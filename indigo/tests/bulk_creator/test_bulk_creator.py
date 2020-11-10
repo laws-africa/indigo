@@ -6,18 +6,17 @@ import datetime
 
 from django.test import testcases
 
-from indigo.bulk_creator import SpreadsheetRow
-from indigo.plugins import plugins
+from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
 from indigo_api.models import Country, Work
 from indigo_app.models import User
 
 
-class BulkCreateWorksTest(testcases.TestCase):
+class BaseBulkCreatorTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
 
     def setUp(self):
         self.maxDiff = None
-        creator = plugins.for_locale('bulk-creator', 'za', None, None)
+        creator = BaseBulkCreator()
         creator.country = Country.objects.get(pk=1)
         creator.locality = None
         creator.user = User.objects.get(pk=1)

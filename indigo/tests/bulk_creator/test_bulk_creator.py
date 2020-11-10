@@ -432,6 +432,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         error_tasks = [t.title for t in error.tasks.all()]
         self.assertIn('Link amendment', error_tasks)
 
+        # TODO: add test for amendment of duplicate main work
+
     def test_link_repeals_passive(self):
         # preview
         works = self.get_works(True, 'repeals_passive.csv')

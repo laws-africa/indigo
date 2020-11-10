@@ -36,6 +36,7 @@ class RowValidationFormBase(forms.Form):
     locality = forms.ChoiceField(required=False)
     title = forms.CharField()
     primary_work = forms.CharField(required=False)
+    subleg = forms.CharField(required=False)
     doctype = forms.ChoiceField(required=True)
     subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
@@ -51,7 +52,10 @@ class RowValidationFormBase(forms.Form):
     commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     stub = forms.BooleanField(required=False)
     commenced_by = forms.CharField(required=False)
+    commences = forms.CharField(required=False)
+    commences_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     amends = forms.CharField(required=False)
+    amended_by = forms.CharField(required=False)
     repealed_by = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
 
@@ -235,11 +239,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
         for row in self.works:
             if row.status and row.commenced:
                 self.link_commencement_passive(row)
+            elif row.status and row.commences:
+                self.link_commencement_active(row)
 
         for row in self.works:
             if row.status == 'success':
                 if row.primary_work:
                     self.link_parent_work(row)
+                if row.subleg:
+                    self.link_children_works(row)
 
                 if row.taxonomy:
                     self.link_taxonomy(row)
@@ -249,8 +257,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 # (they won't overwrite the existing works but the amendments/repeals will be linked)
                 if row.amends:
                     self.link_amendment_active(row)
+                elif row.amended_by:
+                    self.link_amendment_passive(row)
+
                 if row.repealed_by:
                     self.link_repeal_passive(row)
+                elif row.repeals:
+                    self.link_repeal_active(row)
 
         return self.works
 
@@ -396,7 +409,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if len(publications) != 1:
             return self.create_task(work, row, task_type='link-gazette')
 
-        # don't actually create it for dry_run
         if not self.dry_run:
             pub_doc_details = publications[0]
             pub_doc = PublicationDocument()
@@ -545,7 +557,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             row.unlinked_topics = ", ".join(unlinked_topics)
             self.create_task(row.work, row, task_type='link-taxonomy')
 
-    def create_task(self, work, row, task_type, repealing_work=None, amended_work=None, amendment=None):
+    def create_task(self, work, row, task_type, repealing_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
         if self.dry_run:
             row.tasks.append(task_type.replace('-', ' '))
             return
@@ -572,6 +584,12 @@ Possible reasons:
 
 Please link the commencement date and commencing work manually.'''
 
+        elif task_type == 'commences-on-date-missing':
+            task.title = "'Commences on' date missing"
+            task.description = f'''It looks like this work commences "{row.commences}" (see row {row.row_number} of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.
+
+If it should be linked, please do so manually.'''
+
         elif task_type == 'link-amendment':
             task.title = 'Link amendment'
             amended_work = row.amends
@@ -583,6 +601,20 @@ Possible reasons:
 – a typo in the spreadsheet
 – more than one amended work was listed (it only works if there's one)
 – the amended work doesn't exist on the system.
+
+Please link the amendment manually.'''
+
+        elif task_type == 'link-amendment-passive':
+            task.title = 'Link amendment (passive)'
+            amending_work = row.amended_by
+            if len(amending_work) > 256:
+                amending_work = "".join(amending_work[:256] + ', etc')
+            task.description = f'''It looks like this work is amended by "{amending_work}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+
+Possible reasons:
+– a typo in the spreadsheet
+– more than one amending work was listed (it only works if there's one)
+– the amending work doesn't exist on the system.
 
 Please link the amendment manually.'''
 
@@ -639,6 +671,24 @@ Possible reasons:
 – the primary work doesn't exist on the system.
 
 Please link the primary work manually.'''
+
+        elif task_type == 'link-subleg':
+            task.title = 'Link subleg'
+            task.description = f'''It looks like this work has subleg "{subleg}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+
+Possible reasons:
+– a typo in the spreadsheet
+– the subleg work doesn't exist on the system.
+
+Please link the subleg work manually.'''
+
+        elif task_type == 'check-update-subleg':
+            task.title = 'Update subleg?'
+            task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work is subleg under {main_work.title} ({main_work.numbered_title()}).
+
+But this work is already subleg of {work.parent_work.title}, so nothing was done.
+
+Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment.'''
 
         elif task_type == 'link-taxonomy':
             task.title = 'Link taxonomy'
@@ -701,3 +751,98 @@ Possible reasons:
             self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
 
         return self._gsheets_secret.get('client_email')
+
+    def link_children_works(self, row):
+        # if the work has `subleg`, try linking them
+        # make a task if this fails
+        subleg = row.subleg.split('; ')
+        for child_str in subleg:
+            child = self.find_work(child_str)
+            if not child:
+                self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
+            else:
+                row.relationships.append(f'Main work of {child}')
+
+            if child and not self.dry_run:
+                if child.parent_work:
+                    # the child listed already has a parent work
+                    self.create_task(child, row, task_type='check-update-subleg', main_work=row.work)
+                else:
+                    child.parent_work = row.work
+                    try:
+                        child.save_with_revision(self.user)
+                    except ValidationError:
+                        self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
+
+                self.update_works_list(child)
+
+    def link_commencement_active(self, row):
+        # TODO
+        # if the work `commences` another work, try linking it
+        # make a task if a `commences` FRBR URI is given but not found,
+        # or if a `commences_on_date` wasn't given
+        date = row.commences_on_date
+        if not date:
+            return self.create_task(row.work, row, task_type='commences-on-date-missing')
+
+        commencing_work = None
+        if row.commenced_by:
+            commencing_work = self.find_work(row.commenced_by)
+            if not commencing_work:
+                row.work.commenced = False
+                return self.create_task(row.work, row, task_type='link-commencement')
+
+            row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
+
+        if not self.dry_run:
+            Commencement.objects.get_or_create(
+                commenced_work=row.work,
+                commencing_work=commencing_work,
+                date=date,
+                defaults={
+                    'main': True,
+                    'all_provisions': True,
+                    'created_by_user': self.user,
+                },
+            )
+
+    def link_amendment_passive(self, row):
+        # if the work is `amended_by` something, try linking it
+        # (this will only work if there's only one amendment listed)
+        # make a task if this fails
+        amending_work = self.find_work(row.amended_by)
+        if not amending_work:
+            return self.create_task(row.work, row, task_type='link-amendment-passive')
+
+        row.relationships.append(f'Amended by {amending_work}')
+
+        if self.dry_run:
+            row.notes.append("An 'Apply amendment' task will be created on this work")
+        else:
+            date = amending_work.commencement_date
+            if not date:
+                return self.create_task(amending_work, row,
+                                        task_type='link-amendment-pending-commencement',
+                                        amended_work=row.work)
+
+            amendment, new = Amendment.objects.get_or_create(
+                amended_work=row.work,
+                amending_work=amending_work,
+                date=date,
+                defaults={
+                    'created_by_user': self.user,
+                },
+            )
+
+            if new:
+                self.create_task(row.work, row,
+                                 task_type='apply-amendment',
+                                 amendment=amendment)
+
+    def update_works_list(self, work):
+        """ Replaces a work in self.works with the updated one.
+            Use whenever a reverse-relationship work is updated.
+        """
+        for row in self.works:
+            if hasattr(row, 'work') and row.work.pk == work.pk:
+                row.work = work

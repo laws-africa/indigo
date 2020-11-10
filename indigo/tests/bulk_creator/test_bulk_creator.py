@@ -213,6 +213,30 @@ class BulkCreateWorksTest(testcases.TestCase):
         task_titles = [t.title for t in lonely_child.tasks.all()]
         self.assertIn('Link primary work', task_titles)
 
+    def test_link_children(self):
+        works = self.get_works(True, 'children.csv')
+        row1 = works[0]
+        self.assertEqual([
+            'Main work of /akn/za/act/2020/2 (about to be imported)',
+            'Main work of /akn/za/act/2020/3 (about to be imported)'],
+            row1.relationships)
+
+        works = self.get_works(False, 'children.csv')
+        parent = works[0].work
+        child1 = works[1].work
+        child2 = works[2].work
+        self.assertEqual(parent, child1.parent_work)
+        self.assertEqual(parent, child2.parent_work)
+
+        # the children already have a parent work
+        works = self.get_works(False, 'children_2.csv')
+        tasks1 = [t.title for t in child1.tasks.all()]
+        tasks2 = [t.title for t in child2.tasks.all()]
+        self.assertEqual(parent, child1.parent_work)
+        self.assertEqual(parent, child2.parent_work)
+        self.assertIn('Update subleg?', tasks1)
+        self.assertIn('Update subleg?', tasks2)
+
     def test_link_commencements_passive(self):
         # preview (commencement objects aren't created)
         works = self.get_works(True, 'commencements_passive.csv')
@@ -433,6 +457,59 @@ class BulkCreateWorksTest(testcases.TestCase):
         error_tasks = [t.title for t in error.tasks.all()]
         self.assertIn('Link amendment', error_tasks)
 
+    def test_link_amendments_passive(self):
+        # preview
+        works = self.get_works(True, 'amendments_passive.csv')
+        main = works[0]
+        dupe1 = works[1]
+        dupe2 = works[2]
+        dupe3 = works[3]
+        amend_1 = works[4]
+        amend_2 = works[5]
+        amend_3 = works[5]
+        self.assertEqual('success', main.status)
+        self.assertEqual('success', dupe1.status)
+        self.assertEqual('success', dupe2.status)
+        self.assertEqual('success', dupe3.status)
+        self.assertEqual('success', amend_1.status)
+        self.assertEqual('success', amend_2.status)
+        self.assertEqual('success', amend_3.status)
+        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], main.notes)
+        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe1.notes)
+        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe2.notes)
+        self.assertEqual(['Duplicate in batch'], dupe3.notes)
+        self.assertEqual([], amend_1.notes)
+        self.assertEqual([], amend_2.notes)
+        self.assertEqual([], amend_3.notes)
+        self.assertEqual(['Amended by /akn/za/act/2020/2 – First (about to be imported)'], main.relationships)
+        self.assertEqual(['Amended by /akn/za/act/2020/3 – Second (about to be imported)'], dupe1.relationships)
+        self.assertEqual(['Amended by /akn/za/act/2020/4 – Third (about to be imported)'], dupe2.relationships)
+        self.assertEqual([], dupe3.relationships)
+        self.assertEqual([], amend_1.relationships)
+        self.assertEqual([], amend_2.relationships)
+        self.assertEqual([], amend_3.relationships)
+        self.assertEqual(['link gazette', 'import content'], main.tasks)
+        self.assertEqual(['link gazette', 'import content'], dupe1.tasks)
+        self.assertEqual(['link gazette', 'import content'], dupe2.tasks)
+        self.assertEqual(['link gazette', 'import content', 'link amendment passive'], dupe3.tasks)
+        self.assertEqual(['link gazette'], amend_1.tasks)
+        self.assertEqual(['link gazette'], amend_2.tasks)
+        self.assertEqual(['link gazette'], amend_3.tasks)
+
+        # live
+        # works = self.get_works(False, 'amendments_passive.csv')
+        # main = works[0].work
+        # amend_1 = works[1].work
+        # amend_2 = works[2].work
+        # error = works[3].work
+        # amendments = main.amendments.all()
+        # self.assertEqual(2, len(amendments))
+        # amenders = [a.amending_work for a in amendments]
+        # self.assertIn(amend_1, amenders)
+        # self.assertIn(amend_2, amenders)
+        # error_tasks = [t.title for t in error.tasks.all()]
+        # self.assertIn('Link amendment pending commencement', amend3_tasks)
+
     def test_link_repeals_passive(self):
         # preview
         works = self.get_works(True, 'repeals_passive.csv')
@@ -496,8 +573,12 @@ class BulkCreateWorksTest(testcases.TestCase):
         self.assertEqual([], work2.notes)
 
     # TODO:
+    #  - test_link_commencements_active
+    #  - test_link_amendments_passive
+    #  - test_link_repeals_active
     #  - test_link_publication_document
     #  - test_link_taxonomy
     #  - test_create_task (include workflow too)
     #  - test_add_extra_properties
     #  - test_aliases: transform_aliases and transform_error_aliases
+    #  - test subclasses of BaseBulkCreator, RowValidationFormBase

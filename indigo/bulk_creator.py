@@ -23,6 +23,10 @@ from indigo_api.signals import work_changed
 class SpreadsheetRow:
     def __init__(self, data, errors):
         self.errors = errors
+        self.notes = []
+        self.relationships = []
+        self.tasks = []
+        self.taxonomies = []
         for k, v in data.items():
             setattr(self, k, v)
 
@@ -200,13 +204,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_row_validation_form(self, country, locality, subtypes, row_data):
         return self.row_validation_form_class(country, locality, subtypes, row_data)
 
-    def create_works(self, view, table, dry_run, workflow, user):
+    def create_works(self, table, dry_run, workflow):
         self.workflow = workflow
-        self.user = user
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
-        works = []
+        self.works = []
 
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
@@ -224,14 +227,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if row.get('ignore') or not any(row.values()):
                 continue
 
-            works.append(self.create_work(view, row, idx))
+            self.works.append(self.create_work(row, idx))
 
-        # link all commencements first so that amendments and repeals will have dates to work with
-        for row in works:
-            if row.status == 'success' and row.commenced:
-                self.link_commencement(row)
+        self.check_preview_duplicates()
 
-        for row in works:
+        # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
+        for row in self.works:
+            if row.status and row.commenced:
+                self.link_commencement_passive(row)
+
+        for row in self.works:
             if row.status == 'success':
                 if row.primary_work:
                     self.link_parent_work(row)
@@ -243,16 +248,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments/repeals will be linked)
                 if row.amends:
-                    self.link_amendment(row)
+                    self.link_amendment_active(row)
                 if row.repealed_by:
-                    self.link_repeal(row)
+                    self.link_repeal_passive(row)
 
-        return works
+        return self.works
 
-    def create_work(self, view, row, idx):
+    def create_work(self, row, idx):
         # handle spreadsheet that still uses 'principal'
         row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
-        row = self.validate_row(view, row)
+        row = self.validate_row(row)
         row.status = None
         row.row_number = idx + 2
 
@@ -269,32 +274,33 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work = Work()
 
             work.frbr_uri = frbr_uri
-            work.country = view.country
-            work.locality = view.locality
+            work.country = self.country
+            work.locality = self.locality
             for attribute in ['title',
                               'publication_name', 'publication_number',
                               'assent_date', 'publication_date',
                               'commenced', 'stub']:
                 setattr(work, attribute, getattr(row, attribute, None))
-            work.created_by_user = view.request.user
-            work.updated_by_user = view.request.user
+            work.created_by_user = self.user
+            work.updated_by_user = self.user
             self.add_extra_properties(work, row)
 
             try:
                 work.full_clean()
                 if not self.dry_run:
-                    work.save_with_revision(view.request.user)
+                    work.save_with_revision(self.user)
 
                     # signals
-                    work_changed.send(sender=work.__class__, work=work, request=view.request)
+                    if not self.testing:
+                        work_changed.send(sender=work.__class__, work=work, request=self.request)
 
                 # info for linking publication document
                 row.params = {
                     'date': work.publication_date,
                     'number': work.publication_number,
                     'publication': work.publication_name,
-                    'country': view.country.place_code,
-                    'locality': view.locality.code if view.locality else None,
+                    'country': self.country.place_code,
+                    'locality': self.locality.code if self.locality else None,
                 }
 
                 self.link_publication_document(work, row)
@@ -336,7 +342,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if meaning == title:
                     errors[alias] = errors.pop(title)
 
-    def validate_row(self, view, row):
+    def validate_row(self, row):
         self.transform_aliases(row)
 
         # lowercase country, locality, doctype and subtype
@@ -345,7 +351,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
         row['subtype'] = row.get('subtype', '').lower()
 
-        form = self.get_row_validation_form(view.country, view.locality, self.subtypes, row)
+        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
 
         errors = form.errors
         self.transform_error_aliases(errors)
@@ -353,12 +359,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row = SpreadsheetRow(form.cleaned_data, errors)
         # has the work (implicitly) commenced?
         row.commenced = bool(row.commencement_date or row.commenced_by)
-        # e.g. consolidation PiT added
-        row.actions = []
-        # e.g. child of, amends
-        row.relationships = []
-        # e.g. Link publication document
-        row.tasks = []
+        if not row.commenced and self.dry_run:
+            row.notes.append('Uncommenced')
 
         return row
 
@@ -404,7 +406,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
             pub_doc.size = pub_doc_details.get('size')
             pub_doc.save()
 
-    def link_commencement(self, row):
+    def check_preview_duplicates(self):
+        if self.dry_run:
+            frbr_uris = [row.work.frbr_uri for row in self.works if hasattr(row, 'work')]
+            for row in self.works:
+                if hasattr(row, 'work') and frbr_uris.count(row.work.frbr_uri) > 1:
+                    row.notes.append('Duplicate in batch')
+
+    def link_commencement_passive(self, row):
         # if the work has commencement details, try linking it
         # make a task if a `commenced_by` FRBR URI is given but not found
         date = row.commencement_date
@@ -413,11 +422,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if row.commenced_by:
             commencing_work = self.find_work(row.commenced_by)
             if not commencing_work:
-                self.create_task(row.work, row, task_type='link-commencement')
+                row.work.commenced = False
+                return self.create_task(row.work, row, task_type='link-commencement')
 
-        if self.dry_run and commencing_work:
-            row.relationships.append(f'Commenced by {commencing_work}')
-        elif not self.dry_run:
+            row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
+
+        if not self.dry_run:
+            if row.status == 'duplicate' and not row.work.commenced:
+                # follow 'rationalise' logic from Commencement model
+                row.work.commenced = True
+                row.work.updated_by_user = self.user
+                row.work.save()
+
             Commencement.objects.get_or_create(
                 commenced_work=row.work,
                 commencing_work=commencing_work,
@@ -429,7 +445,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 },
             )
 
-    def link_repeal(self, row):
+    def link_repeal_passive(self, row):
         # if the work is `repealed_by` something, try linking it or make the relevant task
         repealing_work = self.find_work(row.repealed_by)
 
@@ -444,9 +460,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         elif not row.work.repealed_by:
             # the work was not already repealed; link the new repeal information
-            if self.dry_run:
-                row.relationships.append(f'Repealed by {repealing_work}')
-            else:
+            row.relationships.append(f'Repealed by {repealing_work}')
+            if not self.dry_run:
                 repeal_date = repealing_work.commencement_date
 
                 if not repeal_date:
@@ -471,16 +486,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not parent_work:
             return self.create_task(row.work, row, task_type='link-primary-work')
 
-        if self.dry_run:
-            row.relationships.append(f'Child of {parent_work}')
-        else:
+        row.relationships.append(f'Subleg under {parent_work}')
+        if not self.dry_run:
             row.work.parent_work = parent_work
             try:
                 row.work.save_with_revision(self.user)
             except ValidationError:
                 self.create_task(row.work, row, task_type='link-primary-work')
 
-    def link_amendment(self, row):
+    def link_amendment_active(self, row):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
@@ -494,8 +508,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                     task_type='link-amendment-pending-commencement',
                                     amended_work=amended_work)
 
+        row.relationships.append(f'Amends {amended_work}')
         if self.dry_run:
-            row.relationships.append(f'Amends {amended_work}')
+            row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
         else:
             amendment, new = Amendment.objects.get_or_create(
                 amended_work=amended_work,
@@ -517,7 +532,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         for t in topics:
             topic = VocabularyTopic.get_topic(t)
             if topic:
-                # don't actually add it in dry_run
+                row.taxonomies.append(topic)
                 if not self.dry_run:
                     row.work.taxonomies.add(topic)
                     row.work.save_with_revision(self.user)
@@ -525,6 +540,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             else:
                 unlinked_topics.append(t)
         if unlinked_topics:
+            if self.dry_run:
+                row.notes.append(f'Taxonomy not found: {", ".join(unlinked_topics)}')
             row.unlinked_topics = ", ".join(unlinked_topics)
             self.create_task(row.work, row, task_type='link-taxonomy')
 
@@ -547,13 +564,13 @@ Find it and upload it manually.'''
 
         elif task_type == 'link-commencement':
             task.title = 'Link commencement'
-            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the commencing work doesn't exist on the system.
 
-Please link the commencing work manually.'''
+Please link the commencement date and commencing work manually.'''
 
         elif task_type == 'link-amendment':
             task.title = 'Link amendment'
@@ -658,20 +675,25 @@ Possible reasons:
             `Administrator-General’s Act` (old style)
             First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
             If not, assume a title has been given and try to match on the whole string.
+            In the case of a dry run, return a string if the work hasn't been found.
         """
-        # just for displaying in preview
-        if self.dry_run:
-            return given_string.split(' - ', 1)[-1]
-
-        # or actually get the work
-        first = given_string.split()[0]
+        work = None
+        substring = given_string.split()[0]
         try:
-            FrbrUri.parse(first)
-            return Work.objects.filter(frbr_uri=first).first()
+            FrbrUri.parse(substring)
+            work = Work.objects.filter(frbr_uri=substring).first()
         except ValueError:
             potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
             if len(potential_matches) == 1:
-                return potential_matches.first()
+                work = potential_matches.first()
+        if self.dry_run and not work:
+            # neither the FRBR URI nor the title matched,
+            # but it could be in the current batch
+            for row in self.works:
+                if hasattr(row, 'work') and (substring == row.work.frbr_uri or given_string == row.work.title):
+                    work = f'{given_string} (about to be imported)'
+                    break
+        return work
 
     @property
     def share_with(self):

@@ -303,20 +303,3 @@ class WorksWebTest(WebTest):
         form['work-frbr_uri'] = '/akn/za/statement/deliberation/my-org/2018-02-02/123-45'
         response = form.submit()
         self.assertRedirects(response, '/works/akn/za/statement/deliberation/my-org/2018-02-02/123-45/', fetch_redirect_response=False)
-
-
-class BulkCreateWorksTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
-
-    def setUp(self):
-        creator = plugins.for_locale('bulk-creator', 'za', None, None)
-        za = Country.objects.get(pk=1)
-        creator.country = za
-        creator.locality = None
-        creator.dry_run = False
-        self.creator = creator
-
-    def test_find_work(self):
-        given_string = "Constitution of the Republic of South Africa, 1996"
-        work = self.creator.find_work(given_string)
-        self.assertEqual(work.id, 10)

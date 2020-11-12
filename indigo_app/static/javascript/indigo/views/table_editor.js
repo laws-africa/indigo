@@ -59,14 +59,6 @@
                         'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
                         'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
       };
-
-      // setup transforms
-      var htmlTransform = new XSLTProcessor();
-      $.get('/static/xsl/html_to_akn.xsl')
-        .then(function(xml) {
-          htmlTransform.importStylesheet(xml);
-          self.htmlTransform = htmlTransform;
-        });
     },
 
     saveChanges: function(e) {
@@ -88,7 +80,7 @@
 
       if (table) {
         // get new xml
-        table = this.tableToAkn(table);
+        table = indigoAkn.tableToAkn(table);
       }
 
       if (table) {
@@ -100,39 +92,6 @@
       }
 
       this.parent.render();
-    },
-
-    tableToAkn: function(table) {
-      if (!this.htmlTransform) return null;
-
-      // html -> xhtml
-      var xml = Indigo.dom.htmlNodeToXmlNode(table);
-      // xhtml -> akn
-      xml = this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
-      if (!xml) {
-        console.log("htmlTransform.transformToFragment returned null, input was: ", table.outerHTML);
-        return null;
-      }
-
-      // strip whitespace at start of first p tag in table cells
-      xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {
-        var text = p.firstChild;
-
-        if (text && text.nodeType === text.TEXT_NODE) {
-          text.textContent = text.textContent.replace(/^\s+/, '');
-        }
-      });
-
-      // strip whitespace at end of last p tag in table cells
-      xml.querySelectorAll('table td > p:last-child, table th > p:last-child').forEach(function(p) {
-        var text = p.lastChild;
-
-        if (text && text.nodeType === text.TEXT_NODE) {
-          text.textContent = text.textContent.replace(/\s+$/, '');
-        }
-      });
-
-      return xml;
     },
 
     discardChanges: function(e, force) {

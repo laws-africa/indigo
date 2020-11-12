@@ -461,58 +461,6 @@ class MarkUpItalicsTermsView(DocumentResourceView, APIView):
             italics_terms_finder.mark_up_italics_in_document(document, italics_terms)
 
 
-class SearchView(DocumentViewMixin, ListAPIView):
-    """ Search and return either works, or documents, depending on `scope`.
-
-    This view drives in-app search and returns works.
-    """
-    serializer_class = DocumentSerializer
-    pagination_class = SearchPagination
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = DOCUMENT_FILTER_FIELDS
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
-
-    # Search scope, either 'documents' or 'works'.
-    scope = 'works'
-
-    def filter_queryset(self, queryset):
-        query = SearchQuery(self.request.query_params.get('q'))
-
-        queryset = super(SearchView, self).filter_queryset(queryset)
-        queryset = queryset.filter(search_vector=query)
-
-        if self.scope == 'works':
-            # Search for distinct works, which means getting the latest
-            # expression of all matching works. To do this, they must
-            # be ordered by expression date, which means paginating
-            # search results by rank is a problem.
-            # So, get all matching expressions, then paginate by re-querying
-            # by document id, and order by rank.
-            doc_ids = [d.id for d in queryset.latest_expression().only('id').prefetch_related(None)]
-            queryset = queryset.filter(id__in=doc_ids)
-
-        # the most expensive part of the search is the snippet/headline generation, which
-        # doesn't use the search vector. It adds about 500ms to the query. Doing it here,
-        # or doing it only on the required document ids, doesn't seem to have an impact.
-        queryset = queryset\
-            .annotate(
-                rank=SearchRankCD(F('search_vector'), query),
-                snippet=Headline(F('search_text'), query, options='StartSel=<mark>, StopSel=</mark>'))\
-            .order_by('-rank')
-
-        return queryset
-
-    def get_serializer(self, queryset, *args, **kwargs):
-        serializer = super(SearchView, self).get_serializer(queryset, *args, **kwargs)
-
-        # add _rank and _snippet to the serialized docs
-        for i, doc in enumerate(queryset):
-            serializer.data[i]['_rank'] = doc.rank
-            serializer.data[i]['_snippet'] = doc.snippet
-
-        return serializer
-
-
 class DocumentDiffView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 

@@ -72,6 +72,7 @@
   Indigo.traditions.default = new Indigo.Tradition({
     country: null,
     grammar: {
+      name: 'slaw',
       fragments: {
         chapter: 'chapters',
         part: 'parts',
@@ -80,7 +81,6 @@
         attachments: 'schedules_container',
       },
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-attachment, .akn-attachments',
-      aceMode: 'ace/mode/indigo',
     },
     // list of names of linter functions applicable to this location
     linters: [],

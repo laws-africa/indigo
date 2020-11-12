@@ -252,7 +252,7 @@ PIPELINE = {
                 'bower_components/moment/locale/en-gb.js',
                 'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
                 'bower_components/showdown/dist/showdown.min.js',
-                'lib/dom-utils.js',
+                'lib/external-imports.js',
                 'javascript/select2-4.0.0.min.js',
                 'javascript/caret.js',
                 'javascript/prettyprint.js',
@@ -403,6 +403,15 @@ LOGGING = {
         },
         'indigo': {
             'level': 'DEBUG' if DEBUG else 'INFO',
+        },
+        'indigo.plugins': {
+            'level': 'INFO',
+        },
+        'indigo.analysis': {
+            'level': 'INFO',
+        },
+        'indigo_api.utils': {
+            'level': 'INFO',
         },
         'indigo.tasks': {
             'handlers': [] if DEBUG else ['mail_admins'],

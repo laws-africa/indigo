@@ -289,34 +289,4 @@ $(function() {
       return Indigo.dom.textPositionToRange(root, posn);
     }
   };
-
-  /**
-   * Serialize an HTML node to an XML string.
-   *
-   * This transforms from html -> string -> xhtml so that the XML is well formed.
-   * It also ensures that entity references that are defined in HTML but not in XML
-   * (eg. &nbsp;) are substituted for their unicode equivalents.
-   */
-  Indigo.dom.htmlNodeToXml = function(node) {
-    // html -> string
-    var xml = new XMLSerializer().serializeToString(node);
-
-    // translate HTML entities that XML doesn't understand
-    // 1. escape away valid XML entities
-    //    https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML
-    xml = xml.replace(/&(quot|amp|apos|lt|gt);/g, '&la_$1;');
-    // 2. decode named entities
-    xml = he.decode(xml);
-    // 3. put the valid XML entities back
-    xml = xml.replace(/&la_(quot|amp|apos|lt|gt);/g, '&$1;');
-
-    return xml;
-  };
-
-  /**
-   * Transform an HTML node into an XML node.
-   */
-  Indigo.dom.htmlNodeToXmlNode = function(node) {
-    return $.parseXML(Indigo.dom.htmlNodeToXml(node));
-  };
 });

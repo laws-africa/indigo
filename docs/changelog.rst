@@ -1,11 +1,35 @@
+
 Changelog
 =========
 
+13.0.0 (2020-11-03)
+--------
+
+* BREAKING: Replace migrations with squashed migrations permanently
+
+Important
+.........
+
+When updating to this version, you must change your Django migrations to declare dependencies on the latest squashed migrations provided by Indigo.
+
+* For `indigo_api`, this is `0001_squashed_0137`
+* For `indigo_app`, this is `0001_squashed_0021`
+
+12.0.0 (2020-11-02)
+--------
+
+Important
+.........
+
+This version squashed migrations, which cannot be undone.
+
+You **must** upgrade to this version before upgrading to future versions.
+
+* BREAKING: replace Ace editor with Monaco editor, for improved syntax highlighting and text editing
+* BREAKING: the search API has been extracted into `indigo-search-psql <https://github.com/laws-africa/indigo-search-psql>`_.
+
 11.1.0 (2020-09-14)
 -------------------
-
-Changes
-.......
 
 * FEATURE: Support for superscript and subscript in parser
 * FIX: keep /akn prefix for resolver

@@ -11,14 +11,12 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict, HttpResponse
+from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
-import io
-import xlsxwriter
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
@@ -27,6 +25,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
+from indigo_app.xlsx_exporter import generate_xlsx
 
 log = logging.getLogger(__name__)
 
@@ -302,9 +301,8 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         self.form.is_valid()
 
         if params.get('format') == 'xlsx':
-            if params.get('full-index') == 'please':
-                self.full_index = True
-            return self.generate_xlsx()
+            self.full_index = params.get('full-index')
+            return generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), self.full_index)
 
         return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
@@ -426,187 +424,6 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         if self.full_index:
             return f"full legislation index {self.kwargs['place']}.xlsx"
         return f"legislation {self.kwargs['place']}.xlsx"
-
-    def generate_xlsx(self):
-        queryset = self.get_queryset()
-        filename = self.get_xlsx_filename()
-        output = io.BytesIO()
-        workbook = xlsxwriter.Workbook(output)
-
-        if self.full_index:
-            self.write_full_index(workbook, queryset)
-        else:
-            self.write_works(workbook, queryset)
-            self.write_relationships(workbook, queryset)
-
-        workbook.close()
-        output.seek(0)
-
-        response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        return response
-
-    def write_works(self, workbook, queryset):
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        works_sheet = workbook.add_worksheet('Works')
-        works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
-                               'Number', 'Publication Date', 'Publication Number',
-                               'Assent Date', 'Commenced', 'Main Commencement Date',
-                               'Repealed Date', 'Parent Work', 'Stub']        
-        # Write the works sheet column titles
-        for position, title in enumerate(works_sheet_columns, 1):
-            works_sheet.write(0, position, title)
-
-        for row, work in enumerate(queryset, 1):
-            works_sheet.write(row, 0, row)
-            works_sheet.write(row, 1, work.frbr_uri)
-            works_sheet.write(row, 2, work.place.place_code) 
-            works_sheet.write(row, 3, work.title)
-            works_sheet.write(row, 4, work.subtype)
-            works_sheet.write(row, 5, work.year)
-            works_sheet.write(row, 6, work.number)
-            works_sheet.write(row, 7, work.publication_date, date_format)
-            works_sheet.write(row, 8, work.publication_number)
-            works_sheet.write(row, 9, work.assent_date, date_format)
-            works_sheet.write(row, 10, work.commenced)
-            works_sheet.write(row, 11, work.commencement_date, date_format)
-            works_sheet.write(row, 12, work.repealed_date, date_format)
-            works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
-            works_sheet.write(row, 14, work.stub)
-
-    def write_relationships(self, workbook, queryset):
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        relationships_sheet = workbook.add_worksheet('Relationships')
-        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
-
-        # write the relationships sheet column titles
-        for position, title in enumerate(relationships_sheet_columns, 1):
-            relationships_sheet.write(0, position, title)
-
-        row = 1
-        for work in queryset:
-            family = []
-
-            # parent work
-            if work.parent_work:
-                family.append({
-                    'rel': 'subsidiary of',
-                    'work': work.parent_work.frbr_uri,
-                    'date': None
-                })
-
-            # amended works
-            amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
-            family = family + [{
-                'rel': 'amends',
-                'work': a.amended_work.frbr_uri,
-                'date': a.date
-            } for a in amended]
-
-            # repealed works
-            repealed_works = work.repealed_works.all()
-            family = family + [{
-                'rel': 'repeals',
-                'work': r.frbr_uri,
-                'date': r.repealed_date
-            } for r in repealed_works]
-
-            # commenced works
-            family = family + [{
-                'rel': 'commences',
-                'work': c.commenced_work.frbr_uri,
-                'date': c.date
-            } for c in work.commencements_made.all()]
-
-            for relationship in family:
-                relationships_sheet.write(row, 0, row)
-                relationships_sheet.write(row, 1, work.frbr_uri)
-                relationships_sheet.write(row, 2, relationship['rel'])
-                relationships_sheet.write(row, 3, relationship['work'])
-                relationships_sheet.write(row, 4, relationship['date'], date_format)
-                row += 1
-
-    def write_full_index(self, workbook, works):
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        sheet = workbook.add_worksheet('Works')
-        columns = ['country', 'locality', 'title', 'subtype (blank for Acts)', 'number', 'year',
-                   'publication_name', 'publication_number',
-                   'assent_date', 'publication_date', 'commencement_date',
-                   'stub (✔)', 'taxonomy',
-                   'primary_work',
-                   'commences', 'commencement_date_active',
-                   'amends', 'amendment_date_active',
-                   'repeals', 'repeal_date_active',
-                   'Ignore (x) or in (✔)',
-                   'frbr_uri', 'frbr_uri_title',
-                   'comments', 'LINKS ETC (add columns as needed)']
-        # Write the column titles
-        for position, title in enumerate(columns):
-            sheet.write(0, position, title)
-
-        rows = []
-        for work in works:
-            # how many rows will we need for this work?
-            # a minimum of one, plus more if there are multiple commencements / amendments / repeals made
-            # (but not if there's one of each)
-            # grab the commencements, amendments and repeals while we're at it
-            n_rows = 1
-            commencements = []
-            if work.commencements_made.exists():
-                commencements = work.commencements_made.all().order_by('date')
-                n_rows += len(commencements) - 1
-            amendments = []
-            if work.amendments_made.exists():
-                amendments = work.amendments_made.all().order_by('date')
-                n_rows += len(amendments) - 1
-            repeals = []
-            if work.repealed_works.exists():
-                repeals = work.repealed_works.all()
-                n_rows += len(repeals) - 1
-
-            work_rows = {
-                'work': work,
-                'n_rows': n_rows,
-                'commencements': commencements,
-                'amendments': amendments,
-                'repeals': repeals,
-            }
-
-            rows.append(work_rows)
-
-        row = 0
-        for info in rows:
-            # TODO: get the nth commencement / amendment / etc and give its details from column 10 onwards
-            # TODO: column10 onwards: functions for getting the relevant information
-            work = info.get('work')
-            for n in range(info.get('n_rows')):
-                row += 1
-                sheet.write(row, 0, work.country.code)
-                sheet.write(row, 1, work.locality.code if work.locality else None)
-                sheet.write(row, 2, work.title)
-                sheet.write(row, 3, work.subtype)
-                sheet.write(row, 4, work.number)
-                sheet.write(row, 5, work.year)
-                sheet.write(row, 6, work.publication_name)
-                sheet.write(row, 7, work.publication_number)
-                sheet.write(row, 8, work.assent_date, date_format)
-                sheet.write(row, 9, work.publication_date, date_format)
-                sheet.write(row, 10, work.commencement_date, date_format)
-                sheet.write(row, 11, '✔' if work.stub else '')
-                sheet.write(row, 12,
-                            ', '.join(str(t.vocabulary) for t in work.taxonomies.all())
-                            if work.taxonomies.exists() else None)
-                sheet.write(row, 13, self.uri_title(work.parent_work) if work.parent_work else None)
-                # sheet.write(row, 13, self.write_commencement_title(work) if work.commencements_made else None)
-                # sheet.write(row, 1, work.frbr_uri)
-
-    def write_taxonomies(self, work):
-        return ', '.join(str(t.vocabulary) for t in work.taxonomies.all())
-
-
-    def uri_title(self, work):
-        return f'{work.frbr_uri} - {work.title}'
-
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):

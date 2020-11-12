@@ -6,13 +6,13 @@ import pandas as pd
 from django.test import testcases
 
 from indigo.bulk_creator import BaseBulkCreator
-from indigo_api.models import Country
+from indigo_api.models import Country, Work
 from indigo_app.models import User
 from indigo_app.xlsx_exporter import *
 
 
 class XLSXExporterTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies']
 
     def setUp(self):
         self.maxDiff = None
@@ -22,12 +22,10 @@ class XLSXExporterTest(testcases.TestCase):
         creator.user = User.objects.get(pk=1)
         creator.testing = True
         self.creator = creator
-
         self.country = Country.objects.get(pk=1)
         self.locality = None
-        self.user = User.objects.get(pk=1)
 
-    def get_works(self, dry_run, filename):
+    def import_works(self, dry_run, filename):
         file = os.path.join(os.path.dirname(__file__), filename)
         with open(file) as csv_file:
             content = csv_file.read()
@@ -42,8 +40,8 @@ class XLSXExporterTest(testcases.TestCase):
         workbook.close()
 
     def write_and_compare(self, filename):
-        rows = self.get_works(False, f'{filename}.csv')
-        works = [row.work for row in rows if hasattr(row, 'work')]
+        self.import_works(False, f'{filename}.csv')
+        works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
         expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
         expected_content = pd.read_excel(expected)

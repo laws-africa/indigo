@@ -75,6 +75,7 @@ setup(
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
+        'pandas>=1.1.4',
         'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
         'requests>=2',
         'unicodecsv>=0.14.1',
@@ -82,6 +83,7 @@ setup(
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
         'xmldiff>=2.4',
+        'xlrd>=1.2.0',
 
         # for indigo_social
         'pillow>=5.2.0',

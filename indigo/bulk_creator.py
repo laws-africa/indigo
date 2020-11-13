@@ -530,7 +530,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                  amendment=amendment)
 
     def link_taxonomy(self, row):
-        topics = [x.strip(',') for x in row.taxonomy.split()]
+        topics = [x.strip(',') for x in row.taxonomy.split(', ')]
         unlinked_topics = []
         for t in topics:
             topic = VocabularyTopic.get_topic(t)

@@ -517,11 +517,17 @@ class BaseBulkCreatorTest(testcases.TestCase):
         w1 = works[0]
         w2 = works[1]
         w3 = works[2]
+        w4 = works[3]
+        w5 = works[4]
         self.assertIn(children, w1.taxonomies)
         self.assertIn(communications, w1.taxonomies)
         self.assertIn(children, w2.taxonomies)
         self.assertIn('Taxonomy not found: Animal Husbandry, Finance', w2.notes)
         self.assertIn('Taxonomy not found: lawsafrica-subjects:People and Work', w3.notes)
+        self.assertIn(children, w4.taxonomies)
+        self.assertIn(communications, w4.taxonomies)
+        self.assertIn(children, w5.taxonomies)
+        self.assertIn(communications, w5.taxonomies)
 
         # live
         works = self.get_works(False, 'taxonomies.csv')
@@ -530,6 +536,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         w2_taxonomies = w2.taxonomies.all()
         w3 = works[2].work
         w3_taxonomies = w3.taxonomies.all()
+        w4_taxonomies = works[3].work.taxonomies.all()
+        w5_taxonomies = works[4].work.taxonomies.all()
         self.assertEqual(2, len(w1_taxonomies))
         self.assertIn(children, w1_taxonomies)
         self.assertIn(communications, w1_taxonomies)
@@ -538,6 +546,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link taxonomy', [t.title for t in w2.tasks.all()])
         self.assertEqual(0, len(w3_taxonomies))
         self.assertIn('Link taxonomy', [t.title for t in w3.tasks.all()])
+        self.assertEqual(2, len(w4_taxonomies))
+        self.assertIn(children, w4_taxonomies)
+        self.assertIn(communications, w4_taxonomies)
+        self.assertEqual(2, len(w5_taxonomies))
+        self.assertIn(children, w5_taxonomies)
+        self.assertIn(communications, w5_taxonomies)
 
     # TODO:
     #  - test_link_publication_document

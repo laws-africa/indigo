@@ -2,3 +2,5 @@ country,locality,title,cap,subtype (blank for Acts),number,year,publication_name
 Za,,Testy 1,,,1,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children, lawsafrica-subjects:People and Work/Communications, ",,,,,,,,,,,,,,
 zA,,Testy 2,,,2,2020,,,,2020-06-01,,,"Animal Husbandry, lawsafrica-subjects:People and Work/Children, Finance",,,,,,,,,,,,,,
 ZA,,Testy 3,,,3,2020,,,,2020-06-01,,,lawsafrica-subjects:People and Work,,,,,,,,,,,,,,
+Za,,Testy 4,,,4,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children,,,,lawsafrica-subjects:People and Work/Communications, ",,,,,,,,,,,,,,
+Za,,Testy 5,,,5,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children ,  lawsafrica-subjects:People and Work/Communications, ,",,,,,,,,,,,,,,

@@ -358,7 +358,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         row = SpreadsheetRow(form.cleaned_data, errors)
         # has the work (implicitly) commenced?
-        row.commenced = bool(row.commencement_date or row.commenced_by)
+        # if the commencement date has an error, the row won't have the attribute
+        row.commenced = bool(
+            (row.commencement_date if hasattr(row, 'commencement_date') else False) or
+            row.commenced_by)
         if not row.commenced and self.dry_run:
             row.notes.append('Uncommenced')
 

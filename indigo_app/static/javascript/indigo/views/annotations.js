@@ -427,8 +427,10 @@
       this.threadViews = [];
       this.visibleThreads = [];
       this.threads = this.model.annotationThreads();
-      this.threads.on('add', this.makeView.bind(this));
-      this.threads.on('reset', this.reset.bind(this));
+      this.listenTo(this.threads, 'add', this.makeView);
+      this.listenTo(this.threads, 'reset', this.reset);
+      this.listenTo(this.threads, 'add remove reset', this.count);
+      this.listenTo(this.threads.annotations, 'change:closed', this.count);
       this.reset();
     },
 
@@ -450,19 +452,24 @@
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.listenTo(view, 'closed', this.threadClosed);
       this.threadViews.push(view);
+      if (view.display()) this.visibleThreads.push(view);
 
       return view;
+    },
+
+    count: function() {
+      this.counts.set({
+        threads: this.visibleThreads.length,
+      });
     },
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     renderAnnotations: function() {
@@ -506,12 +513,13 @@
 
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id});
 
-      // find the newly created view (which is created via events)
-      view = this.threadViews.find(t => t.model === thread);
-      this.visibleThreads.push(view);
-      this.counts.set('threads', this.counts.get('threads') + 1);
-      this.threadViews.forEach(function (v) { v.blur(); });
-      view.display(true);
+      this.threadViews.forEach(v => {
+        if (v.model === thread) {
+          v.display(true);
+        } else {
+          v.blur();
+        }
+      });
     },
 
     removeNewButton: function() {

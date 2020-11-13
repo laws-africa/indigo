@@ -360,7 +360,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # has the work (implicitly) commenced?
         # if the commencement date has an error, the row won't have the attribute
         row.commenced = bool(
-            (row.commencement_date if hasattr(row, 'commencement_date') else False) or
+            getattr(row, 'commencement_date', None) or
             row.commenced_by)
         if not row.commenced and self.dry_run:
             row.notes.append('Uncommenced')

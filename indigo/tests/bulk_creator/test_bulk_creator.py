@@ -7,7 +7,7 @@ import datetime
 from django.test import testcases
 
 from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
-from indigo_api.models import Country, Work
+from indigo_api.models import Country, Work, VocabularyTopic
 from indigo_app.models import User
 
 
@@ -508,9 +508,39 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], work1.notes)
         self.assertEqual([], work2.notes)
 
+    def test_link_taxonomies(self):
+        children = VocabularyTopic.objects.get(pk=3)
+        communications = VocabularyTopic.objects.get(pk=3)
+
+        # preview
+        works = self.get_works(True, 'taxonomies.csv')
+        w1 = works[0]
+        w2 = works[1]
+        w3 = works[2]
+        self.assertIn(children, w1.taxonomies)
+        self.assertIn(communications, w1.taxonomies)
+        self.assertIn(children, w2.taxonomies)
+        self.assertIn('Taxonomy not found: Animal Husbandry, Finance', w2.notes)
+        self.assertIn('Taxonomy not found: lawsafrica-subjects:People and Work', w3.notes)
+
+        # live
+        works = self.get_works(False, 'taxonomies.csv')
+        w1_taxonomies = works[0].work.taxonomies.all()
+        w2 = works[1].work
+        w2_taxonomies = w2.taxonomies.all()
+        w3 = works[2].work
+        w3_taxonomies = w3.taxonomies.all()
+        self.assertEqual(2, len(w1_taxonomies))
+        self.assertIn(children, w1_taxonomies)
+        self.assertIn(communications, w1_taxonomies)
+        self.assertEqual(1, len(w2_taxonomies))
+        self.assertIn(children, w2_taxonomies)
+        self.assertIn('Link taxonomy', [t.title for t in w2.tasks.all()])
+        self.assertEqual(0, len(w3_taxonomies))
+        self.assertIn('Link taxonomy', [t.title for t in w3.tasks.all()])
+
     # TODO:
     #  - test_link_publication_document
-    #  - test_link_taxonomy
     #  - test_create_task (include workflow too)
     #  - test_add_extra_properties
     #  - test_aliases: transform_aliases and transform_error_aliases

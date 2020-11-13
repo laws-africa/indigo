@@ -104,7 +104,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
     def test_errors(self):
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(2, len(works))
+        self.assertEqual(3, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -114,6 +114,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         row2 = works[1]
         self.assertEqual('success', row2.status)
         self.assertEqual({}, row2.errors)
+
+        row3 = works[2]
+        self.assertIsNone(row3.status)
+        self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
+                         row3.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')
@@ -129,6 +134,13 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(work2, row2.work)
         self.assertEqual('success', row2.status)
         self.assertEqual({}, row2.errors)
+
+        row3 = works[2]
+        with self.assertRaises(AttributeError):
+            row3.work
+        self.assertIsNone(row3.status)
+        self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
+                         row3.errors.as_json())
 
     def test_get_frbr_uri(self):
         row = SpreadsheetRow

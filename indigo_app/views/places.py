@@ -278,7 +278,6 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     context_object_name = 'works'
     paginate_by = 50
     js_view = 'PlaceWorksView WorkFilterFormView'
-    full_index = False
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)
@@ -301,14 +300,11 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         self.form.is_valid()
 
         if params.get('format') == 'xlsx':
-            self.full_index = params.get('full-index')
-            return generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), self.full_index)
+            return generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
 
         return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        if self.full_index:
-            return Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
         queryset = Work.objects\
             .select_related('parent_work', 'metrics')\
             .filter(country=self.country, locality=self.locality)\
@@ -421,8 +417,6 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         return context
 
     def get_xlsx_filename(self):
-        if self.full_index:
-            return f"full legislation index {self.kwargs['place']}.xlsx"
         return f"legislation {self.kwargs['place']}.xlsx"
 
 
@@ -639,6 +633,17 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
+
+
+class PlaceWorksIndexView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+    tab = 'place_settings'
+    permission_required = ('indigo_api.change_placesettings',)
+
+    def get(self, request, *args, **kwargs):
+        works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
+        filename = f"Full index for {self.place}.xlsx"
+
+        return generate_xlsx(works, filename, True)
 
 
 class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):

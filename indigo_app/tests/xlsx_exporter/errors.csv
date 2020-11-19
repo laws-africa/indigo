@@ -1,4 +1,3 @@
 country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
 ,xyz,Baddie,,,,Typo,,,2020-13-08,Not a date,,,,,,,,,,,,,,,,,
 zA,,Testy 2,,,2,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,,
-ZA,,Bad commencement date,,,45,2013,Government Gazette,36949,2013-10-03,2013-10-21,21 Oct 2013,x,,,,,,,,,,,,,,,

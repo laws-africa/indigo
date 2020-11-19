@@ -67,11 +67,27 @@ class SuperReviewerBadge(PermissionBadge):
                    'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
 
 
+class TaxonomistBadge(PermissionBadge):
+    slug = 'taxonomist'
+    name = 'Taxonomist'
+    group_name = name + ' Badge'
+    description = 'Can manage taxonomies'
+    permissions = (
+        'indigo_api.add_taxonomyvocabulary',
+        'indigo_api.change_taxonomyvocabulary',
+        'indigo_api.delete_taxonomyvocabulary',
+        'indigo_api.add_vocabularytopic',
+        'indigo_api.change_vocabularytopic',
+        'indigo_api.delete_vocabularytopic',
+                   )
+
+
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
 badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)
+badges.register(TaxonomistBadge)
 
 
 # when a user signs up, grant them the contributor badge immediately

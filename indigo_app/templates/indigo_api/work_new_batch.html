@@ -108,7 +108,7 @@
               <th>Taxonomy</th>
               <th>Tasks</th>
               <th>Relationships</th>
-              <th>Notes (shown in Preview only)</th>
+              <th>Notes</th>
             </tr>
           </thead>
           <tbody>
@@ -275,7 +275,7 @@
                 <td>
                   {% if row.work.taxonomies.exists %}
                     <ul class="pl-0">
-                      {% for t in row.work.taxonomies %}
+                      {% for t in row.work.taxonomies.all %}
                         <li>{{ t }}</li>
                       {% endfor %}
                     </ul>
@@ -284,7 +284,7 @@
                 <td>
                   {% if row.work.tasks.exists %}
                     <ul class="pl-0">
-                      {% for task in row.work.tasks %}
+                      {% for task in row.work.tasks.all %}
                         <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
                       {% endfor %}
                     </ul>

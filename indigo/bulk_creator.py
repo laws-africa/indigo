@@ -371,7 +371,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         row = SpreadsheetRow(form.cleaned_data, errors)
         # has the work (implicitly) commenced?
-        row.commenced = bool(row.commencement_date or row.commenced_by)
+        # if the commencement date has an error, the row won't have the attribute
+        row.commenced = bool(
+            getattr(row, 'commencement_date', None) or
+            row.commenced_by)
         if not row.commenced and self.dry_run:
             row.notes.append('Uncommenced')
 
@@ -539,7 +542,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                  amendment=amendment)
 
     def link_taxonomy(self, row):
-        topics = [x.strip(',') for x in row.taxonomy.split()]
+        topics = [x.strip() for x in row.taxonomy.split(',') if x.strip()]
         unlinked_topics = []
         for t in topics:
             topic = VocabularyTopic.get_topic(t)

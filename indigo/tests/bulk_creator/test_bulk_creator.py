@@ -449,6 +449,157 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Import content', task_titles)
 
+    def test_link_commencements_active(self):
+        # preview (commencement objects aren't created)
+        works = self.get_works(True, 'commencements_active.csv')
+        uncommenced = works[0]
+        both = works[1]
+        commenced_by_only = works[2]
+        commencement_notice_1 = works[3]
+        commencement_notice_2 = works[4]
+        commencement_notice_3 = works[5]
+
+        # uncommenced
+        self.assertEqual(['Uncommenced'], uncommenced.notes)
+        self.assertEqual([], uncommenced.relationships)
+        self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
+
+        # both
+        # TODO: this shouldn't say Uncommenced
+        self.assertEqual(['Uncommenced'], both.notes)
+        self.assertEqual([], both.relationships)
+        self.assertEqual(['link gazette', 'import content'], both.tasks)
+
+        # commenced_by only
+        self.assertEqual(['Uncommenced'], commenced_by_only.notes)
+        self.assertEqual([], commenced_by_only.relationships)
+        self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
+
+        # commencement notice 1
+        self.assertEqual(['Duplicate in batch'], commencement_notice_1.notes)
+        self.assertEqual(['Commences /akn/za/act/2020/2 (about to be imported) on 2020-06-05'], commencement_notice_1.relationships)
+        self.assertEqual(['link gazette'], commencement_notice_1.tasks)
+
+        # commencement notice 2
+        self.assertEqual(['Duplicate in batch'], commencement_notice_2.notes)
+        self.assertEqual([], commencement_notice_2.relationships)
+        self.assertEqual(['link gazette', 'commences on date missing'], commencement_notice_2.tasks)
+
+        # commencement notice 3
+        self.assertEqual(['Duplicate in batch'], commencement_notice_3.notes)
+        self.assertEqual([], commencement_notice_3.relationships)
+        self.assertEqual(['link gazette', 'link commencement active'], commencement_notice_3.tasks)
+
+        # live
+        works = self.get_works(False, 'commencements_active.csv')
+        uncommenced = works[0]
+        both = works[1]
+        commenced_by_only = works[2]
+        commencement_notice_1 = works[3]
+        commencement_notice_2 = works[4]
+        commencement_notice_3 = works[5]
+
+        # uncommenced
+        self.assertFalse(uncommenced.work.commenced)
+        self.assertIsNone(uncommenced.work.commencement_date)
+        self.assertIsNone(uncommenced.work.commencing_work)
+        self.assertEqual([], uncommenced.notes)
+        self.assertEqual([], uncommenced.relationships)
+        tasks = uncommenced.work.tasks.all()
+        self.assertEqual(2, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
+
+        # both
+        self.assertTrue(both.work.commenced)
+        # main_commencement is a cached property
+        actual = Work.objects.get(pk=both.work.pk)
+        self.assertEqual(datetime.date(2020, 6, 5),
+                         actual.commencement_date)
+        self.assertEqual(commencement_notice_1.work, actual.commencing_work)
+        self.assertEqual([], both.notes)
+        self.assertEqual([], both.relationships)
+        tasks = both.work.tasks.all()
+        self.assertEqual(2, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
+
+        # commenced_by only
+        self.assertFalse(commenced_by_only.work.commenced)
+        self.assertIsNone(commenced_by_only.work.commencement_date)
+        self.assertIsNone(commenced_by_only.work.commencing_work)
+        self.assertEqual([], commenced_by_only.notes)
+        self.assertEqual([], commenced_by_only.relationships)
+        tasks = commenced_by_only.work.tasks.all()
+        self.assertEqual(2, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
+
+        # commencement notice 1
+        self.assertEqual('success', commencement_notice_1.status)
+        self.assertTrue(commencement_notice_1.work.commenced)
+        self.assertEqual(datetime.date(2020, 7, 1),
+                         commencement_notice_1.work.commencement_date)
+        self.assertIsNone(commencement_notice_1.work.commencing_work)
+        self.assertEqual([], commencement_notice_1.notes)
+        self.assertEqual(['Commences /akn/za/act/2020/2 (Both date and commenced_by) on 2020-06-05'],
+                         commencement_notice_1.relationships)
+        tasks = commencement_notice_1.work.tasks.all()
+        self.assertEqual(3, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn("'Commences on' date missing", task_titles)
+        self.assertIn('Link commencement (active)', task_titles)
+
+        # commencement notice 2
+        self.assertEqual('duplicate', commencement_notice_2.status)
+        self.assertEqual([], commencement_notice_2.notes)
+        self.assertEqual([], commencement_notice_2.relationships)
+        self.assertEqual(commencement_notice_1.work, commencement_notice_2.work)
+
+        # commencement notice 3
+        self.assertEqual('duplicate', commencement_notice_3.status)
+        self.assertEqual([], commencement_notice_3.notes)
+        self.assertEqual([], commencement_notice_3.relationships)
+        self.assertEqual(commencement_notice_1.work, commencement_notice_3.work)
+
+        # commenced later, preview
+        works = self.get_works(True, 'commencements_active_later.csv')
+        new_commencement_notice = works[0]
+
+        self.assertEqual('success', new_commencement_notice.status)
+        self.assertEqual([], new_commencement_notice.notes)
+        self.assertEqual(['Commences /akn/za/act/2020/1 (Uncommenced) on 2020-10-01'],
+                         new_commencement_notice.relationships)
+        self.assertEqual(['link gazette'], new_commencement_notice.tasks)
+
+        # commenced later, live
+        works = self.get_works(False, 'commencements_active_later.csv')
+        now_commenced = Work.objects.get(pk=uncommenced.work.pk)
+        new_commencement_notice = works[0]
+
+        self.assertTrue(now_commenced.commenced)
+        self.assertEqual(datetime.date(2020, 10, 1),
+                         now_commenced.commencement_date)
+        self.assertEqual(new_commencement_notice.work, now_commenced.commencing_work)
+        tasks = now_commenced.tasks.all()
+        self.assertEqual(2, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
+
+        self.assertEqual('success', new_commencement_notice.status)
+        self.assertEqual([], new_commencement_notice.notes)
+        self.assertEqual(['Commences /akn/za/act/2020/1 (Uncommenced) on 2020-10-01'],
+                         new_commencement_notice.relationships)
+        tasks = new_commencement_notice.work.tasks.all()
+        self.assertEqual(1, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+
     def test_link_amendments_active(self):
         # preview
         works = self.get_works(True, 'amendments_active.csv')

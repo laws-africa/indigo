@@ -463,6 +463,39 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 },
             )
 
+    def link_commencement_active(self, row):
+        # if the work `commences` another work, try linking it
+        # make a task if a `commences` FRBR URI is given but not found,
+        # or if a `commences_on_date` wasn't given
+        date = row.commences_on_date
+        if not date:
+            return self.create_task(row.work, row, task_type='commences-on-date-missing')
+
+        commenced_work = self.find_work(row.commences)
+        if not commenced_work:
+            return self.create_task(row.work, row, task_type='link-commencement-active')
+
+        row.relationships.append(f'Commences {commenced_work} on {date}')
+
+        if not self.dry_run:
+            if not commenced_work.commenced:
+                # follow 'rationalise' logic from Commencement model
+                commenced_work.commenced = True
+                commenced_work.updated_by_user = self.user
+                commenced_work.save()
+
+            Commencement.objects.get_or_create(
+                commenced_work=commenced_work,
+                commencing_work=row.work,
+                date=date,
+                defaults={
+                    'main': True,
+                    'all_provisions': True,
+                    'created_by_user': self.user,
+                },
+            )
+            self.update_works_list(commenced_work)
+
     def link_repeal_passive(self, row):
         # if the work is `repealed_by` something, try linking it or make the relevant task
         repealing_work = self.find_work(row.repealed_by)
@@ -625,6 +658,16 @@ Please link the commencement date and commencing work manually.'''
 
 If it should be linked, please do so manually.'''
 
+        elif task_type == 'link-commencement-active':
+            task.title = 'Link commencement (active)'
+            task.description = f'''It looks like this work commences "{row.commences}" on {row.commences_on_date} (see row {row.row_number} of the spreadsheet), but "{row.commences}" wasn't found, so no action has been taken.
+
+Possible reasons:
+– a typo in the spreadsheet
+– the commenced work doesn't exist on the system.
+
+If the commencement should be linked, please do so manually.'''
+
         elif task_type == 'link-amendment':
             task.title = 'Link amendment'
             amended_work = row.amends
@@ -786,36 +829,6 @@ Possible reasons:
             self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
 
         return self._gsheets_secret.get('client_email')
-
-    def link_commencement_active(self, row):
-        # TODO
-        # if the work `commences` another work, try linking it
-        # make a task if a `commences` FRBR URI is given but not found,
-        # or if a `commences_on_date` wasn't given
-        date = row.commences_on_date
-        if not date:
-            return self.create_task(row.work, row, task_type='commences-on-date-missing')
-
-        commencing_work = None
-        if row.commenced_by:
-            commencing_work = self.find_work(row.commenced_by)
-            if not commencing_work:
-                row.work.commenced = False
-                return self.create_task(row.work, row, task_type='link-commencement')
-
-            row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
-
-        if not self.dry_run:
-            Commencement.objects.get_or_create(
-                commenced_work=row.work,
-                commencing_work=commencing_work,
-                date=date,
-                defaults={
-                    'main': True,
-                    'all_provisions': True,
-                    'created_by_user': self.user,
-                },
-            )
 
     def link_amendment_passive(self, row):
         # if the work is `amended_by` something, try linking it

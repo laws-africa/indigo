@@ -441,7 +441,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             commencing_work = self.find_work(row.commenced_by)
             if not commencing_work:
                 row.work.commenced = False
-                return self.create_task(row.work, row, task_type='link-commencement')
+                return self.create_task(row.work, row, task_type='link-commencement-passive')
 
             row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
 
@@ -642,8 +642,8 @@ Find it and upload it manually.'''
             task.title = 'Import content'
             task.description = '''Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).'''
 
-        elif task_type == 'link-commencement':
-            task.title = 'Link commencement'
+        elif task_type == 'link-commencement-passive':
+            task.title = 'Link commencement (passive)'
             task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:

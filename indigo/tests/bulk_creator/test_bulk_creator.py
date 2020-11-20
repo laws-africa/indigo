@@ -324,7 +324,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # error
         self.assertEqual([], error.notes)
         self.assertEqual([], error.relationships)
-        self.assertEqual(['link gazette', 'import content', 'link commencement'], error.tasks)
+        self.assertEqual(['link gazette', 'import content', 'link commencement passive'], error.tasks)
 
         # live
         works = self.get_works(False, 'commencements_passive.csv')
@@ -410,7 +410,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Import content', task_titles)
-        self.assertIn('Link commencement', task_titles)
+        self.assertIn('Link commencement (passive)', task_titles)
 
         # commenced later, preview
         works = self.get_works(True, 'commencements_passive_later.csv')

@@ -225,28 +225,60 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link primary work', task_titles)
 
     def test_link_children(self):
+        # preview
         works = self.get_works(True, 'children.csv')
         row1 = works[0]
+        # children found
         self.assertEqual([
-            'Main work of /akn/za/act/2020/2 (about to be imported)',
-            'Main work of /akn/za/act/2020/3 (about to be imported)'],
+            'Primary work of /akn/za/act/2020/2 (about to be imported)',
+            'Primary work of /akn/za/act/2020/3 (about to be imported)'],
             row1.relationships)
+        # child not found
+        self.assertEqual(3, len(row1.tasks))
+        self.assertIn('import content', row1.tasks)
+        self.assertIn('link gazette', row1.tasks)
+        self.assertIn('link subleg', row1.tasks)
+        self.assertEqual(1, row1.tasks.count('link subleg'))
 
+        # live
         works = self.get_works(False, 'children.csv')
         parent = works[0].work
+        tasks = [t.title for t in parent.tasks.all()]
         child1 = works[1].work
         child2 = works[2].work
+        child3 = works[3].work
+        # children found
+        self.assertEqual([
+            'Primary work of /akn/za/act/2020/2 (about to be imported)',
+            'Primary work of /akn/za/act/2020/3 (about to be imported)'],
+            row1.relationships)
+        # child not found
+        self.assertEqual(1, tasks.count('Link subleg'))
+        # success
         self.assertEqual(parent, child1.parent_work)
         self.assertEqual(parent, child2.parent_work)
+        self.assertIsNone(child3.parent_work)
 
-        # the children already have a parent work
+        # preview
+        works = self.get_works(True, 'children_2.csv')
+        row1 = works[0]
+        # child 1 and 2 already have a parent
+        self.assertIn('/akn/za/act/2020/2 (Child) already has a primary work', row1.notes)
+        self.assertIn('/akn/za/act/2020/3 (Second child) already has a primary work', row1.notes)
+        # child 3 will now be linked
+        self.assertEqual(['Primary work of /akn/za/act/2020/4 (Third child)'], row1.relationships)
+
+        # live
         works = self.get_works(False, 'children_2.csv')
-        tasks1 = [t.title for t in child1.tasks.all()]
-        tasks2 = [t.title for t in child2.tasks.all()]
+        new_parent = works[0].work
+        child3 = Work.objects.get(pk=child3.pk)
+        # child 1 and 2 already have a parent
         self.assertEqual(parent, child1.parent_work)
         self.assertEqual(parent, child2.parent_work)
-        self.assertIn('Update subleg?', tasks1)
-        self.assertIn('Update subleg?', tasks2)
+        self.assertIn('Update primary work?', [t.title for t in child1.tasks.all()])
+        self.assertIn('Update primary work?', [t.title for t in child2.tasks.all()])
+        # child 3 will now be linked
+        self.assertEqual(new_parent, child3.parent_work)
 
     def test_link_commencements_passive(self):
         # preview (commencement objects aren't created)

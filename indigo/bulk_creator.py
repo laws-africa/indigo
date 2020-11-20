@@ -512,6 +512,35 @@ class BaseBulkCreator(LocaleBasedMatcher):
             except ValidationError:
                 self.create_task(row.work, row, task_type='link-primary-work')
 
+    def link_children_works(self, row):
+        # if the work has `subleg`, try linking them
+        # make a task if this fails
+        subleg = [x.strip() for x in row.subleg.split(';') if x.strip()]
+        for child_str in subleg:
+            child = self.find_work(child_str)
+            if not child:
+                self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
+
+            elif not isinstance(child, Work) or not child.parent_work:
+                row.relationships.append(f'Primary work of {child}')
+
+            if isinstance(child, Work):
+                if child.parent_work:
+                    # the child already has a parent work
+                    if self.dry_run:
+                        row.notes.append(f'{child} already has a primary work')
+                    else:
+                        self.create_task(child, row, task_type='check-update-primary', main_work=row.work)
+                    continue
+
+                elif not self.dry_run:
+                    child.parent_work = row.work
+                    try:
+                        child.save_with_revision(self.user)
+                        self.update_works_list(child)
+                    except ValidationError:
+                        self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
+
     def link_amendment_active(self, row):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
@@ -688,11 +717,11 @@ Possible reasons:
 
 Please link the subleg work manually.'''
 
-        elif task_type == 'check-update-subleg':
-            task.title = 'Update subleg?'
+        elif task_type == 'check-update-primary':
+            task.title = 'Update primary work?'
             task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work is subleg under {main_work.title} ({main_work.numbered_title()}).
 
-But this work is already subleg of {work.parent_work.title}, so nothing was done.
+But this work is already subleg under {work.parent_work.title}, so nothing was done.
 
 Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment.'''
 
@@ -757,30 +786,6 @@ Possible reasons:
             self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
 
         return self._gsheets_secret.get('client_email')
-
-    def link_children_works(self, row):
-        # if the work has `subleg`, try linking them
-        # make a task if this fails
-        subleg = row.subleg.split('; ')
-        for child_str in subleg:
-            child = self.find_work(child_str)
-            if not child:
-                self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
-            else:
-                row.relationships.append(f'Main work of {child}')
-
-            if child and not self.dry_run:
-                if child.parent_work:
-                    # the child listed already has a parent work
-                    self.create_task(child, row, task_type='check-update-subleg', main_work=row.work)
-                else:
-                    child.parent_work = row.work
-                    try:
-                        child.save_with_revision(self.user)
-                    except ValidationError:
-                        self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
-
-                self.update_works_list(child)
 
     def link_commencement_active(self, row):
         # TODO

@@ -57,6 +57,7 @@ class RowValidationFormBase(forms.Form):
     amends = forms.CharField(required=False)
     amended_by = forms.CharField(required=False)
     repealed_by = forms.CharField(required=False)
+    repeals = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
 
     def __init__(self, country, locality, subtypes, *args, **kwargs):
@@ -239,30 +240,32 @@ class BaseBulkCreator(LocaleBasedMatcher):
         for row in self.works:
             if row.status and row.commenced:
                 self.link_commencement_passive(row)
-            elif row.status and row.commences:
+            if row.status and row.commences:
                 self.link_commencement_active(row)
 
         for row in self.works:
-            if row.status == 'success':
+            if row.status:
+                # this will check duplicate works as well
+                # (they won't overwrite the existing works but the relationships will be linked)
                 if row.primary_work:
                     self.link_parent_work(row)
+
                 if row.subleg:
                     self.link_children_works(row)
 
                 if row.taxonomy:
                     self.link_taxonomy(row)
 
-            if row.status:
-                # this will check duplicate works as well
-                # (they won't overwrite the existing works but the amendments/repeals will be linked)
+                if row.amended_by:
+                    self.link_amendment_passive(row)
+
                 if row.amends:
                     self.link_amendment_active(row)
-                elif row.amended_by:
-                    self.link_amendment_passive(row)
 
                 if row.repealed_by:
                     self.link_repeal_passive(row)
-                elif row.repeals:
+
+                if row.repeals:
                     self.link_repeal_active(row)
 
         return self.works

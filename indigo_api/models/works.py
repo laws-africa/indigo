@@ -47,6 +47,7 @@ class TaxonomyVocabulary(models.Model):
     class Meta:
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
+        ordering = ('title',)
 
     def __str__(self):
         return str(self.title)
@@ -59,12 +60,19 @@ class VocabularyTopic(models.Model):
 
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
+        ordering = ('level_1', 'level_2')
+
+    @property
+    def title(self):
+        return ' / '.join(x for x in [self.level_1, self.level_2] if x)
+
+    @property
+    def slug(self):
+        detail = '/'.join(x for x in [self.level_1, self.level_2] if x)
+        return f'{self.vocabulary.slug}:{detail}'
 
     def __str__(self):
-        if self.level_2:
-            return '%s / %s' % (self.level_1, self.level_2)
-        else:
-            return self.level_1
+        return self.title
 
     @classmethod
     def get_topic(self, value):

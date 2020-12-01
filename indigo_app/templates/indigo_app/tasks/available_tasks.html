@@ -70,9 +70,9 @@
             </label>
           </div>
           <select class="form-control selectpicker col-2 ml-2" id="{{ form.type.id_for_label }}" name="{{ form.type.html_name }}"
-                  data-live-search="true" data-size="7">
-            {% for code, title in form.fields.type.choices %}
-              <option value="{{ code }}" {% if code in form.type.value %}selected{% endif %}>{{ title }}</option>
+                  data-live-search="true" data-size="7" multiple>
+            {% for opt in form.type %}
+              {{ opt }}
             {% endfor %}
           </select>
         </div>

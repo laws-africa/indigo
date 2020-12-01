@@ -247,6 +247,7 @@ class TaskFilterForm(forms.Form):
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
+    type = forms.ChoiceField(choices=Task.CODES)
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -255,6 +256,9 @@ class TaskFilterForm(forms.Form):
         self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 
     def filter_queryset(self, queryset):
+        if self.cleaned_data.get('type'):
+            queryset = queryset.filter(code=self.cleaned_data['type'])
+
         if self.cleaned_data.get('labels'):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 

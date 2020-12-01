@@ -69,7 +69,12 @@
               <i class="fas fa-sm fa-fw task-icon-pending_review"></i> Pending review
             </label>
           </div>
-
+          <select class="form-control selectpicker" id="{{ form.type.id_for_label }}" name="{{ form.type.html_name }}"
+                  data-live-search="true" data-size="7">
+            {% for code, title in form.fields.type.choices %}
+              <option value="{{ code }}" {% if code in form.type.value %}selected{% endif %}>{{ title }}</option>
+            {% endfor %}
+          </select>
         </div>
       </form>
     </div>

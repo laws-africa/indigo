@@ -574,13 +574,46 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     except ValidationError:
                         self.create_task(row.work, row, task_type='link-subleg', subleg=child_str)
 
+    def link_amendment_passive(self, row):
+        # if the work is `amended_by` something, try linking it
+        # (this will only work if there's only one amendment listed)
+        # make a task if this fails
+        amending_work = self.find_work(row.amended_by)
+        if not amending_work:
+            return self.create_task(row.work, row, task_type='link-amendment-passive')
+
+        row.relationships.append(f'Amended by {amending_work}')
+
+        if self.dry_run:
+            row.notes.append("An 'Apply amendment' task will be created on this work")
+        else:
+            date = amending_work.commencement_date
+            if not date:
+                return self.create_task(amending_work, row,
+                                        task_type='link-amendment-pending-commencement',
+                                        amended_work=row.work)
+
+            amendment, new = Amendment.objects.get_or_create(
+                amended_work=row.work,
+                amending_work=amending_work,
+                date=date,
+                defaults={
+                    'created_by_user': self.user,
+                },
+            )
+
+            if new:
+                self.create_task(row.work, row,
+                                 task_type='apply-amendment',
+                                 amendment=amendment)
+
     def link_amendment_active(self, row):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
         amended_work = self.find_work(row.amends)
         if not amended_work:
-            return self.create_task(row.work, row, task_type='link-amendment')
+            return self.create_task(row.work, row, task_type='link-amendment-active')
 
         date = row.commencement_date or row.work.commencement_date
         if not date:
@@ -668,8 +701,8 @@ Possible reasons:
 
 If the commencement should be linked, please do so manually.'''
 
-        elif task_type == 'link-amendment':
-            task.title = 'Link amendment'
+        elif task_type == 'link-amendment-active':
+            task.title = 'Link amendment (active)'
             amended_work = row.amends
             if len(amended_work) > 256:
                 amended_work = "".join(amended_work[:256] + ', etc')
@@ -697,7 +730,7 @@ Possible reasons:
 Please link the amendment manually.'''
 
         elif task_type == 'link-amendment-pending-commencement':
-            task.title = 'Link amendment'
+            task.title = 'Link amendment (pending commencement)'
             task.description = f'''It looks like this work amends {amended_work.title} ({amended_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).
 
 Please link the amendment manually (and apply it) when this work comes into force.'''
@@ -719,7 +752,7 @@ Possible reasons:
 Please link the repeal manually.'''
 
         elif task_type == 'check-update-repeal':
-            task.title = 'Update repeal information?'
+            task.title = 'Check / update repeal'
             task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}).
 
 But this work is already listed as having been repealed by {work.repealed_by} ({work.repealed_by.numbered_title()}), so the repeal information wasn't updated automatically.
@@ -729,7 +762,7 @@ If the old / existing repeal information was wrong, update it manually. Otherwis
 
         elif task_type == 'link-repeal-pending-commencement':
             repealed_work = row.work
-            task.title = 'Link repeal'
+            task.title = 'Link repeal (pending commencement)'
             task.description = f'''It looks like this work repeals {repealed_work.title} ({repealed_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
 
 Please link the repeal manually when this work comes into force.'''
@@ -761,7 +794,7 @@ Possible reasons:
 Please link the subleg work manually.'''
 
         elif task_type == 'check-update-primary':
-            task.title = 'Update primary work?'
+            task.title = 'Check / update primary work'
             task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work is subleg under {main_work.title} ({main_work.numbered_title()}).
 
 But this work is already subleg under {work.parent_work.title}, so nothing was done.
@@ -829,39 +862,6 @@ Possible reasons:
             self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
 
         return self._gsheets_secret.get('client_email')
-
-    def link_amendment_passive(self, row):
-        # if the work is `amended_by` something, try linking it
-        # (this will only work if there's only one amendment listed)
-        # make a task if this fails
-        amending_work = self.find_work(row.amended_by)
-        if not amending_work:
-            return self.create_task(row.work, row, task_type='link-amendment-passive')
-
-        row.relationships.append(f'Amended by {amending_work}')
-
-        if self.dry_run:
-            row.notes.append("An 'Apply amendment' task will be created on this work")
-        else:
-            date = amending_work.commencement_date
-            if not date:
-                return self.create_task(amending_work, row,
-                                        task_type='link-amendment-pending-commencement',
-                                        amended_work=row.work)
-
-            amendment, new = Amendment.objects.get_or_create(
-                amended_work=row.work,
-                amending_work=amending_work,
-                date=date,
-                defaults={
-                    'created_by_user': self.user,
-                },
-            )
-
-            if new:
-                self.create_task(row.work, row,
-                                 task_type='apply-amendment',
-                                 amendment=amendment)
 
     def update_works_list(self, work):
         """ Replaces a work in self.works with the updated one.

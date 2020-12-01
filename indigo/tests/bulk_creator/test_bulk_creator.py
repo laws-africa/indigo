@@ -693,20 +693,107 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette'], amend_3.tasks)
 
         # live
-        # works = self.get_works(False, 'amendments_passive.csv')
-        # main = works[0].work
-        # amend_1 = works[1].work
-        # amend_2 = works[2].work
-        # error = works[3].work
-        # amendments = main.amendments.all()
-        # self.assertEqual(2, len(amendments))
-        # amenders = [a.amending_work for a in amendments]
-        # self.assertIn(amend_1, amenders)
-        # self.assertIn(amend_2, amenders)
-        # error_tasks = [t.title for t in error.tasks.all()]
-        # self.assertIn('Link amendment pending commencement', amend3_tasks)
+        works = self.get_works(False, 'amendments_passive.csv')
+        main = works[0]
+        dupe1 = works[1]
+        dupe2 = works[2]
+        dupe3 = works[3]
+        amend_1 = works[4]
+        amend_2 = works[5]
+        amend_3 = works[5]
+
+        self.assertEqual(main.work, dupe1.work)
+        self.assertEqual(dupe1.work, dupe2.work)
+        self.assertEqual(dupe2.work, dupe3.work)
+
+        self.assertEqual('success', main.status)
+        self.assertEqual('duplicate', dupe1.status)
+        self.assertEqual('duplicate', dupe2.status)
+        self.assertEqual('duplicate', dupe3.status)
+        self.assertEqual('success', amend_1.status)
+        self.assertEqual('success', amend_2.status)
+        self.assertEqual('success', amend_3.status)
+        self.assertEqual([], main.notes)
+        self.assertEqual([], dupe1.notes)
+        self.assertEqual([], dupe2.notes)
+        self.assertEqual([], dupe3.notes)
+        self.assertEqual([], amend_1.notes)
+        self.assertEqual([], amend_2.notes)
+        self.assertEqual([], amend_3.notes)
+        self.assertEqual(['Amended by /akn/za/act/2020/2 (Amendment)'], main.relationships)
+        self.assertEqual(['Amended by /akn/za/act/2020/3 (Second amendment)'], dupe1.relationships)
+        # TODO: this should show up as an error (pending commencement) in preview
+        self.assertEqual(['Amended by /akn/za/act/2020/4 (Third amendment)'], dupe2.relationships)
+        self.assertEqual([], dupe3.relationships)
+        self.assertEqual([], amend_1.relationships)
+        self.assertEqual([], amend_2.relationships)
+        self.assertEqual([], amend_3.relationships)
+
+        amendments = main.work.amendments.all()
+        self.assertEqual(2, len(amendments))
+        amenders = [a.amending_work for a in amendments]
+        self.assertIn(amend_1.work, amenders)
+        self.assertIn(amend_2.work, amenders)
+
+        tasks = main.work.tasks.all()
+        task_titles = [t.title for t in tasks]
+        self.assertEqual(5, len(tasks))
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
+        self.assertIn('Link amendment (passive)', task_titles)
+        self.assertEqual(2, task_titles.count('Apply amendment'))
+
+        # TODO: where tf is the Link amendment task??
+        amend_3 = Work.objects.get(pk=amend_3.work.pk)
+        tasks = amend_3.tasks.all()
+        task_titles = [t.title for t in tasks]
+        # self.assertEqual(2, len(tasks))
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Link amendment (pending commencement)', task_titles)
 
     def test_link_repeals_passive(self):
+        # preview
+        works = self.get_works(True, 'repeals_passive.csv')
+        main1 = works[0]
+        repeal1 = works[1]
+        main2 = works[2]
+        repeal2 = works[3]
+        main3 = works[4]
+        self.assertEqual('success', main1.status)
+        self.assertEqual('success', repeal1.status)
+        self.assertEqual('success', main2.status)
+        self.assertEqual('success', repeal2.status)
+        self.assertEqual('success', main3.status)
+
+        self.assertEqual([], main1.notes)
+        self.assertEqual(['Repealed by /akn/za/act/2020/2 (about to be imported)'], main1.relationships)
+        self.assertEqual(['link gazette', 'import content'], main1.tasks)
+
+        self.assertEqual([], main2.notes)
+        self.assertEqual(['Repealed by /akn/za/act/2020/4 (about to be imported)'], main2.relationships)
+        self.assertEqual(['link gazette', 'import content'], main2.tasks)
+
+        self.assertEqual([], main3.notes)
+        self.assertEqual([], main3.relationships)
+        self.assertEqual(['link gazette', 'import content', 'no repeal match'], main3.tasks)
+
+        # live
+        works = self.get_works(False, 'repeals_passive.csv')
+        main1 = works[0].work
+        repeal1 = works[1].work
+        main2 = works[2].work
+        repeal2 = works[3].work
+        main3 = works[4].work
+
+        self.assertEqual(main1.repealed_by, repeal1)
+        self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
+        self.assertIsNone(main2.repealed_by)
+        self.assertIn('Link repeal', [t.title for t in repeal2.tasks.all()])
+        self.assertIsNone(main3.repealed_by)
+        self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
+
+    def test_link_repeals_active(self):
+        # TODO (new)
         # preview
         works = self.get_works(True, 'repeals_passive.csv')
         main1 = works[0]
@@ -814,9 +901,6 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(communications, w5_taxonomies)
 
     # TODO:
-    #  - test_link_commencements_active
-    #  - test_link_amendments_passive
-    #  - test_link_repeals_active
     #  - test_link_publication_document
     #  - test_create_task (include workflow too)
     #  - test_add_extra_properties

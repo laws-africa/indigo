@@ -72,10 +72,10 @@ class Task(models.Model):
         ('link-gazette', 'Link gazette'),
         ('link-primary-work', 'Link primary work'),
         ('link-repeal', 'Link repeal'),
+        ('no-repeal-match', 'Link repeal (not found)'),
         ('link-repeal-pending-commencement', 'Link repeal (pending commencement)'),
         ('link-subleg', 'Link subleg'),
         ('link-taxonomy', 'Link taxonomy'),
-        ('no-repeal-match', 'Link repeal (not found)'),
         ('review-work-expression', 'Sign-off'),
     ]
 

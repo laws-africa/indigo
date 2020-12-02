@@ -72,6 +72,7 @@
           <select class="form-control selectpicker notooltip col-2 ml-2"
                   id="{{ form.type.id_for_label }}" name="{{ form.type.html_name }}"
                   data-style="btn-outline-success" title="Task type"
+                  data-actions-box="true"
                   data-live-search="true" data-size="7" multiple>
             {% for opt in form.type %}
               {{ opt }}

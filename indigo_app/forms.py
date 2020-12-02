@@ -247,7 +247,7 @@ class TaskFilterForm(forms.Form):
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
-    type = forms.MultipleChoiceField(choices=[('', 'Task type (all)')] + Task.CODES)
+    type = forms.MultipleChoiceField(choices=Task.CODES)
 
     def __init__(self, country, *args, **kwargs):
         self.country = country

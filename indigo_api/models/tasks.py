@@ -58,6 +58,27 @@ class Task(models.Model):
         'close': 'approved',
     }
 
+    CODES = [
+        ('apply-amendment', 'Apply amendment'),
+        ('check-update-primary', 'Check / update primary work'),
+        ('check-update-repeal', 'Check / update repeal'),
+        ('commences-on-date-missing', "'Commences on' date missing"),
+        ('import-content', 'Import content'),
+        ('link-amendment-active', 'Link amendment (active)'),
+        ('link-amendment-passive', 'Link amendment (passive)'),
+        ('link-amendment-pending-commencement', 'Link amendment (pending commencement)'),
+        ('link-commencement-active', 'Link commencement (active)'),
+        ('link-commencement-passive', 'Link commencement (passive)'),
+        ('link-gazette', 'Link gazette'),
+        ('link-primary-work', 'Link primary work'),
+        ('link-repeal', 'Link repeal'),
+        ('no-repeal-match', 'Link repeal (not found)'),
+        ('link-repeal-pending-commencement', 'Link repeal (pending commencement)'),
+        ('link-subleg', 'Link subleg'),
+        ('link-taxonomy', 'Link taxonomy'),
+        ('review-work-expression', 'Sign-off'),
+    ]
+
     class Meta:
         permissions = (
             ('submit_task', 'Can submit an open task for review'),

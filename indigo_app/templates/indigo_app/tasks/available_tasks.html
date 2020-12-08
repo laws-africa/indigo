@@ -78,6 +78,15 @@
               {{ opt }}
             {% endfor %}
           </select>
+          <select class="form-control selectpicker notooltip col-2 ml-2"
+                  id="{{ form.country.id_for_label }}" name="{{ form.country.html_name }}"
+                  data-style="btn-outline-success" title="Country"
+                  data-actions-box="true"
+                  data-live-search="true" data-size="7" multiple>
+            {% for opt in form.country %}
+              {{ opt }}
+            {% endfor %}
+          </select>
         </div>
       </form>
     </div>

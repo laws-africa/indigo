@@ -74,6 +74,8 @@ class XLSXExporterTest(testcases.TestCase):
     def test_duplicates(self):
         self.write_and_compare('duplicates')
 
+    def test_taxonomies(self):
+        self.write_and_compare('taxonomies')
+
     # TODO:
-    #  - test_taxonomies
     #  - test_extra_properties (cap)

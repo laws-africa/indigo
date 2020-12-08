@@ -15,6 +15,7 @@
     "fields": {
       "authority": "third" ,
       "name": "party",
+      "slug": "third-party",
       "title": "Third Party Taxonomy"
     }
   },

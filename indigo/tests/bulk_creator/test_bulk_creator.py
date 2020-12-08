@@ -7,7 +7,7 @@ import datetime
 from django.test import testcases
 
 from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
-from indigo_api.models import Country, Work, VocabularyTopic
+from indigo_api.models import Country, Work, VocabularyTopic, Locality
 from indigo_app.models import User
 
 
@@ -102,9 +102,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
 
     def test_errors(self):
+        jhb = Locality.objects.get(pk=1)
+        self.creator.locality = jhb
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(3, len(works))
+        self.assertEqual(4, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -119,6 +121,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row3.status)
         self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
                          row3.errors.as_json())
+
+        row4 = works[3]
+        self.assertIsNone(row4.status)
+        self.assertEqual('''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
+                         row4.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')
@@ -130,7 +137,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
                          row1.errors.as_json())
 
         row2 = works[1]
-        work2 = Work.objects.get(frbr_uri='/akn/za/act/2020/2')
+        work2 = Work.objects.get(frbr_uri='/akn/za-jhb/act/2020/2')
         self.assertEqual(work2, row2.work)
         self.assertEqual('success', row2.status)
         self.assertEqual({}, row2.errors)
@@ -141,6 +148,14 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row3.status)
         self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
                          row3.errors.as_json())
+
+        row4 = works[3]
+        with self.assertRaises(AttributeError):
+            row4.work
+        self.assertIsNone(row4.status)
+        self.assertEqual(
+            '''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
+            row4.errors.as_json())
 
     def test_get_frbr_uri(self):
         row = SpreadsheetRow

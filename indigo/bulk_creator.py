@@ -362,8 +362,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row.commenced = bool(
             getattr(row, 'commencement_date', None) or
             row.commenced_by)
-        if not row.commenced and self.dry_run:
-            row.notes.append('Uncommenced')
+        if self.dry_run:
+            if not row.commenced:
+                row.notes.append('Uncommenced')
+            if row.stub:
+                row.notes.append('Stub')
 
         return row
 

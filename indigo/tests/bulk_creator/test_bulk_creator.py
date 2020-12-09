@@ -714,7 +714,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         dupe3 = works[3]
         amend_1 = works[4]
         amend_2 = works[5]
-        amend_3 = works[5]
+        amend_3 = works[6]
 
         self.assertEqual(main.work, dupe1.work)
         self.assertEqual(dupe1.work, dupe2.work)
@@ -757,11 +757,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link amendment (passive)', task_titles)
         self.assertEqual(2, task_titles.count('Apply amendment'))
 
-        # TODO: where tf is the Link amendment task??
-        amend_3 = Work.objects.get(pk=amend_3.work.pk)
-        tasks = amend_3.tasks.all()
+        tasks = amend_3.work.tasks.all()
         task_titles = [t.title for t in tasks]
-        # self.assertEqual(2, len(tasks))
+        self.assertEqual(2, len(tasks))
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Link amendment (pending commencement)', task_titles)
 

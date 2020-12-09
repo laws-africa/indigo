@@ -490,17 +490,17 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
 
         # commencement notice 1
-        self.assertEqual(['Duplicate in batch'], commencement_notice_1.notes)
+        self.assertEqual(['Stub', 'Duplicate in batch'], commencement_notice_1.notes)
         self.assertEqual(['Commences /akn/za/act/2020/2 (about to be imported) on 2020-06-05'], commencement_notice_1.relationships)
         self.assertEqual(['link gazette'], commencement_notice_1.tasks)
 
         # commencement notice 2
-        self.assertEqual(['Duplicate in batch'], commencement_notice_2.notes)
+        self.assertEqual(['Stub', 'Duplicate in batch'], commencement_notice_2.notes)
         self.assertEqual([], commencement_notice_2.relationships)
         self.assertEqual(['link gazette', 'commences on date missing'], commencement_notice_2.tasks)
 
         # commencement notice 3
-        self.assertEqual(['Duplicate in batch'], commencement_notice_3.notes)
+        self.assertEqual(['Stub', 'Duplicate in batch'], commencement_notice_3.notes)
         self.assertEqual([], commencement_notice_3.relationships)
         self.assertEqual(['link gazette', 'link commencement active'], commencement_notice_3.tasks)
 
@@ -585,7 +585,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         new_commencement_notice = works[0]
 
         self.assertEqual('success', new_commencement_notice.status)
-        self.assertEqual([], new_commencement_notice.notes)
+        self.assertEqual(['Stub'], new_commencement_notice.notes)
         self.assertEqual(['Commences /akn/za/act/2020/1 (Uncommenced) on 2020-10-01'],
                          new_commencement_notice.relationships)
         self.assertEqual(['link gazette'], new_commencement_notice.tasks)
@@ -688,9 +688,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe1.notes)
         self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe2.notes)
         self.assertEqual(['Duplicate in batch'], dupe3.notes)
-        self.assertEqual([], amend_1.notes)
-        self.assertEqual([], amend_2.notes)
-        self.assertEqual([], amend_3.notes)
+        self.assertEqual(['Stub'], amend_1.notes)
+        self.assertEqual(['Stub'], amend_2.notes)
+        self.assertEqual(['Stub'], amend_3.notes)
         self.assertEqual(['Amended by /akn/za/act/2020/2 – First (about to be imported)'], main.relationships)
         self.assertEqual(['Amended by /akn/za/act/2020/3 – Second (about to be imported)'], dupe1.relationships)
         self.assertEqual(['Amended by /akn/za/act/2020/4 – Third (about to be imported)'], dupe2.relationships)

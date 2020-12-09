@@ -479,6 +479,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             return self.create_task(row.work, row, task_type='link-commencement-active')
 
         row.relationships.append(f'Commences {commenced_work} on {date}')
+        for row in self.works:
+            if 'Uncommenced' in row.notes and \
+                    ((hasattr(row, 'work') and
+                      (row.work == commenced_work or
+                       isinstance(commenced_work, str) and row.work.frbr_uri == commenced_work.split()[0])) or
+                     hasattr(row, 'frbr_uri') and isinstance(commenced_work, str) and row.frbr_uri == commenced_work.split()[0]):
+                row.notes.remove('Uncommenced')
 
         if not self.dry_run:
             if not commenced_work.commenced:

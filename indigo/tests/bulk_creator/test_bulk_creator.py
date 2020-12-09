@@ -480,8 +480,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
 
         # both
-        # TODO: this shouldn't say Uncommenced
-        self.assertEqual(['Uncommenced'], both.notes)
+        self.assertEqual([], both.notes)
         self.assertEqual([], both.relationships)
         self.assertEqual(['link gazette', 'import content'], both.tasks)
 

@@ -180,8 +180,9 @@ def write_full_index(workbook, works):
             sheet.write(row, 10, work.publication_date, date_format)
             sheet.write(row, 11, work.commencement_date, date_format)
             sheet.write(row, 12, '✔' if work.stub else '')
-            sheet.write(row, 13,
-                        ', '.join(str(t.vocabulary) for t in work.taxonomies.all()))
+            sheet.write(row, 13, ', '.join(
+                f'{t.vocabulary.slug}:{t.level_1}/{t.level_2}' if t.level_2 else f'{t.vocabulary.slug}:{t.level_1}'
+                for t in work.taxonomies.all()))
             sheet.write(row, 14, uri_title(work.parent_work))
             write_commencement_passive(sheet, row, info, n, date_format)
             write_amendment_passive(sheet, row, info, n, date_format)

@@ -1,0 +1,5 @@
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+ZA,,One,,,1,2020,,,,2020-01-01,2020-01-01,,"lawsafrica-subjects:Money and Business/Banking,,lawsafrica-subjects:People and Work/Children ",,,,,,,,,,,,,,
+ZA,,Two,,,2,2020,,,,2020-01-01,2020-06-01,,"lawsafrica-subjects:Money and Business/Finance, lawsafrica-subjects:People and Work/Non-existent, ,,, ,,  lawsafrica-subjects:People and Work/Communications  ",,,,,,,,,,,,,,
+ZA,,Three,,,3,2020,,,,2020-01-01,2020-07-01,,":Fun stuff, lawsafrica-subjects:People and Work/Communications",,,,,,,,,,,,,,
+ZA,,Four,,,4,2020,,,,2020-01-01,2020-07-01,,:Not so fun stuff,,,,,,,,,,,,,,

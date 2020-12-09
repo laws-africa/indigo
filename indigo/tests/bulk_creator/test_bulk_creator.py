@@ -7,7 +7,7 @@ import datetime
 from django.test import testcases
 
 from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
-from indigo_api.models import Country, Work, VocabularyTopic
+from indigo_api.models import Country, Work, VocabularyTopic, Locality
 from indigo_app.models import User
 
 
@@ -54,7 +54,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row2.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row2.work.publication_date)
         self.assertTrue(row2.work.stub)
-        self.assertEqual(['Uncommenced'], row2.notes)
+        self.assertEqual(['Uncommenced', 'Stub'], row2.notes)
         self.assertEqual([], row2.relationships)
         self.assertEqual(['link gazette'], row2.tasks)
 
@@ -102,9 +102,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
 
     def test_errors(self):
+        jhb = Locality.objects.get(pk=1)
+        self.creator.locality = jhb
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(3, len(works))
+        self.assertEqual(4, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -119,6 +121,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row3.status)
         self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
                          row3.errors.as_json())
+
+        row4 = works[3]
+        self.assertIsNone(row4.status)
+        self.assertEqual('''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
+                         row4.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')
@@ -130,7 +137,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
                          row1.errors.as_json())
 
         row2 = works[1]
-        work2 = Work.objects.get(frbr_uri='/akn/za/act/2020/2')
+        work2 = Work.objects.get(frbr_uri='/akn/za-jhb/act/2020/2')
         self.assertEqual(work2, row2.work)
         self.assertEqual('success', row2.status)
         self.assertEqual({}, row2.errors)
@@ -141,6 +148,14 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row3.status)
         self.assertEqual('''{"commencement_date": [{"message": "Date format should be yyyy-mm-dd.", "code": "invalid"}]}''',
                          row3.errors.as_json())
+
+        row4 = works[3]
+        with self.assertRaises(AttributeError):
+            row4.work
+        self.assertIsNone(row4.status)
+        self.assertEqual(
+            '''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
+            row4.errors.as_json())
 
     def test_get_frbr_uri(self):
         row = SpreadsheetRow
@@ -317,7 +332,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
 
         # commencement notice
-        self.assertEqual([], commencement_notice.notes)
+        self.assertEqual(['Stub'], commencement_notice.notes)
         self.assertEqual([], commencement_notice.relationships)
         self.assertEqual(['link gazette'], commencement_notice.tasks)
 
@@ -617,18 +632,18 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], main.tasks)
 
         self.assertEqual(
-            ["An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
+            ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
             amend1.notes)
         self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported)'], amend1.relationships)
         self.assertEqual(['link gazette'], amend1.tasks)
 
         self.assertEqual(
-            ["An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
+            ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
             amend2.notes)
         self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported)'], amend2.relationships)
         self.assertEqual(['link gazette'], amend2.tasks)
 
-        self.assertEqual([], error.notes)
+        self.assertEqual(['Stub'], error.notes)
         self.assertEqual([], error.relationships)
         self.assertEqual(['link gazette', 'link amendment'], error.tasks)
 
@@ -842,7 +857,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', work1.status)
         self.assertEqual('success', work2.status)
         self.assertEqual(['Duplicate in batch'], work1.notes)
-        self.assertEqual(['Uncommenced', 'Duplicate in batch'], work2.notes)
+        self.assertEqual(['Uncommenced', 'Stub', 'Duplicate in batch'], work2.notes)
 
         # live
         works = self.get_works(False, 'duplicates.csv')

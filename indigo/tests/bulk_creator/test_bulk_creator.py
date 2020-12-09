@@ -290,8 +290,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # child 1 and 2 already have a parent
         self.assertEqual(parent, child1.parent_work)
         self.assertEqual(parent, child2.parent_work)
-        self.assertIn('Update primary work?', [t.title for t in child1.tasks.all()])
-        self.assertIn('Update primary work?', [t.title for t in child2.tasks.all()])
+        self.assertIn('Check / update primary work', [t.title for t in child1.tasks.all()])
+        self.assertIn('Check / update primary work', [t.title for t in child2.tasks.all()])
         # child 3 will now be linked
         self.assertEqual(new_parent, child3.parent_work)
 
@@ -644,7 +644,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Stub'], error.notes)
         self.assertEqual([], error.relationships)
-        self.assertEqual(['link gazette', 'link amendment'], error.tasks)
+        self.assertEqual(['link gazette', 'link amendment active'], error.tasks)
 
         # live
         works = self.get_works(False, 'amendments_active.csv')
@@ -663,7 +663,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(2, main_tasks.count('Apply amendment'))
 
         error_tasks = [t.title for t in error.tasks.all()]
-        self.assertIn('Link amendment', error_tasks)
+        self.assertIn('Link amendment (active)', error_tasks)
 
         # TODO: add test for amendment of duplicate main work
 
@@ -802,7 +802,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(main1.repealed_by, repeal1)
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
         self.assertIsNone(main2.repealed_by)
-        self.assertIn('Link repeal', [t.title for t in repeal2.tasks.all()])
+        self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
         self.assertIsNone(main3.repealed_by)
         self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
 
@@ -844,7 +844,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(main1.repealed_by, repeal1)
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
         self.assertIsNone(main2.repealed_by)
-        self.assertIn('Link repeal', [t.title for t in repeal2.tasks.all()])
+        self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
         self.assertIsNone(main3.repealed_by)
         self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
 

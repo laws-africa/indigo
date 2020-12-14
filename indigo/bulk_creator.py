@@ -540,6 +540,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     self.create_task(row.work, row, task_type='link-repeal',
                                      repealing_work=repealing_work)
 
+    def link_repeal_active(self, row):
+        # if the work `repeals` something, try linking it or make the relevant task
+        repealed_work = self.find_work(row.repeals)
+        # TODO
+
     def link_parent_work(self, row):
         # if the work has a `primary_work`, try linking it
         # make a task if this fails

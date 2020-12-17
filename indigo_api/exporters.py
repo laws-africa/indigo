@@ -87,9 +87,15 @@ class HTMLExporter(object):
     def get_context_data(self, **kwargs):
         """ Get the context data passed to the HTML template.
         """
+        # only commencements up to the current point in time should be considered for the coverpage
+        commencements = None
+        if kwargs.get('document'):
+            document = kwargs.get('document')
+            commencements = document.work.commencements.filter(date__lte=document.expression_date)
         context = {
             'resolver_url': self.resolver,
             'media_resolver_use_akn_prefix': self.media_resolver_use_akn_prefix,
+            'commencements': commencements,
         }
         context.update(kwargs)
         return context

@@ -805,46 +805,64 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
 
     def test_link_repeals_active(self):
-        # TODO (new)
+        # TODO: add test for check-update-repeal
         # preview
-        works = self.get_works(True, 'repeals_passive.csv')
+        works = self.get_works(True, 'repeals_active.csv')
         main1 = works[0]
         repeal1 = works[1]
-        main2 = works[2]
-        repeal2 = works[3]
-        main3 = works[4]
+        repealfail = works[2]
+        main2 = works[3]
+        repeal2 = works[4]
+        repeal3 = works[5]
+
         self.assertEqual('success', main1.status)
         self.assertEqual('success', repeal1.status)
+        self.assertEqual('success', repealfail.status)
         self.assertEqual('success', main2.status)
         self.assertEqual('success', repeal2.status)
-        self.assertEqual('success', main3.status)
+        self.assertEqual('success', repeal3.status)
 
         self.assertEqual([], main1.notes)
-        self.assertEqual(['Repealed by /akn/za/act/2020/2 (about to be imported)'], main1.relationships)
+        self.assertEqual([], main1.relationships)
         self.assertEqual(['link gazette', 'import content'], main1.tasks)
 
+        self.assertEqual(['Stub'], repeal1.notes)
+        self.assertEqual(['Repeals /akn/za/act/2020/1 (about to be imported)'], repeal1.relationships)
+        self.assertEqual(['link gazette'], repeal1.tasks)
+
+        self.assertEqual(['Stub'], repealfail.notes)
+        # TODO: the fact that this is going to result in an error should ideally be shown in preview
+        self.assertEqual(['Repeals /akn/za/act/2020/1 (about to be imported)'], repealfail.relationships)
+        self.assertEqual(['link gazette'], repealfail.tasks)
+
         self.assertEqual([], main2.notes)
-        self.assertEqual(['Repealed by /akn/za/act/2020/4 (about to be imported)'], main2.relationships)
+        self.assertEqual([], main2.relationships)
         self.assertEqual(['link gazette', 'import content'], main2.tasks)
 
-        self.assertEqual([], main3.notes)
-        self.assertEqual([], main3.relationships)
-        self.assertEqual(['link gazette', 'import content', 'no repeal match'], main3.tasks)
+        self.assertEqual(['Uncommenced', 'Stub'], repeal2.notes)
+        self.assertEqual(['Repeals /akn/za/act/2020/3 (about to be imported)'], repeal2.relationships)
+        self.assertEqual(['link gazette', 'link repeal pending commencement'], repeal2.tasks)
+
+        self.assertEqual(['Stub'], repeal3.notes)
+        self.assertEqual([], repeal3.relationships)
+        self.assertEqual(['link gazette', 'no repeal match'], repeal3.tasks)
 
         # live
-        works = self.get_works(False, 'repeals_passive.csv')
+        works = self.get_works(False, 'repeals_active.csv')
         main1 = works[0].work
         repeal1 = works[1].work
-        main2 = works[2].work
-        repeal2 = works[3].work
-        main3 = works[4].work
+        repealfail = works[2].work
+        main2 = works[3].work
+        repeal2 = works[4].work
+        repeal3 = works[5].work
 
         self.assertEqual(main1.repealed_by, repeal1)
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
+        self.assertIn('Check / update repeal', [t.title for t in main1.tasks.all()])
+        self.assertNotIn(main1, repealfail.repealed_works.all())
         self.assertIsNone(main2.repealed_by)
         self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
-        self.assertIsNone(main3.repealed_by)
-        self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
+        self.assertIn('Link repeal', [t.title for t in repeal3.tasks.all()])
 
     def test_duplicates(self):
         # preview

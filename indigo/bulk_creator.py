@@ -528,7 +528,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if not repeal_date:
                     # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
                     return self.create_task(repealing_work, row,
-                                            task_type='link-repeal-pending-commencement')
+                                            task_type='link-repeal-pending-commencement', repealed_work=row.work)
 
                 row.work.repealed_by = repealing_work
                 row.work.repealed_date = repeal_date
@@ -543,7 +543,38 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def link_repeal_active(self, row):
         # if the work `repeals` something, try linking it or make the relevant task
         repealed_work = self.find_work(row.repeals)
-        # TODO
+
+        if not repealed_work:
+            # a work with the given FRBR URI / title wasn't found
+            return self.create_task(row.work, row, task_type='no-repeal-match')
+
+        elif isinstance(repealed_work, Work) and \
+                repealed_work.repealed_by and repealed_work.repealed_by != row.work:
+            # the repealed work was already marked as repealed by a different work
+            return self.create_task(repealed_work, row, task_type='check-update-repeal',
+                                    repealing_work=row.work)
+
+        if isinstance(repealed_work, Work) and not repealed_work.repealed_by or self.dry_run:
+            # the work was not already repealed (or we're in preview); link the new repeal information
+            row.relationships.append(f'Repeals {repealed_work}')
+            repeal_date = row.commencement_date
+
+            if not repeal_date:
+                # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
+                return self.create_task(row.work, row,
+                                        task_type='link-repeal-pending-commencement', repealed_work=repealed_work)
+
+            if not self.dry_run:
+                repealed_work.repealed_by = row.work
+                repealed_work.repealed_date = repeal_date
+
+                try:
+                    repealed_work.save_with_revision(self.user)
+                    self.update_works_list(repealed_work)
+                except ValidationError:
+                    # something else went wrong
+                    self.create_task(repealed_work, row, task_type='link-repeal',
+                                     repealing_work=row.work)
 
     def link_parent_work(self, row):
         # if the work has a `primary_work`, try linking it
@@ -673,7 +704,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             row.unlinked_topics = ", ".join(unlinked_topics)
             self.create_task(row.work, row, task_type='link-taxonomy')
 
-    def create_task(self, work, row, task_type, repealing_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
+    def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
         if self.dry_run:
             row.tasks.append(task_type.replace('-', ' '))
             return
@@ -776,7 +807,6 @@ If the old / existing repeal information was wrong, update it manually. Otherwis
 '''
 
         elif task_type == 'link-repeal-pending-commencement':
-            repealed_work = row.work
             task.title = 'Link repeal (pending commencement)'
             task.description = f'''It looks like this work repeals {repealed_work.title} ({repealed_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
 

@@ -103,6 +103,7 @@ setup(
             'django-webtest>=1.9.4',
             'dotmap>=1.3.8',
             'pandas>=1.1.4',
+            'openpyxl>=3.0.5',
             'xlrd>=1.2.0',
         ],
     },

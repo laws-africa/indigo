@@ -44,9 +44,9 @@ class XLSXExporterTest(testcases.TestCase):
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
         expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        expected_content = pd.read_excel(expected, engine='openpyxl')
+        expected_content = pd.read_excel(expected)
         output = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output_content = pd.read_excel(output, engine='openpyxl')
+        output_content = pd.read_excel(output)
         pd.testing.assert_frame_equal(expected_content, output_content)
 
     def test_basic(self):

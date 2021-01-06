@@ -6,7 +6,7 @@ from indigo.plugins import plugins
 class WorkDetailZA(BaseWorkDetail):
     locale = ('za', None, None)
     """ Locale for this object, as a tuple: (country, language, locality). None matches anything."""
-    no_numbered_title_subtypes = ['by-law', 'mo']
+    no_numbered_title_subtypes = ['by-law', 'mo', 'rules']
 
 
 @plugins.register('work-detail')

@@ -833,6 +833,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self._bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
             self._bulk_creator.country = self.country
             self._bulk_creator.locality = self.locality
+            self._bulk_creator.request = self.request
+            self._bulk_creator.user = self.request.user
+            self._bulk_creator.testing = False
         return self._bulk_creator
 
     def get_initial(self):
@@ -890,7 +893,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
 
-                works = self.bulk_creator.create_works(self, table, dry_run, workflow=workflow, user=self.request.user)
+                works = self.bulk_creator.create_works(table, dry_run, workflow)
                 if not dry_run:
                     messages.success(self.request, f"Imported {len([w for w in works if w.status == 'success'])} works.")
             except ValidationError as e:

@@ -59,6 +59,9 @@
       </div>
     </div>
   </form>
+  <div>
+    <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw mr-1"></i>Download full legislation index for {{ place }}</a>
+  </div>
 
 </div>
 {% endblock %}

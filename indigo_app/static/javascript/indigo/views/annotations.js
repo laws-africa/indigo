@@ -177,6 +177,7 @@
     initialize: function(options) {
       this.annotationTemplate = options.template;
       this.document = options.document;
+      this.anchorRoot = options.root;
       this.marks = [];
 
       // root annotation
@@ -255,7 +256,7 @@
       if (this.root.get('closed')) return;
 
       this.unmark();
-      range = Indigo.dom.targetToRange(this.target);
+      range = Indigo.dom.targetToRange(this.target, this.anchorRoot);
 
       if (range) {
         this.mark(range);
@@ -417,8 +418,7 @@
       this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
-      this.newButton = document.getElementById('new-annotation-floater');
-      this.newButton.remove();
+      this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
 
       this.counts = new Backbone.Model();
@@ -434,6 +434,16 @@
       this.reset();
     },
 
+    makeFloatingButton: function() {
+      const i = document.createElement('i');
+      i.className = 'fas fa-comment';
+      const button = document.createElement('div');
+      button.id = 'new-annotation-floater';
+      button.appendChild(i);
+
+      return button;
+    },
+
     reset: function() {
       this.threadViews = [];
       this.visibleThreads = [];
@@ -446,7 +456,8 @@
       var view = new Indigo.AnnotationThreadView({
         model: thread,
         template: this.annotationTemplate,
-        document: this.model
+        document: this.model,
+        root: this.annotationsContainer,
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);

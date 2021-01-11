@@ -266,7 +266,7 @@ class WorkMixin(object):
 
         return [p for p in provisions if p.id not in commenced]
 
-    def commencements_relevant_to_current_expression(self, date):
+    def commencements_relevant_at_date(self, date):
         """ Return a list of Commencement objects that have to do with the provisions that exist on this work at the given date.
         """
         # common case: one commencement that covers all provisions

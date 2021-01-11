@@ -42,14 +42,14 @@ class CommencementsTestCase(TestCase):
         self.assertEqual(uncommenced_provisions_at_future_date, ['sec_4'])
         self.assertEqual(uncommenced_provisions_at_later_expression_date, ['sec_4', 'sec_6'])
 
-    def test_commencements_relevant_to_current_expression(self):
+    def test_commencements_relevant_at_date(self):
         """ Future commencements should be included even if only one of their `provisions` exists at the given date,
          but not if there's no overlap.
         """
-        commencements_before_publication = [c.id for c in self.work.commencements_relevant_to_current_expression(date=datetime.date(2019, 1, 1))]
-        commencements_at_publication = [c.id for c in self.work.commencements_relevant_to_current_expression(date=datetime.date(2020, 1, 1))]
-        commencements_at_future_date = [c.id for c in self.work.commencements_relevant_to_current_expression(date=datetime.date(2021, 1, 1))]
-        commencements_at_later_expression_date = [c.id for c in self.work.commencements_relevant_to_current_expression(date=datetime.date(2022, 1, 1))]
+        commencements_before_publication = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2019, 1, 1))]
+        commencements_at_publication = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2020, 1, 1))]
+        commencements_at_future_date = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2021, 1, 1))]
+        commencements_at_later_expression_date = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2022, 1, 1))]
 
         self.assertEqual(commencements_before_publication, [])
         self.assertEqual(commencements_at_publication, [4, 5, 7])

@@ -46,5 +46,53 @@
         "created_by_user": 1,
         "updated_by_user": 1
     }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 4,
+    "fields": {
+        "commenced_work": 11,
+        "commencing_work": null,
+        "date": "2020-01-01",
+        "main": true,
+        "all_provisions": false,
+        "provisions": ["sec_1", "sec_3"],
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 5,
+    "fields": {
+        "commenced_work": 11,
+        "commencing_work": null,
+        "date": "2020-01-02",
+        "main": false,
+        "all_provisions": false,
+        "provisions": ["sec_2"],
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 6,
+    "fields": {
+        "commenced_work": 11,
+        "commencing_work": null,
+        "date": "2022-01-01",
+        "main": false,
+        "all_provisions": false,
+        "provisions": ["sec_5"],
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
 }
 ]

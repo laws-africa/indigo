@@ -66,10 +66,10 @@ def make_beautiful(provisions, commenceable_provisions):
 def commenced_provisions_description(document, commencement, uncommenced=False):
     work = document.work
     if uncommenced:
-        provisions = [p.id for p in work.uncommenced_provisions(current=True, date=document.expression_date)]
+        provisions = [p.id for p in work.uncommenced_provisions(date=document.expression_date)]
     else:
         provisions = commencement.provisions
 
-    commenceable_provisions = work.commenceable_provisions(current=True, date=document.expression_date)
+    commenceable_provisions = work.commenceable_provisions(date=document.expression_date)
 
     return make_beautiful(provisions, commenceable_provisions)

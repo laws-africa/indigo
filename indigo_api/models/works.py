@@ -234,11 +234,12 @@ class WorkMixin(object):
         if first:
             return first.date
 
-    def commenceable_provisions(self, current=False, date=None):
+    def commenceable_provisions(self, date=None):
         """ Return a list of TOCElement objects that can be commenced.
+            If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
-        if current:
+        if date:
             documents = self.expressions().filter(expression_date__lte=date)
         else:
             documents = self.expressions().all()
@@ -254,8 +255,8 @@ class WorkMixin(object):
 
         return provisions
 
-    def uncommenced_provisions(self, current=False, date=None):
-        provisions = self.commenceable_provisions(current=current, date=date)
+    def uncommenced_provisions(self, date=None):
+        provisions = self.commenceable_provisions(date=date)
         commenced = set()
         for commencement in self.commencements.all():
             if commencement.all_provisions:

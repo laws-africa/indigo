@@ -73,3 +73,8 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
     commenceable_provisions = work.commenceable_provisions(date=document.expression_date)
 
     return make_beautiful(provisions, commenceable_provisions)
+
+
+@register.simple_tag
+def commencements_relevant_to_current_expression(document):
+    return document.work.commencements_relevant_to_current_expression(date=document.expression_date)

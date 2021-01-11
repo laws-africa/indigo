@@ -266,6 +266,18 @@ class WorkMixin(object):
 
         return [p for p in provisions if p.id not in commenced]
 
+    def commencements_relevant_to_current_expression(self, date):
+        """ Return a list of Commencement objects that have to do with the provisions that exist on this work at the given date.
+        """
+        # common case: one commencement that covers all provisions
+        for commencement in self.commencements.all():
+            if commencement.all_provisions:
+                return [commencement]
+
+        commenceable_provisions = [p.id for p in self.commenceable_provisions(date)]
+        # include commencement if any of its `provisions` are found in `commenceable_provisons`
+        return [c for c in self.commencements.all() if any(p for p in c.provisions if p in commenceable_provisions)]
+
     @property
     def commencements_count(self):
         """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """

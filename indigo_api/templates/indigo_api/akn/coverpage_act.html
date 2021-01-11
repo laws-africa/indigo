@@ -89,6 +89,7 @@
             </li>
           {% endwith %}
         {% else %}
+          {% commencements_relevant_to_current_expression document as commencements %}
           {% if commencements|length > 1 %}
             <li class="commencement-date">
               {% blocktrans %}There are multiple commencements:{% endblocktrans %}

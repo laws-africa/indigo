@@ -5,9 +5,7 @@ from actstream import action
 from django.shortcuts import redirect
 from django.views import View
 from django.views.decorators.cache import cache_control
-from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.search import SearchQuery
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import Http404
 from django.urls import reverse
@@ -17,7 +15,7 @@ from django_comments.models import Comment
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework import mixins, viewsets, renderers, status
-from rest_framework.generics import get_object_or_404, ListAPIView
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
@@ -35,7 +33,7 @@ from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer,
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
-from ..utils import Headline, SearchPagination, SearchRankCD, filename_candidates, find_best_static
+from ..utils import filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
 
 log = logging.getLogger(__name__)
@@ -192,7 +190,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
         queryset += fake_annotations
         context = {}
         context['request'] = request
-        results = AnnotationSerializer(queryset, many=True, context=context)
+        results = self.serializer_class(queryset, many=True, context=context)
         data = {
             "count": len(queryset),
             "results": results.data,

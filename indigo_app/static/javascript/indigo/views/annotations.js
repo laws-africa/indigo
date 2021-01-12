@@ -177,10 +177,11 @@
     initialize: function(options) {
       this.annotationTemplate = options.template;
       this.document = options.document;
+      this.anchorRoot = options.root;
       this.marks = [];
 
       // root annotation
-      this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
+      this.root = this.model.root();
 
       // target for converting to a range
       this.target = {
@@ -189,7 +190,7 @@
       };
 
       // views for each annotation
-      this.annotationViews = this.model.map(function(note) {
+      this.annotationViews = this.model.annotations.map(function(note) {
         /**
          * Comments from tasks (fake annotations) appended to the annotation 
          * thread appeared as new empty annotations field since they lack IDs.
@@ -214,7 +215,7 @@
         });
       });
 
-      this.listenTo(this.model, 'destroy', this.annotationDeleted);
+      this.listenTo(this.model, 'destroy', this.destroyed);
       this.listenTo(this.root, 'change:closed', this.setClosed);
       $('body').on('click', _.bind(this.blurred, this));
 
@@ -255,7 +256,7 @@
       if (this.root.get('closed')) return;
 
       this.unmark();
-      range = Indigo.dom.targetToRange(this.target);
+      range = Indigo.dom.targetToRange(this.target, this.anchorRoot);
 
       if (range) {
         this.mark(range);
@@ -356,15 +357,8 @@
           reply,
           self = this;
 
-      reply = new Indigo.Annotation({
-        text: text,
-        in_reply_to: this.root.get('id'),
-        anchor_id: this.root.get('anchor_id'),
-      });
-      this.document.annotations.add(reply);
-
       this.$el.find('.btn.post').prop('disabled', true);
-
+      reply = this.model.add({text: text});
       reply
         .save()
         .then(function() {
@@ -373,7 +367,6 @@
             template: self.annotationTemplate,
             document: self.document,
           });
-          self.model.add(reply);
           self.annotationViews.push(view);
 
           view.$el.insertBefore(self.$el.find('.reply-container')[0]);
@@ -383,18 +376,11 @@
         });
     },
 
-    annotationDeleted: function(note) {
-      if (this.root == note) {
-        if (this.model.length > 0) {
-          // delete everything else
-          this.model.toArray().forEach(function(n) { n.destroy(); });
-        }
-
-        this.blur();
-        this.unmark();
-        this.remove();
-        this.trigger('deleted', this);
-      }
+    destroyed: function() {
+      this.blur();
+      this.unmark();
+      this.remove();
+      this.trigger('deleted', this);
     },
 
     textareaChanged: function(e) {
@@ -424,9 +410,6 @@
     },
 
     initialize: function(options) {
-      var self = this;
-
-      this.threadViews = [];
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
       this.sheetContainer = this.el.querySelector('.document-sheet-container');
@@ -435,54 +418,69 @@
       this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
-      this.newButton = document.getElementById('new-annotation-floater');
-      this.newButton.remove();
+      this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
 
-      this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
-      this.counts = new Backbone.Model({'threads': 0});
+      this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
+
+      this.threadViews = [];
       this.visibleThreads = [];
+      this.threads = this.model.annotationThreads();
+      this.listenTo(this.threads, 'add', this.makeView);
+      this.listenTo(this.threads, 'reset', this.reset);
+      this.listenTo(this.threads, 'add remove reset', this.count);
+      this.listenTo(this.threads.annotations, 'change:closed', this.count);
+      this.reset();
+    },
 
-      this.annotations.fetch().then(function() {
-        // group by thread and transform into collections
-        var threads = _.map(self.annotations.groupBy(function(a) {
-          return a.get('in_reply_to') || a.get('id');
-        }), function(notes) {
-          var thread = new Backbone.Collection(notes, {comparator: 'created_at'});
-          notes.forEach(function(n) { n.thread = thread; });
-          return thread;
-        });
+    makeFloatingButton: function() {
+      const i = document.createElement('i');
+      i.className = 'fas fa-comment';
+      const button = document.createElement('div');
+      button.id = 'new-annotation-floater';
+      button.appendChild(i);
 
-        threads.forEach(_.bind(self.makeView, self));
+      return button;
+    },
 
-        self.renderAnnotations();
-      });
+    reset: function() {
+      this.threadViews = [];
+      this.visibleThreads = [];
+      this.counts.set({threads: 0});
+      this.threads.forEach(t => this.makeView(t));
+      this.renderAnnotations();
     },
 
     makeView: function(thread) {
       var view = new Indigo.AnnotationThreadView({
         model: thread,
         template: this.annotationTemplate,
-        document: this.model
+        document: this.model,
+        root: this.annotationsContainer,
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.listenTo(view, 'closed', this.threadClosed);
       this.threadViews.push(view);
+      if (view.display()) this.visibleThreads.push(view);
 
       return view;
+    },
+
+    count: function() {
+      this.counts.set({
+        threads: this.visibleThreads.length,
+      });
     },
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     renderAnnotations: function() {
@@ -496,7 +494,7 @@
       this.threadViews.forEach(function(v) {
         if (v.display()) visible.push(v);
 
-        if (prefocus && (v.model.at(0).get('id') || "").toString() == prefocus) {
+        if (prefocus && (v.model.at(0).get('id') || "").toString() === prefocus) {
           v.focus();
           v.scrollIntoView();
         }
@@ -524,14 +522,15 @@
       target = Indigo.dom.rangeToTarget(this.pendingRange, root);
       if (!target) return;
 
-      root = new Indigo.Annotation({selectors: target.selectors, anchor_id: target.anchor_id});
-      this.annotations.add(root);
-      thread = new Backbone.Collection([root]);
-      view = this.makeView(thread);
-      this.visibleThreads.push(view);
-      this.counts.set('threads', this.counts.get('threads') + 1);
-      this.threadViews.forEach(function (v) { v.blur(); });
-      view.display(true);
+      thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id});
+
+      this.threadViews.forEach(v => {
+        if (v.model === thread) {
+          v.display(true);
+        } else {
+          v.blur();
+        }
+      });
     },
 
     removeNewButton: function() {

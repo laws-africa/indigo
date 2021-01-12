@@ -4,6 +4,8 @@ function bootstrapIndigo(exports) {
   if (!exports.Indigo) exports.Indigo = {};
   var Indigo = exports.Indigo;
 
+  window.dispatchEvent(new Event('indigo.beforebootstrap'));
+
   Indigo.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
   // setup CSRF
@@ -149,11 +151,18 @@ function bootstrapIndigo(exports) {
     if (name && Indigo[name]) {
       var view = new Indigo[name]();
       Indigo.view = Indigo.view || view;
+      window.dispatchEvent(new CustomEvent('indigo.createview', {
+        detail: {
+          name: name,
+          view: view
+        }
+      }));
       return view;
     }
   }), function(v) { return !v; });
   _.invoke(Indigo.views, 'render');
 
+  window.dispatchEvent(new Event('indigo.viewscreated'));
 
   // osx vs windows
   var isOSX = navigator.userAgent.indexOf("OS X") > -1;
@@ -168,6 +177,8 @@ function bootstrapIndigo(exports) {
       return 'You will lose your changes!';
     }
   });
+
+  window.dispatchEvent(new Event('indigo.afterbootstrap'));
 }
 
 // tell monaco where to load its files from

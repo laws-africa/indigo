@@ -84,12 +84,12 @@ $(function() {
    *
    * This does its best to try to find a match, walking up the anchor hierarchy if possible.
    */
-  Indigo.dom.targetToRange = function(target) {
+  Indigo.dom.targetToRange = function(target, root) {
     var anchor, range,
         anchor_id = target.anchor_id,
         ix = anchor_id.lastIndexOf('.');
 
-    anchor = document.getElementById(anchor_id);
+    anchor = root.querySelector(`[id="${anchor_id}"]`);
 
     if (!target.selectors) {
       // no selectors, old-style annotation for an entire element
@@ -105,7 +105,7 @@ $(function() {
     while (!anchor && ix > -1) {
       anchor_id = anchor_id.substring(0, ix);
       ix = anchor_id.lastIndexOf('.');
-      anchor = document.getElementById(anchor_id);
+      anchor = root.querySelector(`[id="${anchor_id}"]`);
     }
 
     if (!anchor) return;

@@ -263,7 +263,7 @@
 
     click: function(e) {
       e.preventDefault();
-      if (Indigo.view.bodyEditorView.canCancelEdits()) {
+      if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem($(e.target).data('index'), true);
       }
     },

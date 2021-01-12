@@ -147,5 +147,19 @@
       "frbr_uri": "/akn/za/act/1996/constitution",
       "publication_date": "1996-12-18"
     }
+  },
+  {
+    "pk": 11,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Work with multiple commencements",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2021/1",
+      "publication_date": "2020-01-01"
+    }
   }
 ]

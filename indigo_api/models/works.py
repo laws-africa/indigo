@@ -242,15 +242,11 @@ class WorkMixin(object):
         if first:
             return first.date
 
-    def commenceable_provisions(self, date=None):
+    def commenceable_provisions(self):
         """ Return a list of TOCElement objects that can be commenced.
-            If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
-        if date:
-            documents = self.expressions().filter(expression_date__lte=date)
-        else:
-            documents = self.expressions().all()
+        documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
         # get all the docs and combine the TOCs, based on element IDs
@@ -263,8 +259,8 @@ class WorkMixin(object):
 
         return provisions
 
-    def uncommenced_provisions(self, date=None):
-        provisions = self.commenceable_provisions(date=date)
+    def uncommenced_provisions(self):
+        provisions = self.commenceable_provisions()
         commenced = set()
         for commencement in self.commencements.all():
             if commencement.all_provisions:
@@ -273,18 +269,6 @@ class WorkMixin(object):
                 commenced.add(prov)
 
         return [p for p in provisions if p.id not in commenced]
-
-    def commencements_relevant_at_date(self, date):
-        """ Return a list of Commencement objects that have to do with the provisions that exist on this work at the given date.
-        """
-        # common case: one commencement that covers all provisions
-        for commencement in self.commencements.all():
-            if commencement.all_provisions:
-                return [commencement]
-
-        commenceable_provisions = [p.id for p in self.commenceable_provisions(date)]
-        # include commencement if any of its `provisions` are found in `commenceable_provisons`
-        return [c for c in self.commencements.all() if any(p for p in c.provisions if p in commenceable_provisions)]
 
     @property
     def commencements_count(self):

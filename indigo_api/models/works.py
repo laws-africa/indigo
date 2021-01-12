@@ -242,7 +242,7 @@ class WorkMixin(object):
         if first:
             return first.date
 
-    def commenceable_provisions(self, date=None):
+    def all_commenceable_provisions(self, date=None):
         """ Return a list of TOCElement objects that can be commenced.
             If `date` is provided, only provisions in expressions up to and including that date are included.
         """
@@ -263,8 +263,8 @@ class WorkMixin(object):
 
         return provisions
 
-    def uncommenced_provisions(self, date=None):
-        provisions = self.commenceable_provisions(date=date)
+    def all_uncommenced_provisions(self, date=None):
+        provisions = self.all_commenceable_provisions(date=date)
         commenced = set()
         for commencement in self.commencements.all():
             if commencement.all_provisions:
@@ -282,7 +282,7 @@ class WorkMixin(object):
             if commencement.all_provisions:
                 return [commencement]
 
-        commenceable_provisions = [p.id for p in self.commenceable_provisions(date)]
+        commenceable_provisions = [p.id for p in self.all_commenceable_provisions(date)]
         # include commencement if any of its `provisions` are found in `commenceable_provisons`
         return [c for c in self.commencements.all() if any(p for p in c.provisions if p in commenceable_provisions)]
 
@@ -290,7 +290,7 @@ class WorkMixin(object):
     def commencements_count(self):
         """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
         commencements_count = len(self.commencements.all())
-        if self.uncommenced_provisions():
+        if self.all_uncommenced_provisions():
             commencements_count += 1
         return commencements_count
 

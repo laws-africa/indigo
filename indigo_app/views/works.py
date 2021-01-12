@@ -299,8 +299,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        context['provisions'] = provisions = self.work.commenceable_provisions()
-        context['uncommenced_provisions'] = self.work.uncommenced_provisions()
+        context['provisions'] = provisions = self.work.all_commenceable_provisions()
+        context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
@@ -340,7 +340,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = self.work.commenceable_provisions()
+        kwargs['provisions'] = self.work.all_commenceable_provisions()
         return kwargs
 
     def post(self, request, *args, **kwargs):

@@ -180,6 +180,12 @@ class DocumentMixin(object):
 
         return ids
 
+    def commenceable_provisions(self):
+        return self.work.all_commenceable_provisions(self.expression_date)
+
+    def uncommenced_provisions(self):
+        return self.work.all_uncommenced_provisions(self.expression_date)
+
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter
         exporter = HTMLExporter()

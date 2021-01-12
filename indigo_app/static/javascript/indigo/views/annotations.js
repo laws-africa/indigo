@@ -53,13 +53,6 @@
         json.html = html;
         if (json.task) {
           json.task = json.task.toJSON();
-
-          json.task.view_url =
-            "/places/" +
-            self.document.work.get('country') +
-            (self.document.work.get('locality') ? ('-' + self.document.work.get('locality')) : '') +
-            "/tasks/" +
-            json.task.id;
         }
         json.created_at_text = moment(json.created_at).fromNow();
 

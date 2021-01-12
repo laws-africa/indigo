@@ -456,6 +456,7 @@ class TaskSerializer(serializers.ModelSerializer):
     work = serializers.CharField(source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
+    view_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -471,9 +472,18 @@ class TaskSerializer(serializers.ModelSerializer):
             'labels',
             'assigned_to',
             'annotation',
+            'view_url',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
         )
         read_only_fields = fields
+
+    def get_view_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('task_detail', request=self.context['request'], kwargs={
+            'place': instance.work.place.place_code,
+            'pk': instance.pk,
+        })
 
 
 class AnnotationSerializer(serializers.ModelSerializer):

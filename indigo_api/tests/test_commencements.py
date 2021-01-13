@@ -3,7 +3,7 @@ import datetime
 
 from django.test import TestCase
 
-from indigo_api.models import Work
+from indigo_api.models import Work, Document
 
 
 class CommencementsTestCase(TestCase):
@@ -46,12 +46,10 @@ class CommencementsTestCase(TestCase):
         """ Future commencements should be included even if only one of their `provisions` exists at the given date,
          but not if there's no overlap.
         """
-        commencements_before_publication = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2019, 1, 1))]
-        commencements_at_publication = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2020, 1, 1))]
-        commencements_at_future_date = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2021, 1, 1))]
-        commencements_at_later_expression_date = [c.id for c in self.work.commencements_relevant_at_date(date=datetime.date(2022, 1, 1))]
+        publication_expression = Document.objects.get(pk=21)
+        amendment_expression = Document.objects.get(pk=22)
+        commencements_at_publication = [c.id for c in publication_expression.commencements_relevant_at_expression_date()]
+        commencements_at_later_expression_date = [c.id for c in amendment_expression.commencements_relevant_at_expression_date()]
 
-        self.assertEqual(commencements_before_publication, [])
         self.assertEqual(commencements_at_publication, [4, 5, 7])
-        self.assertEqual(commencements_at_future_date, [4, 5, 7])
         self.assertEqual(commencements_at_later_expression_date, [4, 5, 6, 7])

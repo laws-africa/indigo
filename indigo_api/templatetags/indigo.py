@@ -76,4 +76,4 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
 @register.simple_tag
 def commencements_relevant_at_date(document):
-    return document.work.commencements_relevant_at_date(date=document.expression_date)
+    return document.commencements_relevant_at_expression_date()

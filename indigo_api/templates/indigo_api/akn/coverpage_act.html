@@ -89,13 +89,15 @@
             </li>
           {% endwith %}
         {% else %}
-          {% with document.work.commencements.all as commencements %}
-          <li class="commencement-date">
-            {% blocktrans %}There are multiple commencements:{% endblocktrans %}
-          </li>
-          {% if document.work.commencements_count < 3 %}
+          {% commencements_relevant_at_date document as commencements %}
+          {% if commencements|length > 1 %}
+            <li class="commencement-date">
+              {% blocktrans %}There are multiple commencements:{% endblocktrans %}
+            </li>
+          {% endif %}
+          {% if commencements|length < 3 %}
             {% for commencement in commencements %}
-              {% commenced_provisions_description document.work commencement as provisions_description %}
+              {% commenced_provisions_description document commencement as provisions_description %}
               <li class="commencement-date-list">
                 {% if provisions_description %}
                   {{ provisions_description|capfirst }}
@@ -117,11 +119,13 @@
                 {% endwith %}
               </li>
             {% endfor %}
-            {% if document.work.uncommenced_provisions %}
-              {% commenced_provisions_description document.work commencement uncommenced=True as provisions_description %}
-              <li class="commencement-date-uncommenced">
-                {% blocktrans with provisions=provisions_description|capfirst %}{{ provisions }}: not yet commenced.{% endblocktrans %}
-              </li>
+            {% if document.uncommenced_provisions %}
+              {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
+              {% if provisions_description %}
+                <li class="commencement-date-uncommenced">
+                  {% blocktrans with provisions=provisions_description|capfirst %}{{ provisions }}: not yet commenced.{% endblocktrans %}
+                </li>
+              {% endif %}
             {% endif %}
           {% else %}
             <table class="commencements-table">
@@ -133,7 +137,7 @@
               </thead>
               <tbody>
                 {% for commencement in commencements %}
-                  {% commenced_provisions_description document.work commencement as provisions_description %}
+                  {% commenced_provisions_description document commencement as provisions_description %}
                   <tr>
                     <td>
                       {% if provisions_description %}
@@ -159,10 +163,10 @@
                     </td>
                   </tr>
                 {% endfor %}
-                {% if document.work.uncommenced_provisions %}
+                {% if document.uncommenced_provisions %}
                   <tr>
                     <td>
-                      {% commenced_provisions_description document.work commencement uncommenced=True as provisions_description %}
+                      {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
                       <b>{{ provisions_description|capfirst }}</b>
                     </td>
                     <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
@@ -171,7 +175,6 @@
               </tbody>
             </table>
           {% endif %}
-          {% endwith %}
         {% endif %}
       {% endblock %}
 

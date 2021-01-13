@@ -242,11 +242,15 @@ class WorkMixin(object):
         if first:
             return first.date
 
-    def commenceable_provisions(self):
+    def all_commenceable_provisions(self, date=None):
         """ Return a list of TOCElement objects that can be commenced.
+            If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
-        documents = self.expressions().all()
+        if date:
+            documents = self.expressions().filter(expression_date__lte=date)
+        else:
+            documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
         # get all the docs and combine the TOCs, based on element IDs
@@ -259,8 +263,8 @@ class WorkMixin(object):
 
         return provisions
 
-    def uncommenced_provisions(self):
-        provisions = self.commenceable_provisions()
+    def all_uncommenced_provisions(self, date=None):
+        provisions = self.all_commenceable_provisions(date=date)
         commenced = set()
         for commencement in self.commencements.all():
             if commencement.all_provisions:
@@ -274,7 +278,7 @@ class WorkMixin(object):
     def commencements_count(self):
         """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
         commencements_count = len(self.commencements.all())
-        if self.uncommenced_provisions():
+        if self.all_uncommenced_provisions():
             commencements_count += 1
         return commencements_count
 

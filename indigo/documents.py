@@ -44,14 +44,14 @@ class ResolvedAnchor(object):
         while anchor_id:
             escaped = anchor_id.replace("'", "\\'")
             elems = component.xpath(f".//a:*[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace})
-            if elems:
+            if elems is not None:
                 self.resolve_element(elems[0])
                 break
             elif anchor_id in ['preface', 'preamble']:
                 # HACK HACK HACK
                 # We sometimes use 'preamble' and 'preface' even though they aren't IDs
                 elems = component.xpath(f".//a:{escaped}", namespaces={'a': self.document.doc.namespace})
-                if elems:
+                if elems is not None:
                     self.resolve_element(elems[0])
                     break
 

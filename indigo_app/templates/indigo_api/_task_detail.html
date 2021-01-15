@@ -78,13 +78,13 @@
               <li class="activity-item">
                 {% if anchor.element %}
                   Here is
-                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a>
+                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title|default:anchor.anchor_id }}</a>
                   as it appears currently
                   {% if not anchor.exact_match %}(<b>{{ anchor.anchor_id }}</b> may have been moved or removed){% endif %}
                   <div class="sheet-outer"
                        {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
                     <div class="sheet-inner is-fragment">
-                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
+                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</div>
                     </div>
                   </div>
                 {% else %}

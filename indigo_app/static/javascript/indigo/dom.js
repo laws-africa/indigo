@@ -137,12 +137,23 @@ $(function() {
         }
       } catch (err) {
         // couldn't match to the position, try the quote selector instead
+        console.log("Error in textPositionToRange");
+        console.log(posnSelector);
+        console.log(err, err.stack);
       }
     }
 
     // fall back to the quote selector
     if (quoteSelector) {
-      return Indigo.dom.textQuoteToRange(anchor, quoteSelector);
+      try {
+        return Indigo.dom.textQuoteToRange(anchor, quoteSelector);
+      } catch (err) {
+        // couldn't match to the position, give up
+        console.log("Error in textQuoteToRange");
+        console.log(quoteSelector);
+        console.log(err, err.stack);
+        return null;
+      }
     }
   };
 

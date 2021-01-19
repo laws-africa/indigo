@@ -912,8 +912,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         works = self.get_works(False, 'taxonomies.csv')
         w1_taxonomies = works[0].work.taxonomies.all()
         w2 = works[1].work
+        w2_tasks = w2.tasks.all()
         w2_taxonomies = w2.taxonomies.all()
         w3 = works[2].work
+        w3_tasks = w3.tasks.all()
         w3_taxonomies = w3.taxonomies.all()
         w4_taxonomies = works[3].work.taxonomies.all()
         w5_taxonomies = works[4].work.taxonomies.all()
@@ -922,9 +924,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(communications, w1_taxonomies)
         self.assertEqual(1, len(w2_taxonomies))
         self.assertIn(children, w2_taxonomies)
-        self.assertIn('Link taxonomy', [t.title for t in w2.tasks.all()])
+        self.assertEqual(3, len(w2_tasks))
+        self.assertIn('Link taxonomy', [t.title for t in w2_tasks])
         self.assertEqual(0, len(w3_taxonomies))
-        self.assertIn('Link taxonomy', [t.title for t in w3.tasks.all()])
+        self.assertEqual(3, len(w3_tasks))
+        self.assertIn('Link taxonomy', [t.title for t in w3_tasks])
         self.assertEqual(2, len(w4_taxonomies))
         self.assertIn(children, w4_taxonomies)
         self.assertIn(communications, w4_taxonomies)
@@ -932,6 +936,13 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(children, w5_taxonomies)
         self.assertIn(communications, w5_taxonomies)
         self.assertIn(topic_with_comma, w5_taxonomies)
+
+        # live again; tasks shouldn't be created again
+        works = self.get_works(False, 'taxonomies.csv')
+        w2_tasks = works[1].work.tasks.all()
+        w3_tasks = works[2].work.tasks.all()
+        self.assertEqual(3, len(w2_tasks))
+        self.assertEqual(3, len(w3_tasks))
 
     # TODO:
     #  - test_link_publication_document

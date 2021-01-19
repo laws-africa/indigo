@@ -686,7 +686,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                  amendment=amendment)
 
     def link_taxonomy(self, row):
-        topics = [x.strip() for x in row.taxonomy.split(',') if x.strip()]
+        topics = [x.strip() for x in row.taxonomy.split(';') if x.strip()]
         unlinked_topics = []
         for t in topics:
             topic = VocabularyTopic.get_topic(t)
@@ -700,8 +700,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 unlinked_topics.append(t)
         if unlinked_topics:
             if self.dry_run:
-                row.notes.append(f'Taxonomy not found: {", ".join(unlinked_topics)}')
-            row.unlinked_topics = ", ".join(unlinked_topics)
+                row.notes.append(f'Taxonomy not found: {"; ".join(unlinked_topics)}')
+            row.unlinked_topics = "; ".join(unlinked_topics)
             self.create_task(row.work, row, task_type='link-taxonomy')
 
     def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):

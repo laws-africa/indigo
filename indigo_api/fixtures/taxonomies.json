@@ -69,5 +69,13 @@
       "vocabulary": 2,
       "level_1": "Not so fun stuff"
     }
+  },
+  {
+    "pk": 7,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 1,
+      "level_1": "Estates, Trusts and Succession"
+    }
   }
 ]

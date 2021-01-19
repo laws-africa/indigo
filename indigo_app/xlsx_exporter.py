@@ -180,7 +180,7 @@ def write_full_index(workbook, works):
             sheet.write(row, 10, work.publication_date, date_format)
             sheet.write(row, 11, work.commencement_date, date_format)
             sheet.write(row, 12, '✔' if work.stub else '')
-            sheet.write(row, 13, ', '.join(t.slug for t in work.taxonomies.all()))
+            sheet.write(row, 13, '; '.join(t.slug for t in work.taxonomies.all()))
             sheet.write(row, 14, uri_title(work.parent_work))
             write_commencement_passive(sheet, row, info, n, date_format)
             write_amendment_passive(sheet, row, info, n, date_format)

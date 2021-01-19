@@ -887,7 +887,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_link_taxonomies(self):
         children = VocabularyTopic.objects.get(pk=3)
-        communications = VocabularyTopic.objects.get(pk=3)
+        communications = VocabularyTopic.objects.get(pk=4)
+        topic_with_comma = VocabularyTopic.objects.get(pk=7)
 
         # preview
         works = self.get_works(True, 'taxonomies.csv')
@@ -899,12 +900,13 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(children, w1.taxonomies)
         self.assertIn(communications, w1.taxonomies)
         self.assertIn(children, w2.taxonomies)
-        self.assertIn('Taxonomy not found: Animal Husbandry, Finance', w2.notes)
+        self.assertIn('Taxonomy not found: Animal Husbandry; Finance', w2.notes)
         self.assertIn('Taxonomy not found: lawsafrica-subjects:People and Work', w3.notes)
         self.assertIn(children, w4.taxonomies)
         self.assertIn(communications, w4.taxonomies)
         self.assertIn(children, w5.taxonomies)
         self.assertIn(communications, w5.taxonomies)
+        self.assertIn(topic_with_comma, w5.taxonomies)
 
         # live
         works = self.get_works(False, 'taxonomies.csv')
@@ -926,9 +928,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(2, len(w4_taxonomies))
         self.assertIn(children, w4_taxonomies)
         self.assertIn(communications, w4_taxonomies)
-        self.assertEqual(2, len(w5_taxonomies))
+        self.assertEqual(3, len(w5_taxonomies))
         self.assertIn(children, w5_taxonomies)
         self.assertIn(communications, w5_taxonomies)
+        self.assertIn(topic_with_comma, w5_taxonomies)
 
     # TODO:
     #  - test_link_publication_document

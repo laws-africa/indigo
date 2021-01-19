@@ -48,6 +48,13 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
                         target=workflow, place_code=task.place.place_code)
 
 
+class SingleTaskViewBase(TaskViewBase):
+    model = Task
+
+    def get_queryset(self):
+        return super().get_queryset().filter(country=self.country, locality=self.locality)
+
+
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     model = Task
@@ -92,9 +99,8 @@ class TaskListView(TaskViewBase, ListView):
         return context
 
 
-class TaskDetailView(TaskViewBase, DetailView):
+class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
-    model = Task
 
     def get_context_data(self, **kwargs):
         context = super(TaskDetailView, self).get_context_data(**kwargs)
@@ -213,13 +219,12 @@ class TaskCreateView(TaskViewBase, CreateView):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
 
-class TaskEditView(TaskViewBase, UpdateView):
+class TaskEditView(SingleTaskViewBase, UpdateView):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
     form_class = TaskForm
-    model = Task
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -273,13 +278,12 @@ class TaskEditView(TaskViewBase, UpdateView):
         return context
 
 
-class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
+class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
     change = None
     http_method_names = ['post']
-    model = Task
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
@@ -331,13 +335,12 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
+class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
     unassign = False
     http_method_names = ['post']
-    model = Task
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
@@ -367,12 +370,11 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
+class TaskChangeWorkflowsView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
     http_method_names = ['post']
-    model = Task
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()

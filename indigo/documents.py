@@ -31,7 +31,7 @@ class ResolvedAnchor(object):
             escaped = prefix.replace("'", "\\'")
             # find the attachment with this id
             results = list(self.document.doc.main.xpath(f"./a:attachments/a:attachment[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace}))
-            if results:
+            if len(results):
                 component = results[0]
         else:
             component = self.document.doc.main
@@ -44,14 +44,14 @@ class ResolvedAnchor(object):
         while anchor_id:
             escaped = anchor_id.replace("'", "\\'")
             elems = component.xpath(f".//a:*[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace})
-            if elems:
+            if len(elems):
                 self.resolve_element(elems[0])
                 break
             elif anchor_id in ['preface', 'preamble']:
                 # HACK HACK HACK
                 # We sometimes use 'preamble' and 'preface' even though they aren't IDs
                 elems = component.xpath(f".//a:{escaped}", namespaces={'a': self.document.doc.namespace})
-                if elems:
+                if len(elems):
                     self.resolve_element(elems[0])
                     break
 

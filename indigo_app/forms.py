@@ -561,7 +561,7 @@ class NewCommencementForm(forms.ModelForm):
 class PlaceSettingsForm(forms.ModelForm):
     class Meta:
         model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
+        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text')
 
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(

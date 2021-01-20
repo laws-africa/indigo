@@ -173,7 +173,7 @@ class PlaceSettings(models.Model):
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
     styleguide_url = models.URLField(null=True, blank=True)
-    no_publication_document_text = models.CharField(max_length=1024, default='Note: The original publication document is not available and this content could not be verified.')
+    no_publication_document_text = models.CharField(max_length=1024, default='Note: The original publication document is not available and this content could not be verified.', null=False, blank=True)
 
     @property
     def place(self):

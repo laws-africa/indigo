@@ -189,13 +189,15 @@
       {% endblock %}
 
       {% block publication_document_missing %}
-        {% if not document.work.publication_document %}
+        {% with document.work.place.settings.no_publication_document_text as no_publication_document_text %}
+        {% if not document.work.publication_document and no_publication_document_text %}
           {% block verification_notice %}
             <li class="verification-notice">
-              [{% blocktrans with no_publication_document_text=document.work.place.settings.no_publication_document_text %}{{ no_publication_document_text }}{% endblocktrans %}]
+              [{% trans no_publication_document_text %}]
             </li>
           {% endblock %}
         {% endif %}
+        {% endwith %}
       {% endblock %}
     </ul>
   {% endblock %}

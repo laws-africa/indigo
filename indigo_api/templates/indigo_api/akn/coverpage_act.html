@@ -189,13 +189,15 @@
       {% endblock %}
 
       {% block publication_document_missing %}
-        {% if not document.work.publication_document %}
+        {% with document.work.place.settings.no_publication_document_text as no_publication_document_text %}
+        {% if not document.work.publication_document and no_publication_document_text %}
           {% block verification_notice %}
             <li class="verification-notice">
-              [{% blocktrans %}Note: The original publication document is not available and this content could not be verified.{% endblocktrans %}]
+              [{% trans no_publication_document_text %}]
             </li>
           {% endblock %}
         {% endif %}
+        {% endwith %}
       {% endblock %}
     </ul>
   {% endblock %}

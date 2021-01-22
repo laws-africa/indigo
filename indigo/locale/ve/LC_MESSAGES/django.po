@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 11:58+0200\n"
-"PO-Revision-Date: 2020-09-04 14:37\n"
+"POT-Creation-Date: 2021-01-22 10:38+0200\n"
+"PO-Revision-Date: 2021-01-22 12:14\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Venda\n"
 "Language: ve_ZA\n"
@@ -18,44 +18,49 @@ msgstr ""
 "X-Crowdin-Project-ID: 364773\n"
 "X-Crowdin-File-ID: 60\n"
 
-#: analysis/toc/base.py:13 analysis/work_detail/base.py:42
+#: analysis/toc/base.py:12 analysis/work_detail/base.py:48
 msgid "Act"
 msgstr ""
 
-#: analysis/toc/base.py:14
+#: analysis/toc/base.py:13
 msgid "Article"
 msgstr ""
 
-#: analysis/toc/base.py:15
+#: analysis/toc/base.py:14
 msgid "By-law"
 msgstr ""
 
-#: analysis/toc/base.py:16 analysis/work_detail/base.py:33
+#: analysis/toc/base.py:15
 msgid "Chapter"
 msgstr "Ndima ya"
 
-#: analysis/toc/base.py:17
+#: analysis/toc/base.py:16
 msgid "Government Notice"
 msgstr ""
 
-#: analysis/toc/base.py:18
+#: analysis/toc/base.py:17
 msgid "Part"
 msgstr "Tshipiḓa tsha"
 
-#: analysis/toc/base.py:19
+#: analysis/toc/base.py:18
 msgid "Section"
 msgstr ""
 
-#: analysis/toc/base.py:20
+#: analysis/toc/base.py:19
 msgid "Preface"
 msgstr ""
 
-#: analysis/toc/base.py:21
+#: analysis/toc/base.py:20
 msgid "Preamble"
 msgstr ""
 
-#: analysis/work_detail/base.py:23
+#: analysis/work_detail/base.py:34
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
+msgstr ""
+
+#: analysis/work_detail/base.py:57
+#| msgid "Chapter"
+msgid "Chapter %(cap)s"
 msgstr ""
 

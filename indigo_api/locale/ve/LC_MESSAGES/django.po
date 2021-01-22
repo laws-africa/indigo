@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-26 15:04+0200\n"
-"PO-Revision-Date: 2020-09-04 14:37\n"
+"POT-Creation-Date: 2021-01-22 10:28+0200\n"
+"PO-Revision-Date: 2021-01-22 12:14\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Venda\n"
 "Language: ve_ZA\n"
@@ -18,6 +18,10 @@ msgstr ""
 "X-Crowdin-Project-ID: 364773\n"
 "X-Crowdin-File-ID: 62\n"
 
+#: models/places.py:180
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr ""
+
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
@@ -28,7 +32,7 @@ msgstr ""
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgstr ""
 
-#: templates/indigo_api/akn/_amendments.html:23
+#: templates/indigo_api/akn/_amendments.html:24
 #| msgid ""
 #| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
 #| "%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
@@ -36,7 +40,7 @@ msgstr ""
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
 msgstr ""
 
-#: templates/indigo_api/akn/_amendments.html:25
+#: templates/indigo_api/akn/_amendments.html:26
 #| msgid ""
 #| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
 #| "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
@@ -53,96 +57,99 @@ msgstr ""
 msgid "Published in %(name)s on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:50
+#: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:56
+#: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:62
+#: templates/indigo_api/akn/coverpage_act.html:65
 msgid "Commencement date unknown"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:64
+#: templates/indigo_api/akn/coverpage_act.html:67
 #| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:72
+#: templates/indigo_api/akn/coverpage_act.html:75
 #| msgid ""
 #| "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:74
+#: templates/indigo_api/akn/coverpage_act.html:77
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:78
-#: templates/indigo_api/akn/coverpage_act.html:108
-#: templates/indigo_api/akn/coverpage_act.html:149
+#: templates/indigo_api/akn/coverpage_act.html:81
+#: templates/indigo_api/akn/coverpage_act.html:156
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:80
-#: templates/indigo_api/akn/coverpage_act.html:110
-#: templates/indigo_api/akn/coverpage_act.html:151
+#: templates/indigo_api/akn/coverpage_act.html:83
+#: templates/indigo_api/akn/coverpage_act.html:158
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:91
+#: templates/indigo_api/akn/coverpage_act.html:95
 msgid "There are multiple commencements:"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:100
-#: templates/indigo_api/akn/coverpage_act.html:139
+#: templates/indigo_api/akn/coverpage_act.html:105
+#: templates/indigo_api/akn/coverpage_act.html:146
 msgid "Unknown provisions"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:102
-#: templates/indigo_api/akn/coverpage_act.html:143
+#: templates/indigo_api/akn/coverpage_act.html:107
+#: templates/indigo_api/akn/coverpage_act.html:150
 #| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:120
-#, python-format
-msgid "%(provisions_description)s: not yet commenced"
+#: templates/indigo_api/akn/coverpage_act.html:113
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>."
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:127
+#: templates/indigo_api/akn/coverpage_act.html:115
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>."
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:126
+#| msgid "Not commenced"
+msgid "%(provisions)s: not yet commenced."
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:134
 msgid "Provisions"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:128
+#: templates/indigo_api/akn/coverpage_act.html:135
 msgid "Status"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:165
+#: templates/indigo_api/akn/coverpage_act.html:172
 #| msgid "Not commenced"
 msgid "not yet commenced"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:177
+#: templates/indigo_api/akn/coverpage_act.html:185
 #, python-format
 msgid "Up to date as at %(date)s"
-msgstr ""
-
-#: templates/indigo_api/akn/coverpage_act.html:185
-msgid "Note: The original publication document is not available and this content could not be verified."
 msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr ""
 
-#, python-format
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"
 

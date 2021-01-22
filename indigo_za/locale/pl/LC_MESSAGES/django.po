@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 11:59+0200\n"
-"PO-Revision-Date: 2020-09-04 14:38\n"
+"POT-Creation-Date: 2021-01-22 10:38+0200\n"
+"PO-Revision-Date: 2021-01-22 12:14\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "Section"
 msgstr ""
 
-#: toc.py:28
+#: toc.py:29
 msgid "Article"
 msgstr ""
 
-#: toc.py:29
+#: toc.py:30
 msgid "Chapter"
 msgstr ""
 
-#: toc.py:30
+#: toc.py:31
 msgid "Part"
 msgstr ""
 

@@ -2,6 +2,19 @@
 Changelog
 =========
 
+13.1.0 (2021-01-27)
+--------
+
+* FEATURE: Filter tasks by type, country in all Task list views.
+* FEATURE: Export all works in a place into a maintainable spreadsheet.
+* FEATURE: Bulk creator now supports linking all active and passive, parent and child relationships.
+* FEATURE: The text given on the coverpage of a document when no publication document is linked can now be specified per place.
+* FIX: Taxonomies that include spaces and/or commas are now imported correctly.
+* FIX: Comment-based tasks now show their context even if the annotation doesn't have a parent in the ToC.
+* NEW: Commenceable provisions on the coverpage of a document now only include provisions that exist(ed) on or before the date of the document.
+* NEW: Introduce Taxonomist Permission Badge for working with Taxonomies in the Admin section.
+* NEW: Show 'Stub' status in Preview on bulk import.
+
 13.0.0 (2020-11-03)
 --------
 

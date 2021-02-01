@@ -45,7 +45,8 @@ setup(
         'cobalt>=4.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
-        'django-activity-stream>=0.7.0',
+        'django-activity-stream>=0.7.0,<0.10.0',  # from v0.10.0 'You must install django-jsonfield-backport,
+                                                  # if you wish to use a JSONField on your actions and run Django < 3.1'
         'django-allauth>=0.41.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',

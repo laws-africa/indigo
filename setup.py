@@ -45,7 +45,7 @@ setup(
         'cobalt>=4.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
-        'django-activity-stream>=0.7.0',
+        'django-activity-stream>=0.7.0,<0.10.0',
         'django-allauth>=0.41.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',

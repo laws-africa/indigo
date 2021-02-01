@@ -37,6 +37,14 @@ class EditorBadge(PermissionBadge):
                    'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
 
 
+class PlaceAdminBadge(PermissionBadge):
+    slug = 'place-admin'
+    name = 'Place Admin'
+    group_name = name + ' Badge'
+    description = 'Can edit place settings'
+    permissions = ('indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
+
+
 class ResearcherBadge(PermissionBadge):
     slug = 'researcher'
     name = 'Researcher'
@@ -62,9 +70,8 @@ class SuperReviewerBadge(PermissionBadge):
     slug = 'super-reviewer'
     name = 'Super Reviewer'
     group_name = name + ' Badge'
-    description = 'Can approve any tasks and edit place settings'
-    permissions = ('indigo_api.close_any_task',
-                   'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
+    description = 'Can approve any tasks'
+    permissions = ('indigo_api.close_any_task',)
 
 
 class TaxonomistBadge(PermissionBadge):
@@ -84,6 +91,7 @@ class TaxonomistBadge(PermissionBadge):
 
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
+badges.register(PlaceAdminBadge)
 badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)

@@ -139,7 +139,7 @@
                   {% if row.work.subtype %}
                     {{ row.work.subtype }}
                   {% elif not row.errors %}
-                    {{ view.bulk_creator.default_doctype|capfirst }}
+                    {{ row.work.nature }}
                   {% endif %}
                 </td>
                 <td>
@@ -256,7 +256,7 @@
                   {% if row.work.subtype %}
                     {{ row.work.subtype }}
                   {% elif not row.errors %}
-                    {{ view.bulk_creator.default_doctype|capfirst }}
+                    {{ row.work.nature }}
                   {% endif %}
                 </td>
                 <td>

@@ -136,13 +136,8 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
-        # TODO: other tasks on this and related works (if the task has a work, otherwise none)
         context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality).all()
         context['blocked_by'] = task.blocked_by.all()
-        if task.work:
-            # add all tasks on this work as well as related works to possible_blocking_tasks,
-            # grouped by work
-            pass
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message([task], self)

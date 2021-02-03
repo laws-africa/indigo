@@ -295,7 +295,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='blocked', permission=may_block)
     def block(self, user, **kwargs):
-        self.assign_to(None, user)
+        if self.assigned_to:
+            self.assign_to(None, user)
         blocked_by = kwargs['blocked_by'] or None
         if blocked_by:
             self.blocked_by.set(blocked_by)

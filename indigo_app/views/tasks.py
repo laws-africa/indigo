@@ -424,12 +424,15 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
         else:
             blocked_by = []
 
-        task.blocked_by.set(blocked_by)
         if blocked_by and has_transition_perm(task.block, self):
-            task.block(user)
+            task.block(user, blocked_by=blocked_by)
             messages.success(request, f"Task '{task.title}' has been blocked")
 
-        if not blocked_by and has_transition_perm(task.unblock, self):
+        elif blocked_by:
+            task.blocked_by.set(blocked_by)
+            messages.success(request, f"Task '{task.title}' has been updated")
+
+        elif has_transition_perm(task.unblock, self):
             task.unblock(user)
             messages.success(request, f"Task '{task.title}' has been unblocked")
 

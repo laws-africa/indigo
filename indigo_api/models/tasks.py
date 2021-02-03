@@ -295,7 +295,10 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='blocked', permission=may_block)
     def block(self, user, **kwargs):
-        self.assigned_to = None
+        self.assign_to(None, user)
+        blocked_by = kwargs['blocked_by'] or None
+        if blocked_by:
+            self.blocked_by.set(blocked_by)
 
     # unblock
     def may_unblock(self, view):
@@ -305,7 +308,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
     def unblock(self, user, **kwargs):
-        pass
+        self.blocked_by.clear()
 
     def resolve_anchor(self):
         if self.annotation:

@@ -56,10 +56,10 @@
       {% if status %}
         <div class="mr-2 mb-2">
           <select class="narrow selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
+            <option value="blocked" {% if 'blocked' in form.state.value %}selected{% endif %}>Blocked</option>
             <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
             <option value="assigned" {% if 'assigned' in form.state.value %}selected{% endif %}>Assigned</option>
             <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
-            <option value="blocked" {% if 'blocked' in form.state.value %}selected{% endif %}>Blocked</option>
             <option data-divider="true"></option>
             <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
             <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>

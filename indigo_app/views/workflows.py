@@ -57,7 +57,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review', 'done', 'cancelled'])
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'done', 'cancelled', 'blocked'])
         params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(self.country, params)

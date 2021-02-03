@@ -352,7 +352,7 @@ class Task(models.Model):
             groups[key]['tasks'] = group
 
         # enforce column ordering
-        return [groups.get(g) for g in ['open', 'assigned', 'pending_review', 'blocked', 'done', 'cancelled'] if g in groups]
+        return [groups.get(g) for g in ['blocked', 'open', 'assigned', 'pending_review', 'done', 'cancelled'] if g in groups]
 
     def get_extra_data(self):
         if self.extra_data is None:

@@ -420,7 +420,7 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
         ids = self.request.POST.getlist('blocked_by')
 
         if ids:
-            blocked_by = Task.objects.filter(id__in=ids).all()
+            blocked_by = Task.objects.filter(country=self.country, locality=self.locality, id__in=ids).all()
         else:
             blocked_by = []
 

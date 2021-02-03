@@ -294,11 +294,9 @@ class Task(models.Model):
                view.request.user.has_perm('indigo_api.block_task')
 
     @transition(field=state, source=['open'], target='blocked', permission=may_block)
-    def block(self, user, blocked_by=None, **kwargs):
+    def block(self, user, **kwargs):
         if self.assigned_to:
             self.assign_to(None, user)
-        if blocked_by:
-            self.blocked_by.set(blocked_by)
 
     # unblock
     def may_unblock(self, view):
@@ -308,7 +306,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
     def unblock(self, user, **kwargs):
-        self.blocked_by.clear()
+        pass
 
     def resolve_anchor(self):
         if self.annotation:

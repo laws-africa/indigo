@@ -275,6 +275,12 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         if has_transition_perm(task.cancel, self):
             context['cancel_task_permission'] = True
 
+        if has_transition_perm(task.block, self):
+            context['block_task_permission'] = True
+
+        if has_transition_perm(task.unblock, self):
+            context['unblock_task_permission'] = True
+
         return context
 
 

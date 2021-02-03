@@ -41,6 +41,8 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/reopen', tasks.TaskChangeStateView.as_view(change='reopen'), name='reopen_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/unsubmit', tasks.TaskChangeStateView.as_view(change='unsubmit'), name='unsubmit_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/close', tasks.TaskChangeStateView.as_view(change='close'), name='close_task'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/block', tasks.TaskChangeStateView.as_view(change='block'), name='block_task'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/unblock', tasks.TaskChangeStateView.as_view(change='unblock'), name='unblock_task'),
 
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/projects/$', workflows.WorkflowListView.as_view(), name='workflows'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/projects/new$', workflows.WorkflowCreateView.as_view(), name='workflow_create'),

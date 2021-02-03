@@ -118,12 +118,24 @@
         </div>
 
         <div class="card-footer text-right">
-          {% if task.state == 'open' or task.state == 'pending_review' %}
+          {% if task.state == 'open' or task.state == 'pending_review' or task.state == 'blocked' %}
             <form method="POST">
             {% csrf_token %}
               {% if cancel_task_permission %}
                 <button class="btn btn-danger float-left" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
               {% endif %}
+            </form>
+          {% endif %}
+          {% if task.state == 'open' and block_task_permission %}
+            <form method="POST">
+            {% csrf_token %}
+              <button class="btn btn-danger float-left ml-2" type="submit" data-confirm="Are you sure you want to block this task?" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">Block task</button>
+            </form>
+          {% endif %}
+          {% if task.state == 'blocked' and unblock_task_permission %}
+            <form method="POST">
+            {% csrf_token %}
+              <button class="btn btn-primary float-left ml-2" type="submit" data-confirm="Are you sure you want to unblock this task?" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">Unblock task</button>
             </form>
           {% endif %}
           {% if task.pk %}

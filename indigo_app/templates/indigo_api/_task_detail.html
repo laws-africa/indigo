@@ -8,7 +8,7 @@
             This task is blocked.
             {% if blocked_by %}
               These tasks must be completed first:
-              <ul class="mb-2">
+              <ul class="mt-2">
                   {% for blocking_task in blocked_by|dictsort:'pk' %}
                     <li>
                       <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}

@@ -138,6 +138,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         # TODO: other tasks on this and related works (if the task has a work, otherwise none)
         context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality).all()
+        context['blocked_by'] = task.blocked_by.all()
         if task.work:
             # add all tasks on this work as well as related works to possible_blocking_tasks,
             # grouped by work

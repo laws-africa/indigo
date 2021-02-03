@@ -294,10 +294,9 @@ class Task(models.Model):
                view.request.user.has_perm('indigo_api.block_task')
 
     @transition(field=state, source=['open'], target='blocked', permission=may_block)
-    def block(self, user, **kwargs):
+    def block(self, user, blocked_by=None, **kwargs):
         if self.assigned_to:
             self.assign_to(None, user)
-        blocked_by = kwargs['blocked_by'] or None
         if blocked_by:
             self.blocked_by.set(blocked_by)
 

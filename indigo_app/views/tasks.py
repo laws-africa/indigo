@@ -136,6 +136,13 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
+        # TODO: other tasks on this and related works (if the task has a work, otherwise none)
+        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality).all()
+        if task.work:
+            # add all tasks on this work as well as related works to possible_blocking_tasks,
+            # grouped by work
+            pass
+
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message([task], self)
 
@@ -401,6 +408,38 @@ class TaskChangeWorkflowsView(SingleTaskViewBase, View, SingleObjectMixin):
     def get_redirect_url(self):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        ids = self.request.POST.getlist('blocked_by')
+
+        if ids:
+            blocked_by = Task.objects.filter(id__in=ids).all()
+        else:
+            blocked_by = []
+
+        task.blocked_by.set(blocked_by)
+        if blocked_by and has_transition_perm(task.block, self):
+            task.block(user)
+            messages.success(request, f"Task '{task.title}' has been blocked")
+
+        if not blocked_by and has_transition_perm(task.unblock, self):
+            task.unblock(user)
+            messages.success(request, f"Task '{task.title}' has been unblocked")
+
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 

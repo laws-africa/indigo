@@ -36,6 +36,7 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/unassign', tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/projects', tasks.TaskChangeWorkflowsView.as_view(), name='task_workflows'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/block_by_task', tasks.TaskChangeBlockingTasksView.as_view(), name='task_blocked_by'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/submit', tasks.TaskChangeStateView.as_view(change='submit'), name='submit_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/cancel', tasks.TaskChangeStateView.as_view(change='cancel'), name='cancel_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/reopen', tasks.TaskChangeStateView.as_view(change='reopen'), name='reopen_task'),

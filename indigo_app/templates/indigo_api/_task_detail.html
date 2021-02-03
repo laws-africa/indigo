@@ -3,6 +3,23 @@
 <div class="container mt-3 mb-5">
     <div class="row">
       <div class="mb-3 col-9">
+        {% if task.state == 'blocked' %}
+          <div class="alert alert-danger">
+            This task is blocked.
+            {% with task.blocked_by.all as blocked_by %}
+              {% if blocked_by %}
+                These tasks must be completed first:
+                <ul class="mb-2">
+                    {% for blocking_task in blocked_by|dictsort:'pk' %}
+                      <li>
+                        <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
+                          – {{ blocking_task.title }}</a></li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+          </div>
+        {% endif %}
         <div class="d-flex">
           <div class="mr-3 text-center">
             {% if task.state == 'open' and task.assigned_to %}
@@ -240,6 +257,41 @@
               <li><em>None</em></li>
             {% endif %}
           </ul>
+        {% endwith %}
+
+        {% with task.blocked_by.all as blocked_by %}
+          <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
+                id="task-blocked_by-form" onchange="this.submit();">
+            {% csrf_token %}
+
+            <select class="selectpicker" multiple name="blocked_by"
+                    data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+                    {% if not perms.indigo_api.change_task %}disabled{% endif %}
+                    data-none-selected-text="Blocked by" data-selected-text-format="static"
+                    data-live-search="true" data-size="7">
+
+              {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
+                <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
+                  #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        {% endwith %}
+
+        {% with task.blocking.all as blocking %}
+          {% if blocking %}
+            <div class="mt-3">
+              <i class="fas fa-exclamation-triangle text-warning"></i> This task is blocking these tasks:
+              <ul class="mb-2">
+                {% for blocked_task in blocking|dictsort:'pk' %}
+                  <li>
+                    <a href="{% url 'task_detail' place=place.place_code pk=blocked_task.pk %}">#{{ blocked_task.pk }}
+                      – {{ blocked_task.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         {% endwith %}
 
         {% block task-column-footer %}{% endblock %}

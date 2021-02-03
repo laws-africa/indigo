@@ -425,7 +425,7 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
             blocked_by = []
 
         if blocked_by and has_transition_perm(task.block, self):
-            task.block(user, blocked_by=blocked_by)
+            task.block(user, blocked_by)
             messages.success(request, f"Task '{task.title}' has been blocked")
 
         elif blocked_by:

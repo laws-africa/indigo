@@ -67,7 +67,7 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review'])
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
         params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(self.country, params)
@@ -112,7 +112,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         comments = list(Comment.objects\
             .filter(content_type=task_content_type, object_pk=task.id)\
             .select_related('user'))
-        
+
         # get the annotation for the particular task
         try:
             task_annotation = task.annotation

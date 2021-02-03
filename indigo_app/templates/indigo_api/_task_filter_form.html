@@ -59,6 +59,7 @@
             <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
             <option value="assigned" {% if 'assigned' in form.state.value %}selected{% endif %}>Assigned</option>
             <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
+            <option value="blocked" {% if 'blocked' in form.state.value %}selected{% endif %}>Blocked</option>
             <option data-divider="true"></option>
             <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
             <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>

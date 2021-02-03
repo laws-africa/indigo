@@ -34,7 +34,7 @@ class EditorBadge(PermissionBadge):
                    'indigo_api.add_arbitraryexpressiondate', 'indigo_api.change_arbitraryexpressiondate', 'indigo_api.delete_arbitraryexpressiondate',
                    # required when restoring a document version
                    'reversion.add_version', 'reversion.change_version',
-                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
+                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task', 'indigo_api.block_task')
 
 
 class PlaceAdminBadge(PermissionBadge):

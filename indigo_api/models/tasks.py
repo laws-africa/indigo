@@ -44,11 +44,12 @@ class Task(models.Model):
     PENDING_REVIEW = 'pending_review'
     CANCELLED = 'cancelled'
     DONE = 'done'
+    BLOCKED = 'blocked'
 
-    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE)
+    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE, BLOCKED)
 
     CLOSED_STATES = (CANCELLED, DONE)
-    OPEN_STATES = (OPEN, PENDING_REVIEW)
+    OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
 
     VERBS = {
         'submit': 'submitted',
@@ -56,6 +57,8 @@ class Task(models.Model):
         'reopen': 'reopened',
         'unsubmit': 'requested changes to',
         'close': 'approved',
+        'block': 'blocked',
+        'unblock': 'unblocked',
     }
 
     CODES = [
@@ -87,6 +90,7 @@ class Task(models.Model):
             ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
             ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
+            ('block_task', 'Can block a task from being done, and unblock it'),
         )
 
     objects = TaskManager.from_queryset(TaskQuerySet)()
@@ -98,6 +102,7 @@ class Task(models.Model):
     locality = models.ForeignKey('indigo_api.Locality', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     work = models.ForeignKey('indigo_api.Work', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     document = models.ForeignKey('indigo_api.Document', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    date = models.DateField(null=True, blank=True, help_text="The date on a work's timeline at which this task should be done")
 
     state = FSMField(default=OPEN)
 
@@ -120,6 +125,8 @@ class Task(models.Model):
     labels = models.ManyToManyField('TaskLabel', related_name='tasks')
 
     extra_data = JSONField(null=True, blank=True)
+
+    blocked_by = models.ManyToManyField('self', related_name='blocking', symmetrical=False, help_text='Tasks blocking this task from being done.')
 
     @property
     def place(self):
@@ -228,7 +235,7 @@ class Task(models.Model):
         return view.request.user.is_authenticated and \
                view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
 
-    @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
+    @transition(field=state, source=['open', 'pending_review', 'blocked'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
         self.changes_requested = False
         self.assigned_to = None
@@ -279,6 +286,26 @@ class Task(models.Model):
 
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
+
+    # block
+    def may_block(self, view):
+        return view.request.user.is_authenticated and \
+               view.request.user.editor.has_country_permission(view.country) and \
+               view.request.user.has_perm('indigo_api.block_task')
+
+    @transition(field=state, source=['open'], target='blocked', permission=may_block)
+    def block(self, user, **kwargs):
+        self.assigned_to = None
+
+    # unblock
+    def may_unblock(self, view):
+        return view.request.user.is_authenticated and \
+               view.request.user.editor.has_country_permission(view.country) and \
+               view.request.user.has_perm('indigo_api.block_task')
+
+    @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
+    def unblock(self, user, **kwargs):
+        pass
 
     def resolve_anchor(self):
         if self.annotation:

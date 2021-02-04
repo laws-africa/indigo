@@ -336,12 +336,24 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
 
         task.save()
 
+        if self.change == 'close' or self.change == 'cancel':
+            self.update_blocked_tasks(task, user)
+
         return redirect(self.get_redirect_url())
 
     def get_redirect_url(self):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+    def update_blocked_tasks(self, task, user):
+        previously_blocked_tasks = list(task.blocking.all())
+        # this task is no longer blocking other tasks
+        task.blocking.clear()
+        for blocked_task in previously_blocked_tasks:
+            if not blocked_task.blocked_by.all() and has_transition_perm(blocked_task.unblock, self):
+                # this was the only task blocking that task; unblock it
+                blocked_task.unblock(user)
 
 
 class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):

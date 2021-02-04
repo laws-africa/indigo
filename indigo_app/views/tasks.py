@@ -136,7 +136,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
-        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality).all()
+        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
         context['blocked_by'] = task.blocked_by.all()
 
         # warn when submitting task on behalf of another user

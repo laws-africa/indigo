@@ -230,13 +230,14 @@
         </ul>
         {% with task.workflows.all as workflows %}
           <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
-                data-submit="ajax" id="task-workflow-form">
+                id="task-workflow-form" onchange="this.submit();">
             {% csrf_token %}
 
-            <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+            <select class="selectpicker" multiple name="workflows"
                     data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
                     {% if not perms.indigo_api.change_task %}disabled{% endif %}
-                    data-none-selected-text="Projects" data-selected-text-format="static">
+                    data-none-selected-text="Projects" data-selected-text-format="static"
+                    data-live-search="true" data-size="7">
 
               {% for workflow in possible_workflows|dictsort:'title' %}
                 <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>

@@ -12,7 +12,8 @@
                   {% for blocking_task in blocked_by|dictsort:'pk' %}
                     <li>
                       <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
-                        – {{ blocking_task.title }}</a></li>
+                        – {{ blocking_task.title }}</a> <i class="fas fa-fw task-icon-{{ blocking_task.state }}" title="{{ blocking_task.state }}"></i>
+                    </li>
                   {% endfor %}
               </ul>
             {% endif %}

@@ -436,6 +436,9 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
         else:
             blocked_by = []
 
+        if not self.has_permission():
+            raise PermissionDenied
+
         task.blocked_by.set(blocked_by)
 
         if blocked_by and has_transition_perm(task.block, self):

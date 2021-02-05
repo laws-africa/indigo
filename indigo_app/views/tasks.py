@@ -425,23 +425,25 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
         else:
             blocked_by = []
 
-        if not self.has_permission():
-            raise PermissionDenied
+        if blocked_by:
+            if task.state == 'blocked':
+                task.blocked_by.set(blocked_by)
+                action.send(user, verb='updated', action_object=task,
+                            place_code=task.place.place_code)
+                messages.success(request, f"Task '{task.title}' has been updated")
 
-        task.blocked_by.set(blocked_by)
+            elif has_transition_perm(task.block, user):
+                task.blocked_by.set(blocked_by)
+                task.block(user)
+                messages.success(request, f"Task '{task.title}' has been blocked")
 
-        if blocked_by and has_transition_perm(task.block, user):
-            task.block(user)
-            messages.success(request, f"Task '{task.title}' has been blocked")
+        else:
+            task.blocked_by.clear()
+            if has_transition_perm(task.unblock, user):
+                task.unblock(user)
+                messages.success(request, f"Task '{task.title}' has been unblocked")
 
-        elif blocked_by:
-            action.send(user, verb='updated', action_object=task,
-                        place_code=task.place.place_code)
-            messages.success(request, f"Task '{task.title}' has been updated")
-
-        elif has_transition_perm(task.unblock, user):
-            task.unblock(user)
-            messages.success(request, f"Task '{task.title}' has been unblocked")
+        task.save()
 
         return redirect(self.get_redirect_url())
 

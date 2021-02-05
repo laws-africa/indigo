@@ -294,7 +294,7 @@ class Task(models.Model):
                user.editor.has_country_permission(self.country) and \
                user.has_perm('indigo_api.block_task')
 
-    @transition(field=state, source=['open'], target='blocked', permission=may_block)
+    @transition(field=state, source=['open', 'pending_review'], target='blocked', permission=may_block)
     def block(self, user, **kwargs):
         if self.assigned_to:
             self.assign_to(None, user)

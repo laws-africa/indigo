@@ -310,7 +310,6 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
-                other_changes = {}
                 if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 
@@ -328,18 +327,13 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
                     comment.save()
 
                 else:
-                    other_changes = state_change(user)
+                    state_change(user)
 
                 if change == 'submit':
                     verb = 'submitted for review'
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
                 messages.success(request, f"Task '{task.title}' has been {verb}")
-
-                for unblocked in other_changes.get('unblocked', []):
-                    messages.success(request, f"Task #{unblocked.id} – '{unblocked.title}' has also been unblocked")
-                for still_blocked in other_changes.get('still_blocked', []):
-                    messages.success(request, f"Task #{still_blocked.id} – '{still_blocked.title}' has also been updated")
 
         task.save()
 

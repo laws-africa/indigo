@@ -102,7 +102,6 @@ class Task(models.Model):
     locality = models.ForeignKey('indigo_api.Locality', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     work = models.ForeignKey('indigo_api.Work', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     document = models.ForeignKey('indigo_api.Document', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
-    date = models.DateField(null=True, blank=True, help_text="The date on a work's timeline at which this task should be done")
 
     state = FSMField(default=OPEN)
 

@@ -327,7 +327,8 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         obj.task_stats['n_tasks'] = sum(counts.values())
         obj.task_stats['n_active_tasks'] = (
             obj.task_stats['n_open_tasks'] +
-            obj.task_stats['n_pending_review_tasks']
+            obj.task_stats['n_pending_review_tasks'] +
+            obj.task_stats['n_blocked_tasks']
         )
         obj.task_stats['pending_task_ratio'] = 100 * (
             obj.task_stats['n_pending_review_tasks'] /
@@ -335,6 +336,10 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         )
         obj.task_stats['open_task_ratio'] = 100 * (
             obj.task_stats['n_open_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+        obj.task_stats['blocked_task_ratio'] = 100 * (
+            obj.task_stats['n_blocked_tasks'] /
             (obj.task_stats['n_active_tasks'] or 1)
         )
 

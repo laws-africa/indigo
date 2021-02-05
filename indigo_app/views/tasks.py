@@ -67,7 +67,7 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review'])
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
         params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(self.country, params)
@@ -94,7 +94,7 @@ class TaskListView(TaskViewBase, ListView):
         Task.decorate_submission_message(context['tasks'], self)
 
         Task.decorate_potential_assignees(context['tasks'], self.country)
-        Task.decorate_permissions(context['tasks'], self)
+        Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
 
@@ -112,7 +112,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         comments = list(Comment.objects\
             .filter(content_type=task_content_type, object_pk=task.id)\
             .select_related('user'))
-        
+
         # get the annotation for the particular task
         try:
             task_annotation = task.annotation
@@ -136,11 +136,15 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
+        # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
+        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
+        context['blocked_by'] = task.blocked_by.all()
+
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message([task], self)
 
         Task.decorate_potential_assignees([task], self.country)
-        Task.decorate_permissions([task], self)
+        Task.decorate_permissions([task], self.request.user)
 
         # add work to context
         if task.work:
@@ -261,6 +265,7 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
 
         work = None
         task = self.object
+        user = self.request.user
         if task.work:
             work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
         context['work_json'] = work
@@ -272,8 +277,14 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
-        if has_transition_perm(task.cancel, self):
+        if has_transition_perm(task.cancel, user):
             context['cancel_task_permission'] = True
+
+        if has_transition_perm(task.block, user):
+            context['block_task_permission'] = True
+
+        if has_transition_perm(task.unblock, user):
+            context['unblock_task_permission'] = True
 
         return context
 
@@ -300,7 +311,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
-                if not has_transition_perm(state_change, self):
+                if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 
                 if comment_text:
@@ -323,7 +334,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
                     verb = 'submitted for review'
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
-                messages.success(request, "Task '%s' has been %s" % (task.title, verb))
+                messages.success(request, f"Task '{task.title}' has been {verb}")
 
         task.save()
 
@@ -398,6 +409,49 @@ class TaskChangeWorkflowsView(SingleTaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
+class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        ids = self.request.POST.getlist('blocked_by')
+
+        if ids:
+            blocked_by = Task.objects.filter(country=self.country, locality=self.locality, id__in=ids).all()
+        else:
+            blocked_by = []
+
+        if blocked_by:
+            if task.state == 'blocked':
+                task.blocked_by.set(blocked_by)
+                action.send(user, verb='updated', action_object=task,
+                            place_code=task.place.place_code)
+                messages.success(request, f"Task '{task.title}' has been updated")
+
+            elif has_transition_perm(task.block, user):
+                task.blocked_by.set(blocked_by)
+                task.block(user)
+                messages.success(request, f"Task '{task.title}' has been blocked")
+
+        else:
+            task.blocked_by.clear()
+            if has_transition_perm(task.unblock, user):
+                task.unblock(user)
+                messages.success(request, f"Task '{task.title}' has been unblocked")
+
+        task.save()
+
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
 class TaskBulkUpdateView(TaskViewBase, BaseFormView):
     """ Bulk update a set of tasks.
     """
@@ -411,6 +465,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return kwargs
 
     def form_valid(self, form):
+        # TODO: add ability to bulk change state (specifically to `blocked`)
         assignee = form.cleaned_data.get('assigned_to')
         tasks = form.cleaned_data['tasks']
         count = 0
@@ -498,7 +553,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
             .order_by('-updated_at')
 
         if not self.form.cleaned_data.get('state'):
-            tasks = tasks.filter(state__in=Task.OPEN_STATES)
+            tasks = tasks.filter(state__in=Task.OPEN_STATES).exclude(state='blocked')
 
         if self.priority:
             tasks = tasks.filter(workflows__priority=True)

@@ -302,7 +302,8 @@ class Task(models.Model):
     def may_unblock(self, view):
         return view.request.user.is_authenticated and \
                view.request.user.editor.has_country_permission(view.country) and \
-               view.request.user.has_perm('indigo_api.block_task')
+               view.request.user.has_perm('indigo_api.block_task') and \
+               (not self.blocked_by.exists())
 
     @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
     def unblock(self, user, **kwargs):

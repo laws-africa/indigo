@@ -310,7 +310,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
-                other_changes = None
+                other_changes = {}
                 if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 

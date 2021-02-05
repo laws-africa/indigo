@@ -310,6 +310,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
+                other_changes = None
                 if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 
@@ -327,18 +328,20 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
                     comment.save()
 
                 else:
-                    state_change(user)
+                    other_changes = state_change(user)
 
                 if change == 'submit':
                     verb = 'submitted for review'
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
-                messages.success(request, "Task '%s' has been %s" % (task.title, verb))
+                messages.success(request, f"Task '{task.title}' has been {verb}")
+
+                for unblocked in other_changes.get('unblocked'):
+                    messages.success(request, f"Task #{unblocked.id} – '{unblocked.title}' has also been unblocked")
+                for still_blocked in other_changes.get('still_blocked'):
+                    messages.success(request, f"Task #{still_blocked.id} – '{still_blocked.title}' has also been updated")
 
         task.save()
-
-        if self.change == 'close' or self.change == 'cancel':
-            self.update_blocked_tasks(task, user, request)
 
         return redirect(self.get_redirect_url())
 
@@ -346,20 +349,6 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
-
-    def update_blocked_tasks(self, task, user, request):
-        previously_blocked_tasks = list(task.blocking.all())
-        # this task is no longer blocking other tasks
-        task.blocking.clear()
-        for blocked_task in previously_blocked_tasks:
-            if has_transition_perm(blocked_task.unblock, user):
-                # the other task no longer has blocking tasks; unblock it
-                blocked_task.unblock(user)
-                messages.success(request, f"Task '{blocked_task.title}' has also been unblocked")
-            else:
-                action.send(user, verb='updated', action_object=blocked_task,
-                            place_code=blocked_task.place.place_code)
-                messages.success(request, f"Task '{blocked_task.title}' has also been updated")
 
 
 class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):

@@ -240,6 +240,8 @@ class Task(models.Model):
         self.assigned_to = None
         self.closed_at = timezone.now()
 
+        return self.update_blocked_tasks(self, user)
+
     # reopen – moves back to 'open'
     def may_reopen(self, user):
         return user.is_authenticated and \
@@ -287,6 +289,8 @@ class Task(models.Model):
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
 
+        return self.update_blocked_tasks(self, user)
+
     # block
     def may_block(self, user):
         return user.is_authenticated and \
@@ -308,6 +312,24 @@ class Task(models.Model):
     @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
     def unblock(self, user, **kwargs):
         pass
+
+    def update_blocked_tasks(self, task, user):
+        if task.blocking.exists():
+            blocked_tasks = list(task.blocking.all())
+            # this task is no longer blocking other tasks
+            task.blocking.clear()
+            unblocked = []
+            still_blocked = []
+            for blocked_task in blocked_tasks:
+                if has_transition_perm(blocked_task.unblock, user):
+                    # the other task no longer has blocking tasks; unblock it
+                    blocked_task.unblock(user)
+                    unblocked.append(blocked_task)
+                else:
+                    action.send(user, verb='updated', action_object=blocked_task,
+                                place_code=blocked_task.place.place_code)
+                    still_blocked.append(blocked_task)
+            return {'unblocked': unblocked, 'still_blocked': still_blocked}
 
     def resolve_anchor(self):
         if self.annotation:

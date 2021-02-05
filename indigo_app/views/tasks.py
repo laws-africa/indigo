@@ -336,9 +336,9 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
                     verb = 'returned with changes requested'
                 messages.success(request, f"Task '{task.title}' has been {verb}")
 
-                for unblocked in other_changes.get('unblocked'):
+                for unblocked in other_changes.get('unblocked', []):
                     messages.success(request, f"Task #{unblocked.id} – '{unblocked.title}' has also been unblocked")
-                for still_blocked in other_changes.get('still_blocked'):
+                for still_blocked in other_changes.get('still_blocked', []):
                     messages.success(request, f"Task #{still_blocked.id} – '{still_blocked.title}' has also been updated")
 
         task.save()

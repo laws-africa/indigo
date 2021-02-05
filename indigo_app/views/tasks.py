@@ -464,6 +464,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return kwargs
 
     def form_valid(self, form):
+        # TODO: add ability to bulk change state (specifically to `blocked`)
         assignee = form.cleaned_data.get('assigned_to')
         tasks = form.cleaned_data['tasks']
         count = 0

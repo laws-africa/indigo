@@ -325,10 +325,11 @@ class WorkflowListView(WorkflowViewBase, ListView):
             w.task_counts['total'] = sum(x for x in w.task_counts.values())
             w.task_counts['complete'] = w.task_counts.get('cancelled', 0) + w.task_counts.get('done', 0)
             w.task_counts['assigned'] = w.tasks.filter(state='open').exclude(assigned_to=None).count()
+            w.task_counts['blocked'] = w.task_counts.get('blocked', 0)
             if w.task_counts['assigned'] > 0:
                 w.task_counts['open'] -= w.task_counts['assigned']
             w.pct_complete = w.task_counts['complete'] / (w.task_counts['total'] or 1) * 100.0
 
-            w.task_charts = [(s, w.task_counts.get(s, 0), s.replace('_', ' ')) for s in ['open', 'assigned', 'pending_review', 'cancelled']]
+            w.task_charts = [(s, w.task_counts.get(s, 0), s.replace('_', ' ')) for s in ['open', 'assigned', 'pending_review', 'cancelled', 'blocked']]
 
         return context

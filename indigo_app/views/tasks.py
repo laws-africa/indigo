@@ -94,7 +94,7 @@ class TaskListView(TaskViewBase, ListView):
         Task.decorate_submission_message(context['tasks'], self)
 
         Task.decorate_potential_assignees(context['tasks'], self.country)
-        Task.decorate_permissions(context['tasks'], self)
+        Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
 
@@ -143,7 +143,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         Task.decorate_submission_message([task], self)
 
         Task.decorate_potential_assignees([task], self.country)
-        Task.decorate_permissions([task], self)
+        Task.decorate_permissions([task], self.request.user)
 
         # add work to context
         if task.work:
@@ -264,6 +264,7 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
 
         work = None
         task = self.object
+        user = self.request.user
         if task.work:
             work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
         context['work_json'] = work
@@ -275,13 +276,13 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
-        if has_transition_perm(task.cancel, self):
+        if has_transition_perm(task.cancel, user):
             context['cancel_task_permission'] = True
 
-        if has_transition_perm(task.block, self):
+        if has_transition_perm(task.block, user):
             context['block_task_permission'] = True
 
-        if has_transition_perm(task.unblock, self):
+        if has_transition_perm(task.unblock, user):
             context['unblock_task_permission'] = True
 
         return context
@@ -309,7 +310,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
-                if not has_transition_perm(state_change, self):
+                if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 
                 if comment_text:
@@ -351,7 +352,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         # this task is no longer blocking other tasks
         task.blocking.clear()
         for blocked_task in previously_blocked_tasks:
-            if has_transition_perm(blocked_task.unblock, self):
+            if has_transition_perm(blocked_task.unblock, user):
                 # the other task no longer has blocking tasks; unblock it
                 blocked_task.unblock(user)
                 messages.success(request, f"Task '{blocked_task.title}' has also been unblocked")
@@ -446,7 +447,7 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
 
         task.blocked_by.set(blocked_by)
 
-        if blocked_by and has_transition_perm(task.block, self):
+        if blocked_by and has_transition_perm(task.block, user):
             task.block(user)
             messages.success(request, f"Task '{task.title}' has been blocked")
 
@@ -455,7 +456,7 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
                         place_code=task.place.place_code)
             messages.success(request, f"Task '{task.title}' has been updated")
 
-        elif has_transition_perm(task.unblock, self):
+        elif has_transition_perm(task.unblock, user):
             task.unblock(user)
             messages.success(request, f"Task '{task.title}' has been unblocked")
 

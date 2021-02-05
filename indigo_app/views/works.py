@@ -779,7 +779,7 @@ class WorkTasksView(WorkViewBase, DetailView):
         Task.decorate_submission_message(context['tasks'], self)
 
         Task.decorate_potential_assignees(context['tasks'], self.country)
-        Task.decorate_permissions(context['tasks'], self)
+        Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
 

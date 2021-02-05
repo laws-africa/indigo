@@ -31,6 +31,7 @@
                 ["submit_task", "indigo_api", "task"],
                 ["unsubmit_task", "indigo_api", "task"],
                 ["close_task", "indigo_api", "task"],
+                ["block_task", "indigo_api", "task"],
                 ["add_version", "reversion", "version"],
                 ["add_workflow", "indigo_api", "workflow"],
                 ["change_workflow", "indigo_api", "workflow"],

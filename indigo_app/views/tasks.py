@@ -552,7 +552,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
             .order_by('-updated_at')
 
         if not self.form.cleaned_data.get('state'):
-            tasks = tasks.filter(state__in=Task.OPEN_STATES)
+            tasks = tasks.filter(state__in=Task.OPEN_STATES).exclude(state='blocked')
 
         if self.priority:
             tasks = tasks.filter(workflows__priority=True)

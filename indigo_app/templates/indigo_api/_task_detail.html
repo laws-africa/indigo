@@ -265,7 +265,9 @@
 
           <select class="selectpicker" multiple name="blocked_by"
                   data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
-                  {% if not perms.indigo_api.change_task %}disabled{% endif %}
+                  {% if not perms.indigo_api.change_task or task.is_closed %}
+                    disabled
+                  {% endif %}
                   data-none-selected-text="Blocked by" data-selected-text-format="static"
                   data-live-search="true" data-size="7">
 

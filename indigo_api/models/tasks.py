@@ -317,8 +317,8 @@ class Task(models.Model):
             # this task is no longer blocking other tasks
             task.blocking.clear()
             for blocked_task in blocked_tasks:
-                action.send(user, verb='partially unblocked', action_object=blocked_task,
-                            place_code=blocked_task.place.place_code)
+                action.send(user, verb='resolved a task previously blocking', action_object=blocked_task,
+                            target=task, place_code=blocked_task.place.place_code)
 
     def resolve_anchor(self):
         if self.annotation:

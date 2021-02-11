@@ -317,12 +317,8 @@ class Task(models.Model):
             # this task is no longer blocking other tasks
             task.blocking.clear()
             for blocked_task in blocked_tasks:
-                if has_transition_perm(blocked_task.unblock, user):
-                    # the other task no longer has blocking tasks; unblock it
-                    blocked_task.unblock(user)
-                else:
-                    action.send(user, verb='updated', action_object=blocked_task,
-                                place_code=blocked_task.place.place_code)
+                action.send(user, verb='partially unblocked', action_object=blocked_task,
+                            place_code=blocked_task.place.place_code)
 
     def resolve_anchor(self):
         if self.annotation:

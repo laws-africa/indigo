@@ -104,6 +104,7 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
+              {% block extra_core_properties_head_preview %}{% endblock %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -148,6 +149,7 @@
                 <td>
                   {{ row.work.year }}
                 </td>
+                {% block extra_core_properties_body_preview %}{% endblock %}
                 <td>
                   {% if row.errors %}
                     —
@@ -222,6 +224,7 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
+              {% block extra_core_properties_head_live %}{% endblock %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -265,6 +268,7 @@
                 <td>
                   {{ row.work.year }}
                 </td>
+                {% block extra_core_properties_body_live %}{% endblock %}
                 <td>
                   {% if row.errors %}
                     —

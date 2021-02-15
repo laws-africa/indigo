@@ -88,3 +88,30 @@ class TaskTestCase(TestCase):
         self.task.refresh_from_db()
 
         self.assertEqual(Task.OPEN, self.task.state)
+
+    def test_update_blocked_tasks(self):
+        blocked_task = Task.objects.create(
+            title="Blocked task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+        blocking_task = Task.objects.create(
+            title="Blocking task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+
+        blocked_task.blocked_by.add(blocking_task)
+        blocked_task.block(self.user)
+        blocked_task.save()
+
+        self.assertEqual(Task.BLOCKED, blocked_task.state)
+        self.assertEqual([blocking_task], list(blocked_task.blocked_by.all()))
+
+        blocking_task.cancel(self.user)
+
+        # task is still blocked, but no longer blocked by anything
+        self.assertEqual(Task.BLOCKED, blocked_task.state)
+        self.assertEqual([], list(blocked_task.blocked_by.all()))

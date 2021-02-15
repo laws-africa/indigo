@@ -44,6 +44,12 @@
     {% endwith %}
   {% endif %}
 
+  {% if action.target.target_actions.content_type.model == 'task' %}
+    {% with action.target as blocking_task %}
+      (<a href="{% url 'task_detail' place=blocking_task.place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }} – {{ blocking_task.title }}</a>)
+    {% endwith %}
+  {% endif %}
+
   {% if action.verb == 'submitted' %}
     for review
   {% endif %}

@@ -1,4 +1,5 @@
 {% extends "place/layout.html" %}
+{% load indigo_app %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
 {% block title %}Create a new batch{% endblock %}
@@ -89,6 +90,7 @@
     </div>
 
     {% if works %}
+      {% with place.settings.work_properties.items|dictsort:0 as extra_properties %}
       {% if dry_run %}
         <div class="card mt-3">
         <h4 class="card-header">
@@ -104,7 +106,9 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
-              {% block extra_core_properties_head_preview %}{% endblock %}
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -149,7 +153,9 @@
                 <td>
                   {{ row.work.year }}
                 </td>
-                {% block extra_core_properties_body_preview %}{% endblock %}
+                {% for property_code, _ in extra_properties %}
+                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                {% endfor %}
                 <td>
                   {% if row.errors %}
                     —
@@ -224,7 +230,9 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
-              {% block extra_core_properties_head_live %}{% endblock %}
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -268,7 +276,9 @@
                 <td>
                   {{ row.work.year }}
                 </td>
-                {% block extra_core_properties_body_live %}{% endblock %}
+                {% for property_code, _ in extra_properties %}
+                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                {% endfor %}
                 <td>
                   {% if row.errors %}
                     —
@@ -319,6 +329,7 @@
         </div>
       </div>
       {% endif %}
+      {% endwith %}
     {% endif %}
   </form>
 

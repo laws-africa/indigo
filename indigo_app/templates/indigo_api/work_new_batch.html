@@ -1,4 +1,5 @@
 {% extends "place/layout.html" %}
+{% load indigo_app %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
 {% block title %}Create a new batch{% endblock %}
@@ -89,6 +90,7 @@
     </div>
 
     {% if works %}
+      {% with place.settings.work_properties.items|dictsort:0 as extra_properties %}
       {% if dry_run %}
         <div class="card mt-3">
         <h4 class="card-header">
@@ -104,6 +106,9 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -148,6 +153,9 @@
                 <td>
                   {{ row.work.year }}
                 </td>
+                {% for property_code, _ in extra_properties %}
+                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                {% endfor %}
                 <td>
                   {% if row.errors %}
                     —
@@ -222,6 +230,9 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
               <th>FRBR URI</th>
               <th>Taxonomy</th>
               <th>Tasks</th>
@@ -265,6 +276,9 @@
                 <td>
                   {{ row.work.year }}
                 </td>
+                {% for property_code, _ in extra_properties %}
+                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                {% endfor %}
                 <td>
                   {% if row.errors %}
                     —
@@ -315,6 +329,7 @@
         </div>
       </div>
       {% endif %}
+      {% endwith %}
     {% endif %}
   </form>
 

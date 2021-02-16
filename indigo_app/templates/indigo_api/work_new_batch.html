@@ -154,7 +154,7 @@
                   {{ row.work.year }}
                 </td>
                 {% for property_code, _ in extra_properties %}
-                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
                 {% endfor %}
                 <td>
                   {% if row.errors %}
@@ -277,7 +277,7 @@
                   {{ row.work.year }}
                 </td>
                 {% for property_code, _ in extra_properties %}
-                  <td>{{ row.work.properties|lookup:property_code }}</td>
+                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
                 {% endfor %}
                 <td>
                   {% if row.errors %}

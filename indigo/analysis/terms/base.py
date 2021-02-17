@@ -175,10 +175,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
             return
 
         # term to term id
-        term_lookup = {v: k for k, v in terms.items()}
+        term_lookup = self.make_term_index(terms)
 
         # big regex of all the terms, longest first
-        terms = sorted(terms.values(), key=lambda t: -len(t))
+        terms = sorted(term_lookup.keys(), key=lambda t: -len(t))
         terms_re = re.compile(r'\b(%s)\b' % '|'.join(re.escape(t) for t in terms))
 
         def make_term(match):
@@ -236,6 +236,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
                     break
                 else:
                     break
+
+    def make_term_index(self, terms):
+        return {v: k for k, v in terms.items()}
 
     def renumber_terms(self, doc):
         """ Recalculate eIds for <term> elements

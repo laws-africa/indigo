@@ -737,10 +737,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], amend_1.notes)
         self.assertEqual([], amend_2.notes)
         self.assertEqual([], amend_3.notes)
-        self.assertEqual(['Amended by /akn/za/act/2020/2 (Amendment)'], main.relationships)
-        self.assertEqual(['Amended by /akn/za/act/2020/3 (Second amendment)'], dupe1.relationships)
+        self.assertEqual(['Amended by /akn/za/act/2020/2 (Amendment) on 2020-06-01'], main.relationships)
+        self.assertEqual(['Amended by /akn/za/act/2020/3 (Second amendment) on 2020-08-01'], dupe1.relationships)
         # TODO: this should show up as an error (pending commencement) in preview
-        self.assertEqual(['Amended by /akn/za/act/2020/4 (Third amendment)'], dupe2.relationships)
+        self.assertEqual([], dupe2.relationships)
         self.assertEqual([], dupe3.relationships)
         self.assertEqual([], amend_1.relationships)
         self.assertEqual([], amend_2.relationships)
@@ -751,6 +751,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         amenders = [a.amending_work for a in amendments]
         self.assertIn(amend_1.work, amenders)
         self.assertIn(amend_2.work, amenders)
+        dates = [a.date for a in amendments]
+        self.assertIn(datetime.date(2020, 6, 1), dates)
+        self.assertIn(datetime.date(2020, 8, 1), dates)
 
         tasks = main.work.tasks.all()
         task_titles = [t.title for t in tasks]

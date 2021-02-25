@@ -57,6 +57,7 @@ class RowValidationFormBase(forms.Form):
     amends = forms.CharField(required=False)
     amends_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     amended_by = forms.CharField(required=False)
+    amended_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     repealed_by = forms.CharField(required=False)
     repeals = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
@@ -629,16 +630,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amending_work:
             return self.create_task(row.work, row, task_type='link-amendment-passive')
 
-        row.relationships.append(f'Amended by {amending_work}')
 
         if self.dry_run:
+            row.relationships.append(f'Amended by {amending_work}')
             row.notes.append("An 'Apply amendment' task will be created on this work")
         else:
-            date = amending_work.commencement_date
+            date = row.amended_on_date or amending_work.commencement_date
             if not date:
                 return self.create_task(amending_work, row,
                                         task_type='link-amendment-pending-commencement',
                                         amended_work=row.work)
+
+            row.relationships.append(f'Amended by {amending_work} on {date}')
 
             amendment, new = Amendment.objects.get_or_create(
                 amended_work=row.work,

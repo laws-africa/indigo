@@ -633,13 +633,13 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(
             ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
             amend1.notes)
-        self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported)'], amend1.relationships)
+        self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported) on 2020-06-01'], amend1.relationships)
         self.assertEqual(['link gazette'], amend1.tasks)
 
         self.assertEqual(
             ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
             amend2.notes)
-        self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported)'], amend2.relationships)
+        self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported) on 2020-08-01'], amend2.relationships)
         self.assertEqual(['link gazette'], amend2.tasks)
 
         self.assertEqual(['Stub'], error.notes)
@@ -658,6 +658,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         amenders = [a.amending_work for a in amendments]
         self.assertIn(amend1, amenders)
         self.assertIn(amend2, amenders)
+        dates = [a.date for a in amendments]
+        self.assertIn(datetime.date(2020, 6, 1), dates)
+        self.assertIn(datetime.date(2020, 8, 1), dates)
 
         main_tasks = [t.title for t in main.tasks.all()]
         self.assertEqual(2, main_tasks.count('Apply amendment'))

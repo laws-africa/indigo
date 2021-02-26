@@ -52,6 +52,7 @@ class RowValidationFormBase(forms.Form):
     commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     stub = forms.BooleanField(required=False)
     commenced_by = forms.CharField(required=False)
+    commenced_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     commences = forms.CharField(required=False)
     commences_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     amends = forms.CharField(required=False)
@@ -379,6 +380,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # if the commencement date has an error, the row won't have the attribute
         row.commenced = bool(
             getattr(row, 'commencement_date', None) or
+            getattr(row, 'commenced_on_date', None) or
             row.commenced_by)
         if self.dry_run:
             if not row.commenced:
@@ -439,7 +441,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def link_commencement_passive(self, row):
         # if the work has commencement details, try linking it
         # make a task if a `commenced_by` FRBR URI is given but not found
-        date = row.commencement_date
+        date = row.commenced_on_date or row.commencement_date
 
         commencing_work = None
         if row.commenced_by:
@@ -731,7 +733,7 @@ Find it and upload it manually.'''
 
         elif task_type == 'link-commencement-passive':
             task.title = 'Link commencement (passive)'
-            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
+            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commenced_on_date or row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:
 – a typo in the spreadsheet

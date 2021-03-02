@@ -32,11 +32,11 @@ class SpreadsheetRow:
 
 
 class RowValidationFormBase(forms.Form):
+    # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
+    # core details
     country = forms.ChoiceField(required=True)
     locality = forms.ChoiceField(required=False)
     title = forms.CharField()
-    primary_work = forms.CharField(required=False)
-    subleg = forms.CharField(required=False)
     doctype = forms.ChoiceField(required=True)
     subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
@@ -45,25 +45,31 @@ class RowValidationFormBase(forms.Form):
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', 'Must be a year (yyyy).')
     ])
+    # publication details
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
     publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # other relevant dates
     assent_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # other info
     stub = forms.BooleanField(required=False)
+    taxonomy = forms.CharField(required=False)
+    # passive relationships
+    primary_work = forms.CharField(required=False)
     commenced_by = forms.CharField(required=False)
     commenced_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    amended_by = forms.CharField(required=False)
+    amended_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    repealed_by = forms.CharField(required=False)
+    repealed_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # active relationships
+    subleg = forms.CharField(required=False)
     commences = forms.CharField(required=False)
     commences_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     amends = forms.CharField(required=False)
     amends_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
-    amended_by = forms.CharField(required=False)
-    amended_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
-    repealed_by = forms.CharField(required=False)
     repeals = forms.CharField(required=False)
-    taxonomy = forms.CharField(required=False)
-
-    repealed_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     repeals_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
 
     def __init__(self, country, locality, subtypes, *args, **kwargs):

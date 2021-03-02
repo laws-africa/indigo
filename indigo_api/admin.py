@@ -45,6 +45,9 @@ class VocabularyTopicInline(admin.TabularInline):
     model = VocabularyTopic
     can_delete = True
     extra = 3
+    fields = ('level_1', 'level_2', 'slug')
+    readonly_fields = ('slug',)
+
 
 
 @admin.register(TaxonomyVocabulary)

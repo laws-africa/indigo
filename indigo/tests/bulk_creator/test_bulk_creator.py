@@ -846,13 +846,18 @@ class BaseBulkCreatorTest(testcases.TestCase):
         main2 = works[2].work
         repeal2 = works[3].work
         main3 = works[4].work
+        main4 = works[5].work
+        repeal3 = works[6].work
 
         self.assertEqual(main1.repealed_by, repeal1)
+        self.assertEqual(main1.repealed_date, datetime.date(2020, 6, 3))
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
         self.assertIsNone(main2.repealed_by)
         self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
         self.assertIsNone(main3.repealed_by)
         self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
+        self.assertEqual(main4.repealed_by, repeal3)
+        self.assertEqual(main4.repealed_date, datetime.date(2020, 6, 1))
 
     def test_link_repeals_active(self):
         # TODO: add test for check-update-repeal
@@ -905,14 +910,19 @@ class BaseBulkCreatorTest(testcases.TestCase):
         main2 = works[3].work
         repeal2 = works[4].work
         repeal3 = works[5].work
+        main3 = works[6].work
+        repeal4 = works[7].work
 
         self.assertEqual(main1.repealed_by, repeal1)
+        self.assertEqual(main1.repealed_date, datetime.date(2020, 6, 3))
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
         self.assertIn('Check / update repeal', [t.title for t in main1.tasks.all()])
         self.assertNotIn(main1, repealfail.repealed_works.all())
         self.assertIsNone(main2.repealed_by)
         self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
         self.assertIn('Link repeal', [t.title for t in repeal3.tasks.all()])
+        self.assertEqual(main3.repealed_by, repeal4)
+        self.assertEqual(main3.repealed_date, datetime.date(2020, 6, 1))
 
     def test_duplicates(self):
         # preview

@@ -63,6 +63,9 @@ class RowValidationFormBase(forms.Form):
     repeals = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
 
+    repealed_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    repeals_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+
     def __init__(self, country, locality, subtypes, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
@@ -527,7 +530,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             # the work was not already repealed; link the new repeal information
             row.relationships.append(f'Repealed by {repealing_work}')
             if not self.dry_run:
-                repeal_date = repealing_work.commencement_date
+                repeal_date = row.repealed_on_date or repealing_work.commencement_date
 
                 if not repeal_date:
                     # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
@@ -560,8 +563,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if isinstance(repealed_work, Work) and not repealed_work.repealed_by or self.dry_run:
             # the work was not already repealed (or we're in preview); link the new repeal information
+            repeal_date = row.repeals_on_date or row.commencement_date
             row.relationships.append(f'Repeals {repealed_work}')
-            repeal_date = row.commencement_date
 
             if not repeal_date:
                 # there's no date for the repeal (yet), so create a task on the repealing work for once it commences

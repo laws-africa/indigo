@@ -32,11 +32,11 @@ class SpreadsheetRow:
 
 
 class RowValidationFormBase(forms.Form):
+    # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
+    # core details
     country = forms.ChoiceField(required=True)
     locality = forms.ChoiceField(required=False)
     title = forms.CharField()
-    primary_work = forms.CharField(required=False)
-    subleg = forms.CharField(required=False)
     doctype = forms.ChoiceField(required=True)
     subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
@@ -45,20 +45,32 @@ class RowValidationFormBase(forms.Form):
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', 'Must be a year (yyyy).')
     ])
+    # publication details
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
     publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # other relevant dates
     assent_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # other info
     stub = forms.BooleanField(required=False)
+    taxonomy = forms.CharField(required=False)
+    # passive relationships
+    primary_work = forms.CharField(required=False)
     commenced_by = forms.CharField(required=False)
+    commenced_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    amended_by = forms.CharField(required=False)
+    amended_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    repealed_by = forms.CharField(required=False)
+    repealed_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    # active relationships
+    subleg = forms.CharField(required=False)
     commences = forms.CharField(required=False)
     commences_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     amends = forms.CharField(required=False)
-    amended_by = forms.CharField(required=False)
-    repealed_by = forms.CharField(required=False)
+    amends_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     repeals = forms.CharField(required=False)
-    taxonomy = forms.CharField(required=False)
+    repeals_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
 
     def __init__(self, country, locality, subtypes, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -377,6 +389,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # if the commencement date has an error, the row won't have the attribute
         row.commenced = bool(
             getattr(row, 'commencement_date', None) or
+            getattr(row, 'commenced_on_date', None) or
             row.commenced_by)
         if self.dry_run:
             if not row.commenced:
@@ -437,7 +450,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def link_commencement_passive(self, row):
         # if the work has commencement details, try linking it
         # make a task if a `commenced_by` FRBR URI is given but not found
-        date = row.commencement_date
+        date = row.commenced_on_date or row.commencement_date
 
         commencing_work = None
         if row.commenced_by:
@@ -523,7 +536,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             # the work was not already repealed; link the new repeal information
             row.relationships.append(f'Repealed by {repealing_work}')
             if not self.dry_run:
-                repeal_date = repealing_work.commencement_date
+                repeal_date = row.repealed_on_date or repealing_work.commencement_date
 
                 if not repeal_date:
                     # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
@@ -556,8 +569,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if isinstance(repealed_work, Work) and not repealed_work.repealed_by or self.dry_run:
             # the work was not already repealed (or we're in preview); link the new repeal information
+            repeal_date = row.repeals_on_date or row.commencement_date
             row.relationships.append(f'Repeals {repealed_work}')
-            repeal_date = row.commencement_date
 
             if not repeal_date:
                 # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
@@ -628,16 +641,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amending_work:
             return self.create_task(row.work, row, task_type='link-amendment-passive')
 
-        row.relationships.append(f'Amended by {amending_work}')
 
         if self.dry_run:
+            row.relationships.append(f'Amended by {amending_work}')
             row.notes.append("An 'Apply amendment' task will be created on this work")
         else:
-            date = amending_work.commencement_date
+            date = row.amended_on_date or amending_work.commencement_date
             if not date:
                 return self.create_task(amending_work, row,
                                         task_type='link-amendment-pending-commencement',
                                         amended_work=row.work)
+
+            row.relationships.append(f'Amended by {amending_work} on {date}')
 
             amendment, new = Amendment.objects.get_or_create(
                 amended_work=row.work,
@@ -661,13 +676,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amended_work:
             return self.create_task(row.work, row, task_type='link-amendment-active')
 
-        date = row.commencement_date or row.work.commencement_date
+        date = row.amends_on_date or row.commencement_date or row.work.commencement_date
         if not date:
             return self.create_task(row.work, row,
                                     task_type='link-amendment-pending-commencement',
                                     amended_work=amended_work)
 
-        row.relationships.append(f'Amends {amended_work}')
+        row.relationships.append(f'Amends {amended_work} on {date}')
         if self.dry_run:
             row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
         else:
@@ -727,7 +742,7 @@ Find it and upload it manually.'''
 
         elif task_type == 'link-commencement-passive':
             task.title = 'Link commencement (passive)'
-            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
+            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commenced_on_date or row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:
 – a typo in the spreadsheet

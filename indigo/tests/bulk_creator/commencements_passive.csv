@@ -1,7 +1,9 @@
-country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
-ZA,,Uncommenced,,,1,2020,,,,2020-01-01,,,,,,,,,,,,,,,,,
-ZA,,Both date and commenced_by,,,2,2020,,,,2020-01-01,2020-06-05,,,,/akn/za/act/2020/5 - Commencement notice 1,,,,,,,,,,,,
-ZA,,Date only,,,3,2020,,,,2020-01-01,2020-06-05,,,,,,,,,,,,,,,,
-ZA,,Commenced_by only,,,4,2020,,,,2020-01-01,,,,,/akn/za/act/2020/5 - Commencement notice 1,,,,,,,,,,,,
-ZA,,Commencement notice 1,,,5,2020,,,,2020-06-01,2020-07-01,x,,,,,,,,,,,,,,,
-ZA,,Error,,,6,2020,,,,2020-06-01,2020-06-05,,,,/akn/za/act/2020/xx – Doesn’t exist,,,,,,,,,,,,
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,commenced_on_date,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+ZA,,Uncommenced,,,1,2020,,,,2020-01-01,,,,,,,,,,,,,,,,,,
+ZA,,Both date and commenced_by,,,2,2020,,,,2020-01-01,2020-06-05,,,,/akn/za/act/2020/5 - Commencement notice 1,,,,,,,,,,,,,
+ZA,,Date only,,,3,2020,,,,2020-01-01,2020-06-05,,,,,,,,,,,,,,,,,
+ZA,,Commenced_by only,,,4,2020,,,,2020-01-01,,,,,/akn/za/act/2020/5 - Commencement notice 1,,,,,,,,,,,,,
+ZA,,Commencement notice 1,,,5,2020,,,,2020-06-01,2020-07-01,x,,,,,,,,,,,,,,,,
+ZA,,Error,,,6,2020,,,,2020-06-01,2020-06-05,,,,/akn/za/act/2020/xx – Doesn’t exist,,,,,,,,,,,,,
+ZA,,Both commenced_by and commenced_on_date,,,7,2020,,,,2020-01-01,,,,,/akn/za/act/2020/5 - Commencement notice 1,2020-08-01,,,,,,,,,,,,
+ZA,,commenced_on_date only,,,8,2020,,,,2020-01-01,,,,,,2020-08-01,,,,,,,,,,,,

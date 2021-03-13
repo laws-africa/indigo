@@ -1,7 +1,6 @@
 from itertools import groupby
 
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 
 from cobalt import datestring
 
@@ -9,6 +8,7 @@ from indigo_api.models import Document, Attachment, Country, Locality, Publicati
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
+from indigo_content_api.reverse import reverse_content_api
 
 
 class PublishedDocUrlMixin:
@@ -17,13 +17,13 @@ class PublishedDocUrlMixin:
         eg. /api/v2/akn/za/act/2005/01/eng@2006-02-03
         """
         uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
-        uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+        uri = reverse_content_api('published-document-detail', request=request, kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
 
     def place_url(self, request, code):
         if self.prefix:
             code = 'akn/' + code
-        return reverse('published-document-detail', request=request, kwargs={'frbr_uri': code})
+        return reverse_content_api('published-document-detail', request=request, kwargs={'frbr_uri': code})
 
 
 class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):

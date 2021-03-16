@@ -2,6 +2,11 @@
 Changelog
 =========
 
+? (?)
+-----
+
+* SECURITY: Bump bootstrap-select to 1.13.6
+
 13.1.0 (2021-01-27)
 --------
 

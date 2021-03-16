@@ -16,7 +16,6 @@ router.register(r'works', works.WorkViewSet, basename='work')
 router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentViewSet, basename='work-amendments')
 
 urlpatterns = [
-    path('search/documents', documents.SearchView.as_view(), name='document-search'),
     re_path(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),
 
     re_path(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', attachments.AttachmentMediaView.as_view(), name='document-media'),

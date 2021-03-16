@@ -3,6 +3,22 @@
 <div class="container mt-3 mb-5">
     <div class="row">
       <div class="mb-3 col-9">
+        {% if task.state == 'blocked' %}
+          <div class="alert alert-danger">
+            This task is blocked.
+            {% if blocked_by %}
+              These tasks must be completed first:
+              <ul class="mt-2">
+                  {% for blocking_task in blocked_by|dictsort:'pk' %}
+                    <li>
+                      <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
+                        – {{ blocking_task.title }}</a> <i class="fas fa-fw task-icon-{{ blocking_task.state }}" title="{{ blocking_task.state }}"></i>
+                    </li>
+                  {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endif %}
         <div class="d-flex">
           <div class="mr-3 text-center">
             {% if task.state == 'open' and task.assigned_to %}
@@ -78,13 +94,13 @@
               <li class="activity-item">
                 {% if anchor.element %}
                   Here is
-                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a>
+                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title|default:anchor.anchor_id }}</a>
                   as it appears currently
                   {% if not anchor.exact_match %}(<b>{{ anchor.anchor_id }}</b> may have been moved or removed){% endif %}
                   <div class="sheet-outer"
                        {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
                     <div class="sheet-inner is-fragment">
-                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
+                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</div>
                     </div>
                   </div>
                 {% else %}
@@ -215,13 +231,14 @@
         </ul>
         {% with task.workflows.all as workflows %}
           <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
-                data-submit="ajax" id="task-workflow-form">
+                id="task-workflow-form" onchange="this.submit();">
             {% csrf_token %}
 
-            <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+            <select class="selectpicker" multiple name="workflows"
                     data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
                     {% if not perms.indigo_api.change_task %}disabled{% endif %}
-                    data-none-selected-text="Workflows" data-selected-text-format="static">
+                    data-none-selected-text="Projects" data-selected-text-format="static"
+                    data-live-search="true" data-size="7">
 
               {% for workflow in possible_workflows|dictsort:'title' %}
                 <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>
@@ -240,6 +257,51 @@
               <li><em>None</em></li>
             {% endif %}
           </ul>
+        {% endwith %}
+
+        <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
+              id="task-blocked_by-form">
+          {% csrf_token %}
+
+          <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
+                  data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+                  {% if not perms.indigo_api.change_task or task.is_closed %}
+                    disabled
+                  {% endif %}
+                  data-none-selected-text="Blocked by" data-selected-text-format="static"
+                  data-live-search="true" data-size="7">
+
+            {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
+              <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
+                #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        {% if blocked_by %}
+          <ul class="list-unstyled mb-2">
+            {% for blocking_task in blocked_by|dictsort:'pk' %}
+              <li>
+                <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
+                  – {{ blocking_task.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% with task.blocking.all as blocking %}
+          {% if blocking %}
+            <div class="mt-3">
+              <i class="fas fa-exclamation-triangle text-warning"></i> This task is blocking these tasks:
+              <ul class="mb-2">
+                {% for blocked_task in blocking|dictsort:'pk' %}
+                  <li>
+                    <a href="{% url 'task_detail' place=place.place_code pk=blocked_task.pk %}">#{{ blocked_task.pk }}
+                      – {{ blocked_task.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         {% endwith %}
 
         {% block task-column-footer %}{% endblock %}

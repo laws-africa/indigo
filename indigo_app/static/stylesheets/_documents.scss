@@ -67,10 +67,15 @@ button.btn-link.help {
 
 /* editors */
 
-.ace-editor-wrapper,
-.ace-editor {
+.monaco-editor-wrapper {
   height: 100%;
   padding: 0px !important;
+  overflow: hidden;
+}
+
+.monaco-editor {
+  height: 100%;
+  width: 100%;
 }
 
 .document-sheet-container {
@@ -101,14 +106,14 @@ button.btn-link.help {
     margin-top: 2px;
     display: flex;
     flex-direction: column;
-  }
 
-  a.quick-edit {
-    color: $grey-lighter;
+    & > a {
+      color: $grey-lighter;
 
-    &:hover {
-      color: $primary;
-      text-decoration: none;
+      &:hover {
+        color: $primary;
+        text-decoration: none;
+      }
     }
   }
 }

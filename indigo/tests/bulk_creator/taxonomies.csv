@@ -1,0 +1,6 @@
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+Za,,Testy 1,,,1,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children; lawsafrica-subjects:People and Work/Communications; ",,,,,,,,,,,,,,
+zA,,Testy 2,,,2,2020,,,,2020-06-01,,,"Animal Husbandry; lawsafrica-subjects:People and Work/Children; Finance",,,,,,,,,,,,,,
+ZA,,Testy 3,,,3,2020,,,,2020-06-01,,,lawsafrica-subjects:People and Work,,,,,,,,,,,,,,
+Za,,Testy 4,,,4,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children;;;;lawsafrica-subjects:People and Work/Communications; ",,,,,,,,,,,,,,
+Za,,Testy 5,,,5,2020,,,,2020-01-01,,,"lawsafrica-subjects:People and Work/Children ;  lawsafrica-subjects:People and Work/Communications; ; lawsafrica-subjects:Estates, Trusts and Succession",,,,,,,,,,,,,,

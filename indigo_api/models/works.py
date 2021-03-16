@@ -1,6 +1,4 @@
 # coding=utf-8
-from itertools import chain, groupby
-from datetime import datetime
 
 from actstream import action
 from django.contrib.postgres.fields import JSONField
@@ -8,7 +6,6 @@ from django.db import models
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 import reversion.revisions
@@ -39,14 +36,15 @@ class WorkManager(models.Manager):
 
 
 class TaxonomyVocabulary(models.Model):
-    authority = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Organisation managing this taxonomy")
-    name = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Short name for this taxonomy, under this authority")
+    authority = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Organisation managing this taxonomy")
+    name = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Short name for this taxonomy, under this authority")
     slug = models.SlugField(null=False, unique=True, blank=False, help_text="Code used in the API")
-    title = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
+    title = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
 
     class Meta:
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
+        ordering = ('title',)
 
     def __str__(self):
         return str(self.title)
@@ -54,17 +52,24 @@ class TaxonomyVocabulary(models.Model):
 
 class VocabularyTopic(models.Model):
     vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False, on_delete=models.CASCADE)
-    level_1 = models.CharField(max_length=30, null=False, blank=False)
-    level_2 = models.CharField(max_length=30, null=True, blank=True, help_text='(optional)')
+    level_1 = models.CharField(max_length=512, null=False, blank=False)
+    level_2 = models.CharField(max_length=512, null=True, blank=True, help_text='(optional)')
 
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
+        ordering = ('level_1', 'level_2')
+
+    @property
+    def title(self):
+        return ' / '.join(x for x in [self.level_1, self.level_2] if x)
+
+    @property
+    def slug(self):
+        detail = '/'.join(x for x in [self.level_1, self.level_2] if x)
+        return f'{self.vocabulary.slug}:{detail}'
 
     def __str__(self):
-        if self.level_2:
-            return '%s / %s' % (self.level_1, self.level_2)
-        else:
-            return self.level_1
+        return self.title
 
     @classmethod
     def get_topic(self, value):
@@ -237,11 +242,15 @@ class WorkMixin(object):
         if first:
             return first.date
 
-    def commenceable_provisions(self):
+    def all_commenceable_provisions(self, date=None):
         """ Return a list of TOCElement objects that can be commenced.
+            If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
-        documents = self.expressions().all()
+        if date:
+            documents = self.expressions().filter(expression_date__lte=date)
+        else:
+            documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
         # get all the docs and combine the TOCs, based on element IDs
@@ -254,8 +263,8 @@ class WorkMixin(object):
 
         return provisions
 
-    def uncommenced_provisions(self):
-        provisions = self.commenceable_provisions()
+    def all_uncommenced_provisions(self, date=None):
+        provisions = self.all_commenceable_provisions(date=date)
         commenced = set()
         for commencement in self.commencements.all():
             if commencement.all_provisions:
@@ -269,7 +278,7 @@ class WorkMixin(object):
     def commencements_count(self):
         """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
         commencements_count = len(self.commencements.all())
-        if self.uncommenced_provisions():
+        if self.all_uncommenced_provisions():
             commencements_count += 1
         return commencements_count
 

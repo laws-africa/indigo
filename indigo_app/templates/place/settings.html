@@ -52,6 +52,19 @@
           {% endif %}
         </div>
 
+        <div class="form-group">
+          <label for="{{ form.no_publication_document_text.id_for_label }}">No Gazette text</label>
+          <input type="text" class="form-control" name="{{ form.no_publication_document_text.html_name }}" id="{{ form.no_publication_document_text.id_for_label }}" value="{{ form.no_publication_document_text.value|default:'' }}">
+          <p class="form-text text-muted">The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work.</p>
+          {% if form.no_publication_document_text.errors %}
+            <div class="text-danger">
+              {% for error in form.no_publication_document_text.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
       </div>
 
       <div class="card-footer text-right">
@@ -59,6 +72,9 @@
       </div>
     </div>
   </form>
+  <div>
+    <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw mr-1"></i>Download full legislation index for {{ place }}</a>
+  </div>
 
 </div>
 {% endblock %}

@@ -9,7 +9,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
-from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
@@ -32,8 +31,7 @@ class DocumentManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self) \
             .get_queryset() \
-            .prefetch_related('work') \
-            .defer("search_text", "search_vector")
+            .prefetch_related('work')
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -182,6 +180,25 @@ class DocumentMixin(object):
 
         return ids
 
+    def commenceable_provisions(self):
+        return self.work.all_commenceable_provisions(self.expression_date)
+
+    def uncommenced_provisions(self):
+        return self.work.all_uncommenced_provisions(self.expression_date)
+
+    def commencements_relevant_at_expression_date(self):
+        """ Return a list of Commencement objects that have to do with the provisions that exist on this expression.
+        """
+        # common case: one commencement that covers all provisions
+        for commencement in self.work.commencements.all():
+            if commencement.all_provisions:
+                return [commencement]
+
+        commenceable_provisions = [p.id for p in self.commenceable_provisions()]
+        # include commencement if any of its `provisions` are found in `commenceable_provisons`
+        return [c for c in self.work.commencements.all()
+                if any(p for p in c.provisions if p in commenceable_provisions)]
+
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter
         exporter = HTMLExporter()
@@ -244,10 +261,6 @@ class Document(DocumentMixin, models.Model):
 
     # freeform tags via django-taggit
     tags = TaggableManager()
-
-    # for full text search
-    search_text = models.TextField(null=True, blank=True)
-    search_vector = SearchVectorField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -334,7 +347,6 @@ class Document(DocumentMixin, models.Model):
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
-        self.update_search_text()
         return super(Document, self).save(*args, **kwargs)
 
     def save_with_revision(self, user, comment=None):
@@ -389,18 +401,7 @@ class Document(DocumentMixin, models.Model):
         if not self.title:
             self.title = self.work.title
 
-    def update_search_text(self):
-        """ Update the `search_text` field with a raw representation of all the text in the document.
-        This is used by the `search_vector` field when doing full text search. The `search_vector`
-        field is updated from the `search_text` field using a PostgreSQL trigger, installed by
-        migration 0032.
-        """
-        xpath = '|'.join('//a:%s//text()' % c for c in ['coverPage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions'])
-        texts = self.doc.root.xpath(xpath, namespaces={'a': self.doc.namespace})
-        self.search_text = ' '.join(texts)
-
     def refresh_xml(self):
-        log.debug("Refreshing document xml for %s" % self)
         self.document_xml = self.doc.to_xml().decode('utf-8')
 
     def reset_xml(self, xml, from_model=False):

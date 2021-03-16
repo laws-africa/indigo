@@ -1,4 +1,5 @@
 {% extends "place/layout.html" %}
+{% load indigo_app %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
 {% block title %}Create a new batch{% endblock %}
@@ -53,13 +54,13 @@
         {% endif %}
 
         <div class="form-group">
-          <label for="{{ form.workflow.id_for_label }}">Choose a workflow for newly created tasks</label>
+          <label for="{{ form.workflow.id_for_label }}">Choose a project for newly created tasks</label>
 
           {% if form.fields.workflow.choices %}
             <div class="form-group">
               <div class="form-row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a workflow">
+                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a project">
                     {% for option in form.workflow %}
                       {{ option }}
                     {% endfor %}
@@ -71,10 +72,10 @@
               <div class="form-text text-danger">{{ err }}</div>
             {% endfor %}
           {% else %}
-            <div class="text-danger">No workflows (create one and refresh)</div>
+            <div class="text-danger">No projects (create one and refresh)</div>
           {% endif %}
 
-          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new workflow</a>
+          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new project</a>
         </div>
 
       </div>
@@ -89,13 +90,11 @@
     </div>
 
     {% if works %}
-      <div class="card mt-3">
+      {% with place.settings.work_properties.items|dictsort:0 as extra_properties %}
+      {% if dry_run %}
+        <div class="card mt-3">
         <h4 class="card-header">
-          {% if dry_run %}
-            Preview of your import
-          {% else %}
-            Import complete
-          {% endif %}
+          Preview of your import
         </h4>
 
         <table class="table">
@@ -107,54 +106,211 @@
               <th>Type</th>
               <th>Number</th>
               <th>Year</th>
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
               <th>FRBR URI</th>
+              <th>Taxonomy</th>
+              <th>Tasks</th>
+              <th>Relationships</th>
+              <th>Notes</th>
             </tr>
           </thead>
-
           <tbody>
-            {% for work in works %}
+            {% for row in works %}
               <tr>
                 <td>
-                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ work.row }}" target="_blank">{{ work.row }}</a>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
                 </td>
                 <td class="text-nowrap">
-                  {% if work.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> {% if dry_run %}Ready to import{% else %}Imported{% endif %}
-                  {% elif work.status == 'duplicate' %}
+                  {% if row.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> Ready to import
+                  {% elif row.status == 'duplicate' %}
                     <i class="fas fa-ban text-info"></i> Duplicate
-                  {% elif work.status == 'error' %}
+                  {% elif row.errors %}
                     <i class="fas fa-exclamation-triangle text-danger"></i> Error
                   {% endif %}
                 </td>
                 <td>
-                  {% if work.status == 'success' %}
-                    {{ work.work.title }}
-                  {% elif work.status == 'duplicate' %}
+                  {% if row.status == 'success' %}
+                    {{ row.work.title }}
+                  {% elif row.status == 'duplicate' %}
                     A work with this type, year and number already exists in this place.
-                  {% elif work.status == 'error' %}
-                    {{ work.error_message }}
+                  {% elif row.errors %}
+                    {{ row.errors }}
                   {% endif %}
                 </td>
                 <td>
-                  {% if work.work.subtype %}
-                    {{ work.work.subtype }}
-                  {% elif work.status != 'error' %}
-                    {{ view.bulk_creator.default_doctype|capfirst }}
+                  {% if row.work.subtype %}
+                    {{ row.work.subtype }}
+                  {% elif not row.errors %}
+                    {{ row.work.nature }}
                   {% endif %}
                 </td>
                 <td>
-                  {{ work.work.number }}
+                  {{ row.work.number }}
                 </td>
                 <td>
-                  {{ work.work.year }}
+                  {{ row.work.year }}
                 </td>
+                {% for property_code, _ in extra_properties %}
+                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+                {% endfor %}
                 <td>
-                  {% if work.status == 'error' %}
+                  {% if row.errors %}
                     —
-                  {% elif work.status == 'success' and dry_run %}
-                    {{ work.work.frbr_uri }}
+                  {% elif row.status == 'duplicate' %}
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
                   {% else %}
-                    <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
+                    {{ row.work.frbr_uri }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.taxonomies %}
+                    <ul class="pl-0">
+                      {% for taxonomy in row.taxonomies %}
+                        <li>{{ taxonomy }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.tasks %}
+                    <ul class="pl-0">
+                      {% for task in row.tasks %}
+                        <li>{{ task|capfirst }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.relationships %}
+                    <ul class="pl-0">
+                      {% for relationship in row.relationships %}
+                        <li>{{ relationship }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.notes %}
+                    <ul class="pl-0">
+                      {% for note in row.notes %}
+                        <li>{{ note }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="card-footer">
+          {% if perms.indigo_api.add_work %}
+            <button type="submit" name="preview" class="btn btn-primary show-progress">Refresh preview</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">Import works</button>
+          {% else %}
+            <div class="alert alert-danger">You don't have permission to create works.</div>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+        <div class="card mt-3">
+        <h4 class="card-header">
+          Import complete
+        </h4>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Status</th>
+              <th>Title / Error message</th>
+              <th>Type</th>
+              <th>Number</th>
+              <th>Year</th>
+              {% for _, property_name in extra_properties %}
+                <th>{{ property_name }}</th>
+              {% endfor %}
+              <th>FRBR URI</th>
+              <th>Taxonomy</th>
+              <th>Tasks</th>
+              <th>Relationships</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in works %}
+              <tr>
+                <td>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                </td>
+                <td class="text-nowrap">
+                  {% if row.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> Imported
+                  {% elif row.status == 'duplicate' %}
+                    <i class="fas fa-ban text-info"></i> Duplicate
+                  {% elif row.errors %}
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Error
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.status == 'success' %}
+                    {{ row.work.title }}
+                  {% elif row.status == 'duplicate' %}
+                    A work with this type, year and number already exists in this place.
+                  {% elif row.errors %}
+                    {{ row.errors }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.subtype %}
+                    {{ row.work.subtype }}
+                  {% elif not row.errors %}
+                    {{ row.work.nature }}
+                  {% endif %}
+                </td>
+                <td>
+                  {{ row.work.number }}
+                </td>
+                <td>
+                  {{ row.work.year }}
+                </td>
+                {% for property_code, _ in extra_properties %}
+                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+                {% endfor %}
+                <td>
+                  {% if row.errors %}
+                    —
+                  {% else %}
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.taxonomies.exists %}
+                    <ul class="pl-0">
+                      {% for t in row.work.taxonomies.all %}
+                        <li>{{ t }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.tasks.exists %}
+                    <ul class="pl-0">
+                      {% for task in row.work.tasks.all %}
+                        <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.relationships %}
+                    <ul class="pl-0">
+                      {% for relationship in row.relationships %}
+                        <li>{{ relationship }}</li>
+                      {% endfor %}
+                    </ul>
                   {% endif %}
                 </td>
               </tr>
@@ -172,6 +328,8 @@
           {% endif %}
         </div>
       </div>
+      {% endif %}
+      {% endwith %}
     {% endif %}
   </form>
 
@@ -188,10 +346,10 @@
           <li>Record the Spreadsheet URL under <a href="{% url 'place_settings' place=place.place_code %}" target="_blank">Settings</a>.</li>
           {% if bulk_creator.is_gsheets_enabled %}
             <li>Share the spreadsheet with {{ bulk_creator.share_with }}.</li>
-            <li>Choose a spreadsheet tab and a workflow.</li>
+            <li>Choose a spreadsheet tab and a project.</li>
           {% else %}
             <li>Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner).</li>
-            <li>Choose a workflow.</li>
+            <li>Choose a project.</li>
           {% endif %}
           <li><strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.</li>
           <li><strong>Import works</strong>.</li>

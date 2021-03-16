@@ -31,7 +31,7 @@ $(function() {
       var idScope = element.ownerDocument.evaluate(
         "./ancestor::a:attachment/@eId",
         element,
-        function(x) { if (x == "a") return ns; },
+        function(x) { if (x === "a") return ns; },
         XPathResult.ANY_TYPE,
         null);
 

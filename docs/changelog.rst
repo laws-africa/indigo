@@ -1,5 +1,55 @@
+
 Changelog
 =========
+
+13.1.0 (2021-01-27)
+--------
+
+* FEATURE: Filter tasks by type, country in all Task list views.
+* FEATURE: Export all works in a place into a maintainable spreadsheet.
+* FEATURE: Bulk creator now supports linking all active and passive, parent and child relationships.
+* FEATURE: The text given on the coverpage of a document when no publication document is linked can now be specified per place.
+* FIX: Taxonomies that include spaces and/or commas are now imported correctly.
+* FIX: Comment-based tasks now show their context even if the annotation doesn't have a parent in the ToC.
+* NEW: Commenceable provisions on the coverpage of a document now only include provisions that exist(ed) on or before the date of the document.
+* NEW: Introduce Taxonomist Permission Badge for working with Taxonomies in the Admin section.
+* NEW: Show 'Stub' status in Preview on bulk import.
+
+13.0.0 (2020-11-03)
+--------
+
+* BREAKING: Replace migrations with squashed migrations permanently
+
+Important
+.........
+
+When updating to this version, you must change your Django migrations to declare dependencies on the latest squashed migrations provided by Indigo.
+
+* For `indigo_api`, this is `0001_squashed_0137`
+* For `indigo_app`, this is `0001_squashed_0021`
+
+12.0.0 (2020-11-02)
+--------
+
+Important
+.........
+
+This version squashed migrations, which cannot be undone.
+
+You **must** upgrade to this version before upgrading to future versions.
+
+* BREAKING: replace Ace editor with Monaco editor, for improved syntax highlighting and text editing
+* BREAKING: the search API has been extracted into `indigo-search-psql <https://github.com/laws-africa/indigo-search-psql>`_.
+
+11.1.0 (2020-09-14)
+-------------------
+
+* FEATURE: Support for superscript and subscript in parser
+* FIX: keep /akn prefix for resolver
+* FIX: update component meta when parsing whole document
+* FIX: PDF default templates
+* FIX: docx import
+* Introduce import_from_html
 
 11.0.0 (2020-08-14)
 -------------------

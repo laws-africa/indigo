@@ -410,18 +410,4 @@ The listings include the most recent applicable expressions of each work, in the
 Search
 ------
 
-.. code:: http
-
-    GET /api/v2/search/<country>?q=<search-term>
-
-* Where `<country>` is a two-letter country code
-* Parameter ``q``: the search string
-* Content types: JSON
-
-This API searches for works in a country. It returns all works that match the
-search term in either their title or their body.  Results are returned in
-search rank order.  Each result also has a numeric ``_rank`` and an HTML
-``_snippet`` with highlighted results.
-
-If more than one expression of a particular work matches the search, then only
-the most recent matching expression is returned.
+Search requires a plugin, such as http://github.com/laws-africa/indigo-search-psql

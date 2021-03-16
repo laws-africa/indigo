@@ -45,7 +45,8 @@ setup(
         'cobalt>=4.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
-        'django-activity-stream>=0.7.0',
+        'django-activity-stream>=0.7.0,<0.10.0',  # from v0.10.0 'You must install django-jsonfield-backport,
+                                                  # if you wish to use a JSONField on your actions and run Django < 3.1'
         'django-allauth>=0.41.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',
@@ -66,7 +67,8 @@ setup(
         'django-templated-email>=2.3.0',
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
-        'djangorestframework>=3.11.0',
+        'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
+                                                # the pk in the admin URL. [#7341]
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
@@ -101,6 +103,8 @@ setup(
             'coveralls',
             'django-webtest>=1.9.4',
             'dotmap>=1.3.8',
+            'pandas==1.1.4',
+            'xlrd==1.2.0',
         ],
     },
 )

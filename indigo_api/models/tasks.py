@@ -44,11 +44,12 @@ class Task(models.Model):
     PENDING_REVIEW = 'pending_review'
     CANCELLED = 'cancelled'
     DONE = 'done'
+    BLOCKED = 'blocked'
 
-    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE)
+    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE, BLOCKED)
 
     CLOSED_STATES = (CANCELLED, DONE)
-    OPEN_STATES = (OPEN, PENDING_REVIEW)
+    OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
 
     VERBS = {
         'submit': 'submitted',
@@ -56,7 +57,30 @@ class Task(models.Model):
         'reopen': 'reopened',
         'unsubmit': 'requested changes to',
         'close': 'approved',
+        'block': 'blocked',
+        'unblock': 'unblocked',
     }
+
+    CODES = [
+        ('apply-amendment', 'Apply amendment'),
+        ('check-update-primary', 'Check / update primary work'),
+        ('check-update-repeal', 'Check / update repeal'),
+        ('commences-on-date-missing', "'Commences on' date missing"),
+        ('import-content', 'Import content'),
+        ('link-amendment-active', 'Link amendment (active)'),
+        ('link-amendment-passive', 'Link amendment (passive)'),
+        ('link-amendment-pending-commencement', 'Link amendment (pending commencement)'),
+        ('link-commencement-active', 'Link commencement (active)'),
+        ('link-commencement-passive', 'Link commencement (passive)'),
+        ('link-gazette', 'Link gazette'),
+        ('link-primary-work', 'Link primary work'),
+        ('link-repeal', 'Link repeal'),
+        ('no-repeal-match', 'Link repeal (not found)'),
+        ('link-repeal-pending-commencement', 'Link repeal (pending commencement)'),
+        ('link-subleg', 'Link subleg'),
+        ('link-taxonomy', 'Link taxonomy'),
+        ('review-work-expression', 'Sign-off'),
+    ]
 
     class Meta:
         permissions = (
@@ -66,6 +90,7 @@ class Task(models.Model):
             ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
             ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
+            ('block_task', 'Can block a task from being done, and unblock it'),
         )
 
     objects = TaskManager.from_queryset(TaskQuerySet)()
@@ -99,6 +124,8 @@ class Task(models.Model):
     labels = models.ManyToManyField('TaskLabel', related_name='tasks')
 
     extra_data = JSONField(null=True, blank=True)
+
+    blocked_by = models.ManyToManyField('self', related_name='blocking', symmetrical=False, help_text='Tasks blocking this task from being done.')
 
     @property
     def place(self):
@@ -160,13 +187,13 @@ class Task(models.Model):
         return tasks
 
     @classmethod
-    def decorate_permissions(cls, tasks, view):
+    def decorate_permissions(cls, tasks, user):
         for task in tasks:
-            task.change_task_permission = view.request.user.has_perm('indigo_api.change_task')
-            task.submit_task_permission = has_transition_perm(task.submit, view)
-            task.reopen_task_permission = has_transition_perm(task.reopen, view)
-            task.unsubmit_task_permission = has_transition_perm(task.unsubmit, view)
-            task.close_task_permission = has_transition_perm(task.close, view)
+            task.change_task_permission = user.has_perm('indigo_api.change_task')
+            task.submit_task_permission = has_transition_perm(task.submit, user)
+            task.reopen_task_permission = has_transition_perm(task.reopen, user)
+            task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)
+            task.close_task_permission = has_transition_perm(task.close, user)
 
         return tasks
 
@@ -182,9 +209,7 @@ class Task(models.Model):
         return tasks
 
     # submit for review
-    def may_submit(self, view):
-        user = view.request.user
-
+    def may_submit(self, user):
         if user.has_perm('indigo_api.close_task'):
             senior_or_assignee = True
         else:
@@ -192,7 +217,7 @@ class Task(models.Model):
 
         return senior_or_assignee and \
                user.is_authenticated and \
-               user.editor.has_country_permission(view.country) and \
+               user.editor.has_country_permission(self.country) and \
                user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
@@ -203,20 +228,23 @@ class Task(models.Model):
         self.assigned_to = self.reviewed_by_user
 
     # cancel
-    def may_cancel(self, view):
-        return view.request.user.is_authenticated and \
-               view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
+    def may_cancel(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.cancel_task')
 
-    @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
+    @transition(field=state, source=['open', 'pending_review', 'blocked'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
         self.changes_requested = False
         self.assigned_to = None
         self.closed_at = timezone.now()
+        self.update_blocked_tasks(self, user)
 
     # reopen – moves back to 'open'
-    def may_reopen(self, view):
-        return view.request.user.is_authenticated and \
-               view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
+    def may_reopen(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.reopen_task')
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user, **kwargs):
@@ -224,11 +252,11 @@ class Task(models.Model):
         self.closed_at = None
 
     # unsubmit – moves back to 'open'
-    def may_unsubmit(self, view):
-        return view.request.user.is_authenticated and \
-               view.request.user.editor.has_country_permission(view.country) and \
-               view.request.user.has_perm('indigo_api.unsubmit_task') and \
-               (view.request.user == self.assigned_to or not self.assigned_to)
+    def may_unsubmit(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.unsubmit_task') and \
+               (user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user, **kwargs):
@@ -239,13 +267,13 @@ class Task(models.Model):
         self.changes_requested = True
 
     # close
-    def may_close(self, view):
-        return view.request.user.is_authenticated and \
-               view.request.user.editor.has_country_permission(view.country) and \
-               (view.request.user.has_perm('close_any_task') or
-                (view.request.user.has_perm('indigo_api.close_task') and
-                (view.request.user == self.assigned_to or
-                 (not self.assigned_to and self.submitted_by_user != view.request.user))))
+    def may_close(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               (user.has_perm('close_any_task') or
+                (user.has_perm('indigo_api.close_task') and
+                 (user == self.assigned_to or
+                  (not self.assigned_to and self.submitted_by_user != user))))
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user, **kwargs):
@@ -255,9 +283,42 @@ class Task(models.Model):
         self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None
+        self.update_blocked_tasks(self, user)
 
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
+
+    # block
+    def may_block(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.block_task')
+
+    @transition(field=state, source=['open', 'pending_review'], target='blocked', permission=may_block)
+    def block(self, user, **kwargs):
+        if self.assigned_to:
+            self.assign_to(None, user)
+
+    # unblock
+    def may_unblock(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.block_task') and \
+               (not self.blocked_by.exists())
+
+    @transition(field=state, source=['blocked'], target='open', permission=may_unblock)
+    def unblock(self, user, **kwargs):
+        pass
+
+    def update_blocked_tasks(self, task, user):
+        # don't try to change m2m relationship on tasks that haven't been saved yet
+        if task.pk:
+            blocked_tasks = list(task.blocking.all())
+            # this task is no longer blocking other tasks
+            task.blocking.clear()
+            for blocked_task in blocked_tasks:
+                action.send(user, verb='resolved a task previously blocking', action_object=blocked_task,
+                            target=task, place_code=blocked_task.place.place_code)
 
     def resolve_anchor(self):
         if self.annotation:
@@ -303,7 +364,7 @@ class Task(models.Model):
             groups[key]['tasks'] = group
 
         # enforce column ordering
-        return [groups.get(g) for g in ['open', 'assigned', 'pending_review', 'done', 'cancelled'] if g in groups]
+        return [groups.get(g) for g in ['blocked', 'open', 'assigned', 'pending_review', 'done', 'cancelled'] if g in groups]
 
     def get_extra_data(self):
         if self.extra_data is None:

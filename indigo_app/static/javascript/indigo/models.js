@@ -42,7 +42,8 @@
         return;
       }
 
-      this.trigger('change:dom', options);
+      options.fromContent = true;
+      this.trigger('change:dom', model, options);
     },
 
     domChanged: function(model, options) {
@@ -76,7 +77,7 @@
         }
 
         // entire document has changed
-        if (newNodes.length != 1) {
+        if (newNodes.length !== 1) {
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
         console.log('Replacing whole document');
@@ -110,7 +111,7 @@
       }
 
       // ensure attachment ids are correct, we could have deleted an attachment
-      if (oldNode.tagName == 'attachment') {
+      if (oldNode.tagName === 'attachment') {
         this.fixAttachmentIds();
       }
 
@@ -436,6 +437,25 @@
     tradition: function() {
       return Indigo.traditions.get(this.get('country'));
     },
+
+    /** Get a live AnnotationList for this document.
+     */
+    annotations: function() {
+      if (!this._annotations) {
+        this._annotations = new Indigo.AnnotationList([], {document: this});
+        this._annotations.fetch({reset: true});
+      }
+      return this._annotations;
+    },
+
+    /** Get a live AnnotationThreadList for this document.
+     */
+    annotationThreads: function() {
+      if (!this._annotationThreads) {
+        this._annotationThreads = new Indigo.AnnotationThreadList([], {annotations: this.annotations()});
+      }
+      return this._annotationThreads;
+    }
   });
 
   Indigo.Library = Backbone.Collection.extend({
@@ -671,6 +691,7 @@
 
   Indigo.AnnotationList = Backbone.Collection.extend({
     model: Indigo.Annotation,
+    comparator: 'created_at',
 
     initialize: function(models, options) {
       this.document = options.document;
@@ -684,6 +705,89 @@
     url: function() {
       return this.document.url() + '/annotations';
     },
+  });
+
+  /**
+   * A thread of annotations, with at least one annotation (the root).
+   */
+  Indigo.AnnotationThread = Backbone.Model.extend({
+    initialize: function(attribs, options) {
+      this.document = options.document;
+      this.annotations = new Backbone.Collection(options.annotations, { comparator: 'created_at' });
+      this.root().on('destroy', this.destroyed.bind(this));
+    },
+
+    root: function() {
+      return this.annotations.first();
+    },
+
+    /** Add a new annotation to this thread.
+     */
+    add: function(attribs) {
+      attribs.in_reply_to = this.root().get('id');
+      attribs.anchor_id = this.root().get('anchor_id');
+      const anntn = new Indigo.Annotation(attribs);
+
+      // add it to the master annotation list
+      this.document.annotations().add(anntn);
+      // add it to our local thread list
+      this.annotations.add(anntn);
+
+      return anntn;
+    },
+
+    destroyed: function() {
+      // root was destroyed, delete everything else
+      const root = this.root();
+      this.annotations.forEach(a => {
+        if (a !== root) a.destroy();
+      });
+      this.trigger('destroy');
+    }
+  });
+
+  /**
+   * Collection that groups a documents annotations into threads, and
+   * manages the creation/removal of threads.
+   */
+  Indigo.AnnotationThreadList = Backbone.Collection.extend({
+    initialize: function(models, options) {
+      this.document = options.annotations.document;
+      this.annotations = options.annotations;
+      this.annotations.on('reset', this.prepare.bind(this));
+      this.prepare();
+    },
+
+    prepare: function() {
+      // group annotations by thread
+      const groups = Object.values(this.annotations.groupBy(a => a.get('in_reply_to') || a.get('id')));
+      this.reset(groups.map(g => this.makeThread(g)));
+    },
+
+    /**
+     * Start a new thread using the given attributes for the root annotation.
+     */
+    createThread: function(attribs) {
+      const root = this.annotations.add(attribs);
+      const thread = this.makeThread([root]);
+      this.add(thread);
+      return thread;
+    },
+
+    makeThread: function(annotations) {
+      const thread = new Indigo.AnnotationThread({}, {annotations: annotations, document: this.document});
+      const root = thread.root();
+
+      // monitor the thread: if the root annotation is deleted, remove this thread from the collection
+      thread.on('remove', e => {
+        if (e === root) {
+          // root annotation has been deleted, remove this thread
+          this.remove(thread);
+        }
+      });
+
+      return thread;
+    }
   });
 
   Indigo.DocumentActivity = Backbone.Model.extend({

@@ -34,7 +34,15 @@ class EditorBadge(PermissionBadge):
                    'indigo_api.add_arbitraryexpressiondate', 'indigo_api.change_arbitraryexpressiondate', 'indigo_api.delete_arbitraryexpressiondate',
                    # required when restoring a document version
                    'reversion.add_version', 'reversion.change_version',
-                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
+                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task', 'indigo_api.block_task')
+
+
+class PlaceAdminBadge(PermissionBadge):
+    slug = 'place-admin'
+    name = 'Place Admin'
+    group_name = name + ' Badge'
+    description = 'Can edit place settings'
+    permissions = ('indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
 
 
 class ResearcherBadge(PermissionBadge):
@@ -62,16 +70,32 @@ class SuperReviewerBadge(PermissionBadge):
     slug = 'super-reviewer'
     name = 'Super Reviewer'
     group_name = name + ' Badge'
-    description = 'Can approve any tasks and edit place settings'
-    permissions = ('indigo_api.close_any_task',
-                   'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
+    description = 'Can approve any tasks'
+    permissions = ('indigo_api.close_any_task',)
+
+
+class TaxonomistBadge(PermissionBadge):
+    slug = 'taxonomist'
+    name = 'Taxonomist'
+    group_name = name + ' Badge'
+    description = 'Can manage taxonomies'
+    permissions = (
+        'indigo_api.add_taxonomyvocabulary',
+        'indigo_api.change_taxonomyvocabulary',
+        'indigo_api.delete_taxonomyvocabulary',
+        'indigo_api.add_vocabularytopic',
+        'indigo_api.change_vocabularytopic',
+        'indigo_api.delete_vocabularytopic',
+                   )
 
 
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
+badges.register(PlaceAdminBadge)
 badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)
+badges.register(TaxonomistBadge)
 
 
 # when a user signs up, grant them the contributor badge immediately

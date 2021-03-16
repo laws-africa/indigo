@@ -72,6 +72,7 @@
                       <div class="progress mt-1 progress-thin">
                         <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="open"></div>
                         <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                        <div class="progress-bar task-badge-blocked" style="width: {{ work.task_stats.blocked_task_ratio }}%" title="blocked"></div>
                       </div>
                     {% endif %}
                   </div>
@@ -134,6 +135,7 @@
                             <div class="progress mt-1 progress-thin">
                               <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="open"></div>
                               <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                              <div class="progress-bar task-badge-blocked" style="width: {{ doc.task_stats.blocked_task_ratio }}%" title="blocked"></div>
                             </div>
                           {% endif %}
                         </div>
@@ -161,6 +163,7 @@
             </div>
           </div>
         {% endfor %}
+
       </div>
     </div>
   </div>

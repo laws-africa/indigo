@@ -11,14 +11,12 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict, HttpResponse
+from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
-import io
-import xlsxwriter
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
@@ -27,6 +25,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
+from indigo_app.xlsx_exporter import generate_xlsx
 
 log = logging.getLogger(__name__)
 
@@ -301,8 +300,8 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         self.form.is_valid()
 
         if params.get('format') == 'xlsx':
-            return self.generate_xlsx()
-        
+            return generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
+
         return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -328,7 +327,8 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         obj.task_stats['n_tasks'] = sum(counts.values())
         obj.task_stats['n_active_tasks'] = (
             obj.task_stats['n_open_tasks'] +
-            obj.task_stats['n_pending_review_tasks']
+            obj.task_stats['n_pending_review_tasks'] +
+            obj.task_stats['n_blocked_tasks']
         )
         obj.task_stats['pending_task_ratio'] = 100 * (
             obj.task_stats['n_pending_review_tasks'] /
@@ -336,6 +336,10 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         )
         obj.task_stats['open_task_ratio'] = 100 * (
             obj.task_stats['n_open_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+        obj.task_stats['blocked_task_ratio'] = 100 * (
+            obj.task_stats['n_blocked_tasks'] /
             (obj.task_stats['n_active_tasks'] or 1)
         )
 
@@ -419,102 +423,6 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
     def get_xlsx_filename(self):
         return f"legislation {self.kwargs['place']}.xlsx"
-
-    def generate_xlsx(self):
-        queryset = self.get_queryset()
-        filename = self.get_xlsx_filename()
-        output = io.BytesIO()
-        workbook = xlsxwriter.Workbook(output)
-
-        self.write_works(workbook, queryset)
-        self.write_relationships(workbook, queryset)
-
-        workbook.close()
-        output.seek(0)
-
-        response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        return response
-
-    def write_works(self, workbook, queryset):
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        works_sheet = workbook.add_worksheet('Works')
-        works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
-                               'Number', 'Publication Date', 'Publication Number',
-                               'Assent Date', 'Commenced', 'Main Commencement Date',
-                               'Repealed Date', 'Parent Work', 'Stub']        
-        # Write the works sheet column titles
-        for position, title in enumerate(works_sheet_columns, 1):
-            works_sheet.write(0, position, title)
-
-        for row, work in enumerate(queryset, 1):
-            works_sheet.write(row, 0, row)
-            works_sheet.write(row, 1, work.frbr_uri)
-            works_sheet.write(row, 2, work.place.place_code) 
-            works_sheet.write(row, 3, work.title)
-            works_sheet.write(row, 4, work.subtype)
-            works_sheet.write(row, 5, work.year)
-            works_sheet.write(row, 6, work.number)
-            works_sheet.write(row, 7, work.publication_date, date_format)
-            works_sheet.write(row, 8, work.publication_number)
-            works_sheet.write(row, 9, work.assent_date, date_format)
-            works_sheet.write(row, 10, work.commenced)
-            works_sheet.write(row, 11, work.commencement_date, date_format)
-            works_sheet.write(row, 12, work.repealed_date, date_format)
-            works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
-            works_sheet.write(row, 14, work.stub)
-
-    def write_relationships(self, workbook, queryset):
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        relationships_sheet = workbook.add_worksheet('Relationships')
-        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
-
-        # write the relationships sheet column titles
-        for position, title in enumerate(relationships_sheet_columns, 1):
-            relationships_sheet.write(0, position, title)
-
-        row = 1
-        for work in queryset:
-            family = []
-
-            # parent work
-            if work.parent_work:
-                family.append({
-                    'rel': 'subsidiary of',
-                    'work': work.parent_work.frbr_uri,
-                    'date': None
-                })
-
-            # amended works
-            amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
-            family = family + [{
-                'rel': 'amends',
-                'work': a.amended_work.frbr_uri,
-                'date': a.date
-            } for a in amended]
-
-            # repealed works
-            repealed_works = work.repealed_works.all()
-            family = family + [{
-                'rel': 'repeals',
-                'work': r.frbr_uri,
-                'date': r.repealed_date
-            } for r in repealed_works]
-
-            # commenced works
-            family = family + [{
-                'rel': 'commences',
-                'work': c.commenced_work.frbr_uri,
-                'date': c.date
-            } for c in work.commencements_made.all()]
-
-            for relationship in family:
-                relationships_sheet.write(row, 0, row)
-                relationships_sheet.write(row, 1, work.frbr_uri)
-                relationships_sheet.write(row, 2, relationship['rel'])
-                relationships_sheet.write(row, 3, relationship['work'])
-                relationships_sheet.write(row, 4, relationship['date'], date_format)
-                row += 1
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
@@ -730,6 +638,17 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
+
+
+class PlaceWorksIndexView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+    tab = 'place_settings'
+    permission_required = ('indigo_api.change_placesettings',)
+
+    def get(self, request, *args, **kwargs):
+        works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
+        filename = f"Full index for {self.place}.xlsx"
+
+        return generate_xlsx(works, filename, True)
 
 
 class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):

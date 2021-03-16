@@ -1,0 +1,4 @@
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+ZA,,Parent,,,1,2020,,,,2020-01-01,,,,,,,,,,,,,,,,,
+ZA,,Child,,,2,2020,,,,2020-01-01,,,,/akn/za/act/2020/1 – Parent,,,,,,,,,,,,,
+ZA,,Lonely child,,,3,2020,,,,2020-01-01,,,,/akn/za/act/2020/xx – Non-existent parent,,,,,,,,,,,,,

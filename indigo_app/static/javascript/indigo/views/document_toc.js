@@ -37,7 +37,7 @@
           // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
 
-        } else if (force || (index > -1 && this.toc.length != oldLength)) {
+        } else if (force || (index > -1 && this.toc.length !== oldLength)) {
           // arrangament of the TOC has changed, re-select the item we want
           this.selectItem(index, true);
 
@@ -58,6 +58,7 @@
       var roots = [],
           toc = [];
       var tradition = Indigo.traditions.get(this.model.document.get('country'));
+      var self = this;
 
       function iter_children(node, parent_item) {
         var kids = node.children;
@@ -85,6 +86,17 @@
         }
       }
 
+      function getHeadingText(node) {
+        var headingText = '';
+        var result = self.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
+
+        for (var i = 0; i < result.snapshotLength; i++) {
+          headingText += result.snapshotItem(i).textContent;
+        }
+
+        return headingText;
+      }
+
       function generate_toc(node) {
         var $node = $(node);
         var $component = $node.closest('attachment');
@@ -96,7 +108,7 @@
 
         var item = {
           'num': $node.children('num').text(),
-          'heading': $node.children('heading').text(),
+          'heading': getHeadingText(node),
           'element': node,
           'type': node.localName,
           'id': qualified_id,
@@ -145,7 +157,7 @@
         var severity = _.map(entry.issues, function(issue) { return issue.get('severity'); });
         severity = _.contains(severity, 'error') ? 'error' : (_.contains(severity, 'warning') ? 'warning': 'information');
 
-        entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length == 1 ? '' : 's');
+        entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length === 1 ? '' : 's');
         entry.issues_description = entry.issues.map(function(issue) { return issue.get('message'); }).join('<br>');
         entry.issues_severity = severity;
       });
@@ -217,7 +229,7 @@
 
       i = Math.min(this.toc.length-1, i);
 
-      if (force || index != i) {
+      if (force || index !== i) {
         // unmark the old one
         if (index > -1 && index < this.toc.length) {
           delete (this.toc[index].selected);
@@ -240,7 +252,7 @@
 
     selectItemById: function(itemId) {
       for (var i = 0; i < this.toc.length; i++) {
-        if (this.toc[i].id == itemId) {
+        if (this.toc[i].id === itemId) {
           this.selectItem(i, true);
           return true;
         }
@@ -251,7 +263,7 @@
 
     click: function(e) {
       e.preventDefault();
-      if (Indigo.view.bodyEditorView.canCancelEdits()) {
+      if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem($(e.target).data('index'), true);
       }
     },

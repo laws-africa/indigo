@@ -1,5 +1,4 @@
 import logging
-import itertools
 from collections import defaultdict
 
 log = logging.getLogger(__name__)

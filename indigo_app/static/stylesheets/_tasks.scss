@@ -21,6 +21,10 @@
   background-color: $grey;
 }
 
+.task-badge-blocked {
+  background-color: $red;
+}
+
 .task-icon-open:before {
   content: "\f08d";
   color: $primary;
@@ -41,6 +45,10 @@
 .task-icon-assigned:before {
   content: "\f4fc";
   color: $primary;
+}
+.task-icon-blocked:before {
+  content: "\f05e";
+  color: $red;
 }
 
 .task-icon-assignee {
@@ -92,6 +100,9 @@
 .task-border-done {
   border: 1px solid $success;
 }
+.task-border-blocked {
+  border: 1px solid $red;
+}
 .text-open {
   color: $primary
 }
@@ -101,9 +112,15 @@
 .text-done {
   color: $success;
 }
+.text-blocked {
+  color: $red;
+}
 
 .bg-pending_review {
   background-color: $orange;
+}
+.bg-blocked {
+  background-color: $red;
 }
 
 .narrow {

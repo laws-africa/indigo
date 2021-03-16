@@ -8,7 +8,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.db.models import Count
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -21,7 +20,7 @@ import datetime
 
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement
+    ArbitraryExpressionDate, Commencement, Workflow
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -300,8 +299,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        context['provisions'] = provisions = self.work.commenceable_provisions()
-        context['uncommenced_provisions'] = self.work.uncommenced_provisions()
+        context['provisions'] = provisions = self.work.all_commenceable_provisions()
+        context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
@@ -341,7 +340,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = self.work.commenceable_provisions()
+        kwargs['provisions'] = self.work.all_commenceable_provisions()
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -780,7 +779,7 @@ class WorkTasksView(WorkViewBase, DetailView):
         Task.decorate_submission_message(context['tasks'], self)
 
         Task.decorate_potential_assignees(context['tasks'], self.country)
-        Task.decorate_permissions(context['tasks'], self)
+        Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
 
@@ -834,6 +833,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self._bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
             self._bulk_creator.country = self.country
             self._bulk_creator.locality = self.locality
+            self._bulk_creator.request = self.request
+            self._bulk_creator.user = self.request.user
+            self._bulk_creator.testing = False
         return self._bulk_creator
 
     def get_initial(self):
@@ -843,7 +845,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
+        form.fields['workflow'].queryset = Workflow.objects.filter(country=self.country, locality=self.locality, closed=False).order_by('title').all()
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 
@@ -891,9 +893,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
 
-                works = self.bulk_creator.create_works(self, table, dry_run, workflow=workflow, user=self.request.user)
+                works = self.bulk_creator.create_works(table, dry_run, workflow)
                 if not dry_run:
-                    messages.success(self.request, f"Imported {len([w for w in works if w.get('status') == 'success'])} works.")
+                    messages.success(self.request, f"Imported {len([w for w in works if w.status == 'success'])} works.")
             except ValidationError as e:
                 error = str(e)
 

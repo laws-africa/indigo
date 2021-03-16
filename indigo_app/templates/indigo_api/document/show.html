@@ -114,8 +114,6 @@
 
 {% block js %}
   {{ block.super }}
-  <script type="text/javascript" src="/static/javascript/ace/ace.js"></script>
-
   {# include the document as JSON #}
   <script type="text/javascript">
   window.Indigo.Preloads.document = {{ document_json|safe }};
@@ -127,5 +125,9 @@
   </script>
 
   <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+  <script src="{% static 'lib/monaco-editor-0.20.0/loader.js' %}"></script>
+  <script src="{% static 'lib/monaco-editor-0.20.0/editor/editor.main.nls.js' %}"></script>
+  <script src="{% static 'lib/monaco-editor-0.20.0/editor/editor.main.js' %}"></script>
 
 {% endblock %}

@@ -37,6 +37,10 @@ class TaxonomiesAPIV2Test(APITestCase):
             "title": "Laws.Africa Subject Taxonomy",
             "topics": [
                 {
+                    "level_1": "Estates, Trusts and Succession",
+                    "level_2": None,
+                },
+                {
                     "level_1": "Money and Business",
                     "level_2": "Banking"
                 },

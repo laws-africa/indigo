@@ -112,7 +112,7 @@ class AnnotationAPITest(APITestCase):
     def test_create_annotation_task(self):
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor_id': 'section.1',
+            'anchor_id': 'sec_1',
         })
 
         assert_equal(response.status_code, 201)
@@ -120,6 +120,21 @@ class AnnotationAPITest(APITestCase):
 
         response = self.client.post('/api/documents/10/annotations/%s/task' % note_id)
         assert_equal(response.status_code, 201)
-        assert_equal(response.data['title'], '"section.1": hello')
+        assert_equal(response.data['title'], '"Section 1.": hello')
+        assert_equal(response.data['state'], 'open')
+        assert_is_none(response.data.get('anchor_id'))
+
+    def test_create_annotation_task_anchor_missing(self):
+        response = self.client.post('/api/documents/10/annotations', {
+            'text': 'hello',
+            # sec_99 doesn't exist
+            'anchor_id': 'sec_99',
+        })
+        assert_equal(response.status_code, 201)
+        note_id = response.data['id']
+
+        response = self.client.post('/api/documents/10/annotations/%s/task' % note_id)
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['title'], '"sec_99": hello')
         assert_equal(response.data['state'], 'open')
         assert_is_none(response.data.get('anchor_id'))

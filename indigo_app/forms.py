@@ -238,7 +238,7 @@ class TaskForm(forms.ModelForm):
         self.country = country
         self.locality = locality
         self.fields['workflows'].queryset = self.fields['workflows'].queryset.\
-            filter(country=self.country, locality=self.locality)
+            filter(country=self.country, locality=self.locality, closed=False).order_by('title')
 
 
 class TaskFilterForm(forms.Form):
@@ -247,6 +247,8 @@ class TaskFilterForm(forms.Form):
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
+    type = forms.MultipleChoiceField(choices=Task.CODES)
+    country = forms.ModelMultipleChoiceField(queryset=Country.objects)
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -255,6 +257,12 @@ class TaskFilterForm(forms.Form):
         self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 
     def filter_queryset(self, queryset):
+        if self.cleaned_data.get('country'):
+            queryset = queryset.filter(country__in=self.cleaned_data['country'])
+
+        if self.cleaned_data.get('type'):
+            queryset = queryset.filter(code__in=self.cleaned_data['type'])
+
         if self.cleaned_data.get('labels'):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
@@ -553,7 +561,7 @@ class NewCommencementForm(forms.ModelForm):
 class PlaceSettingsForm(forms.ModelForm):
     class Meta:
         model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
+        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text')
 
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(

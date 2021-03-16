@@ -1,0 +1,9 @@
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,repeals_on_date,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+ZA,,Main,,,1,2020,,,,2020-01-01,2020-01-01,,,,,,,,,,,,,,,,,
+ZA,,Repealing work,,,2,2020,,,,2020-06-01,2020-06-01,x,,,,,,,,,,/akn/za/act/2020/1,2020-06-03,,,,,
+ZA,,Trying to repeal the same main,,,6,2020,,,,2020-06-01,2020-06-01,x,,,,,,,,,,/akn/za/act/2020/1,,,,,,
+ZA,,Other main,,,3,2020,,,,2020-01-01,2020-01-01,,,,,,,,,,,,,,,,,
+ZA,,"Repealing work, no commencement",,,4,2020,,,,2020-06-01,,x,,,,,,,,,,/akn/za/act/2020/3,,,,,,
+ZA,,Repealer of nothing,,,5,2020,,,,2020-06-01,2020-06-01,x,,,,,,,,,,/akn/za/act/2020/xx,,,,,,
+ZA,,Yet another main,,,7,2020,,,,2020-01-01,2020-01-01,,,,,,,,,,,,,,,,,
+ZA,,Repealing work (also successful),,,8,2020,,,,2020-06-01,2020-06-01,x,,,,,,,,,,/akn/za/act/2020/7,,,,,,

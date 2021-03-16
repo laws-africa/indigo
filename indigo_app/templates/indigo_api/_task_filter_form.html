@@ -1,56 +1,71 @@
 {% load account %}
 
 <form method="GET" id="task-filter-form" onchange="this.submit();">
-  <div class="d-flex">
-    {% if status %}
-      <div class="mr-2">
-        <select class="narrow selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
-          <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
-          <option value="assigned" {% if 'assigned' in form.state.value %}selected{% endif %}>Assigned</option>
-          <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
-          <option data-divider="true"></option>
-          <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
-          <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>
+  <div class="d-flex flex-row">
+    <div class="d-flex row">
+      <div class="mr-2 mb-2">
+        <select class="narrow selectpicker notooltip" multiple title="Task type" name="{{ form.type.html_name }}"
+                data-style="btn-outline-success" data-actions-box="true" data-live-search="true" data-size="7">
+          {% for opt in form.type %}
+            {{ opt }}
+          {% endfor %}
         </select>
       </div>
-    {% endif %}
 
-    <div class="mr-2">
-      <select class="narrow selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}" data-style="btn-outline-secondary">
-        {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
-          <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>Me</option>
-          <option data-divider="true"></option>
-        {% endif %}
+      <div class="mr-2 mb-2">
+        <select class="narrow selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}"
+                data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
+          {% for label in form.fields.labels.queryset %}
+            <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-        {% for usr in form.fields.assigned_to.queryset %}
-          {% if usr != user %}
-            <option value="{{ usr.pk }}" {% if usr.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>{% user_display usr %}</option>
+      <div class="mr-2 mb-2">
+        <select class="narrow selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}"
+                data-style="btn-outline-info" data-actions-box="true" data-live-search="true" data-size="7">
+          {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
+            <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>Me</option>
+            <option data-divider="true"></option>
           {% endif %}
-        {% endfor %}
-      </select>
-    </div>
 
-    <div class="mr-2">
-      <select class="narrow selectpicker notooltip" multiple title="Submitted by" name="{{ form.submitted_by.name }}" data-style="btn-outline-secondary">
-        {% if user.is_authenticated and user in form.fields.submitted_by.queryset %}
-          <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.submitted_by.value %}selected{% endif %}>Me</option>
-          <option data-divider="true"></option>
-        {% endif %}
+          {% for usr in form.fields.assigned_to.queryset %}
+            {% if usr != user %}
+              <option value="{{ usr.pk }}" {% if usr.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>{% user_display usr %}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
 
-        {% for usr in form.fields.submitted_by.queryset %}
-          {% if usr != user %}
-            <option value="{{ usr.pk }}" {% if usr.pk|stringformat:"i" in form.submitted_by.value %}selected{% endif %}>{% user_display usr %}</option>
+      <div class="mr-2 mb-2">
+        <select class="narrow selectpicker notooltip" multiple title="Submitted by" name="{{ form.submitted_by.name }}"
+                data-style="btn-outline-warning" data-actions-box="true" data-live-search="true" data-size="7">
+          {% if user.is_authenticated and user in form.fields.submitted_by.queryset %}
+            <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.submitted_by.value %}selected{% endif %}>Me</option>
+            <option data-divider="true"></option>
           {% endif %}
-        {% endfor %}
-      </select>
-    </div>
 
-    <div class="mr-2">
-      <select class="narrow selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}" data-style="btn-outline-secondary">
-        {% for label in form.fields.labels.queryset %}
-          <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
-        {% endfor %}
-      </select>
+          {% for usr in form.fields.submitted_by.queryset %}
+            {% if usr != user %}
+              <option value="{{ usr.pk }}" {% if usr.pk|stringformat:"i" in form.submitted_by.value %}selected{% endif %}>{% user_display usr %}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if status %}
+        <div class="mr-2 mb-2">
+          <select class="narrow selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
+            <option value="blocked" {% if 'blocked' in form.state.value %}selected{% endif %}>Blocked</option>
+            <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
+            <option value="assigned" {% if 'assigned' in form.state.value %}selected{% endif %}>Assigned</option>
+            <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
+            <option data-divider="true"></option>
+            <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
+            <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>
+          </select>
+        </div>
+      {% endif %}
     </div>
 
     {% if format %}

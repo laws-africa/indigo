@@ -161,3 +161,47 @@ class TasksTest(WebTest):
     def test_available_tasks(self):
         response = self.app.get('/tasks/available/')
         self.assertEqual(response.status_code, 200)
+
+    def test_block_unblock_task(self):
+        task = Task.objects.create(
+            title="Test title",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+        blocking_task = Task.objects.create(
+            title="Blocking task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+        second_blocking_task = Task.objects.create(
+            title="Second blocking task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+
+        form = self.app.get(f'/places/za/tasks/{task.id}/').forms['task-blocked_by-form']
+        form['blocked_by'] = [blocking_task.id]
+        form.submit().follow()
+
+        task.refresh_from_db()
+        self.assertEqual(list(task.blocked_by.all()), [blocking_task])
+        self.assertEqual(task.state, Task.BLOCKED)
+
+        # update it
+        form['blocked_by'] = [blocking_task.id, second_blocking_task.id]
+        form.submit().follow()
+
+        task.refresh_from_db()
+        self.assertEqual(list(task.blocked_by.all()), [blocking_task, second_blocking_task])
+        self.assertEqual(task.state, Task.BLOCKED)
+
+        # now unblock it
+        form['blocked_by'] = ''
+        form.submit().follow()
+
+        task.refresh_from_db()
+        self.assertEqual(list(task.blocked_by.all()), [])
+        self.assertEqual(task.state, Task.OPEN)

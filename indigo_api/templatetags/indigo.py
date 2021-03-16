@@ -63,12 +63,17 @@ def make_beautiful(provisions, commenceable_provisions):
 
 
 @register.simple_tag
-def commenced_provisions_description(work, commencement, uncommenced=False):
+def commenced_provisions_description(document, commencement, uncommenced=False):
     if uncommenced:
-        provisions = [p.id for p in work.uncommenced_provisions()]
+        provisions = [p.id for p in document.uncommenced_provisions()]
     else:
         provisions = commencement.provisions
 
-    commenceable_provisions = work.commenceable_provisions()
+    commenceable_provisions = document.commenceable_provisions()
 
     return make_beautiful(provisions, commenceable_provisions)
+
+
+@register.simple_tag
+def commencements_relevant_at_date(document):
+    return document.commencements_relevant_at_expression_date()

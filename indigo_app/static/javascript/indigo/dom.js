@@ -84,12 +84,12 @@ $(function() {
    *
    * This does its best to try to find a match, walking up the anchor hierarchy if possible.
    */
-  Indigo.dom.targetToRange = function(target) {
+  Indigo.dom.targetToRange = function(target, root) {
     var anchor, range,
         anchor_id = target.anchor_id,
         ix = anchor_id.lastIndexOf('.');
 
-    anchor = document.getElementById(anchor_id);
+    anchor = root.querySelector(`[id="${anchor_id}"]`);
 
     if (!target.selectors) {
       // no selectors, old-style annotation for an entire element
@@ -105,7 +105,7 @@ $(function() {
     while (!anchor && ix > -1) {
       anchor_id = anchor_id.substring(0, ix);
       ix = anchor_id.lastIndexOf('.');
-      anchor = document.getElementById(anchor_id);
+      anchor = root.querySelector(`[id="${anchor_id}"]`);
     }
 
     if (!anchor) return;
@@ -137,12 +137,23 @@ $(function() {
         }
       } catch (err) {
         // couldn't match to the position, try the quote selector instead
+        console.log("Error in textPositionToRange");
+        console.log(posnSelector);
+        console.log(err, err.stack);
       }
     }
 
     // fall back to the quote selector
     if (quoteSelector) {
-      return Indigo.dom.textQuoteToRange(anchor, quoteSelector);
+      try {
+        return Indigo.dom.textQuoteToRange(anchor, quoteSelector);
+      } catch (err) {
+        // couldn't match to the position, give up
+        console.log("Error in textQuoteToRange");
+        console.log(quoteSelector);
+        console.log(err, err.stack);
+        return null;
+      }
     }
   };
 
@@ -288,35 +299,5 @@ $(function() {
       posn.end = Math.min(posn.end, root.textContent.length);
       return Indigo.dom.textPositionToRange(root, posn);
     }
-  };
-
-  /**
-   * Serialize an HTML node to an XML string.
-   *
-   * This transforms from html -> string -> xhtml so that the XML is well formed.
-   * It also ensures that entity references that are defined in HTML but not in XML
-   * (eg. &nbsp;) are substituted for their unicode equivalents.
-   */
-  Indigo.dom.htmlNodeToXml = function(node) {
-    // html -> string
-    var xml = new XMLSerializer().serializeToString(node);
-
-    // translate HTML entities that XML doesn't understand
-    // 1. escape away valid XML entities
-    //    https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML
-    xml = xml.replace(/&(quot|amp|apos|lt|gt);/g, '&la_$1;');
-    // 2. decode named entities
-    xml = he.decode(xml);
-    // 3. put the valid XML entities back
-    xml = xml.replace(/&la_(quot|amp|apos|lt|gt);/g, '&$1;');
-
-    return xml;
-  };
-
-  /**
-   * Transform an HTML node into an XML node.
-   */
-  Indigo.dom.htmlNodeToXmlNode = function(node) {
-    return $.parseXML(Indigo.dom.htmlNodeToXml(node));
   };
 });

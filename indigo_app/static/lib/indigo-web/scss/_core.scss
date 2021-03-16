@@ -105,7 +105,8 @@
   /* Indent list-like containers that have margin numbers.
      For the exception where these are not numbered, .akn--no-indent is applied to override the indent. */
   .akn-subsection,
-  .akn-paragraph {
+  .akn-paragraph,
+  .akn-subparagraph {
     margin-left: $akn-para-indent;
     margin-bottom: $akn-para-spacing;
 
@@ -118,6 +119,12 @@
       float: left;
       margin-left: -$akn-para-indent;
       margin-right: 0.25em;
+    }
+
+    &> .akn-heading {
+      font-size: inherit;
+      text-align: inherit;
+      line-height: inherit;
     }
   }
 
@@ -182,4 +189,32 @@
   img {
     max-width: 100%;
   }
+
+  /* footnotes */
+  .akn-authorialNote {
+    display: flex;
+    font-size: small;
+    margin-top: $akn-para-spacing;
+    margin-bottom: $akn-section-spacing;
+
+    & > .akn-authorialNote--marker {
+      margin-right: $akn-para-indent / 2;
+    }
+  }
+  .akn-authorialNote + .akn-authorialNote {
+    margin-top: -$akn-section-spacing;
+  }
+
+  /* quotes */
+  .akn-embeddedStructure {
+    display: block;
+    margin-left: $akn-quote-indent;
+
+    &[data-startQuote]::before {
+      content: attr(data-startQuote);
+      margin-left: -0.5em;
+      float: left;
+    }
+  }
+
 }

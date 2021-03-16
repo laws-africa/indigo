@@ -54,3 +54,15 @@ def publication_document_name(work):
 @register.filter
 def jsonify(value):
     return json.dumps(value, cls=TZAwareJSONEncoder)
+
+
+@register.filter
+def lookup(dictionary, key):
+    """ Returns the value of an item from a given dictionary, using the given key, if it exists.
+        Use when nested template tags would otherwise be needed, e.g. instead of
+        {% for k in list_of_keys %}
+            <li>{{ dictionary.k }}</li> (which will look up `k`, not its value) or
+            <li>{{ dictionary.{{ k }} }}</li> (which is invalid), use
+            <li>{{ dictionary|lookup:k }}</li>
+    """
+    return dictionary.get(key, '')

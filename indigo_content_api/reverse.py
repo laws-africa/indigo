@@ -13,7 +13,7 @@ CONTENT_API_HOST = 'api'
 
 
 def using_django_hosts():
-    return settings.get('ROOT_HOSTCONF')
+    return getattr(settings, 'ROOT_HOSTCONF', None)
 
 
 def reverse_content_api(*args, **kwargs):

@@ -2,10 +2,16 @@
 Changelog
 =========
 
-? (?)
------
+13.1.1 (2021-03-17)
+--------
 
 * SECURITY: Bump bootstrap-select to 1.13.6
+* FEATURE: New 'blocked' state for tasks introduced, with the option of listing one or more blocking tasks.
+* FIX: Start using indigo-akn v1.3.1, which allows us to adjust tables' column widths again.
+* FIX: Helper to support reversing content API URLs.
+* NEW: Introduce Place Admin Permission Badge for editing place settings; move this permission out of 'Super Reviewer' badge.
+* NEW: Bulk creator now supports overriding the date of a commencement / amendment / repeal if it's different from the commencement date of the affecting work.
+* NEW: All extra properties are now shown on bulk import.
 
 13.1.0 (2021-01-27)
 --------

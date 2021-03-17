@@ -5,7 +5,7 @@ Changelog
 13.1.1 (2021-03-17)
 --------
 
-* SECURITY: Bump bootstrap-select to 1.13.6
+* SECURITY: Bump bootstrap-select to 1.13.18
 * FEATURE: New 'blocked' state for tasks introduced, with the option of listing one or more blocking tasks.
 * FIX: Start using indigo-akn v1.3.1, which allows us to adjust tables' column widths again.
 * FIX: Helper to support reversing content API URLs.

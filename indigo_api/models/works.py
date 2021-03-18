@@ -515,6 +515,7 @@ class Commencement(models.Model):
     date = models.DateField(null=True, blank=True, help_text="Date of the commencement, or null if it is unknown")
     main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
     all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
+    note = models.TextField(max_length=1024, blank=True, null=True, help_text="Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation")
 
     # list of the element ids of the provisions commenced, e.g. ["sec_2", "sec_4.3.list0.a"]
     provisions = JSONField(null=False, blank=False, default=list)

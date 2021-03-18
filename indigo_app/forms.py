@@ -50,7 +50,7 @@ class WorkForm(forms.ModelForm):
     # commencement details
     commencement_date = forms.DateField(required=False)
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
-    commencement_note = forms.CharField(max_length=1024)
+    commencement_note = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)

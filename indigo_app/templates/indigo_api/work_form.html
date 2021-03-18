@@ -275,7 +275,18 @@
                   <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
                   <label for="commencement_date_unknown">Commencement date is unknown</label>
                 </div>
-                <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
+                <p class="form-text text-muted">Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation.</p>
+
+                <div id="commencement_note">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="{{ form.commencement_note.id_for_label }}">Commencement note</label>
+                      <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
+                      <p class="form-text text-muted">When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context.</p>
+                      <div class="alert alert-warning">If you add a commencement note, the commencement date (if there is one) will be deleted when you save.</div>
+                    </div>
+                  </div>
+                </div>
 
                 {% if work.pk and work.commencement_date %}
                   {% if work.amendments_made.exists or work.repealed_works.exists %}

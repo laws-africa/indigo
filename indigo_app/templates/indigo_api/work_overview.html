@@ -72,6 +72,9 @@
                         {% if work.commencements.count > 1 %}
                           <div>This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.</div>
                         {% endif %}
+                        {% if work.commencement_note %}
+                          <div>{{ work.commencement_note }}</div>
+                        {% endif %}
                       {% else %}
                         Not commenced
                       {% endif %}

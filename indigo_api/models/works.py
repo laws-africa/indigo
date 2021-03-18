@@ -149,6 +149,12 @@ class WorkMixin(object):
             return main.date
 
     @property
+    def commencement_note(self):
+        main = self.main_commencement
+        if main:
+            return main.note
+
+    @property
     def commencing_work(self):
         main = self.main_commencement
         if main:

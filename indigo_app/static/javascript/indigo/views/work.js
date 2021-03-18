@@ -253,6 +253,10 @@
       this.$('#id_work-commencement_date').attr('disabled', this.commencementDateUnknown.checked);
       if (this.commencementDateUnknown.checked) {
         this.model.set('commencement_date', null);
+        this.$('#commencement_note').removeClass('d-none');
+      } else {
+        this.model.set('commencement_note', null);
+        this.$('#commencement_note').addClass('d-none');
       }
     },
 

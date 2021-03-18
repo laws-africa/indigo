@@ -574,6 +574,7 @@ class WorkSerializer(serializers.ModelSerializer):
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencements = CommencementSerializer(many=True)
     commencement_date = serializers.DateField(required=False, allow_null=True)
+    commencement_note = serializers.CharField(required=False, allow_null=True)
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
@@ -588,7 +589,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'id', 'url',
             'title', 'numbered_title',
             'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencements', 'commencing_work', 'commencement_date',
+            'commenced', 'commencements', 'commencing_work', 'commencement_date', 'commencement_note',
             'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',

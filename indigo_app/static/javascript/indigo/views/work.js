@@ -43,7 +43,7 @@
     publicationUrlTemplate: '#publication-document-url-template',
     bindings: {
       // these are handled directly by the HTML form, but we need the values
-      // to by synchronised on the model so that we can use them elsewhere on the page
+      // to be synchronised on the model so that we can use them elsewhere on the page
       '#id_work-title': 'title',
       '#id_work-publication_date': {
         observe: 'publication_date',
@@ -52,6 +52,7 @@
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
       '#id_work-commenced': 'commenced',
+      '#id_work-commencement_note': 'commencement_note',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
         onSet: emptyIsNull,

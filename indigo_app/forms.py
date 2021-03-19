@@ -512,7 +512,7 @@ class CommencementForm(forms.ModelForm):
 
     class Meta:
         model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main')
+        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
 
     def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)

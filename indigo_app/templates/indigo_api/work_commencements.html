@@ -103,7 +103,7 @@
 
               <div class="form-row form-group">
                 <div class="col-md-4 col-lg-3">
-                  <input type="text" class="form-control commencement-note mr-2" placeholder="See section 1." name="note" value="{{ commencement.note }}" autocomplete="off">
+                  <input type="text" class="form-control commencement-note mr-2" placeholder="See section 1." name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
                 </div>
               </div>
 

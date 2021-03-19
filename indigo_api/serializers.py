@@ -198,7 +198,7 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
             return instance.trusted_url
         # HACK HACK HACK
         # TODO: this is a hack until we can teach indigo to be aware that
-        # the API might live on a different host
+        #  the API might live on a different host
         return settings.INDIGO_URL + '/works{}/media/publication/{}'.format(
             instance.work.frbr_uri, instance.filename
         )
@@ -248,6 +248,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_number = serializers.CharField(read_only=True)
     publication_date = serializers.DateField(read_only=True)
     commencement_date = serializers.DateField(read_only=True)
+    commencement_note = serializers.CharField(read_only=True)
     assent_date = serializers.DateField(read_only=True)
     numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
     type_name = serializers.CharField(read_only=True, source='work.friendly_type')
@@ -562,6 +563,7 @@ class CommencementSerializer(serializers.ModelSerializer):
         fields = (
             'commencing_title', 'commencing_frbr_uri',
             'date', 'main', 'all_provisions', 'provisions',
+            'note',
         )
         read_only_fields = fields
 

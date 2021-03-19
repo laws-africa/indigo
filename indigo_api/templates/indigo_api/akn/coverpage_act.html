@@ -118,7 +118,11 @@
                       {% endif %}
                     </td>
                     <td>
-                      {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
+                      {% if commencement.date %}
+                        {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
+                      {% else %}
+                        {% blocktrans %}commenced on <i>(unknown)</i>{% endblocktrans %}
+                      {% endif %}
                       {% with commencement.commencing_work as commencing_work %}
                         {% if commencing_work %}
                           {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}

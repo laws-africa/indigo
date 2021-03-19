@@ -103,7 +103,6 @@
                 <tr>
                   <th>{% blocktrans %}Provisions{% endblocktrans %}</th>
                   <th>{% blocktrans %}Status{% endblocktrans %}</th>
-                  <th>{% blocktrans %}Note{% endblocktrans %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -135,8 +134,11 @@
                           {% endwith %}
                         {% endif %}
                       {% endwith %}
+                      {% if commencement.note %}
+                        {% blocktrans %}<br><i>Note:{% endblocktrans %}
+                        {% trans commencement.note %}</i>
+                      {% endif %}
                     </td>
-                    <td>{% trans commencement.note %}</td>
                   </tr>
                 {% endfor %}
                 {% if document.uncommenced_provisions %}
@@ -146,7 +148,6 @@
                       <b>{{ provisions_description|capfirst }}</b>
                     </td>
                     <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
-                    <td></td>
                   </tr>
                 {% endif %}
               </tbody>

@@ -103,6 +103,7 @@
                 <tr>
                   <th>{% blocktrans %}Provisions{% endblocktrans %}</th>
                   <th>{% blocktrans %}Status{% endblocktrans %}</th>
+                  <th>{% blocktrans %}Note{% endblocktrans %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,6 +132,7 @@
                         {% endif %}
                       {% endwith %}
                     </td>
+                    <td>{% trans commencement.note %}</td>
                   </tr>
                 {% endfor %}
                 {% if document.uncommenced_provisions %}

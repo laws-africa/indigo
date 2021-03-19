@@ -294,7 +294,7 @@
                 <p class="form-text text-muted">Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation.</p>
               </div>
 
-              <div id="commencement_note" class="form-group col-md-4 d-none">
+              <div class="form-group col-md-4">
                 <label for="{{ form.commencement_note.id_for_label }}">Commencement note</label>
                 <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
                 <p class="form-text text-muted">When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context.</p>

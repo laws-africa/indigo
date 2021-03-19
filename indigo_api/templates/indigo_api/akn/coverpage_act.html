@@ -98,40 +98,7 @@
               {% blocktrans %}There are multiple commencements:{% endblocktrans %}
             </li>
           {% endif %}
-          {% if commencements|length < 3 %}
-            {% for commencement in commencements %}
-              {% commenced_provisions_description document commencement as provisions_description %}
-              <li class="commencement-date-list">
-                {% if provisions_description %}
-                  {{ provisions_description|capfirst }}
-                {% else %}
-                  <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
-                {% endif %}
-                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
-                {% with commencement.commencing_work as commencing_work %}
-                  {% if commencing_work %}
-                    {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
-                      {% work_resolver_url commencing_work as resolver_uri %}
-                      {% if numbered_title %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>.{% endblocktrans %}
-                      {% else %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>.{% endblocktrans %}
-                      {% endif %}
-                    {% endwith %}
-                  {% endif %}
-                {% endwith %}
-              </li>
-            {% endfor %}
-            {% if document.uncommenced_provisions %}
-              {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
-              {% if provisions_description %}
-                <li class="commencement-date-uncommenced">
-                  {% blocktrans with provisions=provisions_description|capfirst %}{{ provisions }}: not yet commenced.{% endblocktrans %}
-                </li>
-              {% endif %}
-            {% endif %}
-          {% else %}
-            <table class="commencements-table">
+          <table class="commencements-table">
               <thead>
                 <tr>
                   <th>{% blocktrans %}Provisions{% endblocktrans %}</th>
@@ -177,7 +144,6 @@
                 {% endif %}
               </tbody>
             </table>
-          {% endif %}
         {% endif %}
       {% endblock %}
 

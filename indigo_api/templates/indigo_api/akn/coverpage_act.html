@@ -88,6 +88,9 @@
               {% endwith %}
             </li>
           {% endwith %}
+          {% if document.work.commencement_note %}
+            <li class="commencement-note">{{ document.work.commencement_note }}</li>
+          {% endif %}
         {% else %}
           {% commencements_relevant_at_date document as commencements %}
           {% if commencements|length > 1 %}

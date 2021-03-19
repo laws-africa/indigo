@@ -197,7 +197,7 @@ class DocumentMixin(object):
         commenceable_provisions = [p.id for p in self.commenceable_provisions()]
         # include commencement if any of its `provisions` are found in `commenceable_provisons`
         return [c for c in self.work.commencements.all()
-                if any(p for p in c.provisions if p in commenceable_provisions)]
+                if any(p for p in c.provisions if p in commenceable_provisions) or not c.provisions]
 
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter

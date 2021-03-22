@@ -118,18 +118,18 @@
                     </td>
                     <td>
                       {% if commencement.date %}
-                        {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
+                        {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
                       {% else %}
-                        {% blocktrans %}commenced on <i>(unknown)</i>{% endblocktrans %}
+                        {% blocktrans %}commenced on <i>(unknown date)</i>{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
                       {% endif %}
                       {% with commencement.commencing_work as commencing_work %}
                         {% if commencing_work %}
                           {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
                             {% work_resolver_url commencing_work as resolver_uri %}
                             {% if numbered_title %}
-                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}.
                             {% else %}
-                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}.
                             {% endif %}
                           {% endwith %}
                         {% endif %}
@@ -147,7 +147,7 @@
                       {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
                       <b>{{ provisions_description|capfirst }}</b>
                     </td>
-                    <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
+                    <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b>.</td>
                   </tr>
                 {% endif %}
               </tbody>

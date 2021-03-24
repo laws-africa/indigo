@@ -2,6 +2,11 @@
 Changelog
 =========
 
+13.1.2 (2021-03-19)
+--------
+
+* FEATURE: Introduce 'commencement note', which can give extra context when the commencement date is unclear.
+
 13.1.1 (2021-03-17)
 --------
 

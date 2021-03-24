@@ -269,13 +269,6 @@
                 <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
                 <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
                 <p class="form-text text-muted">Date when most of the work comes into force</p>
-
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
-                  <label for="commencement_date_unknown">Commencement date is unknown</label>
-                </div>
-                <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
-
                 {% if work.pk and work.commencement_date %}
                   {% if work.amendments_made.exists or work.repealed_works.exists %}
                     <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
@@ -289,6 +282,22 @@
                 <div class="work-commencing-work form-control-static"></div>
                 <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
                 <p class="form-text text-muted">Work that gives the commencement date of this work</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
+                  <label for="commencement_date_unknown">Commencement date is unknown</label>
+                </div>
+                <p class="form-text text-muted">Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation.</p>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="{{ form.commencement_note.id_for_label }}">Commencement note</label>
+                <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
+                <p class="form-text text-muted">When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context.</p>
               </div>
             </div>
           </div>

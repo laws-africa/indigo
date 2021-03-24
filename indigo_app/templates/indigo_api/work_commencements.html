@@ -76,6 +76,7 @@
             </div>
 
             <div class="commencement-details collapse show">
+              {% if commencement.note %}<h6>Note: {{ commencement.note }}</h6>{% endif %}
               {% if commencement.main %}<h6>Main commencement</h6>{% endif %}
               <h6>
                 {% if commencement.all_provisions %}Commences all provisions{% endif %}
@@ -97,6 +98,12 @@
               <div class="form-row form-group">
                 <div class="col-md-4 col-lg-3">
                   <input type="text" class="form-control commencement-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="form-row form-group">
+                <div class="col-md-6 col-lg-4">
+                  <input type="text" class="form-control mr-2" placeholder="See section 1 …." name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
                 </div>
               </div>
 

@@ -50,6 +50,7 @@ class WorkForm(forms.ModelForm):
     # commencement details
     commencement_date = forms.DateField(required=False)
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    commencement_note = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -145,6 +146,7 @@ class WorkForm(forms.ModelForm):
             )
             commencement.updated_by_user = work.updated_by_user
             commencement.commencing_work = self.cleaned_data['commencing_work']
+            commencement.note = self.cleaned_data['commencement_note']
             commencement.date = self.cleaned_data['commencement_date']
             if created:
                 commencement.all_provisions = True
@@ -510,7 +512,7 @@ class CommencementForm(forms.ModelForm):
 
     class Meta:
         model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main')
+        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
 
     def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -389,6 +389,7 @@ class ContentAPIV2TestMixin:
             'date': '2010-06-01',
             'provisions': [],
             'main': True,
+            'note': None,
             'all_provisions': True,
         }])
 

@@ -198,7 +198,7 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
             return instance.trusted_url
         # HACK HACK HACK
         # TODO: this is a hack until we can teach indigo to be aware that
-        # the API might live on a different host
+        #  the API might live on a different host
         return settings.INDIGO_URL + '/works{}/media/publication/{}'.format(
             instance.work.frbr_uri, instance.filename
         )
@@ -248,6 +248,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_number = serializers.CharField(read_only=True)
     publication_date = serializers.DateField(read_only=True)
     commencement_date = serializers.DateField(read_only=True)
+    commencement_note = serializers.CharField(read_only=True)
     assent_date = serializers.DateField(read_only=True)
     numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
     type_name = serializers.CharField(read_only=True, source='work.friendly_type')
@@ -275,6 +276,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
+            'commencement_note',
             'language', 'tags', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
@@ -562,6 +564,7 @@ class CommencementSerializer(serializers.ModelSerializer):
         fields = (
             'commencing_title', 'commencing_frbr_uri',
             'date', 'main', 'all_provisions', 'provisions',
+            'note',
         )
         read_only_fields = fields
 
@@ -574,6 +577,7 @@ class WorkSerializer(serializers.ModelSerializer):
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencements = CommencementSerializer(many=True)
     commencement_date = serializers.DateField(required=False, allow_null=True)
+    commencement_note = serializers.CharField(required=False, allow_null=True)
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
@@ -588,7 +592,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'id', 'url',
             'title', 'numbered_title',
             'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencements', 'commencing_work', 'commencement_date',
+            'commenced', 'commencements', 'commencing_work', 'commencement_date', 'commencement_note',
             'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',

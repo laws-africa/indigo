@@ -88,93 +88,106 @@
               {% endwith %}
             </li>
           {% endwith %}
+          {% if document.work.commencement_note %}
+            <li class="commencement-note">Note: {{ document.work.commencement_note }}</li>
+          {% endif %}
         {% else %}
           {% commencements_relevant_at_date document as commencements %}
-          {% if commencements|length > 1 %}
-            <li class="commencement-date">
-              {% blocktrans %}There are multiple commencements:{% endblocktrans %}
-            </li>
-          {% endif %}
-          {% if commencements|length < 3 %}
-            {% for commencement in commencements %}
+          {% with document.uncommenced_provisions as uncommenced_provisions %}
+            {% if commencements|length == 1 and not uncommenced_provisions %}
+            {% with commencements|first as commencement %}
               {% commenced_provisions_description document commencement as provisions_description %}
-              <li class="commencement-date-list">
-                {% if provisions_description %}
-                  {{ provisions_description|capfirst }}
+              <li class="commencement-date">
+                {% if not commencement.date %}
+                  {% blocktrans %}Commencement date unknown{% endblocktrans %}
                 {% else %}
-                  <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
+                  {% blocktrans with date=commencement.date|date:"j E Y" %}Commenced on {{ date }}{% endblocktrans %}
                 {% endif %}
-                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
                 {% with commencement.commencing_work as commencing_work %}
                   {% if commencing_work %}
                     {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
                       {% work_resolver_url commencing_work as resolver_uri %}
-                      {% if numbered_title %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>.{% endblocktrans %}
+                      {% if not commencement.date %}
+                        {% if numbered_title %}
+                          {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                        {% else %}
+                          {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                        {% endif %}
                       {% else %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>.{% endblocktrans %}
+                        {% if numbered_title %}
+                          {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                        {% else %}
+                          {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                        {% endif %}
                       {% endif %}
                     {% endwith %}
                   {% endif %}
                 {% endwith %}
               </li>
-            {% endfor %}
-            {% if document.uncommenced_provisions %}
-              {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
-              {% if provisions_description %}
-                <li class="commencement-date-uncommenced">
-                  {% blocktrans with provisions=provisions_description|capfirst %}{{ provisions }}: not yet commenced.{% endblocktrans %}
-                </li>
+              {% if commencement.note %}
+                <li class="commencement-note">Note: {{ commencement.note }}</li>
               {% endif %}
-            {% endif %}
-          {% else %}
-            <table class="commencements-table">
-              <thead>
-                <tr>
-                  <th>{% blocktrans %}Provisions{% endblocktrans %}</th>
-                  <th>{% blocktrans %}Status{% endblocktrans %}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for commencement in commencements %}
-                  {% commenced_provisions_description document commencement as provisions_description %}
+            {% endwith %}
+            {% else %}
+              <li class="commencement-date">
+                {% blocktrans %}There are multiple commencements:{% endblocktrans %}
+              </li>
+              <table class="commencements-table">
+                <thead>
                   <tr>
-                    <td>
-                      {% if provisions_description %}
-                        {{ provisions_description|capfirst }}
-                      {% else %}
-                        <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
-                      {% with commencement.commencing_work as commencing_work %}
-                        {% if commencing_work %}
-                          {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
-                            {% work_resolver_url commencing_work as resolver_uri %}
-                            {% if numbered_title %}
-                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
-                            {% else %}
-                              {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
-                            {% endif %}
-                          {% endwith %}
+                    <th>{% blocktrans %}Provisions{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Status{% endblocktrans %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for commencement in commencements %}
+                    {% commenced_provisions_description document commencement as provisions_description %}
+                    <tr>
+                      <td>
+                        {% if provisions_description %}
+                          {{ provisions_description|capfirst }}
+                        {% else %}
+                          <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
                         {% endif %}
-                      {% endwith %}
-                    </td>
-                  </tr>
-                {% endfor %}
-                {% if document.uncommenced_provisions %}
-                  <tr>
-                    <td>
-                      {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
-                      <b>{{ provisions_description|capfirst }}</b>
-                    </td>
-                    <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
-                  </tr>
-                {% endif %}
-              </tbody>
-            </table>
-          {% endif %}
+                      </td>
+                      <td>
+                        {% if commencement.date %}
+                          {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
+                        {% else %}
+                          {% blocktrans %}commenced on <i>(unknown date)</i>{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
+                        {% endif %}
+                        {% with commencement.commencing_work as commencing_work %}
+                          {% if commencing_work %}
+                            {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+                              {% work_resolver_url commencing_work as resolver_uri %}
+                              {% if numbered_title %}
+                                {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}.
+                              {% else %}
+                                {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}.
+                              {% endif %}
+                            {% endwith %}
+                          {% endif %}
+                        {% endwith %}
+                        {% if commencement.note %}
+                          <br><i>{% blocktrans %}Note:{% endblocktrans %}
+                          {% trans commencement.note %}</i>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  {% if uncommenced_provisions %}
+                    <tr>
+                      <td>
+                        {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
+                        <b>{{ provisions_description|capfirst }}</b>
+                      </td>
+                      <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b>.</td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            {% endif %}
+          {% endwith %}
         {% endif %}
       {% endblock %}
 

@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     log4r (1.1.10)
-    mimemagic (0.4.0)
+    mimemagic (0.3.6)
     mini_portile2 (2.5.0)
     nokogiri (1.11.2)
       mini_portile2 (~> 2.5.0)

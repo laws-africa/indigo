@@ -45,8 +45,15 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'attachment',
-                    'component']
+    toc_elements = [
+        # top-level
+        'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
+        # hierarchical elements
+        'article', 'chapter', 'clause', 'division', 'paragraph', 'part', 'point', 'rule', 'section',
+        'subchapter', 'subclause', 'subdivision', 'subparagraph', 'subpart', 'subrule', 'subsection',
+        # block elements
+        'item',
+    ]
     """ Elements we include in the table of contents, without their XML namespace.
     """
 
@@ -245,11 +252,11 @@ class TOCBuilderBase(LocaleBasedMatcher):
         """
         def process(item):
             if item.component == 'main':
+                if item.type not in self.non_commenceable_types and item.num:
+                    items.append(item)
                 if item.children:
                     for kid in item.children:
                         process(kid)
-                elif item.type not in self.non_commenceable_types and item.num:
-                    items.append(item)
 
         items = []
         for entry in toc:

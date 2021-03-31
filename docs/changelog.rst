@@ -2,6 +2,11 @@
 Changelog
 =========
 
+13.1.3 (???)
+--------
+
+* NEW: Commencements below the section level supported.
+
 13.1.2 (2021-03-19)
 --------
 

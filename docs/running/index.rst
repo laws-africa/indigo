@@ -15,10 +15,12 @@ Requirements
 
 Indigo requires:
 
-* Python 2.7
+* Python 3.6+
 * PostgreSQL 9.3+
 * Ruby 2.6.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
+* `wkhtmltopdf <https://wkhtmltopdf.org/>`_ for generating PDFs
+* `pdftotext <https://poppler.freedesktop.org/>`_ for reading PDFs
 
 Optional but useful:
 
@@ -31,7 +33,7 @@ languages. It takes care of all this for you and we highly recommend using them.
 Installing Indigo Locally
 -------------------------
 
-1. Ensure you have Python 2.7 and `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ installed
+1. Ensure you have Python 3.6+ installed
 2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python and Ruby described in it::
 
     $ git clone https://github.com/laws-africa/example-indigo
@@ -39,7 +41,7 @@ Installing Indigo Locally
 
 3. Setup and activate the virtual environment::
 
-    $ virtualenv --no-site-packages --python=python2 env
+    $ python3 -m venv env
     $ source env/bin/activate
 
 4. Install Python dependencies::
@@ -55,6 +57,7 @@ Installing Indigo Locally
 
     $ python manage.py migrate
     $ python manage.py update_countries_plus
+    $ python manage.py loaddata languages_data.json.gz
 
 7. Then create the superuser::
 
@@ -66,9 +69,11 @@ Installing Indigo Locally
 
 9. Visit the website to login: http://localhost:8000/
 
-10. Configure a country:
+10. Configure a language and a country:
 
    * Visit http://localhost:8000/admin
+   * Under **Indigo API** click Languages, then click Add Language in the top right corner
+   * Choose a language from the dropdown list and click Save
    * Under **Indigo API** click Countries, then click Add Country in the top right corner
    * Choose a country and primary language from the dropdown lists
    * Click Save
@@ -85,10 +90,17 @@ Once you've install Ruby, install Bundler and the Indigo dependencies::
     $ gem install bundler
     $ bundle install
 
-You can test that Slaw is installed with slaw --version::
+You can test that Slaw is installed::
 
     $ slaw --version
-    slaw 1.0.4
+    slaw 10.4.0
+
+PDF support
+...........
+
+Indigo creates PDF files using `wkhtmltopdf <https://wkhtmltopdf.org/>`_. Install it as appropriate for your platform.
+
+Indigo reads from PDF files using pdftotext, which is part of the `poppler-utils <https://poppler.freedesktop.org/>`_ package. Install it as appropriate for your platform.
 
 Django Customisation
 ....................

@@ -5,14 +5,15 @@ from indigo_content_api.v2.views import PublishedDocumentDetailView
 from indigo_resolver.models import Authority
 
 
-class BaseAuthority(object):
+class BaseAuthority:
     not_found_url = None
+    priority = 10
 
     def get_references(self, frbr_uri):
         raise NotImplementedError()
 
 
-class Authorities(object):
+class Authorities:
     registry = {}
 
     def get(self, name):
@@ -42,12 +43,14 @@ class AuthorityReference:
     frbr_uri = None
     title = None
     authority = None
+    priority = 10
 
-    def __init__(self, url, frbr_uri, title, authority):
+    def __init__(self, url, frbr_uri, title, authority, priority=None):
         self.url = url
         self.frbr_uri = frbr_uri
         self.title = title
         self.authority = authority
+        self.priority = priority or self.priority
 
     def authority_name(self):
         return self.authority.name
@@ -72,4 +75,5 @@ class InternalAuthority(BaseAuthority):
             url=reverse('work', kwargs={'frbr_uri': document.frbr_uri}),
             frbr_uri=document.frbr_uri,
             title=document.title,
-            authority=self)
+            authority=self,
+            priority=self.priority)

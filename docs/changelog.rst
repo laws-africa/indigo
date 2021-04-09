@@ -2,6 +2,11 @@
 Changelog
 =========
 
+13.2.0 (?)
+----------
+
+* FEATURE: Authorities and resolvers support priorities; highest priority for multiple matches wins.
+
 13.1.2 (2021-03-19)
 --------
 

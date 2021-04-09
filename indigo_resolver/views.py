@@ -58,7 +58,15 @@ class ResolveView(TemplateView):
         return registry.all()
 
     def get_references(self):
-        return list(chain(*(a.get_references(self.frbr_uri) for a in self.authorities)))
+        refs = list(chain(*(a.get_references(self.frbr_uri) for a in self.authorities)))
+        # sort by priority, highest first
+        refs.sort(key=lambda r: -r.priority)
+
+        # if we have multiple matches with different priorities, use the one with the highest priority
+        if len(set(r.priority for r in refs)) > 1:
+            refs = refs[:1]
+
+        return refs
 
     def get_context_data(self, **kwargs):
         kwargs['query'] = {

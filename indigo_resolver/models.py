@@ -23,16 +23,22 @@ class Authority(models.Model):
     url = models.URLField(help_text="Website for this authority (optional)", blank=True, null=True)
     not_found_url = models.URLField(help_text="URL of a 404 page (optional)", null=True, blank=True)
     slug = models.CharField(null=False, blank=False, validators=[validate_slug], max_length=50, unique=True)
+    priority = models.IntegerField(null=False, default=10, help_text="When multiple resolvers match, highest priority wins")
 
     class Meta:
         verbose_name_plural = "Authorities"
 
     def get_references(self, frbr_uri):
         # TODO: handle expression URIs and dates?
-        return self.references\
+        refs = self.references\
             .filter(frbr_uri__in=[frbr_uri.work_uri(), frbr_uri.expression_uri()])\
             .prefetch_related('authority')\
             .all()
+        # default priorities
+        for r in refs:
+            if r.priority is None:
+                r.priority = self.priority
+        return refs
 
     @property
     def reference_count(self):
@@ -51,6 +57,7 @@ class AuthorityReference(models.Model):
     url = models.URLField(max_length=1024, help_text="URL from which this document can be retrieved")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    priority = models.IntegerField(null=True, blank=True, help_text="Priority for this URL. If unset, uses the authority's priority")
 
     authority = models.ForeignKey(Authority, related_name='references', on_delete=models.CASCADE)
 

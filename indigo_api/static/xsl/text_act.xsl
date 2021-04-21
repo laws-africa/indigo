@@ -293,7 +293,7 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:text>&#10;&#10;</xsl:text>
+    <xsl:text>&#10;</xsl:text>
     <xsl:apply-templates select="a:doc/a:mainBody" />
   </xsl:template>
 

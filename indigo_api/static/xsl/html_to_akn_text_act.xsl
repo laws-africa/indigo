@@ -124,6 +124,14 @@
     <xsl:text> </xsl:text>
   </xsl:template>
 
+  <xsl:template match="sup">
+    <xsl:text>^^</xsl:text><xsl:apply-templates /><xsl:text>^^</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="sub">
+    <xsl:text>_^</xsl:text><xsl:apply-templates /><xsl:text>^_</xsl:text>
+  </xsl:template>
+
 
   <!-- for most nodes, just dump their text content -->
   <xsl:template match="*">

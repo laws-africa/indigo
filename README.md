@@ -90,9 +90,9 @@ Now give yourself all the permissions to work in that country by clicking on you
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
 We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll
-need Ruby version 2.3.
+need Ruby version 2.6.
 
-Once you've install Ruby, install [Bundler](https://bundler.io/) and the Indigo dependencies:
+Once you've installed Ruby, install [Bundler](https://bundler.io/) and the Indigo dependencies:
 
 ```bash
 gem install bundler
@@ -103,7 +103,7 @@ You can test that Slaw is installed with `slaw --version`:
 
 ```bash
 $ slaw --version
-slaw 1.0.0
+slaw 10.6.0
 ```
 
 You will also need `pdftotext` to import PDF files. On Mac, you can use Homebrew and run `brew install poppler`.

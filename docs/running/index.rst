@@ -93,7 +93,7 @@ Once you've install Ruby, install Bundler and the Indigo dependencies::
 You can test that Slaw is installed::
 
     $ slaw --version
-    slaw 10.4.0
+    slaw 10.6.0
 
 PDF support
 ...........

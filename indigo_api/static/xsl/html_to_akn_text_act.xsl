@@ -11,6 +11,36 @@
 
   <xsl:template match="head|style|script|link" />
 
+  <!-- block containers that end with newlines -->
+  <xsl:template match="ul|ol|section|article|h1|h2|h3|h4|h5">
+    <xsl:apply-templates />
+    <xsl:text>&#10;&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="ul/li">
+    <!-- * foo -->
+    <xsl:text>* </xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>&#10;</xsl:text>
+  </xsl:template>
+
+  <!-- numbered lists should include a number -->
+  <xsl:template match="ol/li">
+    <!-- \1. foo -->
+    <xsl:text>\</xsl:text>
+    <xsl:choose>
+      <xsl:when test="@value">
+        <xsl:value-of select="@value" />
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="position()" />
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>. </xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>&#10;</xsl:text>
+  </xsl:template>
+
   <xsl:template match="p|div">
     <xsl:choose>
       <xsl:when test="starts-with(., '[') and substring(., string-length(.)) = ']'">
@@ -22,64 +52,30 @@
       </xsl:otherwise>
     </xsl:choose>
     <!-- p and div tags must end with a newline -->
-    <xsl:text>
-</xsl:text>
-  </xsl:template>
-
-  <!-- block containers that end with newlines -->
-  <xsl:template match="ul|ol|section|article">
-    <xsl:apply-templates />
-
-    <xsl:text>
-
-</xsl:text>
-  </xsl:template>
-
-  <!-- numbered lists should include a number -->
-  <xsl:template match="ol/li">
-    <xsl:choose>
-      <xsl:when test="@value">
-        <xsl:value-of select="@value" /><xsl:text>. </xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="count(preceding-sibling::li) + 1" /><xsl:text>. </xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
-
-    <xsl:apply-templates />
-
-    <xsl:text>
-</xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <!-- START tables -->
 
   <xsl:template match="table">
     <xsl:text>{| </xsl:text>
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
     <xsl:apply-templates />
-    <xsl:text>
-|}
-
-</xsl:text>
+    <xsl:text>&#10;|}&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tr">
     <xsl:apply-templates />
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
   </xsl:template>
 
   <xsl:template match="th|td">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'th'">
-        <xsl:text>
-! </xsl:text>
+        <xsl:text>&#10;! </xsl:text>
       </xsl:when>
       <xsl:when test="local-name(.) = 'td'">
-        <xsl:text>
-| </xsl:text>
+        <xsl:text>&#10;| </xsl:text>
       </xsl:when>
     </xsl:choose>
 
@@ -121,7 +117,15 @@
   </xsl:template>
 
   <xsl:template match="br">
-    <xsl:text> </xsl:text>
+    <xsl:text>&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="sup">
+    <xsl:text>^^</xsl:text><xsl:apply-templates /><xsl:text>^^</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="sub">
+    <xsl:text>_^</xsl:text><xsl:apply-templates /><xsl:text>^_</xsl:text>
   </xsl:template>
 
 

@@ -34,6 +34,11 @@
     <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="h1|h2|h3|h4|h5">
+    <xsl:apply-templates />
+    <xsl:text>&#10;&#10;</xsl:text>
+  </xsl:template>
+
   <xsl:template match="p|div">
     <xsl:choose>
       <xsl:when test="starts-with(., '[') and substring(., string-length(.)) = ']'">

@@ -26,17 +26,18 @@
 
   <!-- numbered lists should include a number -->
   <xsl:template match="ol/li">
+    <!-- \1. foo -->
+    <xsl:text>\</xsl:text>
     <xsl:choose>
       <xsl:when test="@value">
-        <xsl:value-of select="@value" /><xsl:text>. </xsl:text>
+        <xsl:value-of select="@value" />
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="count(preceding-sibling::li) + 1" /><xsl:text>. </xsl:text>
+        <xsl:value-of select="position()" />
       </xsl:otherwise>
     </xsl:choose>
-
+    <xsl:text>. </xsl:text>
     <xsl:apply-templates />
-
     <xsl:text>&#10;</xsl:text>
   </xsl:template>
 

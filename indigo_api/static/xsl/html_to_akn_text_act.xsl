@@ -14,8 +14,14 @@
   <!-- block containers that end with newlines -->
   <xsl:template match="ul|ol|section|article">
     <xsl:apply-templates />
-
     <xsl:text>&#10;&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="ul/li">
+    <!-- * foo -->
+    <xsl:text>* </xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
   <!-- numbered lists should include a number -->

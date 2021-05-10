@@ -13,7 +13,7 @@ import lxml.etree as ET
 from django.core.files.uploadedfile import UploadedFile
 
 from cobalt import AkomaNtosoDocument
-from indigo_api.models import Attachment, Document
+from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo_api.serializers import AttachmentSerializer
 from indigo_api.utils import filename_candidates, find_best_static
@@ -358,9 +358,7 @@ class Importer(LocaleBasedMatcher):
         self.stash_attachment(docx_file, doc)
 
     def import_from_html(self, html, frbr_uri):
-        # retain super and subscripts, using XSL
-        text = self.html_to_text(html, Document.objects.get_for_frbr_uri(frbr_uri))
-        return self.import_from_text(text, frbr_uri, 'text')
+        return self.import_from_text(html, frbr_uri, '.html')
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.

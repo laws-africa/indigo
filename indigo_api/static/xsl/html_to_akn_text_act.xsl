@@ -11,20 +11,6 @@
 
   <xsl:template match="head|style|script|link" />
 
-  <xsl:template match="p|div">
-    <xsl:choose>
-      <xsl:when test="starts-with(., '[') and substring(., string-length(.)) = ']'">
-        <!-- block elems that are wrapped in [ and ] are probably remarks -->
-        <xsl:text>[</xsl:text><xsl:apply-templates /><xsl:text>]</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates />
-      </xsl:otherwise>
-    </xsl:choose>
-    <!-- p and div tags must end with a newline -->
-    <xsl:text>&#10;</xsl:text>
-  </xsl:template>
-
   <!-- block containers that end with newlines -->
   <xsl:template match="ul|ol|section|article">
     <xsl:apply-templates />
@@ -45,6 +31,20 @@
 
     <xsl:apply-templates />
 
+    <xsl:text>&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="p|div">
+    <xsl:choose>
+      <xsl:when test="starts-with(., '[') and substring(., string-length(.)) = ']'">
+        <!-- block elems that are wrapped in [ and ] are probably remarks -->
+        <xsl:text>[</xsl:text><xsl:apply-templates /><xsl:text>]</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates />
+      </xsl:otherwise>
+    </xsl:choose>
+    <!-- p and div tags must end with a newline -->
     <xsl:text>&#10;</xsl:text>
   </xsl:template>
 

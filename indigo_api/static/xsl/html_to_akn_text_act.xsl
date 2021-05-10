@@ -45,7 +45,7 @@
       </xsl:otherwise>
     </xsl:choose>
     <!-- p and div tags must end with a newline -->
-    <xsl:text>&#10;</xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <!-- START tables -->

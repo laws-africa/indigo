@@ -22,17 +22,14 @@
       </xsl:otherwise>
     </xsl:choose>
     <!-- p and div tags must end with a newline -->
-    <xsl:text>
-</xsl:text>
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
   <!-- block containers that end with newlines -->
   <xsl:template match="ul|ol|section|article">
     <xsl:apply-templates />
 
-    <xsl:text>
-
-</xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <!-- numbered lists should include a number -->
@@ -48,38 +45,30 @@
 
     <xsl:apply-templates />
 
-    <xsl:text>
-</xsl:text>
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
   <!-- START tables -->
 
   <xsl:template match="table">
     <xsl:text>{| </xsl:text>
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
     <xsl:apply-templates />
-    <xsl:text>
-|}
-
-</xsl:text>
+    <xsl:text>&#10;|}&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tr">
     <xsl:apply-templates />
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
   </xsl:template>
 
   <xsl:template match="th|td">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'th'">
-        <xsl:text>
-! </xsl:text>
+        <xsl:text>&#10;! </xsl:text>
       </xsl:when>
       <xsl:when test="local-name(.) = 'td'">
-        <xsl:text>
-| </xsl:text>
+        <xsl:text>&#10;| </xsl:text>
       </xsl:when>
     </xsl:choose>
 
@@ -121,7 +110,7 @@
   </xsl:template>
 
   <xsl:template match="br">
-    <xsl:text> </xsl:text>
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="sup">

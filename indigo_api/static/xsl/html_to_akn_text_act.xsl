@@ -12,7 +12,7 @@
   <xsl:template match="head|style|script|link" />
 
   <!-- block containers that end with newlines -->
-  <xsl:template match="ul|ol|section|article">
+  <xsl:template match="ul|ol|section|article|h1|h2|h3|h4|h5">
     <xsl:apply-templates />
     <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
@@ -39,11 +39,6 @@
     <xsl:text>. </xsl:text>
     <xsl:apply-templates />
     <xsl:text>&#10;</xsl:text>
-  </xsl:template>
-
-  <xsl:template match="h1|h2|h3|h4|h5">
-    <xsl:apply-templates />
-    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="p|div">

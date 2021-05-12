@@ -51,10 +51,11 @@
         // This allows us to place our own toolbar buttons that use this functionalty.
         toolbar: [{ name: 'basicstyles', items: [ 'Bold', 'Italic' ] }],
 
-        // this must align with the elements and attributes supported by
-        // indigo_app/static/xsl/html_to_akn.xsl
+        // this must align with the elements and attributes supported by indigo-akn
+        // https://github.com/laws-africa/indigo-akn/blob/master/src/xsl.js
         allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
                         'b; i; p;' +
+                        'sup; sub;' +
                         'table[id, data-eid]; thead; tbody; tr;' +
                         'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
                         'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',

@@ -3,7 +3,7 @@ GEM
   specs:
     log4r (1.1.10)
     mini_portile2 (2.5.1)
-    nokogiri (1.11.3)
+    nokogiri (1.11.4)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     polyglot (0.3.5)

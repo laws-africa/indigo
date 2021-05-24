@@ -1,15 +1,15 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from indigo.plugins import plugins
+from .misc import DEFAULT_PERMS
 
 
 class FindPublicationsView(APIView):
-    """ Support for running term discovery and linking on a document.
+    """ Support for finding a publication document for a work.
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = DEFAULT_PERMS + ('indigo_api.change_work',)
 
     def get(self, request, country, locality=None):
         country = country.lower()

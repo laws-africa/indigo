@@ -2,10 +2,12 @@
 Changelog
 =========
 
-13.2.0 (?)
+14.0.0 (?)
 ----------
 
 * FEATURE: Authorities and resolvers support priorities; highest priority for multiple matches wins.
+* BREAKING: Indigo now always requires authentication. Support for unauthenticated use is removed because it is too
+  difficult and risky to support allowing both types of access.
 
 13.1.2 (2021-03-19)
 --------

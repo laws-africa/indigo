@@ -32,10 +32,9 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
 
     * `authentication_required` is True
     * `permission_required` is not empty
-    * INDIGO_AUTH_REQUIRED setting is True
     """
     raise_exception = True
-    authentication_required = settings.INDIGO_AUTH_REQUIRED
+    authentication_required = True
     permission_required = ()
     must_accept_terms = True
 

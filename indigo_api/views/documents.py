@@ -18,7 +18,7 @@ from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
+from rest_framework.permissions import DjangoModelPermissions
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
@@ -82,7 +82,7 @@ class DocumentViewSet(DocumentViewMixin,
     API endpoint that allows get, list, update and destroy, but not creation of documents.
     """
     serializer_class = DocumentSerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, DocumentPermissions)
     renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer,
                         HTMLRenderer, AkomaNtosoRenderer, ZIPRenderer,
                         renderers.BrowsableAPIRenderer)
@@ -133,11 +133,13 @@ class DocumentViewSet(DocumentViewMixin,
         return Response({'toc': self.table_of_contents(self.get_object())})
 
 
-class DocumentResourceView(object):
+class DocumentResourceView:
     """ Helper mixin for views that hang off of a document URL.
 
     Includes enforcing permissions based on the document, not the resource.
     """
+    permission_classes = DEFAULT_PERMS
+
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
         super(DocumentResourceView, self).initial(request, **kwargs)
@@ -156,7 +158,7 @@ class DocumentResourceView(object):
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.document)
@@ -220,7 +222,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = VersionSerializer
     # The permissions applied in this case are for reversion.Version
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions,)
 
     @detail_route_action(detail=True, methods=['POST'])
     def restore(self, request, *args, **kwargs):
@@ -293,7 +295,7 @@ class DocumentActivityViewSet(DocumentResourceView,
     can create an activity object.
     """
     serializer_class = DocumentActivitySerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentActivityPermission)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, DocumentActivityPermission)
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()
@@ -326,8 +328,6 @@ class DocumentActivityViewSet(DocumentResourceView,
 class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, document_id):
         serializer = ParseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -362,7 +362,6 @@ class ParseView(DocumentResourceView, APIView):
 class RenderView(DocumentResourceView, APIView):
     """ Support for rendering a document on the server.
     """
-    permission_classes = ()
     coverpage_only = True
 
     def post(self, request, document_id):
@@ -382,8 +381,6 @@ class RenderView(DocumentResourceView, APIView):
 class LinkTermsView(DocumentResourceView, APIView):
     """ Support for running term discovery and linking on a document.
     """
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, document_id):
         serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
@@ -403,8 +400,6 @@ class LinkTermsView(DocumentResourceView, APIView):
 class LinkReferencesView(DocumentResourceView, APIView):
     """ Find and link internal references and references to other works.
     """
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, document_id):
         serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
@@ -440,8 +435,6 @@ class LinkReferencesView(DocumentResourceView, APIView):
 class MarkUpItalicsTermsView(DocumentResourceView, APIView):
     """ Find and mark up italics terms.
     """
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, document_id):
         serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
@@ -460,8 +453,6 @@ class MarkUpItalicsTermsView(DocumentResourceView, APIView):
 
 
 class DocumentDiffView(DocumentResourceView, APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, document_id):
         serializer = DocumentDiffSerializer(instance=self.document, data=self.request.data)
         serializer.is_valid(raise_exception=True)

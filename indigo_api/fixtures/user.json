@@ -12,19 +12,26 @@
             "last_login": "2012-01-13 00:14:00+00:00",
             "groups": [],
             "user_permissions": [
+                ["view_document", "indigo_api", "document"],
                 ["add_document", "indigo_api", "document"],
                 ["change_document", "indigo_api", "document"],
                 ["delete_document", "indigo_api", "document"],
                 ["publish_document", "indigo_api", "document"],
+                ["view_work", "indigo_api", "work"],
                 ["add_work", "indigo_api", "work"],
                 ["change_work", "indigo_api", "work"],
                 ["delete_work", "indigo_api", "work"],
                 ["add_amendment", "indigo_api", "amendment"],
                 ["change_amendment", "indigo_api", "amendment"],
                 ["delete_amendment", "indigo_api", "amendment"],
+                ["view_annotation", "indigo_api", "annotation"],
                 ["add_annotation", "indigo_api", "annotation"],
                 ["change_annotation", "indigo_api", "annotation"],
                 ["delete_annotation", "indigo_api", "annotation"],
+                ["view_attachment", "indigo_api", "attachment"],
+                ["add_attachment", "indigo_api", "attachment"],
+                ["change_attachment", "indigo_api", "attachment"],
+                ["delete_attachment", "indigo_api", "attachment"],
                 ["add_task", "indigo_api", "task"],
                 ["change_task", "indigo_api", "task"],
                 ["delete_task", "indigo_api", "task"],
@@ -101,6 +108,23 @@
             "user_permissions": [
                 ["view_published_document", "indigo_api", "document"]
             ],
+            "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
+            "date_joined": "2012-01-13 00:14:00+00:00"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "no-perms@example.com",
+            "first_name": "user that has no permissions",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-13 00:14:00+00:00",
+            "groups": [],
+            "user_permissions": [],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "date_joined": "2012-01-13 00:14:00+00:00"
         }

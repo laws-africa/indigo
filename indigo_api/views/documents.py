@@ -18,7 +18,6 @@ from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
-from rest_framework.permissions import DjangoModelPermissions
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
@@ -32,7 +31,8 @@ from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
-from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
+from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions, RelatedDocumentPermissions, \
+    RevisionPermissions
 from ..utils import filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
 
@@ -48,7 +48,7 @@ DOCUMENT_FILTER_FIELDS = {
 }
 
 
-class DocumentViewMixin(object):
+class DocumentViewMixin:
     queryset = Document.objects\
         .undeleted()\
         .no_xml()\
@@ -82,7 +82,7 @@ class DocumentViewSet(DocumentViewMixin,
     API endpoint that allows get, list, update and destroy, but not creation of documents.
     """
     serializer_class = DocumentSerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, DocumentPermissions)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, DocumentPermissions)
     renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer,
                         HTMLRenderer, AkomaNtosoRenderer, ZIPRenderer,
                         renderers.BrowsableAPIRenderer)
@@ -136,9 +136,9 @@ class DocumentViewSet(DocumentViewMixin,
 class DocumentResourceView:
     """ Helper mixin for views that hang off of a document URL.
 
-    Includes enforcing permissions based on the document, not the resource.
+    Enforces permissions for the linked document.
     """
-    permission_classes = DEFAULT_PERMS
+    permission_classes = DEFAULT_PERMS + (RelatedDocumentPermissions,)
 
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
@@ -158,7 +158,7 @@ class DocumentResourceView:
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, AnnotationPermissions)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.document)
@@ -222,7 +222,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = VersionSerializer
     # The permissions applied in this case are for reversion.Version
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions,)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, RevisionPermissions)
 
     @detail_route_action(detail=True, methods=['POST'])
     def restore(self, request, *args, **kwargs):
@@ -295,7 +295,7 @@ class DocumentActivityViewSet(DocumentResourceView,
     can create an activity object.
     """
     serializer_class = DocumentActivitySerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissions, DocumentActivityPermission)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions)
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()

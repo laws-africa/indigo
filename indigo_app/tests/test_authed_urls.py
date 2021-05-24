@@ -6,13 +6,10 @@ from indigo_app.views.base import AbstractAuthedIndigoView
 
 class AuthedUrlsTest(testcases.TestCase):
     non_authed_urls = """
-widgets\/pdf\-attribution$
-widgets\/pdf\-cc\-by$
-notices\/africanlii$
-notices\/openbylaws$
 robots\.txt$
 help$
 terms$
+$
 
 accounts\/social\/connections\/$
 accounts\/social\/signup\/$
@@ -31,13 +28,8 @@ accounts\/password\/change\/$
 accounts\/logout\/$
 accounts\/login\/$
 accounts\/signup\/$
-library\/$
-$
 
 resolver\/(?P<path>.+)$
-help$
-auth\-check$
-commons\/(?P<frbr_uri>\S+?)(?P<format>\.\w+)?$
 resolver\/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
 api\/$

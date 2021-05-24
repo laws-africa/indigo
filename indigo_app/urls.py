@@ -7,8 +7,6 @@ from .views import users, works, documents, tasks, places, workflows, misc
 urlpatterns = [
     # homepage
     path('', RedirectView.as_view(url='/places/', permanent=False)),
-    # old permanent redirect
-    path('library/', RedirectView.as_view(url='/places/', permanent=True)),
 
     # auth and accounts
     path('accounts/', include('allauth.urls')),

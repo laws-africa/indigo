@@ -47,6 +47,7 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     pk_url_kwarg = None
     slug_url_kwarg = 'frbr_uri'
     slug_field = 'frbr_uri'
+    permission_required = ('indigo_api.view_work',)
 
     def determine_place(self):
         if 'place' not in self.kwargs:

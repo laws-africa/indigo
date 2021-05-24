@@ -63,6 +63,7 @@ class PlaceViewBase(AbstractAuthedIndigoView):
     country = None
     locality = None
     place = None
+    permission_required = ('indigo_api.view_country',)
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()

@@ -18,6 +18,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document/show.html'
+    permission_required = ('indigo_api.view_document',)
 
     def get_object(self, queryset=None):
         doc = super(DocumentDetailView, self).get_object(queryset)
@@ -83,6 +84,7 @@ class DocumentPopupView(AbstractAuthedIndigoView, DetailView):
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document_popup.html'
     queryset = Document.objects.no_xml().undeleted()
+    permission_required = ('indigo_api.view_document',)
 
     def get_object(self, queryset=None):
         doc = super(DocumentPopupView, self).get_object(queryset)

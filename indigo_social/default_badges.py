@@ -23,7 +23,7 @@ class ContributorBadge(PermissionBadge):
         'indigo_api.view_work', 'indigo_api.view_document', 'indigo_api.view_commencement',
         'indigo_api.view_task', 'indigo_api.add_task',
         'indigo_api.view_workflow', 'indigo_api.view_taxonomyvocabulary', 'indigo_api.view_vocabularytopic',
-        'indigo_api.view_amendment', 'indigo_api.view_arbitraryexpressiondate',
+        'indigo_api.view_amendment', 'indigo_api.view_arbitraryexpressiondate', 'indigo_api.view_country',
     )
 
 

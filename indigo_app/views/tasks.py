@@ -32,6 +32,7 @@ from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
 
 class TaskViewBase(PlaceViewBase):
     tab = 'tasks'
+    permission_required = ('indigo_api.view_task',)
 
     def record_workflow_actions(self, task, new_workflows):
         old_workflows = task.workflows.all()
@@ -540,6 +541,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     paginate_orphans = 4
     tab = 'available_tasks'
     priority = False
+    permission_required = ('indigo_api.view_task',)
 
     def get(self, request, *args, **kwargs):
         self.form = TaskFilterForm(None, request.GET)

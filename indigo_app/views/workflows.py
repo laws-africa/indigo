@@ -18,6 +18,7 @@ from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 
 class WorkflowViewBase(PlaceViewBase):
     tab = 'workflows'
+    permission_required = ('indigo_api.view_workflow',)
 
 
 class WorkflowCreateView(WorkflowViewBase, CreateView):

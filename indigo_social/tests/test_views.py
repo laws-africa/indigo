@@ -21,6 +21,7 @@ class SocialViewsTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_edit_user_profile(self):
+        self.client.logout()
         response = self.client.get('/accounts/profile/')
         self.assertEqual(response.status_code, 302)
 

@@ -113,7 +113,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceDetailView(PlaceViewBase, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
 
@@ -272,7 +272,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return {"open_tasks_chart": open_tasks_chart, "labels_chart": labels_chart, "total_open_tasks": total_open_tasks}
 
 
-class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
+class PlaceWorksView(PlaceViewBase, ListView):
     template_name = 'place/works.html'
     tab = 'works'
     context_object_name = 'works'
@@ -512,7 +512,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             return action
 
 
-class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
+class PlaceMetricsView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
     template_name = 'place/metrics.html'
     tab = 'insights'
     insights_tab = 'metrics'
@@ -611,7 +611,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, Pl
         return context
 
 
-class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
+class PlaceSettingsView(PlaceViewBase, UpdateView):
     template_name = 'place/settings.html'
     form_class = PlaceSettingsForm
     tab = 'place_settings'
@@ -640,7 +640,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceWorksIndexView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceWorksIndexView(PlaceViewBase, TemplateView):
     tab = 'place_settings'
     permission_required = ('indigo_api.change_placesettings',)
 
@@ -651,7 +651,7 @@ class PlaceWorksIndexView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView)
         return generate_xlsx(works, filename, True)
 
 
-class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
+class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
     template_name = 'place/localities.html'
     tab = 'localities'
     js_view = 'PlaceListView'

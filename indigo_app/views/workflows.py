@@ -16,7 +16,7 @@ from indigo_app.forms import WorkflowFilterForm, TaskFilterForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 
 
-class WorkflowViewBase(PlaceViewBase, AbstractAuthedIndigoView):
+class WorkflowViewBase(PlaceViewBase):
     tab = 'workflows'
 
 

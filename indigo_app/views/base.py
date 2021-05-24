@@ -54,7 +54,7 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
         return self.authentication_required or self.permission_required
 
 
-class PlaceViewBase(object):
+class PlaceViewBase(AbstractAuthedIndigoView):
     """ Views that are tied to a place, either a Country or a Locality.
     This should be the first parent class for views with multiple parents.
 

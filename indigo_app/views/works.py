@@ -34,7 +34,7 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
-class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
+class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     """ Base class for views based on a single work. This finds the work from
     the FRBR URI in the URL, and makes a `work` property available on the view.
 
@@ -182,7 +182,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
+class AddWorkView(PlaceViewBase, CreateView):
     model = Work
     js_view = 'WorkDetailView'
     form_class = WorkForm
@@ -818,7 +818,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
         raise Http404()
 
 
-class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
+class BatchAddWorkView(PlaceViewBase, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.bulk_add_work',)

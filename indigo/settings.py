@@ -315,6 +315,8 @@ RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 INDIGO_SOCIAL = {
     # the badge module to load by default (optional)
     'badges': 'indigo_social.default_badges',
+    # when a user signs up, grant them these badges automatically
+    'new_user_badges': ['contributor'],
 }
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

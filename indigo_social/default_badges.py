@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.conf import settings
 from allauth.account.signals import user_signed_up
 
 from indigo_social.badges import PermissionBadge, badges
@@ -106,7 +107,8 @@ badges.register(SuperReviewerBadge)
 badges.register(TaxonomistBadge)
 
 
-# when a user signs up, grant them the contributor badge immediately
+# when a user signs up, grant them some badges immediately
 @receiver(user_signed_up, sender=User)
 def grant_contributor_new_user(sender, request, user, **kwargs):
-    badges.registry['contributor'].award(user=user)
+    for badge in settings.INDIGO_SOCIAL['new_user_badges']:
+        badges.registry[badge].award(user=user)

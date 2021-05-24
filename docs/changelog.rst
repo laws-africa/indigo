@@ -8,6 +8,8 @@ Changelog
 * FEATURE: Authorities and resolvers support priorities; highest priority for multiple matches wins.
 * BREAKING: Indigo now always requires authentication. Support for unauthenticated use is removed because it is too
   difficult and risky to support allowing both types of access.
+* FEATURE: Enforce view permissions for countries, tasks, workflows, works and documents.
+* BREAKING: Default badge permissions have changed. Run `python manage.py award_badges`.
 
 13.1.2 (2021-03-19)
 --------

@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 
 from ..models import Document, Attachment, Work, PublicationDocument
 from ..serializers import AttachmentSerializer
-from ..authz import AttachmentPermissions
+from ..authz import ModelPermissions, RelatedDocumentPermissions
 from .documents import DocumentResourceView
 from .misc import DEFAULT_PERMS
 
@@ -39,7 +39,7 @@ def download_attachment(attachment):
 class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
-    permission_classes = DEFAULT_PERMS + (AttachmentPermissions,)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions)
 
     @action(detail=True, methods=['GET'])
     def download(self, request, *args, **kwargs):
@@ -59,8 +59,6 @@ class AttachmentMediaView(DocumentResourceView, APIView):
     """ This is a helper view to serve up a named attachment file via
     a document's "media/file.ext" url, which is part of the AKN standard.
     """
-    permission_classes = DEFAULT_PERMS + (AttachmentPermissions,)
-
     def get(self, request, document_id, filename):
         return view_attachment_by_filename(document_id, filename)
 

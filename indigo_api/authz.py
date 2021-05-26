@@ -114,3 +114,8 @@ class RelatedDocumentPermissions(BasePermission):
 class RevisionPermissions(RelatedDocumentPermissions):
     def has_object_permission(self, request, view, obj):
         return self.has_document_permission(request, view, view.document)
+
+
+class FindPublicationsPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.has_perm('indigo_api.change_work',)

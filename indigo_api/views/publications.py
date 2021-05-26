@@ -4,12 +4,13 @@ from rest_framework.response import Response
 
 from indigo.plugins import plugins
 from .misc import DEFAULT_PERMS
+from ..authz import FindPublicationsPermissions
 
 
 class FindPublicationsView(APIView):
     """ Support for finding a publication document for a work.
     """
-    permission_classes = DEFAULT_PERMS + ('indigo_api.change_work',)
+    permission_classes = DEFAULT_PERMS + (FindPublicationsPermissions,)
 
     def get(self, request, country, locality=None):
         country = country.lower()

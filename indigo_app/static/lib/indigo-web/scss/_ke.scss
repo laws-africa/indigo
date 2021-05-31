@@ -18,6 +18,7 @@
   }
 
   // Single-line remarks must be centered.
+  .akn-listIntroduction > .akn-remark:only-child,
   .akn-p > .akn-remark:only-child {
     display: block;
     margin-top: $akn-para-spacing;

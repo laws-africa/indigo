@@ -37,6 +37,7 @@ class EditorBadge(PermissionBadge):
         'indigo_api.add_work', 'indigo_api.change_work',
         'indigo_api.add_document', 'indigo_api.change_document',
         'indigo_api.view_documentactivity', 'indigo_api.add_documentactivity', 'indigo_api.change_documentactivity', 'indigo_api.delete_documentactivity',
+        'indigo_api.view_attachment', 'indigo_api.add_attachment', 'indigo_api.change_attachment', 'indigo_api.delete_attachment',
         'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
         'indigo_api.add_arbitraryexpressiondate', 'indigo_api.change_arbitraryexpressiondate', 'indigo_api.delete_arbitraryexpressiondate',
         # required when restoring a document version

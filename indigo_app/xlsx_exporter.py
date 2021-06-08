@@ -15,6 +15,7 @@ class XlsxWriter:
         bulk_creator = plugins.for_locale('bulk-creator', country.code, None, locality_code)
         self.aliases = bulk_creator.aliases
         self.place = locality or country
+        self.extra_properties = list(self.place.settings.work_properties.keys())
 
     def write_full_index(self, workbook, works):
         def get_columns():
@@ -37,8 +38,7 @@ class XlsxWriter:
                             'comments', 'LINKS ETC (add columns as needed)']
 
             # add extra properties
-            extra_properties = list(self.place.settings.work_properties.keys())
-            columns = extra_properties + base_columns
+            columns = self.extra_properties + base_columns
 
             # transform aliases backwards
             for alias, meaning in self.aliases:
@@ -128,7 +128,8 @@ class XlsxWriter:
             elif field == 'frbr_uri_title':
                 to_write = uri_title(wk)
 
-            # TODO: extra properties (won't know what they're called)
+            elif field in self.extra_properties:
+                to_write = work.properties.get(field)
 
             if format_date:
                 sheet.write(row, column_number, to_write, date_format)
@@ -144,9 +145,6 @@ class XlsxWriter:
                     sheet.write(row, columns.index('repeals_on_date'), repealed_work.repealed_date, date_format)
                 except IndexError:
                     pass
-
-        # def write_relationship(row_number, info, n):
-        #     pass
 
         date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
         sheet = workbook.add_worksheet('Works')
@@ -194,8 +192,6 @@ class XlsxWriter:
                 row += 1
                 for field in columns:
                     write_field(field, work)
-                # sheet.write(row, 3, work.properties.get('cap') or "")
-                # write_relationship(row, info, n)
                 write_commencement_passive(n)
                 write_amendment_passive(n)
                 write_commencement_active(n)

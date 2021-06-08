@@ -25,7 +25,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
-from indigo_app.xlsx_exporter import generate_xlsx
+from indigo_app.xlsx_exporter import XlsxWriter
 
 log = logging.getLogger(__name__)
 
@@ -300,7 +300,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
         self.form.is_valid()
 
         if params.get('format') == 'xlsx':
-            return generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
+            writer = XlsxWriter(self.country, self.locality)
+            return writer.generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
 
         return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
@@ -648,7 +649,8 @@ class PlaceWorksIndexView(PlaceViewBase, TemplateView):
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
         filename = f"Full index for {self.place}.xlsx"
 
-        return generate_xlsx(works, filename, True)
+        writer = XlsxWriter(self.country, self.locality)
+        return writer.generate_xlsx(works, filename, True)
 
 
 class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):

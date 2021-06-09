@@ -1,7 +1,9 @@
 # coding=utf-8
-from django.http import HttpResponse
+import datetime
 import io
 import xlsxwriter
+
+from django.http import HttpResponse
 
 from indigo.plugins import plugins
 from indigo_api.models import Amendment
@@ -90,48 +92,45 @@ class XlsxWriter:
                 except IndexError:
                     pass
 
-        def write_field(field, wk):
+        def write_field(field):
             column_number = columns.index(field)
             to_write = None
-            format_date = None
             # transform aliases
             for alias, meaning in self.aliases:
                 if alias == field:
                     field = meaning
+                    break
 
             # what to actually write
             if field in ['title', 'subtype', 'number', 'year',
                          'publication_name', 'publication_number', 'frbr_uri',
                          'assent_date', 'publication_date', 'commencement_date']:
-                to_write = getattr(wk, field)
-                if field in ['assent_date', 'publication_date', 'commencement_date']:
-                    format_date = True
+                to_write = getattr(work, field)
             elif field == 'country':
-                to_write = wk.country.code
+                to_write = work.country.code
             elif field == 'locality':
-                to_write = wk.locality.code if wk.locality else None
-            elif field == 'stub':
-                to_write = '✔' if wk.stub else ''
+                to_write = work.locality.code if work.locality else ''
+            elif field == 'stub' and work.stub:
+                to_write = '✔'
             elif field == 'taxonomy':
-                to_write = '; '.join(t.slug for t in wk.taxonomies.all())
+                to_write = '; '.join(t.slug for t in work.taxonomies.all())
             elif field == 'primary_work':
-                to_write = uri_title(wk.parent_work)
+                to_write = uri_title(work.parent_work)
             elif field == 'repealed_by':
-                to_write = uri_title(wk.repealed_by)
+                to_write = uri_title(work.repealed_by)
             elif field == 'repealed_on_date':
-                to_write = wk.repealed_date
-                format_date = True
+                to_write = work.repealed_date
             elif field == 'subleg':
-                to_write = '; '.join(uri_title(child) for child in wk.child_works.all())
+                to_write = '; '.join(uri_title(child) for child in work.child_works.all())
             elif field == 'Ignore (x) or in (✔)':
                 to_write = '✔'
             elif field == 'frbr_uri_title':
-                to_write = uri_title(wk)
+                to_write = uri_title(work)
 
             elif field in self.extra_properties:
                 to_write = work.properties.get(field)
 
-            if format_date:
+            if isinstance(to_write, datetime.date):
                 sheet.write(row, column_number, to_write, date_format)
             else:
                 sheet.write(row, column_number, to_write)
@@ -191,7 +190,7 @@ class XlsxWriter:
             for n in range(info.get('n_rows')):
                 row += 1
                 for field in columns:
-                    write_field(field, work)
+                    write_field(field)
                 write_commencement_passive(n)
                 write_amendment_passive(n)
                 write_commencement_active(n)

@@ -59,13 +59,19 @@
                                     <xsl:call-template name="string-replace-all">
                                       <xsl:with-param name="text">
                                         <xsl:call-template name="string-replace-all">
-                                          <xsl:with-param name="text" select="$text" />
-                                          <xsl:with-param name="value"><xsl:value-of select="'\'" /></xsl:with-param>
-                                          <xsl:with-param name="replacement"><xsl:value-of select="'\\'" /></xsl:with-param>
+                                          <xsl:with-param name="text">
+                                            <xsl:call-template name="string-replace-all">
+                                              <xsl:with-param name="text" select="$text" />
+                                              <xsl:with-param name="value"><xsl:value-of select="'\'" /></xsl:with-param>
+                                              <xsl:with-param name="replacement"><xsl:value-of select="'\\'" /></xsl:with-param>
+                                            </xsl:call-template>
+                                          </xsl:with-param>
+                                          <xsl:with-param name="value"><xsl:value-of select="'**'" /></xsl:with-param>
+                                          <xsl:with-param name="replacement"><xsl:value-of select="'\*\*'" /></xsl:with-param>
                                         </xsl:call-template>
                                       </xsl:with-param>
-                                      <xsl:with-param name="value"><xsl:value-of select="'**'" /></xsl:with-param>
-                                      <xsl:with-param name="replacement"><xsl:value-of select="'\*\*'" /></xsl:with-param>
+                                      <xsl:with-param name="value"><xsl:value-of select="'__'" /></xsl:with-param>
+                                      <xsl:with-param name="replacement"><xsl:value-of select="'\_\_'" /></xsl:with-param>
                                     </xsl:call-template>
                                   </xsl:with-param>
                                   <xsl:with-param name="value"><xsl:value-of select="'//'" /></xsl:with-param>
@@ -395,6 +401,12 @@
     <xsl:text>_^</xsl:text>
     <xsl:apply-templates />
     <xsl:text>^_</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:u">
+    <xsl:text>__</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>__</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:eol">

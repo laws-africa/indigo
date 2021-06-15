@@ -19,6 +19,13 @@ class XLSXExporterTest(testcases.TestCase):
     def setUp(self):
         self.maxDiff = None
         creator = BaseBulkCreator()
+        self.columns = ['country', 'locality', 'title', 'subtype', 'number', 'year', 'publication_name',
+                        'publication_number', 'assent_date', 'publication_date', 'commencement_date', 'stub',
+                        'taxonomy', 'primary_work', 'commenced_by', 'commenced_on_date', 'amended_by',
+                        'amended_on_date', 'repealed_by', 'repealed_on_date', 'subleg', 'commences',
+                        'commences_on_date', 'amends', 'amends_on_date', 'repeals', 'repeals_on_date',
+                        'Ignore (x) or in (✔)', 'frbr_uri', 'frbr_uri_title', 'comments',
+                        'LINKS ETC (add columns as needed)']
         creator.country = Country.objects.get(pk=1)
         creator.locality = None
         creator.user = User.objects.get(pk=1)
@@ -48,12 +55,10 @@ class XLSXExporterTest(testcases.TestCase):
         self.write_works(works, f'{filename}_output.xlsx')
 
         expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        expected_content = pd.DataFrame(pd.read_excel(expected))
-        expected_content.sort_index(inplace=True)
+        expected_content = pd.DataFrame(pd.read_excel(expected, names=self.columns))
 
         output = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output_content = pd.DataFrame(pd.read_excel(output))
-        output_content.sort_index(inplace=True)
+        output_content = pd.DataFrame(pd.read_excel(output, names=self.columns))
 
         pd.testing.assert_frame_equal(expected_content, output_content)
 

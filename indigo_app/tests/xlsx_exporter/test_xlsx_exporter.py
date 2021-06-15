@@ -42,18 +42,49 @@ class XLSXExporterTest(testcases.TestCase):
         self.exporter.write_full_index(workbook, works)
         workbook.close()
 
-    def write_and_compare(self, filename):
+    def write_and_compare(self, filename, expected):
         self.import_works(False, f'{filename}.csv')
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
+        output_file = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
+        output = pd.read_excel(output_file).to_numpy(dtype=str, na_value='').tolist()
 
-        expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        output = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-
-        pd.testing.assert_frame_equal(pd.read_excel(expected), pd.read_excel(output))
+        self.assertEqual(output, expected)
 
     def test_amendments(self):
-        self.write_and_compare('amendments_active')
+        expected_output = [
+            ['za', '', 'Main', '', '1', '2020', '', '',
+             '', '2020-01-01 00:00:00', '2020-01-01 00:00:00',
+             '', '',
+             '', '', '', '/akn/za/act/2020/2 - Amendment', '2020-06-01 00:00:00', '', '',
+             '', '', '', '', '', '', '',
+             '✔', '/akn/za/act/2020/1', '/akn/za/act/2020/1 - Main', '', ''],
+            ['za', '', 'Main', '', '1', '2020', '', '',
+             '', '2020-01-01 00:00:00', '2020-01-01 00:00:00',
+             '', '',
+             '', '', '', '/akn/za/act/2020/3 - Second amendment', '2020-07-01 00:00:00', '', '',
+             '', '', '', '', '', '', '',
+             '✔', '/akn/za/act/2020/1', '/akn/za/act/2020/1 - Main', '', ''],
+            ['za', '', 'Amendment', '', '2', '2020', '', '',
+             '', '2020-01-01 00:00:00', '2020-06-01 00:00:00',
+             '✔', '',
+             '', '', '', '', '', '', '',
+             '', '', '', '/akn/za/act/2020/1 - Main', '2020-06-01 00:00:00', '', '',
+             '✔', '/akn/za/act/2020/2', '/akn/za/act/2020/2 - Amendment', '', ''],
+            ['za', '', 'Second amendment', '', '3', '2020', '', '',
+             '', '2020-01-01 00:00:00', '2020-07-01 00:00:00',
+             '✔', '',
+             '', '', '', '', '', '', '',
+             '', '', '', '/akn/za/act/2020/1 - Main', '2020-07-01 00:00:00', '', '',
+             '✔', '/akn/za/act/2020/3', '/akn/za/act/2020/3 - Second amendment', '', ''],
+            ['za', '', 'Error', '', '4', '2020', '', '',
+             '', '2020-01-01 00:00:00', '2020-07-01 00:00:00',
+             '✔', '',
+             '', '', '', '', '', '', '',
+             '', '', '', '', '', '', '',
+             '✔', '/akn/za/act/2020/4', '/akn/za/act/2020/4 - Error', '', '']
+        ]
+        self.write_and_compare('amendments_active', expected_output)
         # TODO: add passive amendments once import is supported
 
     def test_basic(self):

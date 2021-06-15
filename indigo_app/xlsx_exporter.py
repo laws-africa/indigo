@@ -9,7 +9,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Amendment
 
 
-class XlsxWriter:
+class XlsxExporter:
     def __init__(self, country, locality):
         country = country
         locality = locality

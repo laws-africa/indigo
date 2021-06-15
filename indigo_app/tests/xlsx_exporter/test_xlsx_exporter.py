@@ -10,7 +10,7 @@ from django.test import testcases
 from indigo.bulk_creator import BaseBulkCreator
 from indigo_api.models import Country, Work
 from indigo_app.models import User
-from indigo_app.xlsx_exporter import XlsxWriter
+from indigo_app.xlsx_exporter import XlsxExporter
 
 
 class XLSXExporterTest(testcases.TestCase):
@@ -33,6 +33,7 @@ class XLSXExporterTest(testcases.TestCase):
         self.creator = creator
         self.country = Country.objects.get(pk=1)
         self.locality = None
+        self.exporter = XlsxExporter(self.country, self.locality)
 
     def import_works(self, dry_run, filename):
         file = os.path.join(os.path.dirname(__file__), filename)
@@ -45,8 +46,7 @@ class XLSXExporterTest(testcases.TestCase):
     def write_works(self, works, filename):
         filename = os.path.join(os.path.dirname(__file__), filename)
         workbook = xlsxwriter.Workbook(filename)
-        writer = XlsxWriter(self.country, self.locality)
-        writer.write_full_index(workbook, works)
+        self.exporter.write_full_index(workbook, works)
         workbook.close()
 
     def write_and_compare(self, filename):
@@ -55,12 +55,9 @@ class XLSXExporterTest(testcases.TestCase):
         self.write_works(works, f'{filename}_output.xlsx')
 
         expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        expected_content = pd.DataFrame(pd.read_excel(expected, names=self.columns))
-
         output = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output_content = pd.DataFrame(pd.read_excel(output, names=self.columns))
 
-        pd.testing.assert_frame_equal(expected_content, output_content)
+        pd.testing.assert_frame_equal(pd.read_excel(expected), pd.read_excel(output))
 
     def test_amendments(self):
         self.write_and_compare('amendments_active')

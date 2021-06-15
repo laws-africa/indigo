@@ -46,11 +46,16 @@ class XLSXExporterTest(testcases.TestCase):
         self.import_works(False, f'{filename}.csv')
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
+
         expected = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        expected_content = pd.read_excel(expected)
+        expected_content = pd.DataFrame(pd.read_excel(expected))
+        expected_content.sort_index(inplace=True)
+
         output = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output_content = pd.read_excel(output)
-        self.assertEqual(pd.DataFrame(expected_content), pd.DataFrame(output_content))
+        output_content = pd.DataFrame(pd.read_excel(output))
+        output_content.sort_index(inplace=True)
+
+        pd.testing.assert_frame_equal(expected_content, output_content)
 
     def test_amendments(self):
         self.write_and_compare('amendments_active')

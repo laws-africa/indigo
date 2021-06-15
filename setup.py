@@ -81,7 +81,7 @@ setup(
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
         'django-contrib-comments>=1.9.1',
-        'XlsxWriter>=1.2.6',
+        'XlsxWriter==1.4.2',
         'xmldiff>=2.4',
 
         # for indigo_social

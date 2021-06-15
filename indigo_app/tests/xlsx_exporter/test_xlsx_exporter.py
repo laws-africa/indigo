@@ -19,13 +19,6 @@ class XLSXExporterTest(testcases.TestCase):
     def setUp(self):
         self.maxDiff = None
         creator = BaseBulkCreator()
-        self.columns = ['country', 'locality', 'title', 'subtype', 'number', 'year', 'publication_name',
-                        'publication_number', 'assent_date', 'publication_date', 'commencement_date', 'stub',
-                        'taxonomy', 'primary_work', 'commenced_by', 'commenced_on_date', 'amended_by',
-                        'amended_on_date', 'repealed_by', 'repealed_on_date', 'subleg', 'commences',
-                        'commences_on_date', 'amends', 'amends_on_date', 'repeals', 'repeals_on_date',
-                        'Ignore (x) or in (✔)', 'frbr_uri', 'frbr_uri_title', 'comments',
-                        'LINKS ETC (add columns as needed)']
         creator.country = Country.objects.get(pk=1)
         creator.locality = None
         creator.user = User.objects.get(pk=1)

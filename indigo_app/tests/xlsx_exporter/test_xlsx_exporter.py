@@ -46,16 +46,7 @@ class XLSXExporterTest(testcases.TestCase):
         self.exporter.write_full_index(workbook, works)
         workbook.close()
 
-    def write_and_compare(self, filename, expected=None):
-        """ expected output column heads:
-        country, locality, title, subtype, number, year, publication_name, publication_number,
-        assent_date, publication_date, commencement_date,
-        stub (✔), taxonomy,
-        primary_work, commenced_by, commenced_on_date, amended_by, amended_on_date, repealed_by, repealed_on_date,
-        subleg, commences, commences_on_date, amends, amends_on_date, repeals, repeals_on_date,
-        Ignore (x) or in (✔), frbr_uri, frbr_uri_title,
-        comments, LINKS ETC (add columns as needed)
-        """
+    def write_and_compare(self, filename):
         self.import_works(False, f'{filename}.csv')
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
@@ -64,48 +55,15 @@ class XLSXExporterTest(testcases.TestCase):
         logger.info(f'\nOutput columns for {filename} in {self.locality}, {self.country.name}: {output.columns}')
         output = output.to_numpy(dtype=str, na_value='').tolist()
 
-        if not expected:
-            expected_file = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-            expected = pd.read_excel(expected_file)
-            logger.info(f'Expected columns: {expected.columns}')
-            expected = expected.to_numpy(dtype=str, na_value='').tolist()
+        expected_file = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
+        expected = pd.read_excel(expected_file)
+        logger.info(f'Expected columns: {expected.columns}')
+        expected = expected.to_numpy(dtype=str, na_value='').tolist()
 
         self.assertEqual(output, expected)
 
     def test_amendments(self):
-        expected_output = [
-            ['za', '', 'Main', '', '1', '2020', '', '',
-             '', '2020-01-01 00:00:00', '2020-01-01 00:00:00',
-             '', '',
-             '', '', '', '/akn/za/act/2020/2 - Amendment', '2020-06-01 00:00:00', '', '',
-             '', '', '', '', '', '', '',
-             '✔', '/akn/za/act/2020/1', '/akn/za/act/2020/1 - Main', '', ''],
-            ['za', '', 'Main', '', '1', '2020', '', '',
-             '', '2020-01-01 00:00:00', '2020-01-01 00:00:00',
-             '', '',
-             '', '', '', '/akn/za/act/2020/3 - Second amendment', '2020-07-01 00:00:00', '', '',
-             '', '', '', '', '', '', '',
-             '✔', '/akn/za/act/2020/1', '/akn/za/act/2020/1 - Main', '', ''],
-            ['za', '', 'Amendment', '', '2', '2020', '', '',
-             '', '2020-01-01 00:00:00', '2020-06-01 00:00:00',
-             '✔', '',
-             '', '', '', '', '', '', '',
-             '', '', '', '/akn/za/act/2020/1 - Main', '2020-06-01 00:00:00', '', '',
-             '✔', '/akn/za/act/2020/2', '/akn/za/act/2020/2 - Amendment', '', ''],
-            ['za', '', 'Second amendment', '', '3', '2020', '', '',
-             '', '2020-01-01 00:00:00', '2020-07-01 00:00:00',
-             '✔', '',
-             '', '', '', '', '', '', '',
-             '', '', '', '/akn/za/act/2020/1 - Main', '2020-07-01 00:00:00', '', '',
-             '✔', '/akn/za/act/2020/3', '/akn/za/act/2020/3 - Second amendment', '', ''],
-            ['za', '', 'Error', '', '4', '2020', '', '',
-             '', '2020-01-01 00:00:00', '2020-07-01 00:00:00',
-             '✔', '',
-             '', '', '', '', '', '', '',
-             '', '', '', '', '', '', '',
-             '✔', '/akn/za/act/2020/4', '/akn/za/act/2020/4 - Error', '', '']
-        ]
-        self.write_and_compare('amendments_active', expected_output)
+        self.write_and_compare('amendments_active')
         # TODO: add passive amendments once import is supported
 
     def test_basic(self):

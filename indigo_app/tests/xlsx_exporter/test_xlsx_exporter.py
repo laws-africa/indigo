@@ -61,7 +61,7 @@ class XLSXExporterTest(testcases.TestCase):
         self.write_works(works, f'{filename}_output.xlsx')
         output_file = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
         output = pd.read_excel(output_file)
-        logger.info(f'Output columns: {output.columns}')
+        logger.info(f'\nOutput columns for {filename} in {self.locality}, {self.country.name}: {output.columns}')
         output = output.to_numpy(dtype=str, na_value='').tolist()
 
         if not expected:

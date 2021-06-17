@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
 import io
+import logging
 import os
 import pandas as pd
 import xlsxwriter
@@ -11,6 +12,9 @@ from indigo.bulk_creator import BaseBulkCreator
 from indigo_api.models import Country, Work
 from indigo_app.models import User
 from indigo_app.xlsx_exporter import XlsxExporter
+
+
+logger = logging.getLogger(__name__)
 
 
 class XLSXExporterTest(testcases.TestCase):
@@ -42,12 +46,29 @@ class XLSXExporterTest(testcases.TestCase):
         self.exporter.write_full_index(workbook, works)
         workbook.close()
 
-    def write_and_compare(self, filename, expected):
+    def write_and_compare(self, filename, expected=None):
+        """ expected output column heads:
+        country, locality, title, subtype, number, year, publication_name, publication_number,
+        assent_date, publication_date, commencement_date,
+        stub (✔), taxonomy,
+        primary_work, commenced_by, commenced_on_date, amended_by, amended_on_date, repealed_by, repealed_on_date,
+        subleg, commences, commences_on_date, amends, amends_on_date, repeals, repeals_on_date,
+        Ignore (x) or in (✔), frbr_uri, frbr_uri_title,
+        comments, LINKS ETC (add columns as needed)
+        """
         self.import_works(False, f'{filename}.csv')
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
         output_file = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output = pd.read_excel(output_file).to_numpy(dtype=str, na_value='').tolist()
+        output = pd.read_excel(output_file)
+        logger.info(f'Output columns: {output.columns}')
+        output = output.to_numpy(dtype=str, na_value='').tolist()
+
+        if not expected:
+            expected_file = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
+            expected = pd.read_excel(expected_file)
+            logger.info(f'Expected columns: {expected.columns}')
+            expected = expected.to_numpy(dtype=str, na_value='').tolist()
 
         self.assertEqual(output, expected)
 

@@ -2,14 +2,13 @@
 Changelog
 =========
 
-13.1.3 (???)
+14.0.1 (???)
 --------
 
 * NEW: Commencements below the section level supported.
 
-=======
 14.0.0 (2021-06-15)
-----------
+--------
 
 * FEATURE: Authorities and resolvers support priorities; highest priority for multiple matches wins.
 * BREAKING: Indigo now always requires authentication. Support for unauthenticated use is removed because it is too

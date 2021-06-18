@@ -414,7 +414,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         place = self.locality or self.country
         for extra_property in place.settings.work_properties.keys():
             if hasattr(row, extra_property):
-                work.properties[extra_property] = getattr(row, extra_property)
+                work.properties[extra_property] = str(getattr(row, extra_property) or '')
 
     def link_publication_document(self, work, row):
         locality_code = self.locality.code if self.locality else None

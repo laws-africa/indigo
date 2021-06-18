@@ -2,7 +2,7 @@
 Changelog
 =========
 
-14.0.0 (?)
+14.0.0 (2021-06-15)
 ----------
 
 * FEATURE: Authorities and resolvers support priorities; highest priority for multiple matches wins.
@@ -12,6 +12,7 @@ Changelog
 * BREAKING: Default badge permissions have changed. Run `python manage.py award_badges`.
 * FEATURE: Configure the badges assigned to new users through `INDIGO_SOCIAL['new_user_badges']`
 * FEATURE: Support underlines with `__`
+* FIX: Export all extra properties on XLSX export.
 
 13.1.2 (2021-03-19)
 --------

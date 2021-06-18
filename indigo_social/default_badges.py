@@ -14,6 +14,14 @@ from indigo_social.badges import PermissionBadge, badges
 # to the module name. The badges will be imported when the app starts up.
 
 
+class ContentAPIBadge(PermissionBadge):
+    slug = 'content-api'
+    name = 'Content API'
+    group_name = name + ' Badge'
+    description = 'Can use the Content API'
+    permissions = ('indigo_api.view_published_document',)
+
+
 class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
@@ -99,6 +107,7 @@ class TaxonomistBadge(PermissionBadge):
     )
 
 
+badges.register(ContentAPIBadge)
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
 badges.register(PlaceAdminBadge)

@@ -9,31 +9,147 @@
   <xsl:strip-space elements="*"/>
   <xsl:preserve-space elements="a:a a:affectedDocument a:b a:block a:caption a:change a:concept a:courtType a:date a:def a:del a:docCommittee a:docDate a:docIntroducer a:docJurisdiction a:docNumber a:docProponent a:docPurpose a:docStage a:docStatus a:docTitle a:docType a:docketNumber a:entity a:event a:extractText a:fillIn a:from a:heading a:i a:inline a:ins a:judge a:lawyer a:legislature a:li a:listConclusion a:listIntroduction a:location a:mmod a:mod a:mref a:narrative a:neutralCitation a:num a:object a:omissis a:opinion a:organization a:outcome a:p a:party a:person a:placeholder a:process a:quantity a:quotedText a:recordedTime a:ref a:relatedDocument a:remark a:rmod a:role a:rref a:scene a:session a:shortTitle a:signature a:span a:sub a:subheading a:summary a:sup a:term a:tocItem a:u a:vote"/>
 
+  <!-- replaces "value" in "text" with "replacement" -->
+  <xsl:template name="string-replace-all">
+    <xsl:param name="text" />
+    <xsl:param name="value" />
+    <xsl:param name="replacement" />
+
+    <xsl:choose>
+      <xsl:when test="$text = '' or $value = '' or not($value)">
+        <xsl:value-of select="$text" />
+      </xsl:when>
+      <xsl:when test="contains($text, $value)">
+        <xsl:value-of select="substring-before($text, $value)"/>
+        <xsl:value-of select="$replacement" />
+        <xsl:call-template name="string-replace-all">
+          <xsl:with-param name="text" select="substring-after($text, $value)" />
+          <xsl:with-param name="value" select="$value" />
+          <xsl:with-param name="replacement" select="$replacement" />
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$text" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Escape inline markers with a backslash -->
+  <xsl:template name="escape-inlines">
+    <xsl:param name="text" />
+
+    <!-- This works from the inside out, first escaping backslash chars themselves, then escaping
+          the different types of inline markers -->
+    <xsl:call-template name="string-replace-all">
+      <xsl:with-param name="text">
+        <xsl:call-template name="string-replace-all">
+          <xsl:with-param name="text">
+            <xsl:call-template name="string-replace-all">
+              <xsl:with-param name="text">
+                <xsl:call-template name="string-replace-all">
+                  <xsl:with-param name="text">
+                    <xsl:call-template name="string-replace-all">
+                      <xsl:with-param name="text">
+                        <xsl:call-template name="string-replace-all">
+                          <xsl:with-param name="text">
+                            <xsl:call-template name="string-replace-all">
+                              <xsl:with-param name="text">
+                                <xsl:call-template name="string-replace-all">
+                                  <xsl:with-param name="text">
+                                    <xsl:call-template name="string-replace-all">
+                                      <xsl:with-param name="text">
+                                        <xsl:call-template name="string-replace-all">
+                                          <xsl:with-param name="text">
+                                            <xsl:call-template name="string-replace-all">
+                                              <xsl:with-param name="text" select="$text" />
+                                              <xsl:with-param name="value"><xsl:value-of select="'\'" /></xsl:with-param>
+                                              <xsl:with-param name="replacement"><xsl:value-of select="'\\'" /></xsl:with-param>
+                                            </xsl:call-template>
+                                          </xsl:with-param>
+                                          <xsl:with-param name="value"><xsl:value-of select="'**'" /></xsl:with-param>
+                                          <xsl:with-param name="replacement"><xsl:value-of select="'\*\*'" /></xsl:with-param>
+                                        </xsl:call-template>
+                                      </xsl:with-param>
+                                      <xsl:with-param name="value"><xsl:value-of select="'__'" /></xsl:with-param>
+                                      <xsl:with-param name="replacement"><xsl:value-of select="'\_\_'" /></xsl:with-param>
+                                    </xsl:call-template>
+                                  </xsl:with-param>
+                                  <xsl:with-param name="value"><xsl:value-of select="'//'" /></xsl:with-param>
+                                  <xsl:with-param name="replacement"><xsl:value-of select="'\/\/'" /></xsl:with-param>
+                                </xsl:call-template>
+                              </xsl:with-param>
+                              <xsl:with-param name="value"><xsl:value-of select="'_^'" /></xsl:with-param>
+                              <xsl:with-param name="replacement"><xsl:value-of select="'\_^'" /></xsl:with-param>
+                            </xsl:call-template>
+                          </xsl:with-param>
+                          <xsl:with-param name="value"><xsl:value-of select="'^_'" /></xsl:with-param>
+                          <xsl:with-param name="replacement"><xsl:value-of select="'\^_'" /></xsl:with-param>
+                        </xsl:call-template>
+                      </xsl:with-param>
+                      <xsl:with-param name="value"><xsl:value-of select="'^^'" /></xsl:with-param>
+                      <xsl:with-param name="replacement"><xsl:value-of select="'\^\^'" /></xsl:with-param>
+                  </xsl:call-template>
+                </xsl:with-param>
+                <xsl:with-param name="value"><xsl:value-of select="'!['" /></xsl:with-param>
+                <xsl:with-param name="replacement"><xsl:value-of select="'\!['" /></xsl:with-param>
+              </xsl:call-template>
+              </xsl:with-param>
+              <xsl:with-param name="value"><xsl:value-of select="']('" /></xsl:with-param>
+              <xsl:with-param name="replacement"><xsl:value-of select="'\]('" /></xsl:with-param>
+            </xsl:call-template>
+          </xsl:with-param>
+          <xsl:with-param name="value"><xsl:value-of select="'[['" /></xsl:with-param>
+          <xsl:with-param name="replacement"><xsl:value-of select="'\[\['" /></xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+      <xsl:with-param name="value"><xsl:value-of select="']]'" /></xsl:with-param>
+      <xsl:with-param name="replacement"><xsl:value-of select="'\]\]'" /></xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
   <!-- adds a backslash to the start of the value param, if necessary -->
-  <xsl:template name="escape">
+  <xsl:template name="escape-prefixes">
     <xsl:param name="value"/>
 
     <xsl:variable name="prefix" select="translate(substring($value, 1, 13), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
     <!-- '(' is considered special, so translate numbers into '(' so we can find and escape them -->
     <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', '((((((((((')" />
 
-    <!-- p tags must escape initial content that looks like a block element marker -->
-    <xsl:if test="$prefix = 'BODY' or
-                  $prefix = 'PREAMBLE' or
-                  $prefix = 'PREFACE' or
-                  starts-with($prefix, 'CHAPTER ') or
-                  starts-with($prefix, 'PART ') or
-                  starts-with($prefix, 'SUBPART ') or
-                  starts-with($prefix, 'SCHEDULE ') or
-                  starts-with($prefix, 'HEADING ') or
-                  starts-with($prefix, 'SUBHEADING ') or
-                  starts-with($prefix, 'LONGTITLE ') or
-                  starts-with($prefix, 'CROSSHEADING ') or
-                  starts-with($prefix, '{|') or
-                  starts-with($numprefix, '(')">
-      <xsl:text>\</xsl:text>
-    </xsl:if>
-    <xsl:value-of select="$value"/>
+    <xsl:variable name="slash">
+      <!-- p tags must escape initial content that looks like a block element marker -->
+      <xsl:if test="$prefix = 'BODY' or
+                    $prefix = 'PREAMBLE' or
+                    $prefix = 'PREFACE' or
+                    starts-with($prefix, 'CHAPTER ') or
+                    starts-with($prefix, 'PART ') or
+                    starts-with($prefix, 'SUBPART ') or
+                    starts-with($prefix, 'SCHEDULE ') or
+                    starts-with($prefix, 'HEADING ') or
+                    starts-with($prefix, 'SUBHEADING ') or
+                    starts-with($prefix, 'LONGTITLE ') or
+                    starts-with($prefix, 'CROSSHEADING ') or
+                    starts-with($prefix, '{|') or
+                    starts-with($numprefix, '(')">
+        <xsl:value-of select="'\'" />
+      </xsl:if>
+    </xsl:variable>
+
+    <xsl:value-of select="concat($slash, $value)" />
+  </xsl:template>
+
+  <!-- adds a backslash to the start of the text param, if necessary -->
+  <xsl:template name="escape">
+    <xsl:param name="value"/>
+
+    <xsl:variable name="escaped">
+      <xsl:call-template name="escape-inlines">
+        <xsl:with-param name="text" select="$value" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:call-template name="escape-prefixes">
+      <xsl:with-param name="value" select="$escaped" />
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="a:act">
@@ -42,7 +158,7 @@
     <xsl:apply-templates select="a:preamble" />
     <xsl:apply-templates select="a:body" />
     <xsl:apply-templates select="a:conclusions" />
-    <xsl:apply-templates select="a:attachments" />
+    <xsl:apply-templates select="a:attachments/a:attachment" />
   </xsl:template>
 
   <xsl:template match="a:preface">
@@ -77,7 +193,7 @@
   </xsl:template>
 
   <xsl:template match="a:subpart">
-    <xsl:text>SUBPART </xsl:text>
+    <xsl:text>Subpart </xsl:text>
     <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
     <xsl:apply-templates select="a:heading" />
@@ -163,6 +279,13 @@
     </xsl:call-template>
   </xsl:template>
 
+  <!-- escape inlines in text nodes -->
+  <xsl:template match="text()">
+    <xsl:call-template name="escape-inlines">
+      <xsl:with-param name="text" select="." />
+    </xsl:call-template>
+  </xsl:template>
+
 
   <!-- attachments/schedules -->
   <xsl:template match="a:attachment">
@@ -177,10 +300,9 @@
     </xsl:if>
 
     <xsl:text>&#10;</xsl:text>
-    <xsl:apply-templates select="a:doc" />
+    <xsl:apply-templates select="a:doc/a:mainBody" />
   </xsl:template>
 
-  <xsl:template match="a:meta" />
 
   <!-- tables -->
   <xsl:template match="a:table">
@@ -279,6 +401,12 @@
     <xsl:text>_^</xsl:text>
     <xsl:apply-templates />
     <xsl:text>^_</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:u">
+    <xsl:text>__</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>__</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:eol">

@@ -3,6 +3,10 @@
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
+from django.contrib.auth.models import User, Permission
+from django.contrib.contenttypes.models import ContentType
+
+from indigo_api.models import Document
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -70,3 +74,62 @@ class AnalysisTestCase(APITestCase):
         assert_true(content.startswith('<akomaNtoso'))
         assert_in('<def ', content)
         assert_in('<TLCTerm ', content)
+
+    def test_link_terms_no_perms(self):
+        self.client.logout()
+        self.assertTrue(self.client.login(username='no-perms@example.com', password='password'))
+        user = User.objects.get(username='no-perms@example.com')
+
+        data = {
+            'document': {
+                'frbr_uri': '/za/act/1992/1',
+                'expression_date': '2001-01-01',
+                'language': 'eng',
+                'content': document_fixture(xml="""
+<section id="section-1">
+  <num>1.</num>
+  <heading>Definitions and interpretation</heading>
+  <content>
+    <p>test</p>
+  </content>
+</section>
+""")
+            }
+        }
+
+        # user doesn't have perms
+        response = self.client.post('/api/documents/1/analysis/link-terms', data)
+        self.assertEqual(response.status_code, 403)
+
+        # user has view perms, but not change
+        user.user_permissions.add(Permission.objects.get(
+            codename='view_document',
+            content_type=ContentType.objects.get_for_model(Document)
+        ))
+
+        response = self.client.post('/api/documents/1/analysis/link-terms', data)
+        self.assertEqual(response.status_code, 403)
+
+        # user has both view and change perms, but not publication permissions
+        user.user_permissions.add(Permission.objects.get(
+            codename='change_document',
+            content_type=ContentType.objects.get_for_model(Document)
+        ))
+
+        response = self.client.post('/api/documents/1/analysis/link-terms', data)
+        self.assertEqual(response.status_code, 403)
+
+        # add publish perm
+        user.user_permissions.add(Permission.objects.get(
+            codename='publish_document',
+            content_type=ContentType.objects.get_for_model(Document)
+        ))
+
+        response = self.client.post('/api/documents/1/analysis/link-terms', data)
+        self.assertEqual(response.status_code, 403)
+
+        # add missing country permission
+        user.editor.permitted_countries.add(Document.objects.get(pk=1).work.country)
+
+        response = self.client.post('/api/documents/1/analysis/link-terms', data)
+        self.assertEqual(response.status_code, 200)

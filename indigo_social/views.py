@@ -21,13 +21,13 @@ from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
 
 
-class ContributorsView(ListView):
+class ContributorsView(AbstractAuthedIndigoView, ListView):
     model = UserProfile
     template_name = 'indigo_social/contributors.html'
     queryset = UserProfile.objects.prefetch_related('user').order_by('-user__last_login')
 
 
-class UserProfileView(DetailView):
+class UserProfileView(AbstractAuthedIndigoView, DetailView):
     model = User
     slug_field = 'username'
     slug_url_kwarg = 'username'
@@ -132,7 +132,7 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
         return reverse('edit_account')
 
 
-class UserActivityView(MultipleObjectMixin, DetailView):
+class UserActivityView(AbstractAuthedIndigoView, MultipleObjectMixin, DetailView):
     model = User
     slug_field = 'username'
     slug_url_kwarg = 'username'
@@ -253,7 +253,7 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
         return redirect(self.get_success_url())
 
 
-class BadgeListView(TemplateView):
+class BadgeListView(AbstractAuthedIndigoView, TemplateView):
     template_name = 'indigo_social/badges.html'
 
     def get_context_data(self, **context):
@@ -261,7 +261,7 @@ class BadgeListView(TemplateView):
         return context
 
 
-class BadgeDetailView(TemplateView):
+class BadgeDetailView(AbstractAuthedIndigoView, TemplateView):
     template_name = 'indigo_social/badge_detail.html'
 
     def dispatch(self, request, slug):

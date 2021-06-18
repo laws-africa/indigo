@@ -8,6 +8,9 @@ from pinax.badges.registry import badges
 class SocialViewsTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor']
 
+    def setUp(self):
+        self.assertTrue(self.client.login(username='email@example.com', password='password'))
+
     def test_contributor_page(self):
         response = self.client.get('/contributors/')
         self.assertEqual(response.status_code, 200)
@@ -18,6 +21,7 @@ class SocialViewsTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_edit_user_profile(self):
+        self.client.logout()
         response = self.client.get('/accounts/profile/')
         self.assertEqual(response.status_code, 302)
 

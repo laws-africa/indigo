@@ -338,6 +338,28 @@ This is the body of the section.</pre>
           </div>
           {% endblock %}
 
+          {% block cheat-underline %}
+            <div class="card">
+              <a href="#cheat-underline" data-toggle="collapse" class="card-header">Underline text</a>
+              <div id="cheat-underline" class="collapse" data-parent="#cheat-accordion">
+                <div class="card-body">
+                  <p>Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.</p>
+
+                  <div class="row">
+                    <div class="col">
+                      <pre class="editor-snippet">The situation called for __underlined text__.</pre>
+                    </div>
+                    <div class="col">
+                      <div class="akoma-ntoso akoma-ntoso-snippet">
+                        <span class="akn-p mb-0">The situation called for <u>underlined text</u>.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endblock %}
+
           {% block cheat-weblink %}
           <div class="card">
             <a href="#cheat-weblink" data-toggle="collapse" class="card-header">Add a link to a webpage</a>

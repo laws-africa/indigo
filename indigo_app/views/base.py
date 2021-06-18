@@ -32,10 +32,9 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
 
     * `authentication_required` is True
     * `permission_required` is not empty
-    * INDIGO_AUTH_REQUIRED setting is True
     """
     raise_exception = True
-    authentication_required = settings.INDIGO_AUTH_REQUIRED
+    authentication_required = True
     permission_required = ()
     must_accept_terms = True
 
@@ -54,7 +53,7 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
         return self.authentication_required or self.permission_required
 
 
-class PlaceViewBase(object):
+class PlaceViewBase(AbstractAuthedIndigoView):
     """ Views that are tied to a place, either a Country or a Locality.
     This should be the first parent class for views with multiple parents.
 
@@ -64,6 +63,7 @@ class PlaceViewBase(object):
     country = None
     locality = None
     place = None
+    permission_required = ('indigo_api.view_country',)
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()

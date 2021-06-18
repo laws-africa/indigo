@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
+from django.contrib.auth.models import User, Permission, ContentType
 
+from indigo_api.models import Document, Annotation
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -138,3 +138,39 @@ class AnnotationAPITest(APITestCase):
         assert_equal(response.data['title'], '"sec_99": hello')
         assert_equal(response.data['state'], 'open')
         assert_is_none(response.data.get('anchor_id'))
+
+    def test_annotation_permissions(self):
+        self.client.logout()
+        self.assertTrue(self.client.login(username='no-perms@example.com', password='password'))
+        user = User.objects.get(username='no-perms@example.com')
+
+        data = {
+            'text': 'hello',
+            'anchor_id': 'section.1',
+            'selectors': [{
+                'type': 'TextPositionSelector',
+                'start': 100,
+                'end': 102,
+            }],
+        }
+
+        response = self.client.post('/api/documents/10/annotations', data)
+        assert_equal(response.status_code, 403)
+
+        # add view perms
+        user.user_permissions.add(Permission.objects.get(
+            codename='view_document',
+            content_type=ContentType.objects.get_for_model(Document)
+        ))
+
+        response = self.client.post('/api/documents/10/annotations', data)
+        assert_equal(response.status_code, 403)
+
+        # add annotation add perms
+        user.user_permissions.add(Permission.objects.get(
+            codename='add_annotation',
+            content_type=ContentType.objects.get_for_model(Annotation)
+        ))
+
+        response = self.client.post('/api/documents/10/annotations', data)
+        assert_equal(response.status_code, 201)

@@ -928,3 +928,5 @@ class RefsFinderCapENGTestCase(TestCase):
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
+        # set back to what it is in settings.py
+        settings.INDIGO['WORK_PROPERTIES'] = {}

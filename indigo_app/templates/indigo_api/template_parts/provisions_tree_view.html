@@ -1,0 +1,18 @@
+{% for prov in provisions %}
+  <li class="list-group-item">
+    <div class="d-flex align-items-center">
+      <input id="{{ prov.id }}"
+             value="{{ prov.id }}"
+             type="checkbox"
+             name="provisions"
+             class="mr-2"
+      />
+      <label for="{{ prov.id }}" class="mb-0">{{ prov.title }}</label>
+    </div>
+    {% if prov.children %}
+      <ul class="list-group mt-3">
+        {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=prov.children %}
+      </ul>
+    {% endif %}
+  </li>
+{% endfor %}

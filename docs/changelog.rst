@@ -20,6 +20,14 @@ Changelog
 * FEATURE: Support underlines with `__`
 * FIX: Export all extra properties on XLSX export.
 
+Important
+.........
+
+After updating to this version, you must manually grant the Contributor badge
+to your users from each user's profile view (from `/contributors`). The badge
+grants basic read-only permissions and will be automatically awarded to new
+users.
+
 13.1.2 (2021-03-19)
 --------
 

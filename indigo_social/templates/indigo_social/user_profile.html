@@ -39,7 +39,7 @@
       <form method="post" action="{% url 'indigo_social:unaward_user_badge' username=user.username %}">
         {% csrf_token %}
 
-        <p>Unaward a new badge to this user:</p>
+        <p>Remove a badge from this user:</p>
         <select name="{{ unaward_form.badge.name }}" class="form-control">
           {% for val, label in unaward_form.fields.badge.choices %}
             <option value="{{ val }}">{{ label }}</option>

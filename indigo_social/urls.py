@@ -9,7 +9,8 @@ urlpatterns = [
     path('contributors/', views.ContributorsView.as_view(), name='contributors'),
     # /contributors/{ username }
     re_path(r'^contributors/(?P<username>[\w@.-]+)$', views.UserProfileView.as_view(), name='user_profile'),
-    re_path(r'^contributors/(?P<username>[\w@.-]+)/badges$', views.AwardBadgeView.as_view(), name='award_user_badge'),
+    re_path(r'^contributors/(?P<username>[\w@.-]+)/badges/award$', views.AwardBadgeView.as_view(), name='award_user_badge'),
+    re_path(r'^contributors/(?P<username>[\w@.-]+)/badges/unaward$', views.UnawardBadgeView.as_view(), name='unaward_user_badge'),
     re_path(r'^contributors/(?P<username>[\w@.-]+)/activity/$', views.UserActivityView.as_view(), name='user_activity'),
     re_path(r'^contributors/(?P<username>[\w@.-]+)/tasks/$', views.UserTasksView.as_view(), name='user_tasks'),
     re_path(r'^contributors/(?P<username>[\w@.-]+)/popup$', views.UserPopupView.as_view(), name='user_popup'),

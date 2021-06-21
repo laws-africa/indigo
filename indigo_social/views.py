@@ -17,7 +17,7 @@ from pinax.badges.registry import badges
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
-from .forms import UserProfileForm, AwardBadgeForm
+from .forms import UserProfileForm, AwardBadgeForm, UnawardBadgeForm
 from .models import UserProfile
 
 
@@ -40,6 +40,7 @@ class UserProfileView(AbstractAuthedIndigoView, DetailView):
         context['can_award'] = self.request.user.has_perm('auth.change_user')
         if context['can_award']:
             context['award_form'] = AwardBadgeForm(user=self.object)
+            context['unaward_form'] = UnawardBadgeForm(user=self.object)
 
         activity = self.object.actor_actions.all()[:20]
         context['activity_stream'] = self.coalesce_entries(activity)
@@ -251,6 +252,19 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     def form_invalid(self, form):
         self.form = form
         return redirect(self.get_success_url())
+
+
+class UnawardBadgeView(AwardBadgeView):
+    form_class = UnawardBadgeForm
+
+    def form_valid(self, form):
+        self.form = form
+        user = self.user
+        badge = form.actual_badge()
+
+        badge.unaward(user)
+        messages.success(self.request, '%s badge remove from %s' % (badge.name, user_display(user)))
+        return super(AwardBadgeView, self).form_valid(form)
 
 
 class BadgeListView(AbstractAuthedIndigoView, TemplateView):

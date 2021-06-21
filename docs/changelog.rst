@@ -2,6 +2,12 @@
 Changelog
 =========
 
+14.1.0 (?)
+------
+
+* FEATURE: New Content API Badge for controlling who can use the Content API.
+* FEATURE: Admins can now remove badges from the contributor detail page.
+
 14.0.0 (2021-06-15)
 ----------
 

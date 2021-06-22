@@ -14,6 +14,7 @@ from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary,
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
+from indigo_app.views.works import publication_document_response
 
 from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomySerializer,\
     PublishedDocUrlMixin
@@ -349,8 +350,6 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
         work = self.get_document().work
 
         if work.publication_document and work.publication_document.filename == filename:
-            if work.publication_document.trusted_url:
-                return redirect(work.publication_document.trusted_url)
-            return view_attachment(work.publication_document)
+            return publication_document_response(work.publication_document)
 
         raise Http404()

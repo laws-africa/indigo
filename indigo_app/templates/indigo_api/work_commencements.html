@@ -134,14 +134,6 @@
                 <ul class="list-group" data-id="provisions">
                   {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions %}
                 </ul>
-
-
-<!--                TODO: Delete select-->
-                <select name="provisions" class="form-control" multiple size="{% if provisions|length > 20 %}20{% else %}10{% endif %}">
-                  {% for prov in commencement.possible_provisions %}
-                    <option value="{{ prov.id }}" {% if prov.id in commencement.provisions %}selected{% endif %}>{{ prov.title }}</option>
-                  {% endfor %}
-                </select>
               </div>
             </div>
           </form>

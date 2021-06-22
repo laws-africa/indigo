@@ -8,29 +8,6 @@
    * Handle the work commencements display.
    */
 
-  //TODO: Adapt Logic to backbone
-  const commentView = document.querySelector("#work-commencements-view");
-  const provisionCheckboxes = commentView.querySelectorAll('input[name="provisions"]');
-  [...provisionCheckboxes].forEach(checkbox => {
-    checkbox.addEventListener('change', (e) => handleCheckboxesChange(e.target));
-  });
-
-  function handleCheckboxesChange(currentCheckbox) {
-    const parentNodeListItem = currentCheckbox.closest("li");
-    const nestedListElement = parentNodeListItem.querySelector("ul");
-    if (nestedListElement) {
-      const listItemElements = [...nestedListElement.querySelectorAll("li")];
-      listItemElements.forEach((listItemElement) => {
-        const checkbox = listItemElement.querySelector(
-            'input[type="checkbox"]'
-        );
-        if (checkbox) {
-          checkbox.checked = currentCheckbox.checked;
-          handleCheckboxesChange(checkbox);
-        }
-      });
-    }
-  }
 
   Indigo.WorkCommencementsView = Backbone.View.extend({
     el: '#work-commencements-view',
@@ -38,6 +15,7 @@
       'click .add-commencement': 'addCommencement',
       'click .all-provisions': 'allProvisionsChanged',
       'submit .commencement-form': 'formSubmitted',
+      'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
     },
 
     initialize: function() {
@@ -93,6 +71,27 @@
         // we can't iterate over this in-place, so do this instead
         while (form.elements.provisions.selectedOptions.length > 0) form.elements.provisions.selectedOptions[0].selected = false;
       }
+    },
+
+    handleCheckboxesChange(e) {
+      function toggleSelectionByCheckSelected(currentCheckbox) {
+        const parentNodeListItem = currentCheckbox.closest("li");
+        const nestedListElement = parentNodeListItem.querySelector("ul");
+        if (nestedListElement) {
+          const listItemElements = [...nestedListElement.querySelectorAll("li")];
+          listItemElements.forEach((listItemElement) => {
+            const checkbox = listItemElement.querySelector(
+                'input[type="checkbox"]'
+            );
+            if (checkbox) {
+              checkbox.checked = currentCheckbox.checked;
+              toggleSelectionByCheckSelected(checkbox);
+            }
+          });
+        }
+      }
+
+      toggleSelectionByCheckSelected(e.target);
     }
   });
 })(window);

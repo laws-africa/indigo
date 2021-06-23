@@ -301,13 +301,14 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['provisions'] = provisions = self.work.all_commenceable_provisions()
-        # TODO: check for uncommended children provisions
+        # TODO: check for uncommenced children provisions
         context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions'])
 
+        # TODO: get these for children as well
         provision_set = {p.id: p for p in provisions}
         for commencement in commencements:
             # rich description of provisions
@@ -355,8 +356,22 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = self.work.all_commenceable_provisions()
+        kwargs['provisions'] = self.flattened_provisions()
         return kwargs
+
+    def flattened_provisions(self):
+        provisions = self.work.all_commenceable_provisions()
+        flattened = []
+
+        def unpack(p):
+            flattened.append(p)
+            for c in p.children:
+                unpack(c)
+
+        for p in provisions:
+            unpack(p)
+
+        return flattened
 
     def post(self, request, *args, **kwargs):
         if 'delete' in request.POST:

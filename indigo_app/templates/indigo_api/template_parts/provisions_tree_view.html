@@ -1,18 +1,35 @@
 {% for prov in provisions %}
-  <li class="list-group-item">
-    <div class="d-flex align-items-center">
-      <input id="{{ prov.id }}"
-             value="{{ prov.id }}"
-             type="checkbox"
-             name="provisions"
-             class="mr-2"
-      />
-      <label for="{{ prov.id }}" class="mb-0">{{ prov.title }}</label>
+  <li class="provisions-list__item">
+    <div class="d-flex align-items-center justify-content-between">
+      <label class="mb-0">
+        <input value="{{ prov.id }}"
+               type="checkbox"
+               name="provisions"
+               class="mr-2"
+        />
+        {{ prov.title }}
+      </label>
+      {% if prov.children %}
+        <button class="expand-collapse-button"
+                type="button"
+        >
+          <span class="expand-collapse-button__expand-icon">
+            <i class="fas fa-plus"></i>
+          </span>
+          <span class="expand-collapse-button__collapse-icon">
+            <i class="fas fa-minus"></i>
+          </span>
+        </button>
+      {% endif %}
     </div>
+
+
     {% if prov.children %}
-      <ul class="list-group mt-3">
-        {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=prov.children %}
-      </ul>
+      <div class="collapse">
+        <ul class="mb-3 provisions-list">
+          {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=prov.children %}
+        </ul>
+      </div>
     {% endif %}
   </li>
 {% endfor %}

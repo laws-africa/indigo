@@ -301,6 +301,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['provisions'] = provisions = self.work.all_commenceable_provisions()
+        # TODO: check for uncommended children provisions
         context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
@@ -318,8 +319,21 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def get_possible_provisions(self, commencement, commencements, provisions):
         # provisions commenced by everything else
+        # TODO: check for commenced children provisions
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
-        return [p for p in provisions if p.id not in commenced]
+
+        def set_visibility(p, parent):
+            p.visible = p.id not in commenced
+            p.visible_children = False
+            if p.visible and parent:
+                parent.visible_children = True
+            for c in p.children:
+                set_visibility(c, p)
+
+        for p in provisions:
+            set_visibility(p, None)
+
+        return provisions
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

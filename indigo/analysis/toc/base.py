@@ -274,6 +274,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 it helps ensure that our list contains only unique provisions.
             `items` is a list of commenceable provisions from the current document's ToC.
         """
+        # TODO: allow for structural changes (sections moved into Parts etc)
         # take note of any removed items to compensate for later
         removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
         for i, item in enumerate(items):
@@ -286,6 +287,12 @@ class TOCBuilderBase(LocaleBasedMatcher):
                     if i >= n:
                         i += 1
                 provisions.insert(i, item)
+
+            # look at children and insert any provisions there too (ToC can be deeply nested)
+            if item.children:
+                existing_children = provisions[i].children
+                existing_id_set = set([e.id for e in existing_children])
+                self.insert_provisions(existing_children, existing_id_set, item.children)
 
 
 class TOCElement(object):

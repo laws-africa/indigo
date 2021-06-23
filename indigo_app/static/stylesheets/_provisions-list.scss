@@ -1,0 +1,35 @@
+.provisions-list {
+  list-style: none;
+
+  .provisions-list__item {
+    border-bottom: 1px solid lightgrey;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    .expand-collapse-button {
+      background-color: #2d7ad4;
+      color: white;
+      border-radius: 50%;
+      border: none;
+
+
+      i {
+        font-size: 10px;
+      }
+
+      .expand-collapse-button__collapse-icon {
+        display: none;
+      }
+
+      &.expanded {
+        .expand-collapse-button__expand-icon {
+          display: none;
+        }
+
+        .expand-collapse-button__collapse-icon {
+          display: block;
+        }
+      }
+    }
+  }
+}

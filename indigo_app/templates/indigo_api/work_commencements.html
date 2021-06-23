@@ -129,9 +129,7 @@
 
               <div class="form-group provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
                 <label>Provisions commenced:</label>
-                <small class="form-text text-muted">Use SHIFT and Ctrl (or ⌘) to select multiple items.</small>
-
-                <ul class="list-group" data-id="provisions">
+                <ul data-id="provisions" class="provisions-list">
                   {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions %}
                 </ul>
               </div>

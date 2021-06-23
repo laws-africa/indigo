@@ -254,9 +254,6 @@ class TOCBuilderBase(LocaleBasedMatcher):
             if item.component == 'main':
                 if item.type not in self.non_commenceable_types and item.num:
                     items.append(item)
-                if item.children:
-                    for kid in item.children:
-                        process(kid)
 
         items = []
         for entry in toc:

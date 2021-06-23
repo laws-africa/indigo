@@ -308,8 +308,15 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['has_main_commencement'] = any(c.main for c in commencements)
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions'])
 
-        # TODO: get these for children as well
-        provision_set = {p.id: p for p in provisions}
+        provision_set = {}
+
+        def add_to_set(p):
+            provision_set[p.id] = p
+            for c in p.children:
+                add_to_set(c)
+        for p in provisions:
+            add_to_set(p)
+
         for commencement in commencements:
             # rich description of provisions
             commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]

@@ -16,6 +16,7 @@
       'click .all-provisions': 'allProvisionsChanged',
       'submit .commencement-form': 'formSubmitted',
       'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
+      'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick'
     },
 
     initialize: function() {
@@ -61,6 +62,24 @@
 
     allProvisionsChanged: function(e) {
       $(e.target).closest('.card').find('.provisions-commenced').toggleClass('d-none', e.target.checked);
+    },
+
+    onExpandCollapseClick: function(e) {
+      e.stopPropagation();
+      const button = e.currentTarget;
+      const parent = button.closest('li');
+      if(button.classList.contains('expanded')) {
+        button.classList.remove('expanded');
+      } else {
+        button.classList.add('expanded');
+      }
+
+      if(parent) {
+        const collapseElement = $(parent.querySelector('.collapse'));
+        if(collapseElement.length) {
+          collapseElement.collapse('toggle');
+        }
+      }
     },
 
     formSubmitted: function(e) {

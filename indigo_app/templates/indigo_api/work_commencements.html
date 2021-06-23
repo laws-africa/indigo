@@ -128,7 +128,16 @@
               </div>
 
               <div class="form-group provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-                <label>Provisions commenced:</label>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>Provisions commenced:</div>
+                  <label class="d-flex align-items-center">
+                    <input type="checkbox"
+                           name="select-all"
+                           class="mr-2"
+                    />
+                    Select all provisions
+                  </label>
+                </div>
                 <ul data-id="provisions" class="provisions-list">
                   {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions checked=commencement.provisions%}
                 </ul>

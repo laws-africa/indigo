@@ -16,13 +16,15 @@
       'click .all-provisions': 'allProvisionsChanged',
       'submit .commencement-form': 'formSubmitted',
       'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
-      'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick'
+      'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick',
+      'change .commencement-form input[name="select-all"]' : "onSelectAll",
     },
 
     initialize: function() {
       this.model = new Indigo.Work(Indigo.Preloads.work);
-      this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
-      this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
+
+      // this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
+      // this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
     },
 
     addCommencement: function(e) {
@@ -111,6 +113,14 @@
       }
 
       toggleSelectionByCheckSelected(e.target);
+    },
+
+    onSelectAll: function (e) {
+      const checked = e.target.checked;
+      const allProvisionInputs = [...document.querySelectorAll(".commencement-form input[name='provisions']")];
+      allProvisionInputs.forEach(input => {
+        input.checked = checked;
+      });
     }
   });
 })(window);

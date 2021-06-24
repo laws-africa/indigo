@@ -1,13 +1,15 @@
 {% for prov in provisions %}
-  <li>
-    {% if not prov.commenced %}
-      {{ prov.title|default:prov.id }}
-    {% endif %}
+  {% if not prov.commenced or prov.uncommenced_descendants %}
+    <li class="list-unstyled">
+      <span class="{% if prov.commenced %}text-black-50{% else %}alert-warning{% endif %}">
+        {% if prov.commenced %}✔ {% endif %}{{ prov.title|default:prov.id }}
+      </span>
 
-    {% if prov.children %}
-      <ul>
-        {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=prov.children %}
-      </ul>
-    {% endif %}
-  </li>
+      {% if prov.children %}
+        <ul>
+          {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=prov.children %}
+        </ul>
+      {% endif %}
+    </li>
+  {% endif %}
 {% endfor %}

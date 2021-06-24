@@ -326,13 +326,15 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         return context
 
     def add_info(self, p, commenced_provisions, upc, tpc):
+        for c in p.children:
+            upc, tpc = self.add_info(c, commenced_provisions, upc, tpc)
+
         p.commenced = p.id in commenced_provisions
+        p.uncommenced_descendants = (not any(c.commenced for c in p.children)) or any(c.uncommenced_descendants for c in p.children)
+
         tpc += 1
         if not p.commenced:
             upc += 1
-
-        for c in p.children:
-            upc, tpc = self.add_info(c, commenced_provisions, upc, tpc)
 
         return upc, tpc
 

@@ -86,10 +86,8 @@
               </h6>
 
               {% if commencement.provisions %}
-                <ul class="list-unstyled">
-                  {% for prov in commencement.provision_items %}
-                    <li>{{ prov.title|default:prov }}</li>
-                  {% endfor %}
+                <ul class="provisions-list">
+                  {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.commenced_provisions %}
                 </ul>
               {% endif %}
             </div>

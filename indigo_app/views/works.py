@@ -319,7 +319,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         for commencement in commencements:
             # rich description of provisions
-            commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]
+            commencement.commenced_provisions = self.get_commenced_provisions(commencement)
             # possible options
             commencement.possible_provisions = self.get_possible_provisions(commencement, commencements)
 
@@ -347,6 +347,24 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             uncommenced_provisions_count, total_provisions_count = self.add_info(p, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
 
         return uncommenced_provisions_count, total_provisions_count
+
+    def get_commenced_provisions(self, commencement):
+        possible_provisions = self.work.all_commenceable_provisions(commencement.date)
+
+        def set_commencement_status(p):
+            for c in p.children:
+                set_commencement_status(c)
+
+            p.commenced = p.id in commencement.provisions
+            p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
+
+            # The youngest descendant will have this as True, otherwise they'll all be False
+            p.all_descendants_commenced = all(c.commenced and c.all_descendants_commenced for c in p.children)
+
+        for p in possible_provisions:
+            set_commencement_status(p)
+
+        return possible_provisions
 
     def get_possible_provisions(self, commencement, commencements):
         provisions = self.work.all_commenceable_provisions(commencement.date)

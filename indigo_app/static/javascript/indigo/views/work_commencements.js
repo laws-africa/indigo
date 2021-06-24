@@ -68,13 +68,9 @@
       e.stopPropagation();
       const button = e.currentTarget;
       const parent = button.closest('li');
-      if(button.classList.contains('expanded')) {
-        button.classList.remove('expanded');
-      } else {
-        button.classList.add('expanded');
-      }
+      button.classList.toggle('expanded');
 
-      if(parent) {
+      if (parent) {
         const collapseElement = $(parent.querySelector('.collapse'));
         if(collapseElement.length) {
           collapseElement.collapse('toggle');
@@ -93,12 +89,10 @@
     },
 
     handleCheckboxesChange(e) {
-      const parentElement = e.target.closest("li");
-      const nestedListElement = parentElement.querySelector('ul');
-      if(nestedListElement) {
-        for(const checkBox of nestedListElement.querySelectorAll("input[name='provisions']")) {
-          checkBox.checked = e.target.checked;
-        }
+      for (const checkBox of e.target.closest("li")
+          .querySelector('ul')
+          .querySelectorAll("input[name='provisions']")) {
+        checkBox.checked = e.target.checked;
       }
     },
 

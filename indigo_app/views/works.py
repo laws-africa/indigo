@@ -351,16 +351,15 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         # provisions commenced by everything else
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
 
-        def set_visibility(p, parent):
-            p.visible = p.id not in commenced
-            p.visible_children = False
-            if p.visible and parent:
-                parent.visible_children = True
+        def set_visibility(p):
             for c in p.children:
-                set_visibility(c, p)
+                set_visibility(c)
+
+            p.visible = p.id not in commenced
+            p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 
         for p in provisions:
-            set_visibility(p, None)
+            set_visibility(p)
 
         return provisions
 

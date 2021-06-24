@@ -9,6 +9,10 @@
                class="mr-2"
         />
         {{ prov.title }}
+        {% if prov.visible %}<br> I'm visible!
+        {% elif prov.visible_descendants %}<br> I'm visible but don't have a checkbox!
+        {% elif not prov.visible %}<br> I'm not shewn at all!
+        {% else %}<br> What's going on with me??{% endif %}
       </label>
       {% if prov.children %}
         <button class="expand-collapse-button"

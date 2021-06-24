@@ -28,7 +28,7 @@
     {% if prov.children %}
       <div class="collapse">
         <ul class="mb-3 provisions-list">
-          {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=prov.children checked=checked%}
+          {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=prov.children checked=checked %}
         </ul>
       </div>
     {% endif %}

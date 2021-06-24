@@ -14,8 +14,8 @@
     <p class="alert alert-info">This work has not commenced.</p>
   {% endif %}
 
-  {% if uncommenced_provisions %}
-    <p class="alert alert-warning">This work has {{ uncommenced_provisions|length }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions|length|pluralize }}</a>.</p>
+  {% if uncommenced_provisions_count %}
+    <p class="alert alert-warning">This work has {{ uncommenced_provisions_count }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions_count|pluralize }}</a>.</p>
   {% endif %}
 
   {% if everything_commenced %}
@@ -81,7 +81,7 @@
               <h6>
                 {% if commencement.all_provisions %}Commences all provisions{% endif %}
                 {% if commencement.provisions %}
-                  Commences {{ commencement.provisions|length }} of {{ provisions|length }} provision{{ provisions|length|pluralize }}:
+                  Commences {{ commencement.provisions|length }} of {{ total_provisions_count }} provision{{ total_provisions_count|pluralize }}:
                 {% endif %}
               </h6>
 
@@ -139,7 +139,7 @@
                   </label>
                 </div>
                 <ul data-id="provisions" class="provisions-list">
-                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions checked=commencement.provisions%}
+                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions checked=commencement.provisions %}
                 </ul>
               </div>
             </div>
@@ -153,14 +153,12 @@
     {% endfor %}
   </ol>
 
-  {% if uncommenced_provisions %}
+  {% if uncommenced_provisions_count %}
     <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions|length }}</span></h5>
+      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
       <div class="card-body">
-        <ul class="list-unstyled mb-0">
-          {% for prov in uncommenced_provisions %}
-            <li>{{ prov.title }}</li>
-          {% endfor %}
+        <ul class="provisions-list">
+          {% include "indigo_api/_provisions_tree.html" with provisions=provisions %}
         </ul>
       </div>
     </div>
@@ -175,5 +173,3 @@
     </form>
   {% endif %}
 {% endblock %}
-
-

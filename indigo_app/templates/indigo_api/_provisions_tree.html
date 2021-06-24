@@ -1,0 +1,13 @@
+{% for prov in provisions %}
+  <li>
+    {% if not prov.commenced %}
+      {{ prov.title }}
+    {% endif %}
+
+    {% if prov.children %}
+      <ul>
+        {% include "indigo_api/_provisions_tree.html" with provisions=prov.children %}
+      </ul>
+    {% endif %}
+  </li>
+{% endfor %}

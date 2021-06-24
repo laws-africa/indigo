@@ -5,12 +5,12 @@
         {% if not prov.commenced %}× {% endif %}{{ prov.title|default:prov.id }}
       </span>
 
-      {% if prov.children and not prov.all_descendants_commenced %}
+      {% if prov.commenced and prov.children and prov.all_descendants_commenced %}
+        (Commenced in full)
+      {% elif prov.children %}
         <ul>
           {% include "indigo_api/_provisions_tree_commenced.html" with provisions=prov.children %}
         </ul>
-      {% elif prov.children and prov.all_descendants_commenced %}
-        (Commenced in full)
       {% endif %}
     </li>
   {% endif %}

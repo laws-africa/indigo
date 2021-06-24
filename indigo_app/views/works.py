@@ -295,18 +295,18 @@ class WorkOverviewView(WorkViewBase, DetailView):
 
 
 class WorkCommencementsView(WorkViewBase, DetailView):
+    # TODO: don't forget the migration :"D
     template_name_suffix = '_commencements'
     tab = 'commencements'
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['provisions'] = provisions = self.work.all_commenceable_provisions()
-        # TODO: check for uncommenced children provisions
-        context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
-        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions'])
+        context['uncommenced_provisions_count'], context['total_provisions_count'] = self.add_commencement_info(provisions, commencements)
+        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
         provision_set = {}
 
@@ -324,6 +324,27 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             commencement.possible_provisions = self.get_possible_provisions(commencement, commencements)
 
         return context
+
+    def add_info(self, p, commenced_provisions, upc, tpc):
+        p.commenced = p.id in commenced_provisions
+        tpc += 1
+        if not p.commenced:
+            upc += 1
+
+        for c in p.children:
+            upc, tpc = self.add_info(c, commenced_provisions, upc, tpc)
+
+        return upc, tpc
+
+    def add_commencement_info(self, provisions, commencements):
+        commenced_provisions = [p for c in commencements for p in c.provisions]
+        uncommenced_provisions_count = 0
+        total_provisions_count = 0
+
+        for p in provisions:
+            uncommenced_provisions_count, total_provisions_count = self.add_info(p, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
+
+        return uncommenced_provisions_count, total_provisions_count
 
     def get_possible_provisions(self, commencement, commencements):
         provisions = self.work.all_commenceable_provisions(commencement.date)

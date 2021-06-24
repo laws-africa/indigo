@@ -1,7 +1,7 @@
 {% for prov in provisions %}
   <li>
     {% if not prov.commenced %}
-      {{ prov.title }}
+      {{ prov.title|default:prov.id }}
     {% endif %}
 
     {% if prov.children %}

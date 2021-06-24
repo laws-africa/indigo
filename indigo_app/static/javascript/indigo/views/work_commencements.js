@@ -7,8 +7,6 @@
   /**
    * Handle the work commencements display.
    */
-
-
   Indigo.WorkCommencementsView = Backbone.View.extend({
     el: '#work-commencements-view',
     events: {
@@ -95,32 +93,19 @@
     },
 
     handleCheckboxesChange(e) {
-      function toggleSelectionByCheckSelected(currentCheckbox) {
-        const parentNodeListItem = currentCheckbox.closest("li");
-        const nestedListElement = parentNodeListItem.querySelector("ul");
-        if (nestedListElement) {
-          const listItemElements = [...nestedListElement.querySelectorAll("li")];
-          listItemElements.forEach((listItemElement) => {
-            const checkbox = listItemElement.querySelector(
-                'input[type="checkbox"]'
-            );
-            if (checkbox) {
-              checkbox.checked = currentCheckbox.checked;
-              toggleSelectionByCheckSelected(checkbox);
-            }
-          });
+      const parentElement = e.target.closest("li");
+      const nestedListElement = parentElement.querySelector('ul');
+      if(nestedListElement) {
+        for(const checkBox of nestedListElement.querySelectorAll("input[name='provisions']")) {
+          checkBox.checked = e.target.checked;
         }
       }
-
-      toggleSelectionByCheckSelected(e.target);
     },
 
     onSelectAll: function (e) {
-      const checked = e.target.checked;
-      const allProvisionInputs = [...document.querySelectorAll(".commencement-form input[name='provisions']")];
-      allProvisionInputs.forEach(input => {
-        input.checked = checked;
-      });
+      for(const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
+        checkbox.checked = e.target.checked;
+      }
     }
   });
 })(window);

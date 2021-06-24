@@ -23,8 +23,8 @@
     initialize: function() {
       this.model = new Indigo.Work(Indigo.Preloads.work);
 
-      // this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
-      // this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
+      this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
+      this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
     },
 
     addCommencement: function(e) {
@@ -47,6 +47,7 @@
     },
 
     formShow: function(e) {
+      e.stopPropagation();
       // hide the details
       // guard the namespace because otherwise the date selector event clashes with this one
       if (e.namespace == 'bs.collapse') {
@@ -55,6 +56,7 @@
     },
 
     formHide: function(e) {
+      e.stopPropagation();
       // show the details
       // guard the namespace because otherwise the date selector event clashes with this one
       if (e.namespace == 'bs.collapse') {

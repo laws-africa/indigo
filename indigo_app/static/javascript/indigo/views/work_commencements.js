@@ -47,19 +47,17 @@
     },
 
     formShow: function(e) {
-      e.stopPropagation();
       // hide the details
       // guard the namespace because otherwise the date selector event clashes with this one
-      if (e.namespace == 'bs.collapse') {
+      if (e.namespace == 'bs.collapse' && e.target.classList.contains('commencement-form')) {
         e.target.parentElement.querySelector('.commencement-details').classList.remove('show');
       }
     },
 
     formHide: function(e) {
-      e.stopPropagation();
       // show the details
       // guard the namespace because otherwise the date selector event clashes with this one
-      if (e.namespace == 'bs.collapse') {
+      if (e.namespace == 'bs.collapse' && e.target.classList.contains('commencement-form')) {
         e.target.parentElement.querySelector('.commencement-details').classList.add('show');
       }
     },

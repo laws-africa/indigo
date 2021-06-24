@@ -103,7 +103,7 @@
     },
 
     onSelectAll: function (e) {
-      for(const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
+      for (const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
         checkbox.checked = e.target.checked;
       }
     }

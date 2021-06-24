@@ -330,7 +330,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             upc, tpc = self.add_info(c, commenced_provisions, upc, tpc)
 
         p.commenced = p.id in commenced_provisions
-        p.uncommenced_descendants = (not any(c.commenced for c in p.children)) or any(c.uncommenced_descendants for c in p.children)
+        p.uncommenced_descendants = (any(not c.commenced for c in p.children)) or any(c.uncommenced_descendants for c in p.children)
 
         tpc += 1
         if not p.commenced:

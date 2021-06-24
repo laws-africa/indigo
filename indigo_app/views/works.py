@@ -321,13 +321,13 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             # rich description of provisions
             commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]
             # possible options
-            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements, provisions)
+            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements)
 
         return context
 
-    def get_possible_provisions(self, commencement, commencements, provisions):
+    def get_possible_provisions(self, commencement, commencements):
+        provisions = self.work.all_commenceable_provisions(commencement.date)
         # provisions commenced by everything else
-        # TODO: check for commenced children provisions
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
 
         def set_visibility(p, parent):

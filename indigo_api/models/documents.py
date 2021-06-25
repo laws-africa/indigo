@@ -199,7 +199,7 @@ class DocumentMixin(object):
         # get ids of all provisions in the commenceable_provisions tree
 
         def add_to_ids(p):
-            commenceable_provision_ids.append(p)
+            commenceable_provision_ids.append(p.id)
             for c in p.children:
                 add_to_ids(c)
 

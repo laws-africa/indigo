@@ -18,6 +18,7 @@
     "dom-anchor-text-position": "^4.0.0",
     "dom-anchor-text-quote": "^4.0.2",
     "indigo-web": "^5.2.0",
+    "lodash": "^4.17.21",
     "monaco-editor": "^0.20.0",
     "sass-loader": "^12.1.0",
     "vue": "^2.6.14",

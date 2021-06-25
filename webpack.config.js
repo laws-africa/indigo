@@ -1,7 +1,21 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader')
 
-module.exports = {
+const legacyConfig = {
+  entry: './indigo_app/js/external-imports.src.js',
+  mode: 'development',
+  resolve: {
+    modules: [
+      './node_modules',
+    ],
+  },
+  output: {
+    filename: 'external-imports.js',
+    path: path.resolve(__dirname, 'indigo_app/static/lib'),
+  }
+};
+
+const appConfig = {
   entry: './indigo_app/js/main.js',
   mode: 'development',
   resolve: {
@@ -36,3 +50,6 @@ module.exports = {
     new VueLoaderPlugin(),
   ]
 };
+
+
+module.exports = [legacyConfig, appConfig];

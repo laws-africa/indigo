@@ -145,6 +145,8 @@ function bootstrapIndigo(exports) {
     Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
   }
 
+  window.dispatchEvent(new Event('indigo.beforecreateviews'));
+
   // what views must we load?
   var views = ($('body').data('backbone-view') || '').split(" ");
   Indigo.views = _.reject(_.map(views, function(name) {

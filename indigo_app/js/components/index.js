@@ -1,2 +1,1 @@
-export { default as DocumentSheet } from './DocumentSheet.vue';
-export { default as IndigoBadge } from './IndigoBadge.vue';
+export { default as Gutter } from './gutter/Gutter.vue';

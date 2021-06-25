@@ -186,6 +186,9 @@ class DocumentMixin(object):
     def uncommenced_provisions(self):
         return self.work.all_uncommenced_provisions(self.expression_date)
 
+    def has_uncommenced_provisions(self):
+        return self.work.has_uncommenced_provisions(self.expression_date)
+
     def commencements_relevant_at_expression_date(self):
         """ Return a list of Commencement objects that have to do with the provisions that exist on this expression.
         """

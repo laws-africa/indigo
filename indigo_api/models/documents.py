@@ -194,20 +194,20 @@ class DocumentMixin(object):
             if commencement.all_provisions:
                 return [commencement]
 
-        commenceable_provisions = []
+        commenceable_provision_ids = []
         # get ids of all provisions in the commenceable_provisions tree
 
         def add_to_ids(p):
-            commenceable_provisions.append(p)
+            commenceable_provision_ids.append(p)
             for c in p.children:
                 add_to_ids(c)
 
         for p in self.commenceable_provisions():
             add_to_ids(p)
 
-        # include commencement if any of its `provisions` are found in `commenceable_provisons`
+        # include commencement if any of its `provisions` are found in `commenceable_provision_ids`
         return [c for c in self.work.commencements.all()
-                if any(p for p in c.provisions if p in commenceable_provisions) or not c.provisions]
+                if any(p for p in c.provisions if p in commenceable_provision_ids) or not c.provisions]
 
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter

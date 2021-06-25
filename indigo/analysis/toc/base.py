@@ -278,14 +278,16 @@ class TOCBuilderBase(LocaleBasedMatcher):
         # take note of any removed items to compensate for later
         removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
         for i, item in enumerate(items):
+            # We need to insert this provision at the correct position in the work provision list.
+            # We also need to identify the right children based on the index.
+            # If any provisions from a previous document have been removed in this document
+            # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
+            for n in removed_indexes:
+                if i >= n:
+                    i += 1
+
             if item.id and item.id not in id_set:
                 id_set.add(item.id)
-                # We need to insert this provision at the correct position in the work provision list.
-                # If any provisions from a previous document have been removed in this document
-                # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
-                for n in removed_indexes:
-                    if i >= n:
-                        i += 1
                 provisions.insert(i, item)
 
             # look at children and insert any provisions there too (ToC can be deeply nested)

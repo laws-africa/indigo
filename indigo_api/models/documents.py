@@ -189,8 +189,9 @@ class DocumentMixin(object):
     def commencements_relevant_at_expression_date(self):
         """ Return a list of Commencement objects that have to do with the provisions that exist on this expression.
         """
+        commencements = self.work.commencements.all()
         # common case: one commencement that covers all provisions
-        for commencement in self.work.commencements.all():
+        for commencement in commencements:
             if commencement.all_provisions:
                 return [commencement]
 
@@ -206,7 +207,7 @@ class DocumentMixin(object):
             add_to_ids(p)
 
         # include commencement if any of its `provisions` are found in `commenceable_provision_ids`
-        return [c for c in self.work.commencements.all()
+        return [c for c in commencements
                 if any(p for p in c.provisions if p in commenceable_provision_ids) or not c.provisions]
 
     def to_html(self, **kwargs):

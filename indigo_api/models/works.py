@@ -269,6 +269,18 @@ class WorkMixin(object):
 
         return provisions
 
+    def all_uncommenced_provisions(self, date=None):
+        provisions = self.all_commenceable_provisions(date=date)
+        commenced = set()
+        for commencement in self.commencements.all():
+            if commencement.all_provisions:
+                return []
+            for prov in commencement.provisions:
+                commenced.add(prov)
+
+        return [p for p in provisions if p.id not in commenced]
+
+    @property
     def has_uncommenced_provisions(self, date=None):
         commencements = self.commencements.all()
         # common case: one commencement that covers all provisions
@@ -287,17 +299,6 @@ class WorkMixin(object):
 
         for p in self.all_commenceable_provisions(date=date):
             check_for_uncommenced(p)
-
-    def all_uncommenced_provisions(self, date=None):
-        provisions = self.all_commenceable_provisions(date=date)
-        commenced = set()
-        for commencement in self.commencements.all():
-            if commencement.all_provisions:
-                return []
-            for prov in commencement.provisions:
-                commenced.add(prov)
-
-        return [p for p in provisions if p.id not in commenced]
 
     @property
     def commencements_count(self):

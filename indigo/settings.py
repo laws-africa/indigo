@@ -252,7 +252,7 @@ PIPELINE = {
                 'bower_components/moment/locale/en-gb.js',
                 'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
                 'bower_components/showdown/dist/showdown.min.js',
-                'lib/external-imports.js',
+                # 'lib/external-imports.js',
                 'javascript/select2-4.0.0.min.js',
                 'javascript/caret.js',
                 'javascript/prettyprint.js',

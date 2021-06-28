@@ -133,15 +133,14 @@ And then commit the changes.
 
 ## npm module dependencies
 
-Indigo uses a small number of node modules written in ES6. They need to be compiled into a single JS file
-because Indigo doesn't use ES6.
-
-To do this, we use webpack.
+Indigo is migrating to modules written in ES6 using Vue. This code needs to be compiled into a single JS file using webpack.
 
 ```
 npm install
 npx webpack
 ```
+
+During development, using `npx webpack -w` to watch for changes and recompile automatically.
 
 ## Testing
 

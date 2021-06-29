@@ -11,6 +11,7 @@ class Beautifier:
         self.commenced = commenced
 
     def decorate_provisions(self, provisions, assess_against):
+        # TODO: check all these are still needed
         def assess(p):
             for c in p.children:
                 assess(c)
@@ -69,7 +70,7 @@ class Beautifier:
             )
 
             # fully (un)commenced Chapter or Part (skip intervening containers if all are commenced)
-            p.full_container = p.contains_basic_unit and \
+            p.full_container = p.contains_basic_unit and p.commenced == self.commenced and \
                                (p.all_descendants_commenced if self.commenced else not p.some_descendants_commenced)
             p.partial_container = p.contains_fully_commenced_container if self.commenced \
                 else p.contains_fully_uncommenced_container
@@ -77,6 +78,11 @@ class Beautifier:
             # all children are the opposite
             p.lonely_container = p.commenced == self.commenced and p.contains_basic_unit and (not p.some_descendants_commenced if self.commenced else p.all_descendants_commenced)
             p.contains_lonely_container = any(c.lonely_container or c.contains_lonely_container for c in p.children)
+
+            p.in_part_container = p.commenced == self.commenced and p.contains_basic_unit and (
+                not p.all_descendants_commenced if self.commenced else p.some_descendants_commenced
+            )
+            p.contains_in_part_container = any(c.contains_in_part_container or c.in_part_container for c in p.children)
 
         for p in provisions:
             assess(p)
@@ -200,10 +206,13 @@ class Beautifier:
                 self.end_current()
             # e.g. a Chapter that contains a fully un/commenced Part: Chapter 1, Part A (sections 1–3)
             # (the part after the comma will be caught by full_container on the next iteration)
-            elif p.partial_container or p.contains_lonely_container:
+            # if e.g. 'Chapter 1' is given explicitly, add 'in part'
+            elif p.partial_container or p.contains_in_part_container:
+                if p.commenced == self.commenced:
+                    p.num += ' (in part)'
                 self.add_to_current(p)
             # e.g. a Part that has all uncommenced children but is itself commenced on this date
-            elif p.lonely_container:
+            elif p.lonely_container or p.in_part_container:
                 p.num += ' (in part)'
                 self.add_to_current(p)
                 self.end_current()
@@ -235,6 +244,7 @@ class Beautifier:
 
         self.end_current()
 
+        # TODO: only join on ; between certain types of runs (TBD)
         return '; '.join(p for p in self.runs)
 
 

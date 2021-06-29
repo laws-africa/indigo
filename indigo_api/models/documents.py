@@ -183,6 +183,9 @@ class DocumentMixin(object):
     def commenceable_provisions(self):
         return self.work.all_commenceable_provisions(self.expression_date)
 
+    def uncommenced_provision_ids(self):
+        return self.work.uncommenced_provision_ids(self.expression_date)
+
     def uncommenced_provisions(self):
         return self.work.all_uncommenced_provisions(self.expression_date)
 

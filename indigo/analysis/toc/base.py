@@ -45,6 +45,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
+    toc_basic_units = ['section']
+    """ The basic units for the tradition.
+    """
+
     toc_elements = [
         # top-level
         'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
@@ -220,6 +224,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_,
                               num=num, subcomponent=subcomponent, parent=parent, component_id=component_id)
         toc_item.title = self.friendly_title(toc_item)
+        toc_item.basic_unit = type_ in self.toc_basic_units
 
         return toc_item
 

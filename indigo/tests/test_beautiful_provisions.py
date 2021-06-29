@@ -131,7 +131,8 @@ class BeautifulProvisionsTestCase(TestCase):
         provisions = self.beautifier.decorate_provisions(nested_toc, provision_ids)
         return self.beautifier.make_beautiful(provisions)
 
-    def test_nested_all(self):
+    def test_nested_full_containers(self):
+        # Don't dig down further than what is fully commenced
         provision_ids = [
             'chp_1', 'chp_1__part_A', 'sec_1', 'sec_1__subsec_1',
             'sec_1__subsec_1__list_1__item_a',
@@ -153,7 +154,6 @@ class BeautifulProvisionsTestCase(TestCase):
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1 (section 1–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
 
-    def test_nested_chapter1_parta(self):
         provision_ids = [
             'chp_1', 'chp_1__part_A',
             'sec_1', 'sec_1__subsec_1',
@@ -174,34 +174,80 @@ class BeautifulProvisionsTestCase(TestCase):
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A (section 1–3)', self.run_nested(provision_ids))
 
-    def test_nested_chapter1_partials(self):
-        # Chapter 1 isn't mentioned because sections don't need context
+        provision_ids = [
+            'sec_2', 'sec_3',
+            'chp_1__part_B', 'sec_4', 'sec_5',
+            'chp_2', 'sec_6', 'sec_7'
+        ]
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 1, section 2–3, Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1, section 2–3, Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
+
+    def test_nested_partial_containers(self):
+        # Chapter 1 is mentioned regardless because it's given
         provision_ids = ['chp_1', 'sec_2']
         self.beautifier.commenced = True
-        self.assertEqual('section 2', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), section 2', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('section 2', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), section 2', self.run_nested(provision_ids))
 
-        provision_ids = ['chp_1', 'sec_2', 'sec_5']
+        # Chapter 1, Part B is mentioned regardless because it's given
+        provision_ids = [
+            'chp_1', 'chp_1__part_A',
+            'sec_1', 'sec_1__subsec_1',
+            'sec_1__subsec_1__list_1__item_a',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_i',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_A',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_B',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_iii',
+            'sec_1__subsec_1__list_1__item_aA',
+            'sec_1__subsec_1__list_1__item_b',
+            'sec_1__subsec_1__list_1__item_c',
+            'sec_1__subsec_2', 'sec_1__subsec_3', 'sec_1__subsec_4',
+            'sec_2', 'sec_3',
+            'chp_1__part_B',
+        ]
         self.beautifier.commenced = True
-        self.assertEqual('section 2; section 5', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), Part B (in part)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('section 2; section 5', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), Part B (in part)', self.run_nested(provision_ids))
 
-        # Chapter 1 is mentioned because Parts need context
+        provision_ids = [
+            'chp_1', 'chp_1__part_A',
+            'sec_1', 'sec_1__subsec_1',
+            'sec_1__subsec_1__list_1__item_a',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_i',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_A',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_B',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_iii',
+            'sec_1__subsec_1__list_1__item_aA',
+            'sec_1__subsec_1__list_1__item_b',
+            'sec_1__subsec_1__list_1__item_c',
+            'sec_1__subsec_2', 'sec_1__subsec_3', 'sec_1__subsec_4',
+            'sec_2', 'sec_3',
+            'chp_1__part_B', 'sec_4',
+        ]
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), Part B (in part), section 4', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), Part B (in part), section 4', self.run_nested(provision_ids))
+
         provision_ids = ['chp_1', 'sec_2', 'chp_1__part_B']
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, section 2; Part B (in part)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), section 2, Part B (in part)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, section 2; Part B (in part)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), section 2, Part B (in part)', self.run_nested(provision_ids))
 
-        provision_ids = ['chp_1', 'sec_2', 'sec_4', 'sec_5']
+        # Chapter 1 is mentioned (even though it's not given) because Parts need context
+        provision_ids = ['sec_2', 'chp_1__part_B']
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, section 2; Part B (section 4–5)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, section 2, Part B (in part)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, section 2; Part B (section 4–5)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, section 2, Part B (in part)', self.run_nested(provision_ids))
 
-    def test_nested_chapter1_parta_section4(self):
         provision_ids = [
             'chp_1__part_A',
             'sec_1', 'sec_1__subsec_1',
@@ -218,14 +264,18 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_2', 'sec_3', 'sec_4',
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A (section 1–3); section 4', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), section 4', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A (section 1–3); section 4', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1 (in part), Part A (section 1–3), section 4', self.run_nested(provision_ids))
 
-    def test_nested_chapter1_parta_sections4_5(self):
-        # Even though Part B isn't in the ids, it's given because all its descendants are commenced.
-        # This is on purpose, because Part B could contain many basic units.
-        # Part B will be listed separately under 'uncommenced provisions'.
+        # Part B isn't given even though all its basic units have commenced because it's not mentioned 
+        provision_ids = ['chp_1', 'sec_2', 'sec_4', 'sec_5']
+        self.beautifier.commenced = True
+        # TODO: commas or semicolons after section 2 here? (and elsewhere before end of container)?
+        self.assertEqual('Chapter 1, section 2, section 4–5', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1, section 2, section 4–5', self.run_nested(provision_ids))
+
         provision_ids = [
             'chp_1__part_A',
             'sec_1', 'sec_1__subsec_1',
@@ -242,40 +292,33 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_2', 'sec_3', 'sec_4', 'sec_5',
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A (section 1–3); Part B (section 4–5)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A (section 1–3), section 4–5', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A (section 1–3); Part B (section 4–5)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A (section 1–3), section 4–5', self.run_nested(provision_ids))
 
-        provision_ids = [
-            'chp_1__part_B',
-        ]
+        # Chapter 1, Part B are given because they're mentioned 
+        provision_ids = ['chp_1', 'sec_2', 'chp_1__part_B', 'sec_4', 'sec_5']
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 1 (in part), section 2, Part B (section 4–5)', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1 (in part), section 2, Part B (section 4–5)', self.run_nested(provision_ids))
+
+        provision_ids = ['chp_1__part_B']
         self.beautifier.commenced = True
         self.assertEqual('Chapter 1, Part B (in part)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part B (in part)', self.run_nested(provision_ids))
 
     def test_nested_basic_units(self):
-        # full container is given if all basic units in it are fully commenced
-        provision_ids = [
-            'sec_2', 'sec_3',
-            'chp_1__part_B', 'sec_4', 'sec_5',
-            'chp_2', 'sec_6', 'sec_7'
-        ]
-        self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, section 2–3, Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
-        self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, section 2–3, Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
-
-        # container is ignored if not all basic units in it are fully commenced
         provision_ids = [
             'sec_2', 'sec_3',
             'chp_1__part_B', 'sec_5',
             'chp_2', 'sec_7'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('section 2–3; section 5; section 7', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, section 2–3, Part B (in part), section 5; Chapter 2 (in part), section 7', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('section 2–3; section 5; section 7', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, section 2–3, Part B (in part), section 5; Chapter 2 (in part), section 7', self.run_nested(provision_ids))
 
         provision_ids = [
             'sec_2', 'sec_3',
@@ -283,15 +326,16 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_7'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('section 2–3; section 5; section 7', self.run_nested(provision_ids))
+        # TODO: semicolons or commas after section 5 here (and elsewhere at end of container)?
+        self.assertEqual('section 2–3, section 5; section 7', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('section 2–3; section 5; section 7', self.run_nested(provision_ids))
+        self.assertEqual('section 2–3, section 5; section 7', self.run_nested(provision_ids))
 
         provision_ids = ['sec_4', 'chp_2', 'sec_6']
         self.beautifier.commenced = True
-        self.assertEqual('section 4; section 6', self.run_nested(provision_ids))
+        self.assertEqual('section 4; Chapter 2 (in part), section 6', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('section 4; section 6', self.run_nested(provision_ids))
+        self.assertEqual('section 4; Chapter 2 (in part), section 6', self.run_nested(provision_ids))
 
         provision_ids = ['sec_4', 'chp_2']
         self.beautifier.commenced = True
@@ -355,6 +399,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('item (xxx)', self.run_lonely(provision_ids))
 
 
+        # TODO: nuke the below once everything's been tested
         provision_ids = [
             'chp_1',
             'chp_1__part_A',

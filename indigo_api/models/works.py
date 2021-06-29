@@ -269,6 +269,26 @@ class WorkMixin(object):
 
         return provisions
 
+    def uncommenced_provision_ids(self, date=None):
+        commencements = self.commencements.all()
+        # common case: one commencement that covers all provisions
+        if any(c.all_provisions for c in commencements):
+            return []
+
+        commenced = [p for c in commencements for p in c.provisions]
+
+        uncommenced_ids = []
+        def add_to_uncommenced(p):
+            if p.id not in commenced:
+                uncommenced_ids.append(p.id)
+            for c in p.children:
+                add_to_uncommenced(c)
+
+        for p in self.all_commenceable_provisions(date=date):
+            add_to_uncommenced(p)
+
+        return uncommenced_ids
+
     def all_uncommenced_provisions(self, date=None):
         provisions = self.all_commenceable_provisions(date=date)
         commenced = set()

@@ -113,9 +113,19 @@ class AwardBadgeForm(forms.Form):
     def __init__(self, user=None, *args, **kwargs):
         super(AwardBadgeForm, self).__init__(*args, **kwargs)
         if user:
-            # filter possible badges to only those that the user doesn't already have
-            awarded = [b.slug for b in BadgeAward.objects.filter(user=user)]
-            self.fields['badge'].choices = [b for b in self.fields['badge'].choices if b[0] not in awarded]
+            self.setup_badges(user)
+
+    def setup_badges(self, user):
+        # filter possible badges to only those that the user doesn't already have
+        awarded = [b.slug for b in BadgeAward.objects.filter(user=user)]
+        self.fields['badge'].choices = [b for b in self.fields['badge'].choices if b[0] not in awarded]
 
     def actual_badge(self):
         return badges.registry.get(self.cleaned_data.get('badge'))
+
+
+class UnawardBadgeForm(AwardBadgeForm):
+    def setup_badges(self, user):
+        # filter possible badges to only those that the user already has
+        awarded = [b.slug for b in BadgeAward.objects.filter(user=user)]
+        self.fields['badge'].choices = [b for b in self.fields['badge'].choices if b[0] in awarded]

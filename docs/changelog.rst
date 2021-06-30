@@ -1,10 +1,11 @@
 
 Changelog
 =========
-
-14.0.1 (???)
+14.1.0 (?)
 --------
 
+* FEATURE: New Content API Badge for controlling who can use the Content API.
+* FEATURE: Admins can now remove badges from the contributor detail page.
 * NEW: Commencements below the section level supported.
 
 14.0.0 (2021-06-15)
@@ -18,6 +19,14 @@ Changelog
 * FEATURE: Configure the badges assigned to new users through `INDIGO_SOCIAL['new_user_badges']`
 * FEATURE: Support underlines with `__`
 * FIX: Export all extra properties on XLSX export.
+
+Important
+.........
+
+After updating to this version, you must manually grant the Contributor badge
+to your users from each user's profile view (from `/contributors`). The badge
+grants basic read-only permissions and will be automatically awarded to new
+users.
 
 13.1.2 (2021-03-19)
 --------

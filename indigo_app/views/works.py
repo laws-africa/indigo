@@ -34,6 +34,14 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
+def publication_document_response(publication_document):
+    """ Either return the publication document as a response, or redirect to the trusted URL.
+    """
+    if publication_document.trusted_url:
+        return redirect(publication_document.trusted_url)
+    return view_attachment(publication_document)
+
+
 class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     """ Base class for views based on a single work. This finds the work from
     the FRBR URI in the URL, and makes a `work` property available on the view.
@@ -887,9 +895,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
     def get(self, request, filename, *args, **kwargs):
         try:
             if self.work.publication_document.filename == filename:
-                if self.work.publication_document.trusted_url:
-                    return redirect(self.work.publication_document.trusted_url)
-                return view_attachment(self.work.publication_document)
+                return publication_document_response(self.work.publication_document)
         except PublicationDocument.DoesNotExist:
             pass
         raise Http404()

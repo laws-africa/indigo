@@ -219,11 +219,9 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
     date = document.expression_date
     if commencement and date > commencement.date:
         date = commencement.date
+
     provisions = document.work.all_commenceable_provisions(date)
-    if uncommenced:
-        provision_ids = document.uncommenced_provision_ids()
-    else:
-        provision_ids = commencement.provisions
+    provision_ids = document.uncommenced_provision_ids() if uncommenced else commencement.provisions
 
     beautifier = Beautifier(commenced=not uncommenced)
     # decorate the ToC with useful information

@@ -128,7 +128,7 @@ class Beautifier:
                 for c in p.children:
                     add_to_subs(c, prefix + p.num)
 
-        if not p.all_descendants_same:
+        if p.children and not p.all_descendants_same:
             # don't continue run if wer're giving subprovisions
             self.end_at_next_add = True
             for c in p.children:

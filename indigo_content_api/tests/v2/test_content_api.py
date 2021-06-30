@@ -237,7 +237,7 @@ class ContentAPIV2TestMixin:
                         'subcomponent': 'subsection',
                         'title': 'Subsection',
                         'type': 'subsection',
-                        'url': 'http://testserver/api/v2/akn/za/act/2010/1/eng/!main/subsection',
+                        'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/subsection',
                     }
                 ],
             }

@@ -129,11 +129,16 @@ class Beautifier:
                     add_to_subs(c, prefix + p.num)
 
         if not p.all_descendants_same:
+            # don't continue run if wer're giving subprovisions
+            self.end_at_next_add = True
             for c in p.children:
                 add_to_subs(c, p.num)
 
         p.num = ', '.join(subs_to_add) if subs_to_add else p.num
         self.add_to_current(p)
+        if self.end_at_next_add:
+            self.end_current()
+            self.end_at_next_add = False
 
     def process_provision(self, p):
         # start processing?
@@ -186,6 +191,7 @@ class Beautifier:
         self.current_run = []
         self.runs = []
         self.previous_in_run = False
+        self.end_at_next_add = False
 
         for p in provisions:
             self.process_provision(p)

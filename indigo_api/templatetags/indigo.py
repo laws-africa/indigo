@@ -214,6 +214,12 @@ def work_resolver_url(context, work):
 
 @register.simple_tag
 def commenced_provisions_description(document, commencement, uncommenced=False):
+    # To get the provisions relevant to each row of the table,
+    # use the earlier of the document's expression date and the relevant commencement's date
+    date = document.expression_date
+    if commencement and date > commencement.date:
+        date = commencement.date
+    provisions = document.work.all_commenceable_provisions(date)
     if uncommenced:
         provision_ids = document.uncommenced_provision_ids()
     else:
@@ -221,7 +227,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
     beautifier = Beautifier(commenced=not uncommenced)
     # decorate the ToC with useful information
-    provisions = beautifier.decorate_provisions(document.commenceable_provisions(), provision_ids)
+    provisions = beautifier.decorate_provisions(provisions, provision_ids)
     return beautifier.make_beautiful(provisions)
 
 

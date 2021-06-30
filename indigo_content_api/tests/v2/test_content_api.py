@@ -221,10 +221,27 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(response.data['toc'], [
-            {'id': 'sec_1', 'type': 'section', 'num': '1.',
-             'component': 'main', 'subcomponent': 'section/1',
-             'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/section/1',
-             'heading': 'Foo', 'title': '1. Foo'}])
+            {
+                'id': 'sec_1',
+                'type': 'section',
+                'num': '1.',
+                'component': 'main',
+                'subcomponent': 'section/1',
+                'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/section/1',
+                'heading': 'Foo',
+                'title': '1. Foo',
+                'children': [
+                    {
+                        'component': 'main',
+                        'id': 'sec_1.subsection-0',
+                        'subcomponent': 'subsection',
+                        'title': 'Subsection',
+                        'type': 'subsection',
+                        'url': 'http://testserver/api/v2/akn/za/act/2010/1/eng/!main/subsection',
+                    }
+                ],
+            }
+        ])
 
     def test_published_toc_uses_expression_date_in_urls(self):
         # use @2014-02-12

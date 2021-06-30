@@ -198,6 +198,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         self.maxDiff = None
+        # toc now includes `subsection`
         self.assertEqual([
             {
                 'type': 'chapter',
@@ -216,6 +217,16 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
+                        'children': [
+                            {
+                                'type': 'subsection',
+                                'component': 'main',
+                                'subcomponent': 'subsection/1',
+                                'title': 'Subsection (1)',
+                                'num': '(1)',
+                                'id': 'section-3.1'
+                            }
+                        ]
                     },
                 ],
             },

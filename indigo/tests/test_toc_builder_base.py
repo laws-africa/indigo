@@ -87,8 +87,14 @@ class TOCBuilderBaseTestCase(TestCase):
             document_xml=component_fixture(text="hi"),
             language=self.eng)
 
+        # toc now includes `paragraph` (in main body of component fixture)
         toc = self.builder.table_of_contents_for_document(doc)
         self.assertEqual([{
+            'type': 'paragraph',
+            'component': 'main',
+            'subcomponent': 'paragraph',
+            'title': 'Paragraph'
+        }, {
             'type': 'attachment',
             'component': 'schedule1',
             'subcomponent': None,
@@ -103,7 +109,7 @@ class TOCBuilderBaseTestCase(TestCase):
                 'subcomponent': 'section',
             }],
         }], [t.as_dict() for t in toc])
-        self.assertEqual("att_1/sec_1", toc[0].children[0].qualified_id)
+        self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
 
     def test_toc_with_schedule_no_heading(self):
         doc = Document(
@@ -115,8 +121,14 @@ class TOCBuilderBaseTestCase(TestCase):
         for node in doc.doc.root.xpath('//a:attachment/a:heading', namespaces={'a': doc.doc.namespace}):
             node.getparent().remove(node)
 
+        # toc now includes `paragraph` (in main body of component fixture)
         toc = self.builder.table_of_contents_for_document(doc)
         self.assertEqual([{
+            'type': 'paragraph',
+            'component': 'main',
+            'subcomponent': 'paragraph',
+            'title': 'Paragraph'
+        }, {
             'type': 'attachment',
             'component': 'schedule1',
             'subcomponent': None,
@@ -131,7 +143,7 @@ class TOCBuilderBaseTestCase(TestCase):
                 'subcomponent': 'section',
             }],
         }], [t.as_dict() for t in toc])
-        self.assertEqual("att_1/sec_1", toc[0].children[0].qualified_id)
+        self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
 
     def test_toc_below_section(self):
         doc = Document(

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django import template
 from django.conf import settings
 
@@ -226,7 +228,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
     if commencement and date > commencement.date:
         date = commencement.date
 
-    provisions = document.work.all_commenceable_provisions(date)
+    provisions = deepcopy(document.work.all_commenceable_provisions(date))
     provision_ids = document.work.all_uncommenced_provision_ids(document.expression_date) if uncommenced else commencement.provisions
 
     beautifier = Beautifier(commenced=not uncommenced)

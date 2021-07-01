@@ -313,7 +313,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
-        context['uncommenced_provisions_count'], context['total_provisions_count'] = self.add_commencement_info(provisions, commencements)
+        context['uncommenced_provisions_count'], context['total_provisions_count'] = self.add_info_get_counts(provisions, commencements)
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
         provision_set = {}
@@ -328,34 +328,42 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         for commencement in commencements:
             # combined ToC of all documents up to this commencement's date
             provisions = self.work.all_commenceable_provisions(commencement.date)
-            commencement.rich_provisions = self.decorate(commencement, commencements, provisions)
+            commencement.rich_provisions = self.enrich_provisions(commencement, commencements, provisions)
 
         return context
 
-    def add_info(self, p, commenced_provisions, uncommenced_provisions_count, total_provisions_count):
-        for c in p.children:
-            uncommenced_provisions_count, total_provisions_count = self.add_info(c, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
-
+    def add_commencement_info(self, p, commenced_provisions):
         p.commenced = p.id in commenced_provisions
-        p.uncommenced_descendants = any(not c.commenced for c in p.children) or any(c.uncommenced_descendants for c in p.children)
+        p.last_node = not p.children
+        p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
+        # empty list passed to all() returns True
+        p.all_descendants_commenced = all(
+            c.commenced and (c.all_descendants_commenced or c.last_node) for c in p.children) if p.children else False
+        p.uncommenced_descendants = p.children and not p.all_descendants_commenced
 
-        total_provisions_count += 1
-        if not p.commenced:
-            uncommenced_provisions_count += 1
-
-        return uncommenced_provisions_count, total_provisions_count
-
-    def add_commencement_info(self, provisions, commencements):
+    def add_info_get_counts(self, provisions, commencements):
         commenced_provisions = [p for c in commencements for p in c.provisions]
         uncommenced_provisions_count = 0
         total_provisions_count = 0
 
+        def add_info_counts(p, commenced_provisions, n_uncommenced, n_total):
+            for c in p.children:
+                n_uncommenced, n_total = add_info_counts(c, commenced_provisions, n_uncommenced, n_total)
+
+            self.add_commencement_info(p, commenced_provisions)
+
+            n_total += 1
+            if not p.commenced:
+                n_uncommenced += 1
+
+            return n_uncommenced, n_total
+
         for p in provisions:
-            uncommenced_provisions_count, total_provisions_count = self.add_info(p, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
+            uncommenced_provisions_count, total_provisions_count = add_info_counts(p, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
 
         return uncommenced_provisions_count, total_provisions_count
 
-    def decorate(self, commencement, commencements, provisions):
+    def enrich_provisions(self, commencement, commencements, provisions):
         # provisions commenced by everything else
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
 
@@ -364,11 +372,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
                 decorate(c)
 
             # commencement status for displaying provisions on commencement detail
-            p.commenced = p.id in commencement.provisions
-            p.last_node = not p.children
-            p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
-            # empry list passed to all() returns True
-            p.all_descendants_commenced = all(c.commenced and (c.all_descendants_commenced or c.last_node) for c in p.children) if p.children else False
+            self.add_commencement_info(p, commencement.provisions)
 
             # visibility for what to show in commencement form
             p.visible = p.id not in commenced

@@ -50,13 +50,15 @@ class TOCBuilderZATestCase(APITestCase):
         self.maxDiff = None
         self.assertEqual(toc, [
             {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
-                'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo'},
+                'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo',
+                'basic_unit': True, 'children': [],
+             },
             {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
-                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Chapter 1. – The Chapter', 'children': [
+                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Chapter 1. – The Chapter', 'basic_unit': False, 'children': [
                     {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
-                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Part A – The Part', 'children': [
+                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Part A – The Part', 'basic_unit': False, 'children': [
                          {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
-                          'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other'},
+                          'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other', 'basic_unit': True, 'children': []},
                      ]
                      },
                 ]},
@@ -98,13 +100,13 @@ class TOCBuilderZATestCase(APITestCase):
         self.maxDiff = None
         self.assertEqual(toc, [
             {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
-                'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo'},
+                'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo', 'basic_unit': True, 'children': []},
             {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
-                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Hoofstuk 1. – The Chapter', 'children': [
+                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Hoofstuk 1. – The Chapter', 'basic_unit': False, 'children': [
                     {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
-                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Deel A – The Part', 'children': [
+                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Deel A – The Part', 'basic_unit': False, 'children': [
                          {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
-                          'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other'},
+                          'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other', 'basic_unit': True, 'children': []},
                      ]
                      },
                 ]},
@@ -232,13 +234,16 @@ class TOCBuilderZATestCase(APITestCase):
             'id': 'att_1',
             'heading': 'A Title',
             'title': 'A Title',
+            'basic_unit': False,
             'children': [{
-                 'component': 'schedule1',
-                 'type': 'section',
-                 'id': 'sec_1',
-                 'subcomponent': 'section',
-                 'title': 'Section',
-             }]
+                'component': 'schedule1',
+                'type': 'section',
+                'id': 'sec_1',
+                'subcomponent': 'section',
+                'title': 'Section',
+                'basic_unit': True,
+                'children': [],
+            }]
         }, {
             'component': 'schedule2',
             'type': 'attachment',
@@ -246,12 +251,15 @@ class TOCBuilderZATestCase(APITestCase):
             'id': 'att_2',
             'heading': 'Schedule 2',
             'title': 'Schedule 2',
+            'basic_unit': False,
             'children': [{
                 'component': 'schedule2',
                 'type': 'section',
                 'id': 'sec_1',
                 'subcomponent': 'section',
-                'title': 'Section'
+                'title': 'Section',
+                'basic_unit': True,
+                'children': [],
             }]
         }], toc)
 
@@ -281,10 +289,14 @@ class TOCBuilderZATestCase(APITestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual(toc, [
-            {'type': 'coverpage', 'component': 'main', 'subcomponent': 'coverpage', 'title': 'Coverpage'},
-            {'type': 'preface', 'component': 'main', 'subcomponent': 'preface', 'title': 'Preface'},
-            {'type': 'preamble', 'component': 'main', 'subcomponent': 'preamble', 'title': 'Preamble'},
-            {'type': 'conclusions', 'component': 'main', 'subcomponent': 'conclusions', 'title': 'Conclusions'},
+            {'type': 'coverpage', 'component': 'main', 'subcomponent': 'coverpage', 'title': 'Coverpage',
+             'basic_unit': False, 'children': []},
+            {'type': 'preface', 'component': 'main', 'subcomponent': 'preface', 'title': 'Preface',
+             'basic_unit': False, 'children': []},
+            {'type': 'preamble', 'component': 'main', 'subcomponent': 'preamble', 'title': 'Preamble',
+             'basic_unit': False, 'children': []},
+            {'type': 'conclusions', 'component': 'main', 'subcomponent': 'conclusions', 'title': 'Conclusions',
+             'basic_unit': False, 'children': []},
         ])
 
     def test_subpart_without_number(self):
@@ -303,5 +315,5 @@ class TOCBuilderZATestCase(APITestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual([
-            {'type': 'subpart', 'component': 'main', 'subcomponent': 'subpart', 'title': 'My subpart', 'heading': 'My subpart', 'id': 'subpart_1'},
+            {'type': 'subpart', 'component': 'main', 'subcomponent': 'subpart', 'title': 'My subpart', 'heading': 'My subpart', 'id': 'subpart_1', 'basic_unit': False, 'children': []},
         ], toc)

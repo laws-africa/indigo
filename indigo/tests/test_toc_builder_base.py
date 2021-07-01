@@ -42,7 +42,9 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Section',
             'type': 'section',
             'id': 'sec_1',
-            'subcomponent': 'section'
+            'subcomponent': 'section',
+            'basic_unit': True,
+            'children': [],
         }])
 
     def test_toc_item_simple(self):
@@ -59,7 +61,9 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Section',
             'type': 'section',
             'id': 'sec_1',
-            'subcomponent': 'section'
+            'subcomponent': 'section',
+            'basic_unit': True,
+            'children': [],
         })
         self.assertEqual(toc.id, toc.qualified_id)
 
@@ -77,7 +81,9 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Section',
             'type': 'section',
             'id': 'sec_1',
-            'subcomponent': 'section'
+            'subcomponent': 'section',
+            'basic_unit': True,
+            'children': [],
         })
         self.assertEqual("att_1/sec_1", toc.qualified_id)
 
@@ -93,7 +99,9 @@ class TOCBuilderBaseTestCase(TestCase):
             'type': 'paragraph',
             'component': 'main',
             'subcomponent': 'paragraph',
-            'title': 'Paragraph'
+            'title': 'Paragraph',
+            'basic_unit': False,
+            'children': [],
         }, {
             'type': 'attachment',
             'component': 'schedule1',
@@ -101,12 +109,15 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Schedule 1',
             'heading': 'Schedule 1',
             'id': 'att_1',
+            'basic_unit': False,
             'children': [{
                 'component': 'schedule1',
                 'title': 'Section',
                 'type': 'section',
                 'id': 'sec_1',
                 'subcomponent': 'section',
+                'basic_unit': True,
+                'children': [],
             }],
         }], [t.as_dict() for t in toc])
         self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
@@ -127,7 +138,9 @@ class TOCBuilderBaseTestCase(TestCase):
             'type': 'paragraph',
             'component': 'main',
             'subcomponent': 'paragraph',
-            'title': 'Paragraph'
+            'title': 'Paragraph',
+            'basic_unit': False,
+            'children': [],
         }, {
             'type': 'attachment',
             'component': 'schedule1',
@@ -135,12 +148,15 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Schedule alias',
             'heading': 'Schedule alias',
             'id': 'att_1',
+            'basic_unit': False,
             'children': [{
                 'component': 'schedule1',
                 'title': 'Section',
                 'type': 'section',
                 'id': 'sec_1',
                 'subcomponent': 'section',
+                'basic_unit': True,
+                'children': [],
             }],
         }], [t.as_dict() for t in toc])
         self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
@@ -352,6 +368,8 @@ class TOCBuilderBaseTestCase(TestCase):
             'title': 'Section',
             'type': 'section',
             'id': 'sec_1',
-            'subcomponent': 'section'
+            'subcomponent': 'section',
+            'basic_unit': True,
+            'children': [],
         })
         self.assertEqual(toc.id, toc.qualified_id)

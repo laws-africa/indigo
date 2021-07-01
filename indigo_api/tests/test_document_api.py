@@ -208,6 +208,7 @@ class DocumentAPITest(APITestCase):
                 'component': 'main',
                 'title': 'Chapter 2 – Administrative provisions',
                 'subcomponent': 'chapter/2',
+                'basic_unit': False,
                 'children': [
                     {
                         'type': 'section',
@@ -217,6 +218,7 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
+                        'basic_unit': True,
                         'children': [
                             {
                                 'type': 'subsection',
@@ -224,7 +226,9 @@ class DocumentAPITest(APITestCase):
                                 'subcomponent': 'subsection/1',
                                 'title': 'Subsection (1)',
                                 'num': '(1)',
-                                'id': 'section-3.1'
+                                'id': 'section-3.1',
+                                'basic_unit': False,
+                                'children': [],
                             }
                         ]
                     },

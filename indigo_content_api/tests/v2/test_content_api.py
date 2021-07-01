@@ -205,7 +205,7 @@ class ContentAPIV2TestMixin:
             {'id': 'sec_1', 'type': 'section', 'num': '1.',
              'component': 'main', 'subcomponent': 'section/1',
              'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2014/10/eng/!main/section/1',
-             'title': 'Section 1.'}])
+             'title': 'Section 1.', 'basic_unit': True, 'children': []}])
 
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/toc.json')
         self.assertEqual(response.status_code, 200)
@@ -214,7 +214,7 @@ class ContentAPIV2TestMixin:
             {'id': 'sec_1', 'type': 'section', 'num': '1.',
              'component': 'main', 'subcomponent': 'section/1',
              'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2014/10/eng/!main/section/1',
-             'title': 'Section 1.'}])
+             'title': 'Section 1.', 'basic_unit': True, 'children': []}])
 
     def test_published_toc_sections_with_headings(self):
         response = self.client.get(self.api_path + '/akn/za/act/2010/1/eng/toc.json')
@@ -230,6 +230,7 @@ class ContentAPIV2TestMixin:
                 'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/section/1',
                 'heading': 'Foo',
                 'title': '1. Foo',
+                'basic_unit': True,
                 'children': [
                     {
                         'component': 'main',
@@ -238,6 +239,8 @@ class ContentAPIV2TestMixin:
                         'title': 'Subsection',
                         'type': 'subsection',
                         'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/subsection',
+                        'basic_unit': False,
+                        'children': [],
                     }
                 ],
             }
@@ -262,7 +265,7 @@ class ContentAPIV2TestMixin:
             {'id': 'sec_1', 'type': 'section', 'num': '1.',
              'component': 'main', 'subcomponent': 'section/1',
              'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2014/10/eng:2014-02-12/!main/section/1',
-             'title': 'Section 1.'}])
+             'title': 'Section 1.', 'basic_unit': True, 'children': []}])
 
     def test_published_subcomponents(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/!main/section/1.xml')

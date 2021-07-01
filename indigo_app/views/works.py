@@ -326,10 +326,12 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             add_to_set(p)
 
         for commencement in commencements:
+            # combined ToC of all documents up to this commencement's date
+            provisions = self.work.all_commenceable_provisions(commencement.date)
             # rich description of provisions
-            commencement.commenced_provisions = self.get_commenced_provisions(commencement)
+            commencement.commenced_provisions = self.mark_commenced(commencement, provisions)
             # possible options
-            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements)
+            commencement.possible_provisions = self.mark_visible(commencement, commencements, provisions)
 
         return context
 
@@ -356,8 +358,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         return uncommenced_provisions_count, total_provisions_count
 
-    def get_commenced_provisions(self, commencement):
-        possible_provisions = self.work.all_commenceable_provisions(commencement.date)
+    def mark_commenced(self, commencement, provisions):
 
         def set_commencement_status(p):
             for c in p.children:
@@ -369,13 +370,12 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             # The youngest descendant will have this as True, otherwise they'll all be False
             p.all_descendants_commenced = all(c.commenced and c.all_descendants_commenced for c in p.children)
 
-        for p in possible_provisions:
+        for p in provisions:
             set_commencement_status(p)
 
-        return possible_provisions
+        return provisions
 
-    def get_possible_provisions(self, commencement, commencements):
-        provisions = self.work.all_commenceable_provisions(commencement.date)
+    def mark_visible(self, commencement, commencements, provisions):
         # provisions commenced by everything else
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
 

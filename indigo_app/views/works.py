@@ -338,7 +338,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             upc, tpc = self.add_info(c, commenced_provisions, upc, tpc)
 
         p.commenced = p.id in commenced_provisions
-        p.uncommenced_descendants = (any(not c.commenced for c in p.children)) or any(c.uncommenced_descendants for c in p.children)
+        p.uncommenced_descendants = any(not c.commenced for c in p.children) or any(c.uncommenced_descendants for c in p.children)
 
         tpc += 1
         if not p.commenced:
@@ -1047,4 +1047,3 @@ class ImportDocumentView(WorkViewBase, FormView):
 
 class WorkPopupView(WorkViewBase, DetailView):
     template_name = 'indigo_api/work_popup.html'
-

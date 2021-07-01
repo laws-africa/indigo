@@ -336,6 +336,8 @@ class TOCElement(object):
             'component': self.component,
             'subcomponent': self.subcomponent,
             'title': self.title,
+            'children': [],
+            'basic_unit': self.basic_unit,
         }
 
         if self.heading:

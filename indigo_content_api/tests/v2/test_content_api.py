@@ -255,7 +255,7 @@ class ContentAPIV2TestMixin:
             {'id': 'sec_1', 'type': 'section', 'num': '1.',
              'component': 'main', 'subcomponent': 'section/1',
              'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2014/10/eng@2014-02-12/!main/section/1',
-             'title': 'Section 1.'}])
+             'title': 'Section 1.', 'basic_unit': True, 'children': []}])
 
         # use :2014-02-12
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng:2014-02-12/toc.json')

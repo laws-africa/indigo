@@ -87,7 +87,7 @@
 
               {% if commencement.provisions %}
                 <ul class="provisions-list">
-                  {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.commenced_provisions %}
+                  {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
                 </ul>
               {% endif %}
             </div>
@@ -137,7 +137,7 @@
                   </label>
                 </div>
                 <ul data-id="provisions" class="provisions-list">
-                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.possible_provisions checked=commencement.provisions %}
+                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
                 </ul>
               </div>
             </div>

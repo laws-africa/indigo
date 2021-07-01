@@ -328,10 +328,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         for commencement in commencements:
             # combined ToC of all documents up to this commencement's date
             provisions = self.work.all_commenceable_provisions(commencement.date)
-            # rich description of provisions
-            commencement.commenced_provisions = self.mark_commenced(commencement, provisions)
-            # possible options
-            commencement.possible_provisions = self.mark_visible(commencement, commencements, provisions)
+            commencement.rich_provisions = self.decorate(commencement, commencements, provisions)
 
         return context
 
@@ -358,36 +355,27 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         return uncommenced_provisions_count, total_provisions_count
 
-    def mark_commenced(self, commencement, provisions):
-
-        def set_commencement_status(p):
-            for c in p.children:
-                set_commencement_status(c)
-
-            p.commenced = p.id in commencement.provisions
-            p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
-
-            # The youngest descendant will have this as True, otherwise they'll all be False
-            p.all_descendants_commenced = all(c.commenced and c.all_descendants_commenced for c in p.children)
-
-        for p in provisions:
-            set_commencement_status(p)
-
-        return provisions
-
-    def mark_visible(self, commencement, commencements, provisions):
+    def decorate(self, commencement, commencements, provisions):
         # provisions commenced by everything else
         commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
 
-        def set_visibility(p):
+        def decorate(p):
             for c in p.children:
-                set_visibility(c)
+                decorate(c)
 
+            # commencement status for displaying provisions on commencement detail
+            p.commenced = p.id in commencement.provisions
+            p.last_node = not p.children
+            p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
+            # empry list passed to all() returns True
+            p.all_descendants_commenced = all(c.commenced and (c.all_descendants_commenced or c.last_node) for c in p.children) if p.children else False
+
+            # visibility for what to show in commencement form
             p.visible = p.id not in commenced
             p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 
         for p in provisions:
-            set_visibility(p)
+            decorate(p)
 
         return provisions
 

@@ -4,12 +4,12 @@ from dotmap import DotMap
 from django.test import TestCase
 
 from indigo.analysis.toc.base import TOCElement, TOCBuilderBase
-from indigo_api.templatetags.indigo import Beautifier
+from indigo_api.templatetags.indigo import CommencementsBeautifier
 
 
 class BeautifulProvisionsTestCase(TestCase):
     def setUp(self):
-        self.beautifier = Beautifier(commenced=True)
+        self.beautifier = CommencementsBeautifier(commenced=True)
         self.commenceable_provisions = [TOCElement(
             element=None, component=None, children=[], type_='section', id_=f'section-{number}', num=f'{number}.'
         ) for number in range(1, 31)]

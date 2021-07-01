@@ -227,7 +227,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
         date = commencement.date
 
     provisions = document.work.all_commenceable_provisions(date)
-    provision_ids = document.uncommenced_provision_ids() if uncommenced else commencement.provisions
+    provision_ids = document.work.all_uncommenced_provision_ids(document.expression_date) if uncommenced else commencement.provisions
 
     beautifier = Beautifier(commenced=not uncommenced)
     # decorate the ToC with useful information
@@ -238,3 +238,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 @register.simple_tag
 def commencements_relevant_at_date(document):
     return document.commencements_relevant_at_expression_date()
+
+@register.simple_tag
+def has_uncommenced_provisions(document):
+    return bool(document.work.all_uncommenced_provision_ids(document.expression_date))

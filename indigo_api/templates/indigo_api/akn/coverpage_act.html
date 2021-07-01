@@ -93,7 +93,8 @@
           {% endif %}
         {% else %}
           {% commencements_relevant_at_date document as commencements %}
-          {% if commencements|length == 1 and not document.has_uncommenced_provisions %}
+          {% has_uncommenced_provisions document as has_uncommenced_provisions %}
+          {% if commencements|length == 1 and not has_uncommenced_provisions %}
           {% with commencements|first as commencement %}
             {% commenced_provisions_description document commencement as provisions_description %}
             <li class="commencement-date">
@@ -174,7 +175,7 @@
                     </td>
                   </tr>
                 {% endfor %}
-                {% if document.has_uncommenced_provisions %}
+                {% if has_uncommenced_provisions %}
                   <tr>
                     <td>
                       {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}

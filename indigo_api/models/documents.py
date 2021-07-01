@@ -180,18 +180,6 @@ class DocumentMixin(object):
 
         return ids
 
-    def commenceable_provisions(self):
-        return self.work.all_commenceable_provisions(self.expression_date)
-
-    def uncommenced_provision_ids(self):
-        return self.work.uncommenced_provision_ids(self.expression_date)
-
-    def uncommenced_provisions(self):
-        return self.work.all_uncommenced_provisions(self.expression_date)
-
-    def has_uncommenced_provisions(self):
-        return self.work.has_uncommenced_provisions(self.expression_date)
-
     def commencements_relevant_at_expression_date(self):
         """ Return a list of Commencement objects that have to do with the provisions that exist on this expression.
         """
@@ -209,7 +197,7 @@ class DocumentMixin(object):
             for c in p.children:
                 add_to_ids(c)
 
-        for p in self.commenceable_provisions():
+        for p in self.work.all_commenceable_provisions(self.expression_date):
             add_to_ids(p)
 
         # include commencement if any of its `provisions` are found in `commenceable_provision_ids`

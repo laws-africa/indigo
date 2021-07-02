@@ -313,7 +313,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
-        context['uncommenced_provisions_count'], context['total_provisions_count'] = self.add_info_get_counts(provisions, commencements)
+        context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
+        context['total_provisions_count'] = self.add_info_get_total(provisions, commencements)
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
         provision_set = {}
@@ -341,27 +342,23 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             c.commenced and (c.all_descendants_commenced or c.last_node) for c in p.children) if p.children else False
         p.uncommenced_descendants = p.children and not p.all_descendants_commenced
 
-    def add_info_get_counts(self, provisions, commencements):
+    def add_info_get_total(self, provisions, commencements):
         commenced_provisions = [p for c in commencements for p in c.provisions]
-        uncommenced_provisions_count = 0
-        total_provisions_count = 0
+        n_total = 0
 
-        def add_info_counts(p, commenced_provisions, n_uncommenced, n_total):
+        def add_info_counts(p, commenced_provisions, n_total):
             for c in p.children:
-                n_uncommenced, n_total = add_info_counts(c, commenced_provisions, n_uncommenced, n_total)
+                n_total = add_info_counts(c, commenced_provisions, n_total)
 
             self.add_commencement_info(p, commenced_provisions)
-
             n_total += 1
-            if not p.commenced:
-                n_uncommenced += 1
 
-            return n_uncommenced, n_total
+            return n_total
 
         for p in provisions:
-            uncommenced_provisions_count, total_provisions_count = add_info_counts(p, commenced_provisions, uncommenced_provisions_count, total_provisions_count)
+            n_total = add_info_counts(p, commenced_provisions, n_total)
 
-        return uncommenced_provisions_count, total_provisions_count
+        return n_total
 
     def enrich_provisions(self, commencement, commencements, provisions):
         # provisions commenced by everything else

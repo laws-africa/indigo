@@ -303,7 +303,6 @@ class WorkOverviewView(WorkViewBase, DetailView):
 
 
 class WorkCommencementsView(WorkViewBase, DetailView):
-    # TODO: don't forget the migration :"D
     template_name_suffix = '_commencements'
     tab = 'commencements'
 

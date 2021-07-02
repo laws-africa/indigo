@@ -362,7 +362,6 @@ class CommencementsBeautifier:
         self.commenced = commenced
 
     def decorate_provisions(self, provisions, assess_against):
-        # TODO: check all these are still needed
         def assess(p):
             for c in p.children:
                 assess(c)

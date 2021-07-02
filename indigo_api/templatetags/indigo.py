@@ -38,7 +38,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
     beautifier = CommencementsBeautifier(commenced=not uncommenced)
     # decorate the ToC with useful information
-    provisions = beautifier.decorate_provisions(provisions, provision_ids)
+    beautifier.decorate_provisions(provisions, provision_ids)
     return beautifier.make_beautiful(provisions)
 
 

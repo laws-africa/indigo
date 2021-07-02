@@ -362,7 +362,6 @@ class CommencementsBeautifier:
         self.commenced = commenced
 
     def decorate_provisions(self, provisions, assess_against):
-        # TODO: check all these are still needed
         def assess(p):
             for c in p.children:
                 assess(c)
@@ -402,8 +401,6 @@ class CommencementsBeautifier:
 
         for p in provisions:
             assess(p)
-
-        return provisions
 
     def add_to_run(self, p, run):
         typ = p.type.capitalize() if p.type in self.cap_types else p.type

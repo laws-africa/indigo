@@ -1,14 +1,17 @@
 {% for prov in provisions %}
   {% if prov.commenced or prov.commenced_descendants %}
-    <li class="list-unstyled">
+    <li>
       <span class="{% if prov.commenced %}text-body{% else %}text-black-50{% endif %}">
-        {% if not prov.commenced %}× {% endif %}{{ prov.title|default:prov.id }}
+        {% if not prov.commenced %}
+        <input type="checkbox" checked disabled/>
+        {% endif %}
+        {{ prov.title|default:prov.id }}
       </span>
 
       {% if prov.commenced and prov.children and prov.all_descendants_commenced %}
         (Commenced in full)
       {% elif prov.children %}
-        <ul>
+        <ul class="provisions-list">
           {% include "indigo_api/_provisions_tree_commenced.html" with provisions=prov.children %}
         </ul>
       {% endif %}

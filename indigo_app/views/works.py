@@ -316,15 +316,6 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['total_provisions_count'] = self.add_info_get_total(provisions, commencements)
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
-        provision_set = {}
-
-        def add_to_set(p):
-            provision_set[p.id] = p
-            for c in p.children:
-                add_to_set(c)
-        for p in provisions:
-            add_to_set(p)
-
         for commencement in commencements:
             # combined ToC of all documents up to this commencement's date
             provisions = self.work.all_commenceable_provisions(commencement.date)

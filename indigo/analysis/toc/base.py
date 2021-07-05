@@ -20,6 +20,22 @@ _('Preface')
 _('Preamble')
 
 
+def descend_toc_pre_order(items):
+    # yields each TOC element and then its children, recursively
+    for item in items:
+        yield item
+        for descendant in descend_toc_pre_order(item.children):
+            yield descendant
+
+
+def descend_toc_post_order(items):
+    # yields each TOC element's children, recursively, ending with itself
+    for item in items:
+        for descendant in descend_toc_post_order(item.children):
+            yield descendant
+        yield item
+
+
 @plugins.register('toc')
 class TOCBuilderBase(LocaleBasedMatcher):
     """ This builds a Table of Contents for an Act.

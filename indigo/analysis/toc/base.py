@@ -460,7 +460,9 @@ class CommencementsBeautifier:
         e.g. section 2's `num`: '2' --> '2(1), 2(3), 2(4)'
         e.g. section 1's `num`: '1' --> '1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2)'
         """
+        end_at_next_add = False
         subs_to_add = []
+
         def add_to_subs(p, prefix):
             # stop drilling down if the subprovision is fully un/commenced or is the last (un/commenced) node
             if p.commenced == self.commenced and (
@@ -474,16 +476,16 @@ class CommencementsBeautifier:
                     add_to_subs(c, prefix + p.num)
 
         if p.children and not p.all_descendants_same:
-            # don't continue run if wer're giving subprovisions
-            self.end_at_next_add = True
+            # don't continue run if we're giving subprovisions
+            end_at_next_add = True
             for c in p.children:
                 add_to_subs(c, p.num)
 
         p.num = ', '.join(subs_to_add) if subs_to_add else p.num
         self.add_to_current(p)
-        if self.end_at_next_add:
+
+        if end_at_next_add:
             self.end_current()
-            self.end_at_next_add = False
 
     def process_provision(self, p):
         # start processing?
@@ -536,7 +538,6 @@ class CommencementsBeautifier:
         self.current_run = []
         self.runs = []
         self.previous_in_run = False
-        self.end_at_next_add = False
 
         for p in provisions:
             self.process_provision(p)

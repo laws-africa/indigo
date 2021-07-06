@@ -10,7 +10,7 @@
         {{ prov.title|default:prov.id }}
       </span>
 
-      {% if prov.commenced and prov.children and prov.all_descendants_commenced %}
+      {% if prov.commenced and prov.all_descendants_commenced %}
         (Commenced in full)
       {% elif prov.children %}
         <ul class="provisions-list">

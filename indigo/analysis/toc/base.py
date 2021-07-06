@@ -411,7 +411,7 @@ class CommencementsBeautifier:
 
     def stringify_run(self, run):
         # first (could be only) item, e.g. 'section 1'
-        run_str = f"{run[0]['type']} {run[0]['num']}"
+        run_str = f"{run[0]['type']} {run[0]['num']}"
         # common case: e.g. section 1–5 (all the same type)
         if len(run) > 1 and not any(r['new_run'] for r in run):
             run_str += f"–{run[-1]['num']}"
@@ -425,7 +425,7 @@ class CommencementsBeautifier:
             # get all e.g. articles, then all e.g. regulations
             for subsequent_type in [r['type'] for r in run if r['new_run']]:
                 this_type = [r for r in run if r['type'] == subsequent_type]
-                run_str += f", {subsequent_type} {this_type[0]['num']}"
+                run_str += f", {subsequent_type} {this_type[0]['num']}"
                 run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
 
         return run_str
@@ -436,13 +436,9 @@ class CommencementsBeautifier:
         """
         # get all the basic units in the container
         basics = []
-        def check_for_basics(p):
-            if p.basic_unit:
-                self.add_to_run(p, basics)
-            for c in p.children:
-                check_for_basics(c)
-        for c in p.children:
-            check_for_basics(c)
+        for c in descend_toc_pre_order(p.children):
+            if c.basic_unit:
+                self.add_to_run(c, basics)
 
         p.num += f' ({self.stringify_run(basics)})' if basics else ''
 

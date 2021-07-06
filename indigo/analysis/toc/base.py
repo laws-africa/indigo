@@ -469,7 +469,7 @@ class CommencementsBeautifier:
                     p.all_descendants_same or p.all_descendants_opposite or not p.children
             ):
                 # go no further down, prefix with all parent nums
-                subs_to_add.append(f'{prefix}{p.num}')
+                subs_to_add.append(prefix + p.num)
             # keep drilling if some descendants are different
             elif not p.all_descendants_same:
                 for c in p.children:

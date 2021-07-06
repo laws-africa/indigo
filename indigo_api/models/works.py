@@ -249,7 +249,8 @@ class WorkMixin(object):
             return first.date
 
     def all_commenceable_provisions(self, date=None):
-        """ Return a list of TOCElement objects that can be commenced.
+        """ Returns a list of TOCElement objects that can be commenced.
+            Each TOCElement object has a (potentially empty) list of `children`.
             If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
@@ -270,24 +271,20 @@ class WorkMixin(object):
         return provisions
 
     def all_uncommenced_provision_ids(self, date=None):
+        """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.
+            If `date` is provided, only provisions in expressions up to and including that date are included.
+        """
+        from indigo.analysis.toc.base import descend_toc_pre_order
+
         commencements = self.commencements.all()
         # common case: one commencement that covers all provisions
         if any(c.all_provisions for c in commencements):
             return []
 
+        # commencement.provisions are lists of provision ids
         commenced = [p for c in commencements for p in c.provisions]
 
-        uncommenced_ids = []
-        def add_to_uncommenced(p):
-            if p.id not in commenced:
-                uncommenced_ids.append(p.id)
-            for c in p.children:
-                add_to_uncommenced(c)
-
-        for p in self.all_commenceable_provisions(date=date):
-            add_to_uncommenced(p)
-
-        return uncommenced_ids
+        return [p.id for p in descend_toc_pre_order(self.all_commenceable_provisions(date=date)) if p.id not in commenced]
 
     @property
     def commencements_count(self):

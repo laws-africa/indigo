@@ -331,11 +331,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def add_commencement_info(self, p, commenced_provisions):
         # compare current provision against list of commenced provision ids; decorate accordingly
         p.commenced = p.id in commenced_provisions
-        p.last_node = not p.children
-        p.commenced_descendants = any(c.commenced or c.commenced_descendants for c in p.children)
+        p.commenced_descendants = any(c.commenced for c in descend_toc_pre_order(p.children))
         # empty list passed to all() returns True
-        p.all_descendants_commenced = all(
-            c.commenced and (c.all_descendants_commenced or c.last_node) for c in p.children) if p.children else False
+        p.all_descendants_commenced = all(c.commenced for c in descend_toc_pre_order(p.children)) if p.children else False
         p.uncommenced_descendants = p.children and not p.all_descendants_commenced
 
     def decorate_commencement_provisions(self, commencement, commencements):

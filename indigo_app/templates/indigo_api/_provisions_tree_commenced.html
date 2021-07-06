@@ -2,8 +2,10 @@
   {% if prov.commenced or prov.commenced_descendants %}
     <li>
       <span class="{% if prov.commenced %}text-body{% else %}text-black-50{% endif %}">
-        {% if not prov.commenced %}
-        <input type="checkbox" checked disabled/>
+        {% if prov.commenced %}
+          <input type="checkbox" checked disabled/>
+        {% else %}
+          ×
         {% endif %}
         {{ prov.title|default:prov.id }}
       </span>

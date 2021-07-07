@@ -1,5 +1,5 @@
 {% for prov in provisions %}
-  {% if prov.commenced or prov.commenced_descendants %}
+  {% if prov.commenced or prov.children and not prov.all_descendants_same %}
     <li>
       <span class="{% if prov.commenced %}text-body{% else %}text-black-50{% endif %}">
         {% if prov.commenced %}
@@ -8,7 +8,7 @@
         {{ prov.title|default:prov.id }}
       </span>
 
-      {% if prov.commenced and prov.all_descendants_commenced %}
+      {% if prov.commenced and prov.all_descendants_same %}
         (Commenced in full)
       {% elif prov.children %}
         <ul class="provisions-list">

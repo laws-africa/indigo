@@ -35,7 +35,8 @@ class Command(BaseCommand):
                 raise Exception("Forcing rollback")
 
     def explode_provisions(self):
-        for commencement in Commencement.objects.all():
+        commencements = Commencement.objects.all()
+        for commencement in commencements:
 
             def check_existing_add_descendants(provs, commenced_list):
                 # don't use descend_toc_pre_order() because it'll duplicate effort
@@ -59,7 +60,7 @@ class Command(BaseCommand):
                     # update decoration
                     p.commenced = True
 
-            link = f"https://edit.laws.africa/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk}"
+            link = f"{settings.INDIGO_URL}/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk}"
 
             if commencement.provisions:
                 # Note: if subprovisions were added later,
@@ -73,9 +74,18 @@ class Command(BaseCommand):
                 check_existing_add_descendants(provisions, commencement.provisions)
 
                 # then, add fully commenced containers
+                # if different parts of a container commenced on different dates,
+                # it'll be marked as commenced on the latest date
                 # e.g. sec_1, sec_2, sec_3 --> sec_1, …, part_a
                 beautifier = CommencementsBeautifier()
-                beautifier.decorate_provisions(provisions, commencement.provisions)
+                # all commencements on this work to this date, excluding this commencement
+                commencements_to_present = commencements.filter(
+                    commenced_work=commencement.commenced_work, date__lte=commencement.date,
+                ).exclude(pk=commencement.pk)
+                # add in this commencement's provisions separately, because it hasn't been saved yet
+                commenced_ids_to_present = [p_id for c in commencements_to_present
+                                            for p_id in c.provisions] + commencement.provisions
+                beautifier.decorate_provisions(provisions, commenced_ids_to_present)
                 for prov in provisions:
                     add_containers(prov)
 

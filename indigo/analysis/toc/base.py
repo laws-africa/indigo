@@ -329,7 +329,7 @@ class TOCElement(object):
     """
     An element in the table of contents of a document, such as a chapter, part or section.
 
-    :ivar children: further TOC elements contained in this one, may be None or empty
+    :ivar children: further TOC elements contained in this one, defaults to empty list
     :ivar component: component name (after the ! in the FRBR URI) of the component that this item is a part of
     :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
     :ivar heading: heading for this element, excluding the number, may be None
@@ -349,7 +349,7 @@ class TOCElement(object):
         self.heading = heading
         self.id = id_
         self.num = num
-        self.children = children
+        self.children = children or []
         self.subcomponent = subcomponent
         self.title = None
         self.qualified_id = id_ if component == 'main' else f"{component_id}/{id_}"
@@ -361,7 +361,7 @@ class TOCElement(object):
             'component': self.component,
             'subcomponent': self.subcomponent,
             'title': self.title,
-            'children': [],
+            'children': [c.as_dict() for c in self.children],
             'basic_unit': self.basic_unit,
         }
 
@@ -373,9 +373,6 @@ class TOCElement(object):
 
         if self.id:
             info['id'] = self.id
-
-        if self.children:
-            info['children'] = [c.as_dict() for c in self.children]
 
         return info
 

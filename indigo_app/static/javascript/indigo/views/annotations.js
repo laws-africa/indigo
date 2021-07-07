@@ -172,6 +172,8 @@
       this.document = options.document;
       this.anchorRoot = options.root;
       this.marks = [];
+      // this is used in the gutter
+      this.contentElement = this.el;
 
       // root annotation
       this.root = this.model.root();
@@ -209,6 +211,7 @@
       });
 
       this.listenTo(this.model, 'destroy', this.destroyed);
+      this.listenTo(this.model.annotations, 'remove', this.annotationRemoved);
       this.listenTo(this.root, 'change:closed', this.setClosed);
       $('body').on('click', _.bind(this.blurred, this));
 
@@ -243,8 +246,8 @@
       }
     },
 
-    display: function(forInput) {
-      var node, range;
+    display: function() {
+      var range;
 
       if (this.root.get('closed')) return;
 
@@ -253,27 +256,14 @@
 
       if (range) {
         this.mark(range);
-
-        node = range.startContainer;
-        // find the first element
-        while (node && node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
-
-        // attach the floater
-        node.appendChild(this.el);
+        // gutter uses this for positioning
+        this.anchorElement = this.marks[0];
 
         // the DOM elements get rudely removed from the view when the document
         // sheet is re-rendered, which seems to break event handlers, so
         // we have to re-bind them
         this.delegateEvents();
         this.annotationViews.forEach(function(v) { v.delegateEvents(); });
-
-        if (forInput) {
-          this.focus();
-          this.$el
-            .find('textarea')
-            .first()
-            .focus();
-        }
 
         return true;
       } else {
@@ -366,7 +356,13 @@
 
           self.$el.find('textarea').val('');
           self.$el.find('.btn.post').addClass('hidden');
+
+          self.trigger('resized', this);
         });
+    },
+
+    annotationRemoved: function() {
+      this.trigger('resized', this);
     },
 
     destroyed: function() {
@@ -405,14 +401,20 @@
     initialize: function(options) {
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
-      this.sheetContainer = this.el.querySelector('.document-sheet-container');
+      this.contentContainer = this.el.querySelector('.content-with-gutter');
       this.$annotationNav = this.$el.find('.annotation-nav');
-      this.annotationsContainer = this.$el.find('.annotations-container')[0];
       this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
       this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
+
+      this.newButtonItem = {
+        contentElement: this.newButton,
+      };
+
+      this.gutter = this.el.querySelector('.content-with-gutter > .gutter').component;
+      this.gutter.contentRoot = this.el.querySelector('.content-with-gutter > .content');
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
@@ -450,13 +452,17 @@
         model: thread,
         template: this.annotationTemplate,
         document: this.model,
-        root: this.annotationsContainer,
+        root: this.contentContainer,
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.listenTo(view, 'closed', this.threadClosed);
+      this.listenTo(view, 'resized', this.layout);
       this.threadViews.push(view);
-      if (view.display()) this.visibleThreads.push(view);
+      if (view.display()) {
+        this.gutter.items.push(view);
+        this.visibleThreads.push(view);
+      }
 
       return view;
     },
@@ -467,13 +473,23 @@
       });
     },
 
+    layout: function() {
+      this.gutter.runLayout();
+    },
+
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
+      var ix = this.gutter.items.indexOf(view);
+      if (ix > -1) {
+        this.gutter.items.splice(ix, 1);
+      }
+      this.layout();
     },
 
     threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
+      this.layout();
     },
 
     renderAnnotations: function() {
@@ -482,14 +498,19 @@
       // that the click events prevent anything after the initial prefocus from
       // working. It's dirty, we should only prefocus on the first render.
       var prefocus = this.prefocus,
+          gutter = this.gutter,
           visible = [];
+      this.gutter.items = [];
 
       this.threadViews.forEach(function(v) {
-        if (v.display()) visible.push(v);
+        if (v.display()) {
+          gutter.items.push(v);
+          visible.push(v);
 
-        if (prefocus && (v.model.at(0).get('id') || "").toString() === prefocus) {
-          v.focus();
-          v.scrollIntoView();
+          if (prefocus && (v.model.at(0).get('id') || "").toString() === prefocus) {
+            v.focus();
+            v.scrollIntoView();
+          }
         }
       });
 
@@ -505,32 +526,43 @@
 
     // setup a new annotation thread
     newAnnotation: function(e) {
-      var target, root, thread, view;
+      var target, thread;
 
       e.stopPropagation();
       this.removeNewButton();
 
       // don't go outside of the AKN document
-      root = this.annotationsContainer.querySelector('.akoma-ntoso');
-      target = Indigo.dom.rangeToTarget(this.pendingRange, root);
+      target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
 
-      thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id});
+      thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
 
       this.threadViews.forEach(v => {
         if (v.model === thread) {
-          v.display(true);
+          v.display();
+
+          this.gutter.activeItem = v;
+          // once it's rendered in the gutter, focus it
+          this.gutter.$nextTick(() => {
+            v.focus();
+            v.$el
+             .find('textarea')
+             .first()
+             .focus();
+          });
         } else {
           v.blur();
         }
       });
+
     },
 
     removeNewButton: function() {
-      if (this.newButton.parentElement) {
-        this.newButton.parentElement.removeChild(this.newButton);
-      }
-      this.newButtonTimeout = null;
+      const ix = this.gutter.items.indexOf(this.newButtonItem);
+    if (ix > -1) {
+      this.gutter.items.splice(ix, 1);
+    }
+    this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
@@ -548,7 +580,7 @@
     },
 
     scrollSelected: function(toNext) {
-      var threshold = this.sheetContainer.getBoundingClientRect().top + 50,
+      var threshold = this.contentContainer.getBoundingClientRect().top + 50,
           candidates = [];
 
       // ensure none are selected
@@ -583,7 +615,7 @@
         if (this.newButtonTimeout) window.clearTimeout(this.newButtonTimeout);
 
         range = sel.getRangeAt(0);
-        root = this.annotationsContainer.querySelector('.akoma-ntoso');
+        root = this.contentContainer.querySelector('.akoma-ntoso');
 
         // is the common ancestor inside the akn container?
         if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
@@ -595,12 +627,13 @@
           root = range.startContainer;
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
-          // sometimes the browser thinks the selection is inside the new annotation button,
-          // guard against that
-          if (!this.newButton.contains(root)) {
-            root.appendChild(this.newButton);
-            this.pendingRange = range;
-          }
+          this.pendingRange = range;
+          this.newButtonItem.anchorElement = root;
+          if (!this.gutter.items.includes(this.newButtonItem)) {
+            this.gutter.items.push(this.newButtonItem);
+          } else {
+          this.gutter.runLayout();
+        }
         }
       } else {
         // this needs to stick around for a little bit, for the case

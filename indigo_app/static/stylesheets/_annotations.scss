@@ -9,18 +9,11 @@ mark.active mark {
   background-color: #ffff00;
 }
 
-.annotations-container {
-  margin-right: $annotation-gutter-width;
-
+.content-with-gutter .gutter {
   .annotation-thread {
-    position: absolute;
-    top: 0px;
-    right: -200px;
-    width: 150px;
     border: 1px solid $border-color;
     box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.25);
     font-size: 12px;
-    transition: right 150ms ease-in-out;
     z-index: 100;
 
     a.dropdown-toggle {
@@ -28,9 +21,8 @@ mark.active mark {
     }
 
     &.focused {
-      right: -175px;
       z-index: 110;
-      box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.25);
+      box-shadow: 0px 2px 6px 2px rgba(204, 204, 204, 0.5);
 
       .reply-container {
         display: block;
@@ -105,9 +97,6 @@ mark.active mark {
   }
 
   #new-annotation-floater {
-    position: absolute;
-    top: 0px;
-    right: -37px;
     width: 40px;
     height: 40px;
     z-index: 120;
@@ -123,7 +112,6 @@ mark.active mark {
     font-size: 20px;
     padding-top: 7px;
     cursor: pointer;
-    user-select: none;
 
     &:hover {
       opacity: 1;

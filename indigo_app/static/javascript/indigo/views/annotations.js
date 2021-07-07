@@ -540,7 +540,7 @@
 
       this.threadViews.forEach(v => {
         if (v.model === thread) {
-          v.display(true);
+          if (v.display(true)) this.gutter.items.push(v);
         } else {
           v.blur();
         }

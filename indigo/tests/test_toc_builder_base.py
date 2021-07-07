@@ -1,25 +1,12 @@
 # -*- coding: utf-8 -*-
+from copy import copy
+
 from django.test import TestCase
 
 from indigo_api.tests.fixtures import document_fixture, component_fixture
 from indigo_api.models import Document, Language, Work
 
-from indigo.analysis.toc.base import TOCBuilderBase
-
-
-def flat_toc(tocs):
-    flat_toc = []
-
-    def unpack(el):
-        flat_toc.append(el)
-        children = el.get('children', [])
-        for child in children:
-            unpack(child)
-
-    for toc in tocs:
-        unpack(toc)
-
-    return flat_toc
+from indigo.analysis.toc.base import TOCBuilderBase, descend_toc_pre_order
 
 
 class TOCBuilderBaseTestCase(TestCase):
@@ -323,12 +310,28 @@ class TOCBuilderBaseTestCase(TestCase):
             language=self.eng)
 
         toc = self.builder.table_of_contents_for_document(doc)
-        tocs = [t.as_dict() for t in toc]
-        toc_elements = flat_toc(tocs)
-        self.assertEqual(len(toc_elements), 29)
-        ids = [t.get('id') for t in toc_elements]
+        toc_elements = list(descend_toc_pre_order(toc))
+        self.assertEqual(len(toc_elements), 14)
         self.assertEqual(
-            ids,
+            ['chp_II', 'sec_2',
+             'sec_4', 'sec_4__subsec_1', 'sec_4__subsec_4',
+             'sec_4__subsec_6',
+             'dvs_nn_4', 'dvs_nn_4__para_25', 'dvs_nn_4__para_26',
+             'dvs_nn_4__para_26__subpara_a',
+             'dvs_nn_4__para_26__subpara_a__subpara_i',
+             'dvs_nn_4__para_26__subpara_a__subpara_ii',
+             'dvs_nn_4__para_26__subpara_a__subpara_iii',
+             'dvs_nn_4__para_26__subpara_b'],
+            [t.id for t in toc_elements]
+        )
+
+        # add item to `toc_elements`
+        old_elements = copy(self.builder.toc_elements)
+        self.builder.toc_elements += ['item']
+        toc = self.builder.table_of_contents_for_document(doc)
+        toc_elements = list(descend_toc_pre_order(toc))
+        self.assertEqual(len(toc_elements), 29)
+        self.assertEqual(
             ['chp_II', 'sec_2', 'sec_2__hcontainer_1__list_1__item_a',
              'sec_2__hcontainer_1__list_1__item_a__list_1__item_i',
              'sec_2__hcontainer_1__list_1__item_a__list_1__item_ii',
@@ -346,13 +349,18 @@ class TOCBuilderBaseTestCase(TestCase):
              'sec_4__subsec_6__list_1__item_a__list_1__item_i',
              'sec_4__subsec_6__list_1__item_a__list_1__item_ii',
              'sec_4__subsec_6__list_1__item_b',
-             'dvs_nn_4', 'dvs_nn_4__para_25', 'dvs_nn_4__para_26',
+             'dvs_nn_4',
+             'dvs_nn_4__para_25', 'dvs_nn_4__para_26',
              'dvs_nn_4__para_26__subpara_a',
              'dvs_nn_4__para_26__subpara_a__subpara_i',
              'dvs_nn_4__para_26__subpara_a__subpara_ii',
              'dvs_nn_4__para_26__subpara_a__subpara_iii',
-             'dvs_nn_4__para_26__subpara_b']
+             'dvs_nn_4__para_26__subpara_b'],
+            [t.id for t in toc_elements]
         )
+
+        # change it back
+        self.builder.toc_elements = old_elements
 
     def test_toc_item_below_section(self):
         doc = Document(

@@ -401,7 +401,7 @@
     initialize: function(options) {
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
-      this.sheetContainer = this.el.querySelector('.document-sheet-container');
+      this.contentContainer = this.el.querySelector('.content-with-gutter');
       this.$annotationNav = this.$el.find('.annotation-nav');
       this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
@@ -452,7 +452,7 @@
         model: thread,
         template: this.annotationTemplate,
         document: this.model,
-        root: this.sheetContainer,
+        root: this.contentContainer,
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
@@ -532,7 +532,7 @@
       this.removeNewButton();
 
       // don't go outside of the AKN document
-      target = Indigo.dom.rangeToTarget(this.pendingRange, this.sheetContainer);
+      target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
 
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
@@ -580,7 +580,7 @@
     },
 
     scrollSelected: function(toNext) {
-      var threshold = this.sheetContainer.getBoundingClientRect().top + 50,
+      var threshold = this.contentContainer.getBoundingClientRect().top + 50,
           candidates = [];
 
       // ensure none are selected
@@ -615,7 +615,7 @@
         if (this.newButtonTimeout) window.clearTimeout(this.newButtonTimeout);
 
         range = sel.getRangeAt(0);
-        root = this.sheetContainer.querySelector('.akoma-ntoso');
+        root = this.contentContainer.querySelector('.akoma-ntoso');
 
         // is the common ancestor inside the akn container?
         if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {

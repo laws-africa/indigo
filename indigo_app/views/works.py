@@ -328,9 +328,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         return context
 
-    def add_commencement_info(self, p, commenced_provisions):
+    def add_commencement_info(self, p, commenced_provision_ids):
         # compare current provision against list of commenced provision ids; decorate accordingly
-        p.commenced = p.id in commenced_provisions
+        p.commenced = p.id in commenced_provision_ids
         p.commenced_descendants = any(c.commenced for c in descend_toc_pre_order(p.children))
         # empty list passed to all() returns True
         p.all_descendants_commenced = all(c.commenced for c in descend_toc_pre_order(p.children)) if p.children else False
@@ -340,13 +340,13 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         # provisions from all documents up to this commencement's date
         provisions = self.work.all_commenceable_provisions(commencement.date)
         # provision ids commenced by everything else
-        commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
+        commenced_provision_ids = set(p_id for comm in commencements if comm != commencement for p_id in comm.provisions)
 
         for p in descend_toc_post_order(provisions):
             # commencement status for displaying provisions on commencement detail
             self.add_commencement_info(p, commencement.provisions)
             # visibility for what to show in commencement form
-            p.visible = p.id not in commenced
+            p.visible = p.id not in commenced_provision_ids
             p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 
         return provisions

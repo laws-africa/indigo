@@ -40,9 +40,6 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
     return beautifier.make_beautiful(provisions, provision_ids)
 
-@register.simple_tag
-def commencements_relevant_at_date(document):
-    return document.commencements_relevant_at_expression_date()
 
 @register.simple_tag
 def has_uncommenced_provisions(document):

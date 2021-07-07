@@ -4,7 +4,6 @@ from copy import copy
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.db.models import signals
 
 from indigo.analysis.toc.base import CommencementsBeautifier, descend_toc_pre_order
 from indigo_api.models import Commencement

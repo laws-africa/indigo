@@ -3,8 +3,7 @@ from copy import deepcopy
 from dotmap import DotMap
 from django.test import TestCase
 
-from indigo.analysis.toc.base import TOCElement, TOCBuilderBase
-from indigo_api.templatetags.indigo import CommencementsBeautifier
+from indigo.analysis.toc.base import TOCElement, TOCBuilderBase, CommencementsBeautifier
 
 
 class BeautifulProvisionsTestCase(TestCase):
@@ -65,56 +64,46 @@ class BeautifulProvisionsTestCase(TestCase):
 
     def test_beautiful_provisions_basic(self):
         provision_ids = ['section-1', 'section-2', 'section-3', 'section-4']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1–4')
 
         provision_ids = ['section-2', 'section-3', 'section-4', 'section-5']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 2–5')
 
         provision_ids = ['section-1', 'section-2', 'section-3']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1–3')
 
         provision_ids = ['section-1', 'section-3', 'section-4', 'section-5', 'section-6']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1; section 3–6')
 
         provision_ids = ['section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'section-7']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1–5; section 7')
 
         provision_ids = ['section-1', 'section-3', 'section-4', 'section-5', 'section-6', 'section-8']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1; section 3–6; section 8')
 
         provision_ids = ['section-1', 'section-4', 'section-5', 'section-6', 'section-7', 'section-8', 'section-9', 'section-10', 'section-11', 'section-12', 'section-14', 'section-16', 'section-20', 'section-21']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1; section 4–12; section 14; section 16; section 20–21')
 
     def test_one_item(self):
         provision_ids = ['section-23']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 23')
 
     def test_two_items(self):
         provision_ids = ['section-23', 'section-25']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 23; section 25')
 
     def test_three_items(self):
         provision_ids = ['section-23', 'section-24', 'section-25']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 23–25')
 
     def test_one_excluded(self):
@@ -124,19 +113,16 @@ class BeautifulProvisionsTestCase(TestCase):
         ) for number in range(1, 4)]
 
         provision_ids = ['section-1', 'section-2']
-        provisions = self.beautifier.decorate_provisions(commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 1–2')
 
         provision_ids = ['section-2', 'section-3']
-        provisions = self.beautifier.decorate_provisions(commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 2–3')
 
     def run_nested(self, provision_ids):
         nested_toc = deepcopy(self.chapters)
-        provisions = self.beautifier.decorate_provisions(nested_toc, provision_ids)
-        return self.beautifier.make_beautiful(provisions)
+        return self.beautifier.make_beautiful(nested_toc, provision_ids)
 
     def test_nested_full_containers(self):
         # Don't dig down further than what is fully commenced
@@ -436,8 +422,7 @@ class BeautifulProvisionsTestCase(TestCase):
 
         nested_toc = deepcopy(self.chapters)
         nested_toc.insert(0, lonely_item)
-        provisions = self.beautifier.decorate_provisions(nested_toc, provision_ids)
-        return self.beautifier.make_beautiful(provisions)
+        return self.beautifier.make_beautiful(nested_toc, provision_ids)
 
     def test_lonely_subprovisions(self):
         provision_ids = [
@@ -452,13 +437,11 @@ class BeautifulProvisionsTestCase(TestCase):
 
     def test_provisions_out_of_sync(self):
         provision_ids = ['section-29', 'section-30', 'section-31', 'section-32']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, 'section 29–30')
 
         provision_ids = ['section-31', 'section-32', 'section-33', 'section-34']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
-        description = self.beautifier.make_beautiful(provisions)
+        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
         self.assertEqual(description, '')
 
     def test_inserted(self):

@@ -35,12 +35,9 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
     provisions = deepcopy(document.work.all_commenceable_provisions(date))
     provision_ids = document.work.all_uncommenced_provision_ids(document.expression_date) if uncommenced else commencement.provisions
-
     beautifier = CommencementsBeautifier(commenced=not uncommenced)
-    # decorate the ToC with useful information
-    provisions = beautifier.decorate_provisions(provisions, provision_ids)
-    return beautifier.make_beautiful(provisions)
 
+    return beautifier.make_beautiful(provisions, provision_ids)
 
 @register.simple_tag
 def commencements_relevant_at_date(document):

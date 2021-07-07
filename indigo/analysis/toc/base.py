@@ -548,10 +548,12 @@ class CommencementsBeautifier:
         elif self.previous_in_run:
             self.end_current()
 
-    def make_beautiful(self, provisions):
+    def make_beautiful(self, provisions, assess_against):
         self.current_run = []
         self.runs = []
         self.previous_in_run = False
+
+        self.decorate_provisions(provisions, assess_against)
 
         for p in provisions:
             self.process_provision(p)

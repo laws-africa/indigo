@@ -106,7 +106,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     # eg. schedule1
     component_id_re = re.compile('([^0-9]+)([0-9]+)')
 
-    non_commenceable_types = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
+    non_commenceable_toplevel_elements = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
 
     def table_of_contents_for_document(self, document):
         """ Build the table of contents for a document.
@@ -276,10 +276,11 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         By default, these are all the child items in the main component, except
         the preface, preamble and conclusion.
+        Only the top-level toc elements are assessed.
         """
         def process(item):
             if item.component == 'main':
-                if item.type not in self.non_commenceable_types and item.num:
+                if item.type not in self.non_commenceable_toplevel_elements and item.num:
                     items.append(item)
 
         items = []

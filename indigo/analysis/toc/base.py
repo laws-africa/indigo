@@ -386,17 +386,25 @@ class CommencementsBeautifier:
             # when self.commenced is False, assess_against is the list of uncommenced provision ids
             p.commenced = self.commenced if p.id in assess_against else not self.commenced
 
+            p.last_node = not p.children
+
             # Do ALL descendants share the same commencement status as the current p?
             # empty list passed to all() returns True
-            p.all_descendants_same = all(c.commenced == p.commenced for c in descend_toc_pre_order(p.children)) \
-                if p.children else False
+            p.all_descendants_same = all(
+                c.commenced == p.commenced and
+                (c.all_descendants_same or c.last_node)
+                for c in p.children
+            ) if p.children else False
 
             # Do NO descendants share the same commencement status as the current p?
             # empty list passed to all() returns True
-            p.all_descendants_opposite = all(c.commenced != p.commenced for c in descend_toc_pre_order(p.children)) \
-                if p.children else False
+            p.all_descendants_opposite = all(
+                c.commenced != p.commenced and
+                (c.all_descendants_same or c.last_node)
+                for c in p.children
+            ) if p.children else False
 
-            p.container = any(c.basic_unit for c in descend_toc_pre_order(p.children))
+            p.container = any(c.basic_unit or c.container for c in p.children)
 
             # e.g. Subpart I, which is commenced, contains sections 1 to 3, all of which are fully commenced
             p.full_container = p.container and p.all_descendants_same
@@ -466,7 +474,7 @@ class CommencementsBeautifier:
         def add_to_subs(p, prefix):
             # stop drilling down if the subprovision is fully un/commenced or is the last (un/commenced) node
             if p.commenced == self.commenced and (
-                    p.all_descendants_same or p.all_descendants_opposite or not p.children
+                    p.last_node or p.all_descendants_same or p.all_descendants_opposite
             ):
                 # go no further down, prefix with all parent nums
                 subs_to_add.append(prefix + p.num)

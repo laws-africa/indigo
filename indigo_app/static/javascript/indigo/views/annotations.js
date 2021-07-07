@@ -246,7 +246,7 @@
       }
     },
 
-    display: function(forInput) {
+    display: function() {
       var range;
 
       if (this.root.get('closed')) return;
@@ -264,14 +264,6 @@
         // we have to re-bind them
         this.delegateEvents();
         this.annotationViews.forEach(function(v) { v.delegateEvents(); });
-
-        if (forInput) {
-          this.focus();
-          this.$el
-            .find('textarea')
-            .first()
-            .focus();
-        }
 
         return true;
       } else {
@@ -467,7 +459,10 @@
       this.listenTo(view, 'closed', this.threadClosed);
       this.listenTo(view, 'resized', this.layout);
       this.threadViews.push(view);
-      if (view.display()) this.visibleThreads.push(view);
+      if (view.display()) {
+        this.gutter.items.push(view);
+        this.visibleThreads.push(view);
+      }
 
       return view;
     },
@@ -485,6 +480,10 @@
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
+      var ix = this.gutter.items.indexOf(view);
+      if (ix > -1) {
+        this.gutter.items.splice(ix, 1);
+      }
       this.layout();
     },
 
@@ -527,7 +526,7 @@
 
     // setup a new annotation thread
     newAnnotation: function(e) {
-      var target, root, thread, view;
+      var target, thread;
 
       e.stopPropagation();
       this.removeNewButton();
@@ -536,11 +535,21 @@
       target = Indigo.dom.rangeToTarget(this.pendingRange, this.sheetContainer);
       if (!target) return;
 
-      thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id});
+      thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
 
       this.threadViews.forEach(v => {
         if (v.model === thread) {
-          if (v.display(true)) this.gutter.items.push(v);
+          v.display();
+
+          this.gutter.activeItem = v;
+          // once it's rendered in the gutter, focus it
+          this.gutter.$nextTick(() => {
+            v.focus();
+            v.$el
+             .find('textarea')
+             .first()
+             .focus();
+          });
         } else {
           v.blur();
         }

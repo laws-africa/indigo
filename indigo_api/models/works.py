@@ -557,11 +557,11 @@ class Commencement(models.Model):
 
 @receiver(signals.post_save, sender=Commencement)
 def post_save_commencement(sender, instance, **kwargs):
-    # Send action to activity stream, as 'created' if a new commencement,
-    if kwargs['created']:
+    # Send action to activity stream, as 'created' if a new commencement
+    if kwargs['created'] and instance.created_by_user:
         action.send(instance.created_by_user, verb='created', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
-    else:
+    elif instance.updated_by_user:
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
 

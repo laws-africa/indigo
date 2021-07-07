@@ -69,12 +69,18 @@ class TOCBuilderBase(LocaleBasedMatcher):
         # top-level
         'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
         # hierarchical elements
-        'article', 'chapter', 'clause', 'division', 'paragraph', 'part', 'point', 'rule', 'section',
-        'subchapter', 'subclause', 'subdivision', 'subparagraph', 'subpart', 'subrule', 'subsection',
-        # block elements
-        'item',
+        'alinea', 'article', 'book', 'chapter', 'clause', 'division', 'indent', 'level', 'list',
+        'paragraph', 'part', 'point', 'proviso', 'rule', 'section',
+        'subchapter', 'subclause', 'subdivision', 'sublist', 'subparagraph', 'subpart', 'subrule',
+        'subsection', 'subtitle', 'title', 'tome', 'transitional',
     ]
     """ Elements we include in the table of contents, without their XML namespace.
+        Base includes the following from the from the AKN schema:
+        - all `hierarchicalStructure` elements, except:
+          - `meta` and `body` are excluded
+          - `attachment` and `component` are included individually rather than their plural containers
+        - all `ANhier` (hierarchical) elements
+        - no block elements.
     """
 
     toc_deadends = ['meta', 'attachments', 'components', 'embeddedStructure', 'quotedStructure', 'subFlow']

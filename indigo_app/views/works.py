@@ -318,9 +318,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
         # decorate all provisions on the work
-        commenced_provisions = [p for c in commencements for p in c.provisions]
+        commenced_provision_ids = [p for c in commencements for p in c.provisions]
         for prov in descend_toc_post_order(provisions):
-            self.add_commencement_info(prov, commenced_provisions)
+            self.add_commencement_info(prov, commenced_provision_ids)
 
         # decorate provisions on each commencement
         for commencement in commencements:

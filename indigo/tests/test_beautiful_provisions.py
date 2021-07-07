@@ -8,7 +8,7 @@ from indigo.analysis.toc.base import TOCElement, TOCBuilderBase, CommencementsBe
 
 class BeautifulProvisionsTestCase(TestCase):
     def setUp(self):
-        self.beautifier = CommencementsBeautifier(commenced=True)
+        self.beautifier = CommencementsBeautifier()
         self.commenceable_provisions = [TOCElement(
             element=None, component=None, children=[], type_='section',
             id_=f'section-{number}', num=f'{number}.', basic_unit=True

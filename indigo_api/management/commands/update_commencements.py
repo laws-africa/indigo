@@ -75,7 +75,7 @@ class Command(BaseCommand):
 
                 # then, add fully commenced containers
                 # e.g. sec_1, sec_2, sec_3 --> sec_1, …, part_a
-                beautifier = CommencementsBeautifier(commenced=True)
+                beautifier = CommencementsBeautifier()
                 beautifier.decorate_provisions(provisions, commencement.provisions)
                 for prov in provisions:
                     add_containers(prov)

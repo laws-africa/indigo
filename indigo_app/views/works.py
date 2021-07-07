@@ -306,6 +306,7 @@ class WorkOverviewView(WorkViewBase, DetailView):
 class WorkCommencementsView(WorkViewBase, DetailView):
     template_name_suffix = '_commencements'
     tab = 'commencements'
+    beautifier = None
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
@@ -314,13 +315,17 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
         context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
-        context['total_provisions_count'] = len([p for p in descend_toc_pre_order(provisions)])
+        context['total_provisions_count'] = sum(1 for _ in descend_toc_pre_order(provisions))
         context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
+
+        self.beautifier = plugins.for_locale(
+            'commencements-beautifier', self.country.code, None,
+            self.locality.code if self.locality else None,
+        )
 
         # decorate all provisions on the work
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
-        for prov in descend_toc_post_order(provisions):
-            self.add_commencement_info(prov, commenced_provision_ids)
+        self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
 
         # decorate provisions on each commencement
         for commencement in commencements:
@@ -328,24 +333,19 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         return context
 
-    def add_commencement_info(self, p, commenced_provision_ids):
-        # compare current provision against list of commenced provision ids; decorate accordingly
-        p.commenced = p.id in commenced_provision_ids
-        p.commenced_descendants = any(c.commenced for c in descend_toc_pre_order(p.children))
-        # empty list passed to all() returns True
-        p.all_descendants_commenced = all(c.commenced for c in descend_toc_pre_order(p.children)) if p.children else False
-        p.uncommenced_descendants = p.children and not p.all_descendants_commenced
-
     def decorate_commencement_provisions(self, commencement, commencements):
         # provisions from all documents up to this commencement's date
         provisions = self.work.all_commenceable_provisions(commencement.date)
         # provision ids commenced by everything else
-        commenced_provision_ids = set(p_id for comm in commencements if comm != commencement for p_id in comm.provisions)
+        commenced_provision_ids = set(p_id for comm in commencements
+                                      if comm != commencement
+                                      for p_id in comm.provisions)
 
+        # commencement status for displaying provisions on commencement detail
+        self.beautifier.decorate_provisions(provisions, commencement.provisions)
+
+        # visibility for what to show in commencement form
         for p in descend_toc_post_order(provisions):
-            # commencement status for displaying provisions on commencement detail
-            self.add_commencement_info(p, commencement.provisions)
-            # visibility for what to show in commencement form
             p.visible = p.id not in commenced_provision_ids
             p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 

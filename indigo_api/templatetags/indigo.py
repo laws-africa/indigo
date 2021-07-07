@@ -3,7 +3,7 @@ from copy import deepcopy
 from django import template
 from django.conf import settings
 
-from indigo.analysis.toc.base import CommencementsBeautifier
+from indigo.plugins import plugins
 
 register = template.Library()
 
@@ -35,7 +35,8 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
     provisions = deepcopy(document.work.all_commenceable_provisions(date))
     provision_ids = document.work.all_uncommenced_provision_ids(document.expression_date) if uncommenced else commencement.provisions
-    beautifier = CommencementsBeautifier(commenced=not uncommenced)
+    beautifier = plugins.for_document('commencements-beautifier', document)
+    beautifier.commenced = not uncommenced
 
     return beautifier.make_beautiful(provisions, provision_ids)
 

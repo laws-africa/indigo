@@ -377,11 +377,21 @@ class TOCElement(object):
         return info
 
 
-class CommencementsBeautifier:
-    cap_types = ['part', 'chapter']
+@plugins.register('commencements-beautifier')
+class CommencementsBeautifier(LocaleBasedMatcher):
+    locale = (None, None, None)
+    """ The locale this commencements beautifier is suited for, as ``(country, language, locality)``.
+    """
 
-    def __init__(self, commenced):
-        self.commenced = commenced
+    capitalize_types = ['part', 'chapter']
+    """ The types that should be capitalized when beautified for the tradition.
+    """
+
+    def __init__(self):
+        self.commenced = True
+        self.current_run = None
+        self.runs = None
+        self.previous_in_run = False
 
     def decorate_provisions(self, provisions, assess_against):
         for p in descend_toc_post_order(provisions):
@@ -418,7 +428,7 @@ class CommencementsBeautifier:
         return provisions
 
     def add_to_run(self, p, run):
-        typ = p.type.capitalize() if p.type in self.cap_types else p.type
+        typ = p.type.capitalize() if p.type in self.capitalize_types else p.type
         # start a new run if this type is different
         new_run = typ not in [r['type'] for r in run] if run else False
         run.append({'type': typ, 'num': p.num, 'new_run': new_run})

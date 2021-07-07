@@ -11,48 +11,56 @@ class BeautifulProvisionsTestCase(TestCase):
     def setUp(self):
         self.beautifier = CommencementsBeautifier(commenced=True)
         self.commenceable_provisions = [TOCElement(
-            element=None, component=None, children=[], type_='section', id_=f'section-{number}', num=f'{number}.'
+            element=None, component=None, children=[], type_='section',
+            id_=f'section-{number}', num=f'{number}.', basic_unit=True
         ) for number in range(1, 31)]
-        for c in self.commenceable_provisions:
-            c.basic_unit = True
         self.toc_plugin = TOCBuilderBase()
-        items_3 = [TOCElement(element=None, component=None, children=[], type_='item', id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_{number}', num=f'({number})') for number in ['A', 'B']]
-        for c in items_3:
-            c.basic_unit = False
 
-        items_2 = [TOCElement(element=None, component=None, children=[], type_='item', id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_{number}', num=f'({number})') for number in ['i', 'ii', 'iii']]
-        for c in items_2:
-            c.basic_unit = False
+        items_3 = [TOCElement(
+            element=None, component=None, children=[], type_='item',
+            id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_{number}',
+            num=f'({number})', basic_unit=False
+        ) for number in ['A', 'B']]
+
+        items_2 = [TOCElement(
+            element=None, component=None, children=[], type_='item',
+            id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_{number}',
+            num=f'({number})', basic_unit=False
+        ) for number in ['i', 'ii', 'iii']]
         items_2[1].children = items_3
 
-        items_1 = [TOCElement(element=None, component=None, children=[], type_='item', id_=f'sec_1__subsec_1__list_1__item_{number}', num=f'({number})') for number in ['a', 'aA', 'b', 'c']]
-        for c in items_1:
-            c.basic_unit = False
+        items_1 = [TOCElement(
+            element=None, component=None, children=[], type_='item',
+            id_=f'sec_1__subsec_1__list_1__item_{number}', num=f'({number})', basic_unit=False
+        ) for number in ['a', 'aA', 'b', 'c']]
         items_1[0].children = items_2
 
-        subsections = [TOCElement(element=None, component=None, children=[], type_='subsection', id_=f'sec_1__subsec_{number}', num=f'({number})') for number in range(1, 5)]
-        for c in subsections:
-            c.basic_unit = False
+        subsections = [TOCElement(
+            element=None, component=None, children=[], type_='subsection',
+            id_=f'sec_1__subsec_{number}', num=f'({number})', basic_unit=False
+        ) for number in range(1, 5)]
         subsections[0].children = items_1
 
-        sections = [TOCElement(element=None, component=None, children=[], type_='section', id_=f'sec_{number}', num=f'{number}.') for number in range(1, 8)]
-        for c in sections:
-            c.basic_unit = True
+        sections = [TOCElement(
+            element=None, component=None, children=[], type_='section',
+            id_=f'sec_{number}', num=f'{number}.', basic_unit=True
+        ) for number in range(1, 8)]
         sections[0].children = subsections
 
-        parts = [TOCElement(element=None, component=None, children=[], type_='part', id_=f'chp_1__part_{number}', num=number) for number in ['A', 'B']]
-        for c in parts:
-            c.basic_unit = False
+        parts = [TOCElement(
+            element=None, component=None, children=[], type_='part',
+            id_=f'chp_1__part_{number}', num=number, basic_unit=False
+        ) for number in ['A', 'B']]
         parts[0].children = sections[:3]
         parts[1].children = sections[3:5]
 
-        chapters = [
-            TOCElement(element=None, component=None, children=[], type_='chapter', id_=f'chp_{number}', num=number) for number in ['1', '2']
-        ]
-        for c in chapters:
-            c.basic_unit = False
+        chapters = [TOCElement(
+            element=None, component=None, children=[], type_='chapter',
+            id_=f'chp_{number}', num=number, basic_unit=False
+        ) for number in ['1', '2']]
         chapters[0].children = parts
         chapters[1].children = sections[5:]
+
         self.chapters = chapters
 
     def test_beautiful_provisions_basic(self):
@@ -110,19 +118,18 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual(description, 'section 23–25')
 
     def test_one_excluded(self):
-        commenceable_provisions = [
-            TOCElement(element=None, component=None, children=[], type_='section', id_=f'section-{number}', num=f'{number}.') for
-            number in range(1, 4)]
-        for c in commenceable_provisions:
-            c.basic_unit = True
+        commenceable_provisions = [TOCElement(
+            element=None, component=None, children=[], type_='section',
+            id_=f'section-{number}', num=f'{number}.', basic_unit=True
+        ) for number in range(1, 4)]
 
         provision_ids = ['section-1', 'section-2']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
+        provisions = self.beautifier.decorate_provisions(commenceable_provisions, provision_ids)
         description = self.beautifier.make_beautiful(provisions)
         self.assertEqual(description, 'section 1–2')
 
         provision_ids = ['section-2', 'section-3']
-        provisions = self.beautifier.decorate_provisions(self.commenceable_provisions, provision_ids)
+        provisions = self.beautifier.decorate_provisions(commenceable_provisions, provision_ids)
         description = self.beautifier.make_beautiful(provisions)
         self.assertEqual(description, 'section 2–3')
 
@@ -423,8 +430,9 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, section 1(1)(b); Part B, section 4', self.run_nested(provision_ids))
 
     def run_lonely(self, provision_ids):
-        lonely_item = TOCElement(element=None, component=None, children=[], type_='item', id_='item_xxx', num='(xxx)')
-        lonely_item.basic_unit = False
+        lonely_item = TOCElement(
+            element=None, component=None, children=[], type_='item', id_='item_xxx', num='(xxx)', basic_unit=False
+        )
 
         nested_toc = deepcopy(self.chapters)
         nested_toc.insert(0, lonely_item)

@@ -244,9 +244,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 subcomponent += '/' + num.strip('.()')
 
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_,
-                              num=num, subcomponent=subcomponent, parent=parent, component_id=component_id)
+                              num=num, subcomponent=subcomponent, parent=parent, component_id=component_id,
+                              basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)
-        toc_item.basic_unit = type_ in self.toc_basic_units
 
         return toc_item
 
@@ -339,9 +339,10 @@ class TOCElement(object):
     :ivar subcomponent: name of this subcomponent, may be None
     :ivar title: friendly title of this entry
     :ivar type: element type, one of: ``chapter, part, section`` etc.
+    :ivar basic_unit: boolean, defaults to False.
     """
 
-    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, parent=None, children=None, component_id=None):
+    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, parent=None, children=None, component_id=None, basic_unit=False):
         self.element = element
         self.component = component
         self.type = type_
@@ -352,6 +353,7 @@ class TOCElement(object):
         self.subcomponent = subcomponent
         self.title = None
         self.qualified_id = id_ if component == 'main' else f"{component_id}/{id_}"
+        self.basic_unit = basic_unit
 
     def as_dict(self):
         info = {

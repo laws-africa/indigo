@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import signals
 
 from indigo.analysis.toc.base import CommencementsBeautifier, descend_toc_pre_order
-from indigo_api.models import Commencement, post_save_commencement
+from indigo_api.models import Commencement
 
 
 log = logging.getLogger(__name__)
@@ -24,10 +24,9 @@ class Command(BaseCommand):
         if self.dry_run:
             log.info("Dry run, won't actually make changes.")
 
+        # TODO: skip this?
         # disable slack
         settings.SLACK_BOT_TOKEN = None
-        # disconnect post-work save signal
-        assert(signals.post_save.disconnect(post_save_commencement, sender=Commencement))
 
         with transaction.atomic():
             self.explode_provisions()

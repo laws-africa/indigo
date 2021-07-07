@@ -417,6 +417,10 @@
       this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
 
+      this.newButtonItem = {
+        contentElement: this.newButton,
+      };
+
       this.gutter = this.el.querySelector('.content-with-gutter > .gutter').component;
       this.gutter.contentRoot = this.el.querySelector('.content-with-gutter > .content');
 
@@ -541,13 +545,15 @@
           v.blur();
         }
       });
+
     },
 
     removeNewButton: function() {
-      if (this.newButton.parentElement) {
-        this.newButton.parentElement.removeChild(this.newButton);
-      }
-      this.newButtonTimeout = null;
+      const ix = this.gutter.items.indexOf(this.newButtonItem);
+    if (ix > -1) {
+      this.gutter.items.splice(ix, 1);
+    }
+    this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
@@ -612,12 +618,13 @@
           root = range.startContainer;
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
-          // sometimes the browser thinks the selection is inside the new annotation button,
-          // guard against that
-          if (!this.newButton.contains(root)) {
-            root.appendChild(this.newButton);
-            this.pendingRange = range;
-          }
+          this.pendingRange = range;
+          this.newButtonItem.anchorElement = root;
+          if (!this.gutter.items.includes(this.newButtonItem)) {
+            this.gutter.items.push(this.newButtonItem);
+          } else {
+          this.gutter.runLayout();
+        }
         }
       } else {
         // this needs to stick around for a little bit, for the case

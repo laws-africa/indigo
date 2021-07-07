@@ -371,7 +371,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = [p for p in descend_toc_pre_order(self.work.all_commenceable_provisions())]
+        kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
 
     def post(self, request, *args, **kwargs):

@@ -1,12 +1,18 @@
 
 Changelog
 =========
+
 14.1.0 (?)
 --------
 
 * FEATURE: New Content API Badge for controlling who can use the Content API.
 * FEATURE: Admins can now remove badges from the contributor detail page.
 * NEW: Commencements below the section level supported.
+
+Important
+.........
+
+After updating to this version, you must run the `update_commencements` management command.
 
 14.0.0 (2021-06-15)
 --------

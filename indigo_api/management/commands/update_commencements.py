@@ -23,10 +23,6 @@ class Command(BaseCommand):
         if self.dry_run:
             log.info("Dry run, won't actually make changes.")
 
-        # TODO: skip this?
-        # disable slack
-        settings.SLACK_BOT_TOKEN = None
-
         with transaction.atomic():
             self.explode_provisions()
             if self.dry_run:

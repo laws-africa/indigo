@@ -396,7 +396,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
     def decorate_provisions(self, provisions, assess_against):
         for p in descend_toc_post_order(provisions):
             # do this here for all provisions
-            p.num = p.num.strip('.')
+            p.num = p.num.strip('.') if p.num else ''
 
             # when self.commenced is True, assess_against is the list of commenced provision ids
             # when self.commenced is False, assess_against is the list of uncommenced provision ids

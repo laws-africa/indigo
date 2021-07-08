@@ -256,6 +256,13 @@ class WorkMixin(object):
         # gather documents and sort so that we consider primary language documents first
         if date:
             documents = self.expressions().filter(expression_date__lte=date)
+            if not documents:
+                # HACK:
+                # get the earliest available expression when historical points in time don't exist
+                # give it in a list so that it can be sorted below, but not if it's None
+                document = self.expressions().first()
+                if document:
+                    documents = [document]
         else:
             documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)

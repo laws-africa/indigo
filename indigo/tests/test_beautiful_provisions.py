@@ -3,64 +3,47 @@ from copy import deepcopy
 from dotmap import DotMap
 from django.test import TestCase
 
-from indigo.analysis.toc.base import TOCElement, TOCBuilderBase, CommencementsBeautifier
+from indigo.analysis.toc.base import TOCElement, TOCBuilderBase, CommencementsBeautifier, descend_toc_pre_order
 
 
 class BeautifulProvisionsTestCase(TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.beautifier = CommencementsBeautifier()
-        self.commenceable_provisions = [TOCElement(
-            element=None, component=None, children=[], type_='section',
-            id_=f'section-{number}', num=f'{number}.', basic_unit=True
-        ) for number in range(1, 31)]
+        self.commenceable_provisions = self.make_toc_elements('section-', 'section', range(1, 31), basic_unit=True)
         self.toc_plugin = TOCBuilderBase()
 
-        items_3 = [TOCElement(
-            element=None, component=None, children=[], type_='item',
-            id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_{number}',
-            num=f'({number})', basic_unit=False
-        ) for number in ['A', 'B']]
-
-        items_2 = [TOCElement(
-            element=None, component=None, children=[], type_='item',
-            id_=f'sec_1__subsec_1__list_1__item_a__list_1__item_{number}',
-            num=f'({number})', basic_unit=False
-        ) for number in ['i', 'ii', 'iii']]
+        items_3 = self.make_toc_elements('sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_', 'item', ['A', 'B'])
+        items_2 = self.make_toc_elements('sec_1__subsec_1__list_1__item_a__list_1__item_', 'item', ['i', 'ii', 'iii'])
         items_2[1].children = items_3
-
-        items_1 = [TOCElement(
-            element=None, component=None, children=[], type_='item',
-            id_=f'sec_1__subsec_1__list_1__item_{number}', num=f'({number})', basic_unit=False
-        ) for number in ['a', 'aA', 'b', 'c']]
+        items_1 = self.make_toc_elements('sec_1__subsec_1__list_1__item_', 'item', ['a', 'aA', 'b', 'c'])
         items_1[0].children = items_2
-
-        subsections = [TOCElement(
-            element=None, component=None, children=[], type_='subsection',
-            id_=f'sec_1__subsec_{number}', num=f'({number})', basic_unit=False
-        ) for number in range(1, 5)]
+        subsections = self.make_toc_elements('sec_1__subsec_', 'subsection', range(1, 5))
         subsections[0].children = items_1
-
-        sections = [TOCElement(
-            element=None, component=None, children=[], type_='section',
-            id_=f'sec_{number}', num=f'{number}.', basic_unit=True
-        ) for number in range(1, 8)]
+        sections = self.make_toc_elements('sec_', 'section', range(1, 8), basic_unit=True)
         sections[0].children = subsections
-
-        parts = [TOCElement(
-            element=None, component=None, children=[], type_='part',
-            id_=f'chp_1__part_{number}', num=number, basic_unit=False
-        ) for number in ['A', 'B']]
+        parts = self.make_toc_elements('chp_1__part_', 'part', ['A', 'B'], with_brackets=False)
         parts[0].children = sections[:3]
         parts[1].children = sections[3:5]
-
-        chapters = [TOCElement(
-            element=None, component=None, children=[], type_='chapter',
-            id_=f'chp_{number}', num=number, basic_unit=False
-        ) for number in ['1', '2']]
+        chapters = self.make_toc_elements('chp_', 'chapter', ['1', '2'], with_brackets=False)
         chapters[0].children = parts
         chapters[1].children = sections[5:]
 
         self.chapters = chapters
+
+    def make_toc_elements(self, prefix, type, list_of_nums, basic_unit=False, with_brackets=True):
+        def get_num(n):
+            if basic_unit:
+                return f'{n}.'
+            elif with_brackets:
+                return f'({n})'
+            return n
+
+        return [TOCElement(
+            element=None, component=None, children=[], type_=type,
+            id_=f'{prefix}{n}',
+            num=get_num(n), basic_unit=basic_unit
+        ) for n in list_of_nums]
 
     def test_beautiful_provisions_basic(self):
         provision_ids = ['section-1', 'section-2', 'section-3', 'section-4']
@@ -107,10 +90,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual(description, 'section 23–25')
 
     def test_one_excluded(self):
-        commenceable_provisions = [TOCElement(
-            element=None, component=None, children=[], type_='section',
-            id_=f'section-{number}', num=f'{number}.', basic_unit=True
-        ) for number in range(1, 4)]
+        commenceable_provisions = self.make_toc_elements('section-', 'section', range(1, 4), basic_unit=True)
 
         provision_ids = ['section-1', 'section-2']
         description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
@@ -416,9 +396,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, section 1(1)(b); Part B, section 4', self.run_nested(provision_ids))
 
     def run_lonely(self, provision_ids):
-        lonely_item = TOCElement(
-            element=None, component=None, children=[], type_='item', id_='item_xxx', num='(xxx)', basic_unit=False
-        )
+        lonely_item = self.make_toc_elements('item_', 'item', ['xxx'])[0]
 
         nested_toc = deepcopy(self.chapters)
         nested_toc.insert(0, lonely_item)
@@ -461,6 +439,176 @@ class BeautifulProvisionsTestCase(TestCase):
             'section-3',
             'section-3A',
         ])
+
+    def run_test_insert_nested(self, list_of_lists):
+        provisions = []
+        id_set = set()
+        for tocelement in list_of_lists:
+            self.toc_plugin.insert_provisions(provisions, id_set, tocelement)
+        return [p.id for p in descend_toc_pre_order(provisions)]
+
+    def test_insert_provisions_nested(self):
+        original_subsection_1_items = self.make_toc_elements('subsec_1__list_1__item_', 'item', ['a', 'b'])
+        original_subsection_2_items = self.make_toc_elements('subsec_2__list_1__item_', 'item', ['a', 'b'])
+        original_subsection_3_items = self.make_toc_elements('subsec_3__list_1__item_', 'item', ['a', 'b'])
+        original_subsections = self.make_toc_elements('subsec_', 'subsection', ['1', '2', '3'])
+        original_subsections[0].children = original_subsection_1_items
+        original_subsections[1].children = original_subsection_2_items
+        original_subsections[2].children = original_subsection_3_items
+
+        inserted_subsection_1_items = self.make_toc_elements('subsec_1__list_1__item_', 'item', ['a', 'aA', 'b'])
+        inserted_subsection_1a_a_subitems = self.make_toc_elements('subsec_1A__list_1__item_a__list_1__item_', 'item', ['i', 'ii'])
+        inserted_subsection_1a_items = self.make_toc_elements('subsec_1A__list_1__item_', 'item', ['a', 'b'])
+        inserted_subsection_1a_items[0].children = inserted_subsection_1a_a_subitems
+        inserted_subsection_2_b_subitems = self.make_toc_elements('subsec_2__list_1__item_b__list_1__item_', 'item', ['A', 'B'])
+        inserted_subsection_2_items = self.make_toc_elements('subsec_2__list_1__item_', 'item', ['a', 'b', 'c'])
+        inserted_subsection_2_items[1].children = inserted_subsection_2_b_subitems
+        inserted_subsections = self.make_toc_elements('subsec_', 'subsection', ['1', '1A', '2', '3'])
+        inserted_subsections[0].children = inserted_subsection_1_items
+        inserted_subsections[1].children = inserted_subsection_1a_items
+        inserted_subsections[2].children = inserted_subsection_2_items
+        inserted_subsections[3].children = original_subsection_3_items
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_aA',
+            'subsec_1__list_1__item_b',
+            'subsec_1A',
+            'subsec_1A__list_1__item_a',
+            'subsec_1A__list_1__item_a__list_1__item_i',
+            'subsec_1A__list_1__item_a__list_1__item_ii',
+            'subsec_1A__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            'subsec_2__list_1__item_b__list_1__item_A',
+            'subsec_2__list_1__item_b__list_1__item_B',
+            'subsec_2__list_1__item_c',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+        ], self.run_test_insert_nested([deepcopy(original_subsections), deepcopy(inserted_subsections)]))
+
+        removed_subsection_1_items = self.make_toc_elements('subsec_1__list_1__item_', 'item', ['b'])
+        removed_subsections = self.make_toc_elements('subsec_', 'subsection', ['1', '3'])
+        removed_subsections[0].children = removed_subsection_1_items
+        removed_subsections[1].children = original_subsection_3_items
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+        ], self.run_test_insert_nested([deepcopy(original_subsections), deepcopy(removed_subsections)]))
+
+        changed_subsection_1_aa_subitems = self.make_toc_elements('subsec_1__list_1__item_aA__list_1__item_', 'item', ['i', 'ii'])
+        changed_subsection_1_items = self.make_toc_elements('subsec_1__list_1__item_', 'item', ['aA', 'b'])
+        changed_subsection_1_items[0].children = changed_subsection_1_aa_subitems
+        changed_subsection_1a_items = self.make_toc_elements('subsec_1A__list_1__item_', 'item', ['a', 'b'])
+        changed_subsection_3_items = self.make_toc_elements('subsec_3__list_1__item_', 'item', ['c'])
+        changed_subsections = self.make_toc_elements('subsec_', 'subsection', ['1', '1A', '3'])
+        changed_subsections[0].children = changed_subsection_1_items
+        changed_subsections[1].children = changed_subsection_1a_items
+        changed_subsections[2].children = changed_subsection_3_items
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_aA',
+            'subsec_1__list_1__item_aA__list_1__item_i',
+            'subsec_1__list_1__item_aA__list_1__item_ii',
+            'subsec_1__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            # 1A will be worked out as after 2 if 2 is removed and 1A is inserted
+            'subsec_1A',
+            'subsec_1A__list_1__item_a',
+            'subsec_1A__list_1__item_b',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+            'subsec_3__list_1__item_c',
+        ], self.run_test_insert_nested([deepcopy(original_subsections), deepcopy(changed_subsections)]))
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_aA',
+            'subsec_1__list_1__item_b',
+            'subsec_1A',
+            'subsec_1A__list_1__item_a',
+            'subsec_1A__list_1__item_a__list_1__item_i',
+            'subsec_1A__list_1__item_a__list_1__item_ii',
+            'subsec_1A__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            'subsec_2__list_1__item_b__list_1__item_A',
+            'subsec_2__list_1__item_b__list_1__item_B',
+            'subsec_2__list_1__item_c',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+        ], self.run_test_insert_nested(
+            [deepcopy(original_subsections), deepcopy(removed_subsections), deepcopy(inserted_subsections)]
+        ))
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_aA',
+            'subsec_1__list_1__item_b',
+            'subsec_1A',
+            'subsec_1A__list_1__item_a',
+            'subsec_1A__list_1__item_a__list_1__item_i',
+            'subsec_1A__list_1__item_a__list_1__item_ii',
+            'subsec_1A__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            'subsec_2__list_1__item_b__list_1__item_A',
+            'subsec_2__list_1__item_b__list_1__item_B',
+            'subsec_2__list_1__item_c',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+        ], self.run_test_insert_nested(
+            [deepcopy(original_subsections), deepcopy(inserted_subsections), deepcopy(removed_subsections)]
+        ))
+
+        self.assertEqual([
+            'subsec_1',
+            'subsec_1__list_1__item_a',
+            'subsec_1__list_1__item_aA',
+            'subsec_1__list_1__item_aA__list_1__item_i',
+            'subsec_1__list_1__item_aA__list_1__item_ii',
+            'subsec_1__list_1__item_b',
+            'subsec_1A',
+            'subsec_1A__list_1__item_a',
+            'subsec_1A__list_1__item_a__list_1__item_i',
+            'subsec_1A__list_1__item_a__list_1__item_ii',
+            'subsec_1A__list_1__item_b',
+            'subsec_2',
+            'subsec_2__list_1__item_a',
+            'subsec_2__list_1__item_b',
+            'subsec_2__list_1__item_b__list_1__item_A',
+            'subsec_2__list_1__item_b__list_1__item_B',
+            'subsec_2__list_1__item_c',
+            'subsec_3',
+            'subsec_3__list_1__item_a',
+            'subsec_3__list_1__item_b',
+            'subsec_3__list_1__item_c',
+        ], self.run_test_insert_nested(
+            [deepcopy(original_subsections), deepcopy(inserted_subsections),
+             deepcopy(removed_subsections), deepcopy(changed_subsections)]
+        ))
 
     def test_removed_basic(self):
         pit_1_provisions = ['1', '2', '3', '4', '5', '6']

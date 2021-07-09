@@ -30,7 +30,8 @@ class Command(BaseCommand):
                 raise Exception("Forcing rollback")
 
     def explode_provisions(self):
-        commencements = Commencement.objects.all()
+        # only get commencements that have provisions
+        commencements = Commencement.objects.select_for_update().exclude(provisions=[])
         for commencement in commencements:
 
             def check_existing_add_descendants(provs, commenced_list):
@@ -49,64 +50,57 @@ class Command(BaseCommand):
                 for c in p.children:
                     add_containers(c)
 
-                if p.container and not p.commenced and (all(c.commenced for c in p.children)):
+                if p.container and not p.commenced and all(c.commenced for c in p.children):
                     # this container is uncommenced but all its children are commenced; fix that
                     commencement.provisions.append(p.id)
                     # update decoration
                     p.commenced = True
 
-                elif p.container and not p.commenced:
+                elif p.container and not p.commenced and any(c.commenced for c in p.children):
                     log.info(f"\nProvision {p.id} NOT marked as commenced.\n"
+                             f"Double-check that this container should not have commenced on this date, "
+                             f"or fix manually later.\n"
+                             f"Commenced children: {[c.id for c in p.children if c.commenced]}\n"
                              f"Uncommenced children: {[c.id for c in p.children if not c.commenced]}\n\n")
 
             link = f"{settings.INDIGO_URL}/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk}"
 
-            if commencement.provisions:
-                log.info(f"Updating {link}:")
-                # Note: if subprovisions were added later,
-                # they won't be added here because `provisions` will only get provisions up to this commencement's date
-                provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
-                flattened = [p.id for p in descend_toc_pre_order(provisions)]
-                old_provisions_list = copy(commencement.provisions)
+            log.info(f"Updating {link}:")
+            # Note: if subprovisions were added later,
+            # they won't be added here because `provisions` will only get provisions up to this commencement's date
+            provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
+            old_provisions_list = copy(commencement.provisions)
 
-                # first, add all descendants of existing provisions
-                # e.g. sec_1 --> sec_1, sec_1__subsec_1, sec_1__subsec_2, etc.
-                check_existing_add_descendants(provisions, commencement.provisions)
+            # first, add all descendants of existing provisions
+            # e.g. sec_1 --> sec_1, sec_1__subsec_1, sec_1__subsec_2, etc.
+            check_existing_add_descendants(provisions, commencement.provisions)
 
-                # then, add fully commenced containers
-                # if different parts of a container commenced on different dates,
-                # it'll be marked as commenced on the latest date
-                # e.g. sec_1, sec_2, sec_3 --> sec_1, …, part_a
-                beautifier = CommencementsBeautifier()
-                # all commencements on this work to this date, excluding this commencement
-                commencements_to_present = commencements.filter(
-                    commenced_work=commencement.commenced_work, date__lte=commencement.date,
-                ).exclude(pk=commencement.pk)
-                # add in this commencement's provisions separately, because it hasn't been saved yet
-                commenced_ids_to_present = [p_id for c in commencements_to_present
-                                            for p_id in c.provisions] + commencement.provisions
-                beautifier.decorate_provisions(provisions, commenced_ids_to_present)
-                for prov in provisions:
-                    add_containers(prov)
+            # then, add fully commenced containers
+            # if different parts of a container commenced on different dates,
+            # it'll be marked as commenced on the latest date
+            # e.g. sec_1, sec_2, sec_3 --> sec_1, …, part_a
+            beautifier = CommencementsBeautifier()
+            # all commencements on this work to this date, excluding this commencement
+            commencements_to_present = commencements.filter(
+                commenced_work=commencement.commenced_work, date__lte=commencement.date,
+            ).exclude(pk=commencement.pk)
+            # add in this commencement's provisions separately, because it hasn't been saved yet
+            commenced_ids_to_present = [p_id for c in commencements_to_present
+                                        for p_id in c.provisions] + commencement.provisions
+            beautifier.decorate_provisions(provisions, commenced_ids_to_present)
+            for prov in provisions:
+                add_containers(prov)
 
-                # fresh commencement.provisions in the right order
-                commencement.provisions = [p.id for p in descend_toc_pre_order(provisions)
-                                           if p.id in commencement.provisions]
+            # fresh commencement.provisions in the right order
+            commencement.provisions = [p.id for p in descend_toc_pre_order(provisions)
+                                       if p.id in commencement.provisions]
 
-                provisions_added = [pid for pid in commencement.provisions if pid not in old_provisions_list]
-
-                if provisions_added:
-                    commencement.save()
-                    log.info(f"Update done!\n"
-                             f"Added {provisions_added}\n\n"
-                             f"to {old_provisions_list}\n\n"
-                             f"Full new list: {commencement.provisions}\n\n"
-                             f"Full possible list: {flattened}\n\n\n\n")
-                else:
-                    log.info(f"NO UPDATE:\n"
-                             f"Commencement provisions: {commencement.provisions}.\n\n"
-                             f"Old list: {old_provisions_list}.\n\n"
-                             f"Full list: {flattened}\n\n\n\n")
-            elif not commencement.all_provisions:
-                log.info(f"Encountered but didn't update {link}:\n"
-                         f"All provisions were NOT marked as commenced, but there were no provisions to update.\n\n")
+            if any(pid for pid in commencement.provisions if pid not in old_provisions_list):
+                commencement.save()
+                log.info(f"Update done!\n\n"
+                         f"Old list: {old_provisions_list}\n\n"
+                         f"New list: {commencement.provisions}\n\n\n\n")
+            else:
+                log.info(f"NO UPDATE:\n"
+                         f"Old list: {old_provisions_list}\n\n"
+                         f"Unchanged: {commencement.provisions}\n\n\n\n")

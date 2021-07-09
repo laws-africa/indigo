@@ -216,6 +216,51 @@ class ContentAPIV2TestMixin:
              'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2014/10/eng/!main/section/1',
              'title': 'Section 1.', 'basic_unit': True, 'children': []}])
 
+        response = self.client.get(self.api_path + '/akn/za/act/2010/1/eng/toc.json')
+        self.assertEqual([{
+            'type': 'section',
+            'component': 'main',
+            'subcomponent': 'section/1',
+            'title': '1. Foo',
+            'children': [{
+                'type': 'subsection',
+                'component': 'main',
+                'subcomponent': 'subsection',
+                'title': 'Subsection',
+                'children': [],
+                'basic_unit': False,
+                'id': 'sec_1.subsection-0',
+                'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/subsection'
+            }],
+            'basic_unit': True,
+            'heading': 'Foo',
+            'num': '1.',
+            'id': 'sec_1',
+            'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/section/1'}],
+                         response.data['toc'])
+        response = self.client.get(self.api_path + '/akn/za/act/2010/1/toc.json')
+        self.assertEqual([{
+            'type': 'section',
+            'component': 'main',
+            'subcomponent': 'section/1',
+            'title': '1. Foo',
+            'children': [{
+                'type': 'subsection',
+                'component': 'main',
+                'subcomponent': 'subsection',
+                'title': 'Subsection',
+                'children': [],
+                'basic_unit': False,
+                'id': 'sec_1.subsection-0',
+                'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/subsection'
+            }],
+            'basic_unit': True,
+            'heading': 'Foo',
+            'num': '1.',
+            'id': 'sec_1',
+            'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/section/1'}],
+                         response.data['toc'])
+
     def test_published_toc_sections_with_headings(self):
         response = self.client.get(self.api_path + '/akn/za/act/2010/1/eng/toc.json')
         self.assertEqual(response.status_code, 200)

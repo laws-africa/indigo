@@ -254,8 +254,7 @@
       this.unmark();
       range = Indigo.dom.targetToRange(this.target, this.anchorRoot);
 
-      if (range) {
-        this.mark(range);
+      if (range && this.mark(range)) {
         // gutter uses this for positioning
         this.anchorElement = this.marks[0];
 
@@ -264,11 +263,10 @@
         // we have to re-bind them
         this.delegateEvents();
         this.annotationViews.forEach(function(v) { v.delegateEvents(); });
-
         return true;
-      } else {
-        return false;
       }
+
+      return false;
     },
 
     mark: function(range) {
@@ -280,6 +278,8 @@
         self.marks.push(mark);
         mark.addEventListener('click', handler);
       });
+
+      return this.marks.length > 0;
     },
 
     unmark: function() {

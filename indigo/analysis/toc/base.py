@@ -320,8 +320,13 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
             # look at children and insert any provisions there too (ToC can be deeply nested)
             if item.children:
-                existing_children = provisions[i].children
-                existing_id_set = set([e.id for e in existing_children])
+                try:
+                    existing_children = provisions[i].children
+                    existing_id_set = set([e.id for e in existing_children])
+                except IndexError:
+                    # the parent provision didn't exist previously
+                    existing_children = []
+                    existing_id_set = set()
                 self.insert_provisions(existing_children, existing_id_set, item.children)
 
 

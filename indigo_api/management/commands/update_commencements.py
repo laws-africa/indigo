@@ -57,7 +57,7 @@ class Command(BaseCommand):
                     p.commenced = True
 
                 elif p.container and not p.commenced and any(c.commenced for c in p.children):
-                    log.info(f"\nProvision {p.id} NOT marked as commenced.\n"
+                    log.info(f"\n\nProvision {p.id} NOT marked as commenced.\n"
                              f"Double-check that this container should not have commenced on this date, "
                              f"or fix manually later.\n"
                              f"Commenced children: {[c.id for c in p.children if c.commenced]}\n"
@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
             link = f"{settings.INDIGO_URL}/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk}"
 
-            log.info(f"Updating {link}:")
+            log.info(f"\nUpdating {link}:")
             # Note: if subprovisions were added later,
             # they won't be added here because `provisions` will only get provisions up to this commencement's date
             provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
@@ -97,10 +97,10 @@ class Command(BaseCommand):
 
             if any(pid for pid in commencement.provisions if pid not in old_provisions_list):
                 commencement.save()
-                log.info(f"Update done!\n\n"
+                log.info(f"\nUpdate done!\n\n"
                          f"Old list: {old_provisions_list}\n\n"
                          f"New list: {commencement.provisions}\n\n\n\n")
             else:
-                log.info(f"NO UPDATE:\n"
+                log.info(f"\nNO UPDATE:\n"
                          f"Old list: {old_provisions_list}\n\n"
                          f"Unchanged: {commencement.provisions}\n\n\n\n")

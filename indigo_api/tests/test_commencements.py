@@ -11,10 +11,14 @@ class CommencementsTestCase(TestCase):
 
     def setUp(self):
         self.work = Work.objects.get(id=11)
+        self.maxDiff = None
 
     def test_commenceable_provisions(self):
         """ Provisions that don't yet exist at a given date shouldn't be included,
-            but provisions that did exist and have been removed should be. """
+            but provisions that did exist and have been removed should be.
+            With the caveat that if the date is before the earliest expression on the work,
+             all provisions from the first expression will be included.
+        """
         provisions_all = [p.id for p in self.work.all_commenceable_provisions()]
         provisions_before_publication = [p.id for p in self.work.all_commenceable_provisions(date=datetime.date(2019, 1, 1))]
         provisions_at_publication = [p.id for p in self.work.all_commenceable_provisions(date=datetime.date(2020, 1, 1))]
@@ -22,14 +26,17 @@ class CommencementsTestCase(TestCase):
         provisions_at_later_expression_date = [p.id for p in self.work.all_commenceable_provisions(date=datetime.date(2022, 1, 1))]
 
         self.assertEqual(provisions_all, ['sec_1', 'sec_2', 'sec_3', 'sec_4', 'sec_5', 'sec_6', 'sec_7'])
-        self.assertEqual(provisions_before_publication, [])
+        self.assertEqual(provisions_before_publication, ['sec_1', 'sec_2', 'sec_3', 'sec_4'])
         self.assertEqual(provisions_at_publication, ['sec_1', 'sec_2', 'sec_3', 'sec_4'])
         self.assertEqual(provisions_at_future_date, ['sec_1', 'sec_2', 'sec_3', 'sec_4'])
         self.assertEqual(provisions_at_later_expression_date, ['sec_1', 'sec_2', 'sec_3', 'sec_4', 'sec_5', 'sec_6', 'sec_7'])
 
     def test_uncommenced_provisions(self):
         """ Provisions that don't yet exist at a given date shouldn't be included,
-            but provisions that did exist and have been removed should be. """
+            but provisions that did exist and have been removed should be.
+            With the caveat that if the date is before the earliest expression on the work,
+             all provisions from the first expression will be included.
+        """
         uncommenced_provisions_all = self.work.all_uncommenced_provision_ids()
         uncommenced_provisions_before_publication = self.work.all_uncommenced_provision_ids(datetime.date(2019, 1, 1))
         uncommenced_provisions_at_publication = self.work.all_uncommenced_provision_ids(datetime.date(2020, 1, 1))
@@ -37,7 +44,7 @@ class CommencementsTestCase(TestCase):
         uncommenced_provisions_at_later_expression_date = self.work.all_uncommenced_provision_ids(datetime.date(2022, 1, 1))
 
         self.assertEqual(uncommenced_provisions_all, ['sec_4', 'sec_6'])
-        self.assertEqual(uncommenced_provisions_before_publication, [])
+        self.assertEqual(uncommenced_provisions_before_publication, ['sec_4'])
         self.assertEqual(uncommenced_provisions_at_publication, ['sec_4'])
         self.assertEqual(uncommenced_provisions_at_future_date, ['sec_4'])
         self.assertEqual(uncommenced_provisions_at_later_expression_date, ['sec_4', 'sec_6'])

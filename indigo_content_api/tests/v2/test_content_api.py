@@ -230,13 +230,13 @@ class ContentAPIV2TestMixin:
                 'children': [],
                 'basic_unit': False,
                 'id': 'sec_1.subsection-0',
-                'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/subsection'
+                'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/subsection'
             }],
             'basic_unit': True,
             'heading': 'Foo',
             'num': '1.',
             'id': 'sec_1',
-            'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/section/1'}],
+            'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/section/1'}],
                          response.data['toc'])
         response = self.client.get(self.api_path + '/akn/za/act/2010/1/toc.json')
         self.assertEqual([{
@@ -252,13 +252,13 @@ class ContentAPIV2TestMixin:
                 'children': [],
                 'basic_unit': False,
                 'id': 'sec_1.subsection-0',
-                'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/subsection'
+                'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/subsection'
             }],
             'basic_unit': True,
             'heading': 'Foo',
             'num': '1.',
             'id': 'sec_1',
-            'url': 'http://api/v2/akn/za/act/2010/1/eng/!main/section/1'}],
+            'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/section/1'}],
                          response.data['toc'])
 
     def test_published_toc_sections_with_headings(self):

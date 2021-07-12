@@ -23,7 +23,7 @@ class TOCBuilderZA(TOCBuilderBase):
 
     toc_elements = TOCBuilderBase.toc_elements + ['item']
 
-    toc_non_unique_components = ['chapter', 'part', 'subpart', 'paragraph']
+    toc_non_unique_components = ['chapter', 'part', 'subpart']
 
     titles = {
         'article': lambda t: _('Article') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),

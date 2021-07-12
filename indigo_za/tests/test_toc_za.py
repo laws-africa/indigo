@@ -484,8 +484,7 @@ class TOCBuilderZATestCase(APITestCase):
 
         toc = self.toc.table_of_contents_for_document(doc)
         toc_elements = list(descend_toc_pre_order(toc))
-        # division is not in TOCBuilderZA's `toc_elements`, but paragraph is
-        self.assertEqual(len(toc_elements), 28)
+        self.assertEqual(len(toc_elements), 29)
         self.assertEqual(
             ['chp_II', 'sec_2', 'sec_2__hcontainer_1__list_1__item_a',
              'sec_2__hcontainer_1__list_1__item_a__list_1__item_i',
@@ -504,8 +503,7 @@ class TOCBuilderZATestCase(APITestCase):
              'sec_4__subsec_6__list_1__item_a__list_1__item_i',
              'sec_4__subsec_6__list_1__item_a__list_1__item_ii',
              'sec_4__subsec_6__list_1__item_b',
-             # division is not in TOCBuilderZA's `toc_elements`, but paragraph is
-             # 'dvs_nn_4',
+             'dvs_nn_4',
              'dvs_nn_4__para_25', 'dvs_nn_4__para_26',
              'dvs_nn_4__para_26__subpara_a',
              'dvs_nn_4__para_26__subpara_a__subpara_i',

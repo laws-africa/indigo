@@ -2,7 +2,7 @@
 Changelog
 =========
 
-15.0.0 (2021-07-15)
+15.0.0 (2021-07-14)
 --------
 
 * FEATURE: New Content API Badge for controlling who can use the Content API.

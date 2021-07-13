@@ -192,10 +192,10 @@
       {% endblock %}
 
       {% block as_at_date %}
-        {% if document.work.as_at_date %}
+        {% if document.work.computed_as_at_date %}
           {% block as_at_date_notice %}
             <li class="as-at-date-notice">
-              [{% blocktrans with date=document.work.as_at_date|date:"j E Y" %}Up to date as at {{ date }}{% endblocktrans %}]
+              [{% blocktrans with date=document.work.computed_as_at_date|date:"j E Y" %}Up to date as at {{ date }}{% endblocktrans %}]
             </li>
           {% endblock %}
         {% endif %}

@@ -68,7 +68,8 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
     taxonomies = serializers.SerializerMethodField()
-    as_at_date = serializers.DateField(source='work.as_at_date')
+    # TODO: double check this
+    as_at_date = serializers.DateField(source='work.computed_as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
     commencements = CommencementSerializer(many=True, source='work.commencements')
     parent_work = serializers.SerializerMethodField()

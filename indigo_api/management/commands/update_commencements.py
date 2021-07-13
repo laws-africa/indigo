@@ -56,8 +56,8 @@ class Command(BaseCommand):
                     # update decoration
                     p.commenced = True
 
-                elif p.container and not p.commenced and any(c.commenced for c in p.children):
-                    log.info(f"\n\nProvision {p.id} NOT marked as commenced.\n"
+                elif p.container and not p.commenced and any(c.id in commencement.provisions for c in p.children):
+                    log.info(f"\n\nContainer NOT marked as commenced: {p.title} ({p.id}).\n"
                              f"Double-check that this container should not have commenced on this date, "
                              f"or fix manually later.\n"
                              f"Commenced children: {[c.id for c in p.children if c.commenced]}\n"

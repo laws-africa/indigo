@@ -447,8 +447,12 @@ class Work(WorkMixin, models.Model):
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
+        # unless explicitly set on the work,
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.
+        if self.as_at_date:
+            return self.as_at_date
+
         q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
 
         dates = [

@@ -314,6 +314,7 @@ class Work(WorkMixin, models.Model):
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+    as_at_date = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
 
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 

@@ -338,6 +338,20 @@
       </div>
     </div>
     {% endblock work-form-repeal %}
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label for="{{ form.as_at_date.id_for_label }}">{{ form.as_at_date.label }}</label>
+        <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date.html_name }}" value="{{ form.as_at_date.value|default_if_none:''|stringformat:'s' }}">
+        <p class="form-text text-muted">Date up to which this work was last checked for updates.</p>
+        {% if form.as_at_date.errors %}
+          <div class="text-danger">
+            {% for error in form.as_at_date.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </form>
 
   {% if work.pk %}

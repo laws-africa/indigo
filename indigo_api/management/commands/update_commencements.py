@@ -95,6 +95,22 @@ class Command(BaseCommand):
             commencement.provisions = [p.id for p in descend_toc_pre_order(provisions)
                                        if p.id in commencement.provisions]
 
+            # alert about partially commenced basic units, only on final commencement per commenced work
+            if not commencements.filter(commenced_work=commencement.commenced_work, date__gt=commencement.date):
+                all_provisions = commencement.commenced_work.all_commenceable_provisions()
+                updated_commenced_ids_to_present = [p_id for c in commencements_to_present
+                                                    for p_id in c.provisions] + commencement.provisions
+                beautifier.decorate_provisions(all_provisions, updated_commenced_ids_to_present)
+                basic_units_flagged = [
+                    p.id for p in descend_toc_pre_order(all_provisions)
+                    if p.commenced and p.basic_unit and p.children and not p.all_descendants_same
+                ]
+                if basic_units_flagged:
+                    log.info(f"\n\nBasic units NOT fully commenced:\n"
+                             f"{', '.join(basic_units_flagged)}.\n"
+                             f"Explicitly add a commencement for each subprovision – "
+                             f"usually its date of insertion.\n\n")
+
             if any(pid for pid in commencement.provisions if pid not in old_provisions_list):
                 commencement.save()
                 log.info(f"\nUpdate done!\n\n"

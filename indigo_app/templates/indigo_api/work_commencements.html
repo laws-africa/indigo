@@ -14,8 +14,8 @@
     <p class="alert alert-info">This work has not commenced.</p>
   {% endif %}
 
-  {% if uncommenced_provisions %}
-    <p class="alert alert-warning">This work has {{ uncommenced_provisions|length }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions|length|pluralize }}</a>.</p>
+  {% if uncommenced_provisions_count %}
+    <p class="alert alert-warning">This work has {{ uncommenced_provisions_count }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions_count|pluralize }}</a>.</p>
   {% endif %}
 
   {% if everything_commenced %}
@@ -81,15 +81,13 @@
               <h6>
                 {% if commencement.all_provisions %}Commences all provisions{% endif %}
                 {% if commencement.provisions %}
-                  Commences {{ commencement.provisions|length }} of {{ provisions|length }} provision{{ provisions|length|pluralize }}:
+                  Commences {{ commencement.provisions|length }} of {{ total_provisions_count }} provision{{ total_provisions_count|pluralize }}:
                 {% endif %}
               </h6>
 
               {% if commencement.provisions %}
-                <ul class="list-unstyled">
-                  {% for prov in commencement.provision_items %}
-                    <li>{{ prov.title|default:prov }}</li>
-                  {% endfor %}
+                <ul class="provisions-list">
+                  {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
                 </ul>
               {% endif %}
             </div>
@@ -128,13 +126,19 @@
               </div>
 
               <div class="form-group provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-                <label>Provisions commenced:</label>
-                <small class="form-text text-muted">Use SHIFT and Ctrl (or ⌘) to select multiple items.</small>
-                <select name="provisions" class="form-control" multiple size="{% if provisions|length > 20 %}20{% else %}10{% endif %}">
-                  {% for prov in commencement.possible_provisions %}
-                    <option value="{{ prov.id }}" {% if prov.id in commencement.provisions %}selected{% endif %}>{{ prov.title }}</option>
-                  {% endfor %}
-                </select>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>Provisions commenced:</div>
+                  <label class="d-flex align-items-center">
+                    <input type="checkbox"
+                           name="select-all"
+                           class="mr-2"
+                    />
+                    Select all provisions
+                  </label>
+                </div>
+                <ul data-id="provisions" class="provisions-list">
+                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
+                </ul>
               </div>
             </div>
           </form>
@@ -147,14 +151,12 @@
     {% endfor %}
   </ol>
 
-  {% if uncommenced_provisions %}
+  {% if uncommenced_provisions_count %}
     <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions|length }}</span></h5>
+      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
       <div class="card-body">
-        <ul class="list-unstyled mb-0">
-          {% for prov in uncommenced_provisions %}
-            <li>{{ prov.title }}</li>
-          {% endfor %}
+        <ul class="provisions-list">
+          {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=provisions %}
         </ul>
       </div>
     </div>
@@ -169,5 +171,3 @@
     </form>
   {% endif %}
 {% endblock %}
-
-

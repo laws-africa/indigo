@@ -1,0 +1,19 @@
+.treelist-wrapper {
+  ul {
+    padding-left: 0;
+  }
+  li {
+    display: flex;
+  }
+
+  .spacer, input[type="checkbox"] {
+    width: 22px;
+  }
+  input[type="checkbox"]  {
+    margin-top: 3px;
+  }
+
+  .content {
+    flex-grow: 1;
+  }
+}

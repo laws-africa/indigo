@@ -361,25 +361,17 @@ class TOCElement(object):
         self.basic_unit = basic_unit
 
     def as_dict(self):
-        info = {
+        return {
             'type': self.type,
             'component': self.component,
             'subcomponent': self.subcomponent,
             'title': self.title,
             'children': [c.as_dict() for c in self.children],
             'basic_unit': self.basic_unit,
+            'num': self.num,
+            'id': self.id,
+            'heading': self.heading,
         }
-
-        if self.heading:
-            info['heading'] = self.heading
-
-        if self.num:
-            info['num'] = self.num
-
-        if self.id:
-            info['id'] = self.id
-
-        return info
 
 
 @plugins.register('commencements-beautifier')

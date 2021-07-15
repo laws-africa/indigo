@@ -229,6 +229,7 @@ class DocumentAPITest(APITestCase):
                                 'id': 'section-3.1',
                                 'basic_unit': False,
                                 'children': [],
+                                'heading': None,
                             }
                         ]
                     },

@@ -34,6 +34,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'basic_unit': True,
             'children': [],
             'num': None,
+            'heading': None,
         }])
 
     def test_toc_item_simple(self):
@@ -54,6 +55,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'basic_unit': True,
             'children': [],
             'num': None,
+            'heading': None,
         })
         self.assertEqual(toc.id, toc.qualified_id)
 
@@ -75,6 +77,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'basic_unit': True,
             'children': [],
             'num': None,
+            'heading': None,
         })
         self.assertEqual("att_1/sec_1", toc.qualified_id)
 
@@ -95,6 +98,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'children': [],
             'num': None,
             'id': None,
+            'heading': None,
         }, {
             'type': 'attachment',
             'component': 'schedule1',
@@ -113,6 +117,7 @@ class TOCBuilderBaseTestCase(TestCase):
                 'basic_unit': True,
                 'children': [],
                 'num': None,
+                'heading': None,
             }],
         }], [t.as_dict() for t in toc])
         self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
@@ -138,6 +143,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'children': [],
             'num': None,
             'id': None,
+            'heading': None,
         }, {
             'type': 'attachment',
             'component': 'schedule1',
@@ -156,6 +162,7 @@ class TOCBuilderBaseTestCase(TestCase):
                 'basic_unit': True,
                 'children': [],
                 'num': None,
+                'heading': None,
             }],
         }], [t.as_dict() for t in toc])
         self.assertEqual("att_1/sec_1", toc[1].children[0].qualified_id)
@@ -392,5 +399,6 @@ class TOCBuilderBaseTestCase(TestCase):
             'basic_unit': True,
             'children': [],
             'num': None,
+            'heading': None,
         })
         self.assertEqual(toc.id, toc.qualified_id)

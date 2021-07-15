@@ -248,6 +248,7 @@ class TOCBuilderZATestCase(APITestCase):
                 'basic_unit': True,
                 'children': [],
                 'num': None,
+                'heading': None,
             }]
         }, {
             'component': 'schedule2',
@@ -267,6 +268,7 @@ class TOCBuilderZATestCase(APITestCase):
                 'basic_unit': True,
                 'children': [],
                 'num': None,
+                'heading': None,
             }]
         }], toc)
 
@@ -297,13 +299,13 @@ class TOCBuilderZATestCase(APITestCase):
         self.maxDiff = None
         self.assertEqual(toc, [
             {'type': 'coverpage', 'component': 'main', 'subcomponent': 'coverpage', 'title': 'Coverpage',
-             'basic_unit': False, 'children': [], 'num': None, 'id': None},
+             'basic_unit': False, 'children': [], 'num': None, 'id': None, 'heading': None},
             {'type': 'preface', 'component': 'main', 'subcomponent': 'preface', 'title': 'Preface',
-             'basic_unit': False, 'children': [], 'num': None, 'id': None},
+             'basic_unit': False, 'children': [], 'num': None, 'id': None, 'heading': None},
             {'type': 'preamble', 'component': 'main', 'subcomponent': 'preamble', 'title': 'Preamble',
-             'basic_unit': False, 'children': [], 'num': None, 'id': None},
+             'basic_unit': False, 'children': [], 'num': None, 'id': None, 'heading': None},
             {'type': 'conclusions', 'component': 'main', 'subcomponent': 'conclusions', 'title': 'Conclusions',
-             'basic_unit': False, 'children': [], 'num': None, 'id': None},
+             'basic_unit': False, 'children': [], 'num': None, 'id': None, 'heading': None},
         ])
 
     def test_subpart_without_number(self):

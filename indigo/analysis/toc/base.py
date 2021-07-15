@@ -368,16 +368,12 @@ class TOCElement(object):
             'title': self.title,
             'children': [c.as_dict() for c in self.children],
             'basic_unit': self.basic_unit,
+            'num': self.num,
+            'id': self.id,
         }
 
         if self.heading:
             info['heading'] = self.heading
-
-        if self.num:
-            info['num'] = self.num
-
-        if self.id:
-            info['id'] = self.id
 
         return info
 

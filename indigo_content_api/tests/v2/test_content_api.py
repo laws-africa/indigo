@@ -32,6 +32,7 @@ class ContentAPIV2TestMixin:
                 'bad': 'Should be ignored',
             }
         }
+        self.maxDiff = None
 
     def tearDown(self):
         settings.INDIGO['WORK_PROPERTIES'] = self.old_work_properties
@@ -230,6 +231,7 @@ class ContentAPIV2TestMixin:
                 'children': [],
                 'basic_unit': False,
                 'id': 'sec_1.subsection-0',
+                'num': None,
                 'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/subsection'
             }],
             'basic_unit': True,
@@ -252,7 +254,8 @@ class ContentAPIV2TestMixin:
                 'children': [],
                 'basic_unit': False,
                 'id': 'sec_1.subsection-0',
-                'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/subsection'
+                'num': None,
+                'url': f'http://{self.api_host}{self.api_path}/akn/za/act/2010/1/eng/!main/subsection',
             }],
             'basic_unit': True,
             'heading': 'Foo',
@@ -286,6 +289,7 @@ class ContentAPIV2TestMixin:
                         'url': 'http://' + self.api_host + self.api_path + '/akn/za/act/2010/1/eng/!main/subsection',
                         'basic_unit': False,
                         'children': [],
+                        'num': None,
                     }
                 ],
             }

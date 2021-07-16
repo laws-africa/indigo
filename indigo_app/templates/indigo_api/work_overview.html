@@ -19,6 +19,7 @@
     {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
     {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
     {% endif %}
+    {% if work.as_at_date %}<span class="badge badge-info" title="{{ work.as_at_date|date:'Y-m-d' }}">as-at-overridden</span>{% endif %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 

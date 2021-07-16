@@ -91,7 +91,7 @@
     handleCheckboxesChange(e) {
       const ulElement = e.target.closest("li").querySelector('ul');
       //There may not always be a nested ul
-      if(ulElement) {
+      if (ulElement) {
         for (const checkBox of ulElement.querySelectorAll("input[name='provisions']")) {
           checkBox.checked = e.target.checked;
         }

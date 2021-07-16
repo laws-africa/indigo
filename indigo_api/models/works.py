@@ -249,12 +249,17 @@ class WorkMixin(object):
             return first.date
 
     def all_commenceable_provisions(self, date=None):
-        """ Return a list of TOCElement objects that can be commenced.
+        """ Returns a list of TOCElement objects that can be commenced.
+            Each TOCElement object has a (potentially empty) list of `children`.
             If `date` is provided, only provisions in expressions up to and including that date are included.
         """
         # gather documents and sort so that we consider primary language documents first
         if date:
             documents = self.expressions().filter(expression_date__lte=date)
+            if not documents:
+                # get the earliest available expression when historical points in time don't exist
+                # give it in a list so that it can be sorted below, but not if it's None
+                documents = self.expressions()[:1]
         else:
             documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
@@ -269,22 +274,27 @@ class WorkMixin(object):
 
         return provisions
 
-    def all_uncommenced_provisions(self, date=None):
-        provisions = self.all_commenceable_provisions(date=date)
-        commenced = set()
-        for commencement in self.commencements.all():
-            if commencement.all_provisions:
-                return []
-            for prov in commencement.provisions:
-                commenced.add(prov)
+    def all_uncommenced_provision_ids(self, date=None):
+        """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.
+            If `date` is provided, only provisions in expressions up to and including that date are included.
+        """
+        from indigo.analysis.toc.base import descend_toc_pre_order
 
-        return [p for p in provisions if p.id not in commenced]
+        commencements = self.commencements.all()
+        # common case: one commencement that covers all provisions
+        if any(c.all_provisions for c in commencements):
+            return []
+
+        # commencement.provisions are lists of provision ids
+        commenced = [p for c in commencements for p in c.provisions]
+
+        return [p.id for p in descend_toc_pre_order(self.all_commenceable_provisions(date=date)) if p.id not in commenced]
 
     @property
     def commencements_count(self):
         """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
         commencements_count = len(self.commencements.all())
-        if self.all_uncommenced_provisions():
+        if self.all_uncommenced_provision_ids():
             commencements_count += 1
         return commencements_count
 
@@ -556,11 +566,11 @@ class Commencement(models.Model):
 
 @receiver(signals.post_save, sender=Commencement)
 def post_save_commencement(sender, instance, **kwargs):
-    # Send action to activity stream, as 'created' if a new commencement,
-    if kwargs['created']:
+    # Send action to activity stream, as 'created' if a new commencement
+    if kwargs['created'] and instance.created_by_user:
         action.send(instance.created_by_user, verb='created', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
-    else:
+    elif instance.updated_by_user:
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
 

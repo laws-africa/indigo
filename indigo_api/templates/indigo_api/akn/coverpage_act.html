@@ -92,9 +92,9 @@
             <li class="commencement-note">Note: {{ document.work.commencement_note }}</li>
           {% endif %}
         {% else %}
-          {% commencements_relevant_at_date document as commencements %}
-          {% with document.uncommenced_provisions as uncommenced_provisions %}
-            {% if commencements|length == 1 and not uncommenced_provisions %}
+          {% with document.commencements_relevant_at_expression_date as commencements %}
+            {% has_uncommenced_provisions document as has_uncommenced_provisions %}
+            {% if commencements|length == 1 and not has_uncommenced_provisions %}
             {% with commencements|first as commencement %}
               {% commenced_provisions_description document commencement as provisions_description %}
               <li class="commencement-date">
@@ -175,7 +175,7 @@
                       </td>
                     </tr>
                   {% endfor %}
-                  {% if uncommenced_provisions %}
+                  {% if has_uncommenced_provisions %}
                     <tr>
                       <td>
                         {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}

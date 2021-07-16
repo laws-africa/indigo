@@ -20,6 +20,22 @@ _('Preface')
 _('Preamble')
 
 
+def descend_toc_pre_order(items):
+    # yields each TOC element and then its children, recursively
+    for item in items:
+        yield item
+        for descendant in descend_toc_pre_order(item.children):
+            yield descendant
+
+
+def descend_toc_post_order(items):
+    # yields each TOC element's children, recursively, ending with itself
+    for item in items:
+        for descendant in descend_toc_post_order(item.children):
+            yield descendant
+        yield item
+
+
 @plugins.register('toc')
 class TOCBuilderBase(LocaleBasedMatcher):
     """ This builds a Table of Contents for an Act.
@@ -45,9 +61,26 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'attachment',
-                    'component']
+    toc_basic_units = ['section']
+    """ The basic units for the tradition.
+    """
+
+    toc_elements = [
+        # top-level
+        'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
+        # hierarchical elements
+        'alinea', 'article', 'book', 'chapter', 'clause', 'division', 'indent', 'level', 'list',
+        'paragraph', 'part', 'point', 'proviso', 'rule', 'section',
+        'subchapter', 'subclause', 'subdivision', 'sublist', 'subparagraph', 'subpart', 'subrule',
+        'subsection', 'subtitle', 'title', 'tome', 'transitional',
+    ]
     """ Elements we include in the table of contents, without their XML namespace.
+        Base includes the following from the from the AKN schema:
+        - all `hierarchicalStructure` elements, except:
+          - `meta` and `body` are excluded
+          - `attachment` and `component` are included individually rather than their plural containers
+        - all `ANhier` (hierarchical) elements
+        - no block elements.
     """
 
     toc_deadends = ['meta', 'attachments', 'components', 'embeddedStructure', 'quotedStructure', 'subFlow']
@@ -73,7 +106,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     # eg. schedule1
     component_id_re = re.compile('([^0-9]+)([0-9]+)')
 
-    non_commenceable_types = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
+    non_commenceable_toplevel_elements = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
 
     def table_of_contents_for_document(self, document):
         """ Build the table of contents for a document.
@@ -211,7 +244,8 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 subcomponent += '/' + num.strip('.()')
 
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_,
-                              num=num, subcomponent=subcomponent, parent=parent, component_id=component_id)
+                              num=num, subcomponent=subcomponent, component_id=component_id,
+                              basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)
 
         return toc_item
@@ -242,13 +276,11 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         By default, these are all the child items in the main component, except
         the preface, preamble and conclusion.
+        Only the top-level toc elements are assessed.
         """
         def process(item):
             if item.component == 'main':
-                if item.children:
-                    for kid in item.children:
-                        process(kid)
-                elif item.type not in self.non_commenceable_types and item.num:
+                if item.type not in self.non_commenceable_toplevel_elements and item.num:
                     items.append(item)
 
         items = []
@@ -270,25 +302,39 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 it helps ensure that our list contains only unique provisions.
             `items` is a list of commenceable provisions from the current document's ToC.
         """
+        # TODO: allow for structural changes (sections moved into Parts etc)
         # take note of any removed items to compensate for later
         removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
         for i, item in enumerate(items):
+            # We need to insert this provision at the correct position in the work provision list.
+            # We also need to identify the right children based on the index.
+            # If any provisions from a previous document have been removed in this document
+            # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
+            for n in removed_indexes:
+                if i >= n:
+                    i += 1
+
             if item.id and item.id not in id_set:
                 id_set.add(item.id)
-                # We need to insert this provision at the correct position in the work provision list.
-                # If any provisions from a previous document have been removed in this document
-                # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
-                for n in removed_indexes:
-                    if i >= n:
-                        i += 1
                 provisions.insert(i, item)
+
+            # look at children and insert any provisions there too (ToC can be deeply nested)
+            if item.children:
+                try:
+                    existing_children = provisions[i].children
+                    existing_id_set = set([e.id for e in existing_children])
+                except IndexError:
+                    # the parent provision didn't exist previously
+                    existing_children = []
+                    existing_id_set = set()
+                self.insert_provisions(existing_children, existing_id_set, item.children)
 
 
 class TOCElement(object):
     """
     An element in the table of contents of a document, such as a chapter, part or section.
 
-    :ivar children: further TOC elements contained in this one, may be None or empty
+    :ivar children: further TOC elements contained in this one, defaults to empty list
     :ivar component: component name (after the ! in the FRBR URI) of the component that this item is a part of
     :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
     :ivar heading: heading for this element, excluding the number, may be None
@@ -298,38 +344,227 @@ class TOCElement(object):
     :ivar subcomponent: name of this subcomponent, may be None
     :ivar title: friendly title of this entry
     :ivar type: element type, one of: ``chapter, part, section`` etc.
+    :ivar basic_unit: boolean, defaults to False.
     """
 
-    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, parent=None, children=None, component_id=None):
+    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, children=None, component_id=None, basic_unit=False):
         self.element = element
         self.component = component
         self.type = type_
         self.heading = heading
         self.id = id_
         self.num = num
-        self.children = children
+        self.children = children or []
         self.subcomponent = subcomponent
         self.title = None
         self.qualified_id = id_ if component == 'main' else f"{component_id}/{id_}"
+        self.basic_unit = basic_unit
 
     def as_dict(self):
-        info = {
+        return {
             'type': self.type,
             'component': self.component,
             'subcomponent': self.subcomponent,
             'title': self.title,
+            'children': [c.as_dict() for c in self.children],
+            'basic_unit': self.basic_unit,
+            'num': self.num,
+            'id': self.id,
+            'heading': self.heading,
         }
 
-        if self.heading:
-            info['heading'] = self.heading
 
-        if self.num:
-            info['num'] = self.num
+@plugins.register('commencements-beautifier')
+class CommencementsBeautifier(LocaleBasedMatcher):
+    locale = (None, None, None)
+    """ The locale this commencements beautifier is suited for, as ``(country, language, locality)``.
+    """
 
-        if self.id:
-            info['id'] = self.id
+    capitalize_types = ['part', 'chapter']
+    """ The types that should be capitalized when beautified for the tradition.
+    """
 
-        if self.children:
-            info['children'] = [c.as_dict() for c in self.children]
+    def __init__(self):
+        self.commenced = True
+        self.current_run = None
+        self.runs = None
+        self.previous_in_run = False
 
-        return info
+    def decorate_provisions(self, provisions, assess_against):
+        for p in descend_toc_post_order(provisions):
+            # do this here for all provisions
+            p.num = p.num.strip('.') if p.num else ''
+
+            # when self.commenced is True, assess_against is the list of commenced provision ids
+            # when self.commenced is False, assess_against is the list of uncommenced provision ids
+            p.commenced = self.commenced if p.id in assess_against else not self.commenced
+
+            p.last_node = not p.children
+
+            # Do ALL descendants share the same commencement status as the current p?
+            # empty list passed to all() returns True
+            p.all_descendants_same = all(
+                c.commenced == p.commenced and
+                (c.all_descendants_same or c.last_node)
+                for c in p.children
+            ) if p.children else False
+
+            # Do NO descendants share the same commencement status as the current p?
+            # empty list passed to all() returns True
+            p.all_descendants_opposite = all(
+                c.commenced != p.commenced and
+                (c.all_descendants_same or c.last_node)
+                for c in p.children
+            ) if p.children else False
+
+            p.container = any(c.basic_unit or c.container for c in p.children)
+
+            # e.g. Subpart I, which is commenced, contains sections 1 to 3, all of which are fully commenced
+            p.full_container = p.container and p.all_descendants_same
+
+        return provisions
+
+    def add_to_run(self, p, run):
+        typ = p.type.capitalize() if p.type in self.capitalize_types else p.type
+        # start a new run if this type is different
+        new_run = typ not in [r['type'] for r in run] if run else False
+        run.append({'type': typ, 'num': p.num, 'new_run': new_run})
+
+    def stringify_run(self, run):
+        # first (could be only) item, e.g. 'section 1'
+        run_str = f"{run[0]['type']} {run[0]['num']}"
+        # common case: e.g. section 1–5 (all the same type)
+        if len(run) > 1 and not any(r['new_run'] for r in run):
+            run_str += f"–{run[-1]['num']}"
+
+        # e.g. section 1–3, article 1–2, regulation 1
+        elif len(run) > 1:
+            # get all of the first group, e.g. section
+            first_type = [r for r in run if r['type'] == run[0]['type']]
+            run_str += f"–{first_type[-1]['num']}" if len(first_type) > 1 else ''
+
+            # get all e.g. articles, then all e.g. regulations
+            for subsequent_type in [r['type'] for r in run if r['new_run']]:
+                this_type = [r for r in run if r['type'] == subsequent_type]
+                run_str += f", {subsequent_type} {this_type[0]['num']}"
+                run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
+
+        return run_str
+
+    def add_all_basics(self, p):
+        """ Adds a description of all basic units in a container to the container's `num`.
+        e.g. Part A's `num`: 'A' --> 'A (section 1–3)'
+        """
+        # get all the basic units in the container
+        basics = []
+        for c in descend_toc_pre_order(p.children):
+            if c.basic_unit:
+                self.add_to_run(c, basics)
+
+        p.num += f' ({self.stringify_run(basics)})' if basics else ''
+
+    def add_to_current(self, p, all_basic_units=False):
+        if all_basic_units:
+            # num becomes more descriptive
+            self.add_all_basics(p)
+        self.add_to_run(p, self.current_run)
+
+    def end_current(self):
+        if self.current_run:
+            self.runs.append(self.stringify_run(self.current_run))
+            self.current_run = []
+            self.previous_in_run = False
+
+    def process_basic_unit(self, p):
+        """ Adds the subprovisions that have also (not) commenced to the basic unit's `num`,
+        unless the entire provision is (un)commenced.
+        e.g. section 2's `num`: '2' --> '2(1), 2(3), 2(4)'
+        e.g. section 1's `num`: '1' --> '1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2)'
+        """
+        end_at_next_add = False
+        subs_to_add = []
+
+        def add_to_subs(p, prefix):
+            # stop drilling down if the subprovision is fully un/commenced or is the last (un/commenced) node
+            if p.commenced == self.commenced and (
+                    p.last_node or p.all_descendants_same or p.all_descendants_opposite
+            ):
+                # go no further down, prefix with all parent nums
+                subs_to_add.append(prefix + p.num)
+            # keep drilling if some descendants are different
+            elif not p.all_descendants_same:
+                for c in p.children:
+                    add_to_subs(c, prefix + p.num)
+
+        if p.children and not p.all_descendants_same:
+            # don't continue run if we're giving subprovisions
+            end_at_next_add = True
+            for c in p.children:
+                add_to_subs(c, p.num)
+
+        p.num = ', '.join(subs_to_add) if subs_to_add else p.num
+        self.add_to_current(p)
+
+        if end_at_next_add:
+            self.end_current()
+
+    def process_provision(self, p):
+        # start processing?
+        if p.commenced == self.commenced or (p.children and not p.all_descendants_same):
+            # e.g. a fully un/commenced Chapter or Part: Chapter 1 (sections 1–5)
+            if p.full_container:
+                self.add_to_current(p, all_basic_units=True)
+                self.end_current()
+
+            # e.g. a Chapter that isn't fully un/commenced
+            elif p.container:
+                # if the id was explicitly given: Chapter 1 (in part);
+                if p.commenced == self.commenced:
+                    old_num = p.num
+                    p.num += ' (in part)'
+                    self.add_to_current(p)
+                    p.num = old_num
+                    self.end_current()
+                # if we're going to keep going: Chapter 1 (in part); Chapter 1, …
+                if not p.all_descendants_opposite or p.commenced != self.commenced:
+                    self.add_to_current(p)
+
+            # e.g. section with subsections
+            elif p.basic_unit:
+                self.process_basic_unit(p)
+                # keep track in case the next section isn't included
+                self.previous_in_run = True
+
+            # lonely subprovision, e.g. Chapter 1 item (a)
+            elif not p.container and p.commenced == self.commenced:
+                # TODO: deal with nested lonely subprovisions
+                self.add_to_current(p)
+                self.previous_in_run = True
+
+            # keep drilling down on partially un/commenced containers
+            if not (p.full_container or p.basic_unit) and (
+                    not p.all_descendants_opposite or p.commenced != self.commenced
+            ):
+                for c in p.children:
+                    self.process_provision(c)
+                # e.g. end of Part A, sections were checked individually
+                if p.container:
+                    self.end_current()
+
+        # e.g. section 1–3; section 5–8
+        elif self.previous_in_run:
+            self.end_current()
+
+    def make_beautiful(self, provisions, assess_against):
+        self.current_run = []
+        self.runs = []
+        self.previous_in_run = False
+
+        self.decorate_provisions(provisions, assess_against)
+
+        for p in provisions:
+            self.process_provision(p)
+
+        self.end_current()
+
+        return '; '.join(p for p in self.runs)

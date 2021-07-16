@@ -18,6 +18,7 @@ from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
 
+from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement, Workflow
@@ -28,7 +29,7 @@ from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
 from indigo_metrics.models import WorkMetrics
 
-from .base import AbstractAuthedIndigoView, PlaceViewBase
+from .base import PlaceViewBase
 
 
 log = logging.getLogger(__name__)
@@ -305,29 +306,50 @@ class WorkOverviewView(WorkViewBase, DetailView):
 class WorkCommencementsView(WorkViewBase, DetailView):
     template_name_suffix = '_commencements'
     tab = 'commencements'
+    beautifier = None
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['provisions'] = provisions = self.work.all_commenceable_provisions()
-        context['uncommenced_provisions'] = self.work.all_uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
-        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions'])
+        context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
+        context['total_provisions_count'] = sum(1 for _ in descend_toc_pre_order(provisions))
+        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
 
-        provision_set = {p.id: p for p in provisions}
+        self.beautifier = plugins.for_locale(
+            'commencements-beautifier', self.country.code, None,
+            self.locality.code if self.locality else None,
+        )
+
+        # decorate all provisions on the work
+        commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
+        self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
+
+        # decorate provisions on each commencement
         for commencement in commencements:
-            # rich description of provisions
-            commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]
-            # possible options
-            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements, provisions)
+            commencement.rich_provisions = self.decorate_commencement_provisions(commencement, commencements)
 
         return context
 
-    def get_possible_provisions(self, commencement, commencements, provisions):
-        # provisions commenced by everything else
-        commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
-        return [p for p in provisions if p.id not in commenced]
+    def decorate_commencement_provisions(self, commencement, commencements):
+        # provisions from all documents up to this commencement's date
+        provisions = self.work.all_commenceable_provisions(commencement.date)
+        # provision ids commenced by everything else
+        commenced_provision_ids = set(p_id for comm in commencements
+                                      if comm != commencement
+                                      for p_id in comm.provisions)
+
+        # commencement status for displaying provisions on commencement detail
+        self.beautifier.decorate_provisions(provisions, commencement.provisions)
+
+        # visibility for what to show in commencement form
+        for p in descend_toc_post_order(provisions):
+            p.visible = p.id not in commenced_provision_ids
+            p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
+
+        return provisions
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):
@@ -349,7 +371,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = self.work.all_commenceable_provisions()
+        kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
 
     def post(self, request, *args, **kwargs):

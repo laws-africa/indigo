@@ -13,10 +13,14 @@
       'click .add-commencement': 'addCommencement',
       'click .all-provisions': 'allProvisionsChanged',
       'submit .commencement-form': 'formSubmitted',
+      'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
+      'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick',
+      'change .commencement-form input[name="select-all"]' : "onSelectAll",
     },
 
     initialize: function() {
       this.model = new Indigo.Work(Indigo.Preloads.work);
+
       this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
       this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
     },
@@ -43,7 +47,7 @@
     formShow: function(e) {
       // hide the details
       // guard the namespace because otherwise the date selector event clashes with this one
-      if (e.namespace == 'bs.collapse') {
+      if (e.namespace == 'bs.collapse' && e.target.classList.contains('commencement-form')) {
         e.target.parentElement.querySelector('.commencement-details').classList.remove('show');
       }
     },
@@ -51,13 +55,27 @@
     formHide: function(e) {
       // show the details
       // guard the namespace because otherwise the date selector event clashes with this one
-      if (e.namespace == 'bs.collapse') {
+      if (e.namespace == 'bs.collapse' && e.target.classList.contains('commencement-form')) {
         e.target.parentElement.querySelector('.commencement-details').classList.add('show');
       }
     },
 
     allProvisionsChanged: function(e) {
       $(e.target).closest('.card').find('.provisions-commenced').toggleClass('d-none', e.target.checked);
+    },
+
+    onExpandCollapseClick: function(e) {
+      e.stopPropagation();
+      const button = e.currentTarget;
+      const parent = button.closest('li');
+      button.classList.toggle('expanded');
+
+      if (parent) {
+        const collapseElement = $(parent.querySelector('.collapse'));
+        if(collapseElement.length) {
+          collapseElement.collapse('toggle');
+        }
+      }
     },
 
     formSubmitted: function(e) {
@@ -67,6 +85,20 @@
       if (form.elements.all_provisions.checked) {
         // we can't iterate over this in-place, so do this instead
         while (form.elements.provisions.selectedOptions.length > 0) form.elements.provisions.selectedOptions[0].selected = false;
+      }
+    },
+
+    handleCheckboxesChange(e) {
+      for (const checkBox of e.target.closest("li")
+          .querySelector('ul')
+          .querySelectorAll("input[name='provisions']")) {
+        checkBox.checked = e.target.checked;
+      }
+    },
+
+    onSelectAll: function (e) {
+      for (const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
+        checkbox.checked = e.target.checked;
       }
     }
   });

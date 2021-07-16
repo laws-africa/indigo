@@ -20,6 +20,7 @@ import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
 
+from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
 
@@ -180,24 +181,22 @@ class DocumentMixin(object):
 
         return ids
 
-    def commenceable_provisions(self):
-        return self.work.all_commenceable_provisions(self.expression_date)
-
-    def uncommenced_provisions(self):
-        return self.work.all_uncommenced_provisions(self.expression_date)
-
     def commencements_relevant_at_expression_date(self):
         """ Return a list of Commencement objects that have to do with the provisions that exist on this expression.
         """
+        commencements = self.work.commencements.all()
         # common case: one commencement that covers all provisions
-        for commencement in self.work.commencements.all():
+        for commencement in commencements:
             if commencement.all_provisions:
                 return [commencement]
 
-        commenceable_provisions = [p.id for p in self.commenceable_provisions()]
-        # include commencement if any of its `provisions` are found in `commenceable_provisons`
-        return [c for c in self.work.commencements.all()
-                if any(p for p in c.provisions if p in commenceable_provisions) or not c.provisions]
+        # get ids of all provisions in the commenceable_provisions tree
+        commenceable_provision_ids = [p.id for p in descend_toc_pre_order(self.work.all_commenceable_provisions(self.expression_date))]
+
+        # include commencement if any of its `provisions` are found in `commenceable_provision_ids`
+        # or if it has no provisions
+        return [c for c in commencements
+                if any(p for p in c.provisions if p in commenceable_provision_ids) or not c.provisions]
 
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter

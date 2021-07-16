@@ -89,10 +89,12 @@
     },
 
     handleCheckboxesChange(e) {
-      for (const checkBox of e.target.closest("li")
-          .querySelector('ul')
-          .querySelectorAll("input[name='provisions']")) {
-        checkBox.checked = e.target.checked;
+      const ulElement = e.target.closest("li").querySelector('ul');
+      //There may not always be a nested ul
+      if (ulElement) {
+        for (const checkBox of ulElement.querySelectorAll("input[name='provisions']")) {
+          checkBox.checked = e.target.checked;
+        }
       }
     },
 

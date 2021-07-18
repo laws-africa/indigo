@@ -4,13 +4,17 @@
   }
   li {
     display: flex;
+    align-items: flex-start;
   }
 
-  .spacer, input[type="checkbox"] {
+  .spacer {
     width: 22px;
   }
+
   input[type="checkbox"]  {
     margin-top: 3px;
+    width: 12px;
+    margin-right: 3px;
   }
 
   .content {

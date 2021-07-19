@@ -9,8 +9,11 @@
       <div class="content">
         <span class="{% if prov.commenced %}text-black-50{% else %}alert-warning{% endif %}">
           {{ prov.title|default:prov.id }}
+          {% if not prov.commenced and prov.all_descendants_same %}
+            <em>(in full)</em>
+          {% endif %}
         </span>
-        {% if prov.children %}
+        {% if prov.children and not prov.all_descendants_same %}
           <ul>
             {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=prov.children %}
           </ul>

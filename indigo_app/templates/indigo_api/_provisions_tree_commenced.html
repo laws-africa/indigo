@@ -11,7 +11,7 @@
           {{ prov.title|default:prov.id }}
         </span>
         {% if prov.commenced and prov.all_descendants_same %}
-          (Commenced in full)
+          <em>(Commenced in full)</em>
         {% elif prov.children %}
           <ul class="provisions-list">
             {% include "indigo_api/_provisions_tree_commenced.html" with provisions=prov.children %}

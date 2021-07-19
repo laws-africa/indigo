@@ -2,8 +2,8 @@
 
   {% if prov.visible or prov.visible_descendants %}
     <li class="provisions-list__item">
-      <div class="d-flex align-items-center justify-content-between">
-        <label class="mb-0">
+      <div class="provisions-list__item__body">
+        <label>
           {% if prov.visible %}
             <input value="{{ prov.id }}"
                    type="checkbox"
@@ -17,8 +17,10 @@
                    class="mr-2"
             >
           {% endif %}
-          {{ prov.title }}
         </label>
+        <div class="provision-title">
+          {{ prov.title }}
+        </div>
         {% if prov.children %}
         <button class="expand-collapse-button"
                 type="button"

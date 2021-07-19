@@ -7,6 +7,21 @@
     border-bottom: 1px solid lightgrey;
     padding-top: 5px;
     padding-bottom: 5px;
+  }
+
+  .provisions-list__item__body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    label {
+      margin-bottom: 0;
+    }
+
+    .provision-title {
+      flex-grow: 1;
+      text-align: left;
+    }
 
     .expand-collapse-button {
       background-color: #2d7ad4;

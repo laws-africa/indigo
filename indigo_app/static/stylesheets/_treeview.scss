@@ -1,0 +1,17 @@
+.treelist-wrapper {
+  ul {
+    padding-left: 0;
+  }
+  li {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .item-indent {
+    width: 18px;
+  }
+
+  .content {
+    flex-grow: 1;
+  }
+}

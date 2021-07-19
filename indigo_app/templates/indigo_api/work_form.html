@@ -246,7 +246,7 @@
 
     {% block work-form-commencement %}
     <div class="card mb-3" id="commencement">
-      <h5 class="card-header">Commencement and assent</h5>
+      <h5 class="card-header">Commencement</h5>
       <div class="card-body">
 
         {% if work.pk and work.commencements.count > 1 %}
@@ -302,18 +302,36 @@
             </div>
           </div>
         {% endif %}
+      </div>
+    </div>
+    {% endblock work-form-commencement %}
 
+    <div class="card mb-3" id="key-dates">
+      <h5 class="card-header">Key dates</h5>
+      <div class="card-body">
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.assent_date.id_for_label }}">Assent date</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.assent_date.id_for_label }}" name="{{ form.assent_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
             <div class="form-text text-muted">Date when approved by the responsible authority</div>
           </div>
-        </div>
 
+          <div class="form-group col-md-4">
+            <label for="{{ form.as_at_date_override.id_for_label }}">{{ form.as_at_date_override.label }}</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date_override.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date_override.html_name }}" value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
+            <p class="form-text text-muted">Date up to which this work was last checked for updates.
+              Only set this if it should be different from {{ place.name }}'s as-at date.</p>
+            {% if form.as_at_date_override.errors %}
+              <div class="text-danger">
+                {% for error in form.as_at_date_override.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
-    {% endblock work-form-commencement %}
 
     {% block work-form-repeal %}
     <div class="card mb-3" id="repeal">
@@ -338,21 +356,6 @@
       </div>
     </div>
     {% endblock work-form-repeal %}
-    <div class="form-row">
-      <div class="form-group col-md-4">
-        <label for="{{ form.as_at_date_override.id_for_label }}">{{ form.as_at_date_override.label }}</label>
-        <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date_override.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date_override.html_name }}" value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
-        <p class="form-text text-muted">Date up to which this work was last checked for updates.
-          Only set this if it should be different from {{ place.name }}'s as-at date.</p>
-        {% if form.as_at_date_override.errors %}
-          <div class="text-danger">
-            {% for error in form.as_at_date_override.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-    </div>
   </form>
 
   {% if work.pk %}

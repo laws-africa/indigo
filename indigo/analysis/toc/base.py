@@ -562,6 +562,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         # e.g. section 1–3; section 5–8
         elif self.previous_in_run:
             self.end_current()
+            self.previous_in_run = False
 
     def make_beautiful(self, provisions, assess_against):
         self.current_run = []

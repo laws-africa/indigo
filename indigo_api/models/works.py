@@ -456,7 +456,7 @@ class Work(WorkMixin, models.Model):
         """
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
-    def computed_as_at_date(self):
+    def as_at_date(self):
         # unless explicitly set on the work,
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.

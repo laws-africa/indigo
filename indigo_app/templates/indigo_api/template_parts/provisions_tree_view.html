@@ -4,19 +4,14 @@
     <li class="provisions-list__item">
       <div class="provisions-list__item__body">
         <label>
-          {% if prov.visible %}
-            <input value="{{ prov.id }}"
-                   type="checkbox"
-                   {% if prov.id in checked %}checked{% endif %}
-                   name="provisions"
-                   class="mr-2"
-            />
-          {% else %}
-            <input type="checkbox"
-                   disabled
-                   class="mr-2"
-            >
-          {% endif %}
+          <input type="checkbox" class="mr-2"
+            {% if prov.visible %}
+              value="{{ prov.id }}" name="provisions"
+              {% if prov.id in checked %}checked{% endif %}
+            {% else %}
+              disabled
+            {% endif %}
+          >
         </label>
         <div class="provision-title">
           {{ prov.title }}

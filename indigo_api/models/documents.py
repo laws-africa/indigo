@@ -212,13 +212,17 @@ class DocumentMixin(object):
         return exporter.render(self, element=element)
 
     def to_pdf(self, **kwargs):
-        from indigo_api.exporters import PDFExporter
-        return PDFExporter().render(self, **kwargs)
+        # from indigo_api.exporters import PDFExporter
+        # return PDFExporter().render(self, **kwargs)
+        pdf_exporter = plugins.for_document('pdf-exporter', self)
+        return pdf_exporter.render(self, **kwargs)
 
     def element_to_pdf(self, element):
         """ Render a child element of this document into PDF. """
-        from indigo_api.exporters import PDFExporter
-        return PDFExporter().render(self, element=element)
+        # from indigo_api.exporters import PDFExporter
+        # return PDFExporter().render(self, element=element)
+        pdf_exporter = plugins.for_document('pdf-exporter', self)
+        return pdf_exporter.render(self, element=element)
 
 
 class Document(DocumentMixin, models.Model):

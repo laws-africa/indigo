@@ -9,6 +9,7 @@ from django.conf import settings
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 
+from indigo.plugins import plugins
 from indigo_api.exporters import HTMLExporter, PDFExporter, EPUBExporter
 from .serializers import NoopSerializer
 
@@ -119,14 +120,14 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
     media_type = 'application/pdf'
     format = 'pdf'
     serializer_class = NoopSerializer
-    exporter_class = PDFExporter
+    renderer_context = None
 
     # these are used by the document download menu
     icon = 'far fa-file-pdf'
     title = 'PDF'
 
     def __init__(self, *args, **kwargs):
-        super(PDFRenderer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.cache = caches['default']
 
     def render(self, data, media_type=None, renderer_context=None):
@@ -166,6 +167,10 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
             self.cache.set(key, pdf)
 
         return pdf
+
+    def get_exporter(self, *args, **kwargs):
+        exporter = plugins.for_locale('pdf-exporter')
+        return exporter
 
     def cache_key(self, data, view):
         if hasattr(data, 'frbr_uri'):

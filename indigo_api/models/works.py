@@ -324,6 +324,7 @@ class Work(WorkMixin, models.Model):
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
 
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
@@ -456,8 +457,12 @@ class Work(WorkMixin, models.Model):
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
+        # unless explicitly set on the work,
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.
+        if self.as_at_date_override:
+            return self.as_at_date_override
+
         q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
 
         dates = [

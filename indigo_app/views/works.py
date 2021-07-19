@@ -473,7 +473,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline(self.work)
-        context['consolidation_date'] = self.work.as_at_date or self.place.settings.as_at_date or datetime.date.today()
+        context['consolidation_date'] = self.work.as_at_date_override or self.place.settings.as_at_date or datetime.date.today()
         return context
 
 

@@ -460,8 +460,8 @@ class Work(WorkMixin, models.Model):
         # unless explicitly set on the work,
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.
-        if self.as_at_date:
-            return self.as_at_date
+        if self.as_at_date_override:
+            return self.as_at_date_override
 
         q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
 

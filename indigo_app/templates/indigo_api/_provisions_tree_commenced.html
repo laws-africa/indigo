@@ -2,9 +2,11 @@
   {% if prov.commenced or prov.children and not prov.all_descendants_same %}
     <li>
       {% if prov.commenced %}
-        <input type="checkbox" disabled checked>
+        <div class="item-indent">
+          <input type="checkbox" disabled checked>
+        </div>
       {% else %}
-        <div class="spacer"></div>
+        <div class="item-indent"></div>
       {% endif %}
       <div class="content">
         <span class="{% if prov.commenced %}text-body{% else %}text-black-50{% endif %}">

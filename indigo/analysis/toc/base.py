@@ -514,15 +514,15 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
             # e.g. a Chapter that isn't fully un/commenced
             elif p.container:
-                # if the id was explicitly given: Chapter 1 (in part);
-                if p.commenced == self.commenced:
+                # if the id was explicitly given and none of the children will be given: Chapter 1 (in part);
+                if p.commenced == self.commenced and p.all_descendants_opposite:
                     old_num = p.num
                     p.num += ' (in part)'
                     self.add_to_current(p)
                     p.num = old_num
                     self.end_current()
-                # if we're going to keep going: Chapter 1 (in part); Chapter 1, …
-                if not p.all_descendants_opposite or p.commenced != self.commenced:
+                # if we're going to keep going: Chapter 1, Part …
+                else:
                     self.add_to_current(p)
 
             # e.g. section with subsections

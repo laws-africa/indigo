@@ -130,6 +130,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         self.language = language
         self._toc_elements_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_elements)
         self._toc_deadends_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_deadends)
+        self.heading_text_path = etree.XPath(".//text()[not(ancestor::a:authorialNote)]", namespaces={'a': self.act.namespace})
 
     def determine_component(self, element):
         """ Determine the component element which contains +element+.
@@ -191,18 +192,13 @@ class TOCBuilderBase(LocaleBasedMatcher):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('eId')
 
-        def get_heading(element):
-            # collect text without descending into authorial notes
-            xpath = etree.XPath(".//text()[not(ancestor::a:authorialNote)]",
-                                namespaces={'a': self.act.namespace})
-            return ''.join(xpath(element.heading))
-
         # support for crossheadings in AKN 2.0
         if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
             type_ = 'crossheading'
 
         try:
-            heading = get_heading(element)
+            # collect text without descending into authorial notes
+            heading = ''.join(self.heading_text_path(element.heading))
         except AttributeError:
             heading = None
 

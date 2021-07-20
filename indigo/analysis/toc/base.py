@@ -495,6 +495,9 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if p.children and not p.all_descendants_same:
             # don't continue run if we're giving subprovisions
             end_at_next_add = True
+            # e.g. section 1-5; section 6(1)
+            if p.type in [r['type'] for r in self.current_run]:
+                self.end_current()
             for c in p.children:
                 add_to_subs(c, p.num)
 

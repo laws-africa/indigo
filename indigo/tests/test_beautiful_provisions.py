@@ -19,9 +19,11 @@ class BeautifulProvisionsTestCase(TestCase):
         items_1 = self.make_toc_elements('sec_1__subsec_1__list_1__item_', 'item', ['a', 'aA', 'b', 'c'])
         items_1[0].children = items_2
         subsections = self.make_toc_elements('sec_1__subsec_', 'subsection', range(1, 5))
+        sec7_subsections = self.make_toc_elements('sec_7__subsec_', 'subsection', range(1, 3))
         subsections[0].children = items_1
         sections = self.make_toc_elements('sec_', 'section', range(1, 8), basic_unit=True)
         sections[0].children = subsections
+        sections[6].children = sec7_subsections
         parts = self.make_toc_elements('chp_1__part_', 'part', ['A', 'B'], with_brackets=False)
         parts[0].children = sections[:3]
         parts[1].children = sections[3:5]
@@ -120,7 +122,7 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_1__subsec_2', 'sec_1__subsec_3', 'sec_1__subsec_4',
             'sec_2', 'sec_3',
             'chp_1__part_B', 'sec_4', 'sec_5',
-            'chp_2', 'sec_6', 'sec_7',
+            'chp_2', 'sec_6', 'sec_7', 'sec_7__subsec_1', 'sec_7__subsec_2',
         ]
         self.beautifier.commenced = True
         self.assertEqual('Chapter 1 (section 1–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
@@ -151,7 +153,7 @@ class BeautifulProvisionsTestCase(TestCase):
         provision_ids = [
             'sec_2', 'sec_3',
             'chp_1__part_B', 'sec_4', 'sec_5',
-            'chp_2', 'sec_6', 'sec_7'
+            'chp_2', 'sec_6', 'sec_7', 'sec_7__subsec_1', 'sec_7__subsec_2'
         ]
         self.beautifier.commenced = True
         self.assertEqual('Chapter 1, Part A, section 2–3; Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
@@ -403,6 +405,13 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, section 1(1)(b); Part B, section 4', self.run_nested(provision_ids))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A, section 1(1)(b); Part B, section 4', self.run_nested(provision_ids))
+
+        # If a basic unit isn't fully commenced, don't end up with section 6–7(1)
+        provision_ids = ['sec_6', 'sec_7__subsec_1']
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 2, section 6; section 7(1)', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 2, section 6; section 7(1)', self.run_nested(provision_ids))
 
     def run_lonely(self, provision_ids):
         lonely_item = self.make_toc_elements('item_', 'item', ['xxx'])[0]

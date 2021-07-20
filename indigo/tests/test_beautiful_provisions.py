@@ -37,7 +37,7 @@ class BeautifulProvisionsTestCase(TestCase):
                 return f'{n}.'
             elif with_brackets:
                 return f'({n})'
-            return n
+            return f'{n}'
 
         return [TOCElement(
             element=None, component=None, children=[], type_=type,
@@ -157,6 +157,15 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, section 2–3; Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A, section 2–3; Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
+
+    def test_nested_mix(self):
+        provision_ids = [
+            'sec_1__subsec_1', 'sec_6',
+        ]
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 1, Part A, section 1(1); Chapter 2, section 6', self.run_nested(provision_ids))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1, Part A, section 1(1); Chapter 2, section 6', self.run_nested(provision_ids))
 
     def test_nested_partial_containers(self):
         # Chapter 1 is mentioned regardless because it's given

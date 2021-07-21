@@ -451,11 +451,18 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         """ Adds a description of all basic units in a container to the container's `num`.
         e.g. Part A's `num`: 'A' --> 'A (section 1–3)'
         """
-        # get all the basic units in the container
+        # get all the basic units in the container, but don't look lower than needed
         basics = []
-        for c in descend_toc_pre_order(p.children):
-            if c.basic_unit:
-                self.add_to_run(c, basics)
+        def look_for_basics(prov, basics):
+            if prov.basic_unit:
+                self.add_to_run(prov, basics)
+            elif prov.container:
+                for c in prov.children:
+                    look_for_basics(c, basics)
+
+        # we don't need to check if p itself is a basic unit because it must be a container
+        for c in p.children:
+            look_for_basics(c, basics)
 
         p.num += f' ({self.stringify_run(basics)})' if basics else ''
 

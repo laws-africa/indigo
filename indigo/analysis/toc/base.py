@@ -1,4 +1,6 @@
 import re
+from functools import lru_cache
+
 from lxml import etree
 
 from django.utils.translation import override, ugettext as _
@@ -18,6 +20,19 @@ _('Part')
 _('Section')
 _('Preface')
 _('Preamble')
+
+
+@lru_cache(maxsize=None)
+def type_title(typ, language):
+    """ Title for this type of TOC item, translated.
+
+    language is a django language code. It is only used for caching key purposes. It is assumed
+    that the django language has been set to this language already.
+
+    This can be called 10,000s of times when building a TOC, but there are only a handful
+    of possible item types, so they are cached for performance.
+    """
+    return _(typ.capitalize())
 
 
 def descend_toc_pre_order(items):
@@ -261,7 +276,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         if item.heading:
             title = item.heading
         else:
-            title = _(item.type.capitalize())
+            title = type_title(item.type, self.language)
             if item.num:
                 title += ' ' + item.num
 

@@ -467,9 +467,9 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         p.num += f' ({self.stringify_run(basics)})' if basics else ''
 
     def stash_current(self):
-        # TODO: comma-separate runs in stash
-        self.current_stash += self.current_run
-        self.current_run = []
+        if self.current_run:
+            self.current_stash.append(self.current_run)
+            self.current_run = []
 
     def add_to_current(self, p, all_basic_units=False):
         if all_basic_units:
@@ -482,9 +482,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             self.runs.append(self.stringify_run(self.current_run))
             self.current_run = []
         elif self.current_stash:
-            # TODO: comma-separate runs in stash: section 1, section 3–6
-            # self.runs.append(', '.join([self.stringify_run(r) for r in self.current_stash]))
-            self.runs.append(self.stringify_run(self.current_stash))
+            self.runs.append(', '.join([self.stringify_run(r) for r in self.current_stash]))
             self.current_stash = []
 
         self.previous_in_run = False
@@ -513,6 +511,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if p.children and not p.all_descendants_same:
             # don't continue run if we're giving subprovisions
             end_at_next_add = True
+            self.stash_next = True
             # e.g. section 1-5, section 6(1)
             if p.type in [r['type'] for r in self.current_run]:
                 self.stash_current()
@@ -524,6 +523,10 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
         if end_at_next_add:
             self.stash_current()
+        elif self.stash_next:
+            self.stash_current()
+            self.stash_next = False
+
 
     def process_provision(self, p):
         # start processing?
@@ -577,6 +580,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.current_stash = []
         self.runs = []
         self.previous_in_run = False
+        self.stash_next = False
 
         self.decorate_provisions(provisions, assess_against)
 

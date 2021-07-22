@@ -428,7 +428,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
     def stringify_run(self, run):
         # first (could be only) item, e.g. 'section 1'
-        run_str = f"{run[0]['type']} {run[0]['num']}"
+        run_str = f"{run[0]['type']} {run[0]['num']}" if run[0]['num'] else run[0]['type']
         # common case: e.g. section 1–5 (all the same type)
         if len(run) > 1 and not any(r['new_run'] for r in run):
             run_str += f"–{run[-1]['num']}"
@@ -442,7 +442,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             # get all e.g. articles, then all e.g. regulations
             for subsequent_type in [r['type'] for r in run if r['new_run']]:
                 this_type = [r for r in run if r['type'] == subsequent_type]
-                run_str += f", {subsequent_type} {this_type[0]['num']}"
+                run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
                 run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
 
         return run_str
@@ -451,13 +451,25 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         """ Adds a description of all basic units in a container to the container's `num`.
         e.g. Part A's `num`: 'A' --> 'A (section 1–3)'
         """
-        # get all the basic units in the container
+        # get all the basic units in the container, but don't look lower than needed
         basics = []
-        for c in descend_toc_pre_order(p.children):
-            if c.basic_unit:
-                self.add_to_run(c, basics)
+        def look_for_basics(prov, basics):
+            if prov.basic_unit:
+                self.add_to_run(prov, basics)
+            elif prov.container:
+                for c in prov.children:
+                    look_for_basics(c, basics)
+
+        # we don't need to check if p itself is a basic unit because it must be a container
+        for c in p.children:
+            look_for_basics(c, basics)
 
         p.num += f' ({self.stringify_run(basics)})' if basics else ''
+
+    def stash_current(self):
+        if self.current_run:
+            self.current_stash.append(self.current_run)
+            self.current_run = []
 
     def add_to_current(self, p, all_basic_units=False):
         if all_basic_units:
@@ -469,7 +481,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if self.current_run:
             self.runs.append(self.stringify_run(self.current_run))
             self.current_run = []
-            self.previous_in_run = False
+        elif self.current_stash:
+            self.runs.append(', '.join([self.stringify_run(r) for r in self.current_stash]))
+            self.current_stash = []
+
+        self.previous_in_run = False
 
     def process_basic_unit(self, p):
         """ Adds the subprovisions that have also (not) commenced to the basic unit's `num`,
@@ -495,6 +511,10 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if p.children and not p.all_descendants_same:
             # don't continue run if we're giving subprovisions
             end_at_next_add = True
+            self.stash_next = True
+            # e.g. section 1-5, section 6(1)
+            if p.type in [r['type'] for r in self.current_run]:
+                self.stash_current()
             for c in p.children:
                 add_to_subs(c, p.num)
 
@@ -502,7 +522,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.add_to_current(p)
 
         if end_at_next_add:
-            self.end_current()
+            self.stash_current()
+        elif self.stash_next:
+            self.stash_current()
+            self.stash_next = False
+
 
     def process_provision(self, p):
         # start processing?
@@ -514,15 +538,15 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
             # e.g. a Chapter that isn't fully un/commenced
             elif p.container:
-                # if the id was explicitly given: Chapter 1 (in part);
-                if p.commenced == self.commenced:
+                # if the id was explicitly given and none of the children will be given: Chapter 1 (in part);
+                if p.commenced == self.commenced and p.all_descendants_opposite:
                     old_num = p.num
                     p.num += ' (in part)'
                     self.add_to_current(p)
                     p.num = old_num
                     self.end_current()
-                # if we're going to keep going: Chapter 1 (in part); Chapter 1, …
-                if not p.all_descendants_opposite or p.commenced != self.commenced:
+                # if we're going to keep going: Chapter 1, Part …
+                else:
                     self.add_to_current(p)
 
             # e.g. section with subsections
@@ -547,15 +571,16 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                 if p.container:
                     self.end_current()
 
-        # e.g. section 1–3; section 5–8
-        elif self.previous_in_run:
-            self.end_current()
-            self.previous_in_run = False
+        # e.g. section 1–3, section 5–8
+        elif self.previous_in_run and p.basic_unit:
+            self.stash_current()
 
     def make_beautiful(self, provisions, assess_against):
         self.current_run = []
+        self.current_stash = []
         self.runs = []
         self.previous_in_run = False
+        self.stash_next = False
 
         self.decorate_provisions(provisions, assess_against)
 

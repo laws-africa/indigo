@@ -3,7 +3,6 @@ import os
 import logging
 import re
 import datetime
-from functools import lru_cache
 
 from actstream import action
 from django.conf import settings

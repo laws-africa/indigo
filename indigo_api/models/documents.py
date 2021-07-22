@@ -163,10 +163,11 @@ class DocumentMixin(object):
 
         return search_toc(self.table_of_contents())
 
-    @lru_cache(maxsize=1)
     def table_of_contents(self):
-        builder = plugins.for_document('toc', self)
-        return builder.table_of_contents_for_document(self)
+        if not hasattr(self, '_toc'):
+            builder = plugins.for_document('toc', self)
+            self._toc = builder.table_of_contents_for_document(self)
+        return self._toc
 
     def all_provisions(self):
         ids = []

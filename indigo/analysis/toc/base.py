@@ -300,8 +300,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         return items
 
-    def insert_commenceable_provisions(self, doc, provisions, id_set):
-        toc = self.table_of_contents_for_document(doc)
+    def insert_commenceable_provisions(self, toc, provisions, id_set):
         items = self.commenceable_items(toc)
         self.insert_provisions(provisions, id_set, items)
 

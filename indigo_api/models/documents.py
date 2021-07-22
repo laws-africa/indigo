@@ -3,6 +3,7 @@ import os
 import logging
 import re
 import datetime
+from functools import lru_cache
 
 from actstream import action
 from django.conf import settings
@@ -162,6 +163,7 @@ class DocumentMixin(object):
 
         return search_toc(self.table_of_contents())
 
+    @lru_cache(maxsize=1)
     def table_of_contents(self):
         builder = plugins.for_document('toc', self)
         return builder.table_of_contents_for_document(self)

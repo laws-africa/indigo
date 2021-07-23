@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from dotmap import DotMap
 from django.test import TestCase
@@ -191,6 +190,20 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, subpart, section 1, section 3', self.run_nested(provision_ids, chapters))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A, subpart, section 1, section 3', self.run_nested(provision_ids, chapters))
+
+        provision_ids = [
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_A',
+            'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_B',
+            'sec_1__subsec_1__list_1__item_aA',
+            'sec_3',
+            'sec_5',
+            'chp_2', 'sec_6'
+        ]
+        self.beautifier.commenced = True
+        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
+        self.beautifier.commenced = False
+        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
+
 
 
     def test_nested_mix(self):

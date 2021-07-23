@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from copy import deepcopy
 from actstream import action
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -276,7 +277,7 @@ class WorkMixin(object):
             if plugin:
                 if doc.id not in self._toc_cache:
                     self._toc_cache[doc.id] = doc.table_of_contents()
-                toc = self._toc_cache[doc.id]
+                toc = deepcopy(self._toc_cache[doc.id])
                 plugin.insert_commenceable_provisions(toc, provisions, id_set)
 
         return provisions

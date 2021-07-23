@@ -541,7 +541,6 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             self.stash_current()
             self.stash_next = False
 
-
     def process_provision(self, p):
         # start processing?
         if p.commenced == self.commenced or (p.children and not p.all_descendants_same):

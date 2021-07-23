@@ -492,13 +492,12 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.add_to_run(p, self.current_run)
 
     def end_current(self):
-        if self.current_run:
-            self.runs.append(self.stringify_run(self.current_run))
-            self.current_run = []
-        elif self.current_stash:
-            self.runs.append(', '.join([self.stringify_run(r) for r in self.current_stash]))
-            self.current_stash = []
-
+        stash = ', '.join([self.stringify_run(r) for r in self.current_stash]) if self.current_stash else None
+        run = self.stringify_run(self.current_run) if self.current_run else None
+        if stash or run:
+            self.runs.append(', '.join([x for x in [stash, run] if x]))
+        self.current_stash = []
+        self.current_run = []
         self.previous_in_run = False
 
     def process_basic_unit(self, p):

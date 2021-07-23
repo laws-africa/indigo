@@ -2,6 +2,8 @@
 import json
 import logging
 from collections import Counter
+from copy import deepcopy
+
 from itertools import chain
 from datetime import timedelta
 
@@ -309,14 +311,14 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     beautifier = None
 
     def get_context_data(self, **kwargs):
+        provisions = self.work.all_commenceable_provisions()
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        context['provisions'] = provisions = self.work.all_commenceable_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
         context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
         context['total_provisions_count'] = sum(1 for _ in descend_toc_pre_order(provisions))
-        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions_count'])
+        context['everything_commenced'] = context['has_all_provisions'] or (provisions and not context['uncommenced_provisions_count'])
 
         self.beautifier = plugins.for_locale(
             'commencements-beautifier', self.country.code, None,
@@ -325,7 +327,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         # decorate all provisions on the work
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
-        self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
+        rich_provisions = deepcopy(provisions)
+        self.beautifier.decorate_provisions(rich_provisions, commenced_provision_ids)
+        context['provisions'] = rich_provisions
 
         # decorate provisions on each commencement
         for commencement in commencements:
@@ -335,21 +339,21 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def decorate_commencement_provisions(self, commencement, commencements):
         # provisions from all documents up to this commencement's date
-        provisions = self.work.all_commenceable_provisions(commencement.date)
+        rich_provisions = deepcopy(self.work.all_commenceable_provisions(commencement.date))
         # provision ids commenced by everything else
         commenced_provision_ids = set(p_id for comm in commencements
                                       if comm != commencement
                                       for p_id in comm.provisions)
 
         # commencement status for displaying provisions on commencement detail
-        self.beautifier.decorate_provisions(provisions, commencement.provisions)
+        self.beautifier.decorate_provisions(rich_provisions, commencement.provisions)
 
         # visibility for what to show in commencement form
-        for p in descend_toc_post_order(provisions):
+        for p in descend_toc_post_order(rich_provisions):
             p.visible = p.id not in commenced_provision_ids
             p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 
-        return provisions
+        return rich_provisions
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

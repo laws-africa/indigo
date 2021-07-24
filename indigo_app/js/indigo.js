@@ -9,7 +9,7 @@ class IndigoApp {
     this.registerVueComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
 
-    this.createComponents();
+    this.createVueComponents(document);
     window.dispatchEvent(new Event('indigo.components-created'));
   }
 
@@ -22,18 +22,26 @@ class IndigoApp {
     }
   }
 
-  createComponents () {
+  /**
+   * Create Vue-based components on this root and its descendants.
+   * @param root
+   */
+  createVueComponents (root) {
     // create vue-based components
-    for (const element of document.querySelectorAll('[data-vue-component]')) {
-      const name = element.getAttribute('data-vue-component');
+    for (const element of root.querySelectorAll('[data-vue-component]')) {
+      this.createVueComponent(element);
+    }
+  }
 
-      if (this.Vue.options.components[name]) {
-        // create the component and attached it to the HTML element
-        const Component = this.Vue.extend(this.Vue.options.components[name]);
-        const vue = new Component({ el: element });
-        vue.$el.component = vue;
-        this.components.push(vue);
-      }
+  createVueComponent (element) {
+    const name = element.getAttribute('data-vue-component');
+
+    if (this.Vue.options.components[name]) {
+      // create the component and attached it to the HTML element
+      const Component = this.Vue.extend(this.Vue.options.components[name]);
+      const vue = new Component({ el: element });
+      vue.$el.component = vue;
+      this.components.push(vue);
     }
   }
 }

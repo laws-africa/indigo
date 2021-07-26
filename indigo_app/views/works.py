@@ -2,7 +2,6 @@
 import json
 import logging
 from collections import Counter
-from copy import deepcopy
 
 from itertools import chain
 from datetime import timedelta
@@ -311,8 +310,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     beautifier = None
 
     def get_context_data(self, **kwargs):
-        provisions = self.work.all_commenceable_provisions()
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
+        context['provisions'] = provisions = self.work.all_commenceable_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
@@ -327,9 +326,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         # decorate all provisions on the work
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
-        rich_provisions = deepcopy(provisions)
-        self.beautifier.decorate_provisions(rich_provisions, commenced_provision_ids)
-        context['provisions'] = rich_provisions
+        self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
 
         # decorate provisions on each commencement
         for commencement in commencements:
@@ -339,7 +336,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def decorate_commencement_provisions(self, commencement, commencements):
         # provisions from all documents up to this commencement's date
-        rich_provisions = deepcopy(self.work.all_commenceable_provisions(commencement.date))
+        rich_provisions = self.work.all_commenceable_provisions(commencement.date)
         # provision ids commenced by everything else
         commenced_provision_ids = set(p_id for comm in commencements
                                       if comm != commencement

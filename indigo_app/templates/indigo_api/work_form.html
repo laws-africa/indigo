@@ -356,6 +356,19 @@
       </div>
     </div>
     {% endblock work-form-repeal %}
+
+    {% block work-form-place %}
+    <div class="card mb-3" id="place">
+      <h5 class="card-header">Place</h5>
+      <div class="card-body">
+
+        <div class="form-row">
+          <button class="btn btn-outline-primary change-place float-right" type="button">Change this work's place</button>
+        </div>
+
+      </div>
+    </div>
+    {% endblock work-form-place %}
   </form>
 
   {% if work.pk %}

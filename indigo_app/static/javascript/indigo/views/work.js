@@ -28,6 +28,7 @@
       'submit #edit-work-form': 'onSubmit',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
+      'click .change-place': 'changePlace',
       'click .choose-parent': 'changeParent',
       'click .delete-parent': 'deleteParent',
       'click .change-commencing-work': 'changeCommencingWork',
@@ -205,6 +206,25 @@
         this.$('.work-repeal-view').html(this.workRepealTemplate({}));
         this.$('#id_work-repealed_date').removeAttr('required');
       }
+    },
+
+    changePlace: function() {
+      // TODO: only do something if country and/or locality has changed
+      var chooser = new Indigo.PlaceChooserView({
+            country: this.model.get('country'),
+            locality: this.model.get('locality') || '-',
+          }),
+          self = this;
+
+      if (this.model.get('repealed_by')) {
+        chooser.choose(Indigo.works.get(this.model.get('repealed_by')));
+      }
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.model.set('repealed_by', chosen);
+          self.model.set('repealed_date', chosen.get('commencement_date') || chosen.get('publication_date'));
+        }
+      });
     },
 
     deleteCommencingWork: function(e) {

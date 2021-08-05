@@ -148,7 +148,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         request = renderer_context['request']
-        exporter = plugins.for_locale('pdf-exporter')
+        exporter = self.get_exporter()
         exporter.resolver = resolver_url(request, request.GET.get('resolver'))
 
         if isinstance(data, list):
@@ -167,6 +167,10 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
             self.cache.set(key, pdf)
 
         return pdf
+
+    def get_exporter(self, *args, **kwargs):
+        exporter = plugins.for_locale('pdf-exporter')
+        return exporter
 
     def cache_key(self, data, view):
         if hasattr(data, 'frbr_uri'):
@@ -200,6 +204,10 @@ class EPUBRenderer(PDFRenderer, ExporterMixin):
     # these are used by the document download menu
     icon = 'fas fa-book'
     title = 'ePUB'
+
+    def get_exporter(self):
+        exporter = ExporterMixin.get_exporter(self)
+        return exporter
 
     def render(self, data, media_type=None, renderer_context=None):
         self.renderer_context = renderer_context

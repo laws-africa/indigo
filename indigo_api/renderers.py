@@ -148,7 +148,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         request = renderer_context['request']
-        exporter = self.get_exporter()
+        exporter = plugins.for_locale('pdf-exporter')
         exporter.resolver = resolver_url(request, request.GET.get('resolver'))
 
         if isinstance(data, list):
@@ -167,10 +167,6 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
             self.cache.set(key, pdf)
 
         return pdf
-
-    def get_exporter(self, *args, **kwargs):
-        exporter = plugins.for_locale('pdf-exporter')
-        return exporter
 
     def cache_key(self, data, view):
         if hasattr(data, 'frbr_uri'):

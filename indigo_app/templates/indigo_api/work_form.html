@@ -363,7 +363,25 @@
       <div class="card-body">
 
         <div class="form-row">
-          <button class="btn btn-outline-primary change-place float-right" type="button">Change this work's place</button>
+          <div class="form-group col-4">
+            <label for="work_country_id" class="required">{{ form.country.label }}</label>
+            <select id="work_country_id" class="form-control">
+              {% for val, label in form.fields.country.choices %}
+                <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group col-4">
+            <label for="work_locality_id">{{ form.locality.label }}</label>
+            <select id="work_locality_id" class="form-control">
+              <option value="">(none)</option>
+              {% for val, label in form.fields.locality.choices %}
+                <option value="{{ val }}" {% if val == form.locality.value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
         </div>
 
       </div>

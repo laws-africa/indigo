@@ -86,9 +86,11 @@
               </h6>
 
               {% if commencement.provisions %}
-                <ul class="provisions-list">
-                  {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
-                </ul>
+                <div class="treelist-wrapper">
+                  <ul>
+                    {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
+                  </ul>
+                </div>
               {% endif %}
             </div>
 
@@ -155,9 +157,11 @@
     <div class="card mt-5">
       <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
       <div class="card-body">
-        <ul class="provisions-list">
-          {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=provisions %}
-        </ul>
+        <div class="treelist-wrapper">
+          <ul>
+            {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=provisions %}
+          </ul>
+        </div>
       </div>
     </div>
   {% endif %}

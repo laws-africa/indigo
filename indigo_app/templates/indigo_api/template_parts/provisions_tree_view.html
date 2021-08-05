@@ -2,34 +2,30 @@
 
   {% if prov.visible or prov.visible_descendants %}
     <li class="provisions-list__item">
-      <div class="d-flex align-items-center justify-content-between">
-        <label class="mb-0">
-          {% if prov.visible %}
-            <input value="{{ prov.id }}"
-                   type="checkbox"
-                   {% if prov.id in checked %}checked{% endif %}
-                   name="provisions"
-                   class="mr-2"
-            />
-          {% else %}
-            <input
-                   type="checkbox"
-                   disabled
-                   class="mr-2"
-            />
-          {% endif %}
-          {{ prov.title }}
+      <div class="provisions-list__item__body">
+        <label>
+          <input type="checkbox" class="mr-2"
+            {% if prov.visible %}
+              value="{{ prov.id }}" name="provisions"
+              {% if prov.id in checked %}checked{% endif %}
+            {% else %}
+              disabled
+            {% endif %}
+          >
         </label>
+        <div class="provision-title">
+          {{ prov.title }}
+        </div>
         {% if prov.children %}
         <button class="expand-collapse-button"
                 type="button"
         >
-              <span class="expand-collapse-button__expand-icon">
-                <i class="fas fa-plus"></i>
-              </span>
+          <span class="expand-collapse-button__expand-icon">
+            <i class="fas fa-plus"></i>
+          </span>
           <span class="expand-collapse-button__collapse-icon">
-                <i class="fas fa-minus"></i>
-              </span>
+            <i class="fas fa-minus"></i>
+          </span>
         </button>
         {% endif %}
       </div>

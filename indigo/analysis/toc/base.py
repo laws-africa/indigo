@@ -1,4 +1,6 @@
 import re
+from functools import lru_cache
+
 from lxml import etree
 
 from django.utils.translation import override, ugettext as _
@@ -18,6 +20,19 @@ _('Part')
 _('Section')
 _('Preface')
 _('Preamble')
+
+
+@lru_cache(maxsize=None)
+def type_title(typ, language):
+    """ Title for this type of TOC item, translated.
+
+    language is a django language code. It is only used for caching key purposes. It is assumed
+    that the django language has been set to this language already.
+
+    This can be called 10,000s of times when building a TOC, but there are only a handful
+    of possible item types, so they are cached for performance.
+    """
+    return _(typ.capitalize())
 
 
 def descend_toc_pre_order(items):
@@ -130,6 +145,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         self.language = language
         self._toc_elements_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_elements)
         self._toc_deadends_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_deadends)
+        self.heading_text_path = etree.XPath(".//text()[not(ancestor::a:authorialNote)]", namespaces={'a': self.act.namespace})
 
     def determine_component(self, element):
         """ Determine the component element which contains +element+.
@@ -191,18 +207,13 @@ class TOCBuilderBase(LocaleBasedMatcher):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('eId')
 
-        def get_heading(element):
-            # collect text without descending into authorial notes
-            xpath = etree.XPath(".//text()[not(ancestor::a:authorialNote)]",
-                                namespaces={'a': self.act.namespace})
-            return ''.join(xpath(element.heading))
-
         # support for crossheadings in AKN 2.0
         if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
             type_ = 'crossheading'
 
         try:
-            heading = get_heading(element)
+            # collect text without descending into authorial notes
+            heading = ''.join(self.heading_text_path(element.heading))
         except AttributeError:
             heading = None
 
@@ -265,7 +276,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         if item.heading:
             title = item.heading
         else:
-            title = _(item.type.capitalize())
+            title = type_title(item.type, self.language)
             if item.num:
                 title += ' ' + item.num
 
@@ -289,8 +300,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         return items
 
-    def insert_commenceable_provisions(self, doc, provisions, id_set):
-        toc = self.table_of_contents_for_document(doc)
+    def insert_commenceable_provisions(self, toc, provisions, id_set):
         items = self.commenceable_items(toc)
         self.insert_provisions(provisions, id_set, items)
 
@@ -432,7 +442,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
     def stringify_run(self, run):
         # first (could be only) item, e.g. 'section 1'
-        run_str = f"{run[0]['type']} {run[0]['num']}"
+        run_str = f"{run[0]['type']} {run[0]['num']}" if run[0]['num'] else run[0]['type']
         # common case: e.g. section 1–5 (all the same type)
         if len(run) > 1 and not any(r['new_run'] for r in run):
             run_str += f"–{run[-1]['num']}"
@@ -446,7 +456,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             # get all e.g. articles, then all e.g. regulations
             for subsequent_type in [r['type'] for r in run if r['new_run']]:
                 this_type = [r for r in run if r['type'] == subsequent_type]
-                run_str += f", {subsequent_type} {this_type[0]['num']}"
+                run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
                 run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
 
         return run_str
@@ -455,13 +465,25 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         """ Adds a description of all basic units in a container to the container's `num`.
         e.g. Part A's `num`: 'A' --> 'A (section 1–3)'
         """
-        # get all the basic units in the container
+        # get all the basic units in the container, but don't look lower than needed
         basics = []
-        for c in descend_toc_pre_order(p.children):
-            if c.basic_unit:
-                self.add_to_run(c, basics)
+        def look_for_basics(prov, basics):
+            if prov.basic_unit:
+                self.add_to_run(prov, basics)
+            elif prov.container:
+                for c in prov.children:
+                    look_for_basics(c, basics)
+
+        # we don't need to check if p itself is a basic unit because it must be a container
+        for c in p.children:
+            look_for_basics(c, basics)
 
         p.num += f' ({self.stringify_run(basics)})' if basics else ''
+
+    def stash_current(self):
+        if self.current_run:
+            self.current_stash.append(self.current_run)
+            self.current_run = []
 
     def add_to_current(self, p, all_basic_units=False):
         if all_basic_units:
@@ -470,10 +492,13 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.add_to_run(p, self.current_run)
 
     def end_current(self):
-        if self.current_run:
-            self.runs.append(self.stringify_run(self.current_run))
-            self.current_run = []
-            self.previous_in_run = False
+        stash = ', '.join([self.stringify_run(r) for r in self.current_stash]) if self.current_stash else None
+        run = self.stringify_run(self.current_run) if self.current_run else None
+        if stash or run:
+            self.runs.append(', '.join([x for x in [stash, run] if x]))
+        self.current_stash = []
+        self.current_run = []
+        self.previous_in_run = False
 
     def process_basic_unit(self, p):
         """ Adds the subprovisions that have also (not) commenced to the basic unit's `num`,
@@ -499,6 +524,10 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if p.children and not p.all_descendants_same:
             # don't continue run if we're giving subprovisions
             end_at_next_add = True
+            self.stash_next = True
+            # e.g. section 1-5, section 6(1)
+            if p.type in [r['type'] for r in self.current_run]:
+                self.stash_current()
             for c in p.children:
                 add_to_subs(c, p.num)
 
@@ -506,7 +535,10 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.add_to_current(p)
 
         if end_at_next_add:
-            self.end_current()
+            self.stash_current()
+        elif self.stash_next:
+            self.stash_current()
+            self.stash_next = False
 
     def process_provision(self, p):
         # start processing?
@@ -518,15 +550,15 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
             # e.g. a Chapter that isn't fully un/commenced
             elif p.container:
-                # if the id was explicitly given: Chapter 1 (in part);
-                if p.commenced == self.commenced:
+                # if the id was explicitly given and none of the children will be given: Chapter 1 (in part);
+                if p.commenced == self.commenced and p.all_descendants_opposite:
                     old_num = p.num
                     p.num += ' (in part)'
                     self.add_to_current(p)
                     p.num = old_num
                     self.end_current()
-                # if we're going to keep going: Chapter 1 (in part); Chapter 1, …
-                if not p.all_descendants_opposite or p.commenced != self.commenced:
+                # if we're going to keep going: Chapter 1, Part …
+                else:
                     self.add_to_current(p)
 
             # e.g. section with subsections
@@ -551,14 +583,16 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                 if p.container:
                     self.end_current()
 
-        # e.g. section 1–3; section 5–8
-        elif self.previous_in_run:
-            self.end_current()
+        # e.g. section 1–3, section 5–8
+        elif self.previous_in_run and p.basic_unit:
+            self.stash_current()
 
     def make_beautiful(self, provisions, assess_against):
         self.current_run = []
+        self.current_stash = []
         self.runs = []
         self.previous_in_run = False
+        self.stash_next = False
 
         self.decorate_provisions(provisions, assess_against)
 

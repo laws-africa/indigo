@@ -30,7 +30,8 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
     # To get the provisions relevant to each row of the table,
     # use the earlier of the document's expression date and the relevant commencement's date
     date = document.expression_date
-    if commencement and date > commencement.date:
+    # commencements can be dateless
+    if commencement and commencement.date and date > commencement.date:
         date = commencement.date
 
     provisions = deepcopy(document.work.all_commenceable_provisions(date))

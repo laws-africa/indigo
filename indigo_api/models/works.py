@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from copy import deepcopy
 from actstream import action
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -253,6 +254,10 @@ class WorkMixin(object):
             Each TOCElement object has a (potentially empty) list of `children`.
             If `date` is provided, only provisions in expressions up to and including that date are included.
         """
+        if getattr(self, '_toc_cache', None) is None:
+            # cache the TOCs for the various documents because they are expensive to compute
+            self._toc_cache = {}
+
         # gather documents and sort so that we consider primary language documents first
         if date:
             documents = self.expressions().filter(expression_date__lte=date)
@@ -270,7 +275,10 @@ class WorkMixin(object):
         for doc in documents:
             plugin = plugins.for_document('toc', doc)
             if plugin:
-                plugin.insert_commenceable_provisions(doc, provisions, id_set)
+                if doc.id not in self._toc_cache:
+                    self._toc_cache[doc.id] = doc.table_of_contents()
+                toc = deepcopy(self._toc_cache[doc.id])
+                plugin.insert_commenceable_provisions(toc, provisions, id_set)
 
         return provisions
 
@@ -324,6 +332,7 @@ class Work(WorkMixin, models.Model):
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
 
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
@@ -456,8 +465,12 @@ class Work(WorkMixin, models.Model):
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
+        # unless explicitly set on the work,
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.
+        if self.as_at_date_override:
+            return self.as_at_date_override
+
         q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
 
         dates = [

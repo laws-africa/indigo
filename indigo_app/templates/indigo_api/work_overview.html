@@ -80,6 +80,16 @@
                       {% endif %}
                     </dd>
 
+                    <dt>Up to date as at</dt>
+                    <dd>
+                      {{ work.as_at_date|date:'Y-m-d' }}
+                      {% if work.as_at_date_override %}
+                        <span class="text-muted" title="Set explicitly on this work">
+                          <i class="fa fa-info-circle"></i> Overridden
+                        </span>
+                      {% endif %}
+                    </dd>
+
                     {% regroup work.taxonomies.all by vocabulary as topic_groups %}
                     {% if topic_groups %}
                       {% for topic in topic_groups %}

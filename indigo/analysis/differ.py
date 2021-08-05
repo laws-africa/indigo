@@ -196,6 +196,8 @@ class AttributeDiffer:
             'html_new': html.escape(x),
         } for x in old]
 
+        # we're going to modify this
+        old = list(old)
         remove_offset = 0
 
         for patch in jsonpatch.make_patch(old, new):
@@ -210,6 +212,8 @@ class AttributeDiffer:
                     'html_old': '',
                     'html_new': "<ins>{}</ins>".format(html.escape(v)),
                 })
+                # add a fake entry to old, because subsequent references will assume it has happened
+                old.insert(index, None)
             elif patch['op'] == 'replace':
                 old_v = old[index]
                 new_v = patch['value']

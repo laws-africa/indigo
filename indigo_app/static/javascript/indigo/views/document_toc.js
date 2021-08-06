@@ -219,6 +219,22 @@
       }
 
       var root = document.createElement('ol');
+
+      function formatItems (item) {
+        return ({
+          title: item.title,
+          onTitle: function () { console.log('rusty'); },
+          children: item.children && item.children.length ? item.children.map(formatItems) : [],
+        });
+      }
+
+      var tocItems = this.roots.map(formatItems);
+      var TOCController = window.vueData.components.TOCController;
+      if(TOCController) {
+        TOCController.items = [...tocItems];
+        TOCController.expandAll();
+      }
+
       this.roots.forEach(function(x) { renderItem(root, x); });
       this.$el.empty().append(root);
     },

@@ -78,6 +78,7 @@ class Country(models.Model):
     def as_json(self):
         return {
             'name': self.name,
+            'id': self.pk,
             'localities': {loc.code: loc.name for loc in self.localities.all()},
             'publications': [pub.name for pub in self.publication_set.all()],
         }

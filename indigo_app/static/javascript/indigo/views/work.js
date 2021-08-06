@@ -84,15 +84,28 @@
         observe: 'country',
         onSet: function(val) {
           // trigger a redraw of the localities, using this country
-          // TODO: use country id for form, country code for FRBR URI
+          // use country code, not id, for frbr_uri
+          val = this.countryCodeFromId(val);
           this.country = val;
           this.model.set('locality', null);
           this.model.trigger('change:locality', this.model);
           return val;
         },
+        onGet: function(val) {
+          // use country id, not code, in work form
+          return Indigo.countries[val].id.toString();
+        },
       },
       '#work_locality': {
         observe: 'locality',
+        onSet: function(val) {
+          // TODO: use locality code, not id, for frbr_uri
+          return val;
+        },
+        onGet: function(val) {
+          // TODO: use locality id, not code, in work form
+          return val;
+        },
         selectOptions: {
           collection: function() {
             var country = Indigo.countries[this.country || this.model.get('country')];
@@ -106,6 +119,14 @@
       '#work_actor': 'actor',
       '#work_date': 'date',
       '#work_number': 'number',
+    },
+
+    countryCodeFromId: function(countryId) {
+      for (var c in Indigo.countries) {
+        if(Indigo.countries[c].id.toString() === countryId) {
+          return c;
+        }
+      }
     },
 
     initialize: function(options) {

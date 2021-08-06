@@ -364,20 +364,20 @@
 
         <div class="form-row">
           <div class="form-group col-4">
-            <label for="work_country_id" class="required">{{ form.country.label }}</label>
-            <select id="work_country_id" class="form-control">
+            <label for="work_country" class="required">{{ form.country.label }}</label>
+            <select id="work_country" class="form-control">
               {% for val, label in form.fields.country.choices %}
-                <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %} name="{{ form.country.html_name }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>
 
           <div class="form-group col-4">
-            <label for="work_locality_id">{{ form.locality.label }}</label>
-            <select id="work_locality_id" class="form-control">
+            <label for="work_locality">{{ form.locality.label }}</label>
+            <select id="work_locality" class="form-control">
               <option value="">(none)</option>
               {% for val, label in form.fields.locality.choices %}
-                <option value="{{ val }}" {% if val == form.locality.value %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ val }}" {% if val == form.locality.value %}selected{% endif %} name="{{ form.locality.html_name }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>

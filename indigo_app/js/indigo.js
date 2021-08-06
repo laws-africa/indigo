@@ -5,6 +5,10 @@ class IndigoApp {
   setup () {
     this.components = [];
     this.Vue = Vue;
+    window.vueData = {
+      Vue,
+      components: {}
+    };
 
     this.registerVueComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
@@ -42,6 +46,7 @@ class IndigoApp {
       const vue = new Component({ el: element });
       vue.$el.component = vue;
       this.components.push(vue);
+      window.vueData.components[name] = vue;
     }
   }
 }

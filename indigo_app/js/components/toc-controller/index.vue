@@ -1,28 +1,41 @@
 <template>
-  <div class="toc">
-    <div class="toc__input-wrapper">
-      <input v-model="titleQuery" placeholder="Search by title"/>
-      <button @click="clearTitleQuery"
-              :disabled="!titleQuery"
-              class="toc__input-wrapper-clr-btn">
-        X
-      </button>
+  <div data-id="toc-controller" class="toc">
+    <div class="input-group mb-2">
+      <input type="text"
+             class="form-control form-control-sm"
+             placeholder="Search by title"
+             v-model="titleQuery"
+      >
+      <div class="input-group-prepend">
+        <button class="btn btn-sm btn-secondary"
+                type="button"
+                @click="clearTitleQuery"
+                :disabled="!titleQuery"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
-    <div class="toc__action-buttons">
-      <button @click="expandAll">Expand All</button>
-      <button @click="collapseAll">Collapse All</button>
+
+    <div class="d-flex mb-2">
+      <button @click="expandAll" class="btn btn-primary btn-sm mr-1">Expand All</button>
+      <button @click="collapseAll" class="btn btn-primary btn-sm">Collapse All</button>
     </div>
-    <ol class="toc__items-wrapper">
+    <ol>
       <TOCItem
           v-for="(item, index) in items"
           :key="index"
           :title = "item.title"
-          :onTitleClick="item.onTitleClick"
           :children="item.children"
-          :right-icon="item.rightIcon"
           :ref="`toc_item_${index}`"
           :itemsRenderFromFilter="filteredItems"
+          :index="item.index"
+          :selected="item.selected"
+          @on-title-click="onTitleClick"
       >
+        <template v-slot:right-icon v-if="item.rightIcon">
+          <span v-html="item.rightIcon"></span>
+        </template>
       </TOCItem>
     </ol>
   </div>
@@ -40,7 +53,11 @@ export default {
   props: {
     items:  {
       type: Array,
-      default: () => []
+      default: () => [],
+    },
+    onTitleClick: {
+      type: Function,
+      default: () => false,
     }
   },
   data: (instance) => {
@@ -52,17 +69,17 @@ export default {
   methods: {
     expandAll() {
       this.items.forEach((_, index) => {
-        this.$refs[`toc_item_${index}`][0].expandItemAndDescendants();
+        if(this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].expandItemAndDescendants();
       });
     },
     collapseAll() {
       this.items.forEach((_, index) => {
-        this.$refs[`toc_item_${index}`][0].collapseItemAndDescendants();
+        if(this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].collapseItemAndDescendants();
       });
     },
     clearTitleQuery() {
       this.titleQuery = ""
-    }
+    },
   },
   watch: {
     titleQuery(newTitleQuery) {

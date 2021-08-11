@@ -83,6 +83,7 @@ export default {
       return this.children && this.children.length;
     },
     showItem () {
+      // Show everything because search field is empty
       if(!this.itemsRenderFromFilter.length) {
         return true;
       }

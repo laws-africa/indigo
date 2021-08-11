@@ -60,10 +60,10 @@ export default {
       default: () => false,
     }
   },
-  data: (instance) => {
+  data: () => {
     return {
       titleQuery: "",
-      filteredItems: instance.$props.items,
+      filteredItems: [],
     }
   },
   methods: {
@@ -80,43 +80,56 @@ export default {
     clearTitleQuery() {
       this.titleQuery = ""
     },
+
+    flattenItems(items) {
+      const flattenItems = []
+      const iterateFn = (item) => {
+        flattenItems.push(item);
+        if(item.children) item.children.forEach(iterateFn)
+      }
+
+      items.forEach(iterateFn);
+      return flattenItems
+    }
   },
   watch: {
+    items: {
+      deep: true,
+      handler() {
+        // on items prop change from document edit, reset titleQuery and show all items
+        this.titleQuery = "";
+      }
+    },
     titleQuery(newTitleQuery) {
       debounceBuilder(() => {
-        /***
-         * A recursive function that copies the tree, but only retaining children that have a deeper match
-         * When a node matches, no deeper recursion is needed, as then the whole subtree below that node remains
-         * included.
-         * The map will map nodes to false when there is no match somewhere in the subtree rooted by that node.
-         * These false values are then eliminated by filter(Boolean)
-         * */
-        const filterTree = (nodes, cb) => {
-          return nodes.map(node => {
-            if (cb(node)) return node;
-            let children = filterTree(node.children || [], cb);
-            return children.length && { ...node,  children };
-          }).filter(Boolean);
+        if(newTitleQuery) {
+          /***
+           * A recursive function that copies the tree, but only retaining children that have a deeper match
+           * When a node matches, no deeper recursion is needed, as then the whole subtree below that node remains
+           * included.
+           * The map will map nodes to false when there is no match somewhere in the subtree rooted by that node.
+           * These false values are then eliminated by filter(Boolean)
+           * */
+          const filterTree = (nodes, cb) => {
+            return nodes.map(node => {
+              if (cb(node)) return node;
+              let children = filterTree(node.children || [], cb);
+              return children.length && { ...node,  children };
+            }).filter(Boolean);
+          }
+
+          const filteredItems = [...filterTree(this.items, (node) =>
+              node.title.toLowerCase().includes(newTitleQuery.toLowerCase()))]
+
+          const flattenItems = this.flattenItems(filteredItems);
+
+          this.filteredItems = [...flattenItems];
+        } else {
+          this.filteredItems = [];
         }
-
-        const filteredItems = [...filterTree(this.items, (node) =>
-            node.title.toLowerCase().includes(newTitleQuery.toLowerCase()))]
-
-        const flattenItems = [];
-
-        const iterateFn = (item) => {
-          flattenItems.push(item);
-          if(item.children) item.children.forEach(iterateFn)
-        }
-
-        filteredItems.forEach(iterateFn);
-        this.filteredItems = [...flattenItems];
         this.expandAll();
       })
     },
   },
-  mounted() {
-
-  }
 }
 </script>

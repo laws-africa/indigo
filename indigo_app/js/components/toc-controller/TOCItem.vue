@@ -1,32 +1,40 @@
 <template>
-  <li :class="`toc-item${expanded ? '--active' : ''}`" v-show="showItem">
+  <li class="toc-item" v-show="showItem">
     <div class="toc-item__action">
       <div class="toc-item__action__left">
-        <button class="toggle-button"
+        <button class="toc-toggle-btn"
                 v-if="isParent"
                 @click="toggleExpandedState"
         >
-          <span v-html="expanded ? collapseIconHtml : expandIconHtml"></span>
+          <i class="fas fa-minus" v-if="expanded"></i>
+          <i class="fas fa-plus" v-else></i>
         </button>
-        <button @click="onTitleClick" class="toc__title">
+        <button @click="$emit('on-title-click', index)"
+                :class="`toc-item-title-btn ${selected ? 'active' : ''}`"
+        >
           {{title}}
         </button>
       </div>
-      <div class="toc-item__action__right" v-if="rightIcon">
-        <component :is="rightIcon" />
+      <div class="toc-item__action__right">
+        <slot name="right-icon"></slot>
       </div>
     </div>
-    <ol v-if="isParent" v-show="expanded" class="toc-item__children" ref="children-container">
+    <ol v-if="isParent" v-show="expanded" class="" ref="children-container">
       <TOCItem
           v-for="(item, index) in children"
           :key="index"
           :title = "item.title"
-          :onTitleClick="item.onTitleClick"
           :children="item.children"
-          :right-icon="rightIcon"
           :ref="`child_item_${index}`"
+          :index="item.index"
           :items-render-from-filter="itemsRenderFromFilter"
-      />
+          :selected="item.selected"
+          @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
+      >
+        <template v-slot:right-icon v-if="item.rightIcon">
+          <span v-html="item.rightIcon"></span>
+        </template>
+      </TOCItem>
     </ol>
   </li>
 </template>
@@ -54,18 +62,20 @@ export default {
       type: Array,
       default: () => [],
     },
-    onTitleClick: {
-      type: Function,
-      default: () => false,
+
+    selected: {
+      type: Boolean,
+      default: false,
     },
-    rightIcon: {
-      type: Object,
-      default: null,
-    },
+
     itemsRenderFromFilter:  {
       type: Array,
       default: () => []
-    }
+    },
+    index: {
+      type: Number,
+      default: 0,
+    },
   },
 
   computed: {
@@ -76,7 +86,6 @@ export default {
       if(!this.itemsRenderFromFilter.length) {
         return true;
       }
-      console.log(this.itemsRenderFromFilter.some(item => item.title === this.title))
       return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.title)
     }
   },
@@ -105,20 +114,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.toc-item__action {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-}
-
-.toc-item__action__left {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
-.toc-item__action__right {
-  text-align: right;
-}
-</style>

@@ -211,7 +211,7 @@
 
       var tocItems = this.roots.map(formatItems);
       if(this.tocVueComponent) {
-        this.tocVueComponent.items = tocItems.map(item => item);
+        this.tocVueComponent.items = [...tocItems];
         this.tocVueComponent.onTitleClick = (index) => this.onTitleClick(index);
         this.tocVueComponent.expandAll();
         $('#toc [data-toggle="popover"]').popover();

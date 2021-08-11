@@ -7,9 +7,6 @@
   // This view shows the table-of-contents of the document and handles clicks
   Indigo.DocumentTOCView = Backbone.View.extend({
     el: '#toc',
-    events: {
-      'click a': 'click',
-    },
 
     initialize: function(options) {
       this.selection = new Backbone.Model({
@@ -21,6 +18,12 @@
       this.issues = options.document.issues;
 
       this.listenTo(this.issues, 'reset change add remove', this.issuesChanged);
+      this.tocVueComponent = null;
+      var TOCMountedElement = document.querySelector("div[data-id='toc-controller']");
+      if(TOCMountedElement) {
+        this.tocVueComponent = TOCMountedElement.component;
+      }
+
     },
 
     rebuild: function(force) {
@@ -182,61 +185,37 @@
     },
 
     render: function() {
-      // recursively render the TOC
-      function renderItem(root, item) {
-        var li = document.createElement('li');
-        li.classList.add('toc-item');
-
-        // issues?
-        if (item.issues && item.issues.length) {
-          var icon = document.createElement('i');
-          icon.className = 'float-right issue-icon issue-' + item.issues_severity;
-          li.appendChild(icon);
-
-          $(icon).popover({
-            content: item.issues_description,
-            title: item.issues_title,
-            trigger: 'hover',
-            placement: 'bottom',
-            html: true,
-          });
-        }
-
-        var a = document.createElement('a');
-        a.setAttribute('href', '#');
-        a.setAttribute('data-index', item.index);
-        a.textContent = item.title;
-        if (item.selected) a.classList.add('active');
-        li.appendChild(a);
-
-        if (item.children) {
-          var kids = document.createElement('ol');
-          li.appendChild(kids);
-          item.children.forEach(function(x) { renderItem(kids, x); });
-        }
-
-        root.appendChild(li);
-      }
-
-      var root = document.createElement('ol');
-
       function formatItems (item) {
+        var rightIcon = (function () {
+          if(item.issues && item.issues.length) {
+            var icon = document.createElement('i');
+            icon.className = 'float-right issue-icon issue-' + item.issues_severity;
+            icon.dataset.toggle = 'popover';
+            icon.dataset.content = item.issues_description;
+            icon.dataset.title = item.issues_title;
+            icon.dataset.trigger = 'hover';
+            icon.dataset.placement = 'bottom';
+            icon.dataset.html = true;
+            return icon.outerHTML;
+          }
+          return null;
+        })();
         return ({
           title: item.title,
-          onTitle: function () { console.log('rusty'); },
           children: item.children && item.children.length ? item.children.map(formatItems) : [],
+          rightIcon,
+          index: item.index,
+          selected: item.selected,
         });
       }
 
       var tocItems = this.roots.map(formatItems);
-      var TOCController = window.vueData.components.TOCController;
-      if(TOCController) {
-        TOCController.items = [...tocItems];
-        TOCController.expandAll();
+      if(this.tocVueComponent) {
+        this.tocVueComponent.items = tocItems.map(item => item);
+        this.tocVueComponent.onTitleClick = (index) => this.onTitleClick(index);
+        this.tocVueComponent.expandAll();
+        $('#toc [data-toggle="popover"]').popover();
       }
-
-      this.roots.forEach(function(x) { renderItem(root, x); });
-      this.$el.empty().append(root);
     },
 
     // select the i-th item in the TOC
@@ -277,11 +256,10 @@
       return false;
     },
 
-    click: function(e) {
-      e.preventDefault();
+    onTitleClick(index) {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
-        this.selectItem($(e.target).data('index'), true);
+        this.selectItem(index, true);
       }
-    },
+    }
   });
 })(window);

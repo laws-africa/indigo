@@ -359,13 +359,13 @@
 
     {% block work-form-place %}
     <div class="card mb-3" id="place">
-      <h5 class="card-header">Place</h5>
+      <h5 class="card-header">Country and locality</h5>
       <div class="card-body">
 
         <div class="form-row">
           <div class="form-group col-4">
-            <label for="work_country_id" class="required">{{ form.country.label }}</label>
-            <select id="work_country_id" class="form-control">
+            <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
+            <select id="{{ form.country.id_for_label }}" class="form-control" name="{{ form.country.html_name }}">
               {% for val, label in form.fields.country.choices %}
                 <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
               {% endfor %}
@@ -373,12 +373,8 @@
           </div>
 
           <div class="form-group col-4">
-            <label for="work_locality_id">{{ form.locality.label }}</label>
-            <select id="work_locality_id" class="form-control">
-              <option value="">(none)</option>
-              {% for val, label in form.fields.locality.choices %}
-                <option value="{{ val }}" {% if val == form.locality.value %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
+            <label for="{{ form.locality.id_for_label }}">{{ form.locality.label }}</label>
+            <select id="{{ form.locality.id_for_label }}" class="form-control" name="{{ form.locality.html_name }}">
             </select>
           </div>
 

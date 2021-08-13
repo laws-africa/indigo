@@ -358,8 +358,10 @@
     {% endblock work-form-repeal %}
 
     {% block work-form-place %}
-    <div class="card mb-3" id="place">
-      <h5 class="card-header">Country and locality</h5>
+    <button type="button" class="btn btn-primary mb-3" data-target="#place-form" data-toggle="collapse">Change country or locality...</button>
+
+    <div class="card mb-3 collapse" id="place-form">
+      <h5 class="card-header">Country and locality (advanced)</h5>
       <div class="card-body">
 
         <div class="form-row">

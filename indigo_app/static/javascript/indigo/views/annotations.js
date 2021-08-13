@@ -507,7 +507,7 @@
           gutter.items.push(v);
           visible.push(v);
 
-          if (prefocus && (v.model.at(0).get('id') || "").toString() === prefocus) {
+          if (prefocus && (v.model.annotations.at(0).get('id') || "").toString() === prefocus) {
             v.focus();
             v.scrollIntoView();
           }

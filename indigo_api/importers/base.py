@@ -358,7 +358,7 @@ class Importer(LocaleBasedMatcher):
         text = self.html_to_text(html, doc)
         if self.reformat:
             text = self.reformat_text_from_html(text)
-        return self.import_from_text(text, doc.frbr_uri, 'text')
+        return self.import_from_text(text, doc.frbr_uri, '.txt')
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.

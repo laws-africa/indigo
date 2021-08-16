@@ -151,10 +151,7 @@ class Importer(LocaleBasedMatcher):
     def create_from_html(self, upload, doc):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
         """
-        text = self.html_to_text(upload.read().decode('utf-8'), doc)
-        if self.reformat:
-            text = self.reformat_text_from_html(text)
-        xml = self.import_from_text(text, doc.frbr_uri, 'text')
+        xml = self.import_from_html(upload.read().decode('utf-8'), doc)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(upload, doc)
 
@@ -353,12 +350,15 @@ class Importer(LocaleBasedMatcher):
         except BadZipFile:
             raise ValueError("This doesn't seem to be a valid DOCX file.")
 
-        xml = self.import_from_html(html, doc.expression_frbr_uri)
+        xml = self.import_from_html(html, doc)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(docx_file, doc)
 
-    def import_from_html(self, html, frbr_uri):
-        return self.import_from_text(html, frbr_uri, '.html')
+    def import_from_html(self, html, doc):
+        text = self.html_to_text(html, doc)
+        if self.reformat:
+            text = self.reformat_text_from_html(text)
+        return self.import_from_text(text, doc.frbr_uri, 'text')
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.

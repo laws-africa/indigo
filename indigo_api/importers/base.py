@@ -94,6 +94,10 @@ class Importer(LocaleBasedMatcher):
     This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
     """
 
+    html_to_text_xsl_prefix = 'xsl/html_to_akn_text_'
+    """ File prefix used to find an XSLT file to transform HTML to text.
+    """
+
     def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -151,17 +155,14 @@ class Importer(LocaleBasedMatcher):
     def create_from_html(self, upload, doc):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
         """
-        text = self.html_to_text(upload.read().decode('utf-8'), doc)
-        if self.reformat:
-            text = self.reformat_text_from_html(text)
-        xml = self.import_from_text(text, doc.frbr_uri, 'text')
+        xml = self.import_from_html(upload.read().decode('utf-8'), doc)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(upload, doc)
 
     def html_to_text(self, html, doc):
         """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
         """
-        candidates = filename_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
+        candidates = filename_candidates(doc, prefix=self.html_to_text_xsl_prefix, suffix='.xsl')
         xslt_filename = find_best_static(candidates)
         if not xslt_filename:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))
@@ -353,12 +354,15 @@ class Importer(LocaleBasedMatcher):
         except BadZipFile:
             raise ValueError("This doesn't seem to be a valid DOCX file.")
 
-        xml = self.import_from_html(html, doc.expression_frbr_uri)
+        xml = self.import_from_html(html, doc)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(docx_file, doc)
 
-    def import_from_html(self, html, frbr_uri):
-        return self.import_from_text(html, frbr_uri, '.html')
+    def import_from_html(self, html, doc):
+        text = self.html_to_text(html, doc)
+        if self.reformat:
+            text = self.reformat_text_from_html(text)
+        return self.import_from_text(text, doc.frbr_uri, '.txt')
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.

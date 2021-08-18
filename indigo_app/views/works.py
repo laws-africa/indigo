@@ -983,6 +983,8 @@ class ImportDocumentView(WorkViewBase, FormView):
         try:
             importer.create_from_upload(upload, document, self.request)
         except ValueError as e:
+            if document.pk:
+                document.delete()
             log.error("Error during import: %s" % str(e), exc_info=e)
             return JsonResponse({'file': str(e) or "error during import"}, status=400)
 

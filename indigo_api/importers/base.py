@@ -94,6 +94,10 @@ class Importer(LocaleBasedMatcher):
     This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
     """
 
+    html_to_text_xsl_prefix = 'xsl/html_to_akn_text_'
+    """ File prefix used to find an XSLT file to transform HTML to text.
+    """
+
     def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -158,7 +162,7 @@ class Importer(LocaleBasedMatcher):
     def html_to_text(self, html, doc):
         """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
         """
-        candidates = filename_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
+        candidates = filename_candidates(doc, prefix=self.html_to_text_xsl_prefix, suffix='.xsl')
         xslt_filename = find_best_static(candidates)
         if not xslt_filename:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))

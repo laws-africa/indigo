@@ -388,7 +388,6 @@ class BeautifulElement:
     def __init__(self, toc_element):
         self.toc_element = toc_element
         self.num = toc_element.num.strip('.') if toc_element.num else ''
-        # TODO: this will recurse all the way down, is that okay?
         self.children = [BeautifulElement(c) for c in toc_element.children]
         # info that'll get added at decorate_provisions and elsewhere as booleans
         self.commenced = None
@@ -399,6 +398,9 @@ class BeautifulElement:
         self.full_container = None
         self.visible = None
         self.visible_descendants = None
+
+    def __getattr__(self, item):
+        return getattr(self.toc_element, item)
 
 
 @plugins.register('commencements-beautifier')
@@ -423,7 +425,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
             # when self.commenced is True, assess_against is the list of commenced provision ids
             # when self.commenced is False, assess_against is the list of uncommenced provision ids
-            p.commenced = self.commenced if p.toc_element.id in assess_against else not self.commenced
+            p.commenced = self.commenced if p.id in assess_against else not self.commenced
 
             p.last_node = not p.children
 
@@ -443,7 +445,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                 for c in p.children
             ) if p.children else False
 
-            p.container = any(c.toc_element.basic_unit or c.container for c in p.children)
+            p.container = any(c.basic_unit or c.container for c in p.children)
 
             # e.g. Subpart I, which is commenced, contains sections 1 to 3, all of which are fully commenced
             p.full_container = p.container and p.all_descendants_same
@@ -451,7 +453,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         return provisions
 
     def add_to_run(self, p, run):
-        typ = p.toc_element.type.capitalize() if p.toc_element.type in self.capitalize_types else p.toc_element.type
+        typ = p.type.capitalize() if p.type in self.capitalize_types else p.type
         # start a new run if this type is different
         new_run = typ not in [r['type'] for r in run] if run else False
         run.append({'type': typ, 'num': p.num, 'new_run': new_run})
@@ -484,7 +486,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         # get all the basic units in the container, but don't look lower than needed
         basics = []
         def look_for_basics(prov, basics):
-            if prov.toc_element.basic_unit:
+            if prov.basic_unit:
                 self.add_to_run(prov, basics)
             elif prov.container:
                 for c in prov.children:
@@ -542,7 +544,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             end_at_next_add = True
             self.stash_next = True
             # e.g. section 1-5, section 6(1)
-            if p.toc_element.type in [r['type'] for r in self.current_run]:
+            if p.type in [r['type'] for r in self.current_run]:
                 self.stash_current()
             for c in p.children:
                 add_to_subs(c, p.num)
@@ -578,7 +580,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                     self.add_to_current(p)
 
             # e.g. section with subsections
-            elif p.toc_element.basic_unit:
+            elif p.basic_unit:
                 self.process_basic_unit(p)
                 # keep track in case the next section isn't included
                 self.previous_in_run = True
@@ -590,7 +592,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                 self.previous_in_run = True
 
             # keep drilling down on partially un/commenced containers
-            if not (p.full_container or p.toc_element.basic_unit) and (
+            if not (p.full_container or p.basic_unit) and (
                     not p.all_descendants_opposite or p.commenced != self.commenced
             ):
                 for c in p.children:
@@ -600,7 +602,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                     self.end_current()
 
         # e.g. section 1–3, section 5–8
-        elif self.previous_in_run and p.toc_element.basic_unit:
+        elif self.previous_in_run and p.basic_unit:
             self.stash_current()
 
     def make_beautiful(self, provisions, assess_against):

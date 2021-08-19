@@ -327,12 +327,10 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         # decorate all provisions on the work
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
         provisions = self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
-        # TODO: update template to use p.toc_element, not p, where needed
         context['provisions'] = provisions
 
         # decorate provisions on each commencement
         for commencement in commencements:
-            # TODO: update template to use p.toc_element, not p, where needed
             commencement.rich_provisions = self.decorate_commencement_provisions(commencement, commencements)
 
         return context

@@ -270,6 +270,7 @@ class WorkMixin(object):
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
         def build_combined_toc(docs):
+            from indigo.analysis.toc.base import descend_toc_pre_order
             cumulative_provisions = []
 
             for i, doc in enumerate(docs):
@@ -280,7 +281,10 @@ class WorkMixin(object):
                     plugin = plugins.for_document('toc', doc)
                     if plugin:
                         if doc.id not in self._toc_cache:
-                            self._toc_cache[doc.id] = {'toc': doc.table_of_contents()}
+                            d_toc = doc.table_of_contents()
+                            for p in descend_toc_pre_order(d_toc):
+                                p.element = None
+                            self._toc_cache[doc.id] = {'toc': d_toc}
 
                         # marshall our resources
                         toc = self._toc_cache[doc.id]['toc']

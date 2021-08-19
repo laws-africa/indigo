@@ -79,37 +79,48 @@
       // shows the FRBR uri as text
       '#work_frbr_uri': 'frbr_uri',
 
-      // These are special and help backbone build up the frbr_uri
-      '#work_country': {
+      '#id_work-country': {
         observe: 'country',
         onSet: function(val) {
+          // map from numeric to text code
+          var country = _.findWhere(_.values(Indigo.countries), {id: parseInt(val)});
+          this.country = country ? country.code : null;
+
           // trigger a redraw of the localities, using this country
-          // use country code, not id, for frbr_uri
-          val = this.countryCodeFromId(val);
-          this.country = val;
           this.model.set('locality', null);
           this.model.trigger('change:locality', this.model);
-          return val;
+
+          return this.country;
         },
-        onGet: function(val) {
-          // use country id, not code, in work form
-          return Indigo.countries[val].id.toString();
-        },
+        onGet: function(code) {
+          // map from text code to numeric
+          var country = Indigo.countries[code];
+          return country ? String(country.id) : null;
+        }
       },
-      '#work_locality': {
+      '#id_work-locality': {
         observe: 'locality',
-        onSet: function(val) {
-          // TODO: use locality code, not id, for frbr_uri
-          return val;
+        onSet: function(id) {
+          // map from numeric code to text code
+          id = parseInt(id);
+          var country = Indigo.countries[this.model.get('country')];
+          var locality = country ? country.localities.find((loc) => loc.id === id) : null;
+          return locality ? locality.code : null;
         },
-        onGet: function(val) {
-          // TODO: use locality id, not code, in work form
-          return val;
+        onGet: function(code) {
+          // map from text code to numeric code
+          var country = Indigo.countries[this.model.get('country')];
+          var locality = country ? country.localities.find((loc) => loc.code === code) : null;
+          return locality ? String(locality.id) : null;
         },
         selectOptions: {
           collection: function() {
-            var country = Indigo.countries[this.country || this.model.get('country')];
-            return country ? country.localities : [];
+            const country = Indigo.countries[this.country || this.model.get('country')];
+            const localities = {};
+            for (const loc of (country ? country.localities : [])) {
+              localities[loc.id] = loc.name;
+            }
+            return localities;
           },
           defaultOption: {label: "(none)", value: null},
         }

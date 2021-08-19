@@ -358,14 +358,16 @@
     {% endblock work-form-repeal %}
 
     {% block work-form-place %}
-    <div class="card mb-3" id="place">
-      <h5 class="card-header">Place</h5>
+    <button type="button" class="btn btn-primary mb-3" data-target="#place-form" data-toggle="collapse">Change country or locality...</button>
+
+    <div class="card mb-3 collapse" id="place-form">
+      <h5 class="card-header">Country and locality (advanced)</h5>
       <div class="card-body">
 
         <div class="form-row">
           <div class="form-group col-4">
-            <label for="work_country" class="required">{{ form.country.label }}</label>
-            <select id="work_country" class="form-control">
+            <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
+            <select id="{{ form.country.id_for_label }}" class="form-control" name="{{ form.country.html_name }}">
               {% for val, label in form.fields.country.choices %}
                 <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %} name="{{ form.country.html_name }}">{{ label }}</option>
               {% endfor %}
@@ -373,12 +375,8 @@
           </div>
 
           <div class="form-group col-4">
-            <label for="work_locality">{{ form.locality.label }}</label>
-            <select id="work_locality" class="form-control">
-              <option value="">(none)</option>
-              {% for val, label in form.fields.locality.choices %}
-                <option value="{{ val }}" {% if val == form.locality.value %}selected{% endif %} name="{{ form.locality.html_name }}">{{ label }}</option>
-              {% endfor %}
+            <label for="{{ form.locality.id_for_label }}">{{ form.locality.label }}</label>
+            <select id="{{ form.locality.id_for_label }}" class="form-control" name="{{ form.locality.html_name }}">
             </select>
           </div>
 

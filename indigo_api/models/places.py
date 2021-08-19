@@ -77,9 +77,10 @@ class Country(models.Model):
 
     def as_json(self):
         return {
+            'id': self.id,
             'name': self.name,
-            'id': self.pk,
-            'localities': {loc.code: loc.name for loc in self.localities.all()},
+            'code': self.code,
+            'localities': [loc.as_json() for loc in self.localities.all()],
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
@@ -146,6 +147,13 @@ class Locality(models.Model):
 
     def place_workflows(self):
         return self.workflows
+
+    def as_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'code': self.code,
+        }
 
     @property
     def settings(self):

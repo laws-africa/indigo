@@ -269,18 +269,37 @@ class WorkMixin(object):
             documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
-        # get all the docs and combine the TOCs, based on element IDs
-        provisions = []
-        id_set = set()
-        for doc in documents:
-            plugin = plugins.for_document('toc', doc)
-            if plugin:
-                if doc.id not in self._toc_cache:
-                    self._toc_cache[doc.id] = doc.table_of_contents()
-                toc = deepcopy(self._toc_cache[doc.id])
-                plugin.insert_commenceable_provisions(toc, provisions, id_set)
+        def build_combined_toc(docs):
+            cumulative_provisions = []
 
-        return provisions
+            for i, doc in enumerate(docs):
+                # don't do any work if we've already cached the provisions for this doc
+                try:
+                    cumulative_provisions = self._toc_cache[doc.id]['cumulative_provisions']
+                except KeyError:
+                    plugin = plugins.for_document('toc', doc)
+                    if plugin:
+                        if doc.id not in self._toc_cache:
+                            self._toc_cache[doc.id] = {'toc': doc.table_of_contents()}
+
+                        # marshall our resources
+                        toc = self._toc_cache[doc.id]['toc']
+                        previous_id = docs[i - 1].pk if i > 0 else None
+                        # copy cumulative_provisions because they get updated in place
+                        cumulative_provisions = deepcopy(self._toc_cache[previous_id]['cumulative_provisions']) if previous_id else []
+                        cumulative_id_set = self._toc_cache[previous_id]['cumulative_id_set'] if previous_id else set()
+
+                        # update cumulative_provisions, cumulative_id_set based on current toc
+                        plugin.insert_commenceable_provisions(toc, cumulative_provisions, cumulative_id_set)
+
+                        # update the cache; provisions and id_set are updated in place
+                        self._toc_cache[doc.id]['cumulative_provisions'] = cumulative_provisions
+                        self._toc_cache[doc.id]['cumulative_id_set'] = cumulative_id_set
+
+            # this'll be the last doc's cumulative_provisions, or []
+            return cumulative_provisions
+
+        return build_combined_toc(documents)
 
     def all_uncommenced_provision_ids(self, date=None):
         """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.

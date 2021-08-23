@@ -104,7 +104,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual(description, 'section 2–3')
 
     def run_nested(self, provision_ids, nested_toc=None):
-        nested_toc = deepcopy(nested_toc) if nested_toc else deepcopy(self.chapters)
+        nested_toc = nested_toc if nested_toc else self.chapters
         return self.beautifier.make_beautiful(nested_toc, provision_ids)
 
     def test_nested_full_containers(self):
@@ -162,7 +162,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, section 2–3; Part B (section 4–5); Chapter 2 (section 6–7)', self.run_nested(provision_ids))
 
     def test_subparts(self):
-        chapters = deepcopy(self.chapters)
+        chapters = self.chapters
         part_a = chapters[0].children[0]
         part_b = chapters[0].children[1]
         part_a_sections = part_a.children
@@ -203,8 +203,6 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
-
-
 
     def test_nested_mix(self):
         provision_ids = [

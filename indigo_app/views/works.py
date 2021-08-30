@@ -176,16 +176,23 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.save()
 
         if form.has_changed():
-            # signals
-            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, "Work updated.")
-
             # rename publication-document if frbr_uri has changed
             if 'frbr_uri' in form.changed_data:
                 try:
                     self.work.publication_document.save()
                 except PublicationDocument.DoesNotExist:
                     pass
+
+            if 'country' in form.changed_data or 'locality' in form.changed_data:
+                # update all tasks
+                for task in self.work.tasks.all():
+                    task.country = self.work.country
+                    task.locality = self.work.locality
+                    task.save()
+
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+            messages.success(self.request, "Work updated.")
 
         return resp
 

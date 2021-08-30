@@ -119,12 +119,6 @@
         .empty()
         .toggle(!_.isEmpty(localities));
 
-      localities = _.map(localities, function(name, code) {
-        return {
-          name: name,
-          code: code,
-        };
-      });
       localities.push({
         name: '(all localities)',
         code: '',

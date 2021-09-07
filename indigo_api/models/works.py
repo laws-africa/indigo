@@ -37,8 +37,8 @@ class WorkManager(models.Manager):
 
 
 class TaxonomyVocabulary(models.Model):
-    authority = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Organisation managing this taxonomy")
-    name = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Short name for this taxonomy, under this authority")
+    authority = models.CharField(max_length=512, null=False, blank=False, help_text="Organisation managing this taxonomy")
+    name = models.CharField(max_length=512, null=False, blank=False, help_text="Short name for this taxonomy, under this authority")
     slug = models.SlugField(null=False, unique=True, blank=False, help_text="Code used in the API")
     title = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
 
@@ -46,6 +46,7 @@ class TaxonomyVocabulary(models.Model):
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
         ordering = ('title',)
+        unique_together = ('authority', 'name')
 
     def __str__(self):
         return str(self.title)

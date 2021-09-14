@@ -3,3 +3,4 @@ country,locality,title,cap,subtype (blank for Acts),number,year,publication_name
 zA,jhb,Testy 2,,,2,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,,
 ZA,,Bad commencement date,,,45,2013,Government Gazette,36949,2013-10-03,2013-10-21,21 Oct 2013,x,,,,,,,,,,,,,,,
 ZA,cpt,Wrong place,,,3,2020,,,,2020-06-01,,,,,,,,,,,,,,,,,
+zA,,Nonexistent subtype,,ln,1,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,,

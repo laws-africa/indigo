@@ -31,7 +31,10 @@ class Command(BaseCommand):
 
     def explode_provisions(self):
         # only get commencements that have provisions
+        # (they're already ordered by date ascending)
         commencements = Commencement.objects.select_for_update().exclude(provisions=[])
+        n_total = commencements.count()
+        ix = 0
         for commencement in commencements:
 
             def check_existing_add_descendants(provs, commenced_list):
@@ -50,8 +53,10 @@ class Command(BaseCommand):
                 for c in p.children:
                     add_containers(c)
 
-                if p.container and not p.commenced and all(c.commenced for c in p.children):
-                    # this container is uncommenced but all its children are commenced; fix that
+                if p.container and not p.commenced and all(c.commenced for c in p.children) \
+                        and any(c.id in commencement.provisions for c in p.children):
+                    # this container is uncommenced but all its children are commenced,
+                    # and at least one commenced at the present commencement's date
                     commencement.provisions.append(p.id)
                     # update decoration
                     p.commenced = True
@@ -63,9 +68,8 @@ class Command(BaseCommand):
                              f"Commenced children: {[c.id for c in p.children if c.commenced]}\n"
                              f"Uncommenced children: {[c.id for c in p.children if not c.commenced]}\n\n")
 
-            link = f"{settings.INDIGO_URL}/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk}"
-
-            log.info(f"\nUpdating {link}:")
+            ix += 1
+            log.info(f"\nUpdating {settings.INDIGO_URL}/works{commencement.commenced_work.frbr_uri}/commencements/#commencement-{commencement.pk} ({ix} of {n_total}):")
             # Note: if subprovisions were added later,
             # they won't be added here because `provisions` will only get provisions up to this commencement's date
             provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
@@ -77,17 +81,17 @@ class Command(BaseCommand):
 
             # then, add fully commenced containers
             # if different parts of a container commenced on different dates,
-            # it'll be marked as commenced on the latest date
+            # it'll be marked as commenced on the first date that any of its children commenced
             # e.g. sec_1, sec_2, sec_3 --> sec_1, …, part_a
             beautifier = CommencementsBeautifier()
-            # all commencements on this work to this date, excluding this commencement
-            commencements_to_present = commencements.filter(
-                commenced_work=commencement.commenced_work, date__lte=commencement.date,
-            ).exclude(pk=commencement.pk)
+            # all commencements on this work, excluding this commencement
+            almost_all_commencements = commencements\
+                .filter(commenced_work=commencement.commenced_work)\
+                .exclude(pk=commencement.pk)
             # add in this commencement's provisions separately, because it hasn't been saved yet
-            commenced_ids_to_present = [p_id for c in commencements_to_present
-                                        for p_id in c.provisions] + commencement.provisions
-            beautifier.decorate_provisions(provisions, commenced_ids_to_present)
+            all_commenced_ids = [p_id for c in almost_all_commencements for p_id in c.provisions] \
+                + commencement.provisions
+            provisions = beautifier.decorate_provisions(provisions, all_commenced_ids)
             for prov in provisions:
                 add_containers(prov)
 
@@ -98,13 +102,12 @@ class Command(BaseCommand):
             # alert about partially commenced basic units, only on final commencement per commenced work
             if not commencements.filter(commenced_work=commencement.commenced_work, date__gt=commencement.date):
                 all_provisions = commencement.commenced_work.all_commenceable_provisions()
-                updated_commenced_ids_to_present = [p_id for c in commencements_to_present
-                                                    for p_id in c.provisions] + commencement.provisions
-                beautifier.decorate_provisions(all_provisions, updated_commenced_ids_to_present)
+                updated_commenced_ids = [p_id for c in almost_all_commencements
+                                         for p_id in c.provisions] + commencement.provisions
+                all_provisions = beautifier.decorate_provisions(all_provisions, updated_commenced_ids)
                 basic_units_flagged = [
                     p.id for p in descend_toc_pre_order(all_provisions)
-                    if p.commenced and p.basic_unit and p.children and not p.all_descendants_same
-                ]
+                    if p.commenced and p.basic_unit and p.children and not p.all_descendants_same]
                 if basic_units_flagged:
                     log.info(f"\n\nBasic units NOT fully commenced:\n"
                              f"{', '.join(basic_units_flagged)}.\n"
@@ -113,10 +116,9 @@ class Command(BaseCommand):
 
             if any(pid for pid in commencement.provisions if pid not in old_provisions_list):
                 commencement.save()
-                log.info(f"\nUpdate done!\n\n"
-                         f"Old list: {old_provisions_list}\n\n"
-                         f"New list: {commencement.provisions}\n\n\n\n")
+                log.info("\nUPDATE DONE!")
             else:
-                log.info(f"\nNO UPDATE:\n"
-                         f"Old list: {old_provisions_list}\n\n"
-                         f"Unchanged: {commencement.provisions}\n\n\n\n")
+                log.info("\nNO UPDATE:")
+
+            log.info(f"\nOld list: {old_provisions_list}\n\n"
+                     f"New list: {commencement.provisions}\n\n\n")

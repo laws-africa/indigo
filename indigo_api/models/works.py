@@ -37,8 +37,8 @@ class WorkManager(models.Manager):
 
 
 class TaxonomyVocabulary(models.Model):
-    authority = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Organisation managing this taxonomy")
-    name = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Short name for this taxonomy, under this authority")
+    authority = models.CharField(max_length=512, null=False, blank=False, help_text="Organisation managing this taxonomy")
+    name = models.CharField(max_length=512, null=False, blank=False, help_text="Short name for this taxonomy, under this authority")
     slug = models.SlugField(null=False, unique=True, blank=False, help_text="Code used in the API")
     title = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
 
@@ -46,6 +46,7 @@ class TaxonomyVocabulary(models.Model):
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
         ordering = ('title',)
+        unique_together = ('authority', 'name')
 
     def __str__(self):
         return str(self.title)
@@ -269,18 +270,37 @@ class WorkMixin(object):
             documents = self.expressions().all()
         documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
 
-        # get all the docs and combine the TOCs, based on element IDs
-        provisions = []
-        id_set = set()
-        for doc in documents:
-            plugin = plugins.for_document('toc', doc)
-            if plugin:
-                if doc.id not in self._toc_cache:
-                    self._toc_cache[doc.id] = doc.table_of_contents()
-                toc = deepcopy(self._toc_cache[doc.id])
-                plugin.insert_commenceable_provisions(toc, provisions, id_set)
+        # return a list of all provisions to date
+        from indigo.analysis.toc.base import descend_toc_pre_order
+        cumulative_provisions = []
 
-        return provisions
+        for i, doc in enumerate(documents):
+            # don't do any work if we've already cached the provisions for this doc
+            try:
+                cumulative_provisions, cumulative_id_set = self._toc_cache[doc.id]
+            except KeyError:
+                plugin = plugins.for_document('toc', doc)
+                if plugin:
+                    toc = doc.table_of_contents()
+                    for p in descend_toc_pre_order(toc):
+                        p.element = None
+
+                    # get the previous document's provisions and id set to build on
+                    previous_id = documents[i - 1].pk if i > 0 else None
+                    cumulative_provisions, cumulative_id_set = self._toc_cache.get(previous_id, ([], set()))
+                    # copy these because we'll change them
+                    cumulative_provisions = deepcopy(cumulative_provisions)
+                    cumulative_id_set = cumulative_id_set.copy()
+
+                    # update them based on the current toc
+                    plugin.insert_commenceable_provisions(toc, cumulative_provisions, cumulative_id_set)
+
+                    # update the cache; provisions and id_set were updated in place
+                    self._toc_cache[doc.id] = (cumulative_provisions, cumulative_id_set)
+
+        # this'll be the last document's cumulative_provisions, or []
+        return cumulative_provisions
+
 
     def all_uncommenced_provision_ids(self, date=None):
         """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.

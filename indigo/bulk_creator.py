@@ -235,7 +235,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # The rows in table only have entries up to the last non-empty cell,
         # so we ensure that we have at least an empty string for every header.
         rows = [
-            {header: (row[i] if i < len(row) else '') for i, header in enumerate(headers) if header}
+            {header: (row[i].strip() if i < len(row) else '') for i, header in enumerate(headers) if header}
             for row in table[1:]
         ]
 

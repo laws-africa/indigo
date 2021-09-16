@@ -12,7 +12,7 @@ from indigo_app.models import User
 
 
 class BaseBulkCreatorTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'subtype']
 
     def setUp(self):
         self.maxDiff = None
@@ -106,7 +106,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.creator.locality = jhb
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(4, len(works))
+        self.assertEqual(5, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -126,6 +126,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row4.status)
         self.assertEqual('''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
                          row4.errors.as_json())
+
+        row5 = works[4]
+        self.assertIsNone(row5.status)
+        self.assertEqual('''{"subtype": [{"message": "Select a valid choice. ln is not one of the available choices.", "code": "invalid_choice"}]}''',
+                         row5.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')
@@ -157,8 +162,16 @@ class BaseBulkCreatorTest(testcases.TestCase):
             '''{"locality": [{"message": "Select a valid choice. cpt is not one of the available choices.", "code": "invalid_choice"}]}''',
             row4.errors.as_json())
 
+        row5 = works[4]
+        with self.assertRaises(AttributeError):
+            row5.work
+        self.assertIsNone(row5.status)
+        self.assertEqual(
+            '''{"subtype": [{"message": "Select a valid choice. ln is not one of the available choices.", "code": "invalid_choice"}]}''',
+            row5.errors.as_json())
+
     def test_get_frbr_uri(self):
-        row = SpreadsheetRow
+        row = SpreadsheetRow({}, {})
         # not enough details
         with self.assertRaises(AttributeError):
             self.creator.get_frbr_uri(row)
@@ -1003,6 +1016,27 @@ class BaseBulkCreatorTest(testcases.TestCase):
         w3_tasks = works[2].work.tasks.all()
         self.assertEqual(3, len(w2_tasks))
         self.assertEqual(3, len(w3_tasks))
+
+    def test_subtypes(self):
+        # dry run
+        works = self.get_works(True, 'subtypes.csv')
+
+        row1 = works[0]
+        self.assertEqual('si', row1.work.subtype)
+
+        row2 = works[1]
+        self.assertEqual('gn', row2.work.subtype)
+
+        # live
+        works = self.get_works(False, 'subtypes.csv')
+
+        work1 = Work.objects.get(frbr_uri='/akn/za/act/si/2020/1')
+        self.assertEqual(work1, works[0].work)
+        self.assertEqual('si', work1.subtype)
+
+        work2 = Work.objects.get(frbr_uri='/akn/za/act/gn/2020/2')
+        self.assertEqual(work2, works[1].work)
+        self.assertEqual('gn', work2.subtype)
 
     # TODO:
     #  - test_link_publication_document

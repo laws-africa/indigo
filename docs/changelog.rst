@@ -2,6 +2,11 @@
 Changelog
 =========
 
+15.0.1 (2021-09-16)
+--------
+
+* FIX: `update_commencements` management command updated.
+
 15.0.0 (2021-07-14)
 --------
 

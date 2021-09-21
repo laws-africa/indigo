@@ -11,6 +11,7 @@ class IndigoApp {
 
     this.createVueComponents(document);
     window.dispatchEvent(new Event('indigo.components-created'));
+    window.globalVue = Vue;
   }
 
   /**

@@ -1,26 +1,17 @@
 <template>
-  <div data-id="toc-controller" class="toc">
-    <div class="input-group mb-2">
-      <input type="text"
-             class="form-control form-control-sm"
-             placeholder="Search by title"
-             v-model="titleQuery"
-      >
-      <div class="input-group-prepend">
-        <button class="btn btn-sm btn-secondary"
-                type="button"
-                @click="clearTitleQuery"
-                :disabled="!titleQuery"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
+  <div class="toc">
+    <slot name="search"
+          :model="model"
+          :clearTitleQuery="clearTitleQuery"
+    >
+    </slot>
+    <slot
+        name="expand-collapse-toggle"
+        :expandAll="expandAll"
+        :collapseAll="collapseAll"
+    >
+    </slot>
 
-    <div class="d-flex mb-2">
-      <button @click="expandAll" class="btn btn-primary btn-sm mr-1">Expand All</button>
-      <button @click="collapseAll" class="btn btn-primary btn-sm">Collapse All</button>
-    </div>
     <ol>
       <TOCItem
           v-for="(item, index) in items"
@@ -31,7 +22,7 @@
           :itemsRenderFromFilter="filteredItems"
           :index="item.index"
           :selected="item.selected"
-          @on-title-click="onTitleClick"
+          @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
       >
         <template v-slot:right-icon v-if="item.rightIcon">
           <span v-html="item.rightIcon"></span>
@@ -43,9 +34,7 @@
 
 <script>
 import TOCItem from "./TOCItem.vue";
-import debounced from "../../utils/debounced";
-
-const debounceBuilder = debounced(200);
+import debounce from 'lodash/debounce';
 
 export default {
   name: "TOCController",
@@ -55,14 +44,12 @@ export default {
       type: Array,
       default: () => [],
     },
-    onTitleClick: {
-      type: Function,
-      default: () => false,
-    }
   },
   data: () => {
     return {
-      titleQuery: "",
+      model: {
+        titleQuery: "",
+      },
       filteredItems: [],
     }
   },
@@ -78,7 +65,7 @@ export default {
       });
     },
     clearTitleQuery() {
-      this.titleQuery = ""
+      this.model.titleQuery = ""
     },
 
     flattenItems(items) {
@@ -90,18 +77,12 @@ export default {
 
       items.forEach(iterateFn);
       return flattenItems
-    }
+    },
+
   },
   watch: {
-    items: {
-      deep: true,
-      handler() {
-        // on items prop change from document edit, reset titleQuery and show all items
-        this.titleQuery = "";
-      }
-    },
-    titleQuery(newTitleQuery) {
-      debounceBuilder(() => {
+    "model.titleQuery" (newTitleQuery) {
+      const debounceFn = debounce(() => {
         if(newTitleQuery) {
           /***
            * A recursive function that copies the tree, but only retaining children that have a deeper match
@@ -128,7 +109,8 @@ export default {
           this.filteredItems = [];
         }
         this.expandAll();
-      })
+      }, 200);
+      debounceFn();
     },
   },
 }

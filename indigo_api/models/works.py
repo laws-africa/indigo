@@ -257,28 +257,47 @@ class WorkMixin(object):
         if getattr(self, '_toc_cache', None) is None:
             # cache the TOCs for the various documents because they are expensive to compute
             self._toc_cache = {}
+            # cache selected details of the documents we use to build up provisions
+            self._docs_for_provisions = list(
+                self.expressions()
+                    .values('id', 'language_id', 'expression_date')
+                    .order_by('-expression_date')
+                    .all())
 
-        # gather documents and sort so that we consider primary language documents first
         if date:
-            documents = self.expressions().filter(expression_date__lte=date)
+            documents = [d for d in self._docs_for_provisions if d['expression_date'] <= date]
             if not documents:
                 # get the earliest available expression when historical points in time don't exist
                 # give it in a list so that it can be sorted below, but not if it's None
-                documents = self.expressions()[:1]
+                documents = self._docs_for_provisions[:1]
         else:
-            documents = self.expressions().all()
-        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
+            # use all expressions
+            documents = self._docs_for_provisions
 
-        # get all the docs and combine the TOCs, based on element IDs
-        provisions = []
-        id_set = set()
-        for doc in documents:
-            plugin = plugins.for_document('toc', doc)
-            if plugin:
-                if doc.id not in self._toc_cache:
+        # ids of documents we need to generate TOCs for
+        to_load = [d['id'] for d in documents if d['id'] not in self._toc_cache]
+        if to_load:
+            docs_for_toc = self.expressions().filter(pk__in=to_load) \
+                .select_related('language', 'language__language', 'work__locality', 'work__country', 'work__country__country')
+            for doc in docs_for_toc:
+                plugin = plugins.for_document('toc', doc)
+                if plugin:
                     self._toc_cache[doc.id] = doc.table_of_contents()
-                toc = deepcopy(self._toc_cache[doc.id])
-                plugin.insert_commenceable_provisions(toc, provisions, id_set)
+
+        # sort so that we consider primary language documents first
+        documents = sorted(documents, key=lambda d: 0 if d['language_id'] == self.country.primary_language_id else 1)
+
+        # get a TOC plugin that can be shared across all these documents
+        provisions = []
+        locality = self.locality.code if self.locality else None
+        plugin = plugins.for_locale('toc', country=self.country.code, locality=locality, language=self.country.primary_language.code)
+        if plugin:
+            # get all the docs and combine the TOCs, based on element IDs
+            id_set = set()
+            for doc in documents:
+                if doc['id'] in self._toc_cache:
+                    toc = deepcopy(self._toc_cache[doc['id']])
+                    plugin.insert_commenceable_provisions(toc, provisions, id_set)
 
         return provisions
 

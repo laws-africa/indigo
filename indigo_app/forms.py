@@ -310,7 +310,7 @@ class WorkFilterForm(forms.Form):
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
+    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
@@ -397,7 +397,7 @@ class WorkFilterForm(forms.Form):
                 start_date = self.cleaned_data['publication_date_start']
                 end_date = self.cleaned_data['publication_date_end']
                 queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
-          
+
         # filter by commencement date
         if self.cleaned_data.get('commencement') == 'yes':
             queryset = queryset.filter(commenced=True)
@@ -405,6 +405,10 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(commenced=False)
         elif self.cleaned_data.get('commencement') == 'date_unknown':
             queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
+        elif self.cleaned_data.get('commencement') == 'partial':
+            queryset = queryset.filter(commencements__all_provisions__isfalse=True)
+        elif self.cleaned_data.get('commencement') == 'multiple':
+            queryset = queryset.filter(commencements__gt=1)
         elif self.cleaned_data.get('commencement') == 'range':
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']

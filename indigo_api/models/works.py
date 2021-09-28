@@ -252,55 +252,78 @@ class WorkMixin(object):
 
     def all_commenceable_provisions(self, date=None):
         """ Returns a list of TOCElement objects that can be commenced.
-            Each TOCElement object has a (potentially empty) list of `children`.
-            If `date` is provided, only provisions in expressions up to and including that date are included.
-        """
-        if getattr(self, '_toc_cache', None) is None:
-            # cache the TOCs for the various documents because they are expensive to compute
-            self._toc_cache = {}
+        Each TOCElement object has a (potentially empty) list of `children`.
+        If `date` is provided, only provisions in expressions up to and including that date are included.
 
-        # gather documents and sort so that we consider primary language documents first
+        This is a potentially expensive operation across multiple documents, and so intermediate and final
+        results are cached.
+        """
+        from indigo.analysis.toc.base import descend_toc_pre_order
+
+        if getattr(self, '_provision_cache', None) is None:
+            # cache the provisions for the various documents because they are expensive to compute
+            self._provision_cache = {}
+            # cache selected details of the documents we use to build up provisions, in ascending expression date order
+            self._docs_for_provisions = list(
+                self.expressions()
+                    .values('id', 'language_id', 'expression_date')
+                    .order_by('expression_date')
+                    .all())
+
         if date:
-            documents = self.expressions().filter(expression_date__lte=date)
+            documents = [d for d in self._docs_for_provisions if d['expression_date'] <= date]
             if not documents:
                 # get the earliest available expression when historical points in time don't exist
                 # give it in a list so that it can be sorted below, but not if it's None
-                documents = self.expressions()[:1]
+                documents = self._docs_for_provisions[:1]
         else:
-            documents = self.expressions().all()
-        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
+            # use all expressions
+            documents = self._docs_for_provisions
+
+        # ids of documents we need to generate TOCs for
+        to_load = [d['id'] for d in documents if d['id'] not in self._provision_cache]
+        tocs = {}
+        if to_load:
+            docs_for_toc = self.expressions().filter(pk__in=to_load) \
+                .select_related('language', 'language__language', 'work__locality', 'work__country', 'work__country__country')
+            for doc in docs_for_toc:
+                toc = doc.table_of_contents()
+                for p in descend_toc_pre_order(toc):
+                    p.element = None
+                tocs[doc.id] = toc
+
+        # within the existing ascending expression date order, sort expressions so that we consider
+        # primary language documents first
+        documents = sorted(documents, key=lambda d: 0 if d['language_id'] == self.country.primary_language_id else 1)
 
         # return a list of all provisions to date
-        from indigo.analysis.toc.base import descend_toc_pre_order
         cumulative_provisions = []
 
-        for i, doc in enumerate(documents):
-            # don't do any work if we've already cached the provisions for this doc
-            try:
-                cumulative_provisions, cumulative_id_set = self._toc_cache[doc.id]
-            except KeyError:
-                plugin = plugins.for_document('toc', doc)
-                if plugin:
-                    toc = doc.table_of_contents()
-                    for p in descend_toc_pre_order(toc):
-                        p.element = None
+        # get a TOC plugin that can be shared across all these documents
+        locality = self.locality.code if self.locality else None
+        plugin = plugins.for_locale('toc', country=self.country.code, locality=locality, language=self.country.primary_language.code)
 
+        if plugin:
+            for i, doc in enumerate(documents):
+                # don't do any work if we've already cached the provisions for this doc
+                try:
+                    cumulative_provisions, cumulative_id_set = self._provision_cache[doc['id']]
+                except KeyError:
                     # get the previous document's provisions and id set to build on
-                    previous_id = documents[i - 1].pk if i > 0 else None
-                    cumulative_provisions, cumulative_id_set = self._toc_cache.get(previous_id, ([], set()))
+                    previous_id = documents[i - 1]['id'] if i > 0 else None
+                    cumulative_provisions, cumulative_id_set = self._provision_cache.get(previous_id, ([], set()))
                     # copy these because we'll change them
                     cumulative_provisions = deepcopy(cumulative_provisions)
                     cumulative_id_set = cumulative_id_set.copy()
 
                     # update them based on the current toc
-                    plugin.insert_commenceable_provisions(toc, cumulative_provisions, cumulative_id_set)
+                    plugin.insert_commenceable_provisions(tocs[doc['id']], cumulative_provisions, cumulative_id_set)
 
                     # update the cache; provisions and id_set were updated in place
-                    self._toc_cache[doc.id] = (cumulative_provisions, cumulative_id_set)
+                    self._provision_cache[doc['id']] = (cumulative_provisions, cumulative_id_set)
 
         # this'll be the last document's cumulative_provisions, or []
         return cumulative_provisions
-
 
     def all_uncommenced_provision_ids(self, date=None):
         """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.

@@ -317,7 +317,6 @@ class WorkMixin(object):
                     cumulative_id_set = cumulative_id_set.copy()
 
                     # update them based on the current toc
-                    # TODO: where does toc come from?
                     plugin.insert_commenceable_provisions(tocs[doc['id']], cumulative_provisions, cumulative_id_set)
 
                     # update the cache; provisions and id_set were updated in place

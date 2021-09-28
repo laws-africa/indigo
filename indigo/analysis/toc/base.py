@@ -36,7 +36,7 @@ def type_title(typ, language):
 
 
 def descend_toc_pre_order(items):
-    # yields each TOC element and then its children, recursively
+    # yields each item and then its children, recursively
     for item in items:
         yield item
         for descendant in descend_toc_pre_order(item.children):
@@ -44,7 +44,7 @@ def descend_toc_pre_order(items):
 
 
 def descend_toc_post_order(items):
-    # yields each TOC element's children, recursively, ending with itself
+    # yields each item's children, recursively, ending with itself
     for item in items:
         for descendant in descend_toc_post_order(item.children):
             yield descendant
@@ -384,6 +384,25 @@ class TOCElement(object):
         }
 
 
+class BeautifulElement:
+    def __init__(self, toc_element):
+        self.toc_element = toc_element
+        self.num = toc_element.num.strip('.') if toc_element.num else ''
+        self.children = [BeautifulElement(c) for c in toc_element.children]
+        # info that'll get added at decorate_provisions and elsewhere as booleans
+        self.commenced = None
+        self.last_node = None
+        self.all_descendants_same = None
+        self.all_descendants_opposite = None
+        self.container = None
+        self.full_container = None
+        self.visible = None
+        self.visible_descendants = None
+
+    def __getattr__(self, item):
+        return getattr(self.toc_element, item)
+
+
 @plugins.register('commencements-beautifier')
 class CommencementsBeautifier(LocaleBasedMatcher):
     locale = (None, None, None)
@@ -401,9 +420,8 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.previous_in_run = False
 
     def decorate_provisions(self, provisions, assess_against):
+        provisions = [BeautifulElement(p) for p in provisions]
         for p in descend_toc_post_order(provisions):
-            # do this here for all provisions
-            p.num = p.num.strip('.') if p.num else ''
 
             # when self.commenced is True, assess_against is the list of commenced provision ids
             # when self.commenced is False, assess_against is the list of uncommenced provision ids
@@ -594,7 +612,7 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.previous_in_run = False
         self.stash_next = False
 
-        self.decorate_provisions(provisions, assess_against)
+        provisions = self.decorate_provisions(provisions, assess_against)
 
         for p in provisions:
             self.process_provision(p)

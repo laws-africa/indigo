@@ -176,16 +176,23 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.save()
 
         if form.has_changed():
-            # signals
-            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, "Work updated.")
-
             # rename publication-document if frbr_uri has changed
             if 'frbr_uri' in form.changed_data:
                 try:
                     self.work.publication_document.save()
                 except PublicationDocument.DoesNotExist:
                     pass
+
+            if 'country' in form.changed_data or 'locality' in form.changed_data:
+                # update all tasks
+                for task in self.work.tasks.all():
+                    task.country = self.work.country
+                    task.locality = self.work.locality
+                    task.save()
+
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+            messages.success(self.request, "Work updated.")
 
         return resp
 
@@ -310,8 +317,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     beautifier = None
 
     def get_context_data(self, **kwargs):
-        context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        context['provisions'] = provisions = self.work.all_commenceable_provisions()
+        context = super().get_context_data(**kwargs)
+        provisions = self.work.all_commenceable_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
@@ -326,7 +333,8 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         # decorate all provisions on the work
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
-        self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
+        provisions = self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
+        context['provisions'] = provisions
 
         # decorate provisions on each commencement
         for commencement in commencements:
@@ -336,14 +344,14 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def decorate_commencement_provisions(self, commencement, commencements):
         # provisions from all documents up to this commencement's date
-        rich_provisions = self.work.all_commenceable_provisions(commencement.date)
-        # provision ids commenced by everything else
+        provisions = self.work.all_commenceable_provisions(commencement.date)
+        # provision ids commenced by everything else; will affect visibility per commencement form
         commenced_provision_ids = set(p_id for comm in commencements
                                       if comm != commencement
                                       for p_id in comm.provisions)
 
         # commencement status for displaying provisions on commencement detail
-        self.beautifier.decorate_provisions(rich_provisions, commencement.provisions)
+        rich_provisions = self.beautifier.decorate_provisions(provisions, commencement.provisions)
 
         # visibility for what to show in commencement form
         for p in descend_toc_post_order(rich_provisions):

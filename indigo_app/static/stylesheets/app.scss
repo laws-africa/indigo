@@ -1,18 +1,18 @@
-@import "variables";
+@import 'variables';
 
 // give other projects a chance to override variables
-@import "indigo/variables";
+@import 'indigo/variables';
 
 @import 'lib/bootstrap-4.3.1/scss/bootstrap';
 
 
 // fontawesome
-$fa-font-path: "../lib/fontawesome-5.2/webfonts";
-@import "lib/fontawesome-5.2/scss/fontawesome.scss";
-@import "lib/fontawesome-5.2/scss/solid.scss";
-@import "lib/fontawesome-5.2/scss/regular.scss";
-@import "lib/fontawesome-5.2/scss/brands.scss";
-@import "lib/bootstrap-select/css/bootstrap-select.min";
+$fa-font-path: '../lib/fontawesome-5.2/webfonts';
+@import 'lib/fontawesome-5.2/scss/fontawesome.scss';
+@import 'lib/fontawesome-5.2/scss/solid.scss';
+@import 'lib/fontawesome-5.2/scss/regular.scss';
+@import 'lib/fontawesome-5.2/scss/brands.scss';
+@import 'lib/bootstrap-select/css/bootstrap-select.min';
 
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';
@@ -39,8 +39,8 @@ $fa-font-path: "../lib/fontawesome-5.2/webfonts";
 @import 'utilities';
 @import 'works';
 @import 'provisions-list';
-@import "treeview";
-@import "toc";
+@import 'treeview';
+@import 'toc';
 
 // import custom styles right at the end
 @import 'indigo/custom';

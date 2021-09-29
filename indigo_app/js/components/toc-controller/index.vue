@@ -1,31 +1,23 @@
 <template>
   <div class="toc">
-    <slot name="search"
-          :model="model"
-          :clearTitleQuery="clearTitleQuery"
-    >
-    </slot>
-    <slot
-        name="expand-collapse-toggle"
-        :expandAll="expandAll"
-        :collapseAll="collapseAll"
-    >
-    </slot>
-
     <ol>
       <TOCItem
-          v-for="(item, index) in items"
+          v-for="({title, children, selected, index: itemIndex, ...extraData }, index) in items"
           :key="index"
-          :title = "item.title"
-          :children="item.children"
+          :title = "title"
+          :children="children"
           :ref="`toc_item_${index}`"
           :itemsRenderFromFilter="filteredItems"
-          :index="item.index"
-          :selected="item.selected"
+          :index="itemIndex"
+          :selected="selected"
+          :extra-data="extraData"
           @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
       >
-        <template v-slot:right-icon v-if="item.rightIcon">
-          <span v-html="item.rightIcon"></span>
+        <template v-slot:right-icon="{ item }">
+          <slot name="right-icon" :item="item"></slot>
+        </template>
+        <template v-slot:item-toggle-icons="{ item }">
+          <slot name="item-toggle-icons" :item="item"></slot>
         </template>
       </TOCItem>
     </ol>
@@ -44,12 +36,13 @@ export default {
       type: Array,
       default: () => [],
     },
+    titleQuery: {
+      type: String,
+      default: ""
+    }
   },
   data: () => {
     return {
-      model: {
-        titleQuery: "",
-      },
       filteredItems: [],
     }
   },
@@ -63,9 +56,6 @@ export default {
       this.items.forEach((_, index) => {
         if(this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].collapseItemAndDescendants();
       });
-    },
-    clearTitleQuery() {
-      this.model.titleQuery = ""
     },
 
     flattenItems(items) {
@@ -81,7 +71,7 @@ export default {
 
   },
   watch: {
-    "model.titleQuery" (newTitleQuery) {
+    "titleQuery" (newTitleQuery) {
       const debounceFn = debounce(() => {
         if(newTitleQuery) {
           /***

@@ -234,9 +234,6 @@ button.btn-link.help {
   button { padding: 0; }
 
   ol {
-    list-style: none;
-    padding: 0px;
-    margin: 0 !important;
     .toc-item {
       .toc-toggle-btn {
         background-color: transparent;
@@ -250,23 +247,6 @@ button.btn-link.help {
           padding: 2px;
           border: 1px solid $blue;
           color: $blue;
-        }
-      }
-
-      .toc-item-title-btn {
-        background-color: transparent;
-        color: $blue;
-        border: none;
-        cursor: pointer;
-        transition: background-color 300ms ease-in-out, color 300ms;
-        flex-grow: 1;
-        text-align: left;
-        &:hover {
-          background-color: $grey-lighter;
-        }
-        &.active {
-          background-color: $blue;
-          color: white;
         }
       }
     }

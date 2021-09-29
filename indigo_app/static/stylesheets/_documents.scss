@@ -231,63 +231,43 @@ button.btn-link.help {
   font-size: 13px;
   padding: 5px 5px 0px 0px;
 
+  button { padding: 0; }
+
   ol {
     list-style: none;
     padding: 0px;
-    margin: 0px 0px 5px 5px;
-
+    margin: 0 !important;
     .toc-item {
-      .toc-item__action {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        margin-bottom: 5px;
-        flex: 1;
-        width: 100%;
-      }
-
-      .toc-item__action__left {
-        display: flex;
-        flex-grow: 1;
-        flex-flow: row nowrap;
-
-        .toc-toggle-btn {
-          background-color: transparent;
-          border-radius: 50%;
-          padding: 0;
-          border: none;
-          outline: none;
-          margin-right: 5px;
-          i {
-            font-size: 8px;
-            padding: 5px;
-            border: 1px solid $blue;
-            border-radius: 5px;
-            color: $blue;
-          }
-        }
-
-        .toc-item-title-btn {
-          background-color: transparent;
+      .toc-toggle-btn {
+        background-color: transparent;
+        border-radius: 50%;
+        padding: 0;
+        border: none;
+        outline: none;
+        margin-right: 2px;
+        i {
+          font-size: 8px;
+          padding: 2px;
+          border: 1px solid $blue;
           color: $blue;
-          border: none;
-          cursor: pointer;
-          transition: background-color 300ms ease-in-out, color 300ms;
-          flex-grow: 1;
-          text-align: left;
-          &:hover {
-            background-color: $grey-lighter;
-          }
-          &.active {
-            background-color: $blue;
-            color: white;
-          }
         }
       }
 
-      .toc-item__action__right {
-        text-align: right;
-        margin-left: 5px;
+      .toc-item-title-btn {
+        background-color: transparent;
+        color: $blue;
+        border: none;
+        cursor: pointer;
+        transition: background-color 300ms ease-in-out, color 300ms;
+        flex-grow: 1;
+        text-align: left;
+        &:hover {
+          background-color: $grey-lighter;
+        }
+        &.active {
+          background-color: $blue;
+          color: white;
+        }
       }
     }
   }

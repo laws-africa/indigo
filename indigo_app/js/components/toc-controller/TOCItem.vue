@@ -153,7 +153,4 @@ export default {
 .toc-item__content__action.active {
   border-color: #2d7ad4;
 }
-
-
-
 </style>

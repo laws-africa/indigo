@@ -113,7 +113,7 @@ export default {
 .toc-item ol {
   list-style: none;
   padding: 0px;
-  margin: 0 !important;
+  margin: 0;
 }
 
 

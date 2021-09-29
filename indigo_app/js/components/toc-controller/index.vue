@@ -100,3 +100,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.toc ol {
+  list-style: none;
+  padding: 0px;
+  margin: 0;
+}
+</style>

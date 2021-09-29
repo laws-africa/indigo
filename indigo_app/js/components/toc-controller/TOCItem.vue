@@ -14,9 +14,9 @@
       </button>
     </div>
     <div class="toc-item__content">
-      <div class="toc-item__content__action">
+      <div :class="`toc-item__content__action ${item.selected ? 'active' : ''}`">
         <button @click="$emit('on-title-click', item.index)"
-                :class="`toc-item-title-btn ${item.selected ? 'active' : ''}`"
+                class="toc-item__content__action__btn"
         >
           {{item.title}}
         </button>
@@ -110,8 +110,16 @@ export default {
   width: 100%;
 }
 
+.toc-item ol {
+  list-style: none;
+  padding: 0px;
+  margin: 0 !important;
+}
+
+
 .toc-item__indent {
   width: 19px;
+  padding-top: 2px;
 }
 
 .toc-item__content {
@@ -122,5 +130,30 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 3px;
+
 }
+
+.toc-item__content__action__btn {
+  background-color: transparent;
+  border: none;
+  flex: 1;
+  text-align: left;
+  outline: none;
+  color: #2d7ad4;
+}
+
+.toc-item__content__action:hover {
+  background-color: #e9ecef;
+}
+
+.toc-item__content__action.active {
+  border-color: #2d7ad4;
+}
+
+
+
 </style>

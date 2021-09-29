@@ -247,7 +247,7 @@ export default {
       if (force || index !== i) {
         // unmark the old one
         if (index > -1 && index < this.toc.length) {
-          delete (this.toc[index].selected);
+          this.toc[index].selected = false;
         }
 
         if (i > -1) {

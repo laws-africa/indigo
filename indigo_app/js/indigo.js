@@ -1,17 +1,15 @@
-import Vue from "vue";
 import * as vueComponents from "./components";
 
 class IndigoApp {
   setup() {
     this.components = [];
-    this.Vue = Vue;
+    this.Vue = indigoApp.Vue;
 
     this.registerVueComponents(vueComponents);
     window.dispatchEvent(new Event("indigo.vue-components-registered"));
 
     this.createVueComponents(document);
     window.dispatchEvent(new Event("indigo.components-created"));
-    window.indigoApp.Vue = Vue;
   }
 
   /**

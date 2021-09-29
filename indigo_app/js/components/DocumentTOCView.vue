@@ -1,34 +1,56 @@
 <template>
-  <t-o-c-controller
-      :items="tocItems"
-      ref="tocController"
-      @on-title-click="onTitleClick"
-  >
-    <template v-slot:search="{ model, clearTitleQuery }">
-      <div class="input-group mb-2">
-        <input type="text"
-               class="form-control form-control-sm"
-               placeholder="Search by title"
-               v-model="model.titleQuery"
+  <div class="toc-controller-wrapper">
+    <div class="input-group mb-2">
+      <input type="text"
+             class="form-control form-control-sm"
+             placeholder="Search by title"
+             v-model="titleQuery"
+      >
+      <div class="input-group-prepend">
+        <button class="btn btn-sm btn-secondary"
+                type="button"
+                @click="clearTitleQuery"
+                :disabled="!titleQuery"
         >
-        <div class="input-group-prepend">
-          <button class="btn btn-sm btn-secondary"
-                  type="button"
-                  @click="clearTitleQuery"
-                  :disabled="!model.titleQuery"
-          >
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-    </template>
-    <template v-slot:expand-collapse-toggle="{ expandAll, collapseAll }">
-      <div class="d-flex mb-2">
-        <button @click="expandAll" class="btn btn-primary btn-sm mr-1">Expand All</button>
-        <button @click="collapseAll" class="btn btn-primary btn-sm">Collapse All</button>
-      </div>
-    </template>
-  </t-o-c-controller>
+    </div>
+    <div class="d-flex mb-2">
+      <button @click="expandAllTOCItems"
+              class="btn btn-primary btn-sm mr-1"
+      >
+        Expand All
+      </button>
+      <button @click="collapseAllTOCItems"
+              class="btn btn-primary btn-sm">
+        Collapse All
+      </button>
+    </div>
+    <t-o-c-controller
+        :items="tocItems"
+        :title-query="titleQuery"
+        ref="tocController"
+        @on-title-click="onTitleClick"
+    >
+      <template v-slot:right-icon="{item}">
+        <i :class="`float-right issue-icon issue-${item.issues_severity}`"
+           v-if="item.issues && item.issues.length"
+           data-toggle="popover"
+           :data-content="item.issues_description"
+           :data-title="item.issues_title"
+           data-trigger="hover"
+           data-placement="bottom"
+           data-html="true"
+        >
+        </i>
+      </template>
+      <template v-slot:item-toggle-icons="{item}">
+        <i class="fas fa-minus" v-if="item.expanded"></i>
+        <i class="fas fa-plus" v-else></i>
+      </template>
+    </t-o-c-controller>
+  </div>
 </template>
 
 <script>
@@ -40,16 +62,25 @@ export default {
     TOCController
   },
   props: {
-    backBoneContext: {
+    selection: {
+      type: Object,
+      required: true,
+    },
+    model: {
+      type: Object,
+      required: true,
+    },
+    issues: {
       type: Object,
       required: true,
     }
   },
   data () {
     return {
+      titleQuery: "",
       toc: [],
       roots: [],
-      issues: null,
+      issuesState: null,
       tocItems: [],
     }
   },
@@ -57,10 +88,10 @@ export default {
   methods: {
     rebuild (force) {
       // recalculate the TOC from the model
-      if (this.backBoneContext.model.xmlDocument) {
+      if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
         const oldLength = this.toc.length,
-            index = this.backBoneContext.selection.get('index');
+            index = this.selection.get('index');
 
         this.buildToc();
 
@@ -88,7 +119,7 @@ export default {
       // toc is an ordered list of all items in the toc
       const roots = [],
           toc = [];
-      const tradition = Indigo.traditions.get(this.backBoneContext.model.document.get('country'));
+      const tradition = Indigo.traditions.get(this.model.document.get('country'));
 
       const iterateChildren = (node, parentItem) => {
         const kids = node.children;
@@ -118,7 +149,7 @@ export default {
 
       const getHeadingText = (node) => {
         let headingText = '';
-        const result = this.backBoneContext.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
+        const result = this.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
 
         for (let i = 0; i < result.snapshotLength; i++) {
           headingText += result.snapshotItem(i).textContent;
@@ -147,7 +178,7 @@ export default {
         return item;
       }
 
-      iterateChildren(this.backBoneContext.model.xmlDocument);
+      iterateChildren(this.model.xmlDocument);
 
       this.toc = toc;
       this.roots = roots;
@@ -168,7 +199,7 @@ export default {
         entry.issues = [];
       });
 
-      this.issues.each((issue) => {
+      this.issuesState.each((issue) => {
         // find the toc entry for this issue
         const element = issue.get('element');
 
@@ -194,7 +225,7 @@ export default {
 
     entryForElement (element) {
       // find the TOC entry for an XML element
-      const tradition = Indigo.traditions.get(this.backBoneContext.model.document.get('country')),
+      const tradition = Indigo.traditions.get(this.model.document.get('country')),
           toc = this.toc;
 
       // first, find the closest element's ancestor that is a toc element
@@ -211,38 +242,14 @@ export default {
     },
 
     render () {
-      const formatItems = (item) => {
-        const rightIcon = (() => {
-          if(item.issues && item.issues.length) {
-            const icon = document.createElement('i');
-            icon.className = 'float-right issue-icon issue-' + item.issues_severity;
-            icon.dataset.toggle = 'popover';
-            icon.dataset.content = item.issues_description;
-            icon.dataset.title = item.issues_title;
-            icon.dataset.trigger = 'hover';
-            icon.dataset.placement = 'bottom';
-            icon.dataset.html = true;
-            return icon.outerHTML;
-          }
-          return null;
-        })();
-        return ({
-          title: item.title,
-          children: item.children && item.children.length ? item.children.map(formatItems) : [],
-          rightIcon,
-          index: item.index,
-          selected: item.selected,
-        });
-      }
-
-      this.tocItems = this.roots.map(formatItems);
+      this.tocItems = [...this.roots];
       $('#toc [data-toggle="popover"]').popover();
       this.$refs.tocController.expandAll();
     },
 
     // select the i-th item in the TOC
     selectItem (i, force) {
-      const index = this.backBoneContext.selection.get('index');
+      const index = this.selection.get('index');
 
       i = Math.min(this.toc.length-1, i);
 
@@ -261,9 +268,9 @@ export default {
         // only do this after rendering
         if (force) {
           // ensure it forces a change
-          this.backBoneContext.selection.clear({silent: true});
+          this.selection.clear({silent: true});
         }
-        this.backBoneContext.selection.set(i > -1 ? this.toc[i] : {});
+        this.selection.set(i > -1 ? this.toc[i] : {});
       }
     },
 
@@ -282,16 +289,21 @@ export default {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem(index, true);
       }
-    }
+    },
+
+    clearTitleQuery () { this.titleQuery = ""},
+
+    expandAllTOCItems () { this.$refs.tocController.expandAll() },
+    collapseAllTOCItems () { this.$refs.tocController.collapseAll() }
   },
 
   watch: {
-    issues () { this.issuesChanged() }
+    issuesState () { this.issuesChanged() }
   },
 
   mounted() {
-    this.backBoneContext.model.on('change:dom', this.rebuild, this.backBoneContext);
-    this.issues = this.backBoneContext.issues;
+    this.model.on('change:dom', this.rebuild, this);
+    this.issuesState = this.issues;
   }
 }
 </script>

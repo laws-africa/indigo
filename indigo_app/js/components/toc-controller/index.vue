@@ -2,23 +2,18 @@
   <div class="toc">
     <ol>
       <TOCItem
-          v-for="({title, children, selected, index: itemIndex, ...extraData }, index) in items"
+          v-for="(item, index) in items"
+          :item="item"
           :key="index"
-          :title = "title"
-          :children="children"
           :ref="`toc_item_${index}`"
           :itemsRenderFromFilter="filteredItems"
-          :index="itemIndex"
-          :selected="selected"
-          :extra-data="extraData"
           @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
       >
-        <template v-slot:right-icon="{ item }">
-          <slot name="right-icon" :item="item"></slot>
+        <template v-slot:right-icon="props">
+          <slot name="right-icon" :item="props.item"></slot>
         </template>
-        <template v-slot:item-toggle-icons="{ item }">
-          <slot name="item-toggle-icons" :item="item"></slot>
-        </template>
+        <template v-slot:expand-icon><slot name="expand-icon"></slot></template>
+        <template v-slot:collapse-icon><slot name="collapse-icon"></slot></template>
       </TOCItem>
     </ol>
   </div>

@@ -24,7 +24,11 @@
     render: function() {
       var CompClass = window.globalVue.extend(this.registeredComp);
       var compInstance = new CompClass({
-        propsData: { backBoneContext: this }
+        propsData: {
+          selection: this.selection,
+          model: this.model,
+          issues: this.issues
+        }
       });
       compInstance.$mount(this.targetMountElement);
       this.compInstance = compInstance;

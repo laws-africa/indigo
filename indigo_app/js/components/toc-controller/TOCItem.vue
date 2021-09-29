@@ -8,11 +8,11 @@
         >
 
           <span class="item-toggle-icons slot">
-            <slot name="item-toggle-icons" :item="itemData"></slot>
+            <slot name="item-toggle-icons" :item="item" :expanded="expanded"></slot>
           </span>
           <!-- Shown if item-toggle-icons.slot is empty -->
           <span class="item-toggle-icons default">
-           <span class="minus" v-if="expanded">-</span>
+            <span class="minus" v-if="expanded">-</span>
             <span class="plus" v-else>+</span>
           </span>
         </button>
@@ -23,27 +23,27 @@
         </button>
       </div>
       <div class="toc-item__action__right">
-        <slot name="right-icon" :item="itemData"></slot>
+        <slot name="right-icon" :item="item"></slot>
       </div>
     </div>
     <ol v-if="isParent" v-show="expanded" class="" ref="children-container">
       <TOCItem
-          v-for="({title, children, selected, index: itemIndex, ...extraData }, index) in children"
-          :title = "title"
-          :children="children"
-          :selected="selected"
-          :index="itemIndex"
-          :extra-data="extraData"
+          v-for="(item, index) in children"
+          :title = "item.title"
+          :children="item.children"
+          :selected="item.selected"
+          :index="item.index"
+          :item="item"
           :key="index"
           :ref="`child_item_${index}`"
           :items-render-from-filter="itemsRenderFromFilter"
           @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
       >
-        <template v-slot:right-icon="{ item }">
-          <slot name="right-icon" :item="item"></slot>
+        <template v-slot:right-icon="props">
+          <slot name="right-icon" :item="props.item"></slot>
         </template>
-        <template v-slot:item-toggle-icons="{ item }">
-          <slot name="item-toggle-icons" :item="item"></slot>
+        <template v-slot:item-toggle-icons="props">
+          <slot name="item-toggle-icons" :item="props.item"></slot>
         </template>
       </TOCItem>
     </ol>
@@ -70,7 +70,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    extraData: {
+    item: {
       type: Object,
       default: () => ({})
     },
@@ -94,19 +94,6 @@ export default {
         return true;
       }
       return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.title)
-    },
-    itemData () {
-      return {
-        title: this.title,
-        children: this.children,
-        selected: this.selected,
-        index: this.index,
-        expanded: this.expanded,
-        ...this.extraData,
-      }
-    },
-    showSlotItemToggleIcons () {
-      return false;
     }
   },
 

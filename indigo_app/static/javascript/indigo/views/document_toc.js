@@ -18,26 +18,24 @@
 
       this.compInstance = null;
       if (this.registeredComp && this.targetMountElement) {
-        this.render();
+        var CompClass = indigoApp.Vue.extend(this.registeredComp);
+        var compInstance = new CompClass({
+          propsData: {
+            selection: this.selection,
+            model: this.model,
+            issues: this.issues
+          }
+        });
+        compInstance.$mount(this.targetMountElement);
+        this.compInstance = compInstance;
       }
-    },
-    render: function() {
-      var CompClass = indigoApp.Vue.extend(this.registeredComp);
-      var compInstance = new CompClass({
-        propsData: {
-          selection: this.selection,
-          model: this.model,
-          issues: this.issues
-        }
-      });
-      compInstance.$mount(this.targetMountElement);
-      this.compInstance = compInstance;
     },
 
     selectItem: function(i, force) {
-      if (this.compInstance) {
-        this.compInstance.selectItem(i, force);
-      }
+      if (this.compInstance) this.compInstance.selectItem(i, force);
+    },
+    selectItemById: function(itemId) {
+      if (this.compInstance) this.compInstance.selectItemById(itemId);
     }
   });
 })(window);

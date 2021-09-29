@@ -27,8 +27,8 @@
         Collapse All
       </button>
     </div>
-    <t-o-c-controller
-        :items="tocItems"
+    <TOCController
+        :items="roots"
         :title-query="titleQuery"
         ref="tocController"
         @on-title-click="onTitleClick"
@@ -45,11 +45,10 @@
         >
         </i>
       </template>
-      <template v-slot:item-toggle-icons="{item}">
-        <i class="fas fa-minus" v-if="item.expanded"></i>
-        <i class="fas fa-plus" v-else></i>
-      </template>
-    </t-o-c-controller>
+
+      <template v-slot:expand-icon><i class="fas fa-plus"></i></template>
+      <template v-slot:collapse-icon><i class="fas fa-minus"></i></template>
+    </TOCController>
   </div>
 </template>
 
@@ -107,8 +106,6 @@ export default {
           if (index > -1) {
             this.toc[index].selected = true;
           }
-
-          this.render();
         }
       }
     },
@@ -168,11 +165,12 @@ export default {
         }
 
         const item = {
-          'num': $node.children('num').text(),
-          'heading': getHeadingText(node),
-          'element': node,
-          'type': node.localName,
-          'id': qualified_id,
+          num: $node.children('num').text(),
+          heading: getHeadingText(node),
+          element: node,
+          type: node.localName,
+          id: qualified_id,
+          selected: false
         };
         item.title = tradition.toc_element_title(item);
         return item;
@@ -188,7 +186,6 @@ export default {
 
     issuesChanged () {
       this.mergeIssues();
-      this.render();
     },
 
     mergeIssues () {
@@ -241,12 +238,6 @@ export default {
       }
     },
 
-    render () {
-      this.tocItems = [...this.roots];
-      $('#toc [data-toggle="popover"]').popover();
-      this.$refs.tocController.expandAll();
-    },
-
     // select the i-th item in the TOC
     selectItem (i, force) {
       const index = this.selection.get('index');
@@ -262,8 +253,6 @@ export default {
         if (i > -1) {
           this.toc[i].selected = true;
         }
-
-        this.render();
 
         // only do this after rendering
         if (force) {
@@ -301,9 +290,14 @@ export default {
     issuesState () { this.issuesChanged() }
   },
 
+  updated() {
+    $('#toc [data-toggle="popover"]').popover();
+  },
+
   mounted() {
     this.model.on('change:dom', this.rebuild, this);
     this.issuesState = this.issues;
+    this.$nextTick(() => { this.$refs.tocController.expandAll(); })
   }
 }
 </script>

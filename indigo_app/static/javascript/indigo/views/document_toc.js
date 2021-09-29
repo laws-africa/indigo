@@ -10,7 +10,7 @@
 
     initialize: function(options) {
       this.issues = options.document.issues;
-      this.registeredComp = window.globalVue.options.components.DocumentTOCView;
+      this.registeredComp = indigoApp.Vue.options.components.DocumentTOCView;
       this.targetMountElement = document.getElementById("DocumentTOCView");
       this.selection = new Backbone.Model({
         index: -1
@@ -22,7 +22,7 @@
       }
     },
     render: function() {
-      var CompClass = window.globalVue.extend(this.registeredComp);
+      var CompClass = indigoApp.Vue.extend(this.registeredComp);
       var compInstance = new CompClass({
         propsData: {
           selection: this.selection,

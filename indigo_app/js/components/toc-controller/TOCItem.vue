@@ -1,52 +1,46 @@
 <template>
   <li class="toc-item" v-show="showItem">
-    <div class="toc-item__action">
-      <div class="toc-item__action__left">
-        <button class="toc-toggle-btn"
-                v-if="isParent"
-                @click="toggleExpandedState"
-        >
-
-          <span class="item-toggle-icons slot">
-            <slot name="item-toggle-icons" :item="item" :expanded="expanded"></slot>
-          </span>
-          <!-- Shown if item-toggle-icons.slot is empty -->
-          <span class="item-toggle-icons default">
-            <span class="minus" v-if="expanded">-</span>
-            <span class="plus" v-else>+</span>
-          </span>
-        </button>
-        <button @click="$emit('on-title-click', index)"
-                :class="`toc-item-title-btn ${selected ? 'active' : ''}`"
-        >
-          {{title}}
-        </button>
-      </div>
-      <div class="toc-item__action__right">
-        <slot name="right-icon" :item="item"></slot>
-      </div>
-    </div>
-    <ol v-if="isParent" v-show="expanded" class="" ref="children-container">
-      <TOCItem
-          v-for="(item, index) in children"
-          :title = "item.title"
-          :children="item.children"
-          :selected="item.selected"
-          :index="item.index"
-          :item="item"
-          :key="index"
-          :ref="`child_item_${index}`"
-          :items-render-from-filter="itemsRenderFromFilter"
-          @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
+    <div class="toc-item__indent">
+      <button class="toc-toggle-btn"
+              v-if="isParent"
+              @click="toggleExpandedState"
       >
-        <template v-slot:right-icon="props">
-          <slot name="right-icon" :item="props.item"></slot>
-        </template>
-        <template v-slot:item-toggle-icons="props">
-          <slot name="item-toggle-icons" :item="props.item"></slot>
-        </template>
-      </TOCItem>
-    </ol>
+        <slot name="collapse-icon" v-if="expanded">
+          <span class="minus">-</span>
+        </slot>
+        <slot name="expand-icon" v-else>
+          <span class="plus">+</span>
+        </slot>
+      </button>
+    </div>
+    <div class="toc-item__content">
+      <div class="toc-item__content__action">
+        <button @click="$emit('on-title-click', item.index)"
+                :class="`toc-item-title-btn ${item.selected ? 'active' : ''}`"
+        >
+          {{item.title}}
+        </button>
+        <div class="right-icon">
+          <slot name="right-icon" :item="item"></slot>
+        </div>
+      </div>
+      <ol v-if="isParent" v-show="expanded" class="" ref="children-container">
+        <TOCItem
+            v-for="(childItem, index) in item.children"
+            :item="childItem"
+            :key="index"
+            :ref="`child_item_${index}`"
+            :items-render-from-filter="itemsRenderFromFilter"
+            @on-title-click="(emittedIndex) => $emit('on-title-click', emittedIndex)"
+        >
+          <template v-slot:right-icon="props">
+            <slot name="right-icon" :item="props.item"></slot>
+          </template>
+          <template v-slot:expand-icon><slot name="expand-icon"></slot></template>
+          <template v-slot:collapse-icon><slot name="collapse-icon"></slot></template>
+        </TOCItem>
+      </ol>
+    </div>
   </li>
 </template>
 
@@ -57,22 +51,9 @@ export default {
     expanded: false,
   }),
   props: {
-    title: {
-      type: String,
-      default: ""
-    },
-    children: {
-      type: Array,
-      default: () => [],
-    },
-
-    selected: {
-      type: Boolean,
-      default: false,
-    },
     item: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     itemsRenderFromFilter:  {
       type: Array,
@@ -86,7 +67,7 @@ export default {
 
   computed: {
     isParent () {
-      return this.children && this.children.length;
+      return this.item.children && this.item.children.length;
     },
     showItem () {
       // Show everything because search field is empty
@@ -103,8 +84,8 @@ export default {
     },
     expandItemAndDescendants() {
       this.expanded = true;
-      if(this.children.length) {
-        this.children.forEach((_, index) => {
+      if(this.item.children && this.item.children.length) {
+        this.item.children.forEach((_, index) => {
           this.$refs[`child_item_${index}`][0].expandItemAndDescendants();
         })
       }
@@ -112,8 +93,8 @@ export default {
 
     collapseItemAndDescendants() {
       this.expanded = false;
-      if(this.children.length) {
-        this.children.forEach((_, index) => {
+      if(this.item.children && this.item.children.length) {
+        this.item.children.forEach((_, index) => {
           this.$refs[`child_item_${index}`][0].collapseItemAndDescendants();
         })
       }
@@ -123,13 +104,23 @@ export default {
 </script>
 
 <style scoped>
+.toc-item {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
 
-  .item-toggle-icons.default,
-  .item-toggle-icons.slot:empty {
-    visibility: hidden;
-  }
-  .item-toggle-icons.slot:empty + .item-toggle-icons.default {
-    visibility: visible;
-  }
+.toc-item__indent {
+  width: 19px;
+}
 
+.toc-item__content {
+  width: 100%;
+}
+
+.toc-item__content__action {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 </style>

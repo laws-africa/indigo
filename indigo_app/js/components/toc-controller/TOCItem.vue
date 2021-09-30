@@ -48,21 +48,21 @@
 export default {
   name: 'TOCItem',
   data: () => ({
-    expanded: true,
+    expanded: true
   }),
   props: {
     item: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
-    itemsRenderFromFilter:  {
+    itemsRenderFromFilter: {
       type: Array,
       default: () => []
     },
     index: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
 
   computed: {
@@ -71,36 +71,36 @@ export default {
     },
     showItem () {
       // Show everything because search field is empty
-      if(!this.itemsRenderFromFilter.length) {
+      if (!this.itemsRenderFromFilter.length) {
         return true;
       }
-      return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.item.title)
+      return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.item.title);
     }
   },
 
   methods: {
-    toggleExpandedState() {
+    toggleExpandedState () {
       if (this.isParent) this.expanded = !this.expanded;
     },
-    expandItemAndDescendants() {
+    expandItemAndDescendants () {
       this.expanded = true;
-      if(this.item.children && this.item.children.length) {
+      if (this.item.children && this.item.children.length) {
         this.item.children.forEach((_, index) => {
           this.$refs[`child_item_${index}`][0].expandItemAndDescendants();
-        })
+        });
       }
     },
 
-    collapseItemAndDescendants() {
+    collapseItemAndDescendants () {
       this.expanded = false;
-      if(this.item.children && this.item.children.length) {
+      if (this.item.children && this.item.children.length) {
         this.item.children.forEach((_, index) => {
           this.$refs[`child_item_${index}`][0].collapseItemAndDescendants();
-        })
+        });
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>

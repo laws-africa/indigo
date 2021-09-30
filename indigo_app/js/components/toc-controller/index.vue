@@ -20,55 +20,55 @@
 </template>
 
 <script>
-import TOCItem from "./TOCItem.vue";
+import TOCItem from './TOCItem.vue';
 import debounce from 'lodash/debounce';
 
 export default {
-  name: "TOCController",
-  components: {TOCItem},
+  name: 'TOCController',
+  components: { TOCItem },
   props: {
-    items:  {
+    items: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     titleQuery: {
       type: String,
-      default: ""
+      default: ''
     }
   },
   data: () => {
     return {
-      filteredItems: [],
-    }
+      filteredItems: []
+    };
   },
   methods: {
-    expandAll() {
+    expandAll () {
       this.items.forEach((_, index) => {
-        if(this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].expandItemAndDescendants();
+        if (this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].expandItemAndDescendants();
       });
     },
-    collapseAll() {
+    collapseAll () {
       this.items.forEach((_, index) => {
-        if(this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].collapseItemAndDescendants();
+        if (this.$refs[`toc_item_${index}`]) this.$refs[`toc_item_${index}`][0].collapseItemAndDescendants();
       });
     },
 
-    flattenItems(items) {
-      const flattenItems = []
+    flattenItems (items) {
+      const flattenItems = [];
       const iterateFn = (item) => {
         flattenItems.push(item);
-        if(item.children) item.children.forEach(iterateFn)
-      }
+        if (item.children) item.children.forEach(iterateFn);
+      };
 
       items.forEach(iterateFn);
-      return flattenItems
-    },
+      return flattenItems;
+    }
 
   },
   watch: {
     titleQuery (newTitleQuery) {
       const debounceFn = debounce(() => {
-        if(newTitleQuery) {
+        if (newTitleQuery) {
           /***
            * A recursive function that copies the tree, but only retaining children that have a deeper match
            * When a node matches, no deeper recursion is needed, as then the whole subtree below that node remains
@@ -79,13 +79,13 @@ export default {
           const filterTree = (nodes, cb) => {
             return nodes.map(node => {
               if (cb(node)) return node;
-              let children = filterTree(node.children || [], cb);
-              return children.length && { ...node,  children };
+              const children = filterTree(node.children || [], cb);
+              return children.length && { ...node, children };
             }).filter(Boolean);
-          }
+          };
 
           const filteredItems = [...filterTree(this.items, (node) =>
-              node.title.toLowerCase().includes(newTitleQuery.toLowerCase()))]
+            node.title.toLowerCase().includes(newTitleQuery.toLowerCase()))];
 
           const flattenItems = this.flattenItems(filteredItems);
 
@@ -96,9 +96,9 @@ export default {
         this.expandAll();
       }, 200);
       debounceFn();
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>

@@ -229,11 +229,13 @@ button.btn-link.help {
 /* table of contents browser */
 .toc {
   font-size: 13px;
-  padding: 5px 5px 0px 0px;
+  padding: 5px 0px 0px 0px;
 
   button { padding: 0; }
 
   ol {
+    width: 100%;
+
     .toc-item {
       .toc-toggle-btn {
         background-color: transparent;

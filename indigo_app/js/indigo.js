@@ -1,9 +1,10 @@
 import * as vueComponents from "./components";
+import Vue from "vue";
 
 class IndigoApp {
   setup() {
     this.components = [];
-    this.Vue = indigoApp.Vue;
+    this.Vue = Vue;
 
     this.registerVueComponents(vueComponents);
     window.dispatchEvent(new Event("indigo.vue-components-registered"));

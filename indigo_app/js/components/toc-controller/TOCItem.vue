@@ -143,17 +143,15 @@ export default {
   text-align: left;
   outline: none;
   color: #2d7ad4;
+  margin-right: 5px;
 }
 
-.toc-item__content__action:hover {
+.toc-item__content__action:hover .toc-item__content__action__btn  {
   background-color: #e9ecef;
-}
-
-.toc-item__content__action.active {
-  background-color: #2d7ad4;
 }
 
 .toc-item__content__action.active .toc-item__content__action__btn {
   color: white;
+  background-color: #2d7ad4;
 }
 </style>

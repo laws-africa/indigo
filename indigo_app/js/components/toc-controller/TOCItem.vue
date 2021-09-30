@@ -48,7 +48,7 @@
 export default {
   name: 'TOCItem',
   data: () => ({
-    expanded: false,
+    expanded: true,
   }),
   props: {
     item: {

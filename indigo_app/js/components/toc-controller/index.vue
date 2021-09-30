@@ -66,7 +66,7 @@ export default {
 
   },
   watch: {
-    "titleQuery" (newTitleQuery) {
+    titleQuery (newTitleQuery) {
       const debounceFn = debounce(() => {
         if(newTitleQuery) {
           /***

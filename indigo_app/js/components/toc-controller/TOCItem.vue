@@ -74,7 +74,7 @@ export default {
       if(!this.itemsRenderFromFilter.length) {
         return true;
       }
-      return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.title)
+      return this.itemsRenderFromFilter.length && this.itemsRenderFromFilter.some(item => item.title === this.item.title)
     }
   },
 

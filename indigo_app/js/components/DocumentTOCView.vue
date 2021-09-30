@@ -35,7 +35,7 @@
     >
       <template v-slot:right-icon="{item}">
         <i :class="`float-right issue-icon issue-${item.issues_severity}`"
-           v-if="item.issues && item.issues.length"
+           v-if="item.issues.length"
            data-toggle="popover"
            :data-content="item.issues_description"
            :data-title="item.issues_title"
@@ -79,7 +79,6 @@ export default {
       titleQuery: "",
       toc: [],
       roots: [],
-      issuesState: null,
       tocItems: [],
     }
   },
@@ -170,7 +169,11 @@ export default {
           element: node,
           type: node.localName,
           id: qualified_id,
-          selected: false
+          selected: false,
+          issues: [],
+          issues_title: '',
+          issues_description: '',
+          issues_severity: ''
         };
         item.title = tradition.toc_element_title(item);
         return item;
@@ -184,10 +187,6 @@ export default {
       this.mergeIssues();
     },
 
-    issuesChanged () {
-      this.mergeIssues();
-    },
-
     mergeIssues () {
       // fold document issues into the TOC
       const withIssues = [];
@@ -196,7 +195,7 @@ export default {
         entry.issues = [];
       });
 
-      this.issuesState.each((issue) => {
+      this.issues.each((issue) => {
         // find the toc entry for this issue
         const element = issue.get('element');
 
@@ -287,7 +286,7 @@ export default {
   },
 
   watch: {
-    issuesState () { this.issuesChanged() }
+    issues () { this.mergeIssues(); }
   },
 
   updated() {
@@ -296,8 +295,6 @@ export default {
 
   mounted() {
     this.model.on('change:dom', this.rebuild, this);
-    this.issuesState = this.issues;
-    this.$nextTick(() => { this.$refs.tocController.expandAll(); })
   }
 }
 </script>

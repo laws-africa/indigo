@@ -114,31 +114,30 @@ export default {
   list-style: none;
   padding: 0px;
   margin: 0;
+  width: 100%;
 }
-
 
 .toc-item__indent {
   width: 19px;
-  padding-top: 2px;
+  flex-shrink: 0;
 }
 
 .toc-item__content {
-  width: 100%;
+  flex-grow: 1;
+  width: calc(100% - 19px);
 }
 
 .toc-item__content__action {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out;
-  padding: 2px;
-  border: 2px solid transparent;
-  border-radius: 3px;
-
+  flex: 1;
 }
 
 .toc-item__content__action__btn {
+  padding-left: 2px;
   background-color: transparent;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   border: none;
   flex: 1;
   text-align: left;
@@ -151,6 +150,10 @@ export default {
 }
 
 .toc-item__content__action.active {
-  border-color: #2d7ad4;
+  background-color: #2d7ad4;
+}
+
+.toc-item__content__action.active .toc-item__content__action__btn {
+  color: white;
 }
 </style>

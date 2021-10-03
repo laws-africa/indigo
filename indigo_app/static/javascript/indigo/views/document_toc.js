@@ -10,7 +10,7 @@
 
     initialize: function(options) {
       this.issues = options.document.issues;
-      this.listenTo(this.issues, 'reset change add remove', this.issuesChanged);
+      this.listenTo(this.issues, "reset change add remove", this.issuesChanged);
 
       this.registeredComp = indigoApp.Vue.options.components.DocumentTOCView;
       this.targetMountElement = document.getElementById("DocumentTOCView");
@@ -33,7 +33,7 @@
       }
     },
 
-    issuesChanged: function () {
+    issuesChanged: function() {
       // force vue to realise the issues list has changed
       this.compInstance.issues = [];
       this.compInstance.issues = this.issues;
@@ -45,6 +45,10 @@
 
     selectItemById: function(itemId) {
       if (this.compInstance) this.compInstance.selectItemById(itemId);
+    },
+
+    rebuild: function(force) {
+      if (this.compInstance) this.compInstance.rebuild(force);
     }
   });
 })(window);

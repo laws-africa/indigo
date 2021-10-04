@@ -51,6 +51,9 @@ api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
         entries = [[k, v[1]] for k, v in get_resolver().reverse_dict.items()]
 
         for view, url in entries:
+            # different python versions have slightly different regex string formats, so normalize them
+            url = url.replace('\\/', '/')
+
             view_class = getattr(view, 'view_class', None)
             if view_class:
                 if AbstractAuthedIndigoView not in view_class.__mro__ and url not in self.non_authed_urls:

@@ -103,7 +103,7 @@ setup(
             'coveralls',
             'django-webtest>=1.9.4',
             'dotmap>=1.3.8',
-            'xlrd==1.2.0',
+            'sheet2dict==0.1.1'
         ],
     },
 )

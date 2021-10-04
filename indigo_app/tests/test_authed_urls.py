@@ -11,37 +11,37 @@ help$
 terms$
 $
 
-accounts\/social\/connections\/$
-accounts\/social\/signup\/$
-accounts\/social\/login\/error\/$
-accounts\/social\/login\/cancelled\/$
-accounts\/password\/reset\/key\/done\/$
-accounts\/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$
-accounts\/password\/reset\/done\/$
-accounts\/password\/reset\/$
-accounts\/confirm-email/(?P<key>[-:\w]+)/$
-accounts\/confirm\-email\/$
-accounts\/email\/$
-accounts\/inactive\/$
-accounts\/password\/set\/$
-accounts\/password\/change\/$
-accounts\/logout\/$
-accounts\/login\/$
-accounts\/signup\/$
+accounts/social/connections/$
+accounts/social/signup/$
+accounts/social/login/error/$
+accounts/social/login/cancelled/$
+accounts/password/reset/key/done/$
+accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$
+accounts/password/reset/done/$
+accounts/password/reset/$
+accounts/confirm-email/(?P<key>[-:\w]+)/$
+accounts/confirm\-email/$
+accounts/email/$
+accounts/inactive/$
+accounts/password/set/$
+accounts/password/change/$
+accounts/logout/$
+accounts/login/$
+accounts/signup/$
 
-resolver\/(?P<path>.+)$
-resolver\/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
+resolver/(?P<path>.+)$
+resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
-api\/$
-api\/documents\/(?P<document_id>[0-9]+)\/analysis\/mark\-up\-italics$
-api\/documents\/(?P<document_id>[0-9]+)\/analysis\/link\-references$
-api\/documents\/(?P<document_id>[0-9]+)\/analysis\/link\-terms$
-api\/documents\/(?P<document_id>[0-9]+)\/static\/(?P<filename>.+)$
-api\/documents\/(?P<document_id>[0-9]+)\/render\/coverpage$
-api\/documents\/(?P<document_id>[0-9]+)\/parse$
-api\/documents\/(?P<document_id>[0-9]+)\/diff$
-api\/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$
-api\/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
+api/$
+api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics$
+api/documents/(?P<document_id>[0-9]+)/analysis/link\-references$
+api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms$
+api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)$
+api/documents/(?P<document_id>[0-9]+)/render/coverpage$
+api/documents/(?P<document_id>[0-9]+)/parse$
+api/documents/(?P<document_id>[0-9]+)/diff$
+api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$
+api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
 """.split()
 
     def test_urls_have_auth(self):

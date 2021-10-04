@@ -8,6 +8,7 @@
       >
       <div class="input-group-prepend">
         <button class="btn btn-sm btn-secondary"
+                style="width: 25px"
                 type="button"
                 @click="clearTitleQuery"
                 :disabled="!titleQuery"

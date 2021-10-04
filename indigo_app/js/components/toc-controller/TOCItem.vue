@@ -4,6 +4,7 @@
       <button class="toc-toggle-btn"
               v-if="isParent"
               @click="toggleExpandedState"
+              type="button"
       >
         <slot name="collapse-icon" v-if="expanded">
           <span class="minus">-</span>
@@ -16,6 +17,7 @@
     <div class="toc-item__content">
       <div :class="`toc-item__content__action ${item.selected ? 'active' : ''}`">
         <button @click="$emit('on-title-click', item.index)"
+                type="button"
                 class="toc-item__content__action__btn"
         >
           {{item.title}}

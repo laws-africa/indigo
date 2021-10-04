@@ -18,11 +18,13 @@
     </div>
     <div class="d-flex mb-2">
       <button @click="expandAllTOCItems"
+              type="button"
               class="btn btn-primary btn-sm mr-1"
       >
         Expand All
       </button>
       <button @click="collapseAllTOCItems"
+              type="button"
               class="btn btn-primary btn-sm">
         Collapse All
       </button>

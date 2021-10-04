@@ -179,7 +179,7 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
         AWS_SECRET_ACCESS_KEY=aws secret access key \
         AWS_S3_BUCKET=your-bucket-name
 
-5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do this (Substitute the fqdn or IP address of the dokku host, can also use localhost if you are deploying to local Dokku instance)::
+5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do the following (substitute the fqdn or IP address of the dokku host, or use localhost if you are deploying to a local Dokku instance)::
 
     $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
@@ -199,7 +199,7 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
     $ dokku checks:enable indigo
 
-10. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (Depending on how your Dokku installation was configured using the dokku domains:set-global command. Read Dokku Getting Started Documentation for clarity. 
+10. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the [Dokku Getting Started documentation](https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server) for details).
 
 11. Configure a country:
 

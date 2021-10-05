@@ -183,7 +183,7 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
     $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
-6. Disable HOSTS check for first deployment as this will cause a failure:
+6. Disable HOSTS check for first deployment as this will cause a failure::
 
     $ dokku checks:disable indigo
 
@@ -195,13 +195,18 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
     $ dokku run indigo python manage.py createsuperuser
 
-9. Enable HOSTS check for future updates and ensuring post-deployment checks
+9. Install countries and languages::
+
+    $ dokku run indigo python manage.py update_countries_plus
+    $ dokku run indigo python manage.py loaddata languages_data.json.gz
+
+10. Enable HOSTS check for future updates and ensuring post-deployment checks::
 
     $ dokku checks:enable indigo
 
-10. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the [Dokku Getting Started documentation](https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server) for details).
+11. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the `Dokku Getting Started documentation <https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server>` for details).
 
-11. Configure a country:
+12. Configure a country:
 
    * Visit `http://your-dokku-host.example.com/admin`
    * Under **Indigo API** click Countries, then click Add Country in the top right corner

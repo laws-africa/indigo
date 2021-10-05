@@ -76,7 +76,7 @@ setup(
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
-        'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
+        'psycopg2>=2.7,<2.9',
         'requests>=2',
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
@@ -103,8 +103,7 @@ setup(
             'coveralls',
             'django-webtest>=1.9.4',
             'dotmap>=1.3.8',
-            'pandas==1.1.4',
-            'xlrd==1.2.0',
+            'sheet2dict==0.1.1'
         ],
     },
 )

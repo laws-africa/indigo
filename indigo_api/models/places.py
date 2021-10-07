@@ -10,13 +10,22 @@ from countries_plus.models import Country as MasterCountry
 from languages_plus.models import Language as MasterLanguage
 
 
+class LanguageManager(models.Manager):
+    def get_queryset(self):
+        # always load the related language model
+        return super().get_queryset().select_related('language')
+
+
 class Language(models.Model):
     """ The languages available in the UI. They aren't enforced by the API.
     """
     language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE)
+    objects = LanguageManager()
 
     class Meta:
         ordering = ['language__name_en']
+        # also use the manager for related object lookups
+        base_manager_name = 'objects'
 
     @property
     def code(self):

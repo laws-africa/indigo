@@ -15,9 +15,9 @@ Requirements
 
 Indigo requires:
 
-* Python 3.6+
+* Python 3.8+
 * PostgreSQL 9.3+
-* Ruby 2.6.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
+* Ruby 2.7.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
 * `wkhtmltopdf <https://wkhtmltopdf.org/>`_ for generating PDFs
 * `pdftotext <https://poppler.freedesktop.org/>`_ for reading PDFs

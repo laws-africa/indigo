@@ -398,28 +398,6 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['publication_date_end']
                 queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
 
-        # filter by commencement date
-        if self.cleaned_data.get('commencement') == 'yes':
-            queryset = queryset.filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'no':
-            queryset = queryset.filter(commenced=False)
-        elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'partial':
-            # ignore uncommenced works, include works that have any uncommenced provisions
-            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
-            queryset = queryset.filter(pk__in=work_ids)
-        elif self.cleaned_data.get('commencement') == 'multiple':
-            # include works that have either more than one commencement or at least one commencement and
-            # any uncommenced provisions, as they'll need another commencement for those provisions
-            work_ids = [w.pk for w in queryset if w.commencements.count() > 1 or w.commencements.exists() and w.all_uncommenced_provision_ids()]
-            queryset = queryset.filter(pk__in=work_ids)
-        elif self.cleaned_data.get('commencement') == 'range':
-            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
-                start_date = self.cleaned_data['commencement_date_start']
-                end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
-
         # filter by repeal date
         if self.cleaned_data.get('repeal') == 'yes':
             queryset = queryset.filter(repealed_date__isnull=False)
@@ -455,6 +433,28 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
             elif self.cleaned_data['completeness'] == 'incomplete':
                 queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
+
+        # filter by commencement status (last because expensive)
+        if self.cleaned_data.get('commencement') == 'yes':
+            queryset = queryset.filter(commenced=True)
+        elif self.cleaned_data.get('commencement') == 'no':
+            queryset = queryset.filter(commenced=False)
+        elif self.cleaned_data.get('commencement') == 'date_unknown':
+            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
+        elif self.cleaned_data.get('commencement') == 'partial':
+            # ignore uncommenced works, include works that have any uncommenced provisions
+            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
+            queryset = queryset.filter(pk__in=work_ids)
+        elif self.cleaned_data.get('commencement') == 'multiple':
+            # include works that have either more than one commencement or at least one commencement and
+            # any uncommenced provisions, as they'll need another commencement for those provisions
+            work_ids = [w.pk for w in queryset if w.commencements.count() > 1 or w.commencements.exists() and w.all_uncommenced_provision_ids()]
+            queryset = queryset.filter(pk__in=work_ids)
+        elif self.cleaned_data.get('commencement') == 'range':
+            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+                start_date = self.cleaned_data['commencement_date_start']
+                end_date = self.cleaned_data['commencement_date_end']
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
 
         return queryset
 

@@ -2,6 +2,13 @@
 Changelog
 =========
 
+15.0.2 (2021-10-11)
+--------
+
+* NEW: Allow users to filter by 'Partially commenced' and 'Multiple commencements' in the work listing.
+* NEW: Table of contents on documents implemented in vue.
+
+
 15.0.1 (2021-09-16)
 --------
 

@@ -1,5 +1,6 @@
 const path = require('path');
-const { VueLoaderPlugin } = require('vue-loader')
+const { VueLoaderPlugin } = require('vue-loader');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const legacyConfig = {
   entry: './indigo_app/js/external-imports.src.js',
@@ -48,6 +49,7 @@ const appConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
+    new ESLintPlugin(),
   ]
 };
 

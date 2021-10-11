@@ -1,5 +1,5 @@
-import Vue from 'vue';
 import * as vueComponents from './components';
+import Vue from 'vue';
 
 class IndigoApp {
   setup () {

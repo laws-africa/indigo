@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import csv
 import io
 import os
-import pandas as pd
+from sheet2dict import Worksheet
 import xlsxwriter
 
 from django.test import testcases
@@ -47,10 +46,11 @@ class XLSXExporterTest(testcases.TestCase):
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('created_at')
         self.write_works(works, f'{filename}_output.xlsx')
         expected_file = os.path.join(os.path.dirname(__file__), f'{filename}_output_expected.xlsx')
-        expected = pd.read_excel(expected_file)
+
+        expected = Worksheet().xlsx_to_dict(expected_file)
         output_file = os.path.join(os.path.dirname(__file__), f'{filename}_output.xlsx')
-        output = pd.read_excel(output_file)
-        pd.testing.assert_frame_equal(expected, output)
+        output = Worksheet().xlsx_to_dict(output_file)
+        self.assertEqual(expected.sheet_items, output.sheet_items)
 
     def test_amendments(self):
         self.write_and_compare('amendments_active')

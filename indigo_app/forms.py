@@ -406,14 +406,19 @@ class WorkFilterForm(forms.Form):
         elif self.cleaned_data.get('commencement') == 'date_unknown':
             queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'partial':
-            queryset = queryset.filter(commencements__all_provisions__isfalse=True)
+            # ignore uncommenced works, include works that have any uncommenced provisions
+            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
+            queryset = queryset.filter(pk__in=work_ids)
         elif self.cleaned_data.get('commencement') == 'multiple':
-            queryset = queryset.filter(commencements__gt=1)
+            # include works that have either more than one commencement or at least one commencement and
+            # any uncommenced provisions, as they'll need another commencement for those provisions
+            work_ids = [w.pk for w in queryset if w.commencements.count() > 1 or w.commencements.exists() and w.all_uncommenced_provision_ids()]
+            queryset = queryset.filter(pk__in=work_ids)
         elif self.cleaned_data.get('commencement') == 'range':
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']
                 end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')           
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
 
         # filter by repeal date
         if self.cleaned_data.get('repeal') == 'yes':
@@ -424,7 +429,7 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
                 start_date = self.cleaned_data['repealed_date_start']
                 end_date = self.cleaned_data['repealed_date_end']
-                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')           
+                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
         # filter by amendment date
         if self.cleaned_data.get('amendment') == 'yes':

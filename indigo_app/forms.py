@@ -6,7 +6,7 @@ from datetime import date
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from captcha.fields import ReCaptchaField
@@ -446,10 +446,9 @@ class WorkFilterForm(forms.Form):
             work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
             queryset = queryset.filter(pk__in=work_ids)
         elif self.cleaned_data.get('commencement') == 'multiple':
-            # include works that have either more than one commencement or at least one commencement and
-            # any uncommenced provisions, as they'll need another commencement for those provisions
-            work_ids = [w.pk for w in queryset if w.commencements.count() > 1 or w.commencements.exists() and w.all_uncommenced_provision_ids()]
-            queryset = queryset.filter(pk__in=work_ids)
+            queryset = queryset \
+                .annotate(Count('commencements')) \
+                .filter(commencements__count__gt=1)
         elif self.cleaned_data.get('commencement') == 'range':
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']

@@ -15,9 +15,9 @@ Requirements
 
 Indigo requires:
 
-* Python 3.6+
+* Python 3.8+
 * PostgreSQL 9.3+
-* Ruby 2.6.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
+* Ruby 2.7.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
 * `wkhtmltopdf <https://wkhtmltopdf.org/>`_ for generating PDFs
 * `pdftotext <https://poppler.freedesktop.org/>`_ for reading PDFs
@@ -157,21 +157,21 @@ Dokku uses Docker to emulate a Heroku-like environment on your own servers (or c
 Installation on Heroku and Dokku are similar and only really differ in the commands that are run.
 We describe using Dokku below, and assume that you have already have `Dokku installed <http://dokku.viewdocs.io/dokku/getting-started/installation/>`_.
 
-1. Ensure you have PostgreSQL installed and running. Create a postgresql user with username `indigo`, and create a corresponding database called `indigo`. For example::
+1. Use the Dokku PostgreSQL plugin to create a database::
 
-    $ sudo su - postgres -c 'createuser -d -P indigo'
-    $ sudo su - postgres -c 'createdb indigo'
+    $ sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
+    $ dokku postgres:create indigodb
 
-2. Create a new Dokku application::
+2. Create a new Dokku application and link the postgres database to the application::
 
     $ dokku apps:create indigo
+    $ dokku postgres:link indigodb indigo
 
-3. (optional) Create a new AWS S3 account and bucket for storing attachments. You'll need the AWS Access Key Id and AWS Secret Access Key in the next step. You can safely skip this step if you don't care about saving attachments just yet.
+3. (optional) Create a new AWS S3 account and bucket for storing attachments. You'll need the AWS Access Key Id and AWS Secret Access Key in the next step. You can safely skip this step if you don't care about saving attachments just yet. If you decide to skip this step, delete the trailing backslash (\) after the DJANGO_SECRET_KEY variable in step 4 and ignore the last three lines.
 
 4. Set config options as follows (ensure you enter your correct database and AWS settings)::
 
     $ dokku config:set indigo \
-        DATABASE_URL=postgres://indigo:DATABASE-PASSWORD@DATABASE-HOST/indigo \
         DISABLE_COLLECTSTATIC=1 \
         DJANGO_DEBUG=false \
         DJANGO_SECRET_KEY=some random characters \
@@ -179,23 +179,36 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
         AWS_SECRET_ACCESS_KEY=aws secret access key \
         AWS_S3_BUCKET=your-bucket-name
 
-5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do this::
+5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do the following (substitute the fqdn or IP address of the dokku host, or use localhost if you are deploying to a local Dokku instance)::
 
     $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
-6. Now deploy to dokku using `git push dokku`. This is how you deploy any and all updates::
+6. Disable HOSTS check for first deployment as this will cause a failure::
+
+    $ dokku checks:disable indigo
+
+7. Now deploy to dokku using `git push dokku`. This is how you deploy any and all updates::
 
     $ git push dokku
 
-7. Create the an admin user by running this command **on the Dokku server**::
+8. Create the an admin user by running this command **on the Dokku server**::
 
     $ dokku run indigo python manage.py createsuperuser
 
-8. Visit your new Indigo app in your browser at https://your-dokku-host.example.com
+9. Install countries and languages::
 
-9. Configure a country:
+    $ dokku run indigo python manage.py update_countries_plus
+    $ dokku run indigo python manage.py loaddata languages_data.json.gz
 
-   * Visit `https://your-dokku-host.example.com/admin`
+10. Enable HOSTS check for future updates and ensuring post-deployment checks::
+
+    $ dokku checks:enable indigo
+
+11. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the `Dokku Getting Started documentation <https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server>` for details).
+
+12. Configure a country:
+
+   * Visit `http://your-dokku-host.example.com/admin`
    * Under **Indigo API** click Countries, then click Add Country in the top right corner
    * Choose a country and primary language from the dropdown lists
    * Click Save

@@ -6,7 +6,7 @@ from datetime import date
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from captcha.fields import ReCaptchaField
@@ -310,7 +310,7 @@ class WorkFilterForm(forms.Form):
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
+    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
@@ -397,19 +397,6 @@ class WorkFilterForm(forms.Form):
                 start_date = self.cleaned_data['publication_date_start']
                 end_date = self.cleaned_data['publication_date_end']
                 queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
-          
-        # filter by commencement date
-        if self.cleaned_data.get('commencement') == 'yes':
-            queryset = queryset.filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'no':
-            queryset = queryset.filter(commenced=False)
-        elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'range':
-            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
-                start_date = self.cleaned_data['commencement_date_start']
-                end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')           
 
         # filter by repeal date
         if self.cleaned_data.get('repeal') == 'yes':
@@ -420,7 +407,7 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
                 start_date = self.cleaned_data['repealed_date_start']
                 end_date = self.cleaned_data['repealed_date_end']
-                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')           
+                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
         # filter by amendment date
         if self.cleaned_data.get('amendment') == 'yes':
@@ -446,6 +433,27 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
             elif self.cleaned_data['completeness'] == 'incomplete':
                 queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
+
+        # filter by commencement status (last because expensive)
+        if self.cleaned_data.get('commencement') == 'yes':
+            queryset = queryset.filter(commenced=True)
+        elif self.cleaned_data.get('commencement') == 'no':
+            queryset = queryset.filter(commenced=False)
+        elif self.cleaned_data.get('commencement') == 'date_unknown':
+            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
+        elif self.cleaned_data.get('commencement') == 'partial':
+            # ignore uncommenced works, include works that have any uncommenced provisions
+            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
+            queryset = queryset.filter(pk__in=work_ids)
+        elif self.cleaned_data.get('commencement') == 'multiple':
+            queryset = queryset \
+                .annotate(Count('commencements')) \
+                .filter(commencements__count__gt=1)
+        elif self.cleaned_data.get('commencement') == 'range':
+            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+                start_date = self.cleaned_data['commencement_date_start']
+                end_date = self.cleaned_data['commencement_date_end']
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
 
         return queryset
 

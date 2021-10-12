@@ -1,22 +1,31 @@
-# coding=utf-8
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+
 from countries_plus.models import Country as MasterCountry
 from languages_plus.models import Language as MasterLanguage
+
+
+class LanguageManager(models.Manager):
+    def get_queryset(self):
+        # always load the related language model
+        return super().get_queryset().select_related('language')
 
 
 class Language(models.Model):
     """ The languages available in the UI. They aren't enforced by the API.
     """
     language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE)
+    objects = LanguageManager()
 
     class Meta:
         ordering = ['language__name_en']
+        # also use the manager for related object lookups
+        base_manager_name = 'objects'
 
     @property
     def code(self):
@@ -43,8 +52,6 @@ class Country(models.Model):
         blank=True
     )
 
-    _settings = None
-
     class Meta:
         ordering = ['country__name']
         verbose_name_plural = 'Countries'
@@ -67,13 +74,11 @@ class Country(models.Model):
     def place_workflows(self):
         return self.workflows.filter(locality=None)
 
-    @property
+    @cached_property
     def settings(self):
         """ PlaceSettings object for this country.
         """
-        if not self._settings:
-            self._settings = self.place_settings.filter(locality=None).first()
-        return self._settings
+        return self.place_settings.filter(locality=None).first()
 
     def as_json(self):
         return {
@@ -131,8 +136,6 @@ class Locality(models.Model):
     name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
     code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
 
-    _settings = None
-
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'Localities'
@@ -155,13 +158,11 @@ class Locality(models.Model):
             'code': self.code,
         }
 
-    @property
+    @cached_property
     def settings(self):
         """ PlaceSettings object for this place.
         """
-        if not self._settings:
-            self._settings = self.place_settings.first()
-        return self._settings
+        return self.place_settings.first()
 
     def __str__(self):
         return str(self.name)

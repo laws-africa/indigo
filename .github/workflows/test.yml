@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
 
     services:
       postgres:
@@ -22,10 +25,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.6
+        python-version: ${{ matrix.python-version }}
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
@@ -39,6 +42,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         python -m pip install --upgrade pip
+        pip install psycopg2==2.8.6
         pip install .[test]
         bundle install
         npm install -g jshint

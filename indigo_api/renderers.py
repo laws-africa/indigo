@@ -114,7 +114,7 @@ class HTMLRenderer(StaticHTMLRenderer, ExporterMixin):
         return exporter
 
 
-class PDFRenderer(BaseRenderer, ExporterMixin):
+class PDFRenderer(BaseRenderer):
     """ Django Rest Framework PDF Renderer.
     """
     media_type = 'application/pdf'
@@ -169,8 +169,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
         return pdf
 
     def get_exporter(self, *args, **kwargs):
-        exporter = plugins.for_locale('pdf-exporter')
-        return exporter
+        return plugins.for_locale('pdf-exporter')
 
     def cache_key(self, data, view):
         if hasattr(data, 'frbr_uri'):
@@ -194,7 +193,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
         return generate_filename(data, view, self.format)
 
 
-class EPUBRenderer(PDFRenderer, ExporterMixin):
+class EPUBRenderer(ExporterMixin, PDFRenderer):
     """ Django Rest Framework ePub Renderer.
     """
     media_type = 'application/epub+zip'
@@ -204,10 +203,6 @@ class EPUBRenderer(PDFRenderer, ExporterMixin):
     # these are used by the document download menu
     icon = 'fas fa-book'
     title = 'ePUB'
-
-    def get_exporter(self):
-        exporter = ExporterMixin.get_exporter(self)
-        return exporter
 
     def render(self, data, media_type=None, renderer_context=None):
         self.renderer_context = renderer_context

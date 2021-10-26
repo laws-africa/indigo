@@ -200,7 +200,7 @@ class Importer(LocaleBasedMatcher):
             if len(text) < 512:
                 raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
-            xml = self.import_from_text(text, doc.frbr_uri, '.txt')
+            xml = self.import_from_text_pdf(text, doc)
             doc.reset_xml(xml, from_model=True)
 
             # stash the (potentially) modified pdf file
@@ -209,6 +209,9 @@ class Importer(LocaleBasedMatcher):
             f.seek(0)
             pdf = UploadedFile(file=f, name=upload.name, size=fsize, content_type=upload.content_type)
             self.stash_attachment(pdf, doc)
+
+    def import_from_text_pdf(self, text, doc):
+        return self.import_from_text(text, doc.frbr_uri, '.txt')
 
     def pdf_to_text(self, f):
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]

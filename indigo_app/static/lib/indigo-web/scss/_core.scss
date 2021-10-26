@@ -171,6 +171,19 @@
     }
   }
 
+  /* bulleted lists */
+  .akn-ul {
+    display: block;
+    list-style-type: disc;
+    list-style-position: outside;
+    padding-left: $akn-para-indent;
+    margin-bottom: $akn-para-spacing;
+  }
+  .akn-li {
+    display: list-item;
+    margin-bottom: $akn-para-spacing;
+  }
+
   /* inline elements */
   .akn-def {
     font-weight: bold;

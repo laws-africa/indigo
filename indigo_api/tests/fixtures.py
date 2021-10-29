@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*
-
-DOCUMENT_FIXTURE = """<?xml version="1.0"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+DOCUMENT_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
     <meta>
       <identification source="">
@@ -46,8 +43,7 @@ BODY_FIXTURE = """
 </body>
 """
 
-COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+COMPONENT_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
     <meta>
       <identification source="">

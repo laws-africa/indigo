@@ -87,7 +87,7 @@ $(function() {
   Indigo.dom.targetToRange = function(target, root) {
     var anchor, range,
         anchor_id = target.anchor_id,
-        ix = anchor_id.lastIndexOf('.');
+        ix = anchor_id.lastIndexOf('__');
 
     anchor = root.querySelector(`[id="${anchor_id}"]`);
 
@@ -101,10 +101,10 @@ $(function() {
     }
 
     // do our best to find the anchor node, going upwards up the id chain if
-    // the id has dotted components
+    // the id has components separated with a __
     while (!anchor && ix > -1) {
       anchor_id = anchor_id.substring(0, ix);
-      ix = anchor_id.lastIndexOf('.');
+      ix = anchor_id.lastIndexOf('__');
       anchor = root.querySelector(`[id="${anchor_id}"]`);
     }
 

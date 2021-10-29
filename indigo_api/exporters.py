@@ -588,10 +588,7 @@ class XSLTRenderer(object):
     def render(self, node):
         """ Render an XML Tree or Element object into an HTML string.
         """
-        params = {
-            'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
-        }
-        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()})
+        params = {k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()}
         return str(self.xslt(node, **params))
 
     def render_xml(self, xml):
@@ -600,11 +597,3 @@ class XSLTRenderer(object):
         if not isinstance(xml, str):
             xml = xml.decode('utf-8')
         return self.render(ET.fromstring(xml))
-
-    def defaultIdScope(self, node):
-        """ Default scope for ID attributes when rendering.
-        """
-        ns = node.nsmap[None]
-        scope = node.xpath('./ancestor::a:attachment[@eId]/@eId', namespaces={'a': ns})
-        if scope:
-            return scope[0]

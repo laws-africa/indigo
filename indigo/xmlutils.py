@@ -95,20 +95,20 @@ def unwrap_element(elem):
 
 def rewrite_ids(elem, old_id_prefix, new_id_prefix):
     mappings = {}
-    old_id = elem.get('id')
+    old_id = elem.get('eId')
     old_id_len = len(old_id_prefix)
     if old_id and old_id.startswith(old_id_prefix):
         new_id = new_id_prefix + old_id[old_id_len:]
         mappings[old_id] = new_id
-        elem.set('id', new_id)
+        elem.set('eId', new_id)
 
     # rewrite children
-    for child in elem.xpath('.//a:*[@id]', namespaces={'a': elem.nsmap[None]}):
-        old_id = child.get('id')
+    for child in elem.xpath('.//a:*[@eId]', namespaces={'a': elem.nsmap[None]}):
+        old_id = child.get('eId')
         if old_id.startswith(old_id_prefix):
             new_id = new_id_prefix + old_id[old_id_len:]
             mappings[old_id] = new_id
-            child.set('id', new_id)
+            child.set('eId', new_id)
 
     return mappings
 

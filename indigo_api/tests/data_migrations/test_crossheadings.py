@@ -23,7 +23,7 @@ class MigrationTestCase(TestCase):
             etree.tostring(doc.doc.root, encoding='utf-8', pretty_print=True).decode('utf-8'))
         self.assertEqual({
             'hcontainer_1': 'crossHeading_1',
-        }, migration.eidMappings)
+        }, migration.eid_mappings)
 
     def test_multiple(self):
         migration = RealCrossHeadings()
@@ -50,4 +50,4 @@ class MigrationTestCase(TestCase):
             'sec_1__hcontainer_2': 'sec_1__hcontainer_1',
             'sec_1__hcontainer_2__p_1': 'sec_1__hcontainer_1__p_1',
             'sec_1__hcontainer_3': 'sec_1__crossHeading_2',
-        }, migration.eidMappings)
+        }, migration.eid_mappings)

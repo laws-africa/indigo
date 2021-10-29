@@ -17,14 +17,15 @@ def forwards(apps, schema_editor):
 
             # update annotations
             for old, new in migration.eid_mappings.items():
-                # TODO: what about the silly prefixes?
-                Annotation.objects.filter(document_id=doc.id, anchor_id=old).update(anchor_id=new)
+                Annotation.objects.using(db_alias)\
+                    .filter(document_id=doc.id, anchor_id=old)\
+                    .update(anchor_id=new)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0008_taxonomy_vocabulary'),
+        ('indigo_api', '0009_migrate_attachment_eids'),
     ]
 
     operations = [

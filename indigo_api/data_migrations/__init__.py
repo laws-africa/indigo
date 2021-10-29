@@ -61,7 +61,7 @@ class CorrectAttachmentEids:
         for att in xml.xpath('//a:attachment', namespaces={'a': ns}):
             att_id = att.get('eId')
 
-            for elem in att.xpath(f'.//a:*[@eId and not(starts-with(@eId, "{att_id}"))]', namespaces={'a': ns}):
+            for elem in att.xpath(f'.//a:*[@eId and not(starts-with(@eId, "{att_id}__"))]', namespaces={'a': ns}):
                 changed = True
                 new_id = f'{att_id}__{elem.attrib["eId"]}'
                 self.eid_mappings[elem.attrib['eId']] = elem.attrib['eId'] = new_id

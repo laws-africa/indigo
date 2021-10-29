@@ -3,6 +3,7 @@ import re
 
 from django.http import HttpResponse
 from django.views.generic import View
+from django.conf import settings
 
 from indigo_app.views.base import AbstractAuthedIndigoView
 
@@ -26,7 +27,7 @@ class JSErrorView(AbstractAuthedIndigoView, View):
 
         if any(x.search(info['filename']) for x in self.filename_blacklist):
             log.info(f"Ignoring JS error: {info['message']} in {info['filename']}")
-        else:
+        elif settings.INDIGO['REPORT_JS_ERRORS']:
             # This will email the admins if the 'mail_admin' logging handler is enabled.
             request_log.error(f"""JS error: {info['message']}
     URL: {info['url']}

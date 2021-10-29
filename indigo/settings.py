@@ -123,6 +123,9 @@ INDIGO = {
     # If an email fails to send, should we raise an exception?
     'EMAIL_FAIL_SILENTLY': False,
 
+    # Should JS errors be logged and emailed to admins the same way python errors are?
+    'REPORT_JS_ERRORS': True,
+
     # Key-value pairs for custom properties, per place code.
     'WORK_PROPERTIES': {},
 

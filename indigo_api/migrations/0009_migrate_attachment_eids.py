@@ -24,7 +24,8 @@ def forwards(apps, schema_editor):
                     .filter(document_id=doc.id, anchor_id=old)\
                     .update(anchor_id=new)
 
-                # update prefixed anchors: att_1/sec_1 -> att_1__sec_1
+                # update prefixed anchors: att_1/sec_1 -> att_1/att_1__sec_1
+                # we then strip the att_1/ bit for all annotations with SQL later
                 prefix = new.split('__', 1)[0] + '/'
                 assert(prefix.startswith('att_'))
                 old = prefix + old
@@ -44,6 +45,8 @@ class Migration(migrations.Migration):
         migrations.RunPython(forwards, migrations.RunPython.noop),
 
         # strip att_1/ from att_1/att_1__sec_1 in anchor ids
+        # this ensures that ALL matching annotations are updated, not just those
+        # rewritten by the above migration
         migrations.RunSQL(
             """
 UPDATE indigo_api_annotation

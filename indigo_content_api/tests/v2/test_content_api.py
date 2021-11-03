@@ -570,10 +570,8 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng@2014-02-12.json')
         self.assertEqual(response.status_code, 200)
 
-        # this deliberately doesn't use the API path, it uses the app path which allows
-        # us to make this public
         self.assertEqual(response.data['publication_document']['url'],
-                     'http://localhost:8000/works/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
+                     f'http://{self.api_host}{self.api_path}/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
     def test_published_work_before_1900(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.html')
@@ -722,10 +720,9 @@ class ContentAPIV2TestMixin:
     def test_published_publication_document(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng@2014-02-12.json')
         self.assertEqual(response.status_code, 200)
-
-        # this deliberately doesn't use the API path, it uses the app path which allows
-        # us to make this public
-        self.assertEqual(response.data['publication_document']['url'], 'http://localhost:8000/works/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
+        self.assertEqual(
+            response.data['publication_document']['url'],
+            f'http://{self.api_host}{self.api_path}/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277

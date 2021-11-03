@@ -32,9 +32,12 @@
     </xsl:element>
   </xsl:template>
 
-  <!-- eId attribute is moved to id -->
+  <!-- eId attribute is copied to id -->
   <xsl:template match="@eId">
     <xsl:attribute name="id">
+      <xsl:value-of select="." />
+    </xsl:attribute>
+    <xsl:attribute name="data-eId">
       <xsl:value-of select="." />
     </xsl:attribute>
   </xsl:template>

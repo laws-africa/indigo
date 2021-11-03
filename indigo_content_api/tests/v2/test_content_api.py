@@ -334,7 +334,7 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/!main/section/1.html')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'text/html')
-        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1"><h3>1. </h3>
+        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
 <span class="akn-content">
           <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
@@ -355,7 +355,7 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/main/section/1.html')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'text/html')
-        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1"><h3>1. </h3>
+        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
 <span class="akn-content">
           <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>

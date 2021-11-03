@@ -58,6 +58,15 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         # Don't include the trusted_url field
         fields = ('url', 'filename', 'mime_type', 'size')
 
+    def get_url(self, instance):
+        if instance.trusted_url:
+            return instance.trusted_url
+
+        # the publication document is linked to the work, not the expression
+        uri = (instance.work.work_uri.work_uri())[1:]
+        return reverse_content_api('published-document-publication', request=self.context['request'],
+                                   kwargs={'frbr_uri': uri, 'filename': instance.filename})
+
 
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Serializer for published documents.

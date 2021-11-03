@@ -120,7 +120,7 @@
         <br/>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
-      
+
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
     </section>
   </xsl:template>

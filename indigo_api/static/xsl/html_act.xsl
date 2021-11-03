@@ -145,15 +145,12 @@
     </section>
   </xsl:template>
 
-  <!-- crossHeadings - this mimics what the output will be for AKN 3, where crossHeading is a real element -->
-  <xsl:template match="a:hcontainer[@name='crossheading']">
+  <xsl:template match="a:crossHeading">
     <h3 class="akn-crossHeading">
       <xsl:apply-templates select="@*" />
-      <xsl:apply-templates select="a:heading" mode="inline" />
+      <xsl:apply-templates />
     </h3>
   </xsl:template>
-  <!-- don't include name attribute on crossheading output -->
-  <xsl:template match="a:hcontainer[@name='crossheading']/@name"/>
 
   <!-- components/schedules -->
   <xsl:template match="a:attachment">

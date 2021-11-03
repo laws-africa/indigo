@@ -231,9 +231,9 @@
   </xsl:template>
 
   <!-- crossheadings -->
-  <xsl:template match="a:hcontainer[@name='crossheading']">
+  <xsl:template match="a:crossHeading">
     <xsl:text>CROSSHEADING </xsl:text>
-    <xsl:apply-templates select="a:heading" />
+    <xsl:apply-templates />
     <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 

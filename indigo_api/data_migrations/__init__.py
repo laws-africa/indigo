@@ -63,7 +63,7 @@ class CorrectAttachmentEids:
         self.eid_mappings = {}
 
         for att in xml.xpath('//a:attachment', namespaces={'a': self.ns}):
-            changed = changed or self.migrate_element(att)
+            changed = self.migrate_element(att) or changed
 
         return changed
 

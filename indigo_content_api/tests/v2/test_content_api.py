@@ -571,7 +571,7 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(response.data['publication_document']['url'],
-                     'http://api/v2/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
+                     f'http://{self.api_host}{self.api_path}/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
     def test_published_work_before_1900(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.html')

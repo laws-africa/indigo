@@ -43,14 +43,16 @@ class RealCrossHeadings(DataMigration):
             # rewrite new crossHeadings
             for i, crossHeading in enumerate(parent.xpath('./a:crossHeading', namespaces={'a': self.ns})):
                 old_id = crossHeading.get('eId')
-                new_id = re.sub(r'hcontainer_\d+$', f'crossHeading_{i + 1}', old_id)
-                self.eid_mappings.update(rewrite_ids(crossHeading, old_id, new_id))
+                if old_id:
+                    new_id = re.sub(r'hcontainer_\d+$', f'crossHeading_{i + 1}', old_id)
+                    self.eid_mappings.update(rewrite_ids(crossHeading, old_id, new_id))
 
             # now re-write all hcontainers
             for i, hcontainer in enumerate(parent.xpath('./a:hcontainer', namespaces={'a': self.ns})):
                 old_id = hcontainer.get('eId')
-                new_id = re.sub(r'hcontainer_\d+$', f'hcontainer_{i + 1}', old_id)
-                self.eid_mappings.update(rewrite_ids(hcontainer, old_id, new_id))
+                if old_id:
+                    new_id = re.sub(r'hcontainer_\d+$', f'hcontainer_{i + 1}', old_id)
+                    self.eid_mappings.update(rewrite_ids(hcontainer, old_id, new_id))
 
         return changed
 

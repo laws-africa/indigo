@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('reversion', '0002_auto_20141216_1509'),
         ('pinax_badges', '0001_initial'),
+        ('background_task', '0002_auto_20170927_1109'),
     ]
 
     operations = [

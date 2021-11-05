@@ -2,6 +2,15 @@
 Changelog
 =========
 
+16.0.0 (2021-11-05)
+--------
+
+* FEATURE: Collapsible table of contents.
+* NEW: Multiple and partial commencements filter on Work filter form.
+* FIX: Commenceable provisions are loaded faster.
+
+=========
+
 15.0.1 (2021-09-16)
 --------
 

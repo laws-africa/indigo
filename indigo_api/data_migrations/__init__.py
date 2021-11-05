@@ -1,10 +1,24 @@
 import re
+import json
+from django.utils.encoding import force_text
 from lxml import etree
 
 from indigo.xmlutils import unwrap_element, rewrite_ids
 
 
-class RealCrossHeadings:
+class DataMigration:
+    def migrate_document_version(self, version):
+        data = json.loads(force_text(version.serialized_data.encode("utf8")))[0]
+        fields = data['fields']
+        if fields.get('document_xml'):
+            xml = etree.fromstring(fields['document_xml'])
+            if self.migrate_xml(xml):
+                fields['document_xml'] = etree.tostring(xml, encoding='unicode')
+                version.serialized_data = json.dumps(data)
+                return True
+
+
+class RealCrossHeadings(DataMigration):
     """ Migrate old-style hcontainer cross-heading to crossHeading
     """
     def migrate_document(self, document):
@@ -50,7 +64,7 @@ class RealCrossHeadings:
         unwrap_element(heading)
 
 
-class CorrectAttachmentEids:
+class CorrectAttachmentEids(DataMigration):
     """ Ensure that attachment eIds are correctly prefixed
     """
     def migrate_document(self, document):

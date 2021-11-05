@@ -9,12 +9,15 @@ def forwards(apps, schema_editor):
     """
     from indigo_api.models import Document
     from indigo_api.models import Annotation
+    from reversion.models import Version
 
     db_alias = schema_editor.connection.alias
     migration = CorrectAttachmentEids()
 
-    for doc in Document.objects.using(db_alias):
+    for doc in Document.objects.using(db_alias).order_by('-pk'):
+        print(f"Migrating {doc}")
         if migration.migrate_document(doc):
+            print("  Changed")
             doc.save()
 
             # update annotations
@@ -33,6 +36,17 @@ def forwards(apps, schema_editor):
                 Annotation.objects.using(db_alias) \
                     .filter(document_id=doc.id, anchor_id=old) \
                     .update(anchor_id=new)
+        else:
+            print("  No changes")
+
+    # migrate historical document versions
+    for version in Version.objects.get_for_model(Document).order_by('-pk'):
+        print(f"Migrating version {version.pk}")
+        if migration.migrate_document_version(version):
+            print("  Changed")
+            version.save()
+        else:
+            print("  No changes")
 
 
 class Migration(migrations.Migration):

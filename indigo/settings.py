@@ -128,6 +128,10 @@ INDIGO = {
 
     # permanently delete documents deleted this many days ago. Set to 0 to disable.
     'PRUNE_DELETED_DOCUMENT_DAYS': 90,
+    # delete document versions older than this...
+    'PRUNE_DOCUMENT_VERSIONS_DAYS': 90,
+    # ... but keep this number of most recent ones
+    'PRUNE_DOCUMENT_VERSIONS_KEEP': 5,
 
     # Key-value pairs for custom properties, per place code.
     'WORK_PROPERTIES': {},

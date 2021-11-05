@@ -21,6 +21,20 @@ def prune_deleted_documents():
         raise e
 
 
-def setup_prune_deleted_documents():
+@background(queue="indigo", remove_existing_tasks=True)
+def prune_document_versions():
+    """ Prune out old document versions.
+    """
+    try:
+        Document.prune_document_versions()
+    except Exception as e:
+        log.error(f"Error pruning document versions: {e}", exc_info=e)
+        raise e
+
+
+def setup_pruning():
     # schedule task to run in 12 hours time, and repeat daily
     prune_deleted_documents(schedule=timedelta(hours=12), repeat=Task.DAILY)
+
+    # schedule task to run in 12 hours time, and repeat daily
+    prune_document_versions(schedule=timedelta(hours=12), repeat=Task.DAILY)

@@ -1,4 +1,3 @@
-# coding=utf-8
 import os
 import logging
 import re
@@ -459,6 +458,24 @@ class Document(DocumentMixin, models.Model):
         doc.copy_attributes()
 
         return doc
+
+    @classmethod
+    def prune_deleted_documents(cls):
+        """ Prune out deleted documents that are older than SETTINGS['INDIGO']['PRUNE_DELETED_DOCUMENT_DAYS'] days.
+        """
+        days = settings.INDIGO['PRUNE_DELETED_DOCUMENT_DAYS']
+        if not days:
+            log.info("Not pruning old deleted documents because PRUNE_DELETED_DOCUMENT_DAYS is unset")
+            return
+
+        threshold = timezone.now() - datetime.timedelta(days=days)
+        log.info(f"Pruning old deleted documents updated over {days} days ago (before {threshold}).")
+
+        for doc in cls.objects.filter(deleted=True, updated_at__lt=threshold):
+            log.info(f"Pruning old deleted document {doc} last updated on {doc.updated_at}.")
+            doc.delete()
+
+        log.info("Pruning complete.")
 
 
 # version tracking

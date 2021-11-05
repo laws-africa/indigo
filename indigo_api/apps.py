@@ -18,3 +18,6 @@ class IndigoApiConfig(AppConfig):
         registry.register(PlaceSettings)
         registry.register(ArbitraryExpressionDate)
         registry.register(Commencement)
+
+        from indigo_api.tasks import setup_prune_deleted_documents
+        setup_prune_deleted_documents()

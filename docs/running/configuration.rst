@@ -94,6 +94,20 @@ Config options are mostly passed to Indigo as environment variables. These are t
   Should notification emails be sent asynchronously in the background? Default is False. See
   `django-background-tasks documentation <https://django-background-tasks.readthedocs.io/en/latest/>`_.
 
+* ``INDIGO.PRUNE_DELETED_DOCUMENT_DAYS``
+
+  If this is set, deleted documents older than the specified number of days will be deleted. Background tasks
+  must be run to do so. Defaults to 90 days.
+
+* ``INDIGO.PRUNE_DOCUMENT_VERSIONS_DAYS``
+
+  If this is set, document versions older than the specified number of days will be deleted, except
+  the ``INDIGO.PRUNE_DOCUMENT_VERSIONS_KEEP`` most recent. Defaults to 90 days.
+
+* ``INDIGO.PRUNE_DOCUMENT_VERSIONS_KEEP``
+
+  The number of recent document versions to keep when pruning document versions. Defaults to 5.
+
 
 Authentication
 --------------

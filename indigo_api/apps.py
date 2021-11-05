@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.conf import settings
 
 
 class IndigoApiConfig(AppConfig):
@@ -18,3 +19,7 @@ class IndigoApiConfig(AppConfig):
         registry.register(PlaceSettings)
         registry.register(ArbitraryExpressionDate)
         registry.register(Commencement)
+
+        if not settings.DEBUG:
+            from indigo_api.tasks import setup_pruning
+            setup_pruning()

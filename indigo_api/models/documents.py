@@ -1,4 +1,3 @@
-# coding=utf-8
 import os
 import logging
 import re
@@ -8,6 +7,7 @@ from actstream import action
 from django.conf import settings
 from django.db import models
 from django.db.models import signals
+from django.core.management import call_command
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
@@ -459,6 +459,42 @@ class Document(DocumentMixin, models.Model):
         doc.copy_attributes()
 
         return doc
+
+    @classmethod
+    def prune_deleted_documents(cls):
+        """ Prune out deleted documents that are older than SETTINGS.INDIGO['PRUNE_DELETED_DOCUMENT_DAYS'] days.
+        """
+        days = settings.INDIGO['PRUNE_DELETED_DOCUMENT_DAYS']
+        if not days:
+            log.info("Not pruning old deleted documents because PRUNE_DELETED_DOCUMENT_DAYS is unset")
+            return
+
+        threshold = timezone.now() - datetime.timedelta(days=days)
+        log.info(f"Pruning old deleted documents updated over {days} days ago (before {threshold}).")
+
+        for doc in cls.objects.filter(deleted=True, updated_at__lt=threshold):
+            log.info(f"Pruning old deleted document {doc} last updated on {doc.updated_at}.")
+            doc.delete()
+
+        log.info("Pruning complete.")
+
+    @classmethod
+    def prune_document_versions(cls):
+        """ Prune out document versions that are older than SETTINGS.INDIGO['PRUNE_DOCUMENT_VERSIONS_DAYS'] days,
+        keeping only the most recent SETTINGS.INDIGO['PRUNE_DOCUMENT_VERSIONS_KEEP'] versions that are older
+        than that.
+
+        Delegates to the deleterevisions command from django_reversion.
+        """
+        days = settings.INDIGO['PRUNE_DOCUMENT_VERSIONS_DAYS']
+        keep = settings.INDIGO['PRUNE_DOCUMENT_VERSIONS_KEEP']
+        if not days:
+            log.info("Not pruning document versions because PRUNE_DOCUMENT_VERSION_DAYS is unset")
+            return
+
+        log.info(f"Pruning old document versions created over {days} days ago, except the {keep} most recent.")
+        call_command("deleterevisions", "indigo_api.Document", f"--keep={keep}", f"--days={days}")
+        log.info("Pruning complete.")
 
 
 # version tracking

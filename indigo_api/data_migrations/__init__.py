@@ -14,7 +14,7 @@ class DataMigration:
             xml = etree.fromstring(fields['document_xml'])
             if self.migrate_xml(xml):
                 fields['document_xml'] = etree.tostring(xml, encoding='unicode')
-                version.serialized_data = json.dumps(data)
+                version.serialized_data = json.dumps([data])
                 return True
 
 

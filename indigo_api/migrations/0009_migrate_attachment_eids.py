@@ -45,7 +45,8 @@ def forwards(apps, schema_editor):
             print("  No changes")
 
     # migrate historical document versions
-    for version in Version.objects.get_for_model(Document).order_by('-pk'):
+    print("Migrating versions")
+    for version in Version.objects.get_for_model(Document).order_by('-pk').iterator():
         print(f"Migrating version {version.pk}")
         if migration.migrate_document_version(version):
             print("  Changed")

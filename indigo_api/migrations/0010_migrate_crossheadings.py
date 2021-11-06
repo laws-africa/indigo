@@ -20,6 +20,7 @@ def forwards(apps, schema_editor):
     for doc in Document.objects.using(db_alias).order_by('-pk'):
         print(f"Migrating {doc}")
         if migration.migrate_document(doc):
+            print("  Changed")
             doc.save()
 
             # update annotations

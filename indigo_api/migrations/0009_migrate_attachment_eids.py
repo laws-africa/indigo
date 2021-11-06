@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from indigo_api.data_migrations import CorrectAttachmentEids
+from django.db.models import signals
 
 
 def forwards(apps, schema_editor):
@@ -9,7 +10,11 @@ def forwards(apps, schema_editor):
     """
     from indigo_api.models import Document
     from indigo_api.models import Annotation
+    from indigo_api.models.documents import post_save_document
     from reversion.models import Version
+
+    # disconnect signals
+    signals.post_save.disconnect(post_save_document, Document)
 
     db_alias = schema_editor.connection.alias
     migration = CorrectAttachmentEids()

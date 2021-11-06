@@ -6,8 +6,6 @@
   <xsl:output method="html" />
   <!-- base URL of the resolver for resolving ref elements -->
   <xsl:param name="resolverUrl" />
-  <!-- default ID scoping to fall back on if we can't find an appropriate one for a node -->
-  <xsl:param name="defaultIdScope" />
   <!-- fully-qualified media URL to prepend to relative media urls -->
   <xsl:param name="mediaUrl" />
   <!-- 3-letter language code of document -->
@@ -34,32 +32,11 @@
     </xsl:element>
   </xsl:template>
 
-  <!-- helper to build an id attribute with an arbitrary value, scoped to the containing doc (if necessary) -->
-  <xsl:template name="scoped-id">
-    <xsl:param name="id" select="." />
-
-    <xsl:attribute name="id">
-      <!-- scope the id to the containing attachment, if any, using a default if provided -->
-      <xsl:variable name="prefix" select="../ancestor::a:attachment[@eId][1]/@eId"/>
-      <xsl:choose>
-        <xsl:when test="$prefix != ''">
-          <xsl:value-of select="concat($prefix, '/')" />
-        </xsl:when>
-        <xsl:when test="$defaultIdScope != ''">
-          <xsl:value-of select="concat($defaultIdScope, '/')" />
-        </xsl:when>
-      </xsl:choose>
-
-      <xsl:value-of select="$id" />
-    </xsl:attribute>
-  </xsl:template>
-
-  <!-- id attribute is scoped if necessary, and the original saved as data-eId -->
+  <!-- eId attribute is copied to id -->
   <xsl:template match="@eId">
-    <xsl:call-template name="scoped-id">
-      <xsl:with-param name="id" select="." />
-    </xsl:call-template>
-
+    <xsl:attribute name="id">
+      <xsl:value-of select="." />
+    </xsl:attribute>
     <xsl:attribute name="data-eId">
       <xsl:value-of select="." />
     </xsl:attribute>
@@ -146,7 +123,7 @@
         <br/>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
-      
+
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
     </section>
   </xsl:template>
@@ -171,15 +148,12 @@
     </section>
   </xsl:template>
 
-  <!-- crossHeadings - this mimics what the output will be for AKN 3, where crossHeading is a real element -->
-  <xsl:template match="a:hcontainer[@name='crossheading']">
+  <xsl:template match="a:crossHeading">
     <h3 class="akn-crossHeading">
       <xsl:apply-templates select="@*" />
-      <xsl:apply-templates select="a:heading" mode="inline" />
+      <xsl:apply-templates />
     </h3>
   </xsl:template>
-  <!-- don't include name attribute on crossheading output -->
-  <xsl:template match="a:hcontainer[@name='crossheading']/@name"/>
 
   <!-- components/schedules -->
   <xsl:template match="a:attachment">
@@ -203,9 +177,9 @@
   <xsl:template match="a:coverPage | a:preface | a:preamble | a:conclusions">
     <section class="akn-{local-name()}">
       <!-- these components don't have ids in AKN, so add them -->
-      <xsl:call-template name="scoped-id">
-        <xsl:with-param name="id" select="local-name()" />
-      </xsl:call-template>
+      <xsl:attribute name="id">
+        <xsl:value-of select="local-name()" />
+      </xsl:attribute>
 
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />

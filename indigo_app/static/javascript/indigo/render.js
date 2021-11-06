@@ -14,7 +14,6 @@ $(function() {
      * @returns {DocumentFragment}
      */
     renderXmlElement: function(documentModel, element) {
-      this.htmlTransform.setParameter(null, 'defaultIdScope', this.getElementIdScope(element) || '');
       this.htmlTransform.setParameter(null, 'mediaUrl', documentModel.url() + '/');
       this.htmlTransform.setParameter(null, 'lang', documentModel.get('language'));
       this.htmlTransform.setParameter(null, 'documentType', documentModel.work.get('nature'));
@@ -22,21 +21,6 @@ $(function() {
       this.htmlTransform.setParameter(null, 'country', documentModel.work.get('country'));
       this.htmlTransform.setParameter(null, 'locality', documentModel.work.get('locality') || '');
       return this.htmlTransform.transformToFragment(element, document);
-    },
-
-    /** Default scope for ID attribute of rendered elements.
-     */
-    getElementIdScope: function(element) {
-      var ns = element.namespaceURI;
-      var idScope = element.ownerDocument.evaluate(
-        "./ancestor::a:attachment/@eId",
-        element,
-        function(x) { if (x === "a") return ns; },
-        XPathResult.ANY_TYPE,
-        null);
-
-      idScope = idScope.iterateNext();
-      return idScope ? idScope.value : null;
     },
 
     /** Setup for this country, loading the XSL stylesheet, etc.

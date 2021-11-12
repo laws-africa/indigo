@@ -8,21 +8,23 @@ import subprocess
 
 import lxml.html
 from django.conf import settings
-from django.template.loader import render_to_string, get_template
 from django.contrib.staticfiles.finders import find as find_static
+from django.template.loader import render_to_string, get_template
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree as ET
 from sass_processor.processor import SassProcessor
 from wkhtmltopdf import make_absolute_paths, wkhtmltopdf
 
+from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo_api.models import Colophon
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
+
 
 log = logging.getLogger(__name__)
 
 
-class HTMLExporter(object):
+class HTMLExporter:
     """ Export (render) AKN documents as as HTML.
     """
     def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None, media_resolver_use_akn_prefix=False):
@@ -135,17 +137,20 @@ class HTMLExporter(object):
         return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
 
 
-class PDFExporter(HTMLExporter):
+@plugins.register('pdf-exporter')
+class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     """ Exports (renders) AKN documents as PDFs.
     """
+    locale = (None, None, None)
+
     def __init__(self, toc=True, colophon=True, *args, **kwargs):
-        super(PDFExporter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.toc = toc
         self.colophon = colophon
 
     def render(self, document, element=None):
         self.media_url = 'doc-0/'
-        html = super(PDFExporter, self).render(document, element=element)
+        html = super().render(document, element=element)
 
         # embed the HTML into the PDF container
         html = render_to_string('indigo_api/akn/export/pdf.html', {
@@ -163,7 +168,7 @@ class PDFExporter(HTMLExporter):
             # render individual documents
             for i, doc in enumerate(documents):
                 self.media_url = f'doc-{i}/'
-                doc_html = super(PDFExporter, self).render(doc, **kwargs)
+                doc_html = super().render(doc, **kwargs)
                 self.save_attachments(doc_html, doc, f'doc-{i}/media/', tmpdir)
 
                 html.append(doc_html)

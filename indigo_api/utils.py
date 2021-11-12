@@ -71,6 +71,7 @@ def filename_candidates(document, prefix='', suffix=''):
     * doctype-country
     * doctype-language
     * doctype
+    * country
     * akn
     """
     uri = document.expression_uri
@@ -90,6 +91,7 @@ def filename_candidates(document, prefix='', suffix=''):
     options.append('-'.join([doctype, country]))
     options.append('-'.join([doctype, language]))
     options.append(doctype)
+    options.append(country)
     options.append('akn')
 
     return [prefix + f + suffix for f in options]

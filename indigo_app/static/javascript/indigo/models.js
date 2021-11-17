@@ -123,9 +123,11 @@
      */
     fixAttachmentIds: function() {
       var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
+      const rewriter = new indigoAkn.EidRewriter();
 
       for (var i = 0; i < result.snapshotLength; i++) {
-        result.snapshotItem(i).setAttribute('eId', 'att_' + (i + 1));
+        const element = result.snapshotItem(i);
+        rewriter.rewriteEids(element, element.getAttribute('eId'), 'att_' + (i + 1));
       }
     },
 

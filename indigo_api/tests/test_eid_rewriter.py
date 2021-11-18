@@ -53,3 +53,6 @@ class EIdRewriterTestCase(TestCase):
 
     def test_duplicate_section(self):
         self.run_it('duplicate_section_in', 'duplicate_section_out')
+
+    def test_subpart_nn(self):
+        self.run_it('subpart_in', 'subpart_out')

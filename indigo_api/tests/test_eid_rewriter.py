@@ -46,7 +46,10 @@ class EIdRewriterTestCase(TestCase):
         with open(fname, 'rt') as f:
             xml = f.read()
 
-        self.assertEqual(xml_out, xml)
+        self.assertEqual(xml, xml_out)
 
     def test_unchanged(self):
         self.run_it('unchanged', 'unchanged')
+
+    def test_duplicate_section(self):
+        self.run_it('duplicate_section_in', 'duplicate_section_out')

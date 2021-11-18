@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import subprocess
 import tempfile
 import shutil
@@ -13,8 +12,9 @@ import lxml.etree as ET
 from django.core.files.uploadedfile import UploadedFile
 
 from cobalt import AkomaNtosoDocument
-from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo.xmlutils import EIdRewriter, rewrite_ids
+from indigo_api.models import Attachment
 from indigo_api.serializers import AttachmentSerializer
 from indigo_api.utils import filename_candidates, find_best_static
 from indigo_api.importers.pdfs import pdf_extract_pages
@@ -139,6 +139,7 @@ class Importer(LocaleBasedMatcher):
             self.log.info("Processing upload as an unknown file")
             self.create_from_file(upload, doc, 'text')
 
+        self.rewrite_eids(doc)
         self.analyse_after_import(doc)
 
     def create_from_akn(self, upload, doc):
@@ -285,6 +286,30 @@ class Importer(LocaleBasedMatcher):
         f.seek(0)
 
         return f
+
+    def rewrite_eids(self, document):
+        """ rewrite eIds created by slaw that are guaranteed to be unique,
+         and use `nn` to indicate unnumbered elements.
+        """
+        root = ET.fromstring(document.document_xml)
+        ids = EIdRewriter(document.doc.namespace)
+        skip_entirely = ['meta']
+
+        def rewrite(prefix, item):
+            name = item.tag.replace(f'{{{document.doc.namespace}}}', '')
+            existing = item.get('eId')
+            if name not in skip_entirely:
+                if existing:
+                    new = ids.make(prefix, item, name)
+                    if existing != new:
+                        rewrite_ids(item, existing, new)
+
+                for e in item:
+                    rewrite(item.get('eId', prefix), e)
+
+        rewrite('', root)
+
+        document.document_xml = ET.tostring(root, encoding='utf-8').decode('utf-8')
 
     def analyse_after_import(self, doc):
         """ Run analysis after import.

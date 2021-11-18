@@ -197,7 +197,7 @@ class EIdRewriter:
         return sub[name]
 
     def make(self, prefix, item, name):
-        if name in self.dont_prefix:
+        if name in self.dont_prefix and not prefix.startswith('att_'):
             prefix = ''
 
         eid = (f'{prefix}__' if prefix else '') + self.aliases.get(name, name)

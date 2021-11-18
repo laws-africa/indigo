@@ -106,7 +106,7 @@
                 <p>Section 1 content.</p>
               </content>
             </hcontainer>
-            <crossHeading eId="sec_1__crossHeading_1">A cross head</crossHeading>
+            <crossHeading eId="sec_1__crossHeading_2">A cross head</crossHeading>
             <subsection eId="sec_1__subsec_1">
               <num>(1)</num>
               <content>

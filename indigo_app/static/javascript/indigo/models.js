@@ -110,25 +110,8 @@
         }
       }
 
-      // ensure attachment ids are correct, we could have deleted an attachment
-      if (oldNode.tagName === 'attachment') {
-        this.fixAttachmentIds();
-      }
-
       this.trigger('change:dom');
       return first;
-    },
-
-    /** Ensures attachments have sequential eId numbering.
-     */
-    fixAttachmentIds: function() {
-      var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
-      const rewriter = new indigoAkn.EidRewriter();
-
-      for (var i = 0; i < result.snapshotLength; i++) {
-        const element = result.snapshotItem(i);
-        rewriter.rewriteEids(element, element.getAttribute('eId'), 'att_' + (i + 1));
-      }
     },
 
     /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.

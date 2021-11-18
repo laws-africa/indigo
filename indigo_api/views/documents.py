@@ -347,6 +347,7 @@ class ParseView(DocumentResourceView, APIView):
             raise ValidationError({'content': str(e) or "error during import"})
 
         if not fragment:
+            # TODO: when fragment is 'schedules' or 'schedules_container', the meta section is also incorrect
             # The importer doesn't have enough information to give us a complete document
             # including the meta section, so it's empty or incorrect. We fold in the meta section
             # from the existing document, so that we return a complete document to the caller.

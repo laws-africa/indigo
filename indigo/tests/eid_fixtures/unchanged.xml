@@ -257,6 +257,23 @@
                 <p>And, this one</p>
               </content>
             </paragraph>
+            <section eId="att_1__sec_7">
+              <num>7.</num>
+              <heading/>
+              <subsection eId="att_1__sec_7__subsec_1">
+                <num>(1)</num>
+                <content>
+                  <p>first</p>
+                </content>
+              </subsection>
+              <subsection eId="att_1__sec_7__subsec_2">
+                <num>(2)</num>
+                <content>
+                  <p>second</p>
+                  <p>Seventh section, also added later and also commences in the future, with section 3.</p>
+                </content>
+              </subsection>
+            </section>
           </mainBody>
         </doc>
       </attachment>

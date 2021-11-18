@@ -101,7 +101,7 @@
           <section eId="sec_1">
             <num>1.</num>
             <heading>Second section 1</heading>
-            <hcontainer eId="sec_1__hcontainer_1" name="hcontainer">
+            <hcontainer eId="sec_1__hcontainer_2" name="hcontainer">
               <content>
                 <p>Section 1 content.</p>
               </content>

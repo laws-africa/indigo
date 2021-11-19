@@ -437,8 +437,6 @@ class Work(WorkMixin, models.Model):
 
     def save(self, *args, **kwargs):
         # prevent circular references
-        if self.repealed_by == self:
-            self.repealed_by = None
         if self.parent_work == self:
             self.parent_work = None
 

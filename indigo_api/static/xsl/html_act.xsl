@@ -258,14 +258,13 @@
     <xsl:apply-templates select="@*" />
     <xsl:apply-templates />
   </xsl:template>
-  
+
   <!-- For HTML table elements, copy them over then apply normal AN
        processing to their contents -->
   <xsl:template match="a:table">
     <div class="akn--table-container">
       <xsl:element name="{local-name()}">
-        <xsl:copy-of select="@*" />
-        <xsl:apply-templates select="@id" />
+        <xsl:apply-templates select="@*" />
         <xsl:apply-templates />
       </xsl:element>
     </div>

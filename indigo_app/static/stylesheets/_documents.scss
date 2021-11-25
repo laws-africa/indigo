@@ -228,7 +228,6 @@ button.btn-link.help {
 
 /* table of contents browser */
 
-//TODO: Replace with .toc
 la-table-of-contents {
   .indented__toggle-btn {
     background-color: transparent;
@@ -244,32 +243,15 @@ la-table-of-contents {
       color: $blue;
     }
   }
-}
 
-.toc {
-  font-size: 13px;
-  padding: 5px 0px 0px 0px;
+  la-toc-item {
+    .content__action__title:hover {
+      background-color: #e9ecef;
+    }
 
-  button { padding: 0; }
-
-  ol {
-    width: 100%;
-
-    .toc-item {
-      .toc-toggle-btn {
-        background-color: transparent;
-        border-radius: 50%;
-        padding: 0;
-        border: none;
-        outline: none;
-        margin-right: 2px;
-        i {
-          font-size: 8px;
-          padding: 2px;
-          border: 1px solid $blue;
-          color: $blue;
-        }
-      }
+    &.selected > .content > .content__action > .content__action__title {
+      background-color: #2d7ad4;
+      color: white;
     }
   }
 }

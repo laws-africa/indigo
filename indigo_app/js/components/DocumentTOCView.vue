@@ -1,7 +1,8 @@
 <template>
   <div class="toc-controller-wrapper">
     <la-table-of-contents-controller
-        :items="itemsForLaTOCController"
+        ref="la-toc-controller"
+        :items.prop="roots"
         :title-filter="titleQuery"
         expand-all-btn-classes="btn btn-primary btn-sm mr-1"
         collapse-all-btn-classes="btn btn-primary btn-sm mr-1"
@@ -10,76 +11,19 @@
         title-filter-clearable
         title-filter-clear-btn-classes="btn btn-sm btn-secondary"
         v-on:itemRendered="handleItemRendered"
+        v-on:itemTitleClicked="handleItemTitleClicked"
     >
       <span slot="expand-icon"><i class="fas fa-plus"></i></span>
       <span slot="collapse-icon"><i class="fas fa-minus"></i></span>
     </la-table-of-contents-controller>
-
-    <div class="input-group mb-2">
-      <input type="text"
-             class="form-control form-control-sm"
-             placeholder="Search by title"
-             v-model="titleQuery"
-      >
-      <div class="input-group-prepend">
-        <button class="btn btn-sm btn-secondary"
-                style="width: 25px"
-                type="button"
-                @click="clearTitleQuery"
-                :disabled="!titleQuery"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-    <div class="d-flex mb-2">
-      <button @click="expandAllTOCItems"
-              type="button"
-              class="btn btn-primary btn-sm mr-1"
-      >
-        Expand All
-      </button>
-      <button @click="collapseAllTOCItems"
-              type="button"
-              class="btn btn-primary btn-sm">
-        Collapse All
-      </button>
-    </div>
-    <TOCController
-        :items="roots"
-        :title-query="titleQuery"
-        ref="tocController"
-        @on-title-click="onTitleClick"
-    >
-      <template v-slot:right-icon="{item}">
-        <i :class="`float-right issue-icon issue-${item.issues_severity}`"
-           v-if="item.issues.length"
-           data-toggle="popover"
-           :data-content="item.issues_description"
-           :data-title="item.issues_title"
-           data-trigger="hover"
-           data-placement="bottom"
-           data-html="true"
-           data-container=".toc-controller-wrapper"
-        >
-        </i>
-      </template>
-
-      <template v-slot:expand-icon><i class="fas fa-plus"></i></template>
-      <template v-slot:collapse-icon><i class="fas fa-minus"></i></template>
-    </TOCController>
   </div>
 </template>
 
 <script>
-import TOCController from './toc-controller/index.vue';
 import 'la-web-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',
-  components: {
-    TOCController
-  },
   props: {
     selection: {
       type: Object,
@@ -116,6 +60,7 @@ export default {
         icon.dataset.html = true;
         icon.dataset.container = '.toc-controller-wrapper';
         e.target.appendHtml = icon.outerHTML;
+        $('#toc [data-toggle="popover"]').popover();
       }
     },
     rebuild (force) {
@@ -269,8 +214,21 @@ export default {
       }
     },
 
+    handleItemTitleClicked (e) {
+      this.selectItem(e.target.item.index, true);
+    },
+
     // select the i-th item in the TOC
     selectItem (i, force) {
+      // Update toc item state
+      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
+      for (const tocItem of tocItems) {
+        tocItem.classList.remove('selected');
+        if (tocItem.item.index === i) {
+          tocItem.classList.add('selected');
+        }
+      }
+
       const index = this.selection.get('index');
 
       i = Math.min(this.toc.length - 1, i);
@@ -309,30 +267,15 @@ export default {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem(index, true);
       }
-    },
-
-    clearTitleQuery () { this.titleQuery = ''; },
-
-    expandAllTOCItems () { this.$refs.tocController.expandAll(); },
-    collapseAllTOCItems () { this.$refs.tocController.collapseAll(); }
+    }
   },
 
   watch: {
     issues () { this.mergeIssues(); }
   },
 
-  updated () {
-    $('#toc [data-toggle="popover"]').popover();
-  },
-
   mounted () {
     this.model.on('change:dom', this.rebuild, this);
-  },
-
-  computed: {
-    itemsForLaTOCController () {
-      return JSON.stringify(this.roots);
-    }
   }
 };
 </script>

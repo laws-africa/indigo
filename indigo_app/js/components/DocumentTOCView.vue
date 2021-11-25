@@ -1,5 +1,20 @@
 <template>
   <div class="toc-controller-wrapper">
+    <la-table-of-contents-controller
+        :items="itemsForLaTOCController"
+        :title-filter="titleQuery"
+        expand-all-btn-classes="btn btn-primary btn-sm mr-1"
+        collapse-all-btn-classes="btn btn-primary btn-sm mr-1"
+        search-filter-input-classes="form-control form-control-sm"
+        title-filter-placeholder="Search by title"
+        title-filter-clearable
+        title-filter-clear-btn-classes="btn btn-sm btn-secondary"
+        v-on:itemRendered="handleItemRendered"
+    >
+      <span slot="expand-icon"><i class="fas fa-plus"></i></span>
+      <span slot="collapse-icon"><i class="fas fa-minus"></i></span>
+    </la-table-of-contents-controller>
+
     <div class="input-group mb-2">
       <input type="text"
              class="form-control form-control-sm"
@@ -58,6 +73,7 @@
 
 <script>
 import TOCController from './toc-controller/index.vue';
+import 'la-web-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',
@@ -88,6 +104,20 @@ export default {
   },
 
   methods: {
+    handleItemRendered (e) {
+      if (e.target.item.issues.length) {
+        const icon = document.createElement('i');
+        icon.className = `float-right issue-icon issue-${e.target.item.issues_severity}`;
+        icon.dataset.toggle = 'popover';
+        icon.dataset.content = e.target.item.issues_description;
+        icon.dataset.title = e.target.item.issues_title;
+        icon.dataset.trigger = 'hover';
+        icon.dataset.placement = 'bottom';
+        icon.dataset.html = true;
+        icon.dataset.container = '.toc-controller-wrapper';
+        e.target.appendHtml = icon.outerHTML;
+      }
+    },
     rebuild (force) {
       // recalculate the TOC from the model
       if (this.model.xmlDocument) {
@@ -297,6 +327,12 @@ export default {
 
   mounted () {
     this.model.on('change:dom', this.rebuild, this);
+  },
+
+  computed: {
+    itemsForLaTOCController () {
+      return JSON.stringify(this.roots);
+    }
   }
 };
 </script>

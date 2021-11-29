@@ -274,7 +274,7 @@ export default {
 
   mounted () {
     this.model.on('change:dom', this.rebuild, this);
-    this.selection.on('change', this.updateLaToc)
+    this.selection.on('change', this.updateLaToc);
   }
 };
 </script>

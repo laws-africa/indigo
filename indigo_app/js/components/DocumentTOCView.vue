@@ -138,6 +138,13 @@ export default {
 
       iterateChildren(this.model.xmlDocument);
 
+      // move the top-level akomaNtoso element from being the first parent, to just the first sibling of its children
+      // this makes more sense in the TOC view and takes up less horizontal space
+      if (toc.length > 0 && toc[0].type === 'akomaNtoso') {
+        roots.push(...toc[0].children);
+        toc[0].children = [];
+      }
+
       this.toc = toc;
       this.roots = roots;
 

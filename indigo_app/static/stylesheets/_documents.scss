@@ -228,7 +228,9 @@ button.btn-link.help {
 
 /* table of contents browser */
 
-la-table-of-contents {
+la-table-of-contents-controller {
+  font-size: 13px;
+
   .indented__toggle-btn {
     background-color: transparent;
     border-radius: 50%;
@@ -245,8 +247,31 @@ la-table-of-contents {
   }
 
   la-toc-item {
+    align-items: flex-start;
+    width: 100%;
+
+    .indented {
+      width: 19px;
+      flex-shrink: 0;
+    }
+
+    .content {
+      flex-grow: 1;
+      width: calc(100% - 19px);
+    }
+    .content__action__title {
+      text-decoration: none;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
     .content__action__title:hover {
       background-color: $gray-200;
+    }
+    .content__action__append {
+      margin-left: 5px;
     }
 
     &.selected > .content > .content__action > .content__action__title {

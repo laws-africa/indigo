@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import '@laws-africa/la-components/dist/components/la-table-of-contents-controller';
+import '@laws-africa/web-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',
@@ -47,9 +47,6 @@ export default {
 
   methods: {
     handleItemRendered (e) {
-      const title = e.target.querySelector('.content__action__title');
-      //Prevent flash targets
-      title.href = "#";
       if (e.target.item.issues.length) {
         const icon = document.createElement('i');
         icon.className = `float-right issue-icon issue-${e.target.item.issues_severity}`;
@@ -230,6 +227,7 @@ export default {
     },
 
     onTitleClick (e) {
+      e.detail.preventDefault();
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem(e.target.item.index);
       }

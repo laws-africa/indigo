@@ -39,16 +39,16 @@
       this.compInstance.issues = this.issues;
     },
 
-    selectItem: function(i, force) {
-      if (this.compInstance) this.compInstance.selectItem(i, force);
+    selectItem: function(i) {
+      if (this.compInstance) this.compInstance.selectItem(i);
     },
 
     selectItemById: function(itemId) {
       if (this.compInstance) this.compInstance.selectItemById(itemId);
     },
 
-    rebuild: function(force) {
-      if (this.compInstance) this.compInstance.rebuild(force);
+    rebuild: function() {
+      if (this.compInstance) this.compInstance.rebuild();
     }
   });
 })(window);

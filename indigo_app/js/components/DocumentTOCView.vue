@@ -64,21 +64,19 @@ export default {
         $('#toc [data-toggle="popover"]').popover();
       }
     },
-    rebuild (force) {
+    rebuild () {
       // recalculate the TOC from the model
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
-        const oldLength = this.toc.length;
-        const index = this.selection.get('index');
+        const selection = this.selection.get('index');
 
         this.buildToc();
 
-        if (index > this.toc.length - 1) {
+        if (selection > this.toc.length - 1) {
           // we've selected past the end of the TOC
           this.selectItem(this.toc.length - 1);
-        } else if (force || (index > -1 && this.toc.length !== oldLength)) {
-          // arrangament of the TOC has changed, re-select the item we want
-          this.selectItem(index, true);
+        } else if (selection > -1) {
+          this.selectItem(selection);
         }
       }
     },
@@ -215,7 +213,7 @@ export default {
     },
 
     // select the i-th item in the TOC
-    selectItem (i, force) {
+    selectItem (i) {
       const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
       for (const tocItem of tocItems) {
         tocItem.classList.remove('selected');
@@ -224,23 +222,16 @@ export default {
         }
       }
 
-      const index = this.selection.get('index');
-
       i = Math.min(this.toc.length - 1, i);
-      if (force || index !== i) {
-        // only do this after rendering
-        if (force) {
-          // ensure it forces a change
-          this.selection.clear({ silent: true });
-        }
-        this.selection.set(i > -1 ? this.toc[i] : {});
-      }
+      // clear first to ensure a change event
+      this.selection.clear({ silent: true });
+      this.selection.set(i > -1 ? this.toc[i] : {});
     },
 
     selectItemById (itemId) {
       for (let i = 0; i < this.toc.length; i++) {
         if (this.toc[i].id === itemId) {
-          this.selectItem(i, true);
+          this.selectItem(i);
           return true;
         }
       }
@@ -250,7 +241,7 @@ export default {
 
     onTitleClick (index) {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
-        this.selectItem(index, true);
+        this.selectItem(index);
       }
     },
   },

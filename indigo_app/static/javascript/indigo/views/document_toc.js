@@ -44,7 +44,7 @@
     },
 
     selectItemById: function(itemId) {
-      if (this.compInstance) this.compInstance.selectItemById(itemId);
+      if (this.compInstance) return this.compInstance.selectItemById(itemId);
     },
 
     rebuild: function() {

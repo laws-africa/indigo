@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "dependencies": {
-    "@laws-africa/la-components": "^0.4.0-beta"
+    "@laws-africa/la-components": "^0.4.0-beta",
+    "@laws-africa/web-components": "^0.4.0-beta"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",

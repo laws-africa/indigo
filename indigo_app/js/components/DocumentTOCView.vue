@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import 'la-web-components/dist/components/la-table-of-contents-controller';
+import '@laws-africa/la-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',
@@ -218,15 +218,6 @@ export default {
 
     // select the i-th item in the TOC
     selectItem (i, force) {
-      // Update toc item state
-      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
-      for (const tocItem of tocItems) {
-        tocItem.classList.remove('selected');
-        if (tocItem.item.index === i) {
-          tocItem.classList.add('selected');
-        }
-      }
-
       const index = this.selection.get('index');
 
       i = Math.min(this.toc.length - 1, i);
@@ -265,6 +256,15 @@ export default {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
         this.selectItem(index, true);
       }
+    },
+    updateLaToc(data) {
+      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
+      for (const tocItem of tocItems) {
+        tocItem.classList.remove('selected');
+        if (tocItem.item.index === data.changed.index) {
+          tocItem.classList.add('selected');
+        }
+      }
     }
   },
 
@@ -274,6 +274,7 @@ export default {
 
   mounted () {
     this.model.on('change:dom', this.rebuild, this);
+    this.selection.on('change', this.updateLaToc)
   }
 };
 </script>

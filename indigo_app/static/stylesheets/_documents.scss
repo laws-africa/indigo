@@ -246,7 +246,7 @@ la-table-of-contents {
 
   la-toc-item {
     .content__action__title:hover {
-      background-color: #e9ecef;
+      background-color: $gray-200;
     }
 
     &.selected > .content > .content__action > .content__action__title {

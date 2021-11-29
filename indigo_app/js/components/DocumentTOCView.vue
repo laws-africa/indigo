@@ -6,9 +6,7 @@
         :title-filter="titleQuery"
         expand-all-btn-classes="btn btn-primary btn-sm mr-1"
         collapse-all-btn-classes="btn btn-primary btn-sm mr-1"
-        search-filter-input-classes="form-control form-control-sm"
-        title-filter-placeholder="Search by title"
-        title-filter-clearable
+        title-filter-input-classes="form-control form-control-sm"
         title-filter-clear-btn-classes="btn btn-sm btn-secondary"
         v-on:itemRendered="handleItemRendered"
         v-on:itemTitleClicked="handleItemTitleClicked"

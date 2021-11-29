@@ -79,10 +79,6 @@ export default {
         } else if (force || (index > -1 && this.toc.length !== oldLength)) {
           // arrangament of the TOC has changed, re-select the item we want
           this.selectItem(index, true);
-        } else {
-          if (index > -1) {
-            this.toc[index].selected = true;
-          }
         }
       }
     },
@@ -147,7 +143,6 @@ export default {
           element: node,
           type: node.localName,
           id: qualified_id,
-          selected: false,
           issues: [],
           issues_title: '',
           issues_description: '',
@@ -221,20 +216,18 @@ export default {
 
     // select the i-th item in the TOC
     selectItem (i, force) {
+      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
+      for (const tocItem of tocItems) {
+        tocItem.classList.remove('selected');
+        if (tocItem.item.index === i) {
+          tocItem.classList.add('selected');
+        }
+      }
+
       const index = this.selection.get('index');
 
       i = Math.min(this.toc.length - 1, i);
-
       if (force || index !== i) {
-        // unmark the old one
-        if (index > -1 && index < this.toc.length) {
-          this.toc[index].selected = false;
-        }
-
-        if (i > -1) {
-          this.toc[i].selected = true;
-        }
-
         // only do this after rendering
         if (force) {
           // ensure it forces a change
@@ -260,15 +253,6 @@ export default {
         this.selectItem(index, true);
       }
     },
-    updateLaToc(data) {
-      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
-      for (const tocItem of tocItems) {
-        tocItem.classList.remove('selected');
-        if (tocItem.item.index === data.changed.index) {
-          tocItem.classList.add('selected');
-        }
-      }
-    }
   },
 
   watch: {
@@ -277,7 +261,6 @@ export default {
 
   mounted () {
     this.model.on('change:dom', this.rebuild, this);
-    this.selection.on('change', this.updateLaToc);
   }
 };
 </script>

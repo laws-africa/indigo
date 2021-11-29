@@ -9,7 +9,7 @@
         title-filter-input-classes="form-control form-control-sm"
         title-filter-clear-btn-classes="btn btn-sm btn-secondary"
         v-on:itemRendered="handleItemRendered"
-        v-on:itemTitleClicked="handleItemTitleClicked"
+        v-on:itemTitleClicked="onTitleClick"
     >
       <span slot="expand-icon"><i class="fas fa-plus"></i></span>
       <span slot="collapse-icon"><i class="fas fa-minus"></i></span>
@@ -68,16 +68,8 @@ export default {
       // recalculate the TOC from the model
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
-        const selection = this.selection.get('index');
-
         this.buildToc();
-
-        if (selection > this.toc.length - 1) {
-          // we've selected past the end of the TOC
-          this.selectItem(this.toc.length - 1);
-        } else if (selection > -1) {
-          this.selectItem(selection);
-        }
+        this.selectItem(this.selection.get('index'));
       }
     },
 
@@ -128,19 +120,13 @@ export default {
 
       function generateToc (node) {
         const $node = $(node);
-        const $component = $node.closest('attachment');
-        let qualified_id = node.getAttribute('eId');
-
-        if ($component.length > 0) {
-          qualified_id = $component.attr('eId') + '/' + qualified_id;
-        }
 
         const item = {
           num: $node.children('num').text(),
           heading: getHeadingText(node),
           element: node,
           type: node.localName,
-          id: qualified_id,
+          id: node.getAttribute('eId'),
           issues: [],
           issues_title: '',
           issues_description: '',
@@ -208,12 +194,10 @@ export default {
       }
     },
 
-    handleItemTitleClicked (e) {
-      this.selectItem(e.target.item.index, true);
-    },
-
     // select the i-th item in the TOC
     selectItem (i) {
+      i = Math.min(this.toc.length - 1, i);
+
       const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
       for (const tocItem of tocItems) {
         tocItem.classList.remove('selected');
@@ -222,7 +206,6 @@ export default {
         }
       }
 
-      i = Math.min(this.toc.length - 1, i);
       // clear first to ensure a change event
       this.selection.clear({ silent: true });
       this.selection.set(i > -1 ? this.toc[i] : {});
@@ -239,11 +222,11 @@ export default {
       return false;
     },
 
-    onTitleClick (index) {
+    onTitleClick (e) {
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
-        this.selectItem(index);
+        this.selectItem(e.target.item.index);
       }
-    },
+    }
   },
 
   watch: {

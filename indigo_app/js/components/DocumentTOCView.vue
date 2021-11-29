@@ -47,6 +47,9 @@ export default {
 
   methods: {
     handleItemRendered (e) {
+      const title = e.target.querySelector('.content__action__title');
+      //Prevent flash targets
+      title.href = "#";
       if (e.target.item.issues.length) {
         const icon = document.createElement('i');
         icon.className = `float-right issue-icon issue-${e.target.item.issues_severity}`;

@@ -13,7 +13,7 @@
       this.listenTo(this.issues, "reset change add remove", this.issuesChanged);
 
       this.registeredComp = indigoApp.Vue.options.components.DocumentTOCView;
-      this.targetMountElement = document.getElementById("DocumentTOCView");
+      this.targetMountElement = document.querySelector(".document-toc-view");
       this.selection = new Backbone.Model({
         index: -1
       });
@@ -39,16 +39,16 @@
       this.compInstance.issues = this.issues;
     },
 
-    selectItem: function(i, force) {
-      if (this.compInstance) this.compInstance.selectItem(i, force);
+    selectItem: function(i) {
+      if (this.compInstance) this.compInstance.selectItem(i);
     },
 
     selectItemById: function(itemId) {
-      if (this.compInstance) this.compInstance.selectItemById(itemId);
+      if (this.compInstance) return this.compInstance.selectItemById(itemId);
     },
 
-    rebuild: function(force) {
-      if (this.compInstance) this.compInstance.rebuild(force);
+    rebuild: function() {
+      if (this.compInstance) this.compInstance.rebuild();
     }
   });
 })(window);

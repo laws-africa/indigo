@@ -6,7 +6,6 @@
   "directories": {
     "doc": "docs"
   },
-  "dependencies": {},
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
     "@laws-africa/indigo-akn": "^1.4.0",
@@ -47,5 +46,8 @@
   "bugs": {
     "url": "https://github.com/laws-africa/indigo/issues"
   },
-  "homepage": "https://github.com/laws-africa/indigo#readme"
+  "homepage": "https://github.com/laws-africa/indigo#readme",
+  "dependencies": {
+    "@laws-africa/web-components": "^0.4.0-beta"
+  }
 }

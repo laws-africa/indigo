@@ -227,30 +227,56 @@ button.btn-link.help {
 }
 
 /* table of contents browser */
-.toc {
+
+la-table-of-contents-controller {
   font-size: 13px;
-  padding: 5px 0px 0px 0px;
 
-  button { padding: 0; }
+  .indented__toggle-btn {
+    background-color: transparent;
+    border-radius: 50%;
+    padding: 0;
+    border: none;
+    outline: none;
+    margin-right: 2px;
+    i {
+      font-size: 8px;
+      padding: 2px;
+      border: 1px solid $blue;
+      color: $blue;
+    }
+  }
 
-  ol {
+  la-toc-item {
+    align-items: flex-start;
     width: 100%;
 
-    .toc-item {
-      .toc-toggle-btn {
-        background-color: transparent;
-        border-radius: 50%;
-        padding: 0;
-        border: none;
-        outline: none;
-        margin-right: 2px;
-        i {
-          font-size: 8px;
-          padding: 2px;
-          border: 1px solid $blue;
-          color: $blue;
-        }
-      }
+    .indented {
+      width: 19px;
+      flex-shrink: 0;
+    }
+
+    .content {
+      flex-grow: 1;
+      width: calc(100% - 19px);
+    }
+    .content__action__title {
+      text-decoration: none;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+    .content__action__title:hover {
+      background-color: $gray-200;
+    }
+    .content__action__append {
+      margin-left: 5px;
+    }
+
+    &.selected > .content > .content__action > .content__action__title {
+      background-color: $blue;
+      color: white;
     }
   }
 }

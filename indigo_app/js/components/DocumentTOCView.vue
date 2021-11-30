@@ -1,69 +1,27 @@
 <template>
   <div class="toc-controller-wrapper">
-    <div class="input-group mb-2">
-      <input type="text"
-             class="form-control form-control-sm"
-             placeholder="Search by title"
-             v-model="titleQuery"
-      >
-      <div class="input-group-prepend">
-        <button class="btn btn-sm btn-secondary"
-                style="width: 25px"
-                type="button"
-                @click="clearTitleQuery"
-                :disabled="!titleQuery"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-    <div class="d-flex mb-2">
-      <button @click="expandAllTOCItems"
-              type="button"
-              class="btn btn-primary btn-sm mr-1"
-      >
-        Expand All
-      </button>
-      <button @click="collapseAllTOCItems"
-              type="button"
-              class="btn btn-primary btn-sm">
-        Collapse All
-      </button>
-    </div>
-    <TOCController
-        :items="roots"
-        :title-query="titleQuery"
-        ref="tocController"
-        @on-title-click="onTitleClick"
+    <la-table-of-contents-controller
+        ref="la-toc-controller"
+        :items.prop="roots"
+        :title-filter="titleQuery"
+        expand-all-btn-classes="btn btn-primary btn-sm mr-1"
+        collapse-all-btn-classes="btn btn-primary btn-sm mr-1"
+        title-filter-input-classes="form-control form-control-sm"
+        title-filter-clear-btn-classes="btn btn-sm btn-secondary"
+        v-on:itemRendered="handleItemRendered"
+        v-on:itemTitleClicked="onTitleClick"
     >
-      <template v-slot:right-icon="{item}">
-        <i :class="`float-right issue-icon issue-${item.issues_severity}`"
-           v-if="item.issues.length"
-           data-toggle="popover"
-           :data-content="item.issues_description"
-           :data-title="item.issues_title"
-           data-trigger="hover"
-           data-placement="bottom"
-           data-html="true"
-           data-container=".toc-controller-wrapper"
-        >
-        </i>
-      </template>
-
-      <template v-slot:expand-icon><i class="fas fa-plus"></i></template>
-      <template v-slot:collapse-icon><i class="fas fa-minus"></i></template>
-    </TOCController>
+      <span slot="expand-icon"><i class="fas fa-plus"></i></span>
+      <span slot="collapse-icon"><i class="fas fa-minus"></i></span>
+    </la-table-of-contents-controller>
   </div>
 </template>
 
 <script>
-import TOCController from './toc-controller/index.vue';
+import '@laws-africa/web-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',
-  components: {
-    TOCController
-  },
   props: {
     selection: {
       type: Object,
@@ -88,26 +46,27 @@ export default {
   },
 
   methods: {
-    rebuild (force) {
+    handleItemRendered (e) {
+      if (e.target.item.issues.length) {
+        const icon = document.createElement('i');
+        icon.className = `float-right issue-icon issue-${e.target.item.issues_severity}`;
+        icon.dataset.toggle = 'popover';
+        icon.dataset.content = e.target.item.issues_description;
+        icon.dataset.title = e.target.item.issues_title;
+        icon.dataset.trigger = 'hover';
+        icon.dataset.placement = 'bottom';
+        icon.dataset.html = true;
+        icon.dataset.container = '.toc-controller-wrapper';
+        e.target.appendHtml = icon.outerHTML;
+        $('#toc [data-toggle="popover"]').popover();
+      }
+    },
+    rebuild () {
       // recalculate the TOC from the model
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
-        const oldLength = this.toc.length;
-        const index = this.selection.get('index');
-
         this.buildToc();
-
-        if (index > this.toc.length - 1) {
-          // we've selected past the end of the TOC
-          this.selectItem(this.toc.length - 1);
-        } else if (force || (index > -1 && this.toc.length !== oldLength)) {
-          // arrangament of the TOC has changed, re-select the item we want
-          this.selectItem(index, true);
-        } else {
-          if (index > -1) {
-            this.toc[index].selected = true;
-          }
-        }
+        this.selectItem(this.selection.get('index'));
       }
     },
 
@@ -158,20 +117,13 @@ export default {
 
       function generateToc (node) {
         const $node = $(node);
-        const $component = $node.closest('attachment');
-        let qualified_id = node.getAttribute('eId');
-
-        if ($component.length > 0) {
-          qualified_id = $component.attr('eId') + '/' + qualified_id;
-        }
 
         const item = {
           num: $node.children('num').text(),
           heading: getHeadingText(node),
           element: node,
           type: node.localName,
-          id: qualified_id,
-          selected: false,
+          id: node.getAttribute('eId'),
           issues: [],
           issues_title: '',
           issues_description: '',
@@ -182,6 +134,13 @@ export default {
       }
 
       iterateChildren(this.model.xmlDocument);
+
+      // move the top-level akomaNtoso element from being the first parent, to just the first sibling of its children
+      // this makes more sense in the TOC view and takes up less horizontal space
+      if (toc.length > 0 && toc[0].type === 'akomaNtoso') {
+        roots.push(...toc[0].children);
+        toc[0].children = [];
+      }
 
       this.toc = toc;
       this.roots = roots;
@@ -240,34 +199,26 @@ export default {
     },
 
     // select the i-th item in the TOC
-    selectItem (i, force) {
-      const index = this.selection.get('index');
-
+    selectItem (i) {
       i = Math.min(this.toc.length - 1, i);
 
-      if (force || index !== i) {
-        // unmark the old one
-        if (index > -1 && index < this.toc.length) {
-          this.toc[index].selected = false;
+      const tocItems = this.$refs['la-toc-controller'].querySelectorAll('la-toc-item');
+      for (const tocItem of tocItems) {
+        tocItem.classList.remove('selected');
+        if (tocItem.item.index === i) {
+          tocItem.classList.add('selected');
         }
-
-        if (i > -1) {
-          this.toc[i].selected = true;
-        }
-
-        // only do this after rendering
-        if (force) {
-          // ensure it forces a change
-          this.selection.clear({ silent: true });
-        }
-        this.selection.set(i > -1 ? this.toc[i] : {});
       }
+
+      // clear first to ensure a change event
+      this.selection.clear({ silent: true });
+      this.selection.set(i > -1 ? this.toc[i] : {});
     },
 
     selectItemById (itemId) {
       for (let i = 0; i < this.toc.length; i++) {
         if (this.toc[i].id === itemId) {
-          this.selectItem(i, true);
+          this.selectItem(i);
           return true;
         }
       }
@@ -275,24 +226,16 @@ export default {
       return false;
     },
 
-    onTitleClick (index) {
+    onTitleClick (e) {
+      e.detail.preventDefault();
       if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
-        this.selectItem(index, true);
+        this.selectItem(e.target.item.index);
       }
-    },
-
-    clearTitleQuery () { this.titleQuery = ''; },
-
-    expandAllTOCItems () { this.$refs.tocController.expandAll(); },
-    collapseAllTOCItems () { this.$refs.tocController.collapseAll(); }
+    }
   },
 
   watch: {
     issues () { this.mergeIssues(); }
-  },
-
-  updated () {
-    $('#toc [data-toggle="popover"]').popover();
   },
 
   mounted () {

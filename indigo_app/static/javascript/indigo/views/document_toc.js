@@ -13,7 +13,7 @@
       this.listenTo(this.issues, "reset change add remove", this.issuesChanged);
 
       this.registeredComp = indigoApp.Vue.options.components.DocumentTOCView;
-      this.targetMountElement = document.getElementById("DocumentTOCView");
+      this.targetMountElement = document.querySelector(".document-toc-view");
       this.selection = new Backbone.Model({
         index: -1
       });

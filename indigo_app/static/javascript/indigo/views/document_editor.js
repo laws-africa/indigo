@@ -284,8 +284,7 @@
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
-      // reset class name to ensure only one country class
-      $akn[0].className = "akoma-ntoso spinner-when-empty";
+      $akn[0].className = "spinner-when-empty";
       $akn.empty();
 
       if (renderCoverpage) {

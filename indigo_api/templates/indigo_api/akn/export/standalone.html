@@ -23,7 +23,7 @@
     </div>
   {% endif %}
 
-  <div class="akoma-ntoso country-{{ document.country }}">
+  <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}">
     {% include template_name %}
-  </div>
+  </la-akoma-ntoso>
 {% endblock %}

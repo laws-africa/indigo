@@ -286,7 +286,6 @@
 
       // reset class name to ensure only one country class
       $akn[0].className = "akoma-ntoso spinner-when-empty";
-      $akn[0].frbrCountry = this.parent.model.get('country');
       $akn.empty();
 
       if (renderCoverpage) {

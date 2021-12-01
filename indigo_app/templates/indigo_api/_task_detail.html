@@ -100,7 +100,7 @@
                   <div class="sheet-outer"
                        {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
                     <div class="sheet-inner is-fragment">
-                      <la-akoma-ntoso frbr-country="{{ anchor.document.country }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</la-akoma-ntoso>
+                      <la-akoma-ntoso frbr-expression-uri="{{ anchor.document.expression_frbr_uri }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</la-akoma-ntoso>
                     </div>
                   </div>
                 {% else %}

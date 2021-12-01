@@ -15,7 +15,7 @@
         this.editorView = options.editorView;
         this.model = this.document.issues;
         this.template = Handlebars.compile($(this.template).html());
-        this.$akn = this.$('#document-sheet .akoma-ntoso');
+        this.$akn = this.$('#document-sheet la-akoma-ntoso');
 
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
         this.listenTo(this.model, 'reset change add remove', this.render);

@@ -96,7 +96,7 @@
 
       $.get(revision.url() + '/diff')
         .then(function(response) {
-          var $akn = self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
+          var $akn = self.$el.find('.revision-preview la-akoma-ntoso').html(response.content);
           self.$el.find('.change-count').text(
             response.n_changes + ' change' + (response.n_changes != 1 ? 's' : ''));
           self.diffNavigator.refresh();

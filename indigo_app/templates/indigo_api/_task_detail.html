@@ -100,7 +100,7 @@
                   <div class="sheet-outer"
                        {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
                     <div class="sheet-inner is-fragment">
-                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</div>
+                      <la-akoma-ntoso frbr-expression-uri="{{ anchor.document.expression_frbr_uri }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</la-akoma-ntoso>
                     </div>
                   </div>
                 {% else %}
@@ -132,28 +132,28 @@
 
                 <div class="text-right">
                   <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" disabled>
-                  
+
                   {% if task.state == 'pending_review' %}
                     {% if task.unsubmit_task_permission %}
                       <input
-                        class="btn btn-primary mr-2 float-left" 
-                        type="submit" 
-                        data-confirm="Are you sure you want to request changes to this task?" 
-                        formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}" 
+                        class="btn btn-primary mr-2 float-left"
+                        type="submit"
+                        data-confirm="Are you sure you want to request changes to this task?"
+                        formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
                         id="btn_request_changes"
-                        value="Request changes" 
+                        value="Request changes"
                       />
                     {% endif %}
 
                     {% if task.customised.close_url %}
                       <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>
                     {% elif task.close_task_permission %}
-                      <input 
+                      <input
                         class="btn btn-success mr-2 float-left"
                         type="submit"
-                        data-confirm="Are you sure you want to approve this task?" 
-                        formaction="{% url 'close_task' place=place.place_code pk=task.pk %}" 
-                        id="btn_approve" 
+                        data-confirm="Are you sure you want to approve this task?"
+                        formaction="{% url 'close_task' place=place.place_code pk=task.pk %}"
+                        id="btn_approve"
                         value="Approve"
                       />
                     {% endif %}

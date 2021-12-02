@@ -281,11 +281,10 @@
 
       var self = this,
           renderCoverpage = this.parent.fragment.parentElement === null,
-          $akn = this.$('.document-workspace-content .akoma-ntoso'),
+          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
-      // reset class name to ensure only one country class
-      $akn[0].className = "akoma-ntoso spinner-when-empty country-" + this.parent.model.get('country');
+      $akn[0].className = "spinner-when-empty";
       $akn.empty();
 
       if (renderCoverpage) {
@@ -313,7 +312,7 @@
 
     renderComparisonDiff: function() {
       var self = this,
-          $akn = this.$('.document-workspace-content .akoma-ntoso'),
+          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           data = {};
 
       if (!this.comparisonDocumentId) return;

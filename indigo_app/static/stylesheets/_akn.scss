@@ -2,7 +2,7 @@
 @import 'lib/indigo-web/scss/indigo-web';
 
 /* overrides for indigo inserts into akoma-ntoso trees */
-.akoma-ntoso .ig {
+la-akoma-ntoso .ig {
   font-family: $font-family-base;
   font-size: 14px;
   font-weight: normal;
@@ -27,7 +27,8 @@ $hierarchy-elems: (
   'crossHeading': $gray-500,
 );
 
-.show-akn-hierarchy .akoma-ntoso {
+.show-akn-hierarchy la-akoma-ntoso,
+.show-akn-hierarchy {
   @each $elem, $colour in $hierarchy-elems {
     .akn-#{$elem} {
       border: 1px solid $colour;
@@ -74,7 +75,7 @@ $hierarchy-elems: (
 
 // Position hierarchical and block AKN elements relatively,
 // so that inserted indicators and annotations can be positioned relatively
-.akoma-ntoso {
+la-akoma-ntoso {
   .akn-article,
   .akn-blockList,
   .akn-chapter,

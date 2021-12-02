@@ -206,12 +206,19 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   {% for potential_assignee in task.potential_assignees %}
-                    <button class="dropdown-item mb-1" type="submit" name="user_id"
-                            value="{{ potential_assignee.id }}"
-                            formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+                    {% include 'indigo_api/_task_assign_to_button.html' %}
                   {% endfor %}
                 </div>
               </div>
+
+              {% for potential_assignee in task.potential_assignees %}
+                {% if potential_assignee == request.user and potential_assignee.too_many_tasks %}
+                  <div class="mb-3">
+                    <i class="fa fa-exclamation-circle text-warning"></i>
+                    Finish your other assigned tasks before assigning this task to yourself.
+                  </div>
+                {% endif %}
+              {% endfor %}
             {% endif %}
           </form>
         {% endif %}

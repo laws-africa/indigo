@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 10:38+0200\n"
-"PO-Revision-Date: 2021-01-22 12:14\n"
+"POT-Creation-Date: 2021-12-03 09:22+0200\n"
+"PO-Revision-Date: 2021-12-03 07:35\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -18,39 +18,39 @@ msgstr ""
 "X-Crowdin-Project-ID: 364773\n"
 "X-Crowdin-File-ID: 60\n"
 
-#: analysis/toc/base.py:12 analysis/work_detail/base.py:48
+#: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
 msgstr "Ustawa"
 
-#: analysis/toc/base.py:13
+#: analysis/toc/base.py:15
 msgid "Article"
 msgstr ""
 
-#: analysis/toc/base.py:14
+#: analysis/toc/base.py:16
 msgid "By-law"
 msgstr ""
 
-#: analysis/toc/base.py:15
+#: analysis/toc/base.py:17
 msgid "Chapter"
 msgstr ""
 
-#: analysis/toc/base.py:16
+#: analysis/toc/base.py:18
 msgid "Government Notice"
 msgstr ""
 
-#: analysis/toc/base.py:17
+#: analysis/toc/base.py:19
 msgid "Part"
 msgstr ""
 
-#: analysis/toc/base.py:18
+#: analysis/toc/base.py:20
 msgid "Section"
 msgstr ""
 
-#: analysis/toc/base.py:19
+#: analysis/toc/base.py:21
 msgid "Preface"
 msgstr ""
 
-#: analysis/toc/base.py:20
+#: analysis/toc/base.py:22
 msgid "Preamble"
 msgstr ""
 

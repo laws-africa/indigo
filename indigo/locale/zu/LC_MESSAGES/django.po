@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 10:38+0200\n"
+"POT-Creation-Date: 2021-12-03 09:22+0200\n"
 "PO-Revision-Date: 2019-07-12 06:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
@@ -16,39 +16,39 @@ msgstr ""
 "X-Crowdin-Language: zu\n"
 "X-Crowdin-File: /master/indigo/locale/af/LC_MESSAGES/django.po\n"
 
-#: analysis/toc/base.py:12 analysis/work_detail/base.py:48
+#: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
 msgstr ""
 
-#: analysis/toc/base.py:13
+#: analysis/toc/base.py:15
 msgid "Article"
 msgstr ""
 
-#: analysis/toc/base.py:14
+#: analysis/toc/base.py:16
 msgid "By-law"
 msgstr ""
 
-#: analysis/toc/base.py:15
+#: analysis/toc/base.py:17
 msgid "Chapter"
 msgstr "Isahluko"
 
-#: analysis/toc/base.py:16
+#: analysis/toc/base.py:18
 msgid "Government Notice"
 msgstr ""
 
-#: analysis/toc/base.py:17
+#: analysis/toc/base.py:19
 msgid "Part"
 msgstr "Ingxenye"
 
-#: analysis/toc/base.py:18
+#: analysis/toc/base.py:20
 msgid "Section"
 msgstr ""
 
-#: analysis/toc/base.py:19
+#: analysis/toc/base.py:21
 msgid "Preface"
 msgstr ""
 
-#: analysis/toc/base.py:20
+#: analysis/toc/base.py:22
 msgid "Preamble"
 msgstr ""
 

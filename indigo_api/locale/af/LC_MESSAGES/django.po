@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 10:28+0200\n"
+"POT-Creation-Date: 2021-12-03 09:22+0200\n"
 "PO-Revision-Date: 2020-02-06 14:28\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Crowdin-Language: af\n"
 "X-Crowdin-File: /master/indigo_api/locale/af/LC_MESSAGES/django.po\n"
 
-#: models/places.py:180
+#: models/places.py:190
 msgid ""
 "Note: The original publication document is not available and this content "
 "could not be verified."
@@ -90,16 +90,19 @@ msgid "Not commenced"
 msgstr "Nog nie in werking"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
+#: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
 msgstr "Aanvangsdatum onbekend"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
+#: templates/indigo_api/akn/coverpage_act.html:104
 #, fuzzy, python-format
 #| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
 msgstr "Ingestem op %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
+#: templates/indigo_api/akn/coverpage_act.html:112
 #, fuzzy, python-format
 #| msgid ""
 #| "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
@@ -108,74 +111,67 @@ msgstr ""
 "(verwys na <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 
 #: templates/indigo_api/akn/coverpage_act.html:77
+#: templates/indigo_api/akn/coverpage_act.html:114
 #, fuzzy, python-format
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 
 #: templates/indigo_api/akn/coverpage_act.html:81
-#: templates/indigo_api/akn/coverpage_act.html:156
+#: templates/indigo_api/akn/coverpage_act.html:118
+#: templates/indigo_api/akn/coverpage_act.html:164
 #, fuzzy, python-format
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 
 #: templates/indigo_api/akn/coverpage_act.html:83
-#: templates/indigo_api/akn/coverpage_act.html:158
+#: templates/indigo_api/akn/coverpage_act.html:120
+#: templates/indigo_api/akn/coverpage_act.html:166
 #, fuzzy, python-format
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 
-#: templates/indigo_api/akn/coverpage_act.html:95
+#: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:105
-#: templates/indigo_api/akn/coverpage_act.html:146
+#: templates/indigo_api/akn/coverpage_act.html:138
+msgid "Provisions"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:139
+msgid "Status"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:107
-#: templates/indigo_api/akn/coverpage_act.html:150
+#: templates/indigo_api/akn/coverpage_act.html:155
 #, fuzzy, python-format
 #| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
 msgstr "Ingestem op %(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:113
-#, fuzzy, python-format
-#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
-msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>."
-msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
-
-#: templates/indigo_api/akn/coverpage_act.html:115
-#, fuzzy, python-format
-#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
-msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>."
-msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
-
-#: templates/indigo_api/akn/coverpage_act.html:126
-#, fuzzy, python-format
-#| msgid "Not commenced"
-msgid "%(provisions)s: not yet commenced."
-msgstr "Nog nie in werking"
-
-#: templates/indigo_api/akn/coverpage_act.html:134
-msgid "Provisions"
-msgstr ""
-
-#: templates/indigo_api/akn/coverpage_act.html:135
-msgid "Status"
-msgstr ""
+#: templates/indigo_api/akn/coverpage_act.html:157
+#, fuzzy
+#| msgid "Assented to on %(date)s"
+msgid "commenced on <i>(unknown date)</i>"
+msgstr "Ingestem op %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
+msgid "Note:"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:184
 #, fuzzy
 #| msgid "Not commenced"
 msgid "not yet commenced"
 msgstr "Nog nie in werking"
 
-#: templates/indigo_api/akn/coverpage_act.html:185
+#: templates/indigo_api/akn/coverpage_act.html:198
 #, python-format
 msgid "Up to date as at %(date)s"
 msgstr "Opgedateer tot en met %(date)s"
@@ -183,6 +179,21 @@ msgstr "Opgedateer tot en met %(date)s"
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr "Inhoudsopgawe"
+
+#, fuzzy, python-format
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy, python-format
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy, python-format
+#~| msgid "Not commenced"
+#~ msgid "%(provisions)s: not yet commenced."
+#~ msgstr "Nog nie in werking"
 
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-22 10:38+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"PO-Revision-Date: 2021-12-03 07:35\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -15,6 +15,8 @@ msgstr ""
 "X-Crowdin-Project: lawsafrica-indigo\n"
 "X-Crowdin-Language: af\n"
 "X-Crowdin-File: /master/indigo_za/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 364773\n"
+"X-Crowdin-File-ID: 64\n"
 
 #: toc.py:14
 msgid "Section"
@@ -31,3 +33,4 @@ msgstr "Hoofstuk"
 #: toc.py:31
 msgid "Part"
 msgstr "Deel"
+

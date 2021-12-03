@@ -184,9 +184,11 @@ class Task(models.Model):
             elif task.state == 'pending_review':
                 task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and
                                             (u.has_perm('indigo_api.close_any_task') or task.submitted_by_user_id != u.id)]
+            else:
+                task.potential_assignees = []
 
             # move the current user first
-            if current_user and current_user.is_authenticated:
+            if task.potential_assignees and current_user and current_user.is_authenticated:
                 task.potential_assignees.sort(key=lambda u: 0 if u.id == current_user.id else 1)
 
         # mark users that have too many tasks

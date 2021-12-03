@@ -1,10 +1,16 @@
-<form id="bulk-task-update-form" class="d-none" action="{% url 'bulk_task_update' place=place.place_code %}?next={{ request.get_full_path|urlencode }}" method="POST">
+<form id="bulk-task-update-form" class="d-none" method="POST"
+      action="{% url 'bulk_task_update' place=place.place_code %}?next={{ request.get_full_path|urlencode }}"
+      data-assignees-url="{% url 'task_assignees_menu' place=place.place_code %}">
   {% csrf_token %}
 
   <div class="row align-items-end">
     <div class="col-3">
-      <label>Assign to</label>
-      <select name="assigned_to" class="form-control"></select>
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+          Assign to
+        </button>
+        <div class="dropdown-menu"></div>
+      </div>
     </div>
     <div class="col-3 offset-6 text-right">
       <button type="submit" class="btn btn-success">Update selected tasks</button>

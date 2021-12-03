@@ -204,11 +204,7 @@
                         aria-expanded="false">
                   Assign to
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  {% for potential_assignee in task.potential_assignees %}
-                    {% include 'indigo_api/_task_assign_to_button.html' %}
-                  {% endfor %}
-                </div>
+                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
               </div>
 
               {% for potential_assignee in task.potential_assignees %}

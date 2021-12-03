@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 from itertools import chain
 import datetime
@@ -362,7 +361,7 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
             task.assign_to(None, user)
             messages.success(request, "Task '%s' has been unassigned" % task.title)
         else:
-            assignee = User.objects.get(id=self.request.POST.get('user_id'))
+            assignee = User.objects.get(id=self.request.POST.get('assigned_to'))
             if not task.can_assign_to(assignee):
                 raise PermissionDenied
             task.assign_to(assignee, user)
@@ -621,3 +620,24 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
                 w.pct_complete = (w.n_tasks_complete or 0) / (w.n_tasks or 1) * 100.0
 
         return context
+
+
+class TaskAssigneesView(TaskViewBase, TemplateView):
+    http_method_names = ['post']
+    template_name = 'indigo_api/_task_assign_to_menu.html'
+
+    def post(self, request, *args, **kwargs):
+        pks = request.POST.getlist('tasks', [])
+        tasks = Task.objects.filter(pk__in=pks)
+        users = []
+
+        if tasks:
+            Task.decorate_potential_assignees(tasks, self.country, self.request.user)
+            # candidates are the intersection of all tasks
+            users = set.intersection(*(set(t.potential_assignees) for t in tasks))
+            users = sorted(users, key=lambda u: [u.first_name, u.last_name])
+
+        return self.render_to_response({
+            'potential_assignees': users,
+            'unassign': 'unassign' in request.POST,
+        })

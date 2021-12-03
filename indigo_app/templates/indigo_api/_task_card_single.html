@@ -113,9 +113,7 @@
                     Unassign
                   </button>
                   <div class="dropdown-divider"></div>
-                  {% for potential_assignee in task.potential_assignees %}
-                    {% include 'indigo_api/_task_assign_to_button.html' %}
-                  {% endfor %}
+                  {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
                   </div>
                 </div>
               </form>
@@ -129,11 +127,7 @@
                 <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Assign to
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  {% for potential_assignee in task.potential_assignees %}
-                    {% include 'indigo_api/_task_assign_to_button.html' %}
-                  {% endfor %}
-                </div>
+                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
               </div>
             </form>
           {% endif %}

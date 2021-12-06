@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2021-12-03 07:35\n"
+"PO-Revision-Date: 2021-12-06 07:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -95,14 +95,14 @@ msgstr ""
 #: templates/indigo_api/akn/coverpage_act.html:164
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "deur <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:83
 #: templates/indigo_api/akn/coverpage_act.html:120
 #: templates/indigo_api/akn/coverpage_act.html:166
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "deur <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
@@ -137,7 +137,7 @@ msgstr ""
 #: templates/indigo_api/akn/coverpage_act.html:184
 #| msgid "Not commenced"
 msgid "not yet commenced"
-msgstr ""
+msgstr "nog nie in werking"
 
 #: templates/indigo_api/akn/coverpage_act.html:198
 #, python-format

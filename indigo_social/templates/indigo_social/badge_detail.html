@@ -38,16 +38,23 @@
         </div>
       </div>
 
-      {% if request.user.is_superuser and badge.nature == 'permission' %}
-      <h4 class="mt-3">Permissions granted by this badge</h4>
+      {% if badge.nature == 'permission' %}
+        <h4 class="mt-3">Permissions granted by this badge</h4>
 
-      <p>Users awarded this badge are added to the <a href="{% url 'admin:auth_group_change' badge.group.pk %}">{{ badge.group_name }} group</a>.</p>
+        <ul>
+          {% for perm in badge.get_permissions %}
+            <li>
+              {{ perm.name }}
+              {% if request.user.is_staff %}
+                — <code>{{ perm.content_type.app_label }}.{{ perm.content_type }}.{{ perm.codename }}</code>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
 
-      <ul>
-        {% for perm in badge.permissions %}
-        <li>{{ perm }}</li>
-        {% endfor %}
-      </ul>
+        {% if request.user.is_staff %}
+          <p>Users awarded this badge are added to the <a href="{% url 'admin:auth_group_change' badge.group.pk %}">{{ badge.group_name }} group</a>.</p>
+        {% endif %}
       {% endif %}
     </div>
   </div>

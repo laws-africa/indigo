@@ -11,68 +11,6 @@ la-akoma-ntoso .ig {
   user-select: none;
 }
 
-$hierarchy-elems: (
-  'article': $teal,
-  'chapter': $purple,
-  'blockList': $green,
-  'item': $red,
-  'paragraph': $pink,
-  'part': $yellow,
-  'subpart': $orange,
-  'section': $cyan,
-  'subsection': $orange,
-  'preface': $purple,
-  'preamble': $indigo,
-  'hcontainer': $gray-500,
-  'crossHeading': $gray-500,
-);
-
-.show-akn-hierarchy la-akoma-ntoso,
-.show-akn-hierarchy {
-  @each $elem, $colour in $hierarchy-elems {
-    .akn-#{$elem} {
-      border: 1px solid $colour;
-      padding: 2px;
-      background-color: rgba($colour, 0.1);
-
-      &::before {
-        content: $elem;
-
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-
-        color: color-yiq($colour);
-        background-color: $colour;
-
-        border-top-right-radius: 5px;
-        padding: 0px 4px;
-
-        font-family: $font-family-sans-serif;
-        font-weight: normal;
-        font-style: normal;
-        font-size: 12px;
-        text-transform: uppercase;
-      }
-    }
-  }
-
-  .akn-blockList {
-    margin-bottom: 10px;
-    &::before {
-      content: "list" !important;
-    }
-  }
-
-  .akn-hcontainer {
-    margin-bottom: 10px;
-
-    &::before {
-      content: attr(data-name) !important;
-    }
-  }
-}
-
 // Position hierarchical and block AKN elements relatively,
 // so that inserted indicators and annotations can be positioned relatively
 la-akoma-ntoso {

@@ -95,32 +95,30 @@
         {% endfor %}
 
         {% if assigned and task.assigned_to %}
-        <div class="mb-1">
-          <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="Assigned to"></i>
-          <small class="text-muted">{% user_profile task.assigned_to %}</small>
+          <div class="mb-1">
+            <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="Assigned to"></i>
+            <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
-        <!-- assign button-->
-          {% if assign_button and perms.indigo_api.change_task %}
-            <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
-            {% csrf_token %}
+            <!-- assign button-->
+            {% if assign_button and perms.indigo_api.change_task %}
+              <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+              {% csrf_token %}
 
-              <div class="dropdown">
-                <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Reassign
-                </button>
-                <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
-                <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
-                  Unassign
-                </button>
-                <div class="dropdown-divider"></div>
-                {% for potential_assignee in task.potential_assignees %}
-                  <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{ potential_assignee.id }}">{% user_display potential_assignee %}</button>
-                {% endfor %}
+                <div class="dropdown">
+                  <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Reassign
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
+                  <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                    Unassign
+                  </button>
+                  <div class="dropdown-divider"></div>
+                  {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
+                  </div>
                 </div>
-              </div>
-            </form>
-          {% endif %}
-        </div>
+              </form>
+            {% endif %}
+          </div>
         {% elif task.state == 'open' or task.state == 'pending_review' %}
           {% if perms.indigo_api.change_task and task.potential_assignees %}
             <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
@@ -129,11 +127,7 @@
                 <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Assign to
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  {% for potential_assignee in task.potential_assignees %}
-                  <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" >{% user_display potential_assignee %}</button>
-                  {% endfor %}
-                </div>
+                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
               </div>
             </form>
           {% endif %}

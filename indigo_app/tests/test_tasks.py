@@ -92,7 +92,7 @@ class TasksTest(WebTest):
 
         # assign
         response = self.app.post(f'/places/za/tasks/{task.pk}/assign', params={
-            'user_id': 1,
+            'assigned_to': 1,
             'csrfmiddlewaretoken': csrf_token
         })
         self.assertEqual(response.status_code, 302)
@@ -109,7 +109,7 @@ class TasksTest(WebTest):
 
         # change assignment
         response = self.app.post(f'/places/za/tasks/{task.pk}/assign', params={
-            'user_id': 2,
+            'assigned_to': 2,
             'csrfmiddlewaretoken': csrf_token
         })
         self.assertEqual(response.status_code, 302)

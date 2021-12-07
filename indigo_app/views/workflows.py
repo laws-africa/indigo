@@ -93,7 +93,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(tasks, self)
 
-        Task.decorate_potential_assignees(tasks, self.country)
+        Task.decorate_potential_assignees(tasks, self.country, self.request.user)
         Task.decorate_permissions(tasks, self.request.user)
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done

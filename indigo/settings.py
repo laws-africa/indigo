@@ -136,6 +136,9 @@ INDIGO = {
     # Key-value pairs for custom properties, per place code.
     'WORK_PROPERTIES': {},
 
+    # maximum number of tasks that can be assigned to a user at a time
+    'MAX_ASSIGNED_TASKS': 999999,
+
     # AKN document types the platform supports, as a list of (name, code) tuples
     # see http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
     'DOCTYPES': [('Act', 'act')],

@@ -1,11 +1,11 @@
-# coding=utf-8
 import datetime
 from itertools import groupby
 
 from actstream import action
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models import signals, Prefetch
+from django.db.models import signals, Prefetch, Count
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils import timezone
@@ -91,6 +91,7 @@ class Task(models.Model):
             ('close_task', 'Can close a task that has been submitted for review'),
             ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
             ('block_task', 'Can block a task from being done, and unblock it'),
+            ('exceed_task_limits', 'Can be assigned tasks in excess of limits'),
         )
 
     objects = TaskManager.from_queryset(TaskQuerySet)()
@@ -169,7 +170,7 @@ class Task(models.Model):
                         place_code=self.place.place_code)
 
     @classmethod
-    def decorate_potential_assignees(cls, tasks, country):
+    def decorate_potential_assignees(cls, tasks, country, current_user):
         permitted_users = User.objects \
             .filter(editor__permitted_countries=country) \
             .order_by('first_name', 'last_name') \
@@ -183,8 +184,34 @@ class Task(models.Model):
             elif task.state == 'pending_review':
                 task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and
                                             (u.has_perm('indigo_api.close_any_task') or task.submitted_by_user_id != u.id)]
+            else:
+                task.potential_assignees = []
+
+            # move the current user first
+            if task.potential_assignees and current_user and current_user.is_authenticated:
+                task.potential_assignees.sort(key=lambda u: 0 if u.id == current_user.id else 1)
+
+        # mark users that have too many tasks
+        cls.decorate_user_task_limits(set(u for task in tasks for u in task.potential_assignees), tasks)
 
         return tasks
+
+    @classmethod
+    def decorate_user_task_limits(cls, users, tasks):
+        """ Count assigned tasks for these users and decorate users that have exceeded their threshold.
+        """
+        states = set(t.state for t in tasks)
+        counts = Task.objects \
+            .filter(assigned_to__in=users, state__in=states) \
+            .values('assigned_to') \
+            .annotate(tasks=Count(1))
+        counts = {c['assigned_to']: c['tasks'] for c in counts}
+
+        for user in users:
+            user.assigned_tasks_count = counts.get(user.id, 0)
+            user.too_many_tasks = (
+                    user.assigned_tasks_count > settings.INDIGO['MAX_ASSIGNED_TASKS']
+                    and not user.has_perm('indigo_api.exceed_task_limits'))
 
     @classmethod
     def decorate_permissions(cls, tasks, user):

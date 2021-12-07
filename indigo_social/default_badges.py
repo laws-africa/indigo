@@ -93,7 +93,7 @@ class SuperReviewerBadge(PermissionBadge):
     name = 'Super Reviewer'
     group_name = name + ' Badge'
     description = 'Can approve any tasks'
-    permissions = ('indigo_api.close_any_task',)
+    permissions = ('indigo_api.close_any_task', 'indigo_api.exceed_task_limits')
 
 
 class TaxonomistBadge(PermissionBadge):

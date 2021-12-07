@@ -29,6 +29,7 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/update$', tasks.TaskBulkUpdateView.as_view(), name='bulk_task_update'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/assignees$', tasks.TaskAssigneesView.as_view(), name='task_assignees_menu'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/$', tasks.TaskDetailView.as_view(), name='task_detail'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/edit$', tasks.TaskEditView.as_view(), name='task_edit'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/assign', tasks.TaskAssignView.as_view(), name='assign_task'),

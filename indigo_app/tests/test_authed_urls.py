@@ -19,10 +19,10 @@ accounts/social/signup/\Z
 accounts/social/login/error/\Z
 accounts/social/login/cancelled/\Z
 accounts/password/reset/key/done/\Z
-accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/\Z
+accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$
 accounts/password/reset/done/\Z
 accounts/password/reset/\Z
-accounts/confirm-email/(?P<key>[-:\w]+)/\Z
+accounts/confirm-email/(?P<key>[-:\w]+)/$
 accounts/confirm\-email/\Z
 accounts/email/\Z
 accounts/inactive/\Z
@@ -32,10 +32,10 @@ accounts/logout/\Z
 accounts/login/\Z
 accounts/signup/\Z
 
-resolver/(?P<path>.+)\Z
-resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)\Z
+resolver/(?P<path>.+)$
+resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
-api/\Z
+api/$
 api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-references\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms\Z
@@ -43,8 +43,8 @@ api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)\Z
 api/documents/(?P<document_id>[0-9]+)/render/coverpage\Z
 api/documents/(?P<document_id>[0-9]+)/parse\Z
 api/documents/(?P<document_id>[0-9]+)/diff\Z
-api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)\Z
-api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find\Z
+api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$
+api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
 """.split()
 
     def setUp(self):

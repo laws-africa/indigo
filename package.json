@@ -48,6 +48,6 @@
   },
   "homepage": "https://github.com/laws-africa/indigo#readme",
   "dependencies": {
-    "@laws-africa/web-components": "^0.4.0-beta"
+    "@laws-africa/web-components": "^0.5.0-beta"
   }
 }

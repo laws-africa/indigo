@@ -1,3 +1,6 @@
+import re
+
+import django
 from django.urls import get_resolver
 from django.test import testcases
 
@@ -5,44 +8,49 @@ from indigo_app.views.base import AbstractAuthedIndigoView
 
 
 class AuthedUrlsTest(testcases.TestCase):
-    non_authed_urls = """
-robots\.txt$
-help$
-terms$
-$
+    non_authed_urls = r"""
+robots\.txt\Z
+help\Z
+terms\Z
+\Z
 
-accounts/social/connections/$
-accounts/social/signup/$
-accounts/social/login/error/$
-accounts/social/login/cancelled/$
-accounts/password/reset/key/done/$
-accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$
-accounts/password/reset/done/$
-accounts/password/reset/$
-accounts/confirm-email/(?P<key>[-:\w]+)/$
-accounts/confirm\-email/$
-accounts/email/$
-accounts/inactive/$
-accounts/password/set/$
-accounts/password/change/$
-accounts/logout/$
-accounts/login/$
-accounts/signup/$
+accounts/social/connections/\Z
+accounts/social/signup/\Z
+accounts/social/login/error/\Z
+accounts/social/login/cancelled/\Z
+accounts/password/reset/key/done/\Z
+accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/\Z
+accounts/password/reset/done/\Z
+accounts/password/reset/\Z
+accounts/confirm-email/(?P<key>[-:\w]+)/\Z
+accounts/confirm\-email/\Z
+accounts/email/\Z
+accounts/inactive/\Z
+accounts/password/set/\Z
+accounts/password/change/\Z
+accounts/logout/\Z
+accounts/login/\Z
+accounts/signup/\Z
 
-resolver/(?P<path>.+)$
-resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
+resolver/(?P<path>.+)\Z
+resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)\Z
 
-api/$
-api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics$
-api/documents/(?P<document_id>[0-9]+)/analysis/link\-references$
-api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms$
-api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)$
-api/documents/(?P<document_id>[0-9]+)/render/coverpage$
-api/documents/(?P<document_id>[0-9]+)/parse$
-api/documents/(?P<document_id>[0-9]+)/diff$
-api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$
-api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
+api/\Z
+api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics\Z
+api/documents/(?P<document_id>[0-9]+)/analysis/link\-references\Z
+api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms\Z
+api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)\Z
+api/documents/(?P<document_id>[0-9]+)/render/coverpage\Z
+api/documents/(?P<document_id>[0-9]+)/parse\Z
+api/documents/(?P<document_id>[0-9]+)/diff\Z
+api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)\Z
+api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find\Z
 """.split()
+
+    def setUp(self):
+        # version 2.2.25 changed the regexes for URLs, so account for the old format
+        if django.VERSION < (2, 2, 25):
+            self.non_authed_urls = [re.sub(r'\\Z$', '$', x) for x in self.non_authed_urls]
 
     def test_urls_have_auth(self):
         """ This test checks that all URLs, except those explicitly whitelisted, inherit from the

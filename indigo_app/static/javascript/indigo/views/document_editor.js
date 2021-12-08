@@ -284,7 +284,7 @@
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
-      $akn[0].className = "spinner-when-empty";
+      $akn[0].classList.add('spinner-when-empty');
       $akn.empty();
 
       if (renderCoverpage) {
@@ -528,7 +528,7 @@
     el: 'body',
     events: {
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
-      'click .btn.show-akn-hierarchy': 'toggleShowAKNHierarchy',
+      'click .btn.show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
     },
 
@@ -592,9 +592,9 @@
       }
     },
 
-    toggleShowAKNHierarchy: function(e) {
+    toggleShowStructure: function(e) {
       var show = !$(e.currentTarget).hasClass('active');
-      this.$el.find('#document-sheet').toggleClass('show-akn-hierarchy', show);
+      this.$el.find('#document-sheet la-akoma-ntoso').toggleClass('show-structure', show);
     },
 
     toggleShowComparison: function(e) {

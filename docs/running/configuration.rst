@@ -3,9 +3,11 @@
 Configuration
 =============
 
-Config options are mostly passed to Indigo as environment variables. These are the options you can set:
+Some Indigo config options can be set using environment variables. Others are
+`Django configuration options <https://docs.djangoproject.com/en/4.0/topics/settings/>`_ and must be set in your
+``settings.py`` file.
 
-Using Environment variables:
+Options that can be set using environment variables:
 
 * ``AWS_ACCESS_KEY_ID``
 
@@ -105,7 +107,7 @@ Using Environment variables:
 
   The number of recent document versions to keep when pruning document versions. Defaults to 5.
 
-The following configurations require that you edit the settings.py file (./indigo/settings.py):
+Options that must be set in your ``settings.py``:
 
 * ``INDIGO.DOCTYPES``
 
@@ -125,7 +127,7 @@ Social Accounts
 
 By default, Indigo doesn't have any social account authentication enabled. To enable a social provider, follow the documentation for django-allauth. Namely, you'll need to:
 
-1. Include the account provider in `INSTALLED_APPS`:: in the settings.py file (./indigo/settings.py)
+1. Include the account provider in `INSTALLED_APPS` in your ``settings.py`` file::
 
    INSTALLED_APPS = INSTALLED_APPS + ('allauth.socialaccount.providers.google',)
 

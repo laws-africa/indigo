@@ -5,6 +5,8 @@ Configuration
 
 Config options are mostly passed to Indigo as environment variables. These are the options you can set:
 
+Using Environment variables:
+
 * ``AWS_ACCESS_KEY_ID``
 
   **Required for production.**
@@ -73,11 +75,6 @@ Config options are mostly passed to Indigo as environment variables. These are t
   **Required**
   Email address users can email for help.
 
-* ``INDIGO.DOCTYPES``
-
-  A list of ``(label, code)`` pairs of Akoma Ntoso document types that can be
-  created, such as ``('Act', 'act')``. See http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
-
 * ``INDIGO.EMAIL_FAIL_SILENTLY``
 
   Should email sending fail silently?
@@ -108,6 +105,14 @@ Config options are mostly passed to Indigo as environment variables. These are t
 
   The number of recent document versions to keep when pruning document versions. Defaults to 5.
 
+The following configurations require that you edit the settings.py file (./indigo/settings.py):
+
+* ``INDIGO.DOCTYPES``
+
+  A list of ``(label, code)`` pairs of Akoma Ntoso document types that can be
+  created, such as ``('Act', 'act')``. See http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
+  
+  Note that currently the Slaw parser only recognizes the 'act' doctype.
 
 Authentication
 --------------
@@ -120,7 +125,7 @@ Social Accounts
 
 By default, Indigo doesn't have any social account authentication enabled. To enable a social provider, follow the documentation for django-allauth. Namely, you'll need to:
 
-1. Include the account provider in `INSTALLED_APPS`::
+1. Include the account provider in `INSTALLED_APPS`:: in the settings.py file (./indigo/settings.py)
 
    INSTALLED_APPS = INSTALLED_APPS + ('allauth.socialaccount.providers.google',)
 

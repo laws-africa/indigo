@@ -210,6 +210,16 @@
         {% endif %}
         {% endwith %}
       {% endblock %}
+
+      {% block consolidation_note %}
+        {% with document.work.place.settings.consolidation_note as consolidation_note %}
+          {% if document.expression_date in document.work.arbitrary_expression_date_dates and consolidation_note %}
+            <li class="verification-notice">
+              [{% trans consolidation_note %}]
+            </li>
+          {% endif %}
+        {% endwith %}
+      {% endblock %}
     </ul>
   {% endblock %}
 

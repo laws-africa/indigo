@@ -16,7 +16,12 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-        run: npm ci --no-audit --prefer-offline
+        env:
+          GITHUB_TOKEN: ${{ secrets.LA_ACTIONS_TOKEN }}
+        run: |
+          echo '//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}' >> .npmrc
+          npm ci --no-audit --prefer-offline
+          rm .npmrc
 
       - name: Build
         run: npx webpack

@@ -17,11 +17,8 @@ jobs:
 
       - name: Install dependencies
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo '//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}' >> .npmrc
-          npm ci --no-audit --prefer-offline
-          rm .npmrc
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm ci --no-audit --prefer-offline
 
       - name: Build
         run: npx webpack

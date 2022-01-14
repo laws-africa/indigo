@@ -59,7 +59,7 @@ setup(
         'django-languages-plus>=1.0.0',
         'django-pipeline>=1.6.11',
         'django-recaptcha>=1.4.0,<2.0.0',
-        'django-reversion==3.0.1',  # v3.0.2 introduces squashed migrations that break existing migrations
+        'django-reversion==4.0.1',  # v3.0.2 introduces squashed migrations that break existing migrations
         'django-sass-processor>=0.6,<1.0.0',
         'django-storages>=1.6.6',
         'django-taggit-serializer>=0.1.5',

@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Compile javascript and commit changes
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.LA_ACTIONS_TOKEN }}
+        run: |
+          echo '//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}' >> .npmrc
+          npm ci --no-audit --prefer-offline
+          rm .npmrc
+
+      - name: Build
+        run: npx webpack
+
+      - name: Push
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: 'indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js --force'
+          message: 'Update compiled external-imports.js and indigo-app.js'

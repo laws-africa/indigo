@@ -16,7 +16,7 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-          npm ci --no-audit --prefer-offline
+        run: npm ci --no-audit --prefer-offline
 
       - name: Build
         run: npx webpack

@@ -52,6 +52,106 @@
 
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
+
+      this.initLinters();
+    },
+
+    initLinters: function() {
+      debugger;
+      var Indigo = exports.Indigo,
+          defaults = Indigo.traditions.default.settings;
+
+      // Adjust the base definition to include articles
+      defaults.grammar.fragments.article = 'articles';
+      defaults.grammar.fragments.quickEditable = '.akn-chapter, .akn-part, .akn-section, .akn-article, .akn-component, .akn-components';
+      defaults.toc.elements.article = 1;
+      defaults.toc.titles.article = function(i) {
+        return "Art. " + i.num + (i.heading ? " – " + i.heading : '');
+      };
+      // default remark generator
+      defaults.remarkGenerator = 'laTraditionGenerator';
+
+      // linters to be run by default - we push values so that grammars that have inherited these defaults
+      // pick them up
+      defaults.linters.push('upperCaseHeadings');
+      defaults.linters.push('onlySchedule');
+      defaults.linters.push('duplicateSections');
+      defaults.linters.push('duplicateElements');
+      defaults.linters.push('suspiciouslyNumberedItems');
+      defaults.linters.push('nonSequentialSections');
+      defaults.linters.push('numberedElementsSequentialAndOnlyOne');
+      defaults.linters.push('emptySections');
+      defaults.linters.push('spaceBeforePunctuation');
+      defaults.linters.push('spaceMissingAfterPunctuation');
+      defaults.linters.push('metreSquared');
+      defaults.linters.push('missingImageAttachments');
+      defaults.linters.push('hrefContainsSpace');
+      defaults.linters.push('hrefEndsWithStop');
+      defaults.linters.push('hrefMissingProtocol');
+      defaults.linters.push('hyphenSpace');
+
+      /**
+       * Extend Slaw grammar model to add additional syntax highlighting.
+       */
+      class SlawLAGrammarModel extends Indigo.grammars.registry.slaw {
+        constructor(...args) {
+          super(...args);
+          this.language_def.hier = /Part|Chapter|Subpart|Article|PARA/i;
+        }
+      }
+
+      Indigo.grammars.registry.slaw = SlawLAGrammarModel;
+
+      let bluebell_settings = {
+        country: null,
+        toc: {
+          elements: {
+            akomaNtoso: 1,
+            article: 1,
+            attachment: 1,
+            attachments: 1,
+            chapter: 1,
+            conclusions: 1,
+            coverpage: 1,
+            division: 1,
+            paragraph: 1,
+            part: 1,
+            preamble: 1,
+            preface: 1,
+            section: 1,
+            subdivision: 1,
+            subpart: 1,
+          },
+        },
+        grammar: {
+          name: 'bluebell',
+          fragments: {
+            article: 'hier_element_block',
+            attachment: 'attachment',
+            attachments: 'attachments',
+            chapter: 'hier_element_block',
+            division: 'hier_element_block',
+            paragraph: 'hier_element_block',
+            part: 'hier_element_block',
+            section: 'hier_element_block',
+            subdivision: 'hier_element_block',
+            subpart: 'hier_element_block',
+          },
+          quickEditable: '.akn-article, .akn-attachment, .akn-chapter, .akn-division, .akn-paragraph, .akn-part, .akn-section, .akn-subdivision, .akn-subpart',
+        },
+      }
+
+      let bluebell_settings_aa = bluebell_settings;
+      bluebell_settings_aa.country = 'aa';
+      Indigo.traditions.aa = new Indigo.Tradition(bluebell_settings_aa);
+
+      let bluebell_settings_un = bluebell_settings;
+      bluebell_settings_un.country = 'un';
+      Indigo.traditions.un = new Indigo.Tradition(bluebell_settings_un);
+
+      let bluebell_settings_xx = bluebell_settings;
+      bluebell_settings_xx.country = 'xx';
+      Indigo.traditions.xx = new Indigo.Tradition(bluebell_settings_xx);
     },
 
     setupTextEditor: function() {

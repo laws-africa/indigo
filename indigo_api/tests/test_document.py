@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
@@ -143,6 +141,17 @@ class DocumentTestCase(TestCase):
         self.assertFalse(d.is_latest())
         d = Document.objects.get(id=3)
         self.assertTrue(d.is_latest())
+
+    def test_valid_until(self):
+        d = Document(work=self.work)
+        d.expression_date = ''
+        self.assertIsNone(d.valid_until())
+        d.expression_date = None
+        self.assertIsNone(d.valid_until())
+        d = Document.objects.get(id=2)
+        self.assertEqual(date(2012, 2, 1), d.valid_until())
+        d = Document.objects.get(id=3)
+        self.assertIsNone(d.valid_until())
 
     def test_is_consolidation(self):
         d = Document(work=self.work)

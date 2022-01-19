@@ -254,7 +254,7 @@ class DocumentMixin(object):
     def valid_until(self):
         """ Returns the date before the next non-arbitrary expression date on the same work if there is one.
         """
-        if not self.is_latest():
+        if not self.is_latest() and self.expression_date:
             dates_info = self.work.possible_expression_dates()
 
             # remove exclusively arbitrary dates as well as older expression dates

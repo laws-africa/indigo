@@ -203,7 +203,7 @@
 
       {% block publication_document_missing %}
         {% with document.work.place.settings.no_publication_document_text as no_publication_document_text %}
-        {% if not document.work.publication_document and no_publication_document_text %}
+        {% if not document.is_consolidation and not document.work.publication_document and no_publication_document_text %}
           <li class="verification-notice">
             [{% trans no_publication_document_text %}]
           </li>

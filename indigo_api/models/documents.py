@@ -222,6 +222,21 @@ class DocumentMixin(object):
         pdf_exporter = plugins.for_document('pdf-exporter', self)
         return pdf_exporter.render(self, element=element)
 
+    def is_consolidation(self):
+        return self.expression_date in [c.date for c in self.work.arbitrary_expression_dates.all()]
+
+    def is_latest(self):
+        """ Compares the date of the current expression to all possible expression dates on the work,
+             regardless of whether a document has been created at the later date(s).
+
+            Returns True or False.
+
+            Returns False if the document doesn't yet have an expression date
+             or if the work doesn't yet have possible expression dates.
+        """
+        dates = [d['date'] for d in self.work.possible_expression_dates()]
+        return self.expression_date == max(dates) if self.expression_date and dates else False
+
 
 class Document(DocumentMixin, models.Model):
     class Meta:

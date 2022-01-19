@@ -213,7 +213,7 @@
 
       {% block consolidation_note %}
         {% with document.work.place.settings.consolidation_note as consolidation_note %}
-          {% if document.consolidation and consolidation_note %}
+          {% if document.is_consolidation and consolidation_note %}
             <li class="verification-notice">
               [{% trans consolidation_note %}]
             </li>

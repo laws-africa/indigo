@@ -151,6 +151,24 @@
                         </dd>
                       {% endif %}
                     {% endwith %}
+
+                    {% if work.consolidation_note_override or place.settings.consolidation_note %}
+                      <dt>
+                        Consolidation note
+                        {% if work.consolidation_note_override %}
+                          <span class="text-muted" title="Set explicitly on this work">
+                            <i class="fa fa-info-circle"></i> Overridden
+                          </span>
+                        {% endif %}
+                      </dt>
+                      <dd>
+                        {% if work.consolidation_note_override %}
+                          {{ work.consolidation_note_override }}
+                        {% else %}
+                          {{ place.settings.consolidation_note }}
+                        {% endif %}
+                      </dd>
+                    {% endif %}
                   </dl>
                 </div>
               </div>

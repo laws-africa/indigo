@@ -49,13 +49,9 @@ class DocumentTestCase(TestCase):
         d.content = document_fixture('test')
         d.expression_date = ''
         assert_equal(d.expression_date, '')
-        self.assertFalse(d.is_latest())
-        self.assertFalse(d.is_consolidation())
 
         d.expression_date = None
         assert_equal(d.expression_date, None)
-        self.assertFalse(d.is_latest())
-        self.assertFalse(d.is_consolidation())
 
     def test_inherit_from_work(self):
         user = User.objects.get(pk=1)
@@ -96,8 +92,6 @@ class DocumentTestCase(TestCase):
         doc = Document.objects.get(id=2)
         # only the pre-existing amendment event
         assert_equal(len(doc.amendment_events()), 1)
-        self.assertFalse(doc.is_latest())
-        self.assertFalse(doc.is_consolidation())
 
         doc = Document.objects.get(id=3)
         events = list(doc.amendment_events())
@@ -106,8 +100,6 @@ class DocumentTestCase(TestCase):
         assert_equal(events[1].amending_uri, amending.frbr_uri)
         assert_equal(events[1].amending_title, amending.title)
         assert_equal(events[1].date, d)
-        self.assertTrue(doc.is_latest())
-        self.assertFalse(doc.is_consolidation())
 
     def test_get_subcomponent(self):
         d = Document(language=self.eng)
@@ -140,3 +132,30 @@ class DocumentTestCase(TestCase):
 
         assert_is_none(d.get_subcomponent('main', 'chapter/99'))
         assert_is_none(d.get_subcomponent('main', 'section/99'))
+
+    def test_is_latest(self):
+        d = Document(work=self.work)
+        d.expression_date = ''
+        self.assertFalse(d.is_latest())
+        d.expression_date = None
+        self.assertFalse(d.is_latest())
+        d = Document.objects.get(id=2)
+        self.assertFalse(d.is_latest())
+        d = Document.objects.get(id=3)
+        self.assertTrue(d.is_latest())
+
+    def test_is_consolidation(self):
+        d = Document(work=self.work)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=2)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=3)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=6)
+        self.assertTrue(d.is_consolidation())
+
+    def test_consolidation_note(self):
+        d = Document(work=self.work)
+        self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.consolidation_note())
+        d = Document.objects.get(id=6)
+        self.assertEqual('A special consolidation note just for this work', d.consolidation_note())

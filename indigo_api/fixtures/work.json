@@ -56,6 +56,7 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2001/8",
+      "consolidation_note_override": "A special consolidation note just for this work",
       "repealed_by_id": 1,
       "repealed_date": "2014-02-12"
     }

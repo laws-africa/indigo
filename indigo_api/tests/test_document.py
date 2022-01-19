@@ -50,12 +50,12 @@ class DocumentTestCase(TestCase):
         d.expression_date = ''
         assert_equal(d.expression_date, '')
         self.assertFalse(d.is_latest())
-        self.assertFalse(d.is_consolidation)
+        self.assertFalse(d.is_consolidation())
 
         d.expression_date = None
         assert_equal(d.expression_date, None)
         self.assertFalse(d.is_latest())
-        self.assertFalse(d.is_consolidation)
+        self.assertFalse(d.is_consolidation())
 
     def test_inherit_from_work(self):
         user = User.objects.get(pk=1)
@@ -97,7 +97,7 @@ class DocumentTestCase(TestCase):
         # only the pre-existing amendment event
         assert_equal(len(doc.amendment_events()), 1)
         self.assertFalse(doc.is_latest())
-        self.assertFalse(doc.is_consolidation)
+        self.assertFalse(doc.is_consolidation())
 
         doc = Document.objects.get(id=3)
         events = list(doc.amendment_events())
@@ -107,7 +107,7 @@ class DocumentTestCase(TestCase):
         assert_equal(events[1].amending_title, amending.title)
         assert_equal(events[1].date, d)
         self.assertTrue(doc.is_latest())
-        self.assertFalse(doc.is_consolidation)
+        self.assertFalse(doc.is_consolidation())
 
     def test_get_subcomponent(self):
         d = Document(language=self.eng)

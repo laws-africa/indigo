@@ -74,7 +74,7 @@ setup(
         'iso8601>=0.1',
         'jsonpatch>=1.23',
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
-        'lxml>=3.4.1',
+        'lxml>=4.7.1',
         'mammoth>=1.4.4',
         'requests>=2',
         'unicodecsv>=0.14.1',

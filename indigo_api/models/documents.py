@@ -234,11 +234,22 @@ class DocumentMixin(object):
 
             Returns True or False.
 
+            Returns True if all dates after the current expression are arbitrary.
+
             Returns False if the document doesn't yet have an expression date
              or if the work doesn't yet have possible expression dates.
         """
-        dates = [d['date'] for d in self.work.possible_expression_dates()]
-        return self.expression_date == max(dates) if self.expression_date and dates else False
+        latest = False
+        dates_info = self.work.possible_expression_dates()
+        dates = [d['date'] for d in dates_info]
+        if self.expression_date and dates:
+            # whether it's arbitrary or not, it's the latest expression
+            latest = self.expression_date == max(dates)
+            # if it's not the latest, remove all dates that are only arbitrary and check again
+            if not latest:
+                dates = [d['date'] for d in dates_info if d['initial'] or d.get('amendment')]
+                latest = self.expression_date == max(dates)
+        return latest
 
 
 class Document(DocumentMixin, models.Model):

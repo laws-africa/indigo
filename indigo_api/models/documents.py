@@ -251,6 +251,19 @@ class DocumentMixin(object):
                 latest = self.expression_date == max(dates)
         return latest
 
+    def valid_until(self):
+        """ Returns the date before the next non-arbitrary expression date on the same work if there is one.
+        """
+        if not self.is_latest():
+            dates_info = self.work.possible_expression_dates()
+
+            # remove exclusively arbitrary dates as well as older expression dates
+            dates = [d['date'] for d in dates_info
+                     if (d['initial'] or d.get('amendment')) and d['date'] > self.expression_date]
+
+            if dates:
+                return min(dates) - datetime.timedelta(days=1)
+
 
 class Document(DocumentMixin, models.Model):
     class Meta:

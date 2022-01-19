@@ -205,16 +205,13 @@ class WorkMixin(object):
         """
         return self.expressions().filter(expression_date=self.publication_date)
 
-    def arbitrary_expression_date_dates(self):
-        return [c.date for c in self.arbitrary_expression_dates.all()]
-
     def possible_expression_dates(self):
         """ Return a list of dicts each describing a possible expression date on a work, in descending date order.
         Each has a date and specifies whether it is an amendment, consolidation, and/or initial expression.
         """
         initial = self.publication_date or self.commencement_date
         amendment_dates = [a.date for a in self.amendments.all()]
-        consolidation_dates = self.arbitrary_expression_date_dates()
+        consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
         all_dates = set(amendment_dates + consolidation_dates)
         dates = [
             {'date': date,

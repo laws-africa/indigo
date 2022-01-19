@@ -225,6 +225,9 @@ class DocumentMixin(object):
     def is_consolidation(self):
         return self.expression_date in [c.date for c in self.work.arbitrary_expression_dates.all()]
 
+    def consolidation_note(self):
+        return self.work.consolidation_note_override or self.work.place.settings.consolidation_note
+
     def is_latest(self):
         """ Compares the date of the current expression to all possible expression dates on the work,
              regardless of whether a document has been created at the later date(s).

@@ -375,7 +375,6 @@ class Work(WorkMixin, models.Model):
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
-    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
 
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
@@ -393,6 +392,9 @@ class Work(WorkMixin, models.Model):
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+
+    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
+    consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

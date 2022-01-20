@@ -152,7 +152,7 @@
                       {% endif %}
                     {% endwith %}
 
-                    {% if work.consolidation_note_override or place.settings.consolidation_note %}
+                    {% if work.consolidation_note %}
                       <dt>
                         Consolidation note
                         {% if work.consolidation_note_override %}
@@ -162,11 +162,7 @@
                         {% endif %}
                       </dt>
                       <dd>
-                        {% if work.consolidation_note_override %}
-                          {{ work.consolidation_note_override }}
-                        {% else %}
-                          {{ place.settings.consolidation_note }}
-                        {% endif %}
+                        {{ work.consolidation_note }}
                       </dd>
                     {% endif %}
                   </dl>

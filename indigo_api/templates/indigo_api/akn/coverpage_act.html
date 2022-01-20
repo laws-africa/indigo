@@ -193,25 +193,9 @@
 
       {% block as_at_date %}
         {% block as_at_date_notice %}
-          {% with document.valid_until as end_date %}
-            <li class="as-at-date-notice">
-              {% if document.is_latest and not document.is_consolidation and end_date %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" end_date=end_date|date:"j E Y" %}This is the version of this document from {{ date }} and includes any amendments published up to {{ end_date }}{% endblocktrans %}.]
-              {% elif document.is_latest and not document.is_consolidation %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" %}This is the version of this document from {{ date }}{% endblocktrans %}.]
-              {% elif document.is_latest and document.is_consolidation and end_date %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" end_date=end_date|date:"j E Y" %}This is the version of this document at {{ date }} and includes any amendments published up to {{ end_date }}{% endblocktrans %}.]
-              {% elif document.is_latest and document.is_consolidation %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" %}This is the version of this document at {{ date }}{% endblocktrans %}.]
-              {% elif not document.is_latest and not document.is_consolidation %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" end_date=end_date|date:"j E Y" %}This is the version of this document as it was from {{ date }} to {{ end_date }}{% endblocktrans %}.]
-              {% elif not document.is_latest and document.is_consolidation and end_date %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" end_date=end_date|date:"j E Y" %}This is the version of this document as it was at {{ date }} to {{ end_date }}{% endblocktrans %}.]
-              {% elif not document.is_latest and document.is_consolidation %}
-                [{% blocktrans with date=document.expression_date|date:"j E Y" %}This is the version of this document as it was at {{ date }}{% endblocktrans %}.]
-              {% endif %}
-            </li>
-          {% endwith %}
+          <li class="as-at-date-notice">
+            {{ document.validity_notice }}
+          </li>
         {% endblock %}
       {% endblock %}
 

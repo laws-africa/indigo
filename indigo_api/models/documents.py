@@ -13,6 +13,7 @@ from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 from taggit.managers import TaggableManager
@@ -279,6 +280,31 @@ class DocumentMixin(object):
 
             if dates:
                 return min(dates) - datetime.timedelta(days=1)
+
+    def validity_notice(self):
+        """ Returns the string to render on the coverpage.
+        """
+        latest = self.is_latest()
+        consolidation = self.is_consolidation()
+        expression_date = self.expression_date.strftime('%-d %B %Y') if self.expression_date else None
+        end_date = self.valid_until()
+        if end_date:
+            end_date = end_date.strftime('%-d %B %Y')
+        # Scenario 1: Latest, non-arbitrary; with or without end date
+        if latest and not consolidation:
+            return _(f'[This is the version of this document from {expression_date}' +
+                     (f' and includes any amendments published up to {end_date}.]' if end_date else '.]'))
+        # Scenario 2: Latest, arbitrary; with or without end date
+        elif latest and consolidation:
+            return _(f'[This is the version of this document at {expression_date}' +
+                     (f' and includes any amendments published up to {end_date}.]' if end_date else '.]'))
+        # Scenario 3: Not latest, non-arbitrary; will by definition have an end date
+        elif not latest and not consolidation:
+            return _(f'[This is the version of this document as it was from {expression_date} to {end_date}.]')
+        # Scenario 4: Not latest, arbitrary; with or without end date
+        elif not latest and consolidation:
+            return _(f'[This is the version of this document as it was at {expression_date}' +
+                     (f' to {end_date}.]' if end_date else '.]'))
 
 
 class Document(DocumentMixin, models.Model):

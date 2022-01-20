@@ -151,7 +151,7 @@ class DocumentTestCase(TestCase):
         d = Document.objects.get(id=2)
         self.assertEqual(date(2012, 2, 1), d.valid_until())
         d = Document.objects.get(id=3)
-        self.assertIsNone(d.valid_until())
+        self.assertEqual(date(2019, 1, 1), d.valid_until())
 
     def test_is_consolidation(self):
         d = Document(work=self.work)
@@ -165,6 +165,6 @@ class DocumentTestCase(TestCase):
 
     def test_consolidation_note(self):
         d = Document(work=self.work)
-        self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.consolidation_note())
+        self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.consolidation_note)
         d = Document.objects.get(id=6)
-        self.assertEqual('A special consolidation note just for this work', d.consolidation_note())
+        self.assertEqual('A special consolidation note just for this work', d.consolidation_note)

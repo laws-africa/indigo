@@ -249,7 +249,8 @@ class DocumentMixin(object):
             # if it's not the latest, remove all dates that are only arbitrary and check again
             if not latest:
                 dates = [d['date'] for d in dates_info if d['initial'] or d.get('amendment')]
-                latest = self.expression_date == max(dates)
+                if dates:
+                    latest = self.expression_date == max(dates)
         return latest
 
     def valid_until(self):

@@ -267,7 +267,7 @@ class DocumentMixin(object):
                 Return the day before the next non-arbitrary expression date.
         """
         if self.is_latest():
-            as_at = self.work.as_at_date
+            as_at = self.work.as_at_date()
             if as_at and as_at > self.expression_date:
                 return as_at
 

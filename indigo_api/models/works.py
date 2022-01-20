@@ -507,7 +507,6 @@ class Work(WorkMixin, models.Model):
         """
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
-    @property
     def as_at_date(self):
         return self.as_at_date_override or self.place.settings.as_at_date
 

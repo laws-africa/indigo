@@ -252,9 +252,24 @@ class DocumentMixin(object):
         return latest
 
     def valid_until(self):
-        """ Returns the date before the next non-arbitrary expression date on the same work if there is one.
+        """ An expression is valid until either:
+            - The day before the next non-arbitrary expression on the same work
+            - The as-at date on the work, if there is one AND it's later than the current expression
+            - If there isn't an as-at date on the work, the as-at date on the place,
+               if there is one AND it's later than the current expression.
+
+            For the latest (or latest non-arbitrary) expression on a work:
+                Return the as-at date on the work, only if it's later.
+                (The as-at date on the work is the override, if set, or the place's, also if set.)
+            For older expressions:
+                Return the day before the next non-arbitrary expression date.
         """
-        if not self.is_latest() and self.expression_date:
+        if self.is_latest():
+            as_at = self.work.as_at_date
+            if as_at and as_at > self.expression_date:
+                return as_at
+
+        elif self.expression_date:
             dates_info = self.work.possible_expression_dates()
 
             # remove exclusively arbitrary dates as well as older expression dates

@@ -225,6 +225,7 @@ class DocumentMixin(object):
     def is_consolidation(self):
         return self.expression_date in [c.date for c in self.work.arbitrary_expression_dates.all()]
 
+    @property
     def consolidation_note(self):
         return self.work.consolidation_note_override or self.work.place.settings.consolidation_note
 

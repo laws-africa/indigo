@@ -290,21 +290,25 @@ class DocumentMixin(object):
         end_date = self.valid_until()
         if end_date:
             end_date = end_date.strftime('%-d %B %Y')
-        # Scenario 1: Latest, non-arbitrary; with or without end date
-        if latest and not consolidation:
-            return _(f'[This is the version of this document from {expression_date}' +
-                     (f' and includes any amendments published up to {end_date}.]' if end_date else '.]'))
-        # Scenario 2: Latest, arbitrary; with or without end date
+        # Scenario 1: Latest, non-arbitrary; with and without end date
+        if latest and not consolidation and end_date:
+            return _('This is the version of this document from %(start)s and includes any amendments published up to %(end)s.') % {'start': expression_date, 'end': end_date}
+        elif latest and not consolidation:
+            return _('This is the version of this document from %(start)s.') % {'start': expression_date}
+        # Scenario 2: Latest, arbitrary; with and without end date
+        elif latest and consolidation and end_date:
+            return _('This is the version of this document at %(start)s and includes any amendments published up to %(end)s.') % {'start': expression_date, 'end': end_date}
         elif latest and consolidation:
-            return _(f'[This is the version of this document at {expression_date}' +
-                     (f' and includes any amendments published up to {end_date}.]' if end_date else '.]'))
+            return _('This is the version of this document at %(start)s.') % {'start': expression_date}
         # Scenario 3: Not latest, non-arbitrary; will by definition have an end date
         elif not latest and not consolidation:
-            return _(f'[This is the version of this document as it was from {expression_date} to {end_date}.]')
-        # Scenario 4: Not latest, arbitrary; with or without end date
-        elif not latest and consolidation:
-            return _(f'[This is the version of this document as it was at {expression_date}' +
-                     (f' to {end_date}.]' if end_date else '.]'))
+            return _('This is the version of this document as it was from %(start)s to %(end)s.') % {'start': expression_date, 'end': end_date}
+        # Scenario 4: Not latest, arbitrary; with and without end date
+        elif not latest and consolidation and end_date:
+            return _('This is the version of this document as it was at %(start)s to %(end)s.') % {'start': expression_date, 'end': end_date}
+        # 'else' in case a scenario has been missed
+        else:
+            return _('This is the version of this document as it was at %(start)s.') % {'start': expression_date}
 
 
 class Document(DocumentMixin, models.Model):

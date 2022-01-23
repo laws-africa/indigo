@@ -317,7 +317,7 @@ This deployment can run directly from the IP address, however has been set to re
     
 9a. Add the following lines to the bottom of the file, editing the portions in brackets (without brackets) as per your environment (i.e. DJANGO_SECRET_KEY=123456789, not DJANGO_SECRET_KEY={123456789}):
     
-Note, we set DJANGO_DEBUG=true for now, this is due to the way in which Django works and it cannot populate the database otherwise, as soon as we have run the first migration, we will change this.
+Note, we set DJANGO_DEBUG=true for now, this is due to the way in which Django works and it cannot populate the database otherwise, as soon as we have run the first migration, we will change this::
     
     export DJANGO_DEBUG=true
     export DJANGO_SECRET_KEY={Some random characters}

@@ -343,7 +343,7 @@ This deployment can run directly from the IP address, however has been set to re
 
     # python manage.py migrate
     # python manage.py update_countries_plus
-    # python manage.py loaddata countries.json
+    # python manage.py loaddata languages_data.json.gz
     # python manage.py createsuperuser
     # python manage.py compilescss
     # python manage.py collectstatic --noinput -i docs -i \*scss 2>&1

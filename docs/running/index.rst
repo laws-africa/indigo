@@ -236,23 +236,23 @@ This deployment can run directly from the IP address, however has been set to re
     # echo 'eval "$(rbenv init -)"' >> ~/.bashrc
     # source ~/.bashrc
     
-    You can test if Rbenv correctly installed with the following command:
+2a. You can test if Rbenv correctly installed with the following command::
     
     $ rbenv -v
     
-    Now install the appropriate ruby version (2.7.2 at time of writing):
+2b. Now install the appropriate ruby version (2.7.2 at time of writing)::
     
     $ rbenv install 2.7.2
-    
-    Set the global Ruby version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)
+  
+2c. Set the global Ruby version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)::
     
     $ rbenv global 2.7.2
     
-    You can test if this worked as follows (Which should return version 2.7.2):
+2d. You can test if this worked as follows (Which should return version 2.7.2)::
     
     $ ruby -v
 
-3. Install Pyenv Python Version Manager so you can ensure that you run the correct Python version, this will also configure the necessary ENV variables for Python:
+3. Install Pyenv Python Version Manager so you can ensure that you run the correct Python version, this will also configure the necessary ENV variables for Python::
 
     $ curl https://pyenv.run | bash
     $ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
@@ -260,23 +260,23 @@ This deployment can run directly from the IP address, however has been set to re
     $ echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
     $ source ~/.bashrc
     
-    You can test if Pyenv correctly installed with the following command:
+3a. You can test if Pyenv correctly installed with the following command::
     
     $ pyenv -v
     
-    Now install the appropriate ruby version (3.8.12 at time of writing):
+3b. Now install the appropriate ruby version (3.8.12 at time of writing)::
     
     $ pyenv install 3.8.12
 
-    Set the global Python version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)
+3c. Set the global Python version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)::
     
     $ pyenv global 3.8.12
     
-    You can test if this worked as follows (Which should return version 3.8.12):
+3d. You can test if this worked as follows (Which should return version 3.8.12)::
     
     $ python --version
     
-4. Install some PyPi packages that you will need for a production deployment:
+4. Install some PyPi packages that you will need for a production deployment::
 
     $ pip install --upgrade pip
     $ pip install wheel
@@ -285,39 +285,39 @@ This deployment can run directly from the IP address, however has been set to re
     $ pip install gunicorn==20.1.0
     $ pip install psycopg2==2.8.6
     
- 5. Clone into the current version of Indigo:
+5. Clone into the current version of Indigo::
  
     $ git clone https://github.com/laws-africa/indigo
     $ cd indigo
     
-    From here on, all commands will be run from this folder.
+5a. om here on, all commands will be run from this folder.
     
- 6. Setup the Indigo requirements:
+6. Setup the Indigo requirements::
  
     $ pip install -e .
     
- 7. Configure the Postgres Database:
+7. Configure the Postgres Database:
     
-    Note that if you want to use a more secure configuration, you will need to edit the settings.py file contained in ./indigo/settings.py, the relevant variable is: db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo'). You can edit this if you use a different Postgres host, username or password than those set below:
+    Note that if you want to use a more secure configuration, you will need to edit the settings.py file contained in ./indigo/settings.py, the relevant variable is: db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo'). You can edit this if you use a different Postgres host, username or password than those set below::
     
     $ su - postgres -c 'createuser -d -P indigo'
     
-    Set the password to indigo unless you have changed settings.py, in which case, use that password.
+7a. Set the password to indigo unless you have changed settings.py, in which case, use that password::
     
     $ su - postgres -c 'createdb indigo'
     
- 8. Install the Ruby gems required by Indigo:
+8. Install the Ruby gems required by Indigo::
  
     $ gem install bundler
     $ bundle install
  
- 9. Set some ENV variables in Debian required for Indigo to work in production mode:
+9. Set some ENV variables in Debian required for Indigo to work in production mode::
  
     $ nano ~/.bashrc
     
-    Add the following lines to the bottom of the file, editing the portions in brackets (without brackets) as per your environment (i.e. DJANGO_SECRET_KEY=123456789, not DJANGO_SECRET_KEY={123456789}):
+9a. Add the following lines to the bottom of the file, editing the portions in brackets (without brackets) as per your environment (i.e. DJANGO_SECRET_KEY=123456789, not DJANGO_SECRET_KEY={123456789}):
     
-    Note, we set DJANGO_DEBUG=true for now, this is due to the way in which Django works and it cannot populate the database otherwise, as soon as we have run the first migration, we will change this.
+Note, we set DJANGO_DEBUG=true for now, this is due to the way in which Django works and it cannot populate the database otherwise, as soon as we have run the first migration, we will change this.
     
     export DJANGO_DEBUG=true
     export DJANGO_SECRET_KEY={Some random characters}
@@ -335,11 +335,11 @@ This deployment can run directly from the IP address, however has been set to re
     export RECAPTCHA_PRIVATE_KEY={Your ReCaptcha Private Key}
     export GOOGLE_ANALYTICS_ID={Your Google Analytics ID for the property}
     
-    Now ensure that the ENV variables are in-use by refreshing the console session:
+9a. Now ensure that the ENV variables are in-use by refreshing the console session::
     
     $ source ~/.bashrc
 
-10. Now let us run the initial Indigo Deployment:
+10. Now let us run the initial Indigo Deployment::
 
     $ python manage.py migrate
     $ python manage.py update_countries_plus
@@ -348,11 +348,11 @@ This deployment can run directly from the IP address, however has been set to re
     $ python manage.py compilescss
     $ python manage.py collectstatic --noinput -i docs -i \*scss 2>&1
     
-    If everything worked out well, we should be able to test your installation in debug mode now:
+10a. If everything worked out well, we should be able to test your installation in debug mode now::
     
     $ python manage.py runserver 0.0.0.0:8000
     
-    You should be able to connect to the host via your browser to http://ip-of-host:8000
+10b. You should be able to connect to the host via your browser to http://ip-of-host:8000
     
     Ctrl+C to end the development server, we are now reasdy to deploy to production
 

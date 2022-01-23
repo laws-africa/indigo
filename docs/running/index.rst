@@ -231,89 +231,89 @@ This deployment can run directly from the IP address, however has been set to re
     
 2. Install Rbenv Ruby Version Manager so you can ensure that you run the correct Ruby version, this will also configure the necessary ENV variables for Ruby:
 
-    # curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-    # echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-    # echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-    # source ~/.bashrc
+    $ curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+    $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+    $ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+    $ source ~/.bashrc
     
     You can test if Rbenv correctly installed with the following command:
     
-    # rbenv -v
+    $ rbenv -v
     
     Now install the appropriate ruby version (2.7.2 at time of writing):
     
-    # rbenv install 2.7.2
+    $ rbenv install 2.7.2
     
     Set the global Ruby version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)
     
-    # rbenv global 2.7.2
+    $ rbenv global 2.7.2
     
     You can test if this worked as follows (Which should return version 2.7.2):
     
-    # ruby -v
+    $ ruby -v
 
 3. Install Pyenv Python Version Manager so you can ensure that you run the correct Python version, this will also configure the necessary ENV variables for Python:
 
-    # curl https://pyenv.run | bash
-    # echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-    # echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-    # echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
-    # source ~/.bashrc
+    $ curl https://pyenv.run | bash
+    $ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+    $ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+    $ echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+    $ source ~/.bashrc
     
     You can test if Pyenv correctly installed with the following command:
     
-    # pyenv -v
+    $ pyenv -v
     
     Now install the appropriate ruby version (3.8.12 at time of writing):
     
-    # pyenv install 3.8.12
+    $ pyenv install 3.8.12
 
     Set the global Python version to be used (Note, if you are deploying to bare-metal, this is not recommended as it might break other services)
     
-    # pyenv global 3.8.12
+    $ pyenv global 3.8.12
     
     You can test if this worked as follows (Which should return version 3.8.12):
     
-    # python --version
+    $ python --version
     
 4. Install some PyPi packages that you will need for a production deployment:
 
-    # pip install --upgrade pip
-    # pip install wheel
-    # pip install -U pip setuptools
-    # pip install gevent==21.8.0
-    # pip install gunicorn==20.1.0
-    # pip install psycopg2==2.8.6
+    $ pip install --upgrade pip
+    $ pip install wheel
+    $ pip install -U pip setuptools
+    $ pip install gevent==21.8.0
+    $ pip install gunicorn==20.1.0
+    $ pip install psycopg2==2.8.6
     
  5. Clone into the current version of Indigo:
  
-    # git clone https://github.com/laws-africa/indigo
-    # cd indigo
+    $ git clone https://github.com/laws-africa/indigo
+    $ cd indigo
     
     From here on, all commands will be run from this folder.
     
  6. Setup the Indigo requirements:
  
-    # pip install -e .
+    $ pip install -e .
     
  7. Configure the Postgres Database:
     
     Note that if you want to use a more secure configuration, you will need to edit the settings.py file contained in ./indigo/settings.py, the relevant variable is: db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo'). You can edit this if you use a different Postgres host, username or password than those set below:
     
-    # su - postgres -c 'createuser -d -P indigo'
+    $ su - postgres -c 'createuser -d -P indigo'
     
     Set the password to indigo unless you have changed settings.py, in which case, use that password.
     
-    su - postgres -c 'createdb indigo'
+    $ su - postgres -c 'createdb indigo'
     
  8. Install the Ruby gems required by Indigo:
  
-    # gem install bundler
-    # bundle install
+    $ gem install bundler
+    $ bundle install
  
  9. Set some ENV variables in Debian required for Indigo to work in production mode:
  
-    # nano ~/.bashrc
+    $ nano ~/.bashrc
     
     Add the following lines to the bottom of the file, editing the portions in brackets (without brackets) as per your environment (i.e. DJANGO_SECRET_KEY=123456789, not DJANGO_SECRET_KEY={123456789}):
     
@@ -337,20 +337,20 @@ This deployment can run directly from the IP address, however has been set to re
     
     Now ensure that the ENV variables are in-use by refreshing the console session:
     
-    # source ~/.bashrc
+    $ source ~/.bashrc
 
 10. Now let us run the initial Indigo Deployment:
 
-    # python manage.py migrate
-    # python manage.py update_countries_plus
-    # python manage.py loaddata countries.json
-    # python manage.py createsuperuser
-    # python manage.py compilescss
-    # python manage.py collectstatic --noinput -i docs -i \*scss 2>&1
+    $ python manage.py migrate
+    $ python manage.py update_countries_plus
+    $ python manage.py loaddata countries.json
+    $ python manage.py createsuperuser
+    $ python manage.py compilescss
+    $ python manage.py collectstatic --noinput -i docs -i \*scss 2>&1
     
     If everything worked out well, we should be able to test your installation in debug mode now:
     
-    # python manage.py runserver 0.0.0.0:8000
+    $ python manage.py runserver 0.0.0.0:8000
     
     You should be able to connect to the host via your browser to http://ip-of-host:8000
     
@@ -360,7 +360,7 @@ This deployment can run directly from the IP address, however has been set to re
 
     Just like we did in step 9, we are just going to edit the ENV so that the debug flag is set to false:
     
-    # nano ~/.bashrc
+    $ nano ~/.bashrc
     
     Find the line you added earlier for export DJANGO_DEBUG=true and change it to read:
     
@@ -370,11 +370,11 @@ This deployment can run directly from the IP address, however has been set to re
  
     In Production Mode, Indigo requires an SSL connection, lets generate a key-pair inside of the indigo folder:
     
-    # openssl req -new -x509 -days 365 -nodes -out server.crt -keyout server.key
+    $ openssl req -new -x509 -days 365 -nodes -out server.crt -keyout server.key
     
  13. Run Gunicorn webserver for production use:
  
-    # gunicorn -k=gevent indigo.wsgi:application -t 600 --certfile=/root/indigo/server.crt --keyfile=/root/indigo/server.key -b=0.0.0.0:443 -w=4 --forwarded-allow-ips=* --proxy-allow-from=*
+    $ gunicorn -k=gevent indigo.wsgi:application -t 600 --certfile=/root/indigo/server.crt --keyfile=/root/indigo/server.key -b=0.0.0.0:443 -w=4 --forwarded-allow-ips=* --proxy-allow-from=*
     
     You should now be able to connect to your Indigo instance at https://your-ip-address/
 
@@ -386,4 +386,4 @@ cron job to run the ``django-background-tasks`` task queue. Indigo tasks are pla
 in the ``indigo`` task queue. See `django-background-tasks <https://django-background-tasks.readthedocs.io/en/latest/>`
 for more details on running background tasks.
 
-To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True.
+To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True in ./indigo/settings.py.

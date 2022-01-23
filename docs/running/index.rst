@@ -236,11 +236,11 @@ This deployment can run directly from the IP address, however has been set to re
     # echo 'eval "$(rbenv init -)"' >> ~/.bashrc
     # source ~/.bashrc
     
-2a. You can test if Rbenv correctly installed with the following command::
+You can test if Rbenv correctly installed with the following command::
     
     $ rbenv -v
     
-2b. Now install the appropriate ruby version (2.7.2 at time of writing)::
+Now install the appropriate ruby version (2.7.2 at time of writing)::
     
     $ rbenv install 2.7.2
   

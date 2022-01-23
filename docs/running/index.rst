@@ -225,16 +225,16 @@ As this deployment is intended for an LXC Container running as root, you might n
 
 This deployment can run directly from the IP address, however has been set to reduced security as it is recommended you run it behind an NginX reverse Proxy. Read the Gunicorn documentation for more information on this.
 
-1. Install some required packages:
+1. Install some required packages::
 
     # apt update && apt install git curl libssl-dev libreadline-dev zlib1g-dev autoconf bison build-essential libyaml-dev libreadline-dev libncurses5-dev libffi-dev libgdbm-dev xfonts-base xfonts-75dpi fontconfig xfonts-encodings xfonts-utils poppler-utils postgresql python3-pip libpq-dev libpoppler-dev sqlite3 libsqlite3-dev libbz2-dev wkhtmltopdf --no-install-recommends -y
     
-2. Install Rbenv Ruby Version Manager so you can ensure that you run the correct Ruby version, this will also configure the necessary ENV variables for Ruby:
+2. Install Rbenv Ruby Version Manager so you can ensure that you run the correct Ruby version, this will also configure the necessary ENV variables for Ruby::
 
-    $ curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-    $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-    $ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-    $ source ~/.bashrc
+    # curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+    # echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+    # echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+    # source ~/.bashrc
     
     You can test if Rbenv correctly installed with the following command:
     

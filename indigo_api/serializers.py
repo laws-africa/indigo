@@ -142,7 +142,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('document-attachments-detail', request=self.context['request'], kwargs={
-            'document_id': instance.document.pk,
+            'document_id': instance.document_id,
             'pk': instance.pk,
         })
 
@@ -150,7 +150,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('document-attachments-download', request=self.context['request'], kwargs={
-            'document_id': instance.document.pk,
+            'document_id': instance.document_id,
             'pk': instance.pk,
         })
 
@@ -158,7 +158,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('document-attachments-view', request=self.context['request'], kwargs={
-            'document_id': instance.document.pk,
+            'document_id': instance.document_id,
             'pk': instance.pk,
         })
 
@@ -529,7 +529,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('document-annotations-detail', request=self.context['request'], kwargs={
-            'document_id': instance.document.pk,
+            'document_id': instance.document_id,
             'pk': instance.pk,
         })
 

@@ -517,7 +517,7 @@ def post_save_document(sender, instance, **kwargs):
 def attachment_filename(instance, filename):
     """ Make S3 attachment filenames relative to the document,
     this may be modified to ensure it's unique by the storage system. """
-    return 'attachments/%s/%s' % (instance.document.id, os.path.basename(filename))
+    return 'attachments/%s/%s' % (instance.document_id, os.path.basename(filename))
 
 
 class Attachment(models.Model):

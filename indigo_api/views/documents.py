@@ -157,8 +157,8 @@ class DocumentResourceView:
 
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects\
-        .select_related('updated_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
-                        'task_assigned_to', 'task__country', 'task__locality', 'task__work')
+        .select_related('created_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
+                        'task__assigned_to', 'task__country', 'task__locality', 'task__work')
     serializer_class = AnnotationSerializer
     permission_classes = DEFAULT_PERMS + (ModelPermissions, AnnotationPermissions)
 

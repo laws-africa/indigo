@@ -156,7 +156,9 @@ class DocumentResourceView:
 
 
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
-    queryset = Annotation.objects
+    queryset = Annotation.objects\
+        .select_related('updated_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
+                        'task_assigned_to', 'task__country', 'task__locality', 'task__work')
     serializer_class = AnnotationSerializer
     permission_classes = DEFAULT_PERMS + (ModelPermissions, AnnotationPermissions)
 
@@ -167,31 +169,21 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
         queryset = list(self.filter_queryset(self.get_queryset()))
         task_content_type = ContentType.objects.get_for_model(Task)
 
-        fake_annotations = []
-        for annotation in queryset:
-            if annotation.task and annotation.in_reply_to is None:
-                # the task linked to the annotation
-                task = annotation.task
-                # get the tasks comments
-                task_comments = Comment.objects\
-                        .filter(content_type=task_content_type, object_pk=task.id)
-
-                for comment in task_comments:
-                    fake_annotation = Annotation(
-                        document=self.document,
-                        text=comment.comment,
-                        created_by_user=comment.user,
-                        in_reply_to=annotation,
-                        created_at=comment.submit_date,
-                        updated_at=comment.submit_date,
-                        anchor_id=annotation.anchor_id,
-                    )
-
-                    fake_annotations.append(fake_annotation)
+        # load task comments as fake annotations
+        tasks = {a.task_id: a for a in queryset if a.task_id and a.in_reply_to is None}
+        task_comments = Comment.objects.filter(content_type=task_content_type, object_pk__in=list(tasks.keys()))
+        fake_annotations = [Annotation(
+            document=self.document,
+            text=comment.comment,
+            created_by_user=comment.user,
+            in_reply_to=tasks[int(comment.object_pk)],
+            created_at=comment.submit_date,
+            updated_at=comment.submit_date,
+            anchor_id=tasks[int(comment.object_pk)].anchor_id,
+        ) for comment in task_comments]
 
         queryset += fake_annotations
-        context = {}
-        context['request'] = request
+        context = {'request': request}
         results = self.serializer_class(queryset, many=True, context=context)
         data = {
             "count": len(queryset),

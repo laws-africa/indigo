@@ -12,10 +12,18 @@ class DataMigration:
         fields = data['fields']
         if fields.get('document_xml'):
             xml = etree.fromstring(fields['document_xml'])
-            if self.migrate_xml(xml):
+            changed, xml = self.migrate_xml(xml)
+            if changed:
                 fields['document_xml'] = etree.tostring(xml, encoding='unicode')
                 version.serialized_data = json.dumps([data])
                 return True
+
+    def migrate_xml(self, xml):
+        """ Migrates an XML document, returning tuple (changed, xml) where
+        changed is a boolean indicating if the document has changed, and xml
+        is the migrated XML document.
+        """
+        raise NotImplemented()
 
 
 class RealCrossHeadings(DataMigration):
@@ -24,7 +32,8 @@ class RealCrossHeadings(DataMigration):
     def migrate_document(self, document):
         self.ns = document.doc.namespace
         root = etree.fromstring(document.content)
-        if self.migrate_xml(root):
+        changed, root = self.migrate_xml(root)
+        if changed:
             document.content = etree.tostring(root, encoding='unicode')
             return True
 
@@ -54,7 +63,7 @@ class RealCrossHeadings(DataMigration):
                     new_id = re.sub(r'hcontainer_\d+$', f'hcontainer_{i + 1}', old_id)
                     self.eid_mappings.update(rewrite_ids(hcontainer, old_id, new_id))
 
-        return changed
+        return changed, xml
 
     def migrate_element(self, hcontainer):
         # change to crossHeading
@@ -71,8 +80,8 @@ class CorrectAttachmentEids(DataMigration):
     """
     def migrate_document(self, document):
         self.ns = document.doc.namespace
-        if self.migrate_xml(document.doc.root):
-            return True
+        changed, _ = self.migrate_xml(document.doc.root)
+        return changed
 
     def migrate_xml(self, xml):
         changed = False
@@ -81,7 +90,7 @@ class CorrectAttachmentEids(DataMigration):
         for att in xml.xpath('//a:attachment', namespaces={'a': self.ns}):
             changed = self.migrate_element(att) or changed
 
-        return changed
+        return changed, xml
 
     def migrate_element(self, att):
         att_id = att.get('eId')

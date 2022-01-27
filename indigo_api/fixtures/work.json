@@ -56,6 +56,8 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2001/8",
+      "publication_date": "1999-01-01",
+      "as_at_date_override": "2012-03-04",
       "consolidation_note_override": "A special consolidation note just for this work",
       "repealed_by_id": 1,
       "repealed_date": "2014-02-12"
@@ -161,6 +163,34 @@
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2021/1",
       "publication_date": "2020-01-01"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Work with amendment and arbitrary expression date",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2017/17",
+      "publication_date": "2017-01-01"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Work with arbitrary expression date and amendments",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2016/16",
+      "publication_date": "2016-01-01"
     }
   }
 ]

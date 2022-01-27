@@ -57,6 +57,7 @@
     "pk": 4,
     "model": "indigo_api.document",
     "fields": {
+      "expression_date": "2001-10-01",
       "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2001/8/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8\"/>\n          <FRBRalias value=\"Repealed Act\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2001-05-02\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n      <lifecycle>\n        <eventRef eId=\"repeal-2014-02-12\" date=\"2014-02-12\" type=\"repeal\" source=\"#repeal-source\"/>\n        </lifecycle>\n      <references source=\"#this\">\n        <passiveRef eId=\"repeal-source\" href=\"/akn/za/act/2014/10\" showAs=\"Repeal\"/>\n        </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
       "draft": false,
       "title": "Repealed Act",
@@ -65,7 +66,6 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
-      "expression_date": "2001-10-01",
       "deleted": false,
       "frbr_uri": "/akn/za/act/2001/8",
       "work_id": 4
@@ -93,18 +93,126 @@
     "pk": 6,
     "model": "indigo_api.document",
     "fields": {
-      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2001/8/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8\"/>\n          <FRBRalias value=\"Repealed Act\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2001-05-02\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n      <lifecycle>\n        <eventRef eId=\"repeal-2014-02-12\" date=\"2014-02-12\" type=\"repeal\" source=\"#repeal-source\"/>\n        </lifecycle>\n      <references source=\"#this\">\n        <passiveRef eId=\"repeal-source\" href=\"/akn/za/act/2014/10\" showAs=\"Repeal\"/>\n        </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
-      "draft": true,
-      "title": "Repealed Act",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2017/17/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17\"/>\n          <FRBRalias value=\"Work with amendment and arbitrary expression date\"/>\n          <FRBRdate date=\"2017\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@\"/>\n          <FRBRdate date=\"2017-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@\"/>\n          <FRBRdate date=\"2017-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2017-01-01\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n    </meta>\n    <body>\n      <section eId=\"sec_1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "title": "Work with amendment and arbitrary expression date (expression at publication)",
       "language_id": 1,
       "created_at": "2015-01-15T09:20:02.710Z",
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
-      "expression_date": "2011-01-01",
+      "expression_date": "2017-01-01",
       "deleted": false,
-      "frbr_uri": "/akn/za/act/2001/8",
-      "work_id": 4
+      "frbr_uri": "/akn/za/act/2017/17",
+      "work_id": 12
+    }
+  },
+  {
+    "pk": 7,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2017-08-04",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2017/17/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17\"/>\n          <FRBRalias value=\"Work with amendment and arbitrary expression date\"/>\n          <FRBRdate date=\"2017\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2017-08-04/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2017-08-04\"/>\n          <FRBRdate date=\"2017-08-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2017-08-04/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2017-08-04\"/>\n          <FRBRdate date=\"2017-08-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2017-01-01\"/>\n      <lifecycle>\n        <eventRef eId=\"amendment-2017-08-04\" date=\"2017-08-04\" type=\"amendment\" source=\"#amendment-0-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef eId=\"amendment-0-source\" href=\"/akn/za/act/2011/1\" showAs=\"First Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2017/17",
+      "language_id": 1,
+      "title": "Work with amendment and arbitrary expression date (expression at amendment)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 12
+    }
+  },
+  {
+    "pk": 8,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2018-09-24",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2017/17/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17\"/>\n          <FRBRalias value=\"Work with amendment and arbitrary expression date\"/>\n          <FRBRdate date=\"2017\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2017-01-01\"/>\n      <lifecycle>\n        <eventRef eId=\"amendment-2017-08-04\" date=\"2017-08-04\" type=\"amendment\" source=\"#amendment-0-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef eId=\"amendment-0-source\" href=\"/akn/za/act/2011/1\" showAs=\"First Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2017/17",
+      "language_id": 1,
+      "title": "Work with amendment and arbitrary expression date (expression at consolidation)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 12
+    }
+  },
+  {
+    "pk": 9,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2018-10-17",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2017/17/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17\"/>\n          <FRBRalias value=\"Work with amendment and arbitrary expression date\"/>\n          <FRBRdate date=\"2017\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2017/17/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2017/17/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2017-01-01\"/>\n      <lifecycle>\n        <eventRef eId=\"amendment-2017-08-04\" date=\"2017-08-04\" type=\"amendment\" source=\"#amendment-0-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef eId=\"amendment-0-source\" href=\"/akn/za/act/2011/1\" showAs=\"First Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2017/17",
+      "language_id": 1,
+      "title": "Work with amendment and arbitrary expression date (expression at consolidation)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 12
+    }
+  },
+  {
+    "pk": 101,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2017-08-04",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2016/16/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16\"/>\n          <FRBRalias value=\"Work with arbitrary expression date and amendments\"/>\n          <FRBRdate date=\"2016\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2017-08-04/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2017-08-04\"/>\n          <FRBRdate date=\"2017-08-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2017-08-04/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2017-08-04\"/>\n          <FRBRdate date=\"2017-08-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2016-01-01\"/>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2016/16",
+      "language_id": 1,
+      "title": "Work with arbitrary expression date and amendments (expression at consolidation)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 13
+    }
+  },
+  {
+    "pk": 102,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2018-09-24",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2016/16/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16\"/>\n          <FRBRalias value=\"Work with arbitrary expression date and amendments\"/>\n          <FRBRdate date=\"2016\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2018-09-24/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2018-09-24\"/>\n          <FRBRdate date=\"2018-09-24\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2016-01-01\"/>\n      <lifecycle>\n        <eventRef eId=\"amendment-2018-09-24\" date=\"2018-09-24\" type=\"amendment\" source=\"#amendment-0-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef eId=\"amendment-0-source\" href=\"/akn/za/act/2011/1\" showAs=\"First Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2016/16",
+      "language_id": 1,
+      "title": "Work with arbitrary expression date and amendments (expression at first amendment)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 13
+    }
+  },
+  {
+    "pk": 103,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2018-11-12",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2016/16/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16\"/>\n          <FRBRalias value=\"Work with arbitrary expression date and amendments\"/>\n          <FRBRdate date=\"2016\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2018-11-12/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2018-11-12\"/>\n          <FRBRdate date=\"2018-11-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2016/16/eng@2018-11-12/main\"/>\n          <FRBRuri value=\"/akn/za/act/2016/16/eng@2018-11-12\"/>\n          <FRBRdate date=\"2018-11-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2016-01-01\"/>\n      <lifecycle>\n        <eventRef eId=\"amendment-2018-09-24\" date=\"2018-09-24\" type=\"amendment\" source=\"#amendment-0-source\"/>\n        <eventRef eId=\"amendment-2018-11-12\" date=\"2018-11-12\" type=\"amendment\" source=\"#amendment-1-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef eId=\"amendment-0-source\" href=\"/akn/za/act/2011/1\" showAs=\"First Amendment\"/>\n        <passiveRef eId=\"amendment-1-source\" href=\"/akn/za/act/2011/1\" showAs=\"Second Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection eId=\"sec_1__subsection_nn_1\">\n          <content>\n            <p eId=\"sec_1__subsection_nn_1__p_1\">Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2016/16",
+      "language_id": 1,
+      "title": "Work with arbitrary expression date and amendments (expression at second amendment)",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 13
     }
   },
   {
@@ -134,6 +242,58 @@
     }
   },
   {
+    "pk": 3,
+    "model": "indigo_api.amendment",
+    "fields": {
+      "date": "2001-10-01",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "amended_work_id": 4,
+      "amending_work_id": 3,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.amendment",
+    "fields": {
+      "date": "2017-08-04",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "amended_work_id": 12,
+      "amending_work_id": 3,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 5,
+    "model": "indigo_api.amendment",
+    "fields": {
+      "date": "2018-09-24",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "amended_work_id": 13,
+      "amending_work_id": 3,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 6,
+    "model": "indigo_api.amendment",
+    "fields": {
+      "date": "2018-11-12",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "amended_work_id": 13,
+      "amending_work_id": 3,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
     "pk": 1,
     "model": "indigo_api.arbitraryexpressiondate",
     "fields": {
@@ -141,6 +301,42 @@
       "created_at": "2015-01-15T09:20:02.710Z",
       "updated_at": "2015-02-17T10:57:47.779Z",
       "work_id": 4,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.arbitraryexpressiondate",
+    "fields": {
+      "date": "2018-09-24",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "work_id": 12,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 3,
+    "model": "indigo_api.arbitraryexpressiondate",
+    "fields": {
+      "date": "2018-10-17",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "work_id": 12,
+      "created_by_user": 1,
+      "updated_by_user": 1
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.arbitraryexpressiondate",
+    "fields": {
+      "date": "2017-08-04",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "work_id": 13,
       "created_by_user": 1,
       "updated_by_user": 1
     }

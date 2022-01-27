@@ -133,12 +133,12 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 4)
+        self.assertEqual(len(response.data['results']), 6)
 
         response = self.client.get(self.api_path + '/akn/za/act/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 4)
+        self.assertEqual(len(response.data['results']), 6)
 
         response = self.client.get(self.api_path + '/akn/za/act/2014')
         self.assertEqual(response.status_code, 200)

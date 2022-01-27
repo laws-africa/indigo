@@ -160,11 +160,11 @@ class DocumentTestCase(TestCase):
         self.assertFalse(d.is_consolidation())
         d = Document.objects.get(id=3)
         self.assertFalse(d.is_consolidation())
-        d = Document.objects.get(id=6)
+        d = Document.objects.get(id=8)
         self.assertTrue(d.is_consolidation())
 
     def test_consolidation_note(self):
         d = Document(work=self.work)
         self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.consolidation_note())
-        d = Document.objects.get(id=6)
+        d = Document.objects.get(id=4)
         self.assertEqual('A special consolidation note just for this work', d.consolidation_note())

@@ -349,6 +349,9 @@ class WorkMixin(object):
             commencements_count += 1
         return commencements_count
 
+    def consolidation_note(self):
+        return self.consolidation_note_override or self.place.settings.consolidation_note
+
 
 class Work(WorkMixin, models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and

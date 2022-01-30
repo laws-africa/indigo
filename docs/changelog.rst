@@ -2,6 +2,10 @@
 Changelog
 =========
 
+16.1.0 (?)
+
+* CHANGE: use `<br/>` rather than `<eol/>` (slaw 12.0.0).
+
 16.0.0 (2021-11-05)
 --------
 

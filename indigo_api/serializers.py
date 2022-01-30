@@ -536,6 +536,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
 class DocumentActivitySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    document_updated_at = serializers.SerializerMethodField()
 
     class Meta:
         model = DocumentActivity
@@ -545,6 +546,7 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
             'updated_at',
             'nonce',
             'is_asleep',
+            'document_updated_at',
         )
         read_only_fields = ('created_at', 'updated_at')
         extra_kwargs = {'nonce': {'required': True}}
@@ -553,6 +555,11 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context['request'].user
         validated_data['document'] = self.context['document']
         return super(DocumentActivitySerializer, self).create(validated_data)
+
+    def get_document_updated_at(self, obj):
+        # load only the field we need
+        doc = Document.objects.undeleted().only('updated_at').filter(pk=obj.document_id).first()
+        return doc and doc.updated_at
 
 
 class CommencementSerializer(serializers.ModelSerializer):

@@ -293,7 +293,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="a:eol">
+  <xsl:template match="a:eol | a:br">
     <xsl:element name="br" />
   </xsl:template>
 

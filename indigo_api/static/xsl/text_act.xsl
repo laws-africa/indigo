@@ -409,7 +409,7 @@
     <xsl:text>__</xsl:text>
   </xsl:template>
 
-  <xsl:template match="a:eol">
+  <xsl:template match="a:eol | a:br">
     <xsl:text>&#10;</xsl:text>
   </xsl:template>
 

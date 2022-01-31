@@ -192,22 +192,30 @@
       {% endblock %}
 
       {% block as_at_date %}
-        {% if document.work.as_at_date %}
-          {% block as_at_date_notice %}
-            <li class="as-at-date-notice">
-              [{% blocktrans with date=document.work.as_at_date|date:"j E Y" %}Up to date as at {{ date }}{% endblocktrans %}]
-            </li>
-          {% endblock %}
-        {% endif %}
+        {% block as_at_date_notice %}
+          <li class="as-at-date-notice">
+            [{{ document.validity_notice }}]
+          </li>
+        {% endblock %}
       {% endblock %}
 
       {% block publication_document_missing %}
         {% with document.work.place.settings.no_publication_document_text as no_publication_document_text %}
-        {% if not document.work.publication_document and no_publication_document_text %}
+        {% if not document.is_consolidation and not document.work.publication_document and no_publication_document_text %}
           <li class="verification-notice">
             [{% trans no_publication_document_text %}]
           </li>
         {% endif %}
+        {% endwith %}
+      {% endblock %}
+
+      {% block consolidation_note %}
+        {% with document.work.consolidation_note as consolidation_note %}
+          {% if document.is_consolidation and consolidation_note %}
+            <li class="verification-notice">
+              [{% trans consolidation_note %}]
+            </li>
+          {% endif %}
         {% endwith %}
       {% endblock %}
     </ul>

@@ -349,6 +349,9 @@ class WorkMixin(object):
             commencements_count += 1
         return commencements_count
 
+    def consolidation_note(self):
+        return self.consolidation_note_override or self.place.settings.consolidation_note
+
 
 class Work(WorkMixin, models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
@@ -375,7 +378,6 @@ class Work(WorkMixin, models.Model):
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
-    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
 
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
@@ -393,6 +395,9 @@ class Work(WorkMixin, models.Model):
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+
+    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
+    consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -506,22 +511,7 @@ class Work(WorkMixin, models.Model):
         return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
-        # unless explicitly set on the work,
-        # the as-at date is the maximum of the most recent, published expression date,
-        # and the place's as-at date.
-        if self.as_at_date_override:
-            return self.as_at_date_override
-
-        q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
-
-        dates = [
-            (q or {}).get('expression_date'),
-            self.place.settings.as_at_date,
-        ]
-
-        dates = [d for d in dates if d]
-        if dates:
-            return max(dates)
+        return self.as_at_date_override or self.place.settings.as_at_date
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

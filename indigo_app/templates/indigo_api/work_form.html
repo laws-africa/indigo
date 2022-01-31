@@ -333,6 +333,26 @@
       </div>
     </div>
 
+    <div class="card mb-3" id="consolidation-note">
+      <h5 class="card-header">Consolidation note</h5>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="{{ form.consolidation_note_override.id_for_label }}">{{ form.consolidation_note_override.label }}</label>
+            <input type="text" class="form-control" id="{{ form.consolidation_note_override.id_for_label }}" placeholder="{{ place.settings.consolidation_note|default:'' }}" name="{{ form.consolidation_note_override.html_name }}" value="{{ form.consolidation_note_override.value|default_if_none:'' }}">
+            <p class="form-text text-muted">Consolidation note that applies to just this work. Overrides a consolidation note in {{ place.name }} if set.</p>
+            {% if form.consolidation_note_override.errors %}
+              <div class="text-danger">
+                {% for error in form.consolidation_note_override.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% block work-form-repeal %}
     <div class="card mb-3" id="repeal">
       <h5 class="card-header">Repeal</h5>

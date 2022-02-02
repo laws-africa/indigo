@@ -159,6 +159,7 @@
    */
   Indigo.AnnotationThreadView = Backbone.View.extend({
     className: 'annotation-thread ig',
+    tagName: 'la-gutter-item',
     events: {
       'click button.post': 'postReply',
       'focus textarea': 'replyFocus',
@@ -256,7 +257,8 @@
 
       if (range && this.mark(range)) {
         // gutter uses this for positioning
-        this.anchorElement = this.marks[0];
+        // this.anchorElement = this.marks[0];
+        this.el.anchor = this.marks[0];
 
         // the DOM elements get rudely removed from the view when the document
         // sheet is re-rendered, which seems to break event handlers, so
@@ -409,12 +411,11 @@
       this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
 
-      this.newButtonItem = {
-        contentElement: this.newButton,
-      };
+      this.newButtonItem = document.createElement('la-gutter-item');
+      this.newButtonItem.appendChild(this.newButton);
 
-      this.gutter = this.el.querySelector('.content-with-gutter > .gutter').component;
-      this.gutter.contentRoot = this.el.querySelector('.content-with-gutter > .content');
+      this.gutter = this.el.querySelector('.gutter la-gutter');
+      this.gutter.akomaNtoso = this.el.querySelector('.content-with-gutter > .content');
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
@@ -460,7 +461,8 @@
       this.listenTo(view, 'resized', this.layout);
       this.threadViews.push(view);
       if (view.display()) {
-        this.gutter.items.push(view);
+        // this.gutter.items.push(view);
+        this.gutter.appendChild(view.el);
         this.visibleThreads.push(view);
       }
 
@@ -474,16 +476,17 @@
     },
 
     layout: function() {
-      this.gutter.runLayout();
+      this.gutter.layoutItems();
     },
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
-      var ix = this.gutter.items.indexOf(view);
-      if (ix > -1) {
-        this.gutter.items.splice(ix, 1);
-      }
+      // var ix = this.gutter.items.indexOf(view);
+      // if (ix > -1) {
+      //   this.gutter.items.splice(ix, 1);
+      // }
+      view.el.remove();
       this.layout();
     },
 
@@ -500,16 +503,15 @@
       var prefocus = this.prefocus,
           gutter = this.gutter,
           visible = [];
-      this.gutter.items = [];
 
       this.threadViews.forEach(function(v) {
         if (v.display()) {
-          gutter.items.push(v);
+          gutter.appendChild(v.el);
           visible.push(v);
 
           if (prefocus && (v.model.annotations.at(0).get('id') || "").toString() === prefocus) {
-            v.focus();
-            v.scrollIntoView();
+            v.el.active;
+            v.el.scrollIntoView();
           }
         }
       });
@@ -541,28 +543,26 @@
         if (v.model === thread) {
           v.display();
 
-          this.gutter.activeItem = v;
+          v.el.active = true;
           // once it's rendered in the gutter, focus it
-          this.gutter.$nextTick(() => {
-            v.focus();
-            v.$el
-             .find('textarea')
-             .first()
-             .focus();
-          });
+
+          // this.gutter.$nextTick(() => {
+          //   v.focus();
+          //   v.$el
+          //    .find('textarea')
+          //    .first()
+          //    .focus();
+          // });
         } else {
-          v.blur();
+          // v.blur();
         }
       });
 
     },
 
     removeNewButton: function() {
-      const ix = this.gutter.items.indexOf(this.newButtonItem);
-    if (ix > -1) {
-      this.gutter.items.splice(ix, 1);
-    }
-    this.newButtonTimeout = null;
+      this.newButtonItem.remove();
+      this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
@@ -628,12 +628,10 @@
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
           this.pendingRange = range;
-          this.newButtonItem.anchorElement = root;
-          if (!this.gutter.items.includes(this.newButtonItem)) {
-            this.gutter.items.push(this.newButtonItem);
-          } else {
-          this.gutter.runLayout();
-        }
+          this.newButtonItem.anchor = root;
+          if (!this.gutter.contains(this.newButtonItem)) {
+            this.gutter.appendChild(this.newButtonItem);
+          }
         }
       } else {
         // this needs to stick around for a little bit, for the case

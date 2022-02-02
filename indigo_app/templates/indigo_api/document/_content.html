@@ -9,12 +9,14 @@
   </div>
 
   <div class="document-sheet-container content-with-gutter">
-    <div class="sheet-outer content">
+    <div class="sheet-outer content" id="document-sheet-target">
       <div class="sheet-inner" id="document-sheet">
         <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}"></la-akoma-ntoso>
       </div>
     </div>
-    <div data-vue-component="Gutter"></div>
+    <aside class="gutter">
+      <la-gutter class="gutter-items" akoma-ntoso="#document-sheet-target"></la-gutter>
+    </aside>
   </div>
 
   <div class="document-text-editor sheet-outer">

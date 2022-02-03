@@ -11,6 +11,10 @@ jobs:
     name: Compile javascript and commit changes
     steps:
       - uses: actions/checkout@v2
+        with:
+          # use a token that has admin perms to bypass direct commits to master
+          token: ${{ secrets.LA_ACTIONS_TOKEN }}
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'

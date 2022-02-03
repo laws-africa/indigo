@@ -40,7 +40,7 @@ WHERE content_type_id = %s AND serialized_data LIKE '%%<br/>%%';
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0011_language_tasks'),
+        ('indigo_api', '0012_consolidation_note_and_override'),
     ]
 
     operations = [

@@ -133,12 +133,12 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 4)
+        self.assertEqual(len(response.data['results']), 6)
 
         response = self.client.get(self.api_path + '/akn/za/act/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 4)
+        self.assertEqual(len(response.data['results']), 6)
 
         response = self.client.get(self.api_path + '/akn/za/act/2014')
         self.assertEqual(response.status_code, 200)
@@ -636,16 +636,17 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(response.data['parent_work'])
 
-    def test_as_at_date_max_expression_date(self):
+    def test_as_at_date_not_max_expression_date(self):
         """ The as-at date for an individual work with points in time after the as-at date,
-        is the latest point in time date.
+        is still the as-at date.
+        It just won't be used on the coverpage for expressions that are later.
         """
         za = Country.for_code('za')
         za.settings.as_at_date = date(2009, 1, 1)
         za.settings.save()
 
         response = self.client.get(self.api_path + '/akn/za/act/2010/1.json')
-        self.assertEqual(response.data['as_at_date'], "2012-02-02")
+        self.assertEqual(response.data['as_at_date'], "2009-01-01")
 
     def test_published_json(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10')

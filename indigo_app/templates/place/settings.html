@@ -65,6 +65,19 @@
           {% endif %}
         </div>
 
+        <div class="form-group">
+          <label for="{{ form.consolidation_note.id_for_label }}">Consolidation note</label>
+          <input type="text" class="form-control" name="{{ form.consolidation_note.html_name }}" id="{{ form.consolidation_note.id_for_label }}" value="{{ form.consolidation_note.value|default:'' }}">
+          <p class="form-text text-muted">The text to display on a document's coverpage when it's part of a consolidation.</p>
+          {% if form.consolidation_note.errors %}
+            <div class="text-danger">
+              {% for error in form.consolidation_note.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
       </div>
 
       <div class="card-footer text-right">

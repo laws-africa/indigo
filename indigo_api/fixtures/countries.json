@@ -101,7 +101,8 @@
         "pk": 1,
         "fields": {
             "country_id": 1,
-            "as_at_date": "2019-01-01"
+            "as_at_date": "2019-01-01",
+            "consolidation_note": "A general consolidation note that applies to all consolidations in this place."
         }
     }
 ]

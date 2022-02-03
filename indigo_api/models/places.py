@@ -185,6 +185,7 @@ class PlaceSettings(models.Model):
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
     styleguide_url = models.URLField(null=True, blank=True)
+    consolidation_note = models.CharField(max_length=1024, null=True, blank=True)
     no_publication_document_text = models.CharField(
         max_length=1024, null=False, blank=True,
         default=_('Note: The original publication document is not available and this content could not be verified.'))

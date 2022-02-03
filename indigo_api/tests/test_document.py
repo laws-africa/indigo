@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
@@ -132,3 +130,41 @@ class DocumentTestCase(TestCase):
 
         assert_is_none(d.get_subcomponent('main', 'chapter/99'))
         assert_is_none(d.get_subcomponent('main', 'section/99'))
+
+    def test_is_latest(self):
+        d = Document(work=self.work)
+        d.expression_date = ''
+        self.assertFalse(d.is_latest())
+        d.expression_date = None
+        self.assertFalse(d.is_latest())
+        d = Document.objects.get(id=2)
+        self.assertFalse(d.is_latest())
+        d = Document.objects.get(id=3)
+        self.assertTrue(d.is_latest())
+
+    def test_valid_until(self):
+        d = Document(work=self.work)
+        d.expression_date = ''
+        self.assertIsNone(d.valid_until())
+        d.expression_date = None
+        self.assertIsNone(d.valid_until())
+        d = Document.objects.get(id=2)
+        self.assertEqual(date(2012, 2, 1), d.valid_until())
+        d = Document.objects.get(id=3)
+        self.assertEqual(date(2019, 1, 1), d.valid_until())
+
+    def test_is_consolidation(self):
+        d = Document(work=self.work)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=2)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=3)
+        self.assertFalse(d.is_consolidation())
+        d = Document.objects.get(id=8)
+        self.assertTrue(d.is_consolidation())
+
+    def test_consolidation_note(self):
+        d = Document(work=self.work)
+        self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.work.consolidation_note())
+        d = Document.objects.get(id=4)
+        self.assertEqual('A special consolidation note just for this work', d.work.consolidation_note())

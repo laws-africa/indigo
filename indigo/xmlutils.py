@@ -121,3 +121,19 @@ def closest(element, predicate):
         return next(e for e in chain([element], element.iterancestors()) if predicate(e))
     except StopIteration:
         return None
+
+
+def merge_adjacent(e, nxt):
+    """ Combine two adjacent elements into the first one.
+    """
+    kids = list(e)
+    if kids:
+        # put text at end of last child
+        kids[-1].tail = (kids[-1].tail or '') + (nxt.text or '')
+    else:
+        # append text to ours
+        e.text = (e.text or '') + (nxt.text or '')
+    e.tail = nxt.tail
+    for kid in nxt.iterchildren():
+        e.append(kid)
+    nxt.getparent().remove(nxt)

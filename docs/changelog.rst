@@ -2,7 +2,13 @@
 Changelog
 =========
 
+17.0.0 (?)
+----------
+
+* BREAKING: pipeline-based importer and parser.
+
 16.1.0 (?)
+----------
 
 * CHANGE: use `<br/>` rather than `<eol/>` (slaw 12.0.0).
 

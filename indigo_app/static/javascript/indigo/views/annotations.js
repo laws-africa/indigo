@@ -301,7 +301,7 @@
     },
 
     focus: function() {
-      this.$el.addClass('focused');
+      this.el.active = true;
       this.marks.forEach(function(mark) { mark.classList.add('active'); });
     },
 
@@ -324,7 +324,7 @@
     },
 
     blur: function(e) {
-      this.$el.removeClass('focused');
+      this.el.active = false;
       this.marks.forEach(function(mark) { mark.classList.remove('active'); });
     },
 
@@ -510,7 +510,7 @@
           visible.push(v);
 
           if (prefocus && (v.model.annotations.at(0).get('id') || "").toString() === prefocus) {
-            v.el.active;
+            v.el.active = true;
             v.el.scrollIntoView();
           }
         }

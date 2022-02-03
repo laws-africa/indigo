@@ -15,6 +15,8 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.document = options.document;
+      this.locked = false;
+      this.outdated = false;
       this.collection = new Backbone.Collection([], {
         model: Indigo.DocumentActivity,
         comparator: 'created_at',
@@ -72,7 +74,7 @@
 
         // mark is_self
         resp.results.forEach(function(r) {
-          r.is_self = (r.nonce == self.nonce);
+          r.is_self = (r.nonce === self.nonce);
         });
 
         self.collection.set(resp.results);
@@ -81,6 +83,9 @@
         // we're locked if we're not the first item in the collection
         // once locked, page must be refreshed before editing can happen
         self.locked = self.locked || !self.collection.at(0).get('is_self');
+        // we're outdated if the document_updated_at for an entry (they're all the same) is later than
+        // what we think the updated-at should be
+        self.outdated = self.document.get('updated_at') < self.collection.at(0).get('document_updated_at');
         self.render();
       }).fail(function(xhr, error) {
         if (xhr.status >= 100) {
@@ -95,13 +100,16 @@
 
     render: function() {
       var self = this,
-          items = this.collection.toJSON();
+          items = this.collection.toJSON(),
+          saveButtonGroup = document.querySelector('.document-workspace-buttons .save-btn-group');
 
       if (this.locked) {
-        document.querySelector('.document-workspace-buttons .save-btn-group').innerHTML =
+        saveButtonGroup.innerHTML =
           items[0].is_self ?
             ('<div>You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
             ('Editing has been locked by ' + items[0].user.display_name + '.</div>');
+      } else if (this.outdated) {
+        saveButtonGroup.innerHTML = '<div>The document has changed. You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.';
       }
 
       // exclude us

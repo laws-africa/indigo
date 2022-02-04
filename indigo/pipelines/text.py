@@ -30,7 +30,7 @@ class ParseSlawText(Stage):
     Reads: context.text
     Writes: context.xml
     """
-    slaw_grammar = 'la_za'
+    slaw_grammar = 'la'
 
     use_ascii = True
     """ Should we pass --ascii to slaw? This can have significant performance benefits

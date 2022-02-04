@@ -124,6 +124,7 @@ class Importer(LocaleBasedMatcher):
             html.StripParaWhitespace(),
 
             html.HtmlToSlawText(),
+            text.NormaliseWhitespace(),
             text.ParseSlawText(),
             xml.SerialiseXml(),
         ])

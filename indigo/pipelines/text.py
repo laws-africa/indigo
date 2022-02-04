@@ -7,6 +7,19 @@ from cobalt.akn import AkomaNtosoDocument
 from .pipeline import Stage, shell
 
 
+class ImportSourceFile(Stage):
+    """ Import the source file as text.
+
+    Reads: context.source_file
+    Writes: context.text or context.html_text, depending on constructor
+    """
+    def __init__(self, attr='text'):
+        self.attr = attr
+
+    def __call__(self, context):
+        setattr(context, self.attr, context.source_file.read().decode('utf-8'))
+
+
 class NormaliseWhitespace(Stage):
     """ Strip and normalise whitespace in text.
 

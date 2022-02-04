@@ -135,6 +135,7 @@ class Importer(LocaleBasedMatcher):
 
     def get_html_pipeline(self):
         return Pipeline([
+            text.ImportSourceFile('html_text'),
             html.parse_and_clean,
             html.HtmlToSlawText(),
             text.NormaliseWhitespace(),
@@ -145,6 +146,7 @@ class Importer(LocaleBasedMatcher):
     def get_file_pipeline(self):
         # basic file pipeline, assume plain text
         return Pipeline([
+            text.ImportSourceFile(),
             text.NormaliseWhitespace(),
             text.ParseSlawText(),
             xml.SerialiseXml(),

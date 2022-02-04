@@ -31,12 +31,12 @@ class ImporterZA(Importer):
         return pipeline
 
     def get_html_pipeline(self):
-        pipeline = super().get_docx_pipeline()
+        pipeline = super().get_html_pipeline()
         pipeline.stages.insert(-2, text_cleanup)
         return pipeline
 
     def get_file_pipeline(self):
-        pipeline = super().get_docx_pipeline()
+        pipeline = super().get_file_pipeline()
         pipeline.stages.insert(-2, text_cleanup)
         return pipeline
 

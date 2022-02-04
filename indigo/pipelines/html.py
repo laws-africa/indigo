@@ -130,6 +130,7 @@ class SimplifyHtml(Stage):
 """
 
     def __call__(self, context):
+        pass
         xslt = etree.XSLT(etree.fromstring(self.xsl))
         context.html = html.fromstring(str(xslt(context.html)))
 

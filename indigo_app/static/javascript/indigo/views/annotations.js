@@ -427,7 +427,6 @@
       this.listenTo(this.threads, 'reset', this.reset);
       this.listenTo(this.threads, 'add remove reset', this.count);
       this.listenTo(this.threads.annotations, 'change:closed', this.count);
-      this.reset();
     },
 
     makeFloatingButton: function() {
@@ -444,8 +443,11 @@
       this.threadViews = [];
       this.visibleThreads = [];
       this.counts.set({threads: 0});
-      this.threads.forEach(t => this.makeView(t));
-      this.renderAnnotations();
+      //Wait for page to load implicitly
+      window.setTimeout(() => {
+        this.threads.forEach(t => this.makeView(t));
+        this.renderAnnotations();
+      }, 500);
     },
 
     makeView: function(thread) {
@@ -458,10 +460,8 @@
 
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.listenTo(view, 'closed', this.threadClosed);
-      this.listenTo(view, 'resized', this.layout);
       this.threadViews.push(view);
       if (view.display()) {
-        // this.gutter.items.push(view);
         this.gutter.appendChild(view.el);
         this.visibleThreads.push(view);
       }
@@ -475,24 +475,14 @@
       });
     },
 
-    layout: function() {
-      this.gutter.layoutItems();
-    },
-
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
-      // var ix = this.gutter.items.indexOf(view);
-      // if (ix > -1) {
-      //   this.gutter.items.splice(ix, 1);
-      // }
       view.el.remove();
-      this.layout();
     },
 
     threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.layout();
     },
 
     renderAnnotations: function() {
@@ -544,17 +534,10 @@
           v.display();
 
           v.el.active = true;
-          // once it's rendered in the gutter, focus it
-
-          // this.gutter.$nextTick(() => {
-          //   v.focus();
-          //   v.$el
-          //    .find('textarea')
-          //    .first()
-          //    .focus();
-          // });
-        } else {
-          // v.blur();
+          window.setTimeout(() => {
+            // once it's rendered in the gutter, focus it
+            v.el.querySelector('textarea:first-child').focus();
+          }, 200)
         }
       });
 

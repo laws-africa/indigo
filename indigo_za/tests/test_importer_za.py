@@ -1,5 +1,3 @@
-from nose.tools import *  # noqa
-
 from django.test import testcases
 
 from indigo_api.importers.base import ImportContext

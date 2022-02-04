@@ -136,7 +136,7 @@ permit; and
 (bb) changed
         """)
 
-    def test_dehyphenate(self):
+    def test_whitespace_subsections(self):
         self.assertEqual(self.pipeline_text(
             "report on the im- plementation"),
             "report on the implementation")

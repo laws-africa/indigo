@@ -257,7 +257,6 @@
 
       if (range && this.mark(range)) {
         // gutter uses this for positioning
-        // this.anchorElement = this.marks[0];
         this.el.anchor = this.marks[0];
 
         // the DOM elements get rudely removed from the view when the document
@@ -267,7 +266,7 @@
         this.annotationViews.forEach(function(v) { v.delegateEvents(); });
         return true;
       }
-
+      this.el.anchor = null;
       return false;
     },
 

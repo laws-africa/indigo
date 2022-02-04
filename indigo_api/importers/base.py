@@ -114,14 +114,7 @@ class Importer(LocaleBasedMatcher):
     def get_docx_pipeline(self):
         return Pipeline([
             html.DocxToHtml(),
-            html.NormaliseHtmlTextWhitespace(),
-            html.ParseHtml(),
-            html.CleanHtml(),
-            html.MergeAdjacentInlines(),
-            html.RemoveEmptyInlines(),
-            html.MergeUl(),
-            html.CleanTables(),
-            html.StripParaWhitespace(),
+            html.parse_and_clean,
 
             html.HtmlToSlawText(),
             text.NormaliseWhitespace(),
@@ -142,9 +135,9 @@ class Importer(LocaleBasedMatcher):
 
     def get_html_pipeline(self):
         return Pipeline([
+            html.parse_and_clean,
             html.HtmlToSlawText(),
             text.NormaliseWhitespace(),
-
             text.ParseSlawText(),
             xml.SerialiseXml(),
         ])
@@ -154,7 +147,6 @@ class Importer(LocaleBasedMatcher):
         return Pipeline([
             text.NormaliseWhitespace(),
             text.ParseSlawText(),
-
             xml.SerialiseXml(),
         ])
 

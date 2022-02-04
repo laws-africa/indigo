@@ -12,8 +12,7 @@ import mammoth
 
 from indigo.xmlutils import unwrap_element, merge_adjacent
 from indigo_api.utils import filename_candidates, find_best_static
-from .pipeline import Stage, ImportAttachment
-
+from .pipeline import Stage, ImportAttachment, Pipeline
 
 log = logging.getLogger(__name__)
 
@@ -256,3 +255,15 @@ class HtmlToSlawText(Stage):
 
         xslt = etree.XSLT(etree.parse(xslt_filename))
         context.text = str(xslt(context.html))
+
+
+parse_and_clean = Pipeline([
+    NormaliseHtmlTextWhitespace(),
+    ParseHtml(),
+    CleanHtml(),
+    MergeAdjacentInlines(),
+    RemoveEmptyInlines(),
+    MergeUl(),
+    CleanTables(),
+    StripParaWhitespace(),
+])

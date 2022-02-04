@@ -87,6 +87,53 @@ class CleanHtml(Stage):
         context.html = self.cleaner.clean_html(context.html)
 
 
+class SimplifyHtml(Stage):
+    """ Simplify HTML:
+
+    * strong to b
+    * em to i
+    * remove unused headers, styles, scripts etc.
+    """
+
+    xsl = """
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:output method="html" encoding="utf-8" />
+  <xsl:strip-space elements="p"/>
+
+  <!-- ignore these elements -->
+  <xsl:template match="head|style|script|link" />
+
+  <!-- unwrap these elements -->
+  <xsl:template match="div[not(starts-with(@id, 'sdfootnote'))] | span | font">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <!-- strong to b -->
+  <xsl:template match="strong">
+    <b><xsl:apply-templates /></b>
+  </xsl:template>
+
+  <!-- em to i -->
+  <xsl:template match="em">
+    <i><xsl:apply-templates /></i>
+  </xsl:template>
+
+  <!-- for most nodes, just copy -->
+  <xsl:template match="@*|node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template>
+
+</xsl:stylesheet>
+"""
+
+    def __call__(self, context):
+        xslt = etree.XSLT(etree.fromstring(self.xsl))
+        context.html = html.fromstring(str(xslt(context.html)))
+
+
 class NormaliseHtmlTextWhitespace(Stage):
     """ Strip and normalise whitespace in HTML text.
 
@@ -261,6 +308,7 @@ parse_and_clean = Pipeline([
     NormaliseHtmlTextWhitespace(),
     ParseHtml(),
     CleanHtml(),
+    SimplifyHtml(),
     MergeAdjacentInlines(),
     RemoveEmptyInlines(),
     MergeUl(),

@@ -2,9 +2,11 @@ from io import StringIO
 
 from django.test import TestCase
 
-
+from indigo.pipelines.pipeline import Stage
 from indigo_api.importers.base import parse_page_nums, Importer, ImportContext
 from indigo_api.models import Document, Work, Language
+from indigo.pipelines import html
+import lxml.html
 
 
 class ImporterTestCase(TestCase):
@@ -98,6 +100,46 @@ some tabs and newlines""")
 
 
 finish""")
+
+    def test_clean_html(self):
+        class Stringify(Stage):
+            def __call__(self, context):
+                context.text = lxml.html.tostring(context.html, encoding='unicode', pretty_print=True)
+
+        self.pipeline.stages = [
+            html.ParseHtml(),
+            html.SimplifyHtml(),
+            Stringify(),
+        ]
+        self.assertMultiLineEqual(self.pipeline_html("""
+<html>
+<head>
+  <title>title</title>
+  <script>some script</script>
+  <style>some style</style>
+</head>
+<body>
+  <p>text <span class="foo">with a</span> span</p>
+  <p><font family="foo">font family</font></p>
+  <p><strong>strong</strong></p>
+  <p><em>em</em></p>
+  <div>  some weird div  </div>
+  <p>  whitespace in a p </p>
+</body>
+</html>
+""").strip(),
+
+"""<html>
+
+<body>
+  <p>text with a span</p>
+  <p>font family</p>
+  <p><b>strong</b></p>
+  <p><i>em</i></p>
+    some weird div  
+  <p>  whitespace in a p </p>
+</body>
+</html>""")
 
     def test_cleanup_tables(self):
         self.assertMultiLineEqual(self.pipeline_html("""

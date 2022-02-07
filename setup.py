@@ -43,6 +43,7 @@ setup(
         'django>=2.2,<3',
         'boto3>=1.7',
         'cobalt>=4.0',
+        'cssutils>=2.3.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0,<0.10.0',  # from v0.10.0 'You must install django-jsonfield-backport,

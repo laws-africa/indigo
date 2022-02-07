@@ -989,7 +989,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         importer.page_nums = form.cleaned_data['page_nums']
 
         try:
-            importer.create_from_upload(upload, document, self.request)
+            importer.import_from_upload(upload, document, self.request)
         except ValueError as e:
             if document.pk:
                 document.delete()

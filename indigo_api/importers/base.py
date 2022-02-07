@@ -1,23 +1,48 @@
-# -*- coding: utf-8 -*-
-import subprocess
 import tempfile
 import shutil
 import logging
 import re
-from zipfile import BadZipFile
 
-from django.conf import settings
-from django.core.files.base import ContentFile
-import mammoth
-import lxml.etree as ET
 from django.core.files.uploadedfile import UploadedFile
-
-from cobalt import AkomaNtosoDocument
-from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo.pipelines.pipeline import Pipeline, PipelineContext
+import indigo.pipelines.xml as xml
+import indigo.pipelines.html as html
+import indigo.pipelines.text as text
+import indigo.pipelines.pdf as pdf
 from indigo_api.serializers import AttachmentSerializer
-from indigo_api.utils import filename_candidates, find_best_static
-from indigo_api.importers.pdfs import pdf_extract_pages
+
+
+class ImportContext(PipelineContext):
+    """ The context that is passed to import pipeline stages to share information.
+    """
+    doc = None
+    source_file = None
+    page_nums = None
+    cropbox = None
+    frbr_uri = None
+    fragment = None
+    fragment_id_prefix = None
+    section_number_position = None
+    attachments = None
+    html = None
+    html_text = None
+    xml = None
+    xml_text = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attachments = []
+
+
+class ParseContext(PipelineContext):
+    """ The context that is passed to parse stages to share information.
+    """
+    frbr_uri = None
+    fragment = None
+    fragment_id_prefix = None
+    xml = None
+    xml_text = None
 
 
 pages_re = re.compile(r'(\d+)(\s*-\s*(\d+))?')
@@ -50,11 +75,7 @@ def parse_page_nums(pages):
 
 @plugins.register('importer')
 class Importer(LocaleBasedMatcher):
-    """
-    Import from PDF and other document types using Slaw.
-
-    Slaw is a commandline tool from the slaw Ruby Gem which generates Akoma Ntoso
-    from PDF and other documents. See https://rubygems.org/gems/slaw
+    """ Imports documents and parses text into Akoma Ntoso using a pipelines.
     """
     log = logging.getLogger(__name__)
 
@@ -72,20 +93,8 @@ class Importer(LocaleBasedMatcher):
     title? One of: ``before-title``, ``after-title`` or ``guess``.
     """
 
-    reformat = False
-    """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
-
     cropbox = None
     """ Crop box to import within, as [left, top, width, height]
-    """
-
-    slaw_grammar = 'za'
-    """ Slaw grammar to use
-    """
-
-    use_ascii = True
-    """ Should we pass --ascii to slaw? This can have significant performance benefits
-    for large files. See https://github.com/cjheath/treetop/issues/31
     """
 
     page_nums = None
@@ -94,201 +103,101 @@ class Importer(LocaleBasedMatcher):
     This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
     """
 
-    html_to_text_xsl_prefix = 'xsl/html_to_akn_text_'
-    """ File prefix used to find an XSLT file to transform HTML to text.
-    """
+    def __init__(self):
+        self.docx_pipeline = self.get_docx_pipeline()
+        self.pdf_pipeline = self.get_pdf_pipeline()
+        self.html_pipeline = self.get_html_pipeline()
+        self.file_pipeline = self.get_file_pipeline()
+        self.xml_pipeline = self.get_xml_pipeline()
+        self.parse_pipeline = self.get_parse_pipeline()
 
-    def shell(self, cmd):
-        self.log.info("Running %s" % cmd)
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
-        self.log.info("Subprocess exit code: %s, stdout=%d bytes, stderr=%d bytes" % (p.returncode, len(stdout), len(stderr)))
+    def get_docx_pipeline(self):
+        return Pipeline([
+            html.DocxToHtml(),
+            html.parse_and_clean,
 
-        if stderr:
-            self.log.info("Stderr: %s" % stderr.decode('utf-8'))
+            html.HtmlToSlawText(),
+            text.NormaliseWhitespace(),
+            text.ParseSlawText(),
+            xml.SerialiseXml(),
+        ])
 
-        return p.returncode, stdout, stderr
+    def get_pdf_pipeline(self):
+        return Pipeline([
+            pdf.PdfExtractPages(),
+            pdf.PdfToText(),
+            text.MinTextRequired(),
+            text.NormaliseWhitespace(),
 
-    def create_from_upload(self, upload, doc, request):
-        """ Create a new Document by importing it from a
-        :class:`django.core.files.uploadedfile.UploadedFile` instance.
+            text.ParseSlawText(),
+            xml.SerialiseXml(),
+        ])
+
+    def get_html_pipeline(self):
+        return Pipeline([
+            text.ImportSourceFile('html_text'),
+            html.parse_and_clean,
+            html.HtmlToSlawText(),
+            text.NormaliseWhitespace(),
+            text.ParseSlawText(),
+            xml.SerialiseXml(),
+        ])
+
+    def get_file_pipeline(self):
+        # basic file pipeline, assume plain text
+        return Pipeline([
+            text.ImportSourceFile(),
+            text.NormaliseWhitespace(),
+            text.ParseSlawText(),
+            xml.SerialiseXml(),
+        ])
+
+    def get_xml_pipeline(self):
+        return Pipeline([
+            xml.SerialiseXml()
+        ])
+
+    def get_parse_pipeline(self):
+        return Pipeline([
+            text.ParseSlawText(),
+            xml.SerialiseXml()
+        ])
+
+    def import_from_upload(self, upload, doc, request):
+        """ Import an uploaded document into an Akoma Ntoso XML document.
+
+        The upload is an :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
-        self.reformat = True
         self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
         if upload.content_type in ['text/xml', 'application/xml']:
             self.log.info("Processing upload as an AKN XML file")
-            self.create_from_akn(upload, doc)
+            self.import_from_xml(upload, doc)
 
         elif (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
-            self.log.info("Processing upload as a docx file")
-            self.create_from_docx(upload, doc)
+            self.log.info("Processing upload as a DOCX file")
+            self.import_from_docx(upload, doc)
 
         elif upload.content_type == 'application/pdf':
             self.log.info("Processing upload as a PDF file")
-            self.create_from_pdf(upload, doc)
+            self.import_from_pdf(upload, doc)
 
         elif upload.content_type == 'text/html':
             self.log.info("Processing upload as an HTML file")
-            self.create_from_html(upload, doc)
+            self.import_from_html(upload, doc)
 
         else:
-            # slaw will do its best
+            # just try to process the text
             self.log.info("Processing upload as an unknown file")
-            self.create_from_file(upload, doc, 'text')
+            self.import_from_file(upload, doc)
 
+        # TODO: make a pipeline?
         self.analyse_after_import(doc)
 
-    def create_from_akn(self, upload, doc):
-        # just assume it's valid AKN xml
-        doc.content = upload.read().decode('utf-8')
-        self.stash_attachment(upload, doc)
-
-    def create_from_file(self, upload, doc, inputtype):
-        with self.tempfile_for_upload(upload) as f:
-            xml = self.import_from_file(f.name, doc.frbr_uri, inputtype)
-            doc.reset_xml(xml, from_model=True)
-            self.stash_attachment(upload, doc)
-
-    def create_from_html(self, upload, doc):
-        """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
-        """
-        xml = self.import_from_html(upload.read().decode('utf-8'), doc)
-        doc.reset_xml(xml, from_model=True)
-        self.stash_attachment(upload, doc)
-
-    def html_to_text(self, html, doc):
-        """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
-        """
-        candidates = filename_candidates(doc, prefix=self.html_to_text_xsl_prefix, suffix='.xsl')
-        xslt_filename = find_best_static(candidates)
-        if not xslt_filename:
-            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))
-
-        html = ET.HTML(html)
-        xslt = ET.XSLT(ET.parse(xslt_filename))
-        result = xslt(html)
-        return str(result)
-
-    def import_from_text(self, input, frbr_uri, suffix=''):
-        """ Create a new Document by importing it from plain text.
-        """
-        with tempfile.NamedTemporaryFile(suffix=suffix) as f:
-            f.write(input.encode('utf-8'))
-            f.flush()
-            f.seek(0)
-            inputtype = 'html' if suffix == '.html' else 'text'
-            return self.import_from_file(f.name, frbr_uri, inputtype)
-
-    def create_from_pdf(self, upload, doc):
-        """ Import from a PDF upload.
-        """
-        with self.tempfile_for_upload(upload) as f:
-            # extract pages
-            if self.page_nums:
-                if isinstance(self.page_nums, str):
-                    self.page_nums = parse_page_nums(self.page_nums)
-                if self.page_nums:
-                    pdf_extract_pages(f.name, self.page_nums, f.name)
-
-            # pdf to text
-            text = self.pdf_to_text(f)
-            if self.reformat:
-                text = self.reformat_text_from_pdf(text)
-            if len(text) < 512:
-                raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
-
-            xml = self.import_from_text_pdf(text, doc)
-            doc.reset_xml(xml, from_model=True)
-
-            # stash the (potentially) modified pdf file
-            f.seek(0, 2)
-            fsize = f.tell()
-            f.seek(0)
-            pdf = UploadedFile(file=f, name=upload.name, size=fsize, content_type=upload.content_type)
-            self.stash_attachment(pdf, doc)
-
-    def import_from_text_pdf(self, text, doc):
-        return self.import_from_text(text, doc.frbr_uri, '.txt')
-
-    def pdf_to_text(self, f):
-        cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
-
-        if self.cropbox:
-            # left, top, width, height
-            cropbox = (str(int(float(i))) for i in self.cropbox)
-            cropbox = list(zip("-x -y -W -H".split(), cropbox))
-            # flatten
-            cmd += [x for pair in cropbox for x in pair]
-
-        cmd += [f.name, '-']
-        code, stdout, stderr = self.shell(cmd)
-
-        if code > 0:
-            raise ValueError(stderr)
-
-        return stdout.decode('utf-8')
-
-    def reformat_text(self, text):
-        """ Clean up extracted text before giving it to Slaw.
-        """
-        text = self.expand_ligatures(text)
-        return text
-
-    def reformat_text_from_html(self, text):
-        return self.reformat_text(text)
-
-    def reformat_text_from_pdf(self, text):
-        return self.reformat_text(text)
-
-    def import_from_file(self, fname, frbr_uri, inputtype):
-        cmd = ['bundle', 'exec', 'slaw', 'parse']
-
-        if self.fragment:
-            cmd.extend(['--fragment', self.fragment])
-            if self.fragment_id_prefix:
-                cmd.extend(['--id-prefix', self.fragment_id_prefix])
-
-        if self.section_number_position:
-            cmd.extend(['--section-number-position', self.section_number_position])
-
-        cmd.extend(['--grammar', self.slaw_grammar])
-        cmd.extend(['--input', inputtype])
-        if self.use_ascii:
-            cmd.extend(['--ascii'])
-        cmd.append(fname)
-
-        code, stdout, stderr = self.shell(cmd)
-
-        if code > 0:
-            raise ValueError(stderr.decode('utf-8'))
-
-        if not stdout:
-            raise ValueError("We couldn't get any useful text out of the file")
-
-        xml = stdout.decode('utf-8')
-        self.log.info("Successfully imported from %s" % fname)
-
-        return self.postprocess(xml, frbr_uri)
-
-    def tempfile_for_upload(self, upload):
-        """ Uploaded files might not be on disk, ensure it is by creating a
-        temporary file.
-        """
-        f = tempfile.NamedTemporaryFile()
-
-        self.log.info("Copying uploaded file %s to temp file %s" % (upload, f.name))
-        shutil.copyfileobj(upload, f)
-        f.flush()
-        f.seek(0)
-
-        return f
-
     def analyse_after_import(self, doc):
-        """ Run analysis after import.
-        Usually only used on PDF documents.
+        """ Run analysis after first import.
         """
         finder = plugins.for_document('refs', doc)
         if finder:
@@ -315,76 +224,97 @@ class Importer(LocaleBasedMatcher):
         if italics_terms_finder and italics_terms:
             italics_terms_finder.mark_up_italics_in_document(doc, italics_terms)
 
-    def create_from_docx(self, docx_file, doc):
-        """ We can create a mammoth image handler that stashes the binary data of the image
-        and returns an appropriate img attribute to be put into the HTML (and eventually xml).
-        Once the document is created, we can then create attachments with the stashed image data,
-        and set appropriate filenames.
+    def import_from_pdf(self, upload, doc):
+        context = ImportContext(pipeline=self.pdf_pipeline)
+        context.cropbox = self.cropbox
+        context.fragment = self.fragment
+        context.fragment_id_prefix = self.fragment_id_prefix
+        context.section_number_position = self.section_number_position
+        if self.page_nums:
+            if isinstance(self.page_nums, str):
+                self.page_nums = parse_page_nums(self.page_nums)
+            if self.page_nums:
+                context.page_nums = self.page_nums
+
+        self.import_upload_with_context(upload, doc, context)
+
+    def import_from_docx(self, upload, doc):
+        context = ImportContext(pipeline=self.docx_pipeline)
+        self.import_upload_with_context(upload, doc, context)
+
+    def import_from_html(self, upload, doc):
+        context = ImportContext(pipeline=self.html_pipeline)
+        self.import_upload_with_context(upload, doc, context)
+
+    def import_from_file(self, upload, doc):
+        context = ImportContext(pipeline=self.file_pipeline)
+        self.import_upload_with_context(upload, doc, context)
+
+    def import_from_xml(self, upload, doc):
+        context = ImportContext(pipeline=self.xml_pipeline)
+        self.import_upload_with_context(upload, doc, context)
+
+    def import_upload_with_context(self, upload, doc, context):
+        """ Apply a pipeline with context to import the uploaded file.
         """
-        # we need an id to associate attachments
-        if doc.id is None:
-            doc.save()
+        with self.tempfile_for_upload(upload) as f:
+            context.frbr_uri = doc.expression_uri
+            context.source_file = f
+            context.doc = doc
+            # run the pipeline
+            context.pipeline(context)
+            # save the xml
+            doc.reset_xml(context.xml_text, from_model=True)
+            # save attachments
+            self.stash_imported_attachments(context, doc)
+            # save the original upload
+            self.stash_upload(upload, f, doc)
 
-        self.counter = 0
-
-        def stash_image(image):
-            self.counter += 1
-            try:
-                with image.open() as img:
-                    content = img.read()
-                    image_type = image.content_type
-                    file_ext = image_type.split('/')[1]
-                    cf = ContentFile(content)
-
-                    att = Attachment()
-                    att.filename = 'img{num}.{extension}'.format(num=self.counter, extension=file_ext)
-                    att.mime_type = image_type
-                    att.document = doc
-                    att.size = cf.size
-                    att.content = cf
-                    att.file.save(att.filename, cf)
-            except KeyError:
-                # raised when the image can't be found in the zip file
-                return {}
-
-            return {
-                'src': 'media/' + att.filename
-            }
-
-        try:
-            result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(stash_image))
-            html = result.value
-        except BadZipFile:
-            raise ValueError("This doesn't seem to be a valid DOCX file.")
-
-        xml = self.import_from_html(html, doc)
-        doc.reset_xml(xml, from_model=True)
-        self.stash_attachment(docx_file, doc)
-
-    def import_from_html(self, html, doc):
-        text = self.html_to_text(html, doc)
-        if self.reformat:
-            text = self.reformat_text_from_html(text)
-        return self.import_from_text(text, doc.frbr_uri, '.txt')
-
-    def expand_ligatures(self, text):
-        """ Replace ligatures with separate characters, eg. ﬁ -> fi.
+    def parse_from_text(self, text, frbr_uri):
+        """ Parse text into Akoma Ntoso.
         """
-        return text\
-            .replace('ﬁ', 'fi')\
-            .replace('ﬀ', 'ff')\
-            .replace('ﬃ', 'ffi')\
-            .replace('ﬄ', 'ffl')\
-            .replace('ﬆ', 'st')\
-            .replace('ı', 'i')
+        context = ParseContext(pipeline=self.parse_pipeline)
+        context.frbr_uri = frbr_uri
+        context.fragment_id_prefix = self.fragment_id_prefix
+        context.fragment = self.fragment
+        context.text = text
+
+        self.parse_pipeline(context)
+
+        return context.xml_text
+
+    def stash_upload(self, upload, f, doc):
+        f.seek(0, 2)
+        fsize = f.tell()
+        f.seek(0)
+        attachment = UploadedFile(file=f, name=upload.name, size=fsize, content_type=upload.content_type)
+        self.stash_attachment(attachment, doc)
+
+    def stash_imported_attachments(self, context, doc):
+        """ Save attachments on the context as real document attachments.
+        """
+        for att in context.attachments:
+            att.file.seek(0, 2)
+            fsize = att.file.tell()
+            att.file.seek(0)
+            upload = UploadedFile(file=att.file, name=att.filename, size=fsize, content_type=att.content_type)
+            self.stash_attachment(upload, doc)
+            # this ensures that temporary files are deleted
+            att.file.close()
 
     def stash_attachment(self, upload, doc):
-        # add source file as an attachment
+        """ Add an UploadedFile instance as an attachment.
+        """
         AttachmentSerializer(context={'document': doc}).create({'file': upload})
 
-    def postprocess(self, xml, frbr_uri):
-        """ Post-process raw XML generated by the importer.
+    def tempfile_for_upload(self, upload):
+        """ Uploaded files might not be on disk, ensure it is by creating a temporary file.
         """
-        # clean up encoding string in XML produced by slaw
-        doc = AkomaNtosoDocument(xml)
-        return doc.to_xml(encoding='unicode')
+        f = tempfile.NamedTemporaryFile()
+
+        self.log.info("Copying uploaded file %s to temp file %s" % (upload, f.name))
+        shutil.copyfileobj(upload, f)
+        f.flush()
+        f.seek(0)
+
+        return f

@@ -293,6 +293,7 @@
         $akn.append(coverpage);
         this.renderCoverpage().then(function(node) {
           $(coverpage).append(node);
+          self.trigger('rendered');
         });
       }
 

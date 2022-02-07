@@ -536,7 +536,7 @@
           window.setTimeout(() => {
             // once it's rendered in the gutter, focus it
             v.el.querySelector('textarea:first-child').focus();
-          }, 200)
+          }, 200);
         }
       });
 

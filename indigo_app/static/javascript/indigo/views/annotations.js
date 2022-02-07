@@ -304,18 +304,6 @@
       this.marks.forEach(function(mark) { mark.classList.add('active'); });
     },
 
-    scrollIntoView: function() {
-      var container = this.$el.closest('.document-sheet-container')[0],
-          top = this.el.getBoundingClientRect().top;
-
-      if (container) {
-        container.scrollBy({
-          top: top - container.getBoundingClientRect().top - 50,
-          behavior: 'smooth',
-        });
-      }
-    },
-
     blurred: function(e) {
       if (!(this.el == e.target || jQuery.contains(this.el, e.target))) {
         this.blur();
@@ -426,6 +414,7 @@
       this.listenTo(this.threads, 'reset', this.reset);
       this.listenTo(this.threads, 'add remove reset', this.count);
       this.listenTo(this.threads.annotations, 'change:closed', this.count);
+      this.reset();
     },
 
     makeFloatingButton: function() {
@@ -442,11 +431,8 @@
       this.threadViews = [];
       this.visibleThreads = [];
       this.counts.set({threads: 0});
-      //Wait for page to load implicitly
-      window.setTimeout(() => {
         this.threads.forEach(t => this.makeView(t));
         this.renderAnnotations();
-      }, 500);
     },
 
     makeView: function(thread) {
@@ -526,17 +512,34 @@
       target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
 
+      let focusViewInput = false;
+      const layoutCompleteHandler = () => {
+        focusViewInput = true;
+        this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
+      }
+
+      this.gutter.addEventListener("layoutComplete", layoutCompleteHandler)
+
+      // createThread triggers add, the makeView which appends la-gutter-item
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
 
+      // this runs straight after makeView, and this.gutter.runLayout is a 200ms delay from debounce
       this.threadViews.forEach(v => {
         if (v.model === thread) {
           v.display();
 
           v.el.active = true;
-          window.setTimeout(() => {
-            // once it's rendered in the gutter, focus it
+          //Wait for layout to be finished, so view is in correct position, then focus text area
+          return new Promise((resolve) => {
+            const interval = setInterval(() => {
+              if(focusViewInput) {
+                resolve();
+                clearInterval(interval);
+              }
+            },100);
+          }).then(() => {
             v.el.querySelector('textarea:first-child').focus();
-          }, 200);
+          })
         }
       });
 
@@ -550,43 +553,17 @@
     nextAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      this.scrollSelected(true);
+      this.gutter.activateNextItem().then((activeItem) => {
+        activeItem.scrollIntoView({ behavior: "smooth" });
+      });
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      this.scrollSelected(false);
-    },
-
-    scrollSelected: function(toNext) {
-      var threshold = this.contentContainer.getBoundingClientRect().top + 50,
-          candidates = [];
-
-      // ensure none are selected
-      this.visibleThreads.forEach(function(t) { t.blur(); });
-
-      // candidates to be focused
-      this.visibleThreads.forEach(function(thread) {
-        var top = thread.el.getBoundingClientRect().top;
-
-        if (toNext && top > threshold + 1 || !toNext && top < threshold - 1) {
-          candidates.push({
-            view: thread,
-            offset: top - threshold,
-          });
-        }
+      this.gutter.activateNextItem().then((activeItem) => {
+        activeItem.scrollIntoView({ behavior: "smooth" });
       });
-      candidates = _.sortBy(candidates, function(t) { return t.offset; });
-
-      if (!toNext) candidates.reverse();
-
-      if (candidates.length > 0) {
-        candidates[0].view.focus();
-        candidates[0].view.scrollIntoView();
-      }
     },
 
     selectionChanged: function(e) {

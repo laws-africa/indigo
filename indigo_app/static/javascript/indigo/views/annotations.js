@@ -516,7 +516,7 @@
       const layoutCompleteHandler = () => {
         focusViewInput = true;
         this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
-      }
+      };
 
       this.gutter.addEventListener("layoutComplete", layoutCompleteHandler);
 
@@ -539,7 +539,7 @@
             },100);
           }).then(() => {
             v.el.querySelector('textarea:first-child').focus();
-          })
+          });
         }
       });
 
@@ -565,8 +565,8 @@
     handleScrollForActiveItem: function (activeItem) {
       const handler = () => {
         this.scrollToElement(activeItem);
-        this.gutter.removeEventListener('layoutComplete', handler)
-      }
+        this.gutter.removeEventListener('layoutComplete', handler);
+      };
       this.gutter.addEventListener('layoutComplete', handler);
     },
 

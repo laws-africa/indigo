@@ -40,10 +40,10 @@
       if (this.isNew) {
         // controls for adding a new annotation
         var template = $("#new-annotation-template")
-          .clone()
-          .attr('id', '')
-          .show()
-          .get(0);
+            .clone()
+            .attr('id', '')
+            .show()
+            .get(0);
         this.el.appendChild(template);
         this.$el.addClass('is-new');
       } else {
@@ -58,8 +58,8 @@
 
         json.permissions = {
           'can_change': (Indigo.user.hasPerm('indigo_api.change_annotation') &&
-                          (Indigo.user.get('is_staff') ||
-                            json.created_by_user && json.created_by_user.id == Indigo.user.get('id'))),
+              (Indigo.user.get('is_staff') ||
+                  json.created_by_user && json.created_by_user.id == Indigo.user.get('id'))),
           'can_create_task': !json.task && Indigo.user.hasPerm('indigo_api.add_task'),
         };
         json.permissions.readonly = !(json.permissions.can_change || json.permissions.can_create_task);
@@ -99,12 +99,12 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
-        .find('.button-container')
-        .append('<button class="btn btn-primary btn-sm save">Save</button>')
-        .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
-        .end()
-        .find('.content')
-        .replaceWith($textarea);
+          .find('.button-container')
+          .append('<button class="btn btn-primary btn-sm save">Save</button>')
+          .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
+          .end()
+          .find('.content')
+          .replaceWith($textarea);
 
       $textarea.focus().trigger('input');
     },
@@ -228,9 +228,9 @@
 
       if (Indigo.user.hasPerm('indigo_api.add_annotation')) {
         $('<div class="annotation reply-container">')
-          .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-          .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
-          .appendTo(this.el);
+            .append('<textarea class="form-control reply-box" placeholder="Reply...">')
+            .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
+            .appendTo(this.el);
       }
     },
 
@@ -332,22 +332,22 @@
       this.$el.find('.btn.post').prop('disabled', true);
       reply = this.model.add({text: text});
       reply
-        .save()
-        .then(function() {
-          view = new Indigo.AnnotationView({
-            model: reply,
-            template: self.annotationTemplate,
-            document: self.document,
+          .save()
+          .then(function() {
+            view = new Indigo.AnnotationView({
+              model: reply,
+              template: self.annotationTemplate,
+              document: self.document,
+            });
+            self.annotationViews.push(view);
+
+            view.$el.insertBefore(self.$el.find('.reply-container')[0]);
+
+            self.$el.find('textarea').val('');
+            self.$el.find('.btn.post').addClass('hidden');
+
+            self.trigger('resized', this);
           });
-          self.annotationViews.push(view);
-
-          view.$el.insertBefore(self.$el.find('.reply-container')[0]);
-
-          self.$el.find('textarea').val('');
-          self.$el.find('.btn.post').addClass('hidden');
-
-          self.trigger('resized', this);
-        });
     },
 
     annotationRemoved: function() {
@@ -365,8 +365,8 @@
       var input = e.currentTarget;
 
       $(input)
-        .siblings('.btn.save, .btn.post')
-        .attr('disabled', input.value.trim() === '');
+          .siblings('.btn.save, .btn.post')
+          .attr('disabled', input.value.trim() === '');
 
 
       if (input.scrollHeight > input.clientHeight) {
@@ -431,8 +431,8 @@
       this.threadViews = [];
       this.visibleThreads = [];
       this.counts.set({threads: 0});
-        this.threads.forEach(t => this.makeView(t));
-        this.renderAnnotations();
+      this.threads.forEach(t => this.makeView(t));
+      this.renderAnnotations();
     },
 
     makeView: function(thread) {
@@ -518,7 +518,7 @@
         this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
       }
 
-      this.gutter.addEventListener("layoutComplete", layoutCompleteHandler)
+      this.gutter.addEventListener("layoutComplete", layoutCompleteHandler);
 
       // createThread triggers add, the makeView which appends la-gutter-item
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
@@ -553,17 +553,32 @@
     nextAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activateNextItem().then((activeItem) => {
-        activeItem.scrollIntoView({ behavior: "smooth" });
-      });
+      this.gutter.activateNextItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activateNextItem().then((activeItem) => {
-        activeItem.scrollIntoView({ behavior: "smooth" });
-      });
+      this.gutter.activatePrevItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
+    },
+
+    handleScrollForActiveItem: function (activeItem) {
+      const handler = () => {
+        this.scrollToElement(activeItem);
+        this.gutter.removeEventListener('layoutComplete', handler)
+      }
+      this.gutter.addEventListener('layoutComplete', handler);
+    },
+
+    scrollToElement: function(element) {
+      const container = element.closest('.document-sheet-container');
+      const top = element.getBoundingClientRect().top;
+      if (container) {
+        container.scrollBy({
+          top: top - container.getBoundingClientRect().top - 70,
+          behavior: 'smooth',
+        });
+      }
     },
 
     selectionChanged: function(e) {

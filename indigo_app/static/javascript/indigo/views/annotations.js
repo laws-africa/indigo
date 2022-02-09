@@ -463,6 +463,10 @@
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
+      this.counts.set({
+        threads: this.visibleThreads.length,
+      });
+      this.renderCounts();
       view.el.remove();
     },
 
@@ -512,34 +516,20 @@
       target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
 
-      let focusViewInput = false;
-      const layoutCompleteHandler = () => {
-        focusViewInput = true;
-        this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
-      };
-
-      this.gutter.addEventListener("layoutComplete", layoutCompleteHandler);
 
       // createThread triggers add, the makeView which appends la-gutter-item
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
 
-      // this runs straight after makeView, and this.gutter.runLayout is a 200ms delay from debounce
       this.threadViews.forEach(v => {
         if (v.model === thread) {
           v.display();
 
-          v.el.active = true;
-          //Wait for layout to be finished, so view is in correct position, then focus text area
-          return new Promise((resolve) => {
-            const interval = setInterval(() => {
-              if(focusViewInput) {
-                resolve();
-                clearInterval(interval);
-              }
-            },100);
-          }).then(() => {
+          const layoutCompleteHandler = () => {
             v.el.querySelector('textarea:first-child').focus();
-          });
+            this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
+          };
+          this.gutter.addEventListener("layoutComplete", layoutCompleteHandler);
+          v.el.active = true;
         }
       });
 

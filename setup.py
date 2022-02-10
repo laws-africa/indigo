@@ -79,7 +79,7 @@ setup(
         'mammoth>=1.4.4',
         'requests>=2',
         'unicodecsv>=0.14.1',
-        'whitenoise<2,>=1.0.6',
+        'whitenoise>=1.0.6,<7',
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
         'xmldiff>=2.4',

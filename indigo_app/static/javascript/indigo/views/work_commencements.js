@@ -85,7 +85,7 @@
       if (form.elements.all_provisions.checked) {
         [...form.elements.provisions].forEach(function(provision) {
           provision.checked = false;
-        })
+        });
       }
     },
 

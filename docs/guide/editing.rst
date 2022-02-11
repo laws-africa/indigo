@@ -3,6 +3,10 @@
 Editing Documents
 =================
 
+.. note::
+
+    For a full guide to editing documents, see the `Laws.Africa editors guide <https://docs.laws.africa/>`_.
+
 If you're capturing a new document we recommend first capturing it using a standard word processor like Microsoft Word. Once you have the bulk of the document, import it into Indigo.
 
 Indigo looks for structure in a document by looking for keywords such as *chapter* and *part*. It can identify different aspects of a document:

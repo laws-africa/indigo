@@ -1,21 +1,18 @@
 # Indigo
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/495add45b788408284b48c0e045ca408)](https://app.codacy.com/app/longhotsummer/indigo?utm_source=github.com&utm_medium=referral&utm_content=laws-africa/indigo&utm_campaign=Badge_Grade_Dashboard)
 ![Build status](https://github.com/laws-africa/indigo/workflows/Test/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
 
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 
-Indigo is AfricanLII's document management system for managing, capturing and publishing
+Indigo is Laws.Africa's legislation database for managing, consolidating and publishing
 legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
 
 It is a Django python web application using:
 
-* [Django 2](http://djangoproject.com/)
+* [Django](http://djangoproject.com/)
 * [Cobalt](http://cobalt.readthedocs.io/en/latest/) -- a lightweight Python library for working with Akoma Ntoso
 * [Slaw](https://rubygems.org/gems/slaw) -- a Ruby Gem for generating Akoma Ntoso from PDFs and other documents
 * [django-rest-framework](http://www.django-rest-framework.org/)
-* [backbone.js](http://backbonejs.org/)
-* [stickit.js](http://nytimes.github.io/backbone.stickit/)
 
 Read the [full documentation at indigo.readthedocs.io](http://indigo.readthedocs.io/en/latest/index.html).
 

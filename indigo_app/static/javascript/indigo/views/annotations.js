@@ -40,10 +40,10 @@
       if (this.isNew) {
         // controls for adding a new annotation
         var template = $("#new-annotation-template")
-          .clone()
-          .attr('id', '')
-          .show()
-          .get(0);
+            .clone()
+            .attr('id', '')
+            .show()
+            .get(0);
         this.el.appendChild(template);
         this.$el.addClass('is-new');
       } else {
@@ -58,8 +58,8 @@
 
         json.permissions = {
           'can_change': (Indigo.user.hasPerm('indigo_api.change_annotation') &&
-                          (Indigo.user.get('is_staff') ||
-                            json.created_by_user && json.created_by_user.id == Indigo.user.get('id'))),
+              (Indigo.user.get('is_staff') ||
+                  json.created_by_user && json.created_by_user.id == Indigo.user.get('id'))),
           'can_create_task': !json.task && Indigo.user.hasPerm('indigo_api.add_task'),
         };
         json.permissions.readonly = !(json.permissions.can_change || json.permissions.can_create_task);
@@ -99,12 +99,12 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
-        .find('.button-container')
-        .append('<button class="btn btn-primary btn-sm save">Save</button>')
-        .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
-        .end()
-        .find('.content')
-        .replaceWith($textarea);
+          .find('.button-container')
+          .append('<button class="btn btn-primary btn-sm save">Save</button>')
+          .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
+          .end()
+          .find('.content')
+          .replaceWith($textarea);
 
       $textarea.focus().trigger('input');
     },
@@ -159,6 +159,7 @@
    */
   Indigo.AnnotationThreadView = Backbone.View.extend({
     className: 'annotation-thread ig',
+    tagName: 'la-gutter-item',
     events: {
       'click button.post': 'postReply',
       'focus textarea': 'replyFocus',
@@ -227,9 +228,9 @@
 
       if (Indigo.user.hasPerm('indigo_api.add_annotation')) {
         $('<div class="annotation reply-container">')
-          .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-          .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
-          .appendTo(this.el);
+            .append('<textarea class="form-control reply-box" placeholder="Reply...">')
+            .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
+            .appendTo(this.el);
       }
     },
 
@@ -256,7 +257,7 @@
 
       if (range && this.mark(range)) {
         // gutter uses this for positioning
-        this.anchorElement = this.marks[0];
+        this.el.anchor = this.marks[0];
 
         // the DOM elements get rudely removed from the view when the document
         // sheet is re-rendered, which seems to break event handlers, so
@@ -265,7 +266,7 @@
         this.annotationViews.forEach(function(v) { v.delegateEvents(); });
         return true;
       }
-
+      this.el.anchor = null;
       return false;
     },
 
@@ -299,20 +300,8 @@
     },
 
     focus: function() {
-      this.$el.addClass('focused');
+      this.el.active = true;
       this.marks.forEach(function(mark) { mark.classList.add('active'); });
-    },
-
-    scrollIntoView: function() {
-      var container = this.$el.closest('.document-sheet-container')[0],
-          top = this.el.getBoundingClientRect().top;
-
-      if (container) {
-        container.scrollBy({
-          top: top - container.getBoundingClientRect().top - 50,
-          behavior: 'smooth',
-        });
-      }
     },
 
     blurred: function(e) {
@@ -322,7 +311,7 @@
     },
 
     blur: function(e) {
-      this.$el.removeClass('focused');
+      this.el.active = false;
       this.marks.forEach(function(mark) { mark.classList.remove('active'); });
     },
 
@@ -343,22 +332,22 @@
       this.$el.find('.btn.post').prop('disabled', true);
       reply = this.model.add({text: text});
       reply
-        .save()
-        .then(function() {
-          view = new Indigo.AnnotationView({
-            model: reply,
-            template: self.annotationTemplate,
-            document: self.document,
+          .save()
+          .then(function() {
+            view = new Indigo.AnnotationView({
+              model: reply,
+              template: self.annotationTemplate,
+              document: self.document,
+            });
+            self.annotationViews.push(view);
+
+            view.$el.insertBefore(self.$el.find('.reply-container')[0]);
+
+            self.$el.find('textarea').val('');
+            self.$el.find('.btn.post').addClass('hidden');
+
+            self.trigger('resized', this);
           });
-          self.annotationViews.push(view);
-
-          view.$el.insertBefore(self.$el.find('.reply-container')[0]);
-
-          self.$el.find('textarea').val('');
-          self.$el.find('.btn.post').addClass('hidden');
-
-          self.trigger('resized', this);
-        });
     },
 
     annotationRemoved: function() {
@@ -376,8 +365,8 @@
       var input = e.currentTarget;
 
       $(input)
-        .siblings('.btn.save, .btn.post')
-        .attr('disabled', input.value.trim() === '');
+          .siblings('.btn.save, .btn.post')
+          .attr('disabled', input.value.trim() === '');
 
 
       if (input.scrollHeight > input.clientHeight) {
@@ -409,12 +398,11 @@
       this.newButton = this.makeFloatingButton();
       this.newButtonTimeout = null;
 
-      this.newButtonItem = {
-        contentElement: this.newButton,
-      };
+      this.newButtonItem = document.createElement('la-gutter-item');
+      this.newButtonItem.appendChild(this.newButton);
 
-      this.gutter = this.el.querySelector('.content-with-gutter > .gutter').component;
-      this.gutter.contentRoot = this.el.querySelector('.content-with-gutter > .content');
+      this.gutter = this.el.querySelector('.gutter la-gutter');
+      this.gutter.akomaNtoso = this.el.querySelector('.content-with-gutter > .content');
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
@@ -457,10 +445,9 @@
 
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.listenTo(view, 'closed', this.threadClosed);
-      this.listenTo(view, 'resized', this.layout);
       this.threadViews.push(view);
       if (view.display()) {
-        this.gutter.items.push(view);
+        this.gutter.appendChild(view.el);
         this.visibleThreads.push(view);
       }
 
@@ -473,23 +460,18 @@
       });
     },
 
-    layout: function() {
-      this.gutter.runLayout();
-    },
-
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
       this.visibleThreads = _.without(this.visibleThreads, view);
-      var ix = this.gutter.items.indexOf(view);
-      if (ix > -1) {
-        this.gutter.items.splice(ix, 1);
-      }
-      this.layout();
+      this.counts.set({
+        threads: this.visibleThreads.length,
+      });
+      this.renderCounts();
+      view.el.remove();
     },
 
     threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
-      this.layout();
     },
 
     renderAnnotations: function() {
@@ -500,16 +482,15 @@
       var prefocus = this.prefocus,
           gutter = this.gutter,
           visible = [];
-      this.gutter.items = [];
 
       this.threadViews.forEach(function(v) {
         if (v.display()) {
-          gutter.items.push(v);
+          gutter.appendChild(v.el);
           visible.push(v);
 
           if (prefocus && (v.model.annotations.at(0).get('id') || "").toString() === prefocus) {
-            v.focus();
-            v.scrollIntoView();
+            v.el.active = true;
+            v.el.scrollIntoView();
           }
         }
       });
@@ -535,75 +516,58 @@
       target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
 
+
+      // createThread triggers add, the makeView which appends la-gutter-item
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});
 
       this.threadViews.forEach(v => {
         if (v.model === thread) {
           v.display();
 
-          this.gutter.activeItem = v;
-          // once it's rendered in the gutter, focus it
-          this.gutter.$nextTick(() => {
-            v.focus();
-            v.$el
-             .find('textarea')
-             .first()
-             .focus();
-          });
-        } else {
-          v.blur();
+          const layoutCompleteHandler = () => {
+            v.el.querySelector('textarea:first-child').focus();
+            this.gutter.removeEventListener('layoutComplete', layoutCompleteHandler);
+          };
+          this.gutter.addEventListener("layoutComplete", layoutCompleteHandler);
+          v.el.active = true;
         }
       });
 
     },
 
     removeNewButton: function() {
-      const ix = this.gutter.items.indexOf(this.newButtonItem);
-    if (ix > -1) {
-      this.gutter.items.splice(ix, 1);
-    }
-    this.newButtonTimeout = null;
+      this.newButtonItem.remove();
+      this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      this.scrollSelected(true);
+      this.gutter.activateNextItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      this.scrollSelected(false);
+      this.gutter.activatePrevItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
     },
 
-    scrollSelected: function(toNext) {
-      var threshold = this.contentContainer.getBoundingClientRect().top + 50,
-          candidates = [];
+    handleScrollForActiveItem: function (activeItem) {
+      const handler = () => {
+        this.scrollToElement(activeItem);
+        this.gutter.removeEventListener('layoutComplete', handler);
+      };
+      this.gutter.addEventListener('layoutComplete', handler);
+    },
 
-      // ensure none are selected
-      this.visibleThreads.forEach(function(t) { t.blur(); });
-
-      // candidates to be focused
-      this.visibleThreads.forEach(function(thread) {
-        var top = thread.el.getBoundingClientRect().top;
-
-        if (toNext && top > threshold + 1 || !toNext && top < threshold - 1) {
-          candidates.push({
-            view: thread,
-            offset: top - threshold,
-          });
-        }
-      });
-      candidates = _.sortBy(candidates, function(t) { return t.offset; });
-
-      if (!toNext) candidates.reverse();
-
-      if (candidates.length > 0) {
-        candidates[0].view.focus();
-        candidates[0].view.scrollIntoView();
+    scrollToElement: function(element) {
+      const container = element.closest('.document-sheet-container');
+      const top = element.getBoundingClientRect().top;
+      if (container) {
+        container.scrollBy({
+          top: top - container.getBoundingClientRect().top - 70,
+          behavior: 'smooth',
+        });
       }
     },
 
@@ -628,12 +592,10 @@
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
           this.pendingRange = range;
-          this.newButtonItem.anchorElement = root;
-          if (!this.gutter.items.includes(this.newButtonItem)) {
-            this.gutter.items.push(this.newButtonItem);
-          } else {
-          this.gutter.runLayout();
-        }
+          this.newButtonItem.anchor = root;
+          if (!this.gutter.contains(this.newButtonItem)) {
+            this.gutter.appendChild(this.newButtonItem);
+          }
         }
       } else {
         // this needs to stick around for a little bit, for the case

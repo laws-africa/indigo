@@ -1,5 +1,8 @@
 import * as vueComponents from './components';
 import '@laws-africa/web-components/dist/components/la-akoma-ntoso';
+import '@laws-africa/web-components/dist/components/la-gutter';
+import '@laws-africa/web-components/dist/components/la-gutter-item';
+
 import Vue from 'vue';
 
 class IndigoApp {

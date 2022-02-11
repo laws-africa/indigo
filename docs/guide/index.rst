@@ -1,6 +1,10 @@
 Using the Indigo Platform
 =========================
 
+.. note::
+
+    For a full guide to editing documents, see the `Laws.Africa editors guide <https://docs.laws.africa/>`_.
+
 Welcome to the guide to using the Indigo platform to manage and maintain a collection of 
 legislation documents. This guide is for law librarians and others who are familiar with
 writing legislation documents and want to know how to use the Indigo Platform.
@@ -21,7 +25,7 @@ Contents:
 
     account
     principles
+    places
     works
-    managing
     editing
     admin

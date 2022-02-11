@@ -5,6 +5,44 @@ The Indigo platform works a bit differently to other consolidation platforms
 you might be familiar with. Understanding these differences will help make explain why the Indigo
 platform doesn't look like a text editor such as Microsoft Word.
 
+Documents
+---------
+
+A **document** is the primary data type in the platform. It represents a single
+version of a legislation document such as an act. It contains metadata such as
+a title, year of publication, country as well as content in Akoma Ntoso XML.
+
+The Akoma Ntoso standard uses an FRBR URI to uniquely identify an item of legislation. For example, the URI
+
+    ``/za/act/1998/84``
+
+identifies the `National Forests Act 84 of 1998 <http://www.saflii.org/za/legis/consol_act/nfa1998194/>`_.
+The components indicate that the document is from South Africa (``za``), is an
+``act`` and is act number ``84`` to be published in ``1998``. These URIs have a standard
+format and are well-known and so can be guessed. This is useful when an external
+system wants to ask us about an act.
+
+.. seealso::
+   For more details on FRBR URIs, see http://www.akomantoso.org/docs/akoma-ntoso-user-documentation/metadata-describes-the-content
+
+Every Indigo document has an FRBR URI associated with it which is used to identify it in the
+public REST API.
+
+Every Indigo document also has a uinque numeric identifier ``id``. This is assigned by
+the platform and is unique to that document.
+
+A new document is created each time a new **amendment** must be applied to an
+existing document. A single piece of legislation that has been amended over
+time is comprised of multiple separate documents, one for each amendment. Each
+amended version of the document has a different ``id``, but the same URI.
+
+The **application API** uses the numeric IDs to identify documents so that it can
+handle deleted documents, draft documents and amended documents with the same
+URI.
+
+The **public API** uses the FRBR URI to identify documents so that anyone can
+find a document just by constructing a valid FRBR URI.
+
 Structure, Content and Presentation 
 -----------------------------------
 

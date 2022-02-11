@@ -15,11 +15,11 @@ address and password, and click the **Log in** button.
 Creating an account
 -------------------
 
-New accounts must be created manually. Please email the address in the login window to get an account.
+New accounts must be created manually.
 
 .. note::
 
-    Administrators: visit ``/admin/auth/user/`` on your indigo instance to create a new account. Always use an email address for
+    Administrators: visit ``/admin/auth/user/`` on your Indigo instance to create a new account. Always use an email address for
     the username.
 
 Resetting your password
@@ -58,9 +58,7 @@ You can change your password after you've logged in.
 Logging out
 -----------
 
-You don't need to log out.
-
 If you need to log out,
 
-1. Click your button with your name or email in the top-right corner.
+1. Click the button with your name or email in the top-right corner.
 2. Click **Log out**.

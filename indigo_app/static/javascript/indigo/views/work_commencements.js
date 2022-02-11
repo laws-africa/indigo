@@ -83,10 +83,9 @@
 
       // if we've selected all provisions, ensure we don't send back any selections
       if (form.elements.all_provisions.checked) {
-        // we can't iterate over this in-place, so do this instead
-        while ([...form.elements.provisions].some(provision => provision.checked)) {
-          form.elements.provisions[0].checked = false;
-        }
+        [...form.elements.provisions].forEach(function(provision) {
+          provision.checked = false;
+        })
       }
     },
 

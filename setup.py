@@ -105,5 +105,8 @@ setup(
             'dotmap>=1.3.8',
             'sheet2dict==0.1.1'
         ],
+        'docs': [
+            'psycopg2',
+        ],
     },
 )

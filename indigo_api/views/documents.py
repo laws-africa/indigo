@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.views import View
 from django.views.decorators.cache import cache_control
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone

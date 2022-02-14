@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles pipeline sass_tags %}
+{% load static pipeline sass_tags %}
 
 {% block body-class %}resolver {% if not references %}no-refs{% endif %}{% endblock %}
 {% block body-attributes %}data-frbr-uri="{{ query.frbr_uri | escape }}"{% endblock %}

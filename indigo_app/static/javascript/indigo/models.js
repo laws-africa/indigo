@@ -741,8 +741,11 @@
     destroyed: function() {
       // root was destroyed, delete everything else
       const root = this.root();
-      this.annotations.forEach(a => {
-        if (a !== root) a.destroy();
+      const annotations = this.annotations;
+      annotations.forEach(a => {
+        if (a !== root && a) {
+          a.destroy();
+        }
       });
       this.trigger('destroy');
     }

@@ -6,6 +6,7 @@ Changelog
 ----------
 
 * BREAKING: pipeline-based importer and parser.
+* BREAKING: Update to Django 3.2
 * CHANGE: use `<br/>` rather than `<eol/>` (slaw 12.0.0).
 
 16.0.0 (2021-11-05)

@@ -73,7 +73,7 @@ setup(
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
         'jsonpatch>=1.23',
-        'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
+        'libsass==0.21.0',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
         'requests>=2',

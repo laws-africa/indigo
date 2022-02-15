@@ -99,17 +99,8 @@
           }
 
         });
-
         resizeObserver.observe(this.editor.getContainerDomNode());
 
-        new ResizeObserver((entries) => {
-          window.requestAnimationFrame(() => {
-            if (!Array.isArray(entries) || !entries.length) {
-              return;
-            }
-            this.editor.layout();
-          });
-        }).observe(this.editor.getContainerDomNode());
         const onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
         this.editor.onDidChangeModelContent(() => {
           if (!this.updating) onEditorChange();

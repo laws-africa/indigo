@@ -49,7 +49,6 @@ class VocabularyTopicInline(admin.TabularInline):
     readonly_fields = ('slug',)
 
 
-
 @admin.register(TaxonomyVocabulary)
 class TaxonomyVocabularyAdmin(admin.ModelAdmin):
     list_display = ('title', 'authority', '__str__')

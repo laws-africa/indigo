@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         ('taggit', '0001_initial'),
         ('countries_plus', '0005_auto_20160224_1804'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('reversion', '0002_auto_20141216_1509'),
+        ('reversion', '0002_add_index_on_version_for_content_type_and_db'),
         ('pinax_badges', '0001_initial'),
     ]
 

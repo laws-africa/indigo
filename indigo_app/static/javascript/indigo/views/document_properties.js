@@ -18,23 +18,6 @@
     el: '.document-properties-view',
     bindings: {
       '#document_title': 'title',
-      '#document_tags': {
-        observe: 'tags',
-        getVal: function($el, event, options) {
-          return $el.val() || [];
-        },
-        update: function($el, val, model, options) {
-          val = val || [];
-          if (!$el.data('select2')) {
-            $el.select2();
-          }
-
-          // update the valid choices to ensure those we want are there
-          $el.select2({data: val, width: '100%'});
-          // add them
-          $el.val(val).trigger('change');
-        },
-      },
       '#document_expression_date': {
         observe: 'expression_date',
         onSet: emptyIsNull,

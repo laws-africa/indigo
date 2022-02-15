@@ -41,30 +41,6 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['title'], 'Document title')
 
-    def test_update(self):
-        id = 1
-        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']})
-        assert_equal(response.status_code, 200)
-        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
-
-    def test_update_tags(self):
-        id = 1
-        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']})
-        assert_equal(response.status_code, 200)
-        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
-
-        response = self.client.patch('/api/documents/%s' % id, {'tags': ['boom', 'bar']})
-        assert_equal(response.status_code, 200)
-        assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
-
     def test_update_expression_date(self):
         id = 1
         response = self.client.patch('/api/documents/%s' % id, {'expression_date': '2015-01-01'})

@@ -410,7 +410,7 @@ class EPUBExporter(HTMLExporter):
         processor = SassProcessor()
         processor.processor_enabled = True
         path = processor('stylesheets/export-epub.scss')
-        with processor.storage.open(path) as f:
+        with processor.source_storage.open(path) as f:
             css = f.read()
         self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
         self.stylesheets.append(path)

@@ -52,7 +52,7 @@ class DocumentViewMixin:
     queryset = Document.objects\
         .undeleted()\
         .no_xml()\
-        .prefetch_related('tags', 'created_by_user', 'updated_by_user',
+        .prefetch_related('created_by_user', 'updated_by_user',
                           'language', 'language__language',
                           'work', 'work__country',
                           'work__parent_work', 'work__repealed_by',

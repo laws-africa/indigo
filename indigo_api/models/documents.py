@@ -16,7 +16,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
-from taggit.managers import TaggableManager
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
@@ -344,9 +343,6 @@ class Document(DocumentMixin, models.Model):
     expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
-
-    # freeform tags via django-taggit
-    tags = TaggableManager()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -12,7 +12,6 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
-from taggit_serializer.serializers import TagListSerializerField
 from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES
 import reversion
@@ -253,7 +252,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
     type_name = serializers.CharField(read_only=True, source='work.friendly_type')
 
-    tags = TagListSerializerField(required=False)
     amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
 
     """ List of amended versions of this document """
@@ -277,7 +275,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
             'commencement_note',
-            'language', 'tags', 'amendments', 'repeal', 'numbered_title', 'type_name',
+            'language', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
         )
@@ -344,7 +342,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, document, validated_data):
         """ Update and save document. """
-        tags = validated_data.pop('tags', None)
         draft = document.draft
 
         self.update_document(document, validated_data)
@@ -358,11 +355,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # save as a revision
         document.save_with_revision(user)
 
-        # these require that the document is saved
-        if tags is not None:
-            document.tags.set(*tags)
-
-        # reload it to ensure tags are refreshed and we have an id for new documents
+        # reload it to ensure we have an id for new documents
         document = Document.objects.get(pk=document.id)
 
         # signals

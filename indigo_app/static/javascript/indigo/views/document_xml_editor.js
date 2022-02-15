@@ -73,6 +73,35 @@
           wrappingIndent: 'same',
         });
 
+        /*
+        * Because we are resizing the editor by result of `this.editor.layout()` inside the callback of resize observer of that
+        * editor, an infinite loop might occur, since we are watching size changes, then triggering a size. The browser
+        * will take action to counter with results in the error ResizeObserver loop limit exceeded.
+        * We can completely eliminate this by suspending the observation and restart on the next animation frame,
+        * but only if the element resized while the handler was executing
+        * */
+
+        const resizeObserver = new ResizeObserver(() => {
+          const initialSize = this.editor.getContainerDomNode().getBoundingClientRect();
+          // Potential resizing happens
+          this.editor.layout();
+          // Get new size
+          const newSize = this.editor.getContainerDomNode().getBoundingClientRect();
+
+          if (
+              initialSize.width != newSize.width ||
+              initialSize.height != newSize.height
+          ) {
+            resizeObserver.unobserve(this.editor.getContainerDomNode());
+            window.requestAnimationFrame(() => {
+              resizeObserver.observe(this.editor.getContainerDomNode());
+            });
+          }
+
+        });
+
+        resizeObserver.observe(this.editor.getContainerDomNode());
+
         new ResizeObserver((entries) => {
           window.requestAnimationFrame(() => {
             if (!Array.isArray(entries) || !entries.length) {

@@ -51,7 +51,7 @@ setup(
         'django-background-tasks>=1.2.5',
         'django-compressor>=3.1',
         'django-cors-headers>=3.11.0',
-        'django-countries-plus<=2.0.0',
+        'django-countries-plus<3.0.0',
         'django-jsonfield>=1.4.1',
         'django-jsonfield-compat>=0.4.4',
         'django-filter>=2.4.0',

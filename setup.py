@@ -67,7 +67,7 @@ setup(
         'django-templated-email>=2.3.0',
         'django-wkhtmltopdf>=3.3.0',
         'djangorestframework-xml>=1.3.0',
-        'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
+        'djangorestframework>=3.11.0,<3.14.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',

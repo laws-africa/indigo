@@ -156,6 +156,10 @@ DATABASES = {
     'default': db_config,
 }
 
+# Auto-created primary keys
+# see: https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 SITE_ID = 1
 
 # Internationalization

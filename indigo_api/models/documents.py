@@ -9,7 +9,7 @@ from django.db import models
 from django.db.models import signals
 from django.core.management import call_command
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone

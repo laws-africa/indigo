@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from actstream import action
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.db import models
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError

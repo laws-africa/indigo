@@ -14,7 +14,7 @@ from .authorities import authorities as registry
 class ResolveView(TemplateView):
     template_name = 'resolve.html'
 
-    def get(self, request, frbr_uri, authorities, *args, **kwargs):
+    def get(self, request, frbr_uri, authorities=None, *args, **kwargs):
         try:
             FrbrUri.default_language = None
             self.frbr_uri = FrbrUri.parse(frbr_uri)

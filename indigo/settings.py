@@ -247,6 +247,11 @@ STATICFILES_FINDERS = (
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
+# supplement whitenoise's mimetypes
+WHITENOISE_MIMETYPES = {
+    '.xsl': 'application/xslt+xml',
+    '.xslt': 'application/xslt+xml',
+}
 
 
 # django-pipeline for javascript

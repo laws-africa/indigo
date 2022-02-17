@@ -212,7 +212,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             raise Http404
 
         else:
-            # either explicitly or implicitly json
+            # either explicitly or implicitly json -- reset certain settings
+            self.serializer_class = self.__class__.serializer_class
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
 
@@ -225,7 +226,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return response
 
     def add_alternate_links(self, response, request):
-        serializer = self.get_serializer()
+        serializer = self.get_serializer(instance=None)
         url = serializer.published_doc_url(None, request, frbr_uri=self.kwargs['frbr_uri'])
 
         if url.endswith('/'):

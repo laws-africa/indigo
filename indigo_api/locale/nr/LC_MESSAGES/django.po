@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-03 09:22+0200\n"
+"POT-Creation-Date: 2022-02-21 12:25+0200\n"
 "PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Southern Ndebele\n"
@@ -16,7 +16,47 @@ msgstr ""
 "X-Crowdin-Language: nr\n"
 "X-Crowdin-File: /master/locale/af/LC_MESSAGES/django.po\n"
 
-#: models/places.py:190
+#: models/documents.py:291
+#, python-format
+msgid ""
+"This is the version of this document from %(start)s and includes any "
+"amendments published up to %(end)s."
+msgstr ""
+
+#: models/documents.py:293
+#, python-format
+msgid "This is the version of this document from %(start)s."
+msgstr ""
+
+#: models/documents.py:296
+#, python-format
+msgid ""
+"This is the version of this document at %(start)s and includes any "
+"amendments published up to %(end)s."
+msgstr ""
+
+#: models/documents.py:298
+#, python-format
+msgid "This is the version of this document at %(start)s."
+msgstr ""
+
+#: models/documents.py:301
+#, python-format
+msgid ""
+"This is the version of this document as it was from %(start)s to %(end)s."
+msgstr ""
+
+#: models/documents.py:304
+#, python-format
+msgid "This is the version of this document as it was at %(start)s to %(end)s."
+msgstr ""
+
+#: models/documents.py:307
+#, python-format
+msgid "This is the version of this document as it was at %(start)s."
+msgstr ""
+
+#: models/places.py:191
 msgid ""
 "Note: The original publication document is not available and this content "
 "could not be verified."
@@ -138,11 +178,6 @@ msgstr ""
 
 #: templates/indigo_api/akn/coverpage_act.html:184
 msgid "not yet commenced"
-msgstr ""
-
-#: templates/indigo_api/akn/coverpage_act.html:198
-#, python-format
-msgid "Up to date as at %(date)s"
 msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17

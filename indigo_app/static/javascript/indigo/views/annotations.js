@@ -406,6 +406,7 @@
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
+      this.lastActiveItem = null;
 
       this.threadViews = [];
       this.visibleThreads = [];
@@ -543,13 +544,19 @@
     nextAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activateNextItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
+      this.removeNewButton();
+      this.gutter.activateNextItem().then((activeItem) => {
+        this.handleScrollForActiveItem(activeItem)
+      });
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activatePrevItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
+      this.removeNewButton();
+      this.gutter.activatePrevItem().then((activeItem) => {
+        this.handleScrollForActiveItem(activeItem)
+      });
     },
 
     handleScrollForActiveItem: function (activeItem) {
@@ -565,7 +572,7 @@
       const top = element.getBoundingClientRect().top;
       if (container) {
         container.scrollBy({
-          top: top - container.getBoundingClientRect().top - 70,
+          top: top - container.getBoundingClientRect().top - 180,
           behavior: 'smooth',
         });
       }

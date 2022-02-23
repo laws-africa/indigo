@@ -546,7 +546,7 @@
       e.stopPropagation();
       this.removeNewButton();
       this.gutter.activateNextItem().then((activeItem) => {
-        this.handleScrollForActiveItem(activeItem)
+        this.handleScrollForActiveItem(activeItem);
       });
     },
 
@@ -555,7 +555,7 @@
       e.stopPropagation();
       this.removeNewButton();
       this.gutter.activatePrevItem().then((activeItem) => {
-        this.handleScrollForActiveItem(activeItem)
+        this.handleScrollForActiveItem(activeItem);
       });
     },
 

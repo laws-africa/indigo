@@ -407,7 +407,6 @@
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);
-      this.lastActiveItem = null;
 
       this.threadViews = [];
       this.visibleThreads = [];

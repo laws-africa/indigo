@@ -305,12 +305,13 @@
     },
 
     blurred: function(e) {
-      if (!(this.el == e.target || jQuery.contains(this.el, e.target))) {
+      const gutter = this.el.closest('la-gutter');
+      if (e.target.contains(gutter) && !(this.el == e.target || jQuery.contains(this.el, e.target))) {
         this.blur();
       }
     },
 
-    blur: function(e) {
+    blur: function() {
       this.el.active = false;
       this.marks.forEach(function(mark) { mark.classList.remove('active'); });
     },
@@ -543,13 +544,19 @@
     nextAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activateNextItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
+      this.removeNewButton();
+      this.gutter.activateNextItem().then((activeItem) => {
+        this.handleScrollForActiveItem(activeItem);
+      });
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.gutter.activatePrevItem().then((activeItem) => this.handleScrollForActiveItem(activeItem));
+      this.removeNewButton();
+      this.gutter.activatePrevItem().then((activeItem) => {
+        this.handleScrollForActiveItem(activeItem);
+      });
     },
 
     handleScrollForActiveItem: function (activeItem) {
@@ -562,10 +569,9 @@
 
     scrollToElement: function(element) {
       const container = element.closest('.document-sheet-container');
-      const top = element.getBoundingClientRect().top;
       if (container) {
-        container.scrollBy({
-          top: top - container.getBoundingClientRect().top - 70,
+        container.scrollTo({
+          top: parseFloat(element.style.top.replace('px', '')) - 50,
           behavior: 'smooth',
         });
       }

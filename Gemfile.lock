@@ -2,7 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     log4r (1.1.10)
-    nokogiri (1.13.1-arm64-darwin)
+    nokogiri (1.13.3-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.13.3-x86_64-linux)
       racc (~> 1.4)
     polyglot (0.3.5)
     racc (1.6.0)
@@ -17,6 +19,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   slaw (~> 12.0)

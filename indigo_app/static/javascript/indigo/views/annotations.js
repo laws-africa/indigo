@@ -545,36 +545,93 @@
       e.preventDefault();
       e.stopPropagation();
       this.removeNewButton();
-      this.gutter.activateNextItem().then((activeItem) => {
-        this.handleScrollForActiveItem(activeItem);
-      });
+
+      // is there an active item?
+      if (this.gutter.querySelector('la-gutter-item[active]')) {
+        this.gutter.activateNextItem().then((activeItem) => {
+          this.handleScrollForActiveItem(activeItem);
+        });
+      } else {
+        // nothing is active, find the best item to activate
+        this.jumpToBestAnnotation(true);
+      }
     },
 
     prevAnnotation: function(e) {
       e.preventDefault();
       e.stopPropagation();
       this.removeNewButton();
-      this.gutter.activatePrevItem().then((activeItem) => {
-        this.handleScrollForActiveItem(activeItem);
-      });
+
+      // is there an active item?
+      if (this.gutter.querySelector('la-gutter-item[active]')) {
+        this.gutter.activatePrevItem().then((activeItem) => {
+          this.handleScrollForActiveItem(activeItem);
+        });
+      } else {
+        // nothing is active, find the best item to activate
+        this.jumpToBestAnnotation(false);
+      }
     },
 
-    handleScrollForActiveItem: function (activeItem) {
+    jumpToBestAnnotation: function(next) {
+      const container = this.gutter.closest('.document-sheet-container');
+      const items = [...this.gutter.querySelectorAll('la-gutter-item')].map(i => {
+        return {
+          item: i,
+          top: parseFloat(i.style.top.replace('px', ''))
+        };
+      });
+
+      if (container && items.length > 0) {
+        const threshold = container.scrollTop;
+
+        // sort by position; for 'prev', reverse them
+        items.sort((a, b) => a.top - b.top);
+        if (!next) items.reverse();
+
+        // if nothing matches, this is our default
+        let activeItem = items[0].item;
+
+        if (next) {
+          // for 'next', find the first annotation (top-down) below the scroll threshold
+          for (const item of items) {
+            if (item.top > threshold) {
+              // activate this item
+              activeItem = item.item;
+              break;
+            }
+          }
+
+          // nothing matched, start at the top
+        } else {
+          // for 'prev', find the first annotation (bottom-up) above the scroll threshold
+          for (const item of items) {
+            if (item.top < threshold) {
+              // activate this item
+              activeItem = item.item;
+              break;
+            }
+          }
+        }
+
+        activeItem.active = true;
+        this.handleScrollForActiveItem(activeItem);
+      }
+    },
+
+    handleScrollForActiveItem: function (item) {
       const handler = () => {
-        this.scrollToElement(activeItem);
         this.gutter.removeEventListener('layoutComplete', handler);
+
+        const container = item.closest('.document-sheet-container');
+        if (container) {
+          container.scrollTo({
+            top: parseFloat(item.style.top.replace('px', '')) - 50,
+            behavior: 'smooth',
+          });
+        }
       };
       this.gutter.addEventListener('layoutComplete', handler);
-    },
-
-    scrollToElement: function(element) {
-      const container = element.closest('.document-sheet-container');
-      if (container) {
-        container.scrollTo({
-          top: parseFloat(element.style.top.replace('px', '')) - 50,
-          behavior: 'smooth',
-        });
-      }
     },
 
     selectionChanged: function(e) {

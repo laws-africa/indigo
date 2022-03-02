@@ -575,11 +575,13 @@
 
     jumpToBestAnnotation: function(next) {
       const container = this.gutter.closest('.document-sheet-container');
-      const items = [...this.gutter.querySelectorAll('la-gutter-item')].map(i => {
-        return {
-          item: i,
-          top: parseFloat(i.style.top.replace('px', ''))
-        };
+      const items = [...this.gutter.querySelectorAll('la-gutter-item')]
+        .filter(i => i.style.display !== 'none')
+        .map(i => {
+          return {
+            item: i,
+            top: parseFloat(i.style.top.replace('px', ''))
+          };
       });
 
       if (container && items.length > 0) {

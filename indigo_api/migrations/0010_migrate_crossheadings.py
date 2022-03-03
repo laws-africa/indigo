@@ -18,7 +18,7 @@ def forwards(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     migration = RealCrossHeadings()
 
-    for doc in Document.objects.using(db_alias).order_by('-pk'):
+    for doc in Document.objects.using(db_alias).order_by('-pk').iterator(100):
         print(f"Migrating {doc}")
         if migration.migrate_document_xml(doc):
             print("  Changed")
@@ -34,7 +34,7 @@ def forwards(apps, schema_editor):
 
     # migrate historical document versions
     print("Migrating versions")
-    for version in Version.objects.get_for_model(Document).order_by('-pk').iterator():
+    for version in Version.objects.get_for_model(Document).order_by('-pk').iterator(100):
         print(f"Migrating version {version.pk}")
         if migration.migrate_document_version(version):
             print("  Changed")

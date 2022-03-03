@@ -33,7 +33,7 @@ languages. It takes care of all this for you and we highly recommend using them.
 Installing Indigo Locally
 -------------------------
 
-1. Ensure you have Python 3.6+ installed
+1. Ensure you have Python 3.8+ installed
 2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python and Ruby described in it::
 
     $ git clone https://github.com/laws-africa/example-indigo
@@ -85,7 +85,7 @@ Ruby dependencies
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.6.
 
-Once you've install Ruby, install Bundler and the Indigo dependencies::
+Once you've installed Ruby, install Bundler and the Indigo dependencies::
 
     $ gem install bundler
     $ bundle install

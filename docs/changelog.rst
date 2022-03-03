@@ -2,7 +2,7 @@
 Changelog
 =========
 
-17.0.0 (?)
+17.0.0 (2022-03-02)
 ----------
 
 * BREAKING: pipeline-based importer and parser.

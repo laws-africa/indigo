@@ -18,6 +18,17 @@ class DataMigration:
                 version.serialized_data = json.dumps([data])
                 return True
 
+    def migrate_document_xml(self, document):
+        """ Migrate the raw document XML. This is useful in migrations where
+        we don't have access to the full document model's support methods.
+        """
+        xml = etree.fromstring(document.document_xml)
+        self.ns = xml.nsmap[None]
+        changed, xml = self.migrate_xml(xml)
+        if changed:
+            document.document_xml = etree.tostring(xml, encoding='unicode')
+        return changed
+
     def migrate_xml(self, xml):
         """ Migrates an XML document, returning tuple (changed, xml) where
         changed is a boolean indicating if the document has changed, and xml

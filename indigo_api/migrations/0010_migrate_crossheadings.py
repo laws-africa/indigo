@@ -6,10 +6,11 @@ from django.db.models import signals
 
 
 def forwards(apps, schema_editor):
-    from indigo_api.models import Document
-    from indigo_api.models import Annotation
     from indigo_api.models.documents import post_save_document
     from reversion.models import Version
+
+    Document = apps.get_model('indigo_api', 'Document')
+    Annotation = apps.get_model('indigo_api', 'Annotation')
 
     # disconnect signals
     signals.post_save.disconnect(post_save_document, Document)
@@ -19,7 +20,7 @@ def forwards(apps, schema_editor):
 
     for doc in Document.objects.using(db_alias).order_by('-pk'):
         print(f"Migrating {doc}")
-        if migration.migrate_document(doc):
+        if migration.migrate_document_xml(doc):
             print("  Changed")
             doc.save()
 

@@ -8,8 +8,9 @@ from django.db.models import signals
 def forwards(apps, schema_editor):
     """ Migrate attachment eIds, and change annotations to no longer use the attachment scope prefix.
     """
-    from indigo_api.models import Document
-    from indigo_api.models import Annotation
+    Document = apps.get_model('indigo_api', 'Document')
+    Annotation = apps.get_model('indigo_api', 'Annotation')
+
     from indigo_api.models.documents import post_save_document
     from reversion.models import Version
 
@@ -21,7 +22,7 @@ def forwards(apps, schema_editor):
 
     for doc in Document.objects.using(db_alias).order_by('-pk'):
         print(f"Migrating {doc}")
-        if migration.migrate_document(doc):
+        if migration.migrate_document_xml(doc):
             print("  Changed")
             doc.save()
 

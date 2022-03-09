@@ -547,14 +547,9 @@
       this.removeNewButton();
 
       // is there an active item?
-      if (this.gutter.querySelector('la-gutter-item[active]')) {
-        this.gutter.activateNextItem().then((activeItem) => {
-          this.handleScrollForActiveItem(activeItem);
-        });
-      } else {
-        // nothing is active, find the best item to activate
-        this.jumpToBestAnnotation(true);
-      }
+      this.gutter.activateNextItem().then((activeItem) => {
+        this.handleScrollForActiveItem(activeItem);
+      });
     },
 
     prevAnnotation: function(e) {
@@ -562,63 +557,9 @@
       e.stopPropagation();
       this.removeNewButton();
 
-      // is there an active item?
-      if (this.gutter.querySelector('la-gutter-item[active]')) {
-        this.gutter.activatePrevItem().then((activeItem) => {
-          this.handleScrollForActiveItem(activeItem);
-        });
-      } else {
-        // nothing is active, find the best item to activate
-        this.jumpToBestAnnotation(false);
-      }
-    },
-
-    jumpToBestAnnotation: function(next) {
-      const container = this.gutter.closest('.document-sheet-container');
-      const items = [...this.gutter.querySelectorAll('la-gutter-item')]
-        .filter(i => i.style.display !== 'none')
-        .map(i => {
-          return {
-            item: i,
-            top: parseFloat(i.style.top.replace('px', ''))
-          };
-      });
-
-      if (container && items.length > 0) {
-        const threshold = container.scrollTop;
-
-        // sort by position; for 'prev', reverse them
-        items.sort((a, b) => a.top - b.top);
-        if (!next) items.reverse();
-
-        // if nothing matches, this is our default
-        let activeItem = items[0].item;
-
-        if (next) {
-          // for 'next', find the first annotation (top-down) below the scroll threshold
-          for (const item of items) {
-            if (item.top > threshold) {
-              // activate this item
-              activeItem = item.item;
-              break;
-            }
-          }
-
-          // nothing matched, start at the top
-        } else {
-          // for 'prev', find the first annotation (bottom-up) above the scroll threshold
-          for (const item of items) {
-            if (item.top < threshold) {
-              // activate this item
-              activeItem = item.item;
-              break;
-            }
-          }
-        }
-
-        activeItem.active = true;
+      this.gutter.activatePrevItem().then((activeItem) => {
         this.handleScrollForActiveItem(activeItem);
-      }
+      });
     },
 
     handleScrollForActiveItem: function (item) {

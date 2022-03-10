@@ -9,10 +9,7 @@ def pdf_count_pages(fname):
     """ Counts the number of pages in a PDF.
     """
     result = subprocess.run(["pdfinfo", fname], stdout=subprocess.PIPE, check=True)
-    try:
-        m = re.search(r'^Pages:\s*(\d+)', result.stdout.decode('utf-8'), re.MULTILINE)
-    except UnicodeError:
-        m = re.search(r'^Pages:\s*(\d+)', result.stdout.decode('unicode_escape'), re.MULTILINE)
+    m = re.search(r'^Pages:\s*(\d+)', result.stdout.decode('utf-8', errors='ignore'), re.MULTILINE)
     if m:
         return int(m.group(1))
     else:
@@ -23,10 +20,7 @@ def pdf_is_encrypted(fname):
     """ Is this pdf encrypted?
     """
     result = subprocess.run(["pdfinfo", fname], stdout=subprocess.PIPE, check=True)
-    try:
-        m = re.search(r'^Encrypted:\s*(\w+)', result.stdout.decode('utf-8'), re.MULTILINE)
-    except UnicodeError:
-        m = re.search(r'^Encrypted:\s*(\w+)', result.stdout.decode('unicode_escape'), re.MULTILINE)
+    m = re.search(r'^Encrypted:\s*(\w+)', result.stdout.decode('utf-8', errors='ignore'), re.MULTILINE)
     if m:
         return m.group(1).lower() == 'yes'
     else:

@@ -82,7 +82,7 @@
       var form = e.target;
 
       // if we've selected all provisions, ensure we don't send back any selections
-      if (form.elements.all_provisions.checked) {
+      if (form.elements.provisions && form.elements.all_provisions.checked) {
         [...form.elements.provisions].forEach(function(provision) {
           provision.checked = false;
         });

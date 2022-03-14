@@ -402,8 +402,15 @@
       this.newButtonItem = document.createElement('la-gutter-item');
       this.newButtonItem.appendChild(this.newButton);
 
-      this.gutter = this.el.querySelector('.gutter la-gutter');
-      this.gutter.akomaNtoso = this.el.querySelector('.content-with-gutter > .content');
+      this.gutter = this.el.querySelector('la-gutter');
+
+      /*
+      * la-gutter components should have the akoma-ntoso as a attribute set. In the case that it is not dont. Find
+      * the the nearest akomo-ntoso element
+      * */
+      if(!this.gutter.akomaNtoso) {
+        this.gutter.akomaNtoso = this.el.querySelector('la-akoma-ntoso');
+      }
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);

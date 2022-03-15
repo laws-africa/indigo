@@ -402,8 +402,7 @@
       this.newButtonItem = document.createElement('la-gutter-item');
       this.newButtonItem.appendChild(this.newButton);
 
-      this.gutter = this.el.querySelector('.gutter la-gutter');
-      this.gutter.akomaNtoso = this.el.querySelector('.content-with-gutter > .content');
+      this.gutter = this.el.querySelector('la-gutter');
 
       this.counts = new Backbone.Model();
       this.listenTo(this.counts, 'change', this.renderCounts);

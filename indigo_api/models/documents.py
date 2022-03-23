@@ -1,6 +1,5 @@
 import os
 import logging
-import re
 import datetime
 
 from actstream import action
@@ -511,10 +510,7 @@ class Document(DocumentMixin, models.Model):
             return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
 
     def _make_doc(self, xml):
-        id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)
-        doc = self.cobalt_class(xml)
-        doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
-        return doc
+        return self.cobalt_class(xml)
 
     @property
     def cobalt_class(self):

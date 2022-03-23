@@ -127,7 +127,7 @@
 
       for (var i = 0; i < result.snapshotLength; i++) {
         const element = result.snapshotItem(i);
-        rewriter.rewriteEids(element, element.getAttribute('eId'), 'att_' + (i + 1));
+        rewriter.rewriteEidPrefix(element, element.getAttribute('eId'), 'att_' + (i + 1));
       }
     },
 

@@ -127,8 +127,7 @@
 
       for (var i = 0; i < result.snapshotLength; i++) {
         const element = result.snapshotItem(i);
-        let eIdMappings = rewriter.rewriteEidPrefix(element, element.getAttribute('eId'), 'att_' + (i + 1));
-        // TODO: update annotation anchors, internal references? using eIdMappings
+        rewriter.rewriteEidPrefix(element, element.getAttribute('eId'), 'att_' + (i + 1));
       }
     },
 

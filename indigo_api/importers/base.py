@@ -240,14 +240,26 @@ class Importer(LocaleBasedMatcher):
 
     def import_from_docx(self, upload, doc):
         context = ImportContext(pipeline=self.docx_pipeline)
+        context.fragment = self.fragment
+        context.fragment_id_prefix = self.fragment_id_prefix
+        context.section_number_position = self.section_number_position
+
         self.import_upload_with_context(upload, doc, context)
 
     def import_from_html(self, upload, doc):
         context = ImportContext(pipeline=self.html_pipeline)
+        context.fragment = self.fragment
+        context.fragment_id_prefix = self.fragment_id_prefix
+        context.section_number_position = self.section_number_position
+
         self.import_upload_with_context(upload, doc, context)
 
     def import_from_file(self, upload, doc):
         context = ImportContext(pipeline=self.file_pipeline)
+        context.fragment = self.fragment
+        context.fragment_id_prefix = self.fragment_id_prefix
+        context.section_number_position = self.section_number_position
+
         self.import_upload_with_context(upload, doc, context)
 
     def import_from_xml(self, upload, doc):
@@ -278,6 +290,7 @@ class Importer(LocaleBasedMatcher):
         context.fragment_id_prefix = self.fragment_id_prefix
         context.fragment = self.fragment
         context.text = text
+        context.section_number_position = self.section_number_position
 
         self.parse_pipeline(context)
 

@@ -122,12 +122,12 @@
     /** Ensures attachments have sequential eId numbering.
      */
     fixAttachmentIds: function() {
-      var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
+      var result = this.xpath('//a:attachments');
       const rewriter = new indigoAkn.EidRewriter();
 
       for (var i = 0; i < result.snapshotLength; i++) {
         const element = result.snapshotItem(i);
-        rewriter.rewriteEidPrefix(element, element.getAttribute('eId'), 'att_' + (i + 1));
+        rewriter.rewriteEid(element);
       }
     },
 

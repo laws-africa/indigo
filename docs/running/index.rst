@@ -48,7 +48,7 @@ Installing Indigo Locally
 
     $ pip install -r requirements.txt
 
-5. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password `indigo`, and create a corresponding database called `indigo`::
+5. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password ``indigo``, and create a corresponding database called ``indigo``::
 
     $ sudo su - postgres -c 'createuser -d -P indigo'
     $ sudo su - postgres -c 'createdb indigo'
@@ -105,13 +105,13 @@ Indigo reads from PDF files using pdftotext, which is part of the `poppler-utils
 Django Customisation
 ....................
 
-You can now easily change Django settings, add your own modules, change URLs, etc. You simply need to create your own settings file, import the settings from Indigo, and update `manage.py` to reference your new settings file. For example:
+You can now easily change Django settings, add your own modules, change URLs, etc. You simply need to create your own settings file, import the settings from Indigo, and update ``manage.py`` to reference your new settings file. For example:
 
-1. Create a python module folder `my_app`::
+1. Create a python module folder ``my_app``::
 
     $ mkdir my_app; touch my_app/__init__.py
 
-2. Create `my_app/settings.py` so that it looks like this::
+2. Create ``my_app/settings.py`` so that it looks like this::
 
     from indigo.settings import *
 
@@ -125,7 +125,7 @@ You can now easily change Django settings, add your own modules, change URLs, et
 
     # etc.
 
-3. Update `manage.py` so that it references your new `my_app.settings` file::
+3. Update ``manage.py`` so that it references your new ``my_app.settings`` file::
 
     #!/usr/bin/env python
     import os
@@ -179,7 +179,9 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
         AWS_SECRET_ACCESS_KEY=aws secret access key \
         AWS_S3_BUCKET=your-bucket-name
 
-5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do the following (substitute the fqdn or IP address of the dokku host, or use localhost if you are deploying to a local Dokku instance)::
+Indigo uses the ``DATABASE_URL`` environment variable to determine which database to connect to. This is set automatically by the Dokku PostgreSQL plugin. If you are not using the plugin, you must set ``DATABASE_URL`` yourself, using the format ``postgres://USER:PASSWORD@HOST:PORT/DBNAME``.
+
+5. Deploying requires using ``git push`` to push to dokku. So you'll need to add ``dokku`` as a git remote on your local host. If you have cloned the ``example-indigo`` repo from above, you can do the following (substitute the fqdn or IP address of the dokku host, or use localhost if you are deploying to a local Dokku instance)::
 
     $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
@@ -187,7 +189,7 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
     $ dokku checks:disable indigo
 
-7. Now deploy to dokku using `git push dokku`. This is how you deploy any and all updates::
+7. Now deploy to dokku using ``git push dokku``. This is how you deploy any and all updates::
 
     $ git push dokku
 
@@ -204,11 +206,11 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
     $ dokku checks:enable indigo
 
-11. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the `Dokku Getting Started documentation <https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server>` for details).
+11. Visit your new Indigo app in your browser at http://indigo.domain.com or http://indigo.host.domain.com (depending on how your Dokku installation was configured using the dokku domains:set-global command; read the `Dokku Getting Started documentation <https://dokku.com/docs/getting-started/installation/#2-optionally-connect-a-domain-to-your-server>`_ for details).
 
 12. Configure a country:
 
-   * Visit `http://your-dokku-host.example.com/admin`
+   * Visit ``http://your-dokku-host.example.com/admin``
    * Under **Indigo API** click Countries, then click Add Country in the top right corner
    * Choose a country and primary language from the dropdown lists
    * Click Save
@@ -218,7 +220,7 @@ Background Tasks
 
 Indigo can optionally do some operations in the background. It requires a worker or
 cron job to run the ``django-background-tasks`` task queue. Indigo tasks are placed
-in the ``indigo`` task queue. See `django-background-tasks <https://django-background-tasks.readthedocs.io/en/latest/>`
+in the ``indigo`` task queue. See `django-background-tasks <https://django-background-tasks.readthedocs.io/en/latest/>`_.
 for more details on running background tasks.
 
 To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True.

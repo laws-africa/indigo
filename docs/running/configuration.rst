@@ -31,7 +31,7 @@ Options that can be set using environment variables:
 * ``DATABASE_URL``
   
   **Required.**
-  The URL of the database to use
+  The URL of the database to use, in the format: ``postgres://USER:PASSWORD@HOST:PORT/DBNAME``.
 
 * ``DJANGO_DEBUG``
   

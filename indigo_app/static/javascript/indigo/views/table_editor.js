@@ -63,6 +63,19 @@
       };
     },
 
+    /**
+     * Can we edit this html table? Tables with complex content can't be edited with this editor.
+     */
+    canEditTable: function(table) {
+      const oldTable = this.documentContent.getElementByScopedId(table.id);
+      if (oldTable) {
+        // look for complex content
+        const result = this.documentContent.xpath('.//a:authorialNote | .//a:blockList | .//a:ul | .//a:ol | .//a:embeddedStructure');
+        return result.snapshotLength === 0;
+      }
+      return true;
+    },
+
     saveChanges: function(e) {
       if (!this.editing || !this.table) return;
 

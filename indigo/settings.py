@@ -2,10 +2,10 @@
 Django settings for indigo project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/1.7/topics/settings/
+https://docs.djangoproject.com/en/3.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.7/ref/settings/
+https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -147,7 +147,7 @@ INDIGO = {
 }
 
 # Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 import dj_database_url
 db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
@@ -163,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 SITE_ID = 1
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.7/topics/i18n/
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
@@ -229,7 +229,7 @@ else:
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 ASSETS_DEBUG = DEBUG
 ASSETS_URL_EXPIRE = False

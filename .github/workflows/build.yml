@@ -18,10 +18,14 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install dependencies
-        run: npm ci --no-audit --prefer-offline
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo '//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}' >> .npmrc
+          npm ci --no-audit --prefer-offline
+          rm .npmrc
 
       - name: Build
         run: npx webpack

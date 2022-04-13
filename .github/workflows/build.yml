@@ -24,8 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo '//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}' >> .npmrc
-          npm ci --no-audit --prefer-offline
-          rm .npmrc
+          npm ci --no-audit --prefer-offline --ignore-scripts
 
       - name: Build
         run: npx webpack

@@ -23,6 +23,7 @@
       'click .table-text-right': 'alignTextRight',
       'click .table-text-bold': 'toggleTextBold',
       'click .table-text-italic': 'toggleTextItalic',
+      'click .table-text-underline': 'toggleTextUnderline',
       'click .save-edit-table': 'saveChanges',
       'click .cancel-edit-table': 'discardChanges',
     },
@@ -49,12 +50,12 @@
 
         // Enable these formatting buttons, but css in _documents.scss hides the toolbar.
         // This allows us to place our own toolbar buttons that use this functionalty.
-        toolbar: [{ name: 'basicstyles', items: [ 'Bold', 'Italic' ] }],
+        toolbar: [{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline'] }],
 
         // this must align with the elements and attributes supported by indigo-akn
         // https://github.com/laws-africa/indigo-akn/blob/master/src/xsl.js
         allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
-                        'b; i; p;' +
+                        'b; i; u; p;' +
                         'sup; sub;' +
                         'table[id, data-eid]; thead; tbody; tr;' +
                         'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
@@ -187,6 +188,9 @@
       ckeditor.attachStyleStateChange(new CKEDITOR.style({element: 'i'}), function(state) {
           self.styleStateChanged('italic', state === CKEDITOR.TRISTATE_ON);
         });
+      ckeditor.attachStyleStateChange(new CKEDITOR.style({element: 'u'}), function(state) {
+        self.styleStateChanged('underline', state === CKEDITOR.TRISTATE_ON);
+      });
     },
 
     /* Set up observers to:
@@ -347,6 +351,10 @@
 
     toggleTextItalic: function(e) {
       this.ckeditor.execCommand('italic');
+    },
+
+    toggleTextUnderline: function(e) {
+      this.ckeditor.execCommand('underline');
     },
 
     styleStateChanged: function(style, active) {

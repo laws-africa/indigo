@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
-    "@laws-africa/indigo-akn": "^4.0.0",
+    "@laws-africa/indigo-akn": "^4.1.0",
     "@laws-africa/web-components": "^0.7.1-beta",
     "bootstrap": "^4.3.1",
     "bootstrap-select": "^1.13.18",

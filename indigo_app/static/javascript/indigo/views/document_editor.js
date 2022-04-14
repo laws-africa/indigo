@@ -431,9 +431,14 @@
     editTable: function(e) {
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
-      this.tableEditor.editTable(table);
-      // disable other table edit buttons
-      this.$('.edit-table').prop('disabled', true);
+
+      if (!this.tableEditor.canEditTable(table)) {
+        alert('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.');
+      } else {
+        this.tableEditor.editTable(table);
+        // disable other table edit buttons
+        this.$('.edit-table').prop('disabled', true);
+      }
     },
 
     tableEditStart: function() {

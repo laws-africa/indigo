@@ -1,5 +1,6 @@
-import { IEnrichment, IEnrichmentProvider } from '@laws-africa/indigo-akn/src/enrichments/popups';
+import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/src/enrichments/popups';
 import { Instance as Tippy } from 'tippy.js';
+import { default as LinterPopup } from './LinterPopup.vue';
 
 class LinterEnrichment implements IEnrichment {
   public issue: any;
@@ -11,43 +12,29 @@ class LinterEnrichment implements IEnrichment {
   }
 }
 
-export class PopupIssuesProvider implements IEnrichmentProvider {
+export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   private issues: any;
+  private vue: any;
 
   constructor (issues: any) {
     this.issues = issues;
+    // @ts-ignore
+    const Component = window.indigoApp.Vue.extend(LinterPopup);
+    this.vue = new Component({propsData: {issue: null}});
+    this.vue.$mount();
   }
 
   getEnrichments(): IEnrichment[] {
-    return [new LinterEnrichment({
-      message: 'hi',
-    }, {
-      anchor_id: 'sec_1_2__p_1',
-      selectors: [{
-        type: 'TextPositionSelector',
-        start: 0,
-        end: 4,
-      }]
-    })];
-
     // convert issues into enrichments
-    return this.issues.map((issue: any) => {
-      return new LinterEnrichment(issue, {
-        anchor_id: 'sec_1_2__p_1',
-        selectors: [{
-          type: 'TextPositionSelector',
-          start: 0,
-          end: 4,
-        }]
-      });
+    return this.issues.filter((x: any) => x.get('target')).map((issue: any) => {
+      return new LinterEnrichment(issue, issue.get('target'));
     });
   }
 
   getPopupContent(enrichment: IEnrichment, mark: Element): Element {
     const issue = enrichment as LinterEnrichment;
-    const div = window.document.createElement('div');
-    div.innerText = issue.issue.message;
-    return div;
+    this.vue.issue = issue.issue.attributes;
+    return this.vue.$el;
   }
 
   markCreated(enrichment: IEnrichment, mark: Element): void {
@@ -57,6 +44,6 @@ export class PopupIssuesProvider implements IEnrichmentProvider {
   markDestroyed(enrichment: IEnrichment, mark: Element): void {
   }
 
-  popupCreated(popup: Tippy): void {
+  popupCreated(enrichment: IEnrichment, popup: Tippy): void {
   }
 }

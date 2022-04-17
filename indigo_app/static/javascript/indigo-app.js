@@ -273,6 +273,42 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Doc
 
 /***/ }),
 
+/***/ "./indigo_app/js/enrichments/LinterPopup.vue":
+/*!***************************************************!*\
+  !*** ./indigo_app/js/enrichments/LinterPopup.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LinterPopup.vue?vue&type=template&id=5d63c198& */ \"./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198&\");\n/* harmony import */ var _LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LinterPopup.vue?vue&type=script&lang=js& */ \"./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js&\");\n/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ \"./node_modules/vue-loader/lib/runtime/componentNormalizer.js\");\n\n\n\n\n\n/* normalize component */\n\nvar component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(\n  _LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  _LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__[\"render\"],\n  _LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__[\"staticRenderFns\"],\n  false,\n  null,\n  null,\n  null\n  \n)\n\n/* hot reload */\nif (false) { var api; }\ncomponent.options.__file = \"indigo_app/js/enrichments/LinterPopup.vue\"\n/* harmony default export */ __webpack_exports__[\"default\"] = (component.exports);\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/LinterPopup.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib??vue-loader-options!./LinterPopup.vue?vue&type=script&lang=js& */ \"./node_modules/vue-loader/lib/index.js?!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js&\");\n/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__[\"default\"] = (_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__[\"default\"]); \n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/LinterPopup.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198&":
+/*!**********************************************************************************!*\
+  !*** ./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./LinterPopup.vue?vue&type=template&id=5d63c198& */ \"./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198&\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__[\"render\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_5d63c198___WEBPACK_IMPORTED_MODULE_0__[\"staticRenderFns\"]; });\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/LinterPopup.vue?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/enrichments/popups.ts":
 /*!*********************************************!*\
   !*** ./indigo_app/js/enrichments/popups.ts ***!
@@ -281,7 +317,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Doc
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PopupIssuesProvider\", function() { return PopupIssuesProvider; });\nclass LinterEnrichment {\n    constructor(issue, target) {\n        this.issue = issue;\n        this.target = target;\n    }\n}\nclass PopupIssuesProvider {\n    constructor(issues) {\n        this.issues = issues;\n    }\n    getEnrichments() {\n        return [new LinterEnrichment({\n                message: 'hi',\n            }, {\n                anchor_id: 'sec_1_2__p_1',\n                selectors: [{\n                        type: 'TextPositionSelector',\n                        start: 0,\n                        end: 4,\n                    }]\n            })];\n        // convert issues into enrichments\n        return this.issues.map((issue) => {\n            return new LinterEnrichment(issue, {\n                anchor_id: 'sec_1_2__p_1',\n                selectors: [{\n                        type: 'TextPositionSelector',\n                        start: 0,\n                        end: 4,\n                    }]\n            });\n        });\n    }\n    getPopupContent(enrichment, mark) {\n        const issue = enrichment;\n        const div = window.document.createElement('div');\n        div.innerText = issue.issue.message;\n        return div;\n    }\n    markCreated(enrichment, mark) {\n        mark.classList.add('enrichment--warning');\n    }\n    markDestroyed(enrichment, mark) {\n    }\n    popupCreated(popup) {\n    }\n}\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/popups.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PopupIssuesProvider\", function() { return PopupIssuesProvider; });\n/* harmony import */ var _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LinterPopup.vue */ \"./indigo_app/js/enrichments/LinterPopup.vue\");\n\nclass LinterEnrichment {\n    constructor(issue, target) {\n        this.issue = issue;\n        this.target = target;\n    }\n}\nclass PopupIssuesProvider {\n    constructor(issues) {\n        this.issues = issues;\n        // @ts-ignore\n        const Component = window.indigoApp.Vue.extend(_LinterPopup_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\n        this.vue = new Component({ propsData: { issue: null } });\n        this.vue.$mount();\n    }\n    getEnrichments() {\n        // convert issues into enrichments\n        return this.issues.filter((x) => x.get('target')).map((issue) => {\n            return new LinterEnrichment(issue, issue.get('target'));\n        });\n    }\n    getPopupContent(enrichment, mark) {\n        const issue = enrichment;\n        this.vue.issue = issue.issue.attributes;\n        return this.vue.$el;\n    }\n    markCreated(enrichment, mark) {\n        mark.classList.add('enrichment--warning');\n    }\n    markDestroyed(enrichment, mark) {\n    }\n    popupCreated(enrichment, popup) {\n    }\n}\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/popups.ts?");
 
 /***/ }),
 
@@ -509,6 +545,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _law
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/index.js?!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  name: 'LinterPopup',\n  props: ['issue']\n});\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/LinterPopup.vue?./node_modules/vue-loader/lib??vue-loader-options");
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/DocumentTOCView.vue?vue&type=template&id=3c32905c&":
 /*!*******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/components/DocumentTOCView.vue?vue&type=template&id=3c32905c& ***!
@@ -518,6 +566,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _law
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return render; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return staticRenderFns; });\nvar render = function() {\n  var _vm = this\n  var _h = _vm.$createElement\n  var _c = _vm._self._c || _h\n  return _c(\n    \"div\",\n    { staticClass: \"toc-controller-wrapper\" },\n    [\n      _c(\n        \"la-table-of-contents-controller\",\n        {\n          ref: \"la-toc-controller\",\n          attrs: {\n            \"title-filter\": _vm.titleQuery,\n            \"expand-all-btn-classes\": \"btn btn-primary btn-sm mr-1\",\n            \"collapse-all-btn-classes\": \"btn btn-primary btn-sm mr-1\",\n            \"title-filter-input-classes\": \"form-control form-control-sm\",\n            \"title-filter-clear-btn-classes\": \"btn btn-sm btn-secondary\"\n          },\n          domProps: { items: _vm.roots },\n          on: {\n            itemRendered: _vm.handleItemRendered,\n            itemTitleClicked: _vm.onTitleClick\n          }\n        },\n        [\n          _c(\"span\", { attrs: { slot: \"expand-icon\" }, slot: \"expand-icon\" }, [\n            _c(\"i\", { staticClass: \"fas fa-plus\" })\n          ]),\n          _vm._v(\" \"),\n          _c(\n            \"span\",\n            { attrs: { slot: \"collapse-icon\" }, slot: \"collapse-icon\" },\n            [_c(\"i\", { staticClass: \"fas fa-minus\" })]\n          )\n        ]\n      )\n    ],\n    1\n  )\n}\nvar staticRenderFns = []\nrender._withStripped = true\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/DocumentTOCView.vue?./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options");
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/enrichments/LinterPopup.vue?vue&type=template&id=5d63c198& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return render; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return staticRenderFns; });\nvar render = function() {\n  var _vm = this\n  var _h = _vm.$createElement\n  var _c = _vm._self._c || _h\n  return _vm.issue\n    ? _c(\"div\", [\n        _c(\"h6\", [_vm._v(_vm._s(_vm.issue.message))]),\n        _vm._v(\"\\n  \" + _vm._s(_vm.issue.description) + \"\\n\")\n      ])\n    : _vm._e()\n}\nvar staticRenderFns = []\nrender._withStripped = true\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/LinterPopup.vue?./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options");
 
 /***/ }),
 

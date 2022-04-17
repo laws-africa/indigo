@@ -201,6 +201,18 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./indigo_app/js/compat-imports.js":
+/*!*****************************************!*\
+  !*** ./indigo_app/js/compat-imports.js ***!
+  \*****************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _enrichments_popups__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enrichments/popups */ \"./indigo_app/js/enrichments/popups.ts\");\n/**\n * These are imports from local libraries that must be compiled using browserify and then injected\n * into the window global for Indigo to use them.\n *\n * This provides a bridge between Indigo's lack of any support for require() or 'import', and require-js and\n * ES6-style imports.\n */\n\n\nwindow.enrichments = _enrichments_popups__WEBPACK_IMPORTED_MODULE_0__;\n\n\n//# sourceURL=webpack:///./indigo_app/js/compat-imports.js?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/components/DocumentTOCView.vue":
 /*!******************************************************!*\
   !*** ./indigo_app/js/components/DocumentTOCView.vue ***!
@@ -261,6 +273,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Doc
 
 /***/ }),
 
+/***/ "./indigo_app/js/enrichments/popups.ts":
+/*!*********************************************!*\
+  !*** ./indigo_app/js/enrichments/popups.ts ***!
+  \*********************************************/
+/*! exports provided: PopupIssuesProvider */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PopupIssuesProvider\", function() { return PopupIssuesProvider; });\nclass LinterEnrichment {\n    constructor(issue, target) {\n        this.issue = issue;\n        this.target = target;\n    }\n}\nclass PopupIssuesProvider {\n    constructor(issues) {\n        this.issues = issues;\n    }\n    getEnrichments() {\n        return [new LinterEnrichment({\n                message: 'hi',\n            }, {\n                anchor_id: 'sec_1_2__p_1',\n                selectors: [{\n                        type: 'TextPositionSelector',\n                        start: 0,\n                        end: 4,\n                    }]\n            })];\n        // convert issues into enrichments\n        return this.issues.map((issue) => {\n            return new LinterEnrichment(issue, {\n                anchor_id: 'sec_1_2__p_1',\n                selectors: [{\n                        type: 'TextPositionSelector',\n                        start: 0,\n                        end: 4,\n                    }]\n            });\n        });\n    }\n    getPopupContent(enrichment, mark) {\n        const issue = enrichment;\n        const div = window.document.createElement('div');\n        div.innerText = issue.issue.message;\n        return div;\n    }\n    markCreated(enrichment, mark) {\n        mark.classList.add('enrichment--warning');\n    }\n    markDestroyed(enrichment, mark) {\n    }\n    popupCreated(popup) {\n    }\n}\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/popups.ts?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/indigo.js":
 /*!*********************************!*\
   !*** ./indigo_app/js/indigo.js ***!
@@ -269,7 +293,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Doc
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components */ \"./indigo_app/js/components/index.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_akoma_ntoso__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-akoma-ntoso */ \"./node_modules/@laws-africa/web-components/dist/components/la-akoma-ntoso.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter-item */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter-item.js\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm.js\");\n\n\n\n\n\n\n\nclass IndigoApp {\n  setup () {\n    this.components = [];\n    this.Vue = vue__WEBPACK_IMPORTED_MODULE_4__[\"default\"];\n\n    this.registerVueComponents(_components__WEBPACK_IMPORTED_MODULE_0__);\n    window.dispatchEvent(new Event('indigo.vue-components-registered'));\n\n    this.createVueComponents(document);\n    window.dispatchEvent(new Event('indigo.components-created'));\n  }\n\n  /**\n   * Registers all vue components as globals, so that they can be overridden and used without explicit imports.\n   */\n  registerVueComponents (components) {\n    for (const component of Object.values(components)) {\n      this.Vue.component(component.name, component);\n    }\n  }\n\n  /**\n   * Create Vue-based components on this root and its descendants.\n   * @param root\n   */\n  createVueComponents (root) {\n    // create vue-based components\n    for (const element of root.querySelectorAll('[data-vue-component]')) {\n      this.createVueComponent(element);\n    }\n  }\n\n  createVueComponent (element) {\n    const name = element.getAttribute('data-vue-component');\n\n    if (this.Vue.options.components[name]) {\n      // create the component and attached it to the HTML element\n      const Component = this.Vue.extend(this.Vue.options.components[name]);\n      const vue = new Component({ el: element });\n      vue.$el.component = vue;\n      this.components.push(vue);\n    }\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new IndigoApp());\n\n\n//# sourceURL=webpack:///./indigo_app/js/indigo.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components */ \"./indigo_app/js/components/index.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_akoma_ntoso__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-akoma-ntoso */ \"./node_modules/@laws-africa/web-components/dist/components/la-akoma-ntoso.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter-item */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter-item.js\");\n/* harmony import */ var _compat_imports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./compat-imports */ \"./indigo_app/js/compat-imports.js\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm.js\");\n\n\n\n\n\n\n\n\nclass IndigoApp {\n  setup () {\n    this.components = [];\n    this.Vue = vue__WEBPACK_IMPORTED_MODULE_5__[\"default\"];\n\n    this.registerVueComponents(_components__WEBPACK_IMPORTED_MODULE_0__);\n    window.dispatchEvent(new Event('indigo.vue-components-registered'));\n\n    this.createVueComponents(document);\n    window.dispatchEvent(new Event('indigo.components-created'));\n  }\n\n  /**\n   * Registers all vue components as globals, so that they can be overridden and used without explicit imports.\n   */\n  registerVueComponents (components) {\n    for (const component of Object.values(components)) {\n      this.Vue.component(component.name, component);\n    }\n  }\n\n  /**\n   * Create Vue-based components on this root and its descendants.\n   * @param root\n   */\n  createVueComponents (root) {\n    // create vue-based components\n    for (const element of root.querySelectorAll('[data-vue-component]')) {\n      this.createVueComponent(element);\n    }\n  }\n\n  createVueComponent (element) {\n    const name = element.getAttribute('data-vue-component');\n\n    if (this.Vue.options.components[name]) {\n      // create the component and attached it to the HTML element\n      const Component = this.Vue.extend(this.Vue.options.components[name]);\n      const vue = new Component({ el: element });\n      vue.$el.component = vue;\n      this.components.push(vue);\n    }\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new IndigoApp());\n\n\n//# sourceURL=webpack:///./indigo_app/js/indigo.js?");
 
 /***/ }),
 

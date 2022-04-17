@@ -2,6 +2,7 @@ import * as vueComponents from './components';
 import '@laws-africa/web-components/dist/components/la-akoma-ntoso';
 import '@laws-africa/web-components/dist/components/la-gutter';
 import '@laws-africa/web-components/dist/components/la-gutter-item';
+import './compat-imports';
 
 import Vue from 'vue';
 

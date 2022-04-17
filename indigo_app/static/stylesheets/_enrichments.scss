@@ -1,0 +1,9 @@
+.enrichment {
+  &.enrichment--popup {
+    background-color: transparent;
+
+    &.enrichment--warning {
+      border-bottom: 3px double purple;
+    }
+  }
+}

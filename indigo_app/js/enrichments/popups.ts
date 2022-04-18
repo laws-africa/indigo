@@ -1,6 +1,5 @@
 import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/src/enrichments/popups';
 import { Instance as Tippy } from 'tippy.js';
-import { default as LinterPopup } from './LinterPopup.vue';
 
 class LinterEnrichment implements IEnrichment {
   public issue: any;
@@ -13,13 +12,13 @@ class LinterEnrichment implements IEnrichment {
 }
 
 export class PopupIssuesProvider implements IPopupEnrichmentProvider {
-  private issues: any;
-  private vue: any;
+  protected issues: any;
+  protected vue: any;
 
   constructor (issues: any) {
     this.issues = issues;
     // @ts-ignore
-    const Component = window.indigoApp.Vue.extend(LinterPopup);
+    const Component = window.indigoApp.Vue.extend(window.indigoApp.Vue.options.components.LinterPopup);
     this.vue = new Component({propsData: {issue: null}});
     this.vue.$mount();
   }
@@ -39,9 +38,6 @@ export class PopupIssuesProvider implements IPopupEnrichmentProvider {
 
   markCreated(enrichment: IEnrichment, mark: Element): void {
     mark.classList.add('enrichment--warning');
-  }
-
-  markDestroyed(enrichment: IEnrichment, mark: Element): void {
   }
 
   popupCreated(enrichment: IEnrichment, popup: Tippy): void {

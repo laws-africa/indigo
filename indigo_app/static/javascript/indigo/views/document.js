@@ -200,7 +200,7 @@
       const akn = this.el.querySelector('.document-workspace-content la-akoma-ntoso');
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
       this.listenTo(this.bodyEditorView.sourceEditor, 'rendered', () => {
-        this.popupManager.render();
+        this.popupManager.applyEnrichments();
       });
       // TODO: created locally in TS
       this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues));

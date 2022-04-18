@@ -3,28 +3,18 @@ import '@laws-africa/web-components/dist/components/la-akoma-ntoso';
 import '@laws-africa/web-components/dist/components/la-gutter';
 import '@laws-africa/web-components/dist/components/la-gutter-item';
 import './compat-imports';
-
-import Vue from 'vue';
+import { createComponent, getVue, registerComponents } from './vue';
 
 class IndigoApp {
   setup () {
     this.components = [];
-    this.Vue = Vue;
+    this.Vue = getVue();
 
-    this.registerVueComponents(vueComponents);
+    registerComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
 
     this.createVueComponents(document);
     window.dispatchEvent(new Event('indigo.components-created'));
-  }
-
-  /**
-   * Registers all vue components as globals, so that they can be overridden and used without explicit imports.
-   */
-  registerVueComponents (components) {
-    for (const component of Object.values(components)) {
-      this.Vue.component(component.name, component);
-    }
   }
 
   /**
@@ -43,8 +33,7 @@ class IndigoApp {
 
     if (this.Vue.options.components[name]) {
       // create the component and attached it to the HTML element
-      const Component = this.Vue.extend(this.Vue.options.components[name]);
-      const vue = new Component({ el: element });
+      const vue = createComponent(name, { el: element });
       vue.$el.component = vue;
       this.components.push(vue);
     }

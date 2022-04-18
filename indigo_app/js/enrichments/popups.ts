@@ -1,5 +1,7 @@
 import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/src/enrichments/popups';
 import { Instance as Tippy } from 'tippy.js';
+// @ts-ignore
+import { createComponent } from '../vue';
 
 class LinterEnrichment implements IEnrichment {
   public issue: any;
@@ -17,9 +19,7 @@ export class PopupIssuesProvider implements IPopupEnrichmentProvider {
 
   constructor (issues: any) {
     this.issues = issues;
-    // @ts-ignore
-    const Component = window.indigoApp.Vue.extend(window.indigoApp.Vue.options.components.LinterPopup);
-    this.vue = new Component({propsData: {issue: null}});
+    this.vue = createComponent('LinterPopup', {propsData: {issue: null}});
     this.vue.$mount();
   }
 

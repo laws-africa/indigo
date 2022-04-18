@@ -1,7 +1,9 @@
 <template>
-  <div v-if="issue">
-    <h6>{{ issue.message }}</h6>
-    {{ issue.description }}
+  <div>
+    <div v-if="issue">
+      <h6>{{ issue.message }}</h6>
+      {{ issue.description }}
+    </div>
   </div>
 </template>
 

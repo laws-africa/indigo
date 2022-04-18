@@ -1,4 +1,4 @@
-import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/src/enrichments/popups';
+import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/dist/enrichments/popups';
 import { Instance as Tippy } from 'tippy.js';
 // @ts-ignore
 import { createComponent } from '../vue';
@@ -13,6 +13,9 @@ class LinterEnrichment implements IEnrichment {
   }
 }
 
+/**
+ * Converts linter issues that have range targets (ie. are related to snippets of text) into popup enrichments.
+ */
 export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   protected issues: any;
   protected vue: any;
@@ -31,8 +34,7 @@ export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   }
 
   getPopupContent(enrichment: IEnrichment, mark: Element): Element {
-    const issue = enrichment as LinterEnrichment;
-    this.vue.issue = issue.issue.attributes;
+    this.vue.issue = (enrichment as LinterEnrichment).issue.attributes;
     return this.vue.$el;
   }
 

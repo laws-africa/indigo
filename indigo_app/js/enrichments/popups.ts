@@ -1,13 +1,14 @@
 import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/dist/enrichments/popups';
+import { IRangeTarget } from '@laws-africa/indigo-akn/dist/ranges';
 import { Instance as Tippy } from 'tippy.js';
 // @ts-ignore
 import { createComponent } from '../vue';
 
 class LinterEnrichment implements IEnrichment {
   public issue: any;
-  public target: object;
+  public target: IRangeTarget;
 
-  constructor (issue: any, target: any) {
+  constructor (issue: any, target: IRangeTarget) {
     this.issue = issue;
     this.target = target;
   }

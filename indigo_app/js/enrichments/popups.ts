@@ -24,6 +24,7 @@ export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   constructor (issues: any) {
     this.issues = issues;
     this.vue = createComponent('LinterPopup', {propsData: {issue: null}});
+    this.vue.$on('fix', (issue: any) => issue.fix());
     this.vue.$mount();
   }
 

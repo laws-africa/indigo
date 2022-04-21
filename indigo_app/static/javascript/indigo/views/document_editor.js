@@ -155,7 +155,7 @@
       var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
 
       // should we delete the item?
-      if (!content.trim() && fragmentRule != 'akomaNtoso') {
+      if (!content.trim() && fragmentRule !== 'akomaNtoso') {
         if (confirm('Go ahead and delete this section from the document?')) {
           this.parent.removeFragment(this.fragment);
         }
@@ -194,7 +194,7 @@
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
           if (xhr) {
-            if (xhr.status == 400) {
+            if (xhr.status === 400) {
               Indigo.errorView.show(xhr.responseJSON.content || error || status);
             } else {
               Indigo.errorView.show(error || status);
@@ -214,7 +214,7 @@
           data = {
         'content': content,
       };
-      if (fragmentRule != 'akomaNtoso') {
+      if (fragmentRule !== 'akomaNtoso') {
         data.fragment = fragmentRule;
         if (id && id.lastIndexOf('__') > -1) {
           // retain the id of the parent element as the prefix
@@ -624,7 +624,7 @@
       this.updating = true;
       try {
         var updated = this.documentContent.replaceNode(oldNode, newNodes);
-        if (oldNode == this.fragment) {
+        if (oldNode === this.fragment) {
           this.fragment = updated;
           this.sourceEditor.editFragment(updated);
           this.xmlEditor.editFragment(updated);

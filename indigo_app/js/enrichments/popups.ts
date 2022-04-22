@@ -41,7 +41,8 @@ export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   }
 
   markCreated(enrichment: IEnrichment, mark: Element): void {
-    mark.classList.add('enrichment--warning');
+    const issue = (enrichment as LinterEnrichment).issue;
+    mark.classList.add(`enrichment--${issue.attributes.severity}`);
   }
 
   popupCreated(enrichment: IEnrichment, popup: Tippy): void {

@@ -70,7 +70,7 @@
       const oldTable = this.documentContent.getElementByScopedId(table.id);
       if (oldTable) {
         // look for complex content
-        const result = this.documentContent.xpath('.//a:authorialNote | .//a:blockList | .//a:ul | .//a:ol | .//a:embeddedStructure');
+        const result = this.documentContent.xpath('.//a:authorialNote | .//a:blockList | .//a:ul | .//a:ol | .//a:embeddedStructure', oldTable);
         return result.snapshotLength === 0;
       }
       return true;

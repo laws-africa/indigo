@@ -16,6 +16,7 @@
         this.model = this.document.issues;
         this.template = Handlebars.compile($(this.template).html());
         this.$akn = this.$('#document-sheet la-akoma-ntoso');
+        this.nodes = [];
 
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
         this.listenTo(this.model, 'reset change add remove', this.render);
@@ -54,6 +55,12 @@
         var self = this,
             displayed = {};
 
+        // remove existing nodes
+        for (const node of this.nodes) {
+          node.remove();
+        }
+        this.nodes = [];
+
         this.model.forEach(function(issue) {
           // Only attach a particular issue to a node once. This is required for linters that, for example, identify
           // elements with duplicate ids and produce an issue for each copy of the ID. Since we display them based
@@ -74,6 +81,7 @@
 
             var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
             var node = $(self.template(issue.toJSON()))[0];
+            self.nodes.push(node);
 
             var content = issue.get('description');
 

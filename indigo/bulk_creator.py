@@ -366,9 +366,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if ('gazettement_date', 'publication_date') was specified in the subclass's aliases
         """
         for alias, meaning in self.aliases:
-            for title in errors.keys():
-                if meaning == title:
-                    errors[alias] = errors.pop(title)
+            if meaning in errors.keys():
+                errors[alias] = errors[meaning]
+                errors.pop(meaning)
 
     def validate_row(self, row):
         self.transform_aliases(row)

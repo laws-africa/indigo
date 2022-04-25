@@ -201,6 +201,18 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./indigo_app/js/compat-imports.js":
+/*!*****************************************!*\
+  !*** ./indigo_app/js/compat-imports.js ***!
+  \*****************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _enrichments_popups__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enrichments/popups */ \"./indigo_app/js/enrichments/popups.ts\");\n/**\n * These are imports from local libraries that must be compiled using browserify and then injected\n * into the window global for Indigo to use them.\n *\n * This provides a bridge between Indigo's lack of any support for require() or 'import', and require-js and\n * ES6-style imports.\n */\n\n\nwindow.enrichments = _enrichments_popups__WEBPACK_IMPORTED_MODULE_0__;\n\n\n//# sourceURL=webpack:///./indigo_app/js/compat-imports.js?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/components/DocumentTOCView.vue":
 /*!******************************************************!*\
   !*** ./indigo_app/js/components/DocumentTOCView.vue ***!
@@ -249,15 +261,63 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _nod
 
 /***/ }),
 
+/***/ "./indigo_app/js/components/LinterPopup.vue":
+/*!**************************************************!*\
+  !*** ./indigo_app/js/components/LinterPopup.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LinterPopup.vue?vue&type=template&id=6ef8fafc& */ \"./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc&\");\n/* harmony import */ var _LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LinterPopup.vue?vue&type=script&lang=js& */ \"./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js&\");\n/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ \"./node_modules/vue-loader/lib/runtime/componentNormalizer.js\");\n\n\n\n\n\n/* normalize component */\n\nvar component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(\n  _LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  _LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__[\"render\"],\n  _LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__[\"staticRenderFns\"],\n  false,\n  null,\n  null,\n  null\n  \n)\n\n/* hot reload */\nif (false) { var api; }\ncomponent.options.__file = \"indigo_app/js/components/LinterPopup.vue\"\n/* harmony default export */ __webpack_exports__[\"default\"] = (component.exports);\n\n//# sourceURL=webpack:///./indigo_app/js/components/LinterPopup.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib??vue-loader-options!./LinterPopup.vue?vue&type=script&lang=js& */ \"./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js&\");\n/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__[\"default\"] = (_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__[\"default\"]); \n\n//# sourceURL=webpack:///./indigo_app/js/components/LinterPopup.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc&":
+/*!*********************************************************************************!*\
+  !*** ./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./LinterPopup.vue?vue&type=template&id=6ef8fafc& */ \"./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc&\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__[\"render\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LinterPopup_vue_vue_type_template_id_6ef8fafc___WEBPACK_IMPORTED_MODULE_0__[\"staticRenderFns\"]; });\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/LinterPopup.vue?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/components/index.js":
 /*!*******************************************!*\
   !*** ./indigo_app/js/components/index.js ***!
   \*******************************************/
-/*! exports provided: DocumentTOCView */
+/*! exports provided: DocumentTOCView, LinterPopup */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DocumentTOCView.vue */ \"./indigo_app/js/components/DocumentTOCView.vue\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"DocumentTOCView\", function() { return _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]; });\n\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DocumentTOCView.vue */ \"./indigo_app/js/components/DocumentTOCView.vue\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"DocumentTOCView\", function() { return _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]; });\n\n/* harmony import */ var _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LinterPopup.vue */ \"./indigo_app/js/components/LinterPopup.vue\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"LinterPopup\", function() { return _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__[\"default\"]; });\n\n\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/index.js?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/enrichments/popups.ts":
+/*!*********************************************!*\
+  !*** ./indigo_app/js/enrichments/popups.ts ***!
+  \*********************************************/
+/*! exports provided: PopupIssuesProvider */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PopupIssuesProvider\", function() { return PopupIssuesProvider; });\n/* harmony import */ var _vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../vue */ \"./indigo_app/js/vue.js\");\n// @ts-ignore\n\nclass LinterEnrichment {\n    constructor(issue, target) {\n        this.issue = issue;\n        this.target = target;\n    }\n}\n/**\n * Converts linter issues that have range targets (ie. are related to snippets of text) into popup enrichments.\n */\nclass PopupIssuesProvider {\n    constructor(issues) {\n        this.issues = issues;\n        this.vue = Object(_vue__WEBPACK_IMPORTED_MODULE_0__[\"createComponent\"])('LinterPopup', { propsData: { issue: null } });\n        this.vue.$on('fix', (issue) => issue.fix());\n        this.vue.$mount();\n    }\n    getEnrichments() {\n        // convert issues into enrichments\n        return this.issues.filter((x) => x.get('target')).map((issue) => {\n            return new LinterEnrichment(issue, issue.get('target'));\n        });\n    }\n    getPopupContent(enrichment, mark) {\n        this.vue.issue = enrichment.issue.attributes;\n        return this.vue.$el;\n    }\n    markCreated(enrichment, mark) {\n        const issue = enrichment.issue;\n        mark.classList.add(`enrichment--${issue.attributes.severity}`);\n    }\n    popupCreated(enrichment, popup) {\n    }\n}\n\n\n//# sourceURL=webpack:///./indigo_app/js/enrichments/popups.ts?");
 
 /***/ }),
 
@@ -269,7 +329,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Doc
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components */ \"./indigo_app/js/components/index.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_akoma_ntoso__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-akoma-ntoso */ \"./node_modules/@laws-africa/web-components/dist/components/la-akoma-ntoso.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter-item */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter-item.js\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm.js\");\n\n\n\n\n\n\n\nclass IndigoApp {\n  setup () {\n    this.components = [];\n    this.Vue = vue__WEBPACK_IMPORTED_MODULE_4__[\"default\"];\n\n    this.registerVueComponents(_components__WEBPACK_IMPORTED_MODULE_0__);\n    window.dispatchEvent(new Event('indigo.vue-components-registered'));\n\n    this.createVueComponents(document);\n    window.dispatchEvent(new Event('indigo.components-created'));\n  }\n\n  /**\n   * Registers all vue components as globals, so that they can be overridden and used without explicit imports.\n   */\n  registerVueComponents (components) {\n    for (const component of Object.values(components)) {\n      this.Vue.component(component.name, component);\n    }\n  }\n\n  /**\n   * Create Vue-based components on this root and its descendants.\n   * @param root\n   */\n  createVueComponents (root) {\n    // create vue-based components\n    for (const element of root.querySelectorAll('[data-vue-component]')) {\n      this.createVueComponent(element);\n    }\n  }\n\n  createVueComponent (element) {\n    const name = element.getAttribute('data-vue-component');\n\n    if (this.Vue.options.components[name]) {\n      // create the component and attached it to the HTML element\n      const Component = this.Vue.extend(this.Vue.options.components[name]);\n      const vue = new Component({ el: element });\n      vue.$el.component = vue;\n      this.components.push(vue);\n    }\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new IndigoApp());\n\n\n//# sourceURL=webpack:///./indigo_app/js/indigo.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components */ \"./indigo_app/js/components/index.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_akoma_ntoso__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-akoma-ntoso */ \"./node_modules/@laws-africa/web-components/dist/components/la-akoma-ntoso.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter.js\");\n/* harmony import */ var _laws_africa_web_components_dist_components_la_gutter_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @laws-africa/web-components/dist/components/la-gutter-item */ \"./node_modules/@laws-africa/web-components/dist/components/la-gutter-item.js\");\n/* harmony import */ var _compat_imports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./compat-imports */ \"./indigo_app/js/compat-imports.js\");\n/* harmony import */ var _vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./vue */ \"./indigo_app/js/vue.js\");\n\n\n\n\n\n\n\nclass IndigoApp {\n  setup () {\n    this.components = [];\n    this.Vue = Object(_vue__WEBPACK_IMPORTED_MODULE_5__[\"getVue\"])();\n\n    Object(_vue__WEBPACK_IMPORTED_MODULE_5__[\"registerComponents\"])(_components__WEBPACK_IMPORTED_MODULE_0__);\n    window.dispatchEvent(new Event('indigo.vue-components-registered'));\n\n    this.createVueComponents(document);\n    window.dispatchEvent(new Event('indigo.components-created'));\n  }\n\n  /**\n   * Create Vue-based components on this root and its descendants.\n   * @param root\n   */\n  createVueComponents (root) {\n    // create vue-based components\n    for (const element of root.querySelectorAll('[data-vue-component]')) {\n      this.createVueComponent(element);\n    }\n  }\n\n  createVueComponent (element) {\n    const name = element.getAttribute('data-vue-component');\n\n    if (this.Vue.options.components[name]) {\n      // create the component and attached it to the HTML element\n      const vue = Object(_vue__WEBPACK_IMPORTED_MODULE_5__[\"createComponent\"])(name, { el: element });\n      vue.$el.component = vue;\n      this.components.push(vue);\n    }\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new IndigoApp());\n\n\n//# sourceURL=webpack:///./indigo_app/js/indigo.js?");
 
 /***/ }),
 
@@ -282,6 +342,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _com
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _indigo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./indigo */ \"./indigo_app/js/indigo.js\");\n\n\nwindow.addEventListener('indigo.beforecreateviews', () => {\n  window.indigoApp = _indigo__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n  _indigo__WEBPACK_IMPORTED_MODULE_0__[\"default\"].setup();\n});\n\n\n//# sourceURL=webpack:///./indigo_app/js/main.js?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/vue.js":
+/*!******************************!*\
+  !*** ./indigo_app/js/vue.js ***!
+  \******************************/
+/*! exports provided: registerComponents, createComponent, getVue */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"registerComponents\", function() { return registerComponents; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createComponent\", function() { return createComponent; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"getVue\", function() { return getVue; });\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm.js\");\n\n\n/**\n * Registers all vue components as globals, so that they can be overridden and used without explicit imports.\n * @param components object mapping component names to component objects\n */\nfunction registerComponents (components) {\n  for (const component of Object.values(components)) {\n    vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"].component(component.name, component);\n  }\n}\n\n/**\n * Fetch a Vue component from the Vue component registry and create it.\n * @param name the name of the component\n * @param options options to pass to the component constructor\n * @returns {*}\n */\nfunction createComponent (name, options) {\n  const Component = vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"].extend(vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"].options.components[name]);\n  return new Component(options);\n}\n\n/**\n * Get the global Vue instance.\n * @returns {Vue | VueConstructor}\n */\nfunction getVue () {\n  return vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n}\n\n\n//# sourceURL=webpack:///./indigo_app/js/vue.js?");
 
 /***/ }),
 
@@ -485,6 +557,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _law
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/components/LinterPopup.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  name: 'LinterPopup',\n  props: ['issue'],\n  methods: {\n    fix () {\n      this.$emit('fix', this.issue);\n    }\n  }\n});\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/LinterPopup.vue?./node_modules/vue-loader/lib??vue-loader-options");
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/DocumentTOCView.vue?vue&type=template&id=3c32905c&":
 /*!*******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/components/DocumentTOCView.vue?vue&type=template&id=3c32905c& ***!
@@ -494,6 +578,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _law
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return render; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return staticRenderFns; });\nvar render = function() {\n  var _vm = this\n  var _h = _vm.$createElement\n  var _c = _vm._self._c || _h\n  return _c(\n    \"div\",\n    { staticClass: \"toc-controller-wrapper\" },\n    [\n      _c(\n        \"la-table-of-contents-controller\",\n        {\n          ref: \"la-toc-controller\",\n          attrs: {\n            \"title-filter\": _vm.titleQuery,\n            \"expand-all-btn-classes\": \"btn btn-primary btn-sm mr-1\",\n            \"collapse-all-btn-classes\": \"btn btn-primary btn-sm mr-1\",\n            \"title-filter-input-classes\": \"form-control form-control-sm\",\n            \"title-filter-clear-btn-classes\": \"btn btn-sm btn-secondary\"\n          },\n          domProps: { items: _vm.roots },\n          on: {\n            itemRendered: _vm.handleItemRendered,\n            itemTitleClicked: _vm.onTitleClick\n          }\n        },\n        [\n          _c(\"span\", { attrs: { slot: \"expand-icon\" }, slot: \"expand-icon\" }, [\n            _c(\"i\", { staticClass: \"fas fa-plus\" })\n          ]),\n          _vm._v(\" \"),\n          _c(\n            \"span\",\n            { attrs: { slot: \"collapse-icon\" }, slot: \"collapse-icon\" },\n            [_c(\"i\", { staticClass: \"fas fa-minus\" })]\n          )\n        ]\n      )\n    ],\n    1\n  )\n}\nvar staticRenderFns = []\nrender._withStripped = true\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/DocumentTOCView.vue?./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options");
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./indigo_app/js/components/LinterPopup.vue?vue&type=template&id=6ef8fafc& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"render\", function() { return render; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"staticRenderFns\", function() { return staticRenderFns; });\nvar render = function() {\n  var _vm = this\n  var _h = _vm.$createElement\n  var _c = _vm._self._c || _h\n  return _c(\"div\", [\n    _vm.issue\n      ? _c(\"div\", [\n          _c(\"h6\", [_vm._v(_vm._s(_vm.issue.message))]),\n          _vm._v(\" \"),\n          _c(\"div\", [_vm._v(_vm._s(_vm.issue.description))]),\n          _vm._v(\" \"),\n          _vm.issue.fixCaption\n            ? _c(\n                \"button\",\n                {\n                  staticClass: \"btn btn-sm btn-outline-primary mt-2\",\n                  attrs: { type: \"button\" },\n                  on: { click: _vm.fix }\n                },\n                [_vm._v(_vm._s(_vm.issue.fixCaption))]\n              )\n            : _vm._e()\n        ])\n      : _vm._e()\n  ])\n}\nvar staticRenderFns = []\nrender._withStripped = true\n\n\n\n//# sourceURL=webpack:///./indigo_app/js/components/LinterPopup.vue?./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options");
 
 /***/ }),
 

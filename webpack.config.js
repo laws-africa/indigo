@@ -10,6 +10,14 @@ const legacyConfig = {
       './node_modules',
     ],
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
+  },
   output: {
     filename: 'external-imports.js',
     path: path.resolve(__dirname, 'indigo_app/static/lib'),
@@ -25,10 +33,16 @@ const appConfig = {
     ],
     alias: {
       vue: 'vue/dist/vue.esm.js',
-    }
+    },
+    extensions: ['.tsx', '.ts', '.js'],
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader'

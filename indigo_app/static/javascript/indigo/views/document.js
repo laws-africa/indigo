@@ -196,6 +196,10 @@
         editorView: this.bodyEditorView,
       });
 
+      const akn = this.el.querySelector('.document-workspace-content la-akoma-ntoso');
+      this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
+      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues));
+
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');
 

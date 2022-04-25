@@ -1,0 +1,17 @@
+.enrichment {
+  &.enrichment--popup {
+    background-color: transparent;
+
+    &.enrichment--info {
+      border-bottom: 3px double $info;
+    }
+
+    &.enrichment--warning {
+      border-bottom: 3px double $warning;
+    }
+
+    &.enrichment--error {
+      border-bottom: 3px double $danger;
+    }
+  }
+}

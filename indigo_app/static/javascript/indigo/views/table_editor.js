@@ -95,7 +95,7 @@
 
       if (table) {
         // get new xml
-        table = indigoAkn.tableToAkn(table);
+        table = indigoAkn.htmlToAkn(table);
       }
 
       if (table) {

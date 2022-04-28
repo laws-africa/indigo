@@ -316,7 +316,7 @@ class TermsFinderENGTestCase(APITestCase):
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
         self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-
+      
 <section eId="sec_1">
   <num>1.</num>
   <heading>Short title and interpretation</heading>
@@ -339,5 +339,5 @@ class TermsFinderENGTestCase(APITestCase):
   </hcontainer>
 </section>
     </body>
-
+  
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))

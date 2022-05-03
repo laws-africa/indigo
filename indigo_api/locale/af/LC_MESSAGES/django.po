@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-03 08:31\n"
+"PO-Revision-Date: 2022-05-03 08:59\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -26,32 +26,32 @@ msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(star
 #: models/documents.py:293
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
 #: models/documents.py:296
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s%."
 
 #: models/documents.py:298
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
 #: models/documents.py:301
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
 
 #: models/documents.py:304
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Die is die weergawe van hierdie dokument soos dit was teen %(start)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."

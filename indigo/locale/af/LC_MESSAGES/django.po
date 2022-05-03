@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2021-12-03 08:26\n"
+"PO-Revision-Date: 2022-05-03 09:36\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
-msgstr "Daad"
+msgstr "Wet"
 
 #: analysis/toc/base.py:15
 msgid "Article"
@@ -28,7 +28,7 @@ msgstr "Artikel"
 
 #: analysis/toc/base.py:16
 msgid "By-law"
-msgstr "Verordening"
+msgstr "Bywet"
 
 #: analysis/toc/base.py:17
 msgid "Chapter"

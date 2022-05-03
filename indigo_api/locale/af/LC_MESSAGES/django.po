@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-03 09:28\n"
+"PO-Revision-Date: 2022-05-03 09:36\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -80,7 +80,7 @@ msgstr "Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(ti
 #| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
 #| "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr "Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> op <span class=\"repeal-date\">%(date)s</span>"
+msgstr "[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
@@ -110,7 +110,7 @@ msgstr "Aanvangsdatum onbekend"
 #: templates/indigo_api/akn/coverpage_act.html:104
 #| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Inwerking getree op %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
@@ -123,7 +123,7 @@ msgstr "Begin deur <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 #: templates/indigo_api/akn/coverpage_act.html:114
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "- begin deur <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:81
 #: templates/indigo_api/akn/coverpage_act.html:118
@@ -141,33 +141,33 @@ msgstr "deur <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr ""
+msgstr "Daar is vele inwerkingtredings:"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
-msgstr ""
+msgstr "Bepalings"
 
 #: templates/indigo_api/akn/coverpage_act.html:139
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Onbekende bepalings"
 
 #: templates/indigo_api/akn/coverpage_act.html:155
 #| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "begin op%(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 #| msgid "Assented to on %(date)s"
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "inwerking getree <i>(onbekende datum)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"
-msgstr ""
+msgstr "Nota:"
 
 #: templates/indigo_api/akn/coverpage_act.html:184
 #| msgid "Not commenced"

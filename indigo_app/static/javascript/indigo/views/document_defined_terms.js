@@ -12,6 +12,7 @@
     termsTemplate: '#terms-template',
     events: {
       'click .link-terms': 'linkTerms',
+      'click .remove-terms': 'removeTerms',
     },
 
     initialize: function(options) {
@@ -60,6 +61,41 @@
             .prop('disabled', false)
             .find('i').removeClass('fa-spin');
         });
+    },
+
+    removeTerms: function(e) {
+      var changed = false;
+
+      // unwrap all <def>s
+      this.model.xmlDocument.querySelectorAll('def').forEach(function(def) {
+        var parent = def.parentNode;
+        while (def.firstChild) parent.insertBefore(def.firstChild, def);
+        parent.removeChild(def);
+
+        changed = true;
+      });
+
+      // unwrap all <term>s
+      this.model.xmlDocument.querySelectorAll('term').forEach(function(term) {
+        var parent = term.parentNode;
+        while (term.firstChild) parent.insertBefore(term.firstChild, term);
+        parent.removeChild(term);
+      });
+
+      // remove all <TLCTerm>s
+      this.model.xmlDocument.querySelectorAll('TLCTerm').forEach(function(tlcTerm) {
+        var parent = tlcTerm.parentNode;
+        parent.removeChild(tlcTerm);
+      });
+
+      // remove all refersTo attributes that start with '#term-'
+      this.model.xmlDocument.querySelectorAll('[refersTo]').forEach(function(el) {
+        if ((el.getAttribute('refersTo') || '').startsWith('#term-')) {
+          el.removeAttribute('refersTo');
+        }
+      });
+
+      if (changed) this.model.trigger('change:dom');
     },
   });
 })(window);

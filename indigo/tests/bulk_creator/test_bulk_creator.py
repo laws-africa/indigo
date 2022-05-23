@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 import csv
 import io
 import os
 import datetime
 
+from django.conf import settings
 from django.test import testcases
 
 from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
@@ -21,6 +21,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         creator.locality = None
         creator.user = User.objects.get(pk=1)
         creator.testing = True
+        settings.INDIGO['EXTRA_DOCTYPES']['za'] = [('Document', 'doc'), ('Report', 'debateReport'), ('Statement', 'statement')]
         self.creator = creator
 
     def get_works(self, dry_run, filename):
@@ -33,7 +34,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
-        self.assertEqual(2, len(works))
+        self.assertEqual(3, len(works))
 
         row1 = works[0]
         self.assertEqual('success', row1.status)
@@ -58,15 +59,29 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], row2.relationships)
         self.assertEqual(['link gazette'], row2.tasks)
 
+        row3 = works[2]
+        self.assertEqual('success', row3.status)
+        self.assertEqual('Testy 3', row3.work.title)
+        self.assertEqual('debatereport', row3.work.nature)
+        self.assertEqual('1', row3.work.number)
+        self.assertEqual('2020', row3.work.year)
+        self.assertEqual(datetime.date(2020, 6, 1), row3.work.publication_date)
+        self.assertFalse(row3.work.stub)
+        self.assertEqual(['Uncommenced'], row3.notes)
+        self.assertEqual([], row3.relationships)
+        self.assertEqual(['link gazette', 'import content'], row3.tasks)
+
         # not actually created though
         with self.assertRaises(Work.DoesNotExist):
             Work.objects.get(frbr_uri='/akn/za/act/2020/1')
         with self.assertRaises(Work.DoesNotExist):
             Work.objects.get(frbr_uri='/akn/za/act/2020/2')
+        with self.assertRaises(Work.DoesNotExist):
+            Work.objects.get(frbr_uri='/akn/za/debatereport/2020/1')
 
     def test_basic_live(self):
         works = self.get_works(False, 'basic.csv')
-        self.assertEqual(2, len(works))
+        self.assertEqual(3, len(works))
 
         work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
         row1 = works[0]
@@ -100,6 +115,23 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(1, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+
+        work3 = Work.objects.get(frbr_uri='/akn/za/debatereport/2020/1')
+        row3 = works[2]
+        self.assertEqual(work3, row3.work)
+        self.assertEqual('Testy 3', work3.title)
+        self.assertEqual('1', work3.number)
+        self.assertEqual('2020', work3.year)
+        self.assertEqual(datetime.date(2020, 6, 1), work3.publication_date)
+        self.assertFalse(work3.stub)
+        # no 'notes' when not in preview
+        self.assertEqual([], row3.notes)
+        self.assertEqual([], row3.relationships)
+        tasks = work3.tasks.all()
+        self.assertEqual(2, len(tasks))
+        task_titles = [t.title for t in tasks]
+        self.assertIn('Link gazette', task_titles)
+        self.assertIn('Import content', task_titles)
 
     def test_errors(self):
         jhb = Locality.objects.get(pk=1)

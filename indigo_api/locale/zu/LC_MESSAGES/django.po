@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-24 13:33\n"
+"PO-Revision-Date: 2022-05-24 15:20\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -80,7 +80,7 @@ msgstr "[Ichithwe ngu <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(t
 #| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
 #| "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Ichtshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> ngomhla zingu <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
@@ -176,7 +176,7 @@ msgstr "ayikaqali"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Okuqukethwe"
 
 #~ msgid "Up to date as at %(date)s"
 #~ msgstr "Opgedateer tot en met %(date)s"

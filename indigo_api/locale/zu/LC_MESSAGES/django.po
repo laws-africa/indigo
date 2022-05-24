@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-24 13:16\n"
+"PO-Revision-Date: 2022-05-24 13:22\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -55,17 +55,17 @@ msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu - %(start)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "Qaphela: Idokhumenti eshiqilelwe kuqala ayitholakali futhi lokhu okuqukethwe akukwazanga ukuqinisekiswa."
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Ichitshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Ichtshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> ngomhla zingu <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #| msgid ""
@@ -73,7 +73,7 @@ msgstr ""
 #| "%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
 #| "date\">%(date)s</span>]"
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Ichithwe ngu <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> ngomhla zingu <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #| msgid ""
@@ -85,12 +85,12 @@ msgstr ""
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr ""
+msgstr "Ishicilelwe kwi %(name)s nombolo. %(number)s ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:41
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Ishicilelwe kwi %(name)s ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format

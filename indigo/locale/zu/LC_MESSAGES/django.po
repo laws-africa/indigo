@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2022-05-24 12:59\n"
+"PO-Revision-Date: 2022-05-24 13:05\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -48,19 +48,19 @@ msgstr "Isigaba"
 
 #: analysis/toc/base.py:21
 msgid "Preface"
-msgstr "Isanduleliso"
+msgstr "Isashayelelo"
 
 #: analysis/toc/base.py:22
 msgid "Preamble"
-msgstr ""
+msgstr "Isanduleliso"
 
 #: analysis/work_detail/base.py:34
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr ""
+msgstr "%(type)s %(number)s ye %(year)s"
 
 #: analysis/work_detail/base.py:57
 #| msgid "Chapter"
 msgid "Chapter %(cap)s"
-msgstr ""
+msgstr "Isahluko %(cap)s"
 

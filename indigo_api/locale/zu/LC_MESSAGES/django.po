@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-24 15:20\n"
+"PO-Revision-Date: 2022-05-25 07:51\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -21,37 +21,37 @@ msgstr ""
 #: models/documents.py:291
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr "Lena yinguqulo yale dokhumenti eqala ku - %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti eqala ku %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
 
 #: models/documents.py:293
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr "Lena yinguqulo yale dokhumenti eqala ku - %(start)s."
+msgstr "Lena yinguqulo yale dokhumenti eqala ku %(start)s."
 
 #: models/documents.py:296
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr "Lena yinguqulo yale dokhumenti ngo - %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti ngo %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
 
 #: models/documents.py:298
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr "Lena yinguqulo yale dokhumenti ku - %(start)s."
+msgstr "Lena yinguqulo yale dokhumenti ku %(start)s."
 
 #: models/documents.py:301
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr "Lena yinguqulo yale dokhumenti ngomhla yayizi - %(start)s kuya ku %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti ngomhla yayizi %(start)s kuya ku %(end)s."
 
 #: models/documents.py:304
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu - %(start)s kuya ku %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu %(start)s kuya ku %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu - %(start)s."
+msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu %(start)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."
@@ -95,7 +95,7 @@ msgstr "Ishicilelwe kwi %(name)s ngomhla zingu %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr "Yasayindwa ngomhla zingu -%(date)s"
+msgstr "Yasayindwa ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
@@ -110,7 +110,7 @@ msgstr "Usuku ezoqala ngayo alwaziwa"
 #: templates/indigo_api/akn/coverpage_act.html:104
 #| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
-msgstr "Yaqala ngomhla zingu - %(date)s"
+msgstr "Yaqala ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
@@ -158,12 +158,12 @@ msgstr "Izigaba ezingaziwa"
 #: templates/indigo_api/akn/coverpage_act.html:155
 #| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
-msgstr "yaqala ngomhla zingu - %(date)s"
+msgstr "yaqala ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 #| msgid "Assented to on %(date)s"
 msgid "commenced on <i>(unknown date)</i>"
-msgstr "yaqala ngomhla zingu - <i>(usuku alwaziwa)</i>"
+msgstr "yaqala ngomhla zingu <i>(usuku alwaziwa)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"

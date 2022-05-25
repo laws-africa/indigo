@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2019-07-12 06:58\n"
+"PO-Revision-Date: 2022-05-25 08:03\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -15,6 +15,8 @@ msgstr ""
 "X-Crowdin-Project: lawsafrica-indigo\n"
 "X-Crowdin-Language: xh\n"
 "X-Crowdin-File: /master/indigo/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 364773\n"
+"X-Crowdin-File-ID: 60\n"
 
 #: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
@@ -58,7 +60,7 @@ msgid "%(type)s %(number)s of %(year)s"
 msgstr ""
 
 #: analysis/work_detail/base.py:57
-#, fuzzy, python-format
 #| msgid "Chapter"
 msgid "Chapter %(cap)s"
-msgstr "Isahluko"
+msgstr "Isahluko %(cap)s"
+

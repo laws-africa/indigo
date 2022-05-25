@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"PO-Revision-Date: 2022-05-25 07:51\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -15,171 +15,187 @@ msgstr ""
 "X-Crowdin-Project: lawsafrica-indigo\n"
 "X-Crowdin-Language: zu\n"
 "X-Crowdin-File: /master/indigo_api/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 364773\n"
+"X-Crowdin-File-ID: 62\n"
 
 #: models/documents.py:291
 #, python-format
-msgid ""
-"This is the version of this document from %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti eqala ku %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
 
 #: models/documents.py:293
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Lena yinguqulo yale dokhumenti eqala ku %(start)s."
 
 #: models/documents.py:296
 #, python-format
-msgid ""
-"This is the version of this document at %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti ngo %(start)s futhi iqukethe zonke izichibiyelo eshicilelwe kuze kufike ku %(end)s."
 
 #: models/documents.py:298
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Lena yinguqulo yale dokhumenti ku %(start)s."
 
 #: models/documents.py:301
 #, python-format
-msgid ""
-"This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
+msgstr "Lena yinguqulo yale dokhumenti ngomhla yayizi %(start)s kuya ku %(end)s."
 
 #: models/documents.py:304
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu %(start)s kuya ku %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Lena yinguqulo yale dokhumenti ngomhla zazingu %(start)s."
 
 #: models/places.py:191
-msgid ""
-"Note: The original publication document is not available and this content "
-"could not be verified."
-msgstr ""
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr "Qaphela: Idokhumenti eshiqilelwe kuqala ayitholakali futhi lokhu okuqukethwe akukwazanga ukuqinisekiswa."
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
-"date\">%(date)s</span>]"
-msgstr ""
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Ichitshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Ichtshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> ngomhla zingu <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
-#, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+#| msgid ""
+#| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+#| "%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
+#| "date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Ichithwe ngu <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> ngomhla zingu <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
-#, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+#| msgid ""
+#| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+#| "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Ichtshiyelwe ngu <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> ngomhla zingu <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr ""
+msgstr "Ishicilelwe kwi %(name)s nombolo. %(number)s ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:41
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Ishicilelwe kwi %(name)s ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Yasayindwa ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
-msgstr ""
+msgstr "Ayikaqali"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Usuku ezoqala ngayo alwaziwa"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
-#, python-format
+#| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Yaqala ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
-#, python-format
+#| msgid ""
+#| "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "– yaqaliswa ngu <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:77
 #: templates/indigo_api/akn/coverpage_act.html:114
-#, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "– yaqaliswa ngu <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:81
 #: templates/indigo_api/akn/coverpage_act.html:118
 #: templates/indigo_api/akn/coverpage_act.html:164
-#, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "ngu <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:83
 #: templates/indigo_api/akn/coverpage_act.html:120
 #: templates/indigo_api/akn/coverpage_act.html:166
-#, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "ngu <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr ""
+msgstr "Kunezinsuku eziningi zokuqalisa:"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
-msgstr ""
+msgstr "Izigaba"
 
 #: templates/indigo_api/akn/coverpage_act.html:139
 msgid "Status"
-msgstr ""
+msgstr "Isimo"
 
 #: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Izigaba ezingaziwa"
 
 #: templates/indigo_api/akn/coverpage_act.html:155
-#, python-format
+#| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "yaqala ngomhla zingu %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
+#| msgid "Assented to on %(date)s"
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "yaqala ngomhla zingu <i>(usuku alwaziwa)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"
-msgstr ""
+msgstr "Qaphela:"
 
 #: templates/indigo_api/akn/coverpage_act.html:184
+#| msgid "Not commenced"
 msgid "not yet commenced"
-msgstr ""
+msgstr "ayikaqali"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Okuqukethwe"
+
+#~ msgid "Up to date as at %(date)s"
+#~ msgstr "Opgedateer tot en met %(date)s"
+
+#, fuzzy
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy
+#~| msgid "Not commenced"
+#~ msgid "%(provisions)s: not yet commenced."
+#~ msgstr "Nog nie in werking"
+
+#~ msgid "Commences on %(date)s unless otherwise noted"
+#~ msgstr "Aanvang op %(date)s tensy anders vermeld"
+

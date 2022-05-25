@@ -35,7 +35,7 @@ open a pull request to merge the changes into master.
 Once merged into master, you must [tell Django to compile the .po files to .mo files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#compiling-message-files):
 
 ```bash
-django-admin compilemessages --settings indigo.settings
+python manage.py compilemessages
 ```
 
 And then commit the changes.

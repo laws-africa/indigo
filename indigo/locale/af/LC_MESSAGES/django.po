@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"PO-Revision-Date: 2022-05-25 08:03\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -15,10 +15,12 @@ msgstr ""
 "X-Crowdin-Project: lawsafrica-indigo\n"
 "X-Crowdin-Language: af\n"
 "X-Crowdin-File: /master/indigo/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 364773\n"
+"X-Crowdin-File-ID: 60\n"
 
 #: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
-msgstr "Daad"
+msgstr "Wet"
 
 #: analysis/toc/base.py:15
 msgid "Article"
@@ -26,7 +28,7 @@ msgstr "Artikel"
 
 #: analysis/toc/base.py:16
 msgid "By-law"
-msgstr "Verordening"
+msgstr "Bywet"
 
 #: analysis/toc/base.py:17
 msgid "Chapter"
@@ -34,7 +36,7 @@ msgstr "Hoofstuk"
 
 #: analysis/toc/base.py:18
 msgid "Government Notice"
-msgstr "Regeringsbrief"
+msgstr "Staats Kennisgewing"
 
 #: analysis/toc/base.py:19
 msgid "Part"
@@ -58,7 +60,7 @@ msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s van %(year)s"
 
 #: analysis/work_detail/base.py:57
-#, fuzzy, python-format
 #| msgid "Chapter"
 msgid "Chapter %(cap)s"
-msgstr "Hoofstuk"
+msgstr "Hoofstuk %(cap)s"
+

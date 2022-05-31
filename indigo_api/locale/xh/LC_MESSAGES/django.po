@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-31 21:05\n"
+"PO-Revision-Date: 2022-05-31 21:20\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -95,88 +95,88 @@ msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Kuvunyiwe ukuba kuqhubeke ngomhla we %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
-msgstr ""
+msgstr "Ayiqalanga"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Umhla wokuqalisa awaziwa"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
 #| msgid "Assented to on %(date)s"
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Yaqala ngo %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
 #| msgid ""
 #| "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "– iqalwe ngu <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:77
 #: templates/indigo_api/akn/coverpage_act.html:114
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "– iqalwe ngu <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:81
 #: templates/indigo_api/akn/coverpage_act.html:118
 #: templates/indigo_api/akn/coverpage_act.html:164
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "ngu <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:83
 #: templates/indigo_api/akn/coverpage_act.html:120
 #: templates/indigo_api/akn/coverpage_act.html:166
 #| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "ngu <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr ""
+msgstr "Kukho iintlobo ezininzi zokuqalisa:"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
-msgstr ""
+msgstr "Izibonelelo"
 
 #: templates/indigo_api/akn/coverpage_act.html:139
 msgid "Status"
-msgstr ""
+msgstr "Ubume"
 
 #: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Izibonelelo ezingaziwayo"
 
 #: templates/indigo_api/akn/coverpage_act.html:155
 #| msgid "Assented to on %(date)s"
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "yaqala ngo %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 #| msgid "Assented to on %(date)s"
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "yaqala ngo <i>(umhla ongaziwayo)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"
-msgstr ""
+msgstr "Qaphela:"
 
 #: templates/indigo_api/akn/coverpage_act.html:184
 #| msgid "Not commenced"
 msgid "not yet commenced"
-msgstr ""
+msgstr "ayikaqalisi"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Isiqulatho"
 
 #~ msgid "Up to date as at %(date)s"
 #~ msgstr "Opgedateer tot en met %(date)s"

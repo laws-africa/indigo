@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-31 20:50\n"
+"PO-Revision-Date: 2022-05-31 20:55\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -41,21 +41,21 @@ msgstr "Olu luguqulelo lolu xwebhu kwi %(start)s."
 #: models/documents.py:301
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu njengoko lwalusuka %(start)s ukuya %(end)s."
 
 #: models/documents.py:304
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu njengoko belunjalo e %(start)s ukuya %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu njengoko belunjalo e %(start)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "Qaphela: Uxwebhu loqobo lopapasho alukho kwaye lo mxholo awukwazanga kuqinisekiswa."
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format

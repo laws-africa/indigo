@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-25 08:03\n"
+"PO-Revision-Date: 2022-05-31 20:50\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -21,22 +21,22 @@ msgstr ""
 #: models/documents.py:291
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu ukusuka %(start)s kwaye lubandakanya naziphi na izilungiso ezipapashiweyo ukuya kuthi ga %(end)s."
 
 #: models/documents.py:293
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu %(start)s."
 
 #: models/documents.py:296
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu kwi %(start)s kwaye lubandakanya naziphi na izilungiso ezipapashiweyo ukuya kuthi ga %(end)s."
 
 #: models/documents.py:298
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Olu luguqulelo lolu xwebhu kwi %(start)s."
 
 #: models/documents.py:301
 #, python-format

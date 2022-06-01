@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-21 12:25+0200\n"
-"PO-Revision-Date: 2022-05-31 21:20\n"
+"PO-Revision-Date: 2022-06-01 06:53\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -60,12 +60,12 @@ msgstr "Qaphela: Uxwebhu loqobo lopapasho alukho kwaye lo mxholo awukwazanga kuq
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Ilungiswe ngu<a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s(%(amending_numtitle)s)</a> kwi<span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Ilungiswe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> kwi <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Ilungiswe ngu<a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwi <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Ilungiswe ngu <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwi <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #| msgid ""

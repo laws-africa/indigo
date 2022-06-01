@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - l10n_master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Compile updated translations and commit changes
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          python -m pip install --upgrade pip
+          pip install psycopg2==2.8.6
+          pip install .
+
+      - name: Compile messages
+        run: python manage.py compilemessages
+
+      - name: Push
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: '*/locale/*/LC_MESSAGES/*.mo'
+          message: 'Update compiled translations'

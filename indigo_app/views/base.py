@@ -1,3 +1,6 @@
+from lxml import etree
+from math import ceil
+
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
@@ -116,5 +119,10 @@ class PlaceViewBase(AbstractAuthedIndigoView):
         return doctypes
 
     def page_count(self, works):
-        # TODO: return actual page count
-        return 0
+        page_count = 0
+        for w in works:
+            for d in w.document_set.undeleted():
+                xml = etree.fromstring(d.document_xml)
+                text = '\n'.join(x.strip() for x in xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
+                page_count += ceil(len(text.split()) / 250)
+        return page_count

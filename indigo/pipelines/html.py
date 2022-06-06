@@ -16,6 +16,16 @@ from .pipeline import Stage, ImportAttachment, Pipeline
 
 log = logging.getLogger(__name__)
 
+WHITELIST = [f'image/{t}' for t in [
+    'bmp',
+    'gif',
+    'jpeg',
+    'png',
+    'svg+xml',
+    'tiff',
+    'x-icon',
+]]
+
 
 class DocxToHtml(Stage):
     """ Converts a DOCX file into HTML.
@@ -34,6 +44,11 @@ class DocxToHtml(Stage):
             helper['counter'] += 1
             try:
                 with image.open() as img:
+                    # check mimetype first; only process those on our whitelist
+                    if image.content_type not in WHITELIST:
+                        log.info(f"Image type {image.content_type} not supported; ignoring")
+                        return {}
+
                     # copy the file to somewhere temporary
                     f = tempfile.NamedTemporaryFile()
                     shutil.copyfileobj(img, f)

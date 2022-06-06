@@ -46,7 +46,7 @@
           <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
           <h5 class="mb-0">Works ({{ total_works }})</h5>
           <div>
-            Pages ({{ total_page_count }})
+            ({{ total_page_count }} page{{ total_page_count|pluralize }})
           </div>
         </div>
         <div class="card-body">

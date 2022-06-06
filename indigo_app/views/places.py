@@ -427,8 +427,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
-        # total page count
-        context['total_page_count'] = self.page_count(works)
+        # page count
+        context['page_count'] = self.page_count(works)
 
         return context
 

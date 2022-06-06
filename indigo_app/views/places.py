@@ -17,13 +17,14 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document
+from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
+from indigo_app.views.base import page_count
 from indigo_app.xlsx_exporter import XlsxExporter
 
 log = logging.getLogger(__name__)
@@ -70,19 +71,11 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # TODO: include real n_pages; default to 0 for n_works and n_pages rather than None
         context['countries'] = Country.objects\
             .prefetch_related('country')\
             .annotate(n_works=Subquery(
                 Work.objects.filter(country=OuterRef('pk'), locality=None)
                 .values('country')
-                .annotate(cnt=Count('pk'))
-                .values('cnt'),
-                output_field=IntegerField()
-            ))\
-            .annotate(n_pages=Subquery(
-                Document.objects.filter(work__country=OuterRef('pk'), work__locality=None)
-                .values('work')
                 .annotate(cnt=Count('pk'))
                 .values('cnt'),
                 output_field=IntegerField()
@@ -117,6 +110,10 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
             for country, group in groupby(metrics, lambda m: m.country)}
         self.add_activity_metrics(context['countries'], metrics, since.date())
 
+        # page counts
+        for c in context['countries']:
+            c.n_pages = page_count(c.works.filter(locality=None))
+
         return context
 
 
@@ -134,7 +131,7 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
         context['total_works'] = sum(p[1] for p in context['subtypes'])
-        context['total_page_count'] = self.page_count(works)
+        context['total_page_count'] = page_count(works)
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
@@ -428,7 +425,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         # page count
-        context['page_count'] = self.page_count(works)
+        context['page_count'] = page_count(works)
 
         return context
 
@@ -671,17 +668,9 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # TODO: include real n_pages; default to 0 for n_works and n_pages rather than None
         context['localities'] = Locality.objects \
             .filter(country=self.country) \
             .annotate(n_works=Count('works')) \
-            .annotate(n_pages=Subquery(
-                Document.objects.filter(work__locality=OuterRef('pk'))
-                .values('work')
-                .annotate(cnt=Count('pk'))
-                .values('cnt'),
-                output_field=IntegerField()
-            ))\
             .annotate(n_open_tasks=Subquery(
                 Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
                     .values('locality')
@@ -710,5 +699,9 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
             country: list(group)
             for country, group in groupby(metrics, lambda m: m.locality)}
         self.add_activity_metrics(context['localities'], metrics, since.date())
+
+        # page counts
+        for p in context['localities']:
+            p.n_pages = page_count(p.works.all())
 
         return context

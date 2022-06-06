@@ -9,6 +9,16 @@ from django.http import Http404
 from indigo_api.models import Country
 
 
+def page_count(works):
+    page_count = 0
+    for w in works:
+        for d in w.document_set.undeleted():
+            xml = etree.fromstring(d.document_xml)
+            text = '\n'.join(x.strip() for x in xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
+            page_count += ceil(len(text.split()) / 250)
+    return page_count
+
+
 class IndigoJSViewMixin(object):
     """ View that inject's the appropriate Backbone view name into the template, for use by the Backbone
     view system. By default, the Backbone view name is the same name as the view's class name.
@@ -117,12 +127,3 @@ class PlaceViewBase(AbstractAuthedIndigoView):
             return doctypes + extras
 
         return doctypes
-
-    def page_count(self, works):
-        page_count = 0
-        for w in works:
-            for d in w.document_set.undeleted():
-                xml = etree.fromstring(d.document_xml)
-                text = '\n'.join(x.strip() for x in xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
-                page_count += ceil(len(text.split()) / 250)
-        return page_count

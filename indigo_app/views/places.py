@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 from collections import defaultdict, Counter
 from datetime import timedelta, date
@@ -18,7 +17,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
+from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
@@ -71,11 +70,19 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # TODO: include real n_pages; default to 0 for n_works and n_pages rather than None
         context['countries'] = Country.objects\
             .prefetch_related('country')\
             .annotate(n_works=Subquery(
                 Work.objects.filter(country=OuterRef('pk'), locality=None)
                 .values('country')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .annotate(n_pages=Subquery(
+                Document.objects.filter(work__country=OuterRef('pk'), work__locality=None)
+                .values('work')
                 .annotate(cnt=Count('pk'))
                 .values('cnt'),
                 output_field=IntegerField()
@@ -127,6 +134,7 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
         context['total_works'] = sum(p[1] for p in context['subtypes'])
+        context['total_page_count'] = self.page_count(works)
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
@@ -303,7 +311,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
             exporter = XlsxExporter(self.country, self.locality)
             return exporter.generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
 
-        return super(PlaceWorksView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = Work.objects\
@@ -355,7 +363,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
             .filter(closed=False) \
             .filter(document__deleted=False) \
             .annotate(n_annotations=Count('document_id')) \
-            .filter(document_id__in=list(docs_by_id.keys()))
+            .filter(document_id__in=docs_by_id)
         for count in annotations:
             docs_by_id[count['document_id']].n_annotations = count['n_annotations']
 
@@ -419,6 +427,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+        # total page count
+        context['total_page_count'] = self.page_count(works)
 
         return context
 
@@ -661,9 +671,17 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # TODO: include real n_pages; default to 0 for n_works and n_pages rather than None
         context['localities'] = Locality.objects \
             .filter(country=self.country) \
             .annotate(n_works=Count('works')) \
+            .annotate(n_pages=Subquery(
+                Document.objects.filter(work__locality=OuterRef('pk'))
+                .values('work')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
             .annotate(n_open_tasks=Subquery(
                 Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
                     .values('locality')

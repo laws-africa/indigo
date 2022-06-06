@@ -45,6 +45,9 @@
         <div class="card-header">
           <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
           <h5 class="mb-0">Works ({{ total_works }})</h5>
+          <div>
+            Pages ({{ total_page_count }})
+          </div>
         </div>
         <div class="card-body">
           {% for subtype, count, perc in subtypes %}

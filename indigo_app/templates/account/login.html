@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load account socialaccount static %}
+{% load account socialaccount static i18n %}
 
 {% block title %}Log In{% endblock %}
 {% block head-css %}
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="mb-3">Log In</h1>
+<h1 class="mb-3">{% trans 'Log In' %}</h1>
 
 <form method="POST" action="{% url 'account_login' %}" id="email-login">
   {% csrf_token %}
@@ -25,7 +25,7 @@
   {% endif %}
 
   <div class="form-group">
-    <label for="{{ form.login.id_for_label }}">Email address</label>
+    <label for="{{ form.login.id_for_label }}">{% trans 'Email address' %}</label>
     <input type="email" class="form-control" name="{{ form.login.name }}" id="{{ form.login.id_for_label }}" required autofocus placeholder="you@example.com">
     {% if form.login.errors %}
       <div class="text-danger">
@@ -37,9 +37,9 @@
   </div>
 
   <div class="form-group">
-    <label for="{{ form.password.id_for_label }}">Password</label>
+    <label for="{{ form.password.id_for_label }}">{% trans 'Password' %}</label>
     <input type="password" class="form-control" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" required>
-    <div><a href="{% url 'account_reset_password' %}">Forgot your password?</a></div>
+    <div><a href="{% url 'account_reset_password' %}">{% trans 'Forgot your password?' %}</a></div>
     {% if form.password.errors %}
       <div class="text-danger">
         {% for error in form.password.errors %}
@@ -51,11 +51,11 @@
 
   <div class="row">
     <div class="col-md-6">
-      <button class="btn btn-success btn-block mb-3" type="submit">Log in</button>
+      <button class="btn btn-success btn-block mb-3" type="submit">{% trans 'Log in' %}</button>
     </div>
 
     <div class="col-md-6">
-      <a class="btn btn-outline-primary btn-block mb-3" href="{{ signup_url }}">Sign up</a>
+      <a class="btn btn-outline-primary btn-block mb-3" href="{{ signup_url }}">{% trans 'Sign up' %}</a>
     </div>
   </div>
 </form>
@@ -75,12 +75,15 @@
           <i class="fab fa-fw fa-{{ provider.id }}"></i>
         {% endif %}
 
-        Log in with {{provider.name}}
+        {% blocktrans with provider=provider.name %}Log in with {{provider}}{% endblocktrans %}
       </a>
     {% endfor %}
   </div>
 </div>
 
-<div class="mt-3 text-muted text-center">By logging in you agree to our <a href="{% url 'terms_of_use' %}">Terms of Use &amp; Privacy Policy</a>.</div>
+<div class="mt-3 text-muted text-center">
+  {% url 'terms_of_use' as tos_url %}
+  {% blocktrans %}By logging in you agree to our <a href="{{ tos_url }}">Terms of Use and Privacy Policy</a>.{% endblocktrans %}
+</div>
 
 {% endblock %}

@@ -1,19 +1,21 @@
+{% load i18n %}
+
 <div class="document-revisions-view d-none">
   <header class="revisions-header">
     <div class="title">
       <div class="diff-navigator float-right" data-target="#revision-akn">
         <span class="change-count mr-3"></span>
         <div class="btn-group" role="group">
-          <button type="button" class="btn btn-outline-secondary prev-change-btn">Previous <i class="fas fa-chevron-up"></i></button>
-          <button type="button" class="btn btn-outline-secondary next-change-btn">Next <i class="fas fa-chevron-down"></i></button>
+          <button type="button" class="btn btn-outline-secondary prev-change-btn">{% trans 'Previous' %} <i class="fas fa-chevron-up"></i></button>
+          <button type="button" class="btn btn-outline-secondary next-change-btn">{% trans 'Next' %} <i class="fas fa-chevron-down"></i></button>
         </div>
       </div>
 
-      <h5>Recent Changes</h5>
+      <h5>{% trans 'Recent Changes' %}</h5>
     </div>
 
     <div class="buttons text-right">
-      <a href="#" class="btn btn-primary dismiss">Close</a>
+      <a href="#" class="btn btn-primary dismiss">{% trans 'Close' %}</a>
     </div>
   </header>
 
@@ -42,7 +44,7 @@
         <div class="revision-user">{{ user.display_name }}</div>
         <div class="revision-comment">{{ comment }}</div>
         <div class="revision-controls">
-          <a href="#" class="restore-revision">Restore this revision</a>
+          <a href="#" class="restore-revision">{% endverbatim %}{% trans 'Restore this revision' %}{% verbatim %}</a>
         </div>
       </div>
     </li>

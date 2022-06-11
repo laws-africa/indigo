@@ -1,19 +1,21 @@
+{% load i18n %}
+
 <div class="modal fade" id="italics-modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Italicised terms</h5>
+        <h5 class="modal-title">{% trans 'Italicised terms' %}</h5>
         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
       </div>
 
       <div class="modal-body">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#this-document-italics-terms">In this document</a>
+            <a class="nav-link active" data-toggle="tab" href="#this-document-italics-terms">{% trans 'In this document' %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#country-italics-terms">In {{ country }}</a>
+            <a class="nav-link" data-toggle="tab" href="#country-italics-terms">{% blocktrans %}In {{ country }}{% endblocktrans %}</a>
           </li>
         </ul>
         <div class="tab-content mt-3">
@@ -26,7 +28,7 @@
           </div>
           <div class="tab-pane fade" id="country-italics-terms">
             {% if country.italics_terms %}
-              <p>Terms that will be italicised in {{ country }}:</p>
+              <p>{% blocktrans %}Terms that will be italicised in {{ country }}:{% endblocktrans %}</p>
               <table class="table table-striped table-sm">
                 <tbody>
                 {% for term in country.italics_terms %}
@@ -37,16 +39,16 @@
                 </tbody>
               </table>
             {% else %}
-              <em>No terms have been selected to be italicised in {{ country }}.</em>
+              <em>{% blocktrans %}No terms have been selected to be italicised in {{ country }}.{% endblocktrans %}</em>
             {% endif %}
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary remove-italics"><i class="fas fa-times"></i> Remove italics</button>
-        <button type="button" class="btn btn-outline-secondary mark-up-italics"><i class="fas fa-sync"></i> Mark up italics</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-secondary remove-italics"><i class="fas fa-times"></i> {% trans 'Remove italics' %}</button>
+        <button type="button" class="btn btn-outline-secondary mark-up-italics"><i class="fas fa-sync"></i> {% trans 'Mark up italics' %}</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Close' %}</button>
       </div>
 
     </div>
@@ -68,7 +70,7 @@
     </tbody>
   </table>
   {{else}}
-  <em>The document does not contain any italicised terms.</em>
+  <em>{% endverbatim %}{% trans 'No italicised terms.' %}{% verbatim %}.</em>
   {{/if}}
   {% endverbatim %}
 

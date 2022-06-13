@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-22 10:38+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"PO-Revision-Date: 2022-06-08 15:24\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -20,17 +20,17 @@ msgstr ""
 
 #: toc.py:14
 msgid "Section"
-msgstr ""
+msgstr "Sekcja"
 
 #: toc.py:29
 msgid "Article"
-msgstr ""
+msgstr "Decyzja Rady 2013/743/UE z dnia 3 grudnia 2013 r. ustanawiająca program szczegółowy wdrażający program „Horyzont 2020” – program ramowy w zakresie badań naukowych i innowacji (2014–2020) i uchylająca decyzje 2006/971/WE, 2006/972/WE, 2006/973/WE, 2006/974/WE i 2006/975/WE (Dz.U. L 347 z 20.12.2013, s. 965), w szczególności jej art. 3 ust. 3 lit. c)."
 
 #: toc.py:30
 msgid "Chapter"
-msgstr ""
+msgstr "Rozdział"
 
 #: toc.py:31
 msgid "Part"
-msgstr ""
+msgstr "Część"
 

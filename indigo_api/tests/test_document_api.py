@@ -343,7 +343,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
         assert_in('<div', response.content.decode('utf-8'))
-        assert_in('Daad 10 van 2014', response.content.decode('utf-8'))
+        assert_in('Wet 10 van 2014', response.content.decode('utf-8'))
 
     def test_document_zipfile(self):
         response = self.client.get('/api/documents/1.zip')

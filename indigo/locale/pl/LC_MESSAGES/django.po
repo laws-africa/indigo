@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-03 09:22+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"PO-Revision-Date: 2022-06-08 15:24\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -24,43 +24,43 @@ msgstr "Ustawa"
 
 #: analysis/toc/base.py:15
 msgid "Article"
-msgstr ""
+msgstr "Decyzja Rady 2013/743/UE z dnia 3 grudnia 2013 r. ustanawiająca program szczegółowy wdrażający program „Horyzont 2020” – program ramowy w zakresie badań naukowych i innowacji (2014–2020) i uchylająca decyzje 2006/971/WE, 2006/972/WE, 2006/973/WE, 2006/974/WE i 2006/975/WE (Dz.U. L 347 z 20.12.2013, s. 965), w szczególności jej art. 3 ust. 3 lit. c)."
 
 #: analysis/toc/base.py:16
 msgid "By-law"
-msgstr ""
+msgstr "Prawo pocztowe"
 
 #: analysis/toc/base.py:17
 msgid "Chapter"
-msgstr ""
+msgstr "Rozdział"
 
 #: analysis/toc/base.py:18
 msgid "Government Notice"
-msgstr ""
+msgstr "Zawiadomienie rządu"
 
 #: analysis/toc/base.py:19
 msgid "Part"
-msgstr ""
+msgstr "Część"
 
 #: analysis/toc/base.py:20
 msgid "Section"
-msgstr ""
+msgstr "Sekcja"
 
 #: analysis/toc/base.py:21
 msgid "Preface"
-msgstr ""
+msgstr "Preface"
 
 #: analysis/toc/base.py:22
 msgid "Preamble"
-msgstr ""
+msgstr "Preambuła"
 
 #: analysis/work_detail/base.py:34
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr ""
+msgstr "%(type)s %(number)s z %(year)s"
 
 #: analysis/work_detail/base.py:57
 #| msgid "Chapter"
 msgid "Chapter %(cap)s"
-msgstr ""
+msgstr "Rozdział %(cap)s"
 

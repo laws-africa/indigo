@@ -14,7 +14,7 @@ def page_count(works):
     for w in works:
         for d in w.document_set.undeleted():
             xml = etree.fromstring(d.document_xml)
-            text = '\n'.join(x.strip() for x in xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
+            text = ' '.join(xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
             page_count += ceil(len(text.split()) / 250)
     return page_count
 

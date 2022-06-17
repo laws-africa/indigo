@@ -1,8 +1,4 @@
-/*
- * Poland (PL) AKN styles
- */
-
-.akoma-ntoso.country-pl {
+@mixin tradition-pl {
   .coverpage {
     .doctype {
       text-transform: uppercase;

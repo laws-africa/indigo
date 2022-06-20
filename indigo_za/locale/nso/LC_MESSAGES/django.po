@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"PO-Revision-Date: 2022-06-20 13:54\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Northern Sotho\n"
 "Language: ns_ZA\n"
@@ -33,3 +33,4 @@ msgstr "Kgaolo ya"
 #: toc.py:31
 msgid "Part"
 msgstr ""
+

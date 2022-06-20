@@ -16,6 +16,7 @@
      For the exception where these are not numbered, .akn--no-indent is applied to override the indent. */
   .akn-subsection,
   .akn-paragraph,
+  .akn-subrule,
   .akn-subparagraph {
     padding-left: $akn-para-indent;
     margin-bottom: $akn-para-spacing;

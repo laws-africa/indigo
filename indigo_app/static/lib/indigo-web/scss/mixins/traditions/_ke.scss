@@ -65,21 +65,6 @@
     text-decoration: underline;
   }
 
-  // turn off table borders
-  table {
-    border-width: 0px;
-
-    th,
-    td {
-      border-left-width: 0px;
-      border-top-width: 0px;
-    }
-
-    tbody + tbody {
-      border-top-width: 0px;
-    }
-  }
-
   // header
   .akn-header {
     // use padding not margin so that it is included in clientHeight

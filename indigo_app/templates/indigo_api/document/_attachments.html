@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <div class="modal fade" id="attachments-modal" tabindex="-1">
   <div class="modal-dialog modal-lg document-attachments-view">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Attachments</h5>
+        <h5 class="modal-title">{% trans 'Attachments' %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
 
@@ -11,7 +13,7 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">{% trans 'Close' %}</button>
       </div>
     </div>
   </div>
@@ -49,7 +51,7 @@
       <input type="file" id="new-attachment-file" multiple="true">
       <h4>Drag and drop a file</h4>
       <h5>or</h5>
-      <button class="btn btn-secondary">Choose a file</button>
+      <button class="btn btn-secondary">{% endverbatim %}{% trans 'Choose a file' %}{% verbatim %}</button>
     </div>
   </li>
 </ul>
@@ -58,13 +60,11 @@
 </script>
 
 <script id="edit-attachment-template" type="text/x-handlebars-template">
-{% verbatim %}
 <form>
   <div class="mb-2"><input type="text" class="form-control form-control-sm" name="filename" required></div>
   <div>
-    <button class="btn btn-sm btn-success save-attachment" type="submit">OK</button>
-    <button class="btn btn-sm btn-outline-secondary cancel">Cancel</button>
+    <button class="btn btn-sm btn-success save-attachment" type="submit">{% trans 'OK' %}</button>
+    <button class="btn btn-sm btn-outline-secondary cancel">{% trans 'Cancel' %}</button>
   </div>
 </form>
-{% endverbatim %}
 </script>

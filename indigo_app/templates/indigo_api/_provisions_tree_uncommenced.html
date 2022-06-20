@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% for prov in provisions %}
   {% if not prov.commenced or prov.children and not prov.all_descendants_same %}
     <li>
@@ -10,7 +12,7 @@
         <span class="{% if prov.commenced %}text-black-50{% else %}alert-warning{% endif %}">
           {{ prov.title|default:prov.id }}
           {% if not prov.commenced and prov.all_descendants_same %}
-            <em>(in full)</em>
+            <em>{% trans '(in full)' %}</em>
           {% endif %}
         </span>
         {% if prov.children and not prov.all_descendants_same %}

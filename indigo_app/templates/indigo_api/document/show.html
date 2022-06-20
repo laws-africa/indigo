@@ -1,6 +1,5 @@
 {% extends "indigo_api/work_layout.html" %}
-{% load pipeline %}
-{% load static %}
+{% load pipeline static i18n %}
 
 {% block title %}{{ document.title }}{% endblock %}
 {% block body-class %}{{ block.super }} document-editor-view no-site-footer sidebar-minimized
@@ -23,9 +22,9 @@
               {{ document.work.numbered_title }}:
             {% endif %}
             <span class="document-title">{{ document.title }}</span>
-            <span class="badge badge-info if-published">published</span>
-            <span class="badge badge-warning if-draft">draft</span>
-            <span class="badge badge-info if-repealed">repealed</span>
+            <span class="badge badge-info if-published">{% trans 'published' %}</span>
+            <span class="badge badge-warning if-draft">{% trans 'draft' %}</span>
+            <span class="badge badge-info if-repealed">{% trans 'repealed' %}</span>
           </h5>
         </div>
 
@@ -37,18 +36,28 @@
               {% if request.user.is_authenticated %}
                 {% if user_can_edit %}
                   <div class="btn-group save-btn-group">
-                    <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
+                    <button class="btn btn-success save" disabled>
+                      <span class="if-published">{% trans 'Save &amp; publish' %}</span>
+                      <span class="if-draft">{% trans 'Save draft' %}</span>
+                    </button>
                     <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
                     <div class="dropdown-menu dropdown-menu-right">
-                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
-                      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
+                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
+                      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Unpublish &amp; save' %}</a>
                     </div>
                   </div>
                 {% else %}
-                  <div>You don't have permission to make changes.</div>
+                  <div>{% trans "You don't have permission to make changes." %}</div>
                 {% endif %}
               {% else %}
-                <div><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to make changes.</div>
+                <div>
+                  {% with path=request.get_full_path|urlencode %}
+                    {% url 'account_login' as login_url %}
+                    {% blocktrans with url=login_url|add:"?next="|add:path trimmed %}
+                    <a href="{{ url }}">Log in </a> to make changes.
+                    {% endblocktrans %}
+                  {% endwith %}
+                </div>
               {% endif %}
             {% endblock %}
           </div>
@@ -75,7 +84,9 @@
     {{#if locality}}
     <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}/" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
-    <li class="breadcrumb-item"><a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works/">Works</a></li>
+    <li class="breadcrumb-item">
+      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works/">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
+    </li>
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
       <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
@@ -85,12 +96,12 @@
             <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
               {{ ../date }}
               · {{ language }}
-              {{#if current}} – this document{{/if}}
+              {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
             </a>
           {{/each}}
         {{/each}}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">Manage amendments...</a>
+        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% endverbatim %}{% trans 'Manage amendments' %}...{% verbatim %}</a>
       </div>
     </li>
   {% endverbatim %}

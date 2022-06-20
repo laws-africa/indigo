@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
 {{#unless permissions.readonly }}
@@ -6,20 +8,20 @@
     <div class="dropdown-menu">
       {{#unless in_reply_to}}
         {{#if permissions.can_change }}
-          <a href="#" class="dropdown-item close-anntn">Resolve</a>
+          <a href="#" class="dropdown-item close-anntn">{% endverbatim %}{% trans 'Resolve' %}{% verbatim %}</a>
           <div class="dropdown-divider"></div>
         {{/if}}
         {{#unless task}}
           {{#if permissions.can_create_task}}
-            <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+            <a href="#" class="dropdown-item create-anntn-task">{% endverbatim %}{% trans 'Create task' %}{% verbatim %}</a>
           {{/if}}
         {{/unless}}
       {{/unless}}
 
       {{#if permissions.can_change }}
         {{#if id}}
-          <a href="#" class="dropdown-item edit-anntn">Edit</a>
-          <a href="#" class="dropdown-item delete-anntn">Delete</a>
+          <a href="#" class="dropdown-item edit-anntn">{% endverbatim %}{% trans 'Edit' %}{% verbatim %}</a>
+          <a href="#" class="dropdown-item delete-anntn">{% endverbatim %}{% trans 'Delete' %}{% verbatim %}</a>
         {{/if}}
       {{/if}}
     </div>
@@ -33,14 +35,14 @@
 {{#if task}}
   <div class="task mt-2">
     <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i>
-    <a href="{{ task.view_url }}" target="_blank">Task #{{ task.id }}</a>
+    <a href="{{ task.view_url }}" target="_blank">{% endverbatim %}{% trans 'Task' %}{% verbatim %} #{{ task.id }}</a>
   </div>
 {{/if}}
 {% endverbatim %}
 </script>
 
 <div id="new-annotation-template" style="display: none">
-  <textarea class="form-control" placeholder="Comment..."></textarea>
-  <button class="btn btn-primary btn-sm save" disabled>Comment</button>
-  <button class="btn btn-outline-secondary btn-sm float-right cancel">Cancel</button>
+  <textarea class="form-control" placeholder="{% trans 'Comment' %}..."></textarea>
+  <button class="btn btn-primary btn-sm save" disabled>{% trans 'Comment' %}</button>
+  <button class="btn btn-outline-secondary btn-sm float-right cancel">{% trans 'Cancel' %}</button>
 </div>

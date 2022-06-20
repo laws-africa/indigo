@@ -1,20 +1,22 @@
+{% load i18n %}
+
 <div class="modal fade" id="properties-modal" tabindex="-1">
   <div class="modal-dialog modal-lg document-properties-view">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Details of this expression</h5>
+        <h5 class="modal-title">{% trans 'Details of this expression' %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body form-horizontal">
 
         <div class="form-row">
           <div class="form-group col-sm-8">
-            <label for="document_title" class="required">Short title</label>
-            <input type="text" class="form-control" id="document_title" placeholder="Title" required>
+            <label for="document_title" class="required">{% trans 'Short title' %}</label>
+            <input type="text" class="form-control" id="document_title" placeholder="{% trans 'Title' %}" required>
           </div>
 
           <div class="form-group col">
-            <label for="document_language" class="required">Language</label>
+            <label for="document_language" class="required">{% trans 'Language' %}</label>
             <select id="document_language" class="form-control">
               {% for opt in indigo_languages %}
               <option value="{{ opt.code }}">{{ opt.language.name_en }}</option>
@@ -24,7 +26,7 @@
         </div>
 
         <div class="form-group">
-          <label for="document_expression_date" class="required">Expression date</label>
+          <label for="document_expression_date" class="required">{% trans 'Expression date' %}</label>
 
           <div class="form-row">
             <div class="col-sm-8">
@@ -33,30 +35,30 @@
                   <option value="{{ date.date|date:"Y-m-d" }}">
                   {{ date.date|date:"Y-m-d"}} –
                   {% if date.initial %}
-                    initial publication
+                    {% trans 'initial publication' %}
                   {% elif date.amendment %}
-                    amendment
+                    {% trans 'amendment' %}
                   {% elif date.consolidation %}
-                    consolidation
+                    {% trans 'consolidation' %}
                   {% endif %}
                 {% endfor %}
               </select>
-              <p class="form-text text-muted">Date of this version of the document, either the publication date or an amendment date</p>
+              <p class="form-text text-muted">{% trans 'Date of this version of the document, either the publication date or an amendment date' %}</p>
             </div>
             <div class="col">
-              <a href="{% url 'work_amendments' document.work.frbr_uri %}" class="btn btn-outline-secondary manage-amendments">Manage amendments</a>
+              <a href="{% url 'work_amendments' document.work.frbr_uri %}" class="btn btn-outline-secondary manage-amendments">{% trans 'Manage amendments' %}</a>
             </div>
           </div>
         </div>
 
         <div class="form-group published-url" style="display: none">
-          <div class="form-text">Published URL: <a href="#" target="_blank" id="document_published_url"></a></div>
+          <div class="form-text">{% trans 'Published URL:' %} <a href="#" target="_blank" id="document_published_url"></a></div>
         </div>
 
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close">Close</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close">{% trans 'Close' %}</button>
       </div>
     </div>
   </div>

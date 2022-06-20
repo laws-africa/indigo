@@ -5,6 +5,8 @@ from .views import users, works, documents, tasks, places, workflows, misc
 
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
+
     # homepage
     path('', RedirectView.as_view(url='/places/', permanent=False)),
 

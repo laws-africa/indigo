@@ -5,6 +5,7 @@ import logging
 
 from cobalt import FrbrUri
 from django import forms
+from django.utils.translation import gettext_lazy as __, gettext as _
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -39,37 +40,43 @@ class RowValidationFormBase(forms.Form):
     doctype = forms.ChoiceField(required=True)
     subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
-        RegexValidator(r'^[a-zA-Z0-9-]+$', 'No spaces or punctuation allowed (use \'-\' for spaces).')
+        RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
     ])
     year = forms.CharField(validators=[
-        RegexValidator(r'\d{4}', 'Must be a year (yyyy).')
+        RegexValidator(r'\d{4}', __('Must be a year (yyyy).'))
     ])
     # publication details
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
-    publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    publication_date = forms.DateField(error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # other relevant dates
-    assent_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
-    commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    assent_date = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
+    commencement_date = forms.DateField(required=False,
+                                        error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # other info
     stub = forms.BooleanField(required=False)
     taxonomy = forms.CharField(required=False)
     # passive relationships
     primary_work = forms.CharField(required=False)
     commenced_by = forms.CharField(required=False)
-    commenced_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    commenced_on_date = forms.DateField(required=False,
+                                        error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     amended_by = forms.CharField(required=False)
-    amended_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    amended_on_date = forms.DateField(required=False,
+                                      error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     repealed_by = forms.CharField(required=False)
-    repealed_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    repealed_on_date = forms.DateField(required=False,
+                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # active relationships
     subleg = forms.CharField(required=False)
     commences = forms.CharField(required=False)
-    commences_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    commences_on_date = forms.DateField(required=False,
+                                        error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     amends = forms.CharField(required=False)
-    amends_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    amends_on_date = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     repeals = forms.CharField(required=False)
-    repeals_on_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    repeals_on_date = forms.DateField(required=False,
+                                      error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
 
     def __init__(self, country, locality, subtypes, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -102,7 +109,8 @@ class PublicationDateOptionalRowValidationForm(RowValidationFormBase):
     To make it optional for individual work creation, also add the country code to
     AddWorkView.PUB_DATE_OPTIONAL_COUNTRIES in apps.IndigoLawsAfricaConfig.
     """
-    publication_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    publication_date = forms.DateField(required=False,
+                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
 
 
 @plugins.register('bulk-creator')
@@ -160,16 +168,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
             response = requests.get(url, timeout=5)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise ValidationError("Error talking to Google Sheets: %s" % str(e))
+            raise ValidationError(_("Error talking to Google Sheets: %s") % str(e))
 
         reader = csv.reader(io.StringIO(response.content.decode('utf-8')))
         rows = list(reader)
 
         if not rows or not rows[0]:
-            raise ValidationError(
+            raise ValidationError(_(
                 "Your sheet did not import successfully; "
                 "please check that you have link sharing ON (Anyone with the link)."
-            )
+            ))
         return rows
 
     @property
@@ -199,13 +207,17 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 .execute()
         except HttpError as e:
             self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
-            raise ValidationError("Unable to access spreadsheet. Is the URL correct and have you shared it with {}?".format(
-                self._gsheets_secret['client_email'],
-            ))
+            raise ValidationError(
+                _("Unable to access spreadsheet. Is the URL correct and have you shared it with %s?").format(
+                    self._gsheets_secret['client_email'],
+                ))
 
         rows = result.get('values', [])
         if not rows or not rows[0]:
-            raise ValidationError("There doesn't appear to be data in sheet {} of {}".format(sheet_name, spreadsheet_id))
+            raise ValidationError(_("There doesn't appear to be data in sheet %(name)s of %(id)s") % {
+                'name': sheet_name,
+                'id': spreadsheet_id
+            })
         return rows
 
     @property
@@ -730,147 +742,200 @@ class BaseBulkCreator(LocaleBasedMatcher):
         task = Task()
 
         if task_type == 'link-gazette':
-            task.title = 'Link gazette'
-            task.description = f'''This work's gazette (original publication document) couldn't be linked automatically.
+            task.title = _('Link gazette')
+            task.description = _('''This work's gazette (original publication document) couldn't be linked automatically.
 
-Find it and upload it manually.'''
+Find it and upload it manually.''')
 
         elif task_type == 'import-content':
-            task.title = 'Import content'
-            task.description = '''Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).'''
+            task.title = _('Import content')
+            task.description = _('Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).')
 
         elif task_type == 'link-commencement-passive':
-            task.title = 'Link commencement (passive)'
-            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commenced_on_date or row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
+            task.title = _('Link commencement (passive)')
+            task.description = _('''It looks like this work was commenced by "%(commenced_by)s" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the commencing work doesn't exist on the system.
 
-Please link the commencement date and commencing work manually.'''
+Please link the commencement date and commencing work manually.''') % {
+                'commenced_by': row.commenced_by,
+                'date': row.commenced_on_date or row.commencement_date or _("(unknown)"),
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'commences-on-date-missing':
-            task.title = "'Commences on' date missing"
-            task.description = f'''It looks like this work commences "{row.commences}" (see row {row.row_number} of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.
+            task.title = _("'Commences on' date missing")
+            task.description = _('''It looks like this work commences "%(commences)s" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.
 
-If it should be linked, please do so manually.'''
+If it should be linked, please do so manually.''') % {
+                'commences': row.commences,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-commencement-active':
-            task.title = 'Link commencement (active)'
-            task.description = f'''It looks like this work commences "{row.commences}" on {row.commences_on_date} (see row {row.row_number} of the spreadsheet), but "{row.commences}" wasn't found, so no action has been taken.
+            task.title = _('Link commencement (active)')
+            task.description = _('''It looks like this work commences "%(commences)s" on %(date)s (see row %(row_num)s of the spreadsheet), but "%(commences)s" wasn't found, so no action has been taken.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the commenced work doesn't exist on the system.
 
-If the commencement should be linked, please do so manually.'''
+If the commencement should be linked, please do so manually.''') % {
+                'commences': row.commences,
+                'date': row.commenced_on_date,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-amendment-active':
-            task.title = 'Link amendment (active)'
+            task.title = _('Link amendment (active)')
             amended_work = row.amends
             if len(amended_work) > 256:
                 amended_work = "".join(amended_work[:256] + ', etc')
-            task.description = f'''It looks like this work amends "{amended_work}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.description = _('''It looks like this work amends "%(amended_work)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
 – more than one amended work was listed (it only works if there's one)
 – the amended work doesn't exist on the system.
 
-Please link the amendment manually.'''
+Please link the amendment manually.''') % {
+                'amended_work': amended_work,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-amendment-passive':
-            task.title = 'Link amendment (passive)'
+            task.title = _('Link amendment (passive)')
             amending_work = row.amended_by
             if len(amending_work) > 256:
                 amending_work = "".join(amending_work[:256] + ', etc')
-            task.description = f'''It looks like this work is amended by "{amending_work}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.description = _('''It looks like this work is amended by "%(amending_work)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
 – more than one amending work was listed (it only works if there's one)
 – the amending work doesn't exist on the system.
 
-Please link the amendment manually.'''
+Please link the amendment manually.''') % {
+                'amending_work': amending_work,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-amendment-pending-commencement':
-            task.title = 'Link amendment (pending commencement)'
-            task.description = f'''It looks like this work amends {amended_work.title} ({amended_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).
+            task.title = _('Link amendment (pending commencement)')
+            task.description = _('''It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).
 
-Please link the amendment manually (and apply it) when this work comes into force.'''
+Please link the amendment manually (and apply it) when this work comes into force.''') % {
+                'amended_title': amended_work.title,
+                'numbered_title': amended_work.numbered_title(),
+            }
 
         elif task_type == 'apply-amendment':
-            task.title = 'Apply amendment'
-            task.description = f'''Apply the amendments made by {amendment.amending_work.title} ({amendment.amending_work.numbered_title()}) on {amendment.date}.
+            task.title = _('Apply amendment')
+            task.description = _('''Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.
 
-The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.'''
+The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.''') % {
+                'amending_title': amendment.amending_work.title,
+                'numbered_title': amendment.amending_work.numbered_title(),
+                'date': amendment.date,
+            }
 
         elif task_type == 'no-repeal-match':
-            task.title = 'Link repeal'
-            task.description = f'''It looks like this work was repealed by "{row.repealed_by}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.title = _('Link repeal')
+            task.description = _('''It looks like this work was repealed by "%(repealed_by)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the repealing work doesn't exist on the system.
 
-Please link the repeal manually.'''
+Please link the repeal manually.''') % {
+                'repealed_by': row.repealed_by,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'check-update-repeal':
-            task.title = 'Check / update repeal'
-            task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}).
+            task.title = _('Check / update repeal')
+            task.description = _('''On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).
 
-But this work is already listed as having been repealed by {work.repealed_by} ({work.repealed_by.numbered_title()}), so the repeal information wasn't updated automatically.
+But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.
 
 If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task with a comment.
-'''
+''') % {
+                'repealing_title': repealing_work.title,
+                'repealing_numbered_title': repealing_work.numbered_title(),
+                'repealed_by': work.repealed_by,
+                'repealed_by_numbered_title': work.repealed_by.numbered_title(),
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-repeal-pending-commencement':
-            task.title = 'Link repeal (pending commencement)'
-            task.description = f'''It looks like this work repeals {repealed_work.title} ({repealed_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
+            task.title = _('Link repeal (pending commencement)')
+            task.description = _('''It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
 
-Please link the repeal manually when this work comes into force.'''
+Please link the repeal manually when this work comes into force.''') % {
+                'title': repealed_work.title,
+                'numbered_title': repealed_work.numbered_title(),
+            }
 
         elif task_type == 'link-repeal':
-            task.title = 'Link repeal'
-            task.description = f'''It looks like this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}), but it couldn't be linked automatically.
+            task.title = _('Link repeal')
+            task.description = _('''It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.
 
-Please link it manually.'''
+Please link it manually.''') % {
+                'title': repealing_work.title,
+                'numbered_title': repealing_work.numbered_title(),
+            }
 
         elif task_type == 'link-primary-work':
-            task.title = 'Link primary work'
-            task.description = f'''It looks like this work's primary work is "{row.primary_work}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.title = _('Link primary work')
+            task.description = _('''It looks like this work's primary work is "%(work)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the primary work doesn't exist on the system.
 
-Please link the primary work manually.'''
+Please link the primary work manually.''') % {
+                'work': row.primary_work,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-subleg':
-            task.title = 'Link subleg'
-            task.description = f'''It looks like this work has subleg "{subleg}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.title = _('Link subleg')
+            task.description = _('''It looks like this work has subleg "%(subleg)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the subleg work doesn't exist on the system.
 
-Please link the subleg work manually.'''
+Please link the subleg work manually.''') % {
+                'subleg': subleg,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'check-update-primary':
-            task.title = 'Check / update primary work'
-            task.description = f'''On the spreadsheet (see row {row.row_number}), it says that this work is subleg under {main_work.title} ({main_work.numbered_title()}).
+            task.title = _('Check / update primary work')
+            task.description = _('''On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).
 
-But this work is already subleg under {work.parent_work.title}, so nothing was done.
+But this work is already subleg under %(parent)s, so nothing was done.
 
-Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment.'''
+Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment.''') % {
+                'title': main_work.title,
+                'numbered_title': main_work.numbered_title(),
+                'parent': work.parent_work.title,
+                'row_num': row.row_number,
+            }
 
         elif task_type == 'link-taxonomy':
-            task.title = 'Link taxonomy'
-            task.description = f'''It looks like this work has the following taxonomy: "{row.unlinked_topics}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.title = _('Link taxonomy')
+            task.description = _(f'''It looks like this work has the following taxonomy: "%(topics)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
 – a typo in the spreadsheet
-– the taxonomy doesn't exist on the system.'''
+– the taxonomy doesn't exist on the system.''') % {
+                'topics': row.unlinked_topics,
+                'row_num': row.row_number,
+            }
 
         task.country = self.country
         task.locality = self.locality
@@ -915,7 +980,7 @@ Possible reasons:
             # but it could be in the current batch
             for row in self.works:
                 if hasattr(row, 'work') and (substring == row.work.frbr_uri or given_string == row.work.title):
-                    work = f'{given_string} (about to be imported)'
+                    work = _('%s (about to be imported)') % given_string
                     break
         return work
 

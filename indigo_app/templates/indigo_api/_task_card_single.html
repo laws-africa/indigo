@@ -1,5 +1,4 @@
-{% load humanize indigo_app %}
-{% load account %}
+{% load humanize indigo_app account i18n %}
 
 <div class="card mb-3 task-list-card {% if task_border %} task-border-{{ task.state }} {% endif %}" id="task-{{ task.id }}">
   <div class="card-body">
@@ -16,30 +15,30 @@
                       class="dropdown-item"
                       formaction="{% url 'submit_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
                       data-confirm="{{ task.submission_message }}">
-                Submit for review
+                {% trans 'Submit for review' %}
               </button>
             {% endif %}
             {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
               <button type="submit"
                       class="dropdown-item"
                       formaction="{% url 'unsubmit_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="Are you sure you want to request changes to this task?">
-                Request changes
+                      data-confirm="{% trans 'Are you sure you want to request changes to this task?' %}">
+                {% trans 'Request changes' %}
               </button>
             {% endif %}
             {% if task.state == 'pending_review' and task.close_task_permission %}
               <button type="submit"
                       class="dropdown-item"
                       formaction="{% url 'close_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="Are you sure you want to approve this task?">
-                Approve
+                      data-confirm="{% trans 'Are you sure you want to approve this task?' %}">
+                {% trans 'Approve' %}
               </button>
             {% endif %}
             <button type="submit"
                     class="dropdown-item"
                     formaction="{% url 'workflow_remove_task' place=task.place.place_code pk=workflow.pk task_pk=task.pk %}"
-                    data-confirm="Are you sure you want to remove this task?">
-              Remove from project
+                    data-confirm="{% trans 'Are you sure you want to remove this task?' %}">
+              {% trans 'Remove from project' %}
             </button>
           </div>
       </div>
@@ -58,7 +57,7 @@
           #{{ task.id }}
         {% endif %}
         {% if task.changes_requested %}
-          <span class="badge badge-secondary bg-pending_review ml-1">Changes requested</span>
+          <span class="badge badge-secondary bg-pending_review ml-1">{% trans 'Changes requested' %}</span>
         {% endif %}
       </div>
       <div>
@@ -91,12 +90,12 @@
 
         <!-- task label -->
         {% for label in task.labels.all %}
-          <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
+          <span class="badge badge-secondary mb-1" title="{% trans label.description %}">{% trans label.title %}</span>
         {% endfor %}
 
         {% if assigned and task.assigned_to %}
           <div class="mb-1">
-            <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="Assigned to"></i>
+            <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="{% trans 'Assigned to' %}"></i>
             <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
             <!-- assign button-->
@@ -106,11 +105,11 @@
 
                 <div class="dropdown">
                   <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Reassign
+                    {% trans 'Reassign' %}
                   </button>
                   <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
-                  <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
-                    Unassign
+                  <button class="dropdown-item mb-1" type="submit" data-confirm="{% trans 'Are you sure you want to unassign this task?' %}" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                    {% trans 'Unassign' %}
                   </button>
                   <div class="dropdown-divider"></div>
                   {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
@@ -125,7 +124,7 @@
             {% csrf_token %}
               <div class="dropdown">
                 <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Assign to
+                  {% trans 'Assign to' %}
                 </button>
                 {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
               </div>
@@ -135,14 +134,14 @@
 
         {% if approved and task.reviewed_by_user %}
           <div class="mb-1">
-            <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="Approved by"></i>
+            <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="{% trans 'Approved by' %}"></i>
             <small class="text-muted">{% user_profile task.reviewed_by_user %}</small>
           </div>
         {% endif %}
 
         {% if submitted_by_user and task.submitted_by_user and task.state == 'pending_review' %}
           <div>
-            <i class="fas fa-user-edit fa-xs task-icon-assignee" title="Submitted by"></i>
+            <i class="fas fa-user-edit fa-xs task-icon-assignee" title="{% trans 'Submitted by' %}"></i>
             <small class="text-muted">{% user_profile task.submitted_by_user %}</small>
           </div>
         {% endif %}

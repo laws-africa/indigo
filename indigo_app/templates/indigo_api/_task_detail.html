@@ -1,18 +1,18 @@
-{% load activity_tags humanize indigo_app account comments %}
+{% load activity_tags humanize indigo_app account comments i18n %}
 
 <div class="container mt-3 mb-5">
     <div class="row">
       <div class="mb-3 col-9">
         {% if task.state == 'blocked' %}
           <div class="alert alert-danger">
-            This task is blocked.
+            {% trans 'This task is blocked.' %}
             {% if blocked_by %}
-              These tasks must be completed first:
+              {% trans 'These tasks must be completed first:' %}
               <ul class="mt-2">
                   {% for blocking_task in blocked_by|dictsort:'pk' %}
                     <li>
                       <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
-                        – {{ blocking_task.title }}</a> <i class="fas fa-fw task-icon-{{ blocking_task.state }}" title="{{ blocking_task.state }}"></i>
+                        – {{ blocking_task.title }}</a> <i class="fas fa-fw task-icon-{{ blocking_task.state }}" title="{% trans blocking_task.state %}"></i>
                     </li>
                   {% endfor %}
               </ul>
@@ -22,9 +22,9 @@
         <div class="d-flex">
           <div class="mr-3 text-center">
             {% if task.state == 'open' and task.assigned_to %}
-            <i class="fas fa-fw task-icon-assigned" title="assigned"></i><br>
+            <i class="fas fa-fw task-icon-assigned" title="{% trans 'assigned' %}"></i><br>
             {% else %}
-            <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i><br>
+            <i class="fas fa-fw task-icon-{{ task.state }}" title="{% trans task.state %}"></i><br>
             {% endif %}
             <span class="text-muted">#{{ task.pk }}</span>
           </div>
@@ -32,7 +32,7 @@
             <h5>
               {{ task.title }}
               {% if task.changes_requested %}
-              <span class="badge badge-secondary bg-pending_review ml-2">Changes requested</span>
+              <span class="badge badge-secondary bg-pending_review ml-2">{% trans 'Changes requested' %}</span>
               {% endif %}
             </h5>
 
@@ -57,7 +57,7 @@
 
       {% if not task.state == 'done' and not task.state == 'cancelled' and task.change_task_permission %}
       <div class="col-3">
-        <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
+        <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">{% trans 'Edit task' %}</a>
       </div>
       {% endif %}
     </div>
@@ -75,7 +75,7 @@
             {% if entry.comment %}
               <li class="activity-item card">
                 <div class="card-header">
-                  {% user_profile entry.user %} commented
+                  {% user_profile entry.user %} {% trans 'commented' %}
                   <span class="time-ago" data-timestamp="{{ entry.submit_date|date:'c' }}">{{ entry.submit_date|date:"Y-m-d H:i" }}</span>:
                 </div>
                 <div class="card-body">
@@ -93,10 +93,16 @@
             {% if anchor %}
               <li class="activity-item">
                 {% if anchor.element %}
-                  Here is
-                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title|default:anchor.anchor_id }}</a>
-                  as it appears currently
-                  {% if not anchor.exact_match %}(<b>{{ anchor.anchor_id }}</b> may have been moved or removed){% endif %}
+                  {% url 'document' doc_id=task.document.pk as doc_url %}
+                  {% with qid=anchor.toc_entry.qualified_id|default:'' anntn_id=task.annotation.id|slugify %}
+                    {% blocktrans trimmed with item_url=doc_url|add:"?toc="|add:qid|add:"&anntn="|add:anntn_id title=anchor.toc_entry.title|default:anchor.anchor_id %}
+                      Here is <a href="{{ item_url }}">{{ title }}</a> as it appears currently
+                    {% endblocktrans %}
+                  {% endwith %}
+
+                  {% if not anchor.exact_match %}
+                    {% blocktrans with a=anchor.anchor_id %}(<b>{{ a }}</b> may have been moved or removed){% endblocktrans %}
+                  {% endif %}
                   <div class="sheet-outer"
                        {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
                     <div class="sheet-inner is-fragment">
@@ -104,8 +110,9 @@
                     </div>
                   </div>
                 {% else %}
-                  The content at <b>{{ anchor.toc_entry.title|default:anchor.anchor_id }}</b> is not
-                  available and may have been moved or removed.
+                  {% blocktrans trimmed with a=anchor.toc_entry.title|default:anchor.anchor_id %}
+                    The content at <b>{{ a }}</b> is not available and may have been moved or removed.
+                  {% endblocktrans %}
                 {% endif %}
               </li>
             {% endif %}
@@ -131,40 +138,46 @@
                           cols="80" placeholder="Add a comment"></textarea>
 
                 <div class="text-right">
-                  <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" disabled>
+                  <input class="btn btn-primary" type="submit" value="{% trans 'Add comment' %}" id="id_submit" disabled>
 
                   {% if task.state == 'pending_review' %}
                     {% if task.unsubmit_task_permission %}
                       <input
                         class="btn btn-primary mr-2 float-left"
                         type="submit"
-                        data-confirm="Are you sure you want to request changes to this task?"
+                        data-confirm="{% trans 'Are you sure you want to request changes to this task?' %}"
                         formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
                         id="btn_request_changes"
-                        value="Request changes"
-                      />
+                        value="{% trans 'Request changes' %}">
                     {% endif %}
 
                     {% if task.customised.close_url %}
-                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>
+                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">{% trans 'Review changes' %}</a>
                     {% elif task.close_task_permission %}
                       <input
                         class="btn btn-success mr-2 float-left"
                         type="submit"
-                        data-confirm="Are you sure you want to approve this task?"
+                        data-confirm="{% trans 'Are you sure you want to approve this task?' %}"
                         formaction="{% url 'close_task' place=place.place_code pk=task.pk %}"
                         id="btn_approve"
-                        value="Approve"
-                      />
+                        value="{% trans 'Approve' %}">
                     {% endif %}
 
                   {% elif task.state == 'cancelled' or task.state == 'done' %}
                     {% if task.reopen_task_permission %}
-                      <input class="btn btn-primary float-left mr-2" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}" id="btn_reopen" value="Reopen"/>
+                      <input class="btn btn-primary float-left mr-2" type="submit"
+                             data-confirm="{% trans 'Are you sure you want to reopen this task?' %}"
+                             formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}"
+                             id="btn_reopen"
+                             value="{% trans 'Reopen' %}">
                     {% endif %}
 
                   {% elif task.state == 'open' and task.submit_task_permission %}
-                    <input class="btn btn-primary float-left mr-2" type="submit" data-confirm="{{ task.submission_message }}" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}" id="btn_submit_for_review" value="Submit for review"/>
+                    <input class="btn btn-primary float-left mr-2" type="submit"
+                           data-confirm="{% trans task.submission_message %}"
+                           formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}"
+                           id="btn_submit_for_review"
+                           value="{% trans 'Submit for review' %}">
                   {% endif %}
                 </div>
               </div>
@@ -172,18 +185,18 @@
 
           </form>
         {% else %}
-          <p>Please <a href="{{ login_url }}">log in</a> to leave a comment.</p>
+          <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to leave a comment.{% endblocktrans %}</p>
         {% endif %}
 
       </div>
 
       <div class="col-3">
-        <h6>Assigned to</h6>
+        <h6>{% trans 'Assigned to' %}</h6>
         <div class="mb-2">
           {% if task.assigned_to %}
             {% user_profile task.assigned_to %}
           {% else %}
-            <em>Unassigned</em>
+            <em>{% trans 'Unassigned' %}</em>
           {% endif %}
         </div>
 
@@ -192,8 +205,9 @@
             {% csrf_token %}
             {% if task.assigned_to %}
               <button class="btn btn-outline-danger mb-3" type="submit"
-                      data-confirm="Are you sure you want to unassign this task?"
-                      formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign
+                      data-confirm="{% trans 'Are you sure you want to unassign this task?' %}"
+                      formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">
+                {% trans 'Unassign' %}
               </button>
             {% endif %}
 
@@ -202,7 +216,7 @@
                 <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                  Assign to
+                  {% trans 'Assign to' %}
                 </button>
                 {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
               </div>
@@ -211,7 +225,7 @@
                 {% if potential_assignee == request.user and potential_assignee.too_many_tasks %}
                   <div class="mb-3">
                     <i class="fa fa-exclamation-circle text-warning"></i>
-                    Finish your other assigned tasks before assigning this task to yourself.
+                    {% trans 'Finish your other assigned tasks before assigning this task to yourself.' %}
                   </div>
                 {% endif %}
               {% endfor %}
@@ -219,16 +233,16 @@
           </form>
         {% endif %}
 
-        <h6>Labels</h6>
+        <h6>{% trans 'Labels' %}</h6>
         <ul class="list-unstyled">
           {% with task.labels.all as labels %}
             {% if labels %}
               {% for label in labels %}
                 <li><span class="badge badge-secondary"
-                          title="{{ label.description }}">{{ label.title }}</span></li>
+                          title="{% trans label.description %}">{% trans label.title %}</span></li>
               {% endfor %}
             {% else %}
-              <li><em>None</em></li>
+              <li><em>{% trans 'None' %}</em></li>
             {% endif %}
           {% endwith %}
         </ul>
@@ -240,7 +254,7 @@
             <select class="selectpicker" multiple name="workflows"
                     data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
                     {% if not perms.indigo_api.change_task %}disabled{% endif %}
-                    data-none-selected-text="Projects" data-selected-text-format="static"
+                    data-none-selected-text="{% trans 'Projects' %}" data-selected-text-format="static"
                     data-live-search="true" data-size="7">
 
               {% for workflow in possible_workflows|dictsort:'title' %}
@@ -257,7 +271,7 @@
                     – {{ workflow.title }}</a></li>
               {% endfor %}
             {% else %}
-              <li><em>None</em></li>
+              <li><em>{% trans 'None' %}</em></li>
             {% endif %}
           </ul>
         {% endwith %}
@@ -271,7 +285,7 @@
                   {% if not perms.indigo_api.change_task or task.is_closed %}
                     disabled
                   {% endif %}
-                  data-none-selected-text="Blocked by" data-selected-text-format="static"
+                  data-none-selected-text="{% trans 'Blocked by' %}" data-selected-text-format="static"
                   data-live-search="true" data-size="7">
 
             {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
@@ -294,7 +308,8 @@
         {% with task.blocking.all as blocking %}
           {% if blocking %}
             <div class="mt-3">
-              <i class="fas fa-exclamation-triangle text-warning"></i> This task is blocking these tasks:
+              <i class="fas fa-exclamation-triangle text-warning"></i>
+              {% trans 'This task is blocking these tasks:' %}
               <ul class="mb-2">
                 {% for blocked_task in blocking|dictsort:'pk' %}
                   <li>

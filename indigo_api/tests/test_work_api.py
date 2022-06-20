@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from nose.tools import assert_equal, assert_not_equal
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
@@ -29,6 +31,6 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_not_equal(len(response.data['results']), 0)
 
-        response = self.client.get('/api/works?country=zz')
+        response = self.client.get('/api/works?country=xx')
         assert_equal(response.status_code, 200)
         assert_equal(len(response.data['results']), 0)

@@ -1,0 +1,55 @@
+@mixin tables {
+  .akn--table-container {
+    // scroll tables horizontally on small screens
+    max-width: 100%;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    margin-bottom: $akn-section-spacing;
+    border: $akn-table-border-width solid $akn-table-border-colour;
+    border-collapse: collapse;
+
+    // Cells
+    th,
+    td {
+      border-top: $akn-table-border-width solid $akn-table-border-colour;
+      border-left: $akn-table-border-width solid $akn-table-border-colour;
+      padding: 5px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    // last elements in table cells don't get a bottom margin
+    th, td {
+      &> :last-child {
+        margin-bottom: 0px;
+      }
+    }
+
+    // Bottom align for column headings
+    thead th {
+      vertical-align: bottom;
+    }
+
+    // Remove top border from thead by default
+    caption + thead tr:first-child th,
+    caption + thead tr:first-child td,
+    colgroup + thead tr:first-child th,
+    colgroup + thead tr:first-child td,
+    thead:first-child tr:first-child th,
+    thead:first-child tr:first-child td {
+      border-top: 0;
+    }
+
+    // Account for multiple tbody instances
+    tbody + tbody {
+      border-top: $akn-table-border-width * 2 solid $akn-table-border-colour;
+    }
+  }
+}

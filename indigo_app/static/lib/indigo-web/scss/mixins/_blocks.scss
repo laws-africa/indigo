@@ -1,0 +1,58 @@
+@mixin blocks {
+  @each $elem in $akn-elements-block {
+    .akn-#{$elem} {
+      display: block;
+    }
+  }
+
+  .akn-preface,
+  .akn-preamble {
+    margin-bottom: $akn-section-spacing;
+
+    &> .akn-p {
+      margin-bottom: $akn-para-spacing;
+    }
+  }
+
+  .akn-listIntroduction,
+  .akn-p {
+    display: block;
+    margin-bottom: $akn-para-spacing;
+  }
+
+  /* blocklists */
+  .akn-blockList {
+    &> .akn-item {
+      padding-left: $akn-para-indent;
+      margin-bottom: $akn-para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$akn-para-indent;
+        margin-right: 0.25em;
+      }
+    }
+  }
+
+  /* bulleted lists */
+  .akn-ul,
+  .akn-ol {
+    list-style-position: outside;
+    padding-left: $akn-para-indent;
+    margin-bottom: $akn-para-spacing;
+  }
+
+  .akn-ul {
+    list-style-type: disc;
+  }
+
+  .akn-ol {
+    list-style-type: arabic;
+  }
+
+  .akn-li {
+    display: list-item;
+    margin-bottom: $akn-para-spacing;
+  }
+}

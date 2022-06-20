@@ -1,0 +1,36 @@
+@mixin tradition-na {
+  // notices on the coverpage are green and bold
+  .coverpage {
+    .amendment-list,
+    .commencement-date,
+    .verification-notice,
+    .as-at-date-notice,
+    .assent-date {
+      font-style: normal;
+      font-weight: bold;
+      color: #00b156;
+    }
+
+    .as-at-date-notice,
+    .amendment,
+    .commencement-note,
+    .verification-notice {
+      font-style: normal;
+    }
+  }
+
+  // remarks are green and bold
+  .akn-remark {
+    font-style: normal;
+    font-weight: bold;
+    color: #00b156;
+  }
+
+  // Single-line remarks must be centered.
+  .akn-p > .akn-remark:only-child,
+  .akn-listIntroduction > .akn-remark:only-child {
+    display: block;
+    margin-top: $akn-para-spacing;
+    text-align: center;
+  }
+}

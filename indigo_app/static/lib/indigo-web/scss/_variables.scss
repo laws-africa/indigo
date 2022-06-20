@@ -17,3 +17,33 @@ $akn-section-spacing: 1.6em !default;  // generally 2 * $para-spacing
 $akn-quote-indent: 2em !default;
 
 $akn-table-border-colour: #ddd !default;
+$akn-table-border-width: 1px !default;
+
+$akn-footnote-bg-colour: rgba(0, 0, 0, 0.07);
+
+
+// AKN document types
+$akn-elements-doctype: (
+  "act", "amendment", "amendmentList", "bill", "components", "debate", "debateReport", "doc", "documentCollection",
+  "judgment", "officialGazette", "portion", "statement"
+);
+
+// AKN hierarchical elements
+$akn-elements-hier: (
+  "alinea", "article", "book", "chapter", "clause", "division", "hcontainer", "indent", "level", "list", "paragraph",
+  "part", "point", "proviso", "rule", "section", "subchapter", "subclause", "subdivision", "sublist", "subparagraph",
+  "subpart", "subrule", "subsection", "subtitle", "title", "tome", "transitional",
+  // semi-hierarchical
+  "crossHeading"
+);
+
+// AKN block and block-like elements
+$akn-elements-block: (
+  "blockContainer", "block", "blockList", "conclusions", "coverPage", "foreign", "item", "ol", "p", "preamble",
+  "preface", "tblock", "toc", "ul"
+);
+
+// AKN document containers
+$akn-elements-doc-container: (
+  "attachment", "component"
+);

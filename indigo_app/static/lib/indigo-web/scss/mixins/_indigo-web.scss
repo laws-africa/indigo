@@ -1,0 +1,11 @@
+// This mixin pulls in all indigo-web styling, including traditions
+@mixin indigo-web {
+  @include blocks;
+  @include core;
+  @include coverpage;
+  @include headings;
+  @include hierarchical;
+  @include inlines;
+  @include tables;
+  @include utilities;
+}

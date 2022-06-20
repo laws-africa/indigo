@@ -1,0 +1,152 @@
+@mixin tradition-ke {
+  /*
+   * Kenya (KE) AKN styles
+   */
+
+  // crossheadings, remarks and editorial comments aren't italicised
+  .akn-remark,
+  .akn-crossHeading {
+    font-style: normal;
+  }
+
+  .coverpage {
+    .amendment,
+    .verification-notice,
+    .as-at-date-notice {
+      font-style: normal;
+    }
+  }
+
+  // Single-line remarks must be centered.
+  .akn-listIntroduction > .akn-remark:only-child,
+  .akn-p > .akn-remark:only-child {
+    display: block;
+    margin-top: $akn-para-spacing;
+    text-align: center;
+  }
+
+  // judgments
+  &[frbr-type="judgment"] {
+    @include tradition-ke-judgment;
+  }
+}
+
+@mixin tradition-ke-judgment {
+  .akn-division,
+  .akn-paragraph {
+    .akn-heading {
+      text-align: start;
+      font-size: $akn-font-size;
+      line-height: $akn-line-height;
+    }
+  }
+
+  .akn-heading,
+  .akn-subheading {
+    margin-bottom: $akn-para-spacing;
+  }
+
+  // justify all 'body' text in the main judgment and attachments
+  .akn-judgmentBody, .akn-attachments {
+    .akn-p {
+      text-align: justify;
+    }
+  }
+
+  .akn-remark,
+  .akn-ref,
+  .akn-term {
+    font-style: italic;
+  }
+
+  // emphasis
+  em {
+    font-style: normal;
+    text-decoration: underline;
+  }
+
+  // header
+  .akn-header {
+    // use padding not margin so that it is included in clientHeight
+    padding-top: $akn-section-spacing;
+    padding-bottom: $akn-section-spacing * 2;
+  }
+
+  .tausi-header {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: $akn-section-spacing;
+    font-weight: bold;
+    text-align: center;
+
+    .doc-title, .neutral-citation {
+      margin-bottom: $akn-para-spacing;
+    }
+
+    .doc-date, .judges, .docket-number, .extra-text, .doc-authority {
+      margin-bottom: $akn-para-spacing;
+      text-transform: uppercase;
+    }
+
+    .legacy-citation {
+      margin-bottom: $akn-para-spacing;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    .republic-head, .parties-separator {
+      margin-top: $akn-section-spacing;
+      margin-bottom: $akn-para-spacing;
+      text-transform: uppercase;
+    }
+
+    .party-listing {
+      margin-bottom: $akn-para-spacing;
+      text-transform: uppercase;
+      display: flex;
+      align-content: flex-end;
+
+      .party-name {
+        text-align: left;
+        max-width: 60%;
+      }
+
+      .dotted {
+        flex-grow: 1;
+        border-bottom: dotted 1px;
+        margin: 6px;
+      }
+    }
+
+    .header-note {
+      margin-top: $akn-section-spacing;
+      margin-bottom: $akn-para-spacing;
+      font-style: italic;
+    }
+  }
+
+  .summary {
+    text-align: justify;
+
+    .summary-title, .author {
+      margin-bottom: $akn-para-spacing;
+    }
+
+    .catchwords, .outcome {
+      font-style: italic;
+    }
+
+    .akn-h4 {
+      font-weight: bold;
+      font-style: normal;
+    }
+  }
+
+  .introduction .decision-action {
+    text-align: center;
+    margin-top: $akn-section-spacing * 1.5;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+}

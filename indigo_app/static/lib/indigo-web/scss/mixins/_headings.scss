@@ -1,0 +1,48 @@
+@mixin headings {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  .akn-heading {
+    margin-top: 0px;
+    margin-bottom: $akn-para-spacing;
+
+    font-family: $akn-font-family;
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: ceil($akn-font-size * 1.7); // ~ 24px
+    line-height: 1.2;
+  }
+
+  h2,
+  .akn-heading {
+    text-align: center;
+    font-size: ceil($akn-font-size * 1.25); // ~ 18px
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: ceil($akn-font-size * 1.14); // ~ 16px
+    line-height: $akn-line-height;
+  }
+
+  h4 {
+    font-size: $akn-font-size;
+    line-height: $akn-line-height;
+  }
+
+  .akn-subheading,
+  .akn-crossHeading {
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Schedules and attachments */
+  .akn-attachment > .akn-subheading {
+    // don't italicise sub-headings for attachments
+    font-style: normal;
+  }
+}

@@ -1,0 +1,17 @@
+@import "ke";
+@import "na";
+@import "pl";
+
+@mixin traditions {
+  &.country-ke {
+    @include tradition-ke;
+  }
+
+  &.country-na {
+    @include tradition-na;
+  }
+
+  &.country-pl {
+    @include tradition-pl;
+  }
+}

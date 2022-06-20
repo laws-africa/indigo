@@ -29,8 +29,12 @@ jobs:
       - name: Build
         run: npx webpack
 
+      - name: Import indigo-web
+        # Keep the local copy of indigo-web up to date; this is only used for PDF exports
+        run: cp -R node_modules/indigo-web/scss indigo_app/static/lib/indigo-web/
+
       - name: Push
         uses: EndBug/add-and-commit@v7
         with:
-          add: 'indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js --force'
+          add: 'indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js indigo_app/static/lib/indigo-web/ --force'
           message: 'Update compiled external-imports.js and indigo-app.js'

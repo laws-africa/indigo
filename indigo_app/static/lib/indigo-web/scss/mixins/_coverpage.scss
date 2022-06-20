@@ -1,8 +1,4 @@
-/*
- * Generated coverpage elements
- */
-
-.akoma-ntoso {
+@mixin coverpage {
   .coverpage {
     text-align: center;
     margin-bottom: $akn-section-spacing;

@@ -1,5 +1,5 @@
-import { IEnrichment, IPopupEnrichmentProvider } from '@laws-africa/indigo-akn/dist/enrichments/popups';
-import { IRangeTarget } from '@laws-africa/indigo-akn/dist/ranges';
+import { IEnrichment, IPopupEnrichmentProvider } from '@lawsafrica/indigo-akn/dist/enrichments/popups';
+import { IRangeTarget } from '@lawsafrica/indigo-akn/dist/ranges';
 import { Instance as Tippy } from 'tippy.js';
 // @ts-ignore
 import { createComponent } from '../vue';

@@ -16,5 +16,5 @@ window.textQuoteFromTextPosition = datq.fromTextPosition;
 window.textQuoteToTextPosition = datq.toTextPosition;
 
 // AKN utilities
-import * as indigoAkn from '@laws-africa/indigo-akn';
+import * as indigoAkn from '@lawsafrica/indigo-akn';
 window.indigoAkn = indigoAkn;

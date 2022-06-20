@@ -1,7 +1,7 @@
 import * as vueComponents from './components';
-import '@laws-africa/web-components/dist/components/la-akoma-ntoso';
-import '@laws-africa/web-components/dist/components/la-gutter';
-import '@laws-africa/web-components/dist/components/la-gutter-item';
+import '@lawsafrica/web-components/dist/components/la-akoma-ntoso';
+import '@lawsafrica/web-components/dist/components/la-gutter';
+import '@lawsafrica/web-components/dist/components/la-gutter-item';
 import './compat-imports';
 import { createComponent, getVue, registerComponents } from './vue';
 

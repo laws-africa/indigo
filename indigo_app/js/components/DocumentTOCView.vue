@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import '@laws-africa/web-components/dist/components/la-table-of-contents-controller';
+import '@lawsafrica/web-components/dist/components/la-table-of-contents-controller';
 
 export default {
   name: 'DocumentTOCView',

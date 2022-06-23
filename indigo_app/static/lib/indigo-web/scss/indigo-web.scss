@@ -5,15 +5,10 @@
  * Licensed under the MIT license
  */
 
-@import "custom";
 @import "variables";
-@import "core";
-@import "coverpage";
-@import "tables";
-@import "utilities";
+@import "mixins";
 
-// tradition-specific styles
-@import "ke";
-@import "na";
-@import "pl";
-@import "za";
+.akoma-ntoso {
+  @include indigo-web;
+  @include traditions;
+}

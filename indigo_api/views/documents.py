@@ -10,6 +10,7 @@ from django.templatetags.static import static
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django_comments.models import Comment
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
@@ -91,7 +92,7 @@ class DocumentViewSet(DocumentViewMixin,
 
     def perform_destroy(self, instance):
         if not instance.draft:
-            raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
+            raise MethodNotAllowed('DELETE', _('DELETE not allowed for published documents, mark as a draft first.'))
         instance.deleted = True
         action.send(self.request.user, verb='deleted', action_object=instance,
                     place_code=instance.work.place.place_code)
@@ -200,7 +201,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
         if request.method == 'POST':
             if annotation.in_reply_to:
-                raise MethodNotAllowed('POST', 'Cannot create a task for a reply annotation.')
+                raise MethodNotAllowed('POST', _('Cannot create a task for a reply annotation.'))
             annotation.create_task(user=request.user)
             status = 201
 
@@ -336,7 +337,7 @@ class ParseView(DocumentResourceView, APIView):
             xml = importer.parse_from_text(text, frbr_uri)
         except ValueError as e:
             log.warning("Error during import: %s" % str(e), exc_info=e)
-            raise ValidationError({'content': str(e) or "error during import"})
+            raise ValidationError({'content': str(e) or _("Error during import")})
 
         if not fragment:
             # The importer doesn't have enough information to give us a complete document

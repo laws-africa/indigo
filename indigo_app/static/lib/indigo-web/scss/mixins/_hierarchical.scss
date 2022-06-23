@@ -1,0 +1,62 @@
+@mixin hierarchical {
+  @each $elem in $akn-elements-hier {
+    .akn-#{$elem} {
+      display: block;
+
+      @if $elem == 'hcontainer' {
+        // hcontainers are treated like paragraphs, rather than major basic units
+        margin-bottom: $akn-para-spacing;
+      } @else {
+        margin-bottom: $akn-section-spacing;
+      }
+    }
+  }
+
+  /* Indent list-like containers that have margin numbers.
+     For the exception where these are not numbered, .akn--no-indent is applied to override the indent. */
+  .akn-subsection,
+  .akn-paragraph,
+  .akn-subrule,
+  .akn-subparagraph {
+    padding-left: $akn-para-indent;
+    margin-bottom: $akn-para-spacing;
+
+    &.akn--no-indent {
+      padding-left: 0px;
+    }
+
+    & > .akn-num {
+      display: block;
+      float: left;
+      margin-left: -$akn-para-indent;
+      margin-right: 0.25em;
+    }
+
+    & > .akn-heading {
+      font-size: inherit;
+      text-align: inherit;
+      line-height: inherit;
+    }
+  }
+
+  /* lists (mostly used in definitions) */
+  .akn-list {
+    &> .akn-intro {
+      display: block;
+      margin-bottom: $akn-para-spacing;
+    }
+
+    &> .akn-point {
+      display: block;
+      margin-left: $akn-para-indent;
+      margin-bottom: $akn-para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$akn-para-indent;
+        margin-right: 0.25em;
+      }
+    }
+  }
+}

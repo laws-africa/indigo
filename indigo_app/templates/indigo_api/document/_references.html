@@ -1,17 +1,19 @@
+{% load i18n %}
+
 <div class="modal fade" id="references-modal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">References</h5>
+        <h5 class="modal-title">{% trans 'References' %}</h5>
         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
       </div>
       <div class="scrollable">
         <div class="document-references-list"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary remove-references pull-left"><i class="fas fa-times"></i> Remove references</button>
-        <button type="button" class="btn btn-outline-secondary find-references"><i class="fas fa-sync"></i> Find references</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-secondary remove-references pull-left"><i class="fas fa-times"></i> {% trans 'Remove references' %}</button>
+        <button type="button" class="btn btn-outline-secondary find-references"><i class="fas fa-sync"></i> {% trans 'Find references' %}</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Close' %}</button>
       </div>
     </div>
   </div>

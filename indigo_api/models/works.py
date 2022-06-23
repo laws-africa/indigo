@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from copy import deepcopy
 from actstream import action
 from django.db.models import JSONField
@@ -9,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from django.utils.translation import gettext as _
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
@@ -417,7 +416,7 @@ class Work(WorkMixin, models.Model):
         if value:
             locality = self.country.localities.filter(code=value).first()
             if not locality:
-                raise ValueError("No such locality for this country: %s" % value)
+                raise ValueError(_("No such locality for this country: %s") % value)
             self.locality = locality
         else:
             self.locality = None
@@ -427,7 +426,7 @@ class Work(WorkMixin, models.Model):
         try:
             frbr_uri = FrbrUri.parse(self.frbr_uri).work_uri(work_component=False)
         except ValueError:
-            raise ValidationError("Invalid FRBR URI")
+            raise ValidationError(_("Invalid FRBR URI"))
 
         # Assume frbr_uri starts with /akn; `rest` is everything after the country/locality, e.g.
         # in `/akn/za-wc/act/2000/12`, `rest` is `act/2000/12`.

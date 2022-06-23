@@ -13,8 +13,11 @@
   <div class="card-body">
     {% with user.emailaddress_set.all as emails %}
       {% if emails %}
-        <p>You can use any of these email addresses to log in.</p>
-        <p><strong>Note:</strong> We only send email notifications to your <strong>primary</strong> email address.</p>
+        <p>{% trans 'You can use any of these email addresses to log in.' %}</p>
+        <p>
+          <strong>{% trans 'Note:' %}</strong>
+          {% blocktrans %}We only send email notifications to your <strong>primary</strong> email address.{% endblocktrans %}
+        </p>
 
         {% if form.non_field_errors %}
           <div class="text-danger">
@@ -27,8 +30,8 @@
         <table class="table table-sm mt-4 mb-4">
           <thead class="thead-light">
             <tr>
-              <th>Email address</th>
-              <th colspan="2">Status</th>
+              <th>{% trans 'Email address' %}</th>
+              <th colspan="2">{% trans 'Status' %}</th>
             </tr>
           </thead>
         {% for emailaddress in emails %}
@@ -39,12 +42,12 @@
             <td>
               {% if emailaddress.verified %}
                 <i class="far fa-fw fa-check-circle text-success"></i>
-                verified
+                {% trans 'verified' %}
               {% else %}
                 <i class="far fa-fw fa-question-circle text-danger"></i>
-                unverified
+                {% trans 'unverified' %}
               {% endif %}
-              {% if emailaddress.primary %}– primary{% endif %}
+              {% if emailaddress.primary %}– {% trans 'primary' %}{% endif %}
             </td>
             <td class="text-right">
               <form action="{% url 'account_email' %}" method="post">
@@ -70,7 +73,7 @@
       {% endif %}
     {% endwith %}
 
-    <h5 class="mt-5">Add an email address</h5>
+    <h5 class="mt-5">{% trans 'Add an email address' %}</h5>
 
     <form method="post" action="{% url 'account_email' %}">
       {% csrf_token %}
@@ -86,7 +89,7 @@
         {% endif %}
       </div>
       
-      <button name="action_add" type="submit" class="btn btn-primary">Add email</button>
+      <button name="action_add" type="submit" class="btn btn-primary">{% trans 'Add email' %}</button>
     </form>
   </div>
 </div>

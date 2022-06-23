@@ -1,21 +1,24 @@
-/*
- * Tables
- */
+@mixin tables {
+  .akn--table-container {
+    // scroll tables horizontally on small screens
+    max-width: 100%;
+    overflow-y: auto;
+  }
 
-.akoma-ntoso {
   table {
     width: 100%;
     margin-bottom: $akn-section-spacing;
-    border: 1px solid $akn-table-border-colour;
+    border: $akn-table-border-width solid $akn-table-border-colour;
+    border-collapse: collapse;
 
     // Cells
     th,
     td {
-      border-left: 1px solid $akn-table-border-colour;
+      border-top: $akn-table-border-width solid $akn-table-border-colour;
+      border-left: $akn-table-border-width solid $akn-table-border-colour;
       padding: 5px;
       text-align: left;
       vertical-align: top;
-      border-top: 1px solid $akn-table-border-colour;
     }
 
     th {
@@ -46,12 +49,7 @@
 
     // Account for multiple tbody instances
     tbody + tbody {
-      border-top: 2px solid $akn-table-border-colour;
-    }
-
-    // Nesting
-    .table {
-      background-color: white;
+      border-top: $akn-table-border-width * 2 solid $akn-table-border-colour;
     }
   }
 }

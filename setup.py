@@ -54,7 +54,7 @@ setup(
         'django-countries-plus<=2.0.0',
         'django-jsonfield>=1.4.1',
         'django-jsonfield-compat>=0.4.4',
-        'django-filter>=2.4.0',
+        'django-filter==2.4.0',
         'django-fsm>=2.6.0',
         'django-languages-plus>=1.1.1',
         'django-pipeline>=1.6.11',
@@ -73,7 +73,7 @@ setup(
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
         'jsonpatch>=1.23',
-        'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
+        'libsass>=0.21.0',
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
         'requests>=2',

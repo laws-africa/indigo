@@ -1,6 +1,7 @@
 import re
 import tempfile
 
+from django.utils.translation import gettext as _
 from lxml import etree
 from cobalt.akn import AkomaNtosoDocument
 
@@ -77,7 +78,7 @@ class ParseSlawText(Stage):
             raise ValueError(stderr.decode('utf-8'))
 
         if not stdout:
-            raise ValueError("We couldn't get any useful text out of the file")
+            raise ValueError(_("We couldn't get any useful text out of the file"))
 
         # clean up encoding string in XML produced by slaw
         doc = AkomaNtosoDocument(stdout.decode('utf-8'))
@@ -94,4 +95,6 @@ class MinTextRequired(Stage):
 
     def __call__(self, context):
         if len(context.text) < self.length:
-            raise ValueError("There is not enough text in the document to import. You may need to OCR the file first.")
+            raise ValueError(
+                _("There is not enough text in the document to import. You may need to OCR the file first.")
+            )

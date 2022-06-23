@@ -1,0 +1,75 @@
+@mixin inlines {
+  .akn-br {
+    display: block;
+  }
+
+  .akn-def {
+    font-weight: bold;
+  }
+
+  .akn-longTitle {
+    display: block;
+    font-weight: bold;
+    margin-bottom: $akn-para-spacing;
+  }
+
+  .akn-remark {
+    font-style: italic;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  /* amendment markup */
+  .akn-ins {
+    text-decoration: underline;
+  }
+  .akn-del {
+    text-decoration: line-through;
+  }
+
+  /* footnotes */
+  .akn-authorialNote {
+    display: flex;
+    font-size: small;
+    margin-top: $akn-para-spacing / 2;
+    padding: .25em 0.25em 0 .25em;
+    position: relative;
+    background-color: $akn-footnote-bg-colour;
+
+    // add a line above the footnote
+    &::before {
+      content: " ";
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-top: 1px solid black;
+      width: 15%;
+    }
+
+    // only first in consecutive footnotes have a border
+    & + .akn-authorialNote {
+      margin-top: 0px;
+
+      &::before {
+        border-top: 0px;
+      }
+    }
+
+    & > .akn-authorialNote--marker {
+      margin-right: $akn-para-indent / 6;
+    }
+  }
+
+  /* quotes */
+  .akn-embeddedStructure {
+    display: block;
+    margin-left: $akn-quote-indent;
+
+    .akn-embeddedStructure--startQuote {
+      margin-left: -0.5em;
+      float: left;
+    }
+  }
+}

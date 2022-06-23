@@ -1,0 +1,17 @@
+@mixin core {
+  /* typography */
+  font-family: $akn-font-family;
+  font-size: $akn-font-size;
+  line-height: $akn-line-height;
+
+  /* document types */
+  .akn-akomaNtoso {
+    display: block;
+  }
+
+  @each $elem in $akn-elements-doctype {
+    .akn-#{$elem} {
+      display: block;
+    }
+  }
+}

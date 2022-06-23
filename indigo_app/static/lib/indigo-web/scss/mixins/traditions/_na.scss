@@ -1,8 +1,4 @@
-/*
- * Namibia (NA) AKN styles
- */
-
-.akoma-ntoso.country-na {
+@mixin tradition-na {
   // notices on the coverpage are green and bold
   .coverpage {
     .amendment-list,

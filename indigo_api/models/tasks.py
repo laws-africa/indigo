@@ -2,6 +2,7 @@ import datetime
 from itertools import groupby
 
 from actstream import action
+from django.utils.translation import gettext_lazy as __, gettext as _
 from django.db.models import JSONField
 from django.db import models
 from django.db.models import signals, Prefetch, Count
@@ -62,24 +63,24 @@ class Task(models.Model):
     }
 
     CODES = [
-        ('apply-amendment', 'Apply amendment'),
-        ('check-update-primary', 'Check / update primary work'),
-        ('check-update-repeal', 'Check / update repeal'),
-        ('commences-on-date-missing', "'Commences on' date missing"),
-        ('import-content', 'Import content'),
-        ('link-amendment-active', 'Link amendment (active)'),
-        ('link-amendment-passive', 'Link amendment (passive)'),
-        ('link-amendment-pending-commencement', 'Link amendment (pending commencement)'),
-        ('link-commencement-active', 'Link commencement (active)'),
-        ('link-commencement-passive', 'Link commencement (passive)'),
-        ('link-gazette', 'Link gazette'),
-        ('link-primary-work', 'Link primary work'),
-        ('link-repeal', 'Link repeal'),
-        ('no-repeal-match', 'Link repeal (not found)'),
-        ('link-repeal-pending-commencement', 'Link repeal (pending commencement)'),
-        ('link-subleg', 'Link subleg'),
-        ('link-taxonomy', 'Link taxonomy'),
-        ('review-work-expression', 'Sign-off'),
+        ('apply-amendment', __('Apply amendment')),
+        ('check-update-primary', __('Check / update primary work')),
+        ('check-update-repeal', __('Check / update repeal')),
+        ('commences-on-date-missing', __("'Commences on' date missing")),
+        ('import-content', __('Import content')),
+        ('link-amendment-active', __('Link amendment (active)')),
+        ('link-amendment-passive', __('Link amendment (passive)')),
+        ('link-amendment-pending-commencement', __('Link amendment (pending commencement)')),
+        ('link-commencement-active', __('Link commencement (active)')),
+        ('link-commencement-passive', __('Link commencement (passive)')),
+        ('link-gazette', __('Link gazette')),
+        ('link-primary-work', __('Link primary work')),
+        ('link-repeal', __('Link repeal')),
+        ('no-repeal-match', __('Link repeal (not found)')),
+        ('link-repeal-pending-commencement', __('Link repeal (pending commencement)')),
+        ('link-subleg', __('Link subleg')),
+        ('link-taxonomy', __('Link taxonomy')),
+        ('review-work-expression', __('Sign-off')),
     ]
 
     class Meta:
@@ -227,10 +228,10 @@ class Task(models.Model):
     @classmethod
     def decorate_submission_message(cls, tasks, view):
         for task in tasks:
-            submission_message = 'Are you sure you want to submit this task for review?'
+            submission_message = _('Are you sure you want to submit this task for review?')
             if task.assigned_to and not task.assigned_to == view.request.user:
-                submission_message = 'Are you sure you want to submit this task for review on behalf of {}?' \
-                    .format(user_display(task.assigned_to))
+                submission_message = _('Are you sure you want to submit this task for review on behalf of %s?') % \
+                    user_display(task.assigned_to)
             task.submission_message = submission_message
 
         return tasks

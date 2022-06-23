@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% for prov in provisions %}
   {% if prov.commenced or prov.children and not prov.all_descendants_same %}
     <li>
@@ -11,7 +13,7 @@
           {{ prov.title|default:prov.id }}
         </span>
         {% if prov.commenced and prov.all_descendants_same %}
-          <em>(Commenced in full)</em>
+          <em>{% trans '(Commenced in full)' %}</em>
         {% elif prov.children %}
           <ul class="provisions-list">
             {% include "indigo_api/_provisions_tree_commenced.html" with provisions=prov.children %}

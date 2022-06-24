@@ -1,15 +1,20 @@
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 import logging
 
 from background_task import background
 from background_task.models import Task
 from django.utils import timezone
 
-from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
+from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DocumentMetrics
 
 
 # get specific task logger
 log = logging.getLogger('indigo.tasks')
+
+
+@background(queue="indigo", remove_existing_tasks=True)
+def update_document_metrics(doc_id):
+    DocumentMetrics.create_or_update(doc_id)
 
 
 @background(queue="indigo", remove_existing_tasks=True)

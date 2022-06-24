@@ -1,22 +1,9 @@
-from lxml import etree
-from math import ceil
-
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
 
 from indigo_api.models import Country
-
-
-def page_count(works):
-    page_count = 0
-    for w in works:
-        for d in w.document_set.undeleted():
-            xml = etree.fromstring(d.document_xml)
-            text = ' '.join(xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]}))
-            page_count += ceil(len(text.split()) / 250)
-    return page_count
 
 
 class IndigoJSViewMixin(object):

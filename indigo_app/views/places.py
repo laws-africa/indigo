@@ -24,8 +24,8 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
-from indigo_app.views.base import page_count
 from indigo_app.xlsx_exporter import XlsxExporter
+from indigo_metrics.models import DocumentMetrics
 
 log = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
 
         # page counts
         for c in context['countries']:
-            c.n_pages = page_count(c.works.filter(locality=None))
+            c.n_pages = DocumentMetrics.calculate_for_place(c.code)['n_pages'] or 0
 
         return context
 
@@ -131,7 +131,7 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
         context['total_works'] = sum(p[1] for p in context['subtypes'])
-        context['total_page_count'] = page_count(works)
+        context['total_page_count'] = DocumentMetrics.calculate_for_place(self.place.place_code)['n_pages'] or 0
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
@@ -425,7 +425,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         # page count
-        context['page_count'] = page_count(works)
+        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
 
         return context
 
@@ -702,6 +702,6 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
 
         # page counts
         for p in context['localities']:
-            p.n_pages = page_count(p.works.all())
+            p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
 
         return context

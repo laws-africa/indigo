@@ -31,7 +31,7 @@
     <div id="library">
       <div class="list-group list-group-flush">
         <div class="list-group-item p-2 text-muted">
-          <span>{{ paginator.count }} works (of {{ total_works }} total)</span>
+          <span>{{ paginator.count }} work{{ paginator.count|pluralize }} (of {{ total_works }} total) · {{ page_count }} page{{ page_count|pluralize }}</span>
           {% if perms.indigo_api.bulk_export_work %}
             <span class="float-right">
               <a href="{{ request.get_full_path }}?&format=xlsx"><i class="fas fa-file-excel fa-fw mr-1"></i>Download to Excel</a>

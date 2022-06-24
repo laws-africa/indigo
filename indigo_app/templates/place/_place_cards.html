@@ -27,6 +27,13 @@
               </div>
             </div>
 
+            <div class="row text-muted">
+              <div class="col mb-2">
+                <h6 class="mb-0">{{ place.n_pages }}</h6>
+                Page{{ place.n_pages|pluralize }}
+              </div>
+            </div>
+
           </div>
           <div class="card-footer pb-0 p-relative" style="height: 50px">
             <canvas class="place-activity-chart" data-values="{{ place.activity_history }}" title="Recent activity"></canvas>

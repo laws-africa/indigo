@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 from collections import defaultdict, Counter
 from datetime import timedelta, date
@@ -26,6 +25,7 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
 from indigo_app.xlsx_exporter import XlsxExporter
+from indigo_metrics.models import DocumentMetrics
 
 log = logging.getLogger(__name__)
 
@@ -110,6 +110,10 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
             for country, group in groupby(metrics, lambda m: m.country)}
         self.add_activity_metrics(context['countries'], metrics, since.date())
 
+        # page counts
+        for c in context['countries']:
+            c.n_pages = DocumentMetrics.calculate_for_place(c.code)['n_pages'] or 0
+
         return context
 
 
@@ -127,6 +131,7 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
         context['total_works'] = sum(p[1] for p in context['subtypes'])
+        context['total_page_count'] = DocumentMetrics.calculate_for_place(self.place.place_code)['n_pages'] or 0
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
@@ -303,7 +308,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
             exporter = XlsxExporter(self.country, self.locality)
             return exporter.generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
 
-        return super(PlaceWorksView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = Work.objects\
@@ -355,7 +360,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
             .filter(closed=False) \
             .filter(document__deleted=False) \
             .annotate(n_annotations=Count('document_id')) \
-            .filter(document_id__in=list(docs_by_id.keys()))
+            .filter(document_id__in=docs_by_id)
         for count in annotations:
             docs_by_id[count['document_id']].n_annotations = count['n_annotations']
 
@@ -419,6 +424,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+        # page count
+        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
 
         return context
 
@@ -692,5 +699,9 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
             country: list(group)
             for country, group in groupby(metrics, lambda m: m.locality)}
         self.add_activity_metrics(context['localities'], metrics, since.date())
+
+        # page counts
+        for p in context['localities']:
+            p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
 
         return context

@@ -1,10 +1,13 @@
-import logging
+from lxml import etree
+from math import ceil
 import datetime
+import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection, models, transaction
+from django.db.models import Sum
 
-from indigo_api.models import PublicationDocument, Country
+from indigo_api.models import PublicationDocument, Country, Document
 
 
 log = logging.getLogger(__name__)
@@ -88,6 +91,64 @@ class WorkMetrics(models.Model):
         for work in Work.objects.all():
             cls.create_or_update(work)
         log.info('Work metrics updated')
+
+
+class DocumentMetrics(models.Model):
+    document = models.OneToOneField(Document, on_delete=models.CASCADE, null=False, related_name='metrics')
+
+    n_bytes = models.IntegerField(null=False, default=0)
+    n_provisions = models.IntegerField(null=False, default=0)
+    n_words = models.IntegerField(null=False, default=0)
+    n_pages = models.IntegerField(null=False, default=0)
+
+    @classmethod
+    def calculate(cls, document):
+        metrics = DocumentMetrics()
+        xml = etree.fromstring(document.document_xml)
+        n_words = len(' '.join(xml.xpath('//a:*//text()', namespaces={'a': xml.nsmap[None]})).split())
+
+        metrics.n_bytes = len(document.document_xml)
+        metrics.n_provisions = len(document.all_provisions())
+        metrics.n_words = n_words
+        # average of 250 words per page
+        metrics.n_pages = ceil(n_words / 250)
+
+        return metrics
+
+    @classmethod
+    def create_or_update(cls, doc_id):
+        document = Document.objects.get(pk=doc_id)
+        metrics = cls.calculate(document)
+
+        try:
+            existing = cls.objects.get(document_id=document.pk)
+            if existing:
+                metrics.id = existing.id
+        except cls.DoesNotExist:
+            pass
+
+        document.metrics = metrics
+        metrics.save()
+
+        return metrics
+
+    @classmethod
+    def calculate_for_place(cls, place_code):
+        """ Calculates the aggregate DocumentMetrics values for all undeleted documents in a given place.
+        """
+        country, locality = Country.get_country_locality(place_code)
+
+        return DocumentMetrics.objects\
+            .filter(document__work__country=country, document__work__locality=locality, document__deleted=False)\
+            .aggregate(n_bytes=Sum('n_bytes'), n_provisions=Sum('n_provisions'), n_words=Sum('n_words'), n_pages=Sum('n_pages'))
+
+    @classmethod
+    def calculate_for_works(cls, works):
+        """ Calculates the aggregate DocumentMetrics values for all undeleted documents related to a list of works.
+        """
+        return DocumentMetrics.objects\
+            .filter(document__work__in=works, document__deleted=False)\
+            .aggregate(n_bytes=Sum('n_bytes'), n_provisions=Sum('n_provisions'), n_words=Sum('n_words'), n_pages=Sum('n_pages'))
 
 
 class DailyWorkMetrics(models.Model):

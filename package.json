@@ -27,7 +27,7 @@
     "indigo-web": "^8.1.2",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.20.0",
-    "sass-loader": "^12.1.0",
+    "sass-loader": "^13.0.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.1.0",
     "typescript": "^4.6.3",

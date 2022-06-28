@@ -178,7 +178,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             component = None
             if self.frbr_uri.work_component:
                 component = document.doc.components().get(self.frbr_uri.work_component)
-                if not component:
+                if component is None:
                     raise Http404
             self.element = document.doc.get_portion_element(self.portion, component)
         else:
@@ -307,7 +307,8 @@ class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.Retri
 
         def add_url(item):
             uri.work_component = item['component']
-            uri.portion = item.get('id')
+            # if the item doesn't normally have an eid, use the type name as the portion, otherwise use the eid
+            uri.portion = item['type'] if item['type'] in document.doc.non_eid_portions else item.get('id')
             item['url'] = self.published_doc_url(
                 document, self.request, frbr_uri=uri.expression_uri()
             )

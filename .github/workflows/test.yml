@@ -45,7 +45,7 @@ jobs:
         pip install psycopg2==2.8.6
         pip install .[test]
         bundle install
-        npm install -g jshint
+        npm install -g jshint sass
     - name: Run tests
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"

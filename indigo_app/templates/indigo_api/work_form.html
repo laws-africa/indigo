@@ -1,17 +1,18 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
 {% block view-id %}edit-work-view{% endblock %}
-{% block title %}Edit – {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Edit' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
   {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
   {% else %}
-    <div class="alert alert-danger">You don't have permission to create or change a work.</div>
+    <div class="alert alert-danger">{% trans "You don't have permission to create or change a work." %}</div>
   {% endif %}
 
   {% if form.errors %}
     <div class="alert alert-danger" role="alert">
-      <p>There were some errors in the information you entered. Please correct the following:</p>
+      <p>{% trans "There were some errors in the information you entered. Please correct the following:" %}</p>
       {{ form.non_field_errors }}
       <ul>
         {% for field in form %}
@@ -29,11 +30,11 @@
     <div class="mb-3">
       <div class="float-right">
         {% if work.pk %}
-          <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">Cancel</a>
+          <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
         {% endif %}
 
         {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
-          <button class="btn btn-success save" type="submit">{% if work.pk %}Save{% else %}Create{% endif %}</button>
+          <button class="btn btn-success save" type="submit">{% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}</button>
         {% endif %}
       </div>
 
@@ -47,19 +48,19 @@
 
     {% block work-form-details %}
     <div class="card mb-3">
-      <h5 class="card-header">Work identification</h5>
+      <h5 class="card-header">{% trans 'Work identification' %}</h5>
       <div class="card-body">
 
         <div class="form-row">
           <div class="form-group col-12">
-            <label for="{{ form.title.id_for_label }}" class="required">Short title</label>
-            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.html_name }}" autofocus placeholder="Title" required value="{{ form.title.value|default:'' }}">
+            <label for="{{ form.title.id_for_label }}" class="required">{% trans 'Short title' %}</label>
+            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.html_name }}" autofocus placeholder="{% trans 'Title' %}" required value="{{ form.title.value|default:'' }}">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-4">
-            <label for="work_doctype" class="required">Work type</label>
+            <label for="work_doctype" class="required">{% trans 'Work type' %}</label>
             <select id="work_doctype" class="form-control">
               {% for label, code in doctypes %}
                 <option value="{{ code }}" selected>{{ label }} ({{ code }})</option>
@@ -68,9 +69,9 @@
           </div>
 
           <div class="form-group col-4">
-            <label for="work_subtype">Work subtype</label>
+            <label for="work_subtype">{% trans 'Work subtype' %}</label>
             <select id="work_subtype" class="form-control">
-              <option value="">(none)</option>
+              <option value="">{% trans '(none)' %}</option>
               {% for subtype in subtypes %}
                 <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
               {% endfor %}
@@ -78,51 +79,57 @@
           </div>
 
           <div class="form-group col-4">
-            <label for="work_actor">Responsible organisation (actor)</label>
+            <label for="work_actor">{% trans 'Responsible organisation (actor)' %}</label>
             <input type="text" class="form-control" id="work_actor">
-            <div class="form-text text-muted">Organisation that created this work. Not normally used for acts.</div>
+            <div class="form-text text-muted">{% trans 'Organisation that created this work. Not normally used for acts.' %}</div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-3 mb-0">
-            <label for="work_date" class="required">Year (or date) of introduction</label>
+            <label for="work_date" class="required">{% trans 'Year (or date) of introduction' %}</label>
             <input type="text" class="form-control" id="work_date" required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)">
           </div>
 
           <div class="form-group col-md-6 offset-md-3 mb-0">
-            <label for="work_number" class="required">Number within year</label>
+            <label for="work_number" class="required">{% trans 'Number within year' %}</label>
             <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
-            <div class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only.</div>
+            <div class="form-text text-muted">
+              {% trans "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only." %}
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card mb-3">
-      <h5 class="card-header">Classification</h5>
+      <h5 class="card-header">{% trans 'Classification' %}</h5>
       <div class="card-body">
 
         <div class="form-row">
           <div class="form-group col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
-              <label class="mb-0" for="{{ form.stub.id_for_label }}">Stub – this work will have no content</label>
-              <p class="form-text text-muted">Check this option for commencing or amending works that are not captured in detail.</p>
+              <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
+              <p class="form-text text-muted">
+                {% trans "Check this option for commencing or amending works that are not captured in detail." %}
+              </p>
             </div>
           </div>
 
           <div class="form-group col-md-6">
-            <button class="btn btn-outline-primary choose-parent float-right" type="button">Choose primary work</button>
+            <button class="btn btn-outline-primary choose-parent float-right" type="button">{% trans 'Choose primary work' %}</button>
             <label>Primary work</label>
-            <p class="form-text text-muted">The primary work for regulations and notices is the primary Act</p>
+            <p class="form-text text-muted">
+              {% trans 'The primary work for regulations and notices is the primary Act.' %}
+            </p>
             <input type="hidden" id="{{ form.parent_work.id_for_label }}" name="{{ form.parent_work.html_name }}" value="{{ form.parent_work.value|default:'' }}">
             <div id="work_parent_work" class="form-text" style="display: none">
               <a class="work_parent_title"></a>
               <br>
               <span class="work_parent_uri"></span>
               <br>
-              <a href="#" class="delete-parent">remove</a>
+              <a href="#" class="delete-parent">{% trans 'remove' %}</a>
             </div>
           </div>
         </div>
@@ -131,7 +138,7 @@
           <div class="form-group col-md-6">
             {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
             {% if topic_groups %}
-              <label for="taxonomies">Taxonomy tags</label>
+              <label for="taxonomies">{% trans 'Taxonomy tags' %}</label>
               <select id="taxonomies" name="work-taxonomies" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">
                 {% for topic in topic_groups %}
                   <optgroup label="{{ topic.grouper }}">
@@ -168,23 +175,23 @@
 
     {% block work-form-publication %}
     <div class="card mb-3" id="publication">
-      <h5 class="card-header">Publication</h5>
+      <h5 class="card-header">{% trans 'Publication' %}</h5>
       <div class="card-body">
 
         {% block work-form-publication-details %}
         <div class="form-row">
           {% block publication-date %}
           <div class="form-group col">
-            <label for="{{ form.publication_date.id_for_label }}" class="required">Publication date</label>
+            <label for="{{ form.publication_date.id_for_label }}" class="required">{% trans 'Publication date' %}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
-            <p class="form-text text-muted">Date when first published</p>
+            <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
           </div>
           {% endblock %}
 
           <div class="form-group col">
-            <label for="{{ form.publication_name.id_for_label }}">Publication name</label>
+            <label for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
             <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
-            <p class="form-text text-muted">Original publication, eg. national gazette</p>
+            <p class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</p>
             <datalist id="publication_list">
               {% for pub in country.publication_set.all %}
                 <option value="{{ pub.name }}">
@@ -193,17 +200,17 @@
           </div>
 
           <div class="form-group col">
-            <label for="{{ form.publication_number.id_for_label }}">Publication number</label>
+            <label for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
             <input type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
-            <p class="form-text text-muted">Publication's sequence number, eg. gazette number</p>
+            <p class="form-text text-muted">{% trans "The publication's sequence number, eg. gazette number." %}</p>
           </div>
         </div>
         {% endblock work-form-publication-details %}
 
         {% block work-form-publication-file %}
         <div class="form-group">
-          <label for="work_publication_document" class="mb-0">Official publication document</label>
-          <p class="form-text text-muted mt-0">A copy of the official publication document, such as the gazette.</p>
+          <label for="work_publication_document" class="mb-0">{% trans 'Official publication document' %}</label>
+          <p class="form-text text-muted mt-0">{% trans 'A copy of the official publication document, such as the gazette.' %}</p>
 
           <input type="hidden" id="{{ form.delete_publication_document.id_for_label }}" name="{{ form.delete_publication_document.html_name }}">
           <input type="hidden" id="{{ form.publication_document_mime_type.id_for_label }}" name="{{ form.publication_document_mime_type.html_name }}">
@@ -226,12 +233,16 @@
             <script id="publication-document-url-template" type="text/x-handlebars-template">
             {% verbatim %}
               {{#if publications}}
-                <li class="list-group-item bg-light h6">Possible documents</li>
+                <li class="list-group-item bg-light h6">{% endverbatim %}{% trans 'Possible documents' %}{% verbatim %}</li>
               {{/if}}
               {{#each publications}}
                 <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center publication-url" data-size="{{ size }}" data-mime-type="{{ mime_type }}" data-url="{{ url }}">
                   <a href="{{ url }}" target="_blank" rel="noreferrer noopener">{{ url }}</a>
-                  {{#if trustworthy}}<button type="button" class="btn btn-secondary attach-publication-url ml-2">Attach document</button>{{/if}}
+                  {{#if trustworthy}}
+                  <button type="button" class="btn btn-secondary attach-publication-url ml-2">
+                    {% endverbatim %}{% trans 'Attach document' %}{% verbatim %}
+                  </button>
+                  {{/if}}
                 </li>
               {{/each}}
             {% endverbatim %}
@@ -246,42 +257,52 @@
 
     {% block work-form-commencement %}
     <div class="card mb-3" id="commencement">
-      <h5 class="card-header">Commencement</h5>
+      <h5 class="card-header">{% trans 'Commencement' %}</h5>
       <div class="card-body">
 
         {% if work.pk and work.commencements.count > 1 %}
           <div class="mb-3">
             <input type="hidden" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
-            This work has mixed commencements, <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">edit them in the Commencements page</a>.
+            {% url 'work_commencements' frbr_uri=work.frbr_uri as comm_url %}
+            {% blocktrans trimmed %}
+              This work has mixed commencements, <a href="{{ comm_url }}">edit them in the Commencements page</a>.
+            {% endblocktrans %}
           </div>
         {% else %}
           <div class="form-row">
             <div class="form-group">
               <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="{{ form.commenced.id_for_label }}" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
-                <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">Commenced – this work has come into force, or has a future commencement date</label>
+                <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">
+                  {% trans 'Commenced – this work has come into force, or has a future commencement date'%}
+                </label>
               </div>
             </div>
           </div>
           <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
             <div class="form-row">
               <div class="form-group col-md-4">
-                <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
+                <label for="{{ form.commencement_date.id_for_label }}">{% trans 'Commencement date' %}</label>
                 <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
-                <p class="form-text text-muted">Date when most of the work comes into force</p>
+                <p class="form-text text-muted">{% trans 'Date when most of the work comes into force.' %}</p>
                 {% if work.pk and work.commencement_date %}
                   {% if work.amendments_made.exists or work.repealed_works.exists %}
-                    <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
+                    <div class="alert alert-warning">
+                      {% url 'work_related' work.frbr_uri as work_url %}
+                      {% blocktrans trimmed %}
+                        If you change this commencement date, you may also have to manually change the dates for related <a href="{{ work_url }}">amendments and repeals</a> made by this work.
+                      {% endblocktrans %}
+                    </div>
                   {% endif %}
                 {% endif %}
               </div>
 
               <div class="form-group col">
-                <button class="btn btn-outline-primary float-right change-commencing-work" type="button">Choose commencing work</button>
-                <label>Commenced by</label>
+                <button class="btn btn-outline-primary float-right change-commencing-work" type="button">{% trans 'Choose commencing work' %}</button>
+                <label>{% trans 'Commenced by' %}</label>
                 <div class="work-commencing-work form-control-static"></div>
                 <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
-                <p class="form-text text-muted">Work that gives the commencement date of this work</p>
+                <p class="form-text text-muted">{% trans 'The work that gives the commencement date of this work.' %}</p>
               </div>
             </div>
 
@@ -289,15 +310,19 @@
               <div class="form-group col-md-4">
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
-                  <label for="commencement_date_unknown">Commencement date is unknown</label>
+                  <label for="commencement_date_unknown">{% trans 'Commencement date is unknown' %}</label>
                 </div>
-                <p class="form-text text-muted">Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation.</p>
+                <p class="form-text text-muted">
+                  {% trans "Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation." %}
+                </p>
               </div>
 
               <div class="form-group col-md-4">
-                <label for="{{ form.commencement_note.id_for_label }}">Commencement note</label>
+                <label for="{{ form.commencement_note.id_for_label }}">{% trans 'Commencement note' %}</label>
                 <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
-                <p class="form-text text-muted">When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context.</p>
+                <p class="form-text text-muted">
+                  {% trans "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context." %}
+                </p>
               </div>
             </div>
           </div>
@@ -307,20 +332,25 @@
     {% endblock work-form-commencement %}
 
     <div class="card mb-3" id="key-dates">
-      <h5 class="card-header">Key dates</h5>
+      <h5 class="card-header">{% trans 'Key dates' %}</h5>
       <div class="card-body">
         <div class="form-row">
           <div class="form-group col-md-4">
-            <label for="{{ form.assent_date.id_for_label }}">Assent date</label>
+            <label for="{{ form.assent_date.id_for_label }}">{% trans 'Assent date' %}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.assent_date.id_for_label }}" name="{{ form.assent_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
-            <div class="form-text text-muted">Date when approved by the responsible authority</div>
+            <div class="form-text text-muted">
+              {% trans 'Date when approved by the responsible authority.' %}
+            </div>
           </div>
 
           <div class="form-group col-md-4">
             <label for="{{ form.as_at_date_override.id_for_label }}">{{ form.as_at_date_override.label }}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date_override.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date_override.html_name }}" value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
-            <p class="form-text text-muted">Date up to which this work was last checked for updates.
-              Only set this if it should be different from {{ place.name }}'s as-at date.</p>
+            <p class="form-text text-muted">
+              {% blocktrans trimmed with name=place.name %}
+                Date up to which this work was last checked for updates. Only set this if it should be different from {{ name }}'s as-at date.
+              {% endblocktrans %}
+            </p>
             {% if form.as_at_date_override.errors %}
               <div class="text-danger">
                 {% for error in form.as_at_date_override.errors %}
@@ -334,13 +364,17 @@
     </div>
 
     <div class="card mb-3" id="consolidation-note">
-      <h5 class="card-header">Consolidation note</h5>
+      <h5 class="card-header">{% trans 'Consolidation note' %}</h5>
       <div class="card-body">
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.consolidation_note_override.id_for_label }}">{{ form.consolidation_note_override.label }}</label>
             <input type="text" class="form-control" id="{{ form.consolidation_note_override.id_for_label }}" placeholder="{{ place.settings.consolidation_note|default:'' }}" name="{{ form.consolidation_note_override.html_name }}" value="{{ form.consolidation_note_override.value|default_if_none:'' }}">
-            <p class="form-text text-muted">Consolidation note that applies to just this work. Overrides a consolidation note in {{ place.name }} if set.</p>
+            <p class="form-text text-muted">
+              {% blocktrans trimmed with name=place.name %}
+                Consolidation note that applies to just this work. Overrides a consolidation note in {{ name }} if set.
+              {% endblocktrans %}
+            </p>
             {% if form.consolidation_note_override.errors %}
               <div class="text-danger">
                 {% for error in form.consolidation_note_override.errors %}
@@ -355,13 +389,13 @@
 
     {% block work-form-repeal %}
     <div class="card mb-3" id="repeal">
-      <h5 class="card-header">Repeal</h5>
+      <h5 class="card-header">{% trans 'Repeal' %}</h5>
       <div class="card-body">
 
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label>Repealed by</label>
-            <button class="btn btn-outline-primary change-repeal float-right" type="button">Choose repealing work</button>
+            <label>{% trans 'Repealed by' %}</label>
+            <button class="btn btn-outline-primary change-repeal float-right" type="button">{% trans 'Choose repealing work' %}</button>
             <div class="work-repeal-view form-text"></div>
             <input type="hidden" id="{{ form.repealed_by.id_for_label }}" name="{{ form.repealed_by.html_name }}" value="{{ form.repealed_by.value|default:'' }}">
           </div>
@@ -369,7 +403,7 @@
 
         <div class="form-row">
           <div class="form-group col-md-4 if-repealed">
-            <label class="required">Repeal date</label>
+            <label class="required">{% trans 'Repeal date' %}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
           </div>
         </div>
@@ -378,10 +412,12 @@
     {% endblock work-form-repeal %}
 
     {% block work-form-place %}
-    <button type="button" class="btn btn-primary mb-3" data-target="#place-form" data-toggle="collapse">Change country or locality...</button>
+    <button type="button" class="btn btn-primary mb-3" data-target="#place-form" data-toggle="collapse">
+      {% trans 'Change country or locality' %}...
+    </button>
 
     <div class="card mb-3 collapse" id="place-form">
-      <h5 class="card-header">Country and locality (advanced)</h5>
+      <h5 class="card-header">{% trans 'Country and locality (advanced)' %}</h5>
       <div class="card-body">
 
         <div class="form-row">
@@ -409,20 +445,24 @@
 
   {% if work.pk %}
     {% if not work.can_delete %}
-    <p>
-      This work cannot be deleted while <a href="{% url 'work_amendments' work.frbr_uri %}">linked documents</a>
-      and <a href="{% url 'work_related' work.frbr_uri %}">related works</a> exist.
-    </p>
+      <p>
+        {% url 'work_amendments' work.frbr_uri as amendments_url %}
+        {% url 'work_related' work.frbr_uri as related_url %}
+        {% blocktrans trimmed %}
+          This work cannot be deleted while <a href="{{ amendments_url }}">linked documents</a> and <a href="{{ related_url }}">related works</a> exist.
+        {% endblocktrans %}
+      </p>
     {% elif perms.indigo_api.delete_work %}
       <form method="POST" action="{% url 'work_delete' frbr_uri=work.frbr_uri %}">
         {% csrf_token %}
-        <button class="btn btn-danger delete pull-left" type="submit" data-confirm="Are you sure you want to delete this work?">Delete this work</button>
+        <button class="btn btn-danger delete pull-left" type="submit" data-confirm="{% trans 'Are you sure you want to delete this work?' %}">
+          {% trans 'Delete' %}
+        </button>
       </form>
     {% endif %}
   {% endif %}
 
   <script id="publication-document-template" type="text/x-handlebars-template">
-  {% verbatim %}
 
     <div class="card">
       <div class="card-body bg-light">
@@ -432,10 +472,11 @@
             <div class="dropdown float-right">
               <a href="#" class="dropdown-toggle text-dark btn" data-toggle="dropdown"></a>
               <div class="dropdown-menu">
-                <a class="dropdown-item delete-publication-document" href="#">Delete</a>
+                <a class="dropdown-item delete-publication-document" href="#">{% trans 'Delete' %}</a>
               </div>
             </div>
             <h6 class="my-0">
+              {% verbatim %}
               {{#if url}}
               <a href="{{ url }}" target="_blank" rel="noreferrer">{{ filename }}</a>
               {{else}}
@@ -460,9 +501,9 @@
   {{#if repealed_by }}
     <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
     <span>{{ repealed_by.frbr_uri }}</span><br>
-    <a href="#" class="delete-repeal">remove</a>
+    <a href="#" class="delete-repeal">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
   {{else}}
-    <i class="text-muted">Not repealed.</i>
+    <i class="text-muted">{% endverbatim %}{% trans 'Not repealed.' %}{% verbatim %}</i>
   {{/if}}
 
   {% endverbatim %}
@@ -474,7 +515,7 @@
   {{#if commencing_work }}
     <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
     <span>{{ commencing_work.frbr_uri }}</span><br>
-    <a href="#" class="delete-commencing-work">remove</a>
+    <a href="#" class="delete-commencing-work">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
   {{/if}}
 
   {% endverbatim %}

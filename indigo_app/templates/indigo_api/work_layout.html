@@ -1,4 +1,5 @@
 {% extends "place/layout.html" %}
+{% load i18n %}
 
 {% block title %}{% if work.pk %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
 
@@ -11,7 +12,7 @@
           {% if locality %}
           <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a></li>
           {% endif %}
-          <li class="breadcrumb-item"><a href="{% url 'place_works' place=place.place_code %}">Works</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'place_works' place=place.place_code %}">{% trans 'Works' %}</a></li>
           {% if work.pk %}
           <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>
           {% endif %}
@@ -22,10 +23,10 @@
         {% if work.pk %}
           <h5 class="main-header-title">
             <span class="work-title">{{ work.title }}</span>
-            {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
-            {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
-            {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
-            {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
+            {% if work.stub %}<span class="badge badge-info">{% trans 'stub' %}</span>{% endif %}
+            {% if work.repealed_date %} <span class="badge badge-info">{% trans 'repealed' %}</span> {% endif %}
+            {% if not work.commenced %} <span class="badge badge-info">{% trans 'not commenced' %}</span>
+            {% elif not work.commencement_date %} <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
             {% endif %}
           </h5>
           {% if work.numbered_title %}<h6>{{ work.numbered_title }}</h6>{% endif %}
@@ -36,23 +37,23 @@
         <nav class="nav nav-tabs mt-4">
           {% block work-header-tabs %}
             <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-book"></i> Overview
+              <i class="fas fa-fw fa-book"></i> {% trans 'Overview' %}
             </a>
             <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-clock"></i> Points in time
+              <i class="fas fa-fw fa-clock"></i> {% trans 'Points in time' %}
             </a>
             <a class="nav-item nav-link {% if view.tab == 'commencements' %}active{% endif %}" href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-rocket fa-rotate-315"></i> Commencements
+              <i class="fas fa-fw fa-rocket fa-rotate-315"></i> {% trans 'Commencements' %}
             </a>
             <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-thumbtack"></i> Tasks
+              <i class="fas fa-fw fa-thumbtack"></i> {% trans 'Tasks' %}
               <span class="badge badge-light">{{ work.tasks.unclosed.count }}</span>
             </a>
             <a class="nav-item nav-link {% if view.tab == 'related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-sitemap"></i> Related works
+              <i class="fas fa-fw fa-sitemap"></i> {% trans 'Related works' %}
             </a>
             <a class="nav-item nav-link {% if view.tab == 'versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-history"></i> Changes
+              <i class="fas fa-fw fa-history"></i> {% trans 'Changes' %}
             </a>
           {% endblock %}
         </nav>

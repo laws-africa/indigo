@@ -16,7 +16,7 @@
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Labels' %}" name="{{ form.labels.name }}"
                 data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
           {% for label in form.fields.labels.queryset %}
-            <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{% trans label.description %}">{% trans label.title %}</option>
+            <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
           {% endfor %}
         </select>
       </div>

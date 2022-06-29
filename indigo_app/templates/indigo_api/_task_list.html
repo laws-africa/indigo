@@ -47,7 +47,7 @@
         <span class="badge badge-secondary bg-pending_review ml-1 mr-1">{% trans 'Changes requested' %}</span>
       {% endif %}
       {% for label in task.labels.all %}
-        <span class="badge badge-secondary mr-1" title="{% trans label.description %}">{% trans label.title %}</span>
+        <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
       {% endfor %}
       {% endblock %}
     </td>

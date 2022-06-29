@@ -1,10 +1,12 @@
+{% load i18n %}
+
 <div class="popup-content lh-compact">
   <h6>
     {{ document.title }}
     {% if document.draft %}
-      <span class="badge badge-warning">draft</span>
+      <span class="badge badge-warning">{% trans 'draft' %}</span>
     {% else %}
-      <span class="badge badge-info">published</span>
+      <span class="badge badge-info">{% trans 'published' %}</span>
     {% endif %}
     {% if document.work.numbered_title %}
       <p class="small mb-0">{{ document.work.numbered_title }}</p>

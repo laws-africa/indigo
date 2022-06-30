@@ -14,7 +14,7 @@ class IndigoJSViewMixin(object):
     js_view = None
 
     def get_context_data(self, **kwargs):
-        context = super(IndigoJSViewMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['js_view'] = self.get_js_view()
         return context
 
@@ -47,7 +47,7 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
             # user must accept terms
             return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
 
-        return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def requires_authentication(self):
         return self.authentication_required or self.permission_required
@@ -67,14 +67,14 @@ class PlaceViewBase(AbstractAuthedIndigoView):
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()
-        return super(PlaceViewBase, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['locality'] = self.locality
         kwargs['country'] = self.country
         kwargs['place'] = self.place
         kwargs['user_can_change_place_settings'] = self.request.user.has_perm('indigo_api.change_placesettings')
-        return super(PlaceViewBase, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     def determine_place(self):
         parts = self.kwargs['place'].split('-', 1)
@@ -94,7 +94,7 @@ class PlaceViewBase(AbstractAuthedIndigoView):
         self.place = self.locality or self.country
 
     def has_permission(self):
-        return super(PlaceViewBase, self).has_permission() and self.has_country_permission()
+        return super().has_permission() and self.has_country_permission()
 
     def has_country_permission(self):
         if self.request.method not in ['POST', 'PUT', 'PATCH', 'DELETE']:

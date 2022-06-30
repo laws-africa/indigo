@@ -166,15 +166,21 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         """ Return details on a single document, possible only part of that document.
         """
         # these are made available to the renderer
-        self.component = self.frbr_uri.expression_component or 'main'
-        self.subcomponent = self.frbr_uri.expression_subcomponent
+        self.component = self.frbr_uri.work_component or 'main'
+        self.portion = self.frbr_uri.portion
         format = self.request.accepted_renderer.format
 
         # get the document
         document = self.get_document()
 
-        if self.subcomponent:
-            self.element = document.get_subcomponent(self.component, self.subcomponent)
+        if self.portion:
+            # get the component, if any, and then the portion within that component
+            component = None
+            if self.frbr_uri.work_component:
+                component = document.doc.components().get(self.frbr_uri.work_component)
+                if component is None:
+                    raise Http404
+            self.element = document.doc.get_portion_element(self.portion, component)
         else:
             # special cases of the entire document
 
@@ -300,8 +306,9 @@ class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.Retri
         uri = uri or document.doc.frbr_uri
 
         def add_url(item):
-            uri.expression_component = item['component']
-            uri.expression_subcomponent = item.get('subcomponent')
+            uri.work_component = item['component']
+            # if the item doesn't normally have an eid, use the type name as the portion, otherwise use the eid
+            uri.portion = item['type'] if item['type'] in document.doc.non_eid_portions else item.get('id')
             item['url'] = self.published_doc_url(
                 document, self.request, frbr_uri=uri.expression_uri()
             )

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"PO-Revision-Date: 2022-06-30 08:02\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Southern Sotho\n"
 "Language: st_ZA\n"
@@ -20,9 +20,7 @@ msgstr ""
 
 #: models/documents.py:290
 #, python-format
-msgid ""
-"This is the version of this document from %(start)s and includes any "
-"amendments published up to %(end)s."
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
 msgstr ""
 
 #: models/documents.py:292
@@ -32,9 +30,7 @@ msgstr ""
 
 #: models/documents.py:295
 #, python-format
-msgid ""
-"This is the version of this document at %(start)s and includes any "
-"amendments published up to %(end)s."
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
 msgstr ""
 
 #: models/documents.py:297
@@ -44,8 +40,7 @@ msgstr ""
 
 #: models/documents.py:300
 #, python-format
-msgid ""
-"This is the version of this document as it was from %(start)s to %(end)s."
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
 msgstr ""
 
 #: models/documents.py:303
@@ -59,9 +54,7 @@ msgid "This is the version of this document as it was at %(start)s."
 msgstr ""
 
 #: models/places.py:191
-msgid ""
-"Note: The original publication document is not available and this content "
-"could not be verified."
+msgid "Note: The original publication document is not available and this content could not be verified."
 msgstr ""
 
 #: models/tasks.py:231
@@ -84,31 +77,22 @@ msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
-"date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/coverpage_act.html:39
@@ -236,3 +220,4 @@ msgstr ""
 
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"
+

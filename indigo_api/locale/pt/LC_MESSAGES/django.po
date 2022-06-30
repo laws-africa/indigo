@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-06-30 08:18\n"
+"PO-Revision-Date: 2022-06-30 15:31\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -220,3 +220,4 @@ msgstr "Erro durante a importação"
 
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"
+

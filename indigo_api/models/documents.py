@@ -58,7 +58,7 @@ class DocumentQuerySet(models.QuerySet):
         """
         if not isinstance(frbr_uri, FrbrUri):
             frbr_uri = FrbrUri.parse(frbr_uri)
-        query = self.filter(frbr_uri=frbr_uri.work_uri(work_component=False))
+        query = self.filter(frbr_uri=frbr_uri.work_uri())
 
         # filter on language
         if frbr_uri.language:
@@ -98,7 +98,7 @@ class DocumentQuerySet(models.QuerySet):
 
         if obj and frbr_uri.language and obj.language.code != frbr_uri.language:
             raise ValueError("The document %s exists but is not available in the language '%s'"
-                             % (frbr_uri.work_uri(work_component=False), frbr_uri.language))
+                             % (frbr_uri.work_uri(), frbr_uri.language))
 
         return obj
 

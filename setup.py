@@ -42,7 +42,7 @@ setup(
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',
-        'cobalt>=6.0',
+        'cobalt>=5.0',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',

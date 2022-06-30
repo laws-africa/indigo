@@ -63,7 +63,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
     The TOC is assembled from certain tags in the document, see ``toc_elements``.
 
     The Table of Contents can also be used to lookup the XML element corresponding
-    to an item in the Table of Contents identified by its component and id.
+    to an item in the Table of Contents identified by its subcomponent path.
+    This is useful when handling URIs such as ``.../eng/main/section/1`` or
+    ``.../eng/main/part/C``.
 
     Some components can be uniquely identified by their type and number, such as
     ``Section 2``. Others require context, such as ``Part 2 of Chapter 1``. The
@@ -228,7 +230,25 @@ class TOCBuilderBase(LocaleBasedMatcher):
             num = None
 
         num = num.text if num else None
-        toc_item = TOCElement(element, component, type_, heading=heading, id_=id_, num=num, component_id=component_id,
+
+        if type_ in self.component_elements:
+            subcomponent = None
+        else:
+            # if we have a chapter/part as a child of a chapter/part, we need to include
+            # the parent as context because they aren't unique, eg: part/1/chapter/2
+            if type_ in self.toc_non_unique_components and parent and parent.type in self.toc_non_unique_components:
+                subcomponent = parent.subcomponent + "/"
+            else:
+                subcomponent = ""
+
+            # eg. 'preamble' or 'chapter/2'
+            subcomponent += type_
+
+            if num:
+                subcomponent += '/' + num.strip('.()')
+
+        toc_item = TOCElement(element, component, type_, heading=heading, id_=id_,
+                              num=num, subcomponent=subcomponent, component_id=component_id,
                               basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)
 
@@ -323,12 +343,14 @@ class TOCElement(object):
     :ivar heading: heading for this element, excluding the number, may be None
     :ivar id: XML id string of the node in the document, may be None
     :ivar num: number of this element, as a string, may be None
+    :ivar qualified_id: the id of the element, qualified by the component id (if any)
+    :ivar subcomponent: name of this subcomponent, may be None
     :ivar title: friendly title of this entry
     :ivar type: element type, one of: ``chapter, part, section`` etc.
     :ivar basic_unit: boolean, defaults to False.
     """
 
-    def __init__(self, element, component, type_, heading=None, id_=None, num=None, children=None, component_id=None, basic_unit=False):
+    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, children=None, component_id=None, basic_unit=False):
         self.element = element
         self.component = component
         self.type = type_
@@ -336,6 +358,7 @@ class TOCElement(object):
         self.id = id_
         self.num = num
         self.children = children or []
+        self.subcomponent = subcomponent
         self.title = None
         self.qualified_id = id_ if component == 'main' else f"{component_id}/{id_}"
         self.basic_unit = basic_unit
@@ -344,6 +367,7 @@ class TOCElement(object):
         return {
             'type': self.type,
             'component': self.component,
+            'subcomponent': self.subcomponent,
             'title': self.title,
             'children': [c.as_dict() for c in self.children],
             'basic_unit': self.basic_unit,

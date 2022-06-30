@@ -42,7 +42,7 @@ def generate_filename(data, view, format=None):
     if hasattr(data, 'frbr_uri'):
         parts = [data.year, data.number]
         if hasattr(view, 'component'):
-            parts.extend([view.component if view.component != 'main' else None, view.portion])
+            parts.extend([view.component if view.component != 'main' else None, view.subcomponent])
     else:
         parts = view.kwargs['frbr_uri'].split('/')
 
@@ -70,7 +70,7 @@ class AkomaNtosoRenderer(XMLRenderer):
         filename = generate_filename(data, view, self.format)
         renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
 
-        if not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             return data.document_xml
 
         return ET.tostring(view.element, pretty_print=True, encoding='utf-8')
@@ -94,7 +94,7 @@ class HTMLRenderer(StaticHTMLRenderer, ExporterMixin):
         view = renderer_context['view']
         exporter = self.get_exporter()
 
-        if not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             exporter.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
             return exporter.render(document)
 
@@ -154,7 +154,7 @@ class PDFRenderer(BaseRenderer):
         if isinstance(data, list):
             # render many
             pdf = exporter.render_many(data)
-        elif not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
+        elif not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             # whole document
             pdf = exporter.render(data)
         else:
@@ -180,7 +180,7 @@ class PDFRenderer(BaseRenderer):
             parts = [str(data.id), data.updated_at.isoformat()]
             if hasattr(view, 'component'):
                 parts.append(view.component)
-                parts.append(view.portion)
+                parts.append(view.subcomponent)
         else:
             # list of docs
             data = sorted(data, key=lambda d: d.id)
@@ -228,7 +228,7 @@ class EPUBRenderer(ExporterMixin, PDFRenderer):
         if isinstance(data, list):
             # render many
             epub = exporter.render_many(data)
-        elif not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
+        elif not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             # whole document
             epub = exporter.render(data)
         else:

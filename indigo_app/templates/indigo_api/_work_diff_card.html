@@ -1,13 +1,17 @@
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 <div>
-  {% user_profile version.revision.user %} made
-  {{ version.changes|length }} change{{ version.changes|length|pluralize}} 
+  {% user_profile version.revision.user %}
+  {% blocktrans trimmed count n_changes=version.changes|length %}
+    made {{ n_changes }} change
+    {% plural %}
+    made {{ n_changes }} changes
+  {% endblocktrans %}
   <span class="time-ago" data-timestamp="{{ version.revision.date_created|date:'c' }}">{{ version.revision.date_created|date:"Y-m-d H:i" }}</span>
   {% if version.revision.comment %}
     <span class="text-muted">· {{ version.revision.comment }}</span>
   {% endif %}
-  · <a href="#changes-{{ version.id }}" data-toggle="collapse">Show changes</a>
+  · <a href="#changes-{{ version.id }}" data-toggle="collapse">{% trans 'Show changes' %}</a>
 </div>
 
 <div class="card mt-3 collapse" id="changes-{{ version.id }}">
@@ -15,9 +19,9 @@
     <table class="table table-sm table-borderless diff-table">
       <thead>
         <tr>
-          <th class="text-muted">{% if version.previous %}Version #{{ version.previous.id }}{% endif %}</th>
+          <th class="text-muted">{% if version.previous %}{% trans 'Version' %} #{{ version.previous.id }}{% endif %}</th>
           <td></td>
-          <th class="text-muted">{% if current %}Current version{% else %}Version #{{ version.id }}{% endif %}</th>
+          <th class="text-muted">{% if current %}{% trans 'Current version' %}{% else %}{% trans 'Version' %} #{{ version.id }}{% endif %}</th>
         </tr>
       </thead>
       <tbody>
@@ -36,9 +40,9 @@
     {% if version.previous and perms.indigo_api.change_work %}
       <form action="{% url 'work_restore_version' frbr_uri=work.frbr_uri version_id=version.previous.id %}" method="POST">
         {% csrf_token %}
-        <button type="submit" class="btn btn-warning" data-confirm="Are you sure?">Restore this version</button>
+        <button type="submit" class="btn btn-warning" data-confirm="{% trans 'Are you sure?' %}">{% trans 'Restore this version' %}</button>
       </form>
     {% endif %}
 
-</div>
+  </div>
 </div>

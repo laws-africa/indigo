@@ -1,23 +1,23 @@
 {% extends "indigo_api/work_layout.html" %}
-{% load indigo_app humanize %}
+{% load indigo_app humanize i18n %}
 
 {% block work-content %}
 
   <div class="float-right">
     {% block work-buttons %}
       {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-        <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">Create task</a>
-        <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit work</a>
+        <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
+        <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">{% trans 'Edit work' %}</a>
       {% endif %}
     {% endblock %}
   </div>
 
   <h3>
     {{ work.title }}
-    {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
-    {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
-    {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
-    {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
+    {% if work.stub %}<span class="badge badge-info">{% trans 'stub' %}</span>{% endif %}
+    {% if work.repealed_date %} <span class="badge badge-info">{% trans 'repealed' %}</span> {% endif %}
+    {% if not work.commenced %} <span class="badge badge-info">{% trans 'not commenced' %}</span>
+    {% elif not work.commencement_date %} <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
     {% endif %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
@@ -25,9 +25,13 @@
   {% block country %}
   <div class="mb-3">
     <div class="float-right">
-      {% if work.updated_by_user %}{% user_profile work.updated_by_user %} u{% else %}U{% endif %}pdated {{ work.updated_at|naturaltime }} 
+      {% if work.updated_by_user %}
+        {% user_profile work.updated_by_user %}
+      {% endif %}
+      {% trans 'updated' %}
+      {{ work.updated_at|naturaltime }}
       ·
-      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">recent changes</a>
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">{% trans 'recent changes' %}</a>
     </div>
     <div>
       {{ country.name }} · {{ country.code }}
@@ -46,12 +50,12 @@
               <div class="row">
                 <div class="col-sm-6">
                   <dl class="mb-0">
-                    <dt>Promulgation</dt>
+                    <dt>{% trans 'Promulgation' %}</dt>
                     <dd>
                       <div>
-                        Published in {{ work.publication_name|default:"(unknown)" }}
-                        {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
-                        {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+                        {% blocktrans with name=work.publication_name|default:"(unknown)" %}Published in {{ name }}{% endblocktrans %}
+                        {% if work.publication_number %} {% trans 'no.' %} {{ work.publication_number }}{% endif %}
+                        {% if work.publication_date %} {% trans 'on' %} {{ work.publication_date|date:"Y-m-d" }}{% endif %}
                       </div>
                       {% if work.publication_document %}
                       <div>
@@ -60,32 +64,43 @@
                       {% endif %}
                     </dd>
 
-                    <dt>Commencement</dt>
+                    <dt>{% trans 'Commencement' %}</dt>
                     <dd>
                       {% if work.commenced %}
-                        Commenced
-                        {% if work.main_commencement and not work.main_commencement.all_provisions %}in part{% endif %}
-                        on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
+                        {% if work.main_commencement and not work.main_commencement.all_provisions %}
+                          {% trans 'Commenced in part' %}
+                        {% else %}
+                          {% trans 'Commenced' %}
+                        {% endif %}
+
+                        {% trans 'on' %} {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
+
                         {% if work.commencing_work %}
-                          by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                          {% trans 'by' %}
+                          <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                         {% endif %}
                         {% if work.commencements.count > 1 %}
-                          <div>This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.</div>
+                          <div>
+                            {% url 'work_commencements' frbr_uri=work.frbr_uri as work_url %}
+                            {% blocktrans trimmed %}
+                              This work has <a href="{{ work_rul }}">multiple commencements</a>.
+                            {% endblocktrans %}
+                          </dd>
                         {% endif %}
                         {% if work.commencement_note %}
                           <div>{{ work.commencement_note }}</div>
                         {% endif %}
                       {% else %}
-                        Not commenced
+                        {% trans 'Not commenced' %}
                       {% endif %}
                     </dd>
 
-                    <dt>Up to date as at</dt>
+                    <dt>{% trans 'Up to date as at' %}</dt>
                     <dd>
                       {{ work.as_at_date|date:'Y-m-d' }}
                       {% if work.as_at_date_override %}
-                        <span class="text-muted" title="Set explicitly on this work">
-                          <i class="fa fa-info-circle"></i> Overridden
+                        <span class="text-muted" title="{% trans 'Set explicitly on this work' %}">
+                          <i class="fa fa-info-circle"></i> {% trans 'Overridden' %}
                         </span>
                       {% endif %}
                     </dd>
@@ -107,29 +122,29 @@
 
                 <div class="col-sm-6">
                   <dl class="mb-0">
-                    <dt>Assent</dt>
+                    <dt>{% trans 'Assent' %}</dt>
                     <dd>
                       {% if work.assent_date %}
-                        Assented to on {{ work.assent_date|date:"Y-m-d" }}
+                        {% trans 'Assented to on' %} {{ work.assent_date|date:"Y-m-d" }}
                       {% else %}
-                        <i>(unknown)</i>
+                        <i>{% trans '(unknown)' %}</i>
                       {% endif %}
                     </dd>
 
-                    <dt>Repeal</dt>
+                    <dt>{% trans 'Repeal' %}</dt>
                     <dd>
                       {% if work.repealed_date %}
-                        Repealed on {{ work.repealed_date|date:"Y-m-d" }}
+                        {% trans 'Repealed on' %} {{ work.repealed_date|date:"Y-m-d" }}
                         {% if work.repealed_by %}
-                        by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+                          {% trans 'by' %} <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
                         {% endif %}
                       {% else %}
-                        <i>(not repealed)</i>
+                        <i>{% trans '(not repealed)' %}</i>
                       {% endif %}
                     </dd>
 
                     {% if work.parent_work %}
-                      <dt>Primary work</dt>
+                      <dt>{% trans 'Primary work' %}</dt>
                       <dd>
                         <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
                       </dd>
@@ -137,7 +152,7 @@
 
                     {% with work.child_works.all as kids %}
                       {% if kids|length > 0 %}
-                        <dt>Subsidary works</dt>
+                        <dt>{% trans 'Subsidary works' %}</dt>
                         <dd>
                           {% if kids|length > 3 %}
                             <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
@@ -154,10 +169,10 @@
 
                     {% if work.consolidation_note %}
                       <dt>
-                        Consolidation note
+                        {% trans 'Consolidation note' %}
                         {% if work.consolidation_note_override %}
-                          <span class="text-muted" title="Set explicitly on this work">
-                            <i class="fa fa-info-circle"></i> Overridden
+                          <span class="text-muted" title="{% trans 'Set explicitly on this work' %}">
+                            <i class="fa fa-info-circle"></i> {% trans 'Overridden' %}
                           </span>
                         {% endif %}
                       </dt>
@@ -187,7 +202,7 @@
 
     <div class="col-3">
       {% block secondary-info %}
-        <h6>Core Details</h6>
+        <h6>{% trans 'Core Details' %}</h6>
 
         <div class="d-flex mb-2">
           <div>
@@ -195,17 +210,17 @@
           </div>
           <div class="ml-2 mt-2">
             <h3 class="mb-0">{{ work.metrics.p_breadth_complete|floatformat:0 }}%</h3>
-            Complete
+            {% trans 'Complete' %}
           </div>
         </div>
 
         {% if work.metrics.p_complete < 100 %}
           <ul class="mb-0 mt-3 pl-4">
             {% if not work.publication_document %}
-              <li>Add a publication document.</li>
+              <li>{% trans 'Add a publication document.' %}</li>
             {% endif %}
             {% if not work.stub and work.metrics.n_expressions == 0 %}
-              <li>Publish at least one point in time.</li>
+              <li>{% trans 'Publish at least one point in time.' %}</li>
             {% endif %}
           </ul>
         {% endif %}
@@ -216,13 +231,14 @@
   {% block points_in_time %}
   <div class="row mb-3 mt-5">
     <div class="col text-right">
-      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage points in time</a>
+      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">{% trans 'Manage points in time' %}</a>
     </div>
   </div>
 
   {% if work.stub and work.document_set.undeleted.exists %}
     <p class="alert alert-warning">
-      <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub.
+      <i class="fas fa-exclamation-triangle text-warning"></i>
+      {% trans "Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub." %}
     </p>
   {% endif %}
 
@@ -246,7 +262,13 @@
               <ul class="list-unstyled mb-0">
                 {% for user in contributors %}
                   <li>
-                    <span class="float-right">{{ user.task_count }} task{{ user.task_count|pluralize }}</span>
+                    <span class="float-right">
+                      {% blocktrans trimmed count count=user.task_count %}
+                        {{ user.task_count }} task
+                      {% plural %}
+                        {{ user.task_count }} tasks
+                      {% endblocktrans %}
+                    </span>
                     {% user_profile user %}
                   </li>
                 {% endfor %}

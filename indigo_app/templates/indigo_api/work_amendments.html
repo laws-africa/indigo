@@ -1,15 +1,19 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
 {% block view-id %}work-amendments-view{% endblock %}
-{% block title %}Points in time – {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Points in time' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>Points in time</h4>
+  <h4>{% trans 'Points in time' %}</h4>
 
   {% if work.stub %}
     <p class="alert alert-warning">
-      <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time.
-      {% if work.document_set.undeleted.exists %}Either remove these points in time or don't mark this work as a stub.{% endif %}
+      <i class="fas fa-exclamation-triangle text-warning"></i>
+      {% trans 'Stub works should not have points in time.' %}
+      {% if work.document_set.undeleted.exists %}
+        {% trans "Either remove these points in time or don't mark this work as a stub." %}
+      {% endif %}
     </p>
   {% endif %}
 
@@ -23,8 +27,8 @@
   {% verbatim %}
   <div class="form-inline">
     <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
-    <button class="btn btn-success save-amendment">OK</button>
-    <button class="btn btn-link cancel">Cancel</button>
+    <button class="btn btn-success save-amendment">{% trans 'OK' %}</button>
+    <button class="btn btn-link cancel">{% trans 'Cancel' %}</button>
   </div>
   {% endverbatim %}
   </script>

@@ -90,7 +90,7 @@
 
         <!-- task label -->
         {% for label in task.labels.all %}
-          <span class="badge badge-secondary mb-1" title="{% trans label.description %}">{% trans label.title %}</span>
+          <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
         {% endfor %}
 
         {% if assigned and task.assigned_to %}

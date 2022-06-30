@@ -1,25 +1,32 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
 {% block view-id %}work-commencements-view{% endblock %}
-{% block title %}Commencements – {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Commencements' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>Commencements</h4>
+  <h4>{% trans 'Commencements' %}</h4>
 
   {% if work.commenced and not work.commencement_date %}
-    <p class="alert alert-warning">This work has commenced, but the commencement date is unknown.</p>
+    <p class="alert alert-warning">{% trans 'This work has commenced, but the commencement date is unknown.' %}</p>
   {% endif %}
 
   {% if not work.commenced %}
-    <p class="alert alert-info">This work has not commenced.</p>
+    <p class="alert alert-info">{% trans 'This work has not commenced.' %}</p>
   {% endif %}
 
   {% if uncommenced_provisions_count %}
-    <p class="alert alert-warning">This work has {{ uncommenced_provisions_count }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions_count|pluralize }}</a>.</p>
+    <p class="alert alert-warning">
+      {% blocktrans trimmed count count=uncommenced_provisions_count %}
+        This work has {{ count }} <a href="#uncommenced">uncommenced provision</a>.
+      {% plural %}
+        This work has {{ count }} <a href="#uncommenced">uncommenced provisions</a>.
+      {% endblocktrans %}
+    </p>
   {% endif %}
 
   {% if everything_commenced %}
-    <p>All provisions have commenced, no additional commencement events are required.</p>
+    <p>{% trans "All provisions have commenced, no additional commencement events are required." %}</p>
   {% endif %}
 
   <ol class="timeline">
@@ -28,12 +35,10 @@
         <div class="card-body">
           {% block new-commencement-card %}
             <div class="btn-group">
-              <button class="btn btn-primary add-commencement"><i class="fas fa-plus"></i> Add commencement</button>
-              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
+              <button class="btn btn-primary add-commencement"><i class="fas fa-plus"></i> {% trans 'Add commencement' %}</button>
+              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
               <div class="dropdown-menu">
-                <button class="dropdown-item" type="submit" form="new-commencement-form">Add without a commencing work</button>
+                <button class="dropdown-item" type="submit" form="new-commencement-form">{% trans 'Add without a commencing work' %}</button>
               </div>
             </div>
             <form action="{% url 'new_work_commencement' frbr_uri=work.frbr_uri %}" method="POST" id="new-commencement-form">
@@ -48,26 +53,30 @@
 
     {% for commencement in commencements %}
       <li class="timeline-item card">
-        <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>Unknown</em>{% endif %}</h6>
+        <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>{% trans 'Unknown' %}</em>{% endif %}</h6>
         <div class="card-body">
           <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
             {% csrf_token %}
 
             <div class="float-right">
               {% if perms.indigo_api.delete_commencement %}
-                <button class="btn btn-link text-danger mr-2" type="submit" name="delete" data-confirm="Really delete this commencement?">Delete</button>
+                <button class="btn btn-link text-danger mr-2" type="submit" name="delete" data-confirm="{% trans 'Really delete this commencement?' %}">{% trans 'Delete' %}</button>
               {% endif %}
               {% if perms.indigo_api.change_commencement %}
-                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-toggle="collapse">Edit</a>
+                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-toggle="collapse">{% trans 'Edit' %}</a>
               {% endif %}
             </div>
 
             <div class="mb-3">
               <h6>
-                Commenced
-                {% if not commencement.all_provisions %} in part{% endif %}
+                {% if commencement.all_provisions %}
+                  {% trans 'Commenced' %}
+                {% else %}
+                  {% trans 'Commenced in part' %}
+                {% endif %}
                 {% if commencement.commencing_work %}
-                  by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+                  {% trans 'by' %}
+                  <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
                 {% endif %}
               </h6>
               {% if commencement.commencing_work %}
@@ -76,12 +85,14 @@
             </div>
 
             <div class="commencement-details collapse show">
-              {% if commencement.note %}<h6>Note: {{ commencement.note }}</h6>{% endif %}
-              {% if commencement.main %}<h6>Main commencement</h6>{% endif %}
+              {% if commencement.note %}<h6>{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
+              {% if commencement.main %}<h6>{% trans 'Main commencement' %}</h6>{% endif %}
               <h6>
-                {% if commencement.all_provisions %}Commences all provisions{% endif %}
+                {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
                 {% if commencement.provisions %}
-                  Commences {{ commencement.provisions|length }} of {{ total_provisions_count }} provision{{ total_provisions_count|pluralize }}:
+                  {% blocktrans trimmed with provisions=commencement.provisions|length %}
+                    Commences {{ provisions }} of {{ total_provisions_count }} provisions:
+                  {% endblocktrans %}
                 {% endif %}
               </h6>
 
@@ -103,7 +114,7 @@
 
               <div class="form-row form-group">
                 <div class="col-md-6 col-lg-4">
-                  <input type="text" class="form-control mr-2" placeholder="See section 1 …." name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
+                  <input type="text" class="form-control mr-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
                 </div>
               </div>
 
@@ -113,7 +124,7 @@
                          value="true" name="main"
                          {% if commencement.main %}checked{% endif %}
                          {% if has_main_commencement and not commencement.main %}disabled{% endif %}>
-                  <label class="form-check-label" for="commencement-{{ commencement.id }}-main">Main commencement</label>
+                  <label class="form-check-label" for="commencement-{{ commencement.id }}-main">{% trans 'Main commencement' %}</label>
                 </div>
               </div>
 
@@ -123,19 +134,19 @@
                          value="true" name="all_provisions"
                          {% if commencement.all_provisions %}checked{% endif %}
                          {% if commencements|length > 1 and not commencement.all_provisions %}disabled{% endif %}>
-                  <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">Commences all provisions</label>
+                  <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">{% trans 'Commences all provisions' %}</label>
                 </div>
               </div>
 
               <div class="form-group provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
                 <div class="d-flex align-items-center justify-content-between">
-                  <div>Provisions commenced:</div>
+                  <div>{% trans 'Provisions commenced' %}:</div>
                   <label class="d-flex align-items-center">
                     <input type="checkbox"
                            name="select-all"
                            class="mr-2"
                     />
-                    Select all provisions
+                    {% trans 'Select all provisions' %}
                   </label>
                 </div>
                 <ul data-id="provisions" class="provisions-list">
@@ -146,8 +157,8 @@
           </form>
         </div>
         <div class="card-footer text-right commencement-form-{{ commencement.id }} collapse">
-          <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-toggle="collapse" data-target=".commencement-form-{{ commencement.id }}">Cancel</button>
-          <button class="btn btn-success" type="submit" form="commencement-{{ commencement.id }}">Save</button>
+          <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-toggle="collapse" data-target=".commencement-form-{{ commencement.id }}">{% trans 'Cancel' %}</button>
+          <button class="btn btn-success" type="submit" form="commencement-{{ commencement.id }}">{% trans 'Save' %}</button>
         </div>
       </li>
     {% endfor %}
@@ -155,7 +166,7 @@
 
   {% if uncommenced_provisions_count %}
     <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
+      <h5 id="uncommenced" class="card-header">{% trans 'Uncommenced provisions' %} <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
       <div class="card-body">
         <div class="treelist-wrapper">
           <ul>
@@ -169,9 +180,9 @@
   {% if work.commencements.count and perms.indigo_api.delete_commencement %}
     <form method="post" class="mt-5" action="{% url 'work_uncommenced' frbr_uri=work.frbr_uri %}">
       {% csrf_token %}
-      <h5>Not yet commenced?</h5>
-      <p>Remove all commencement detail and mark as not commenced.</p>
-      <button type="submit" class="btn btn-danger" data-confirm="Are you sure?" name="delete">This work has not commenced</button>
+      <h5>{% trans 'Not yet commenced?' %}</h5>
+      <p>{% trans 'Remove all commencement detail and mark as not commenced.' %}</p>
+      <button type="submit" class="btn btn-danger" data-confirm="{% trans 'Are you sure?' %}" name="delete">{% trans 'This work has not commenced' %}</button>
     </form>
   {% endif %}
 {% endblock %}

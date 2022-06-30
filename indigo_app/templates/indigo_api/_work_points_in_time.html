@@ -1,10 +1,12 @@
+{% load i18n %}
+
 <ol class="timeline">
   {% if editable and perms.indigo_api.add_amendment %}
     <li class="timeline-item card">
       <div class="card-body">
         {% block new-amendment-card %}
           <div class="btn-group">
-            <button class="btn btn-primary add-amendment"><i class="fas fa-plus"></i> Add amendment</button>
+            <button class="btn btn-primary add-amendment"><i class="fas fa-plus"></i> {% trans 'Add amendment' %}</button>
             <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
               {% csrf_token %}
               <input type="hidden" name="amending_work" value="">
@@ -12,12 +14,12 @@
             </form>
 
             {% if perms.indigo_api.add_arbitraryexpressiondate %}
-              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
+              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
               <div class="dropdown-menu">
                 <form method="POST" action="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">
                   {% csrf_token %}
                   <button class="dropdown-item" type="submit" name="date"
-                          value="{{ consolidation_date|date:'Y-m-d' }}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
+                          value="{{ consolidation_date|date:'Y-m-d' }}">{% trans 'Add consolidation date' %}: {{ consolidation_date|date:'Y-m-d' }}</button>
                 </form>
               </div>
             {% endif %}
@@ -35,27 +37,35 @@
       <div class="card-body">
 
         {% if event.assent_date %}
-          <h6>Assented to</h6>
+          <h6>{% trans 'Assented to' %}</h6>
         {% endif %}
 
         {% if event.publication_date %}
-          <h6>Published</h6>
+          <h6>{% trans 'Published' %}</h6>
         {% endif %}
 
         {% if event.repealed_date %}
-          <h6>Repealed
+          <h6>
             {% if work.repealed_by %}
-              by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+              {% trans 'Repealed by' %}
+              <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+            {% else %}
+              {% trans 'Repealed' %}
             {% endif %}
           </h6>
         {% endif %}
 
         {% for commencement in event.commencements %}
           <h6>
-            Commenced{% if not commencement.all_provisions %} in part{% endif %}
-              {% if commencement.commencing_work %}
-                by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
-              {% endif %}
+            {% if commencement.all_provisions %}
+              {% trans 'Commenced' %}
+            {% else %}
+              {% trans 'Commenced in part' %}
+            {% endif %}
+            {% if commencement.commencing_work %}
+              {% trans 'by' %}
+              <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+            {% endif %}
           </h6>
         {% endfor %}
 
@@ -66,21 +76,23 @@
 
               {% if editable and perms.indigo_api.change_arbitraryexpressiondate %}
                 <div class="dropdown float-right">
-                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    {% trans 'Options' %} <span class="caret"></span>
+                  </button>
                   <div class="dropdown-menu">
-                    <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
+                    <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="dropdown-item" data-toggle="collapse">{% trans 'Change date' %}</a>
                     {% if consolidation.can_delete %}
-                    <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this expression date?">Delete</button>
+                      <button class="dropdown-item" type="submit" name="delete" data-confirm="{% trans 'Really delete this expression date?' %}">{% trans 'Delete' %}</button>
                     {% endif %}
                   </div>
                 </div>
               {% endif %}
 
-              <h6>Consolidation</h6>
+              <h6>{% trans 'Consolidation' %}</h6>
               <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ consolidation.id }}">
                 <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ consolidation.date|date:"Y-m-d" }}" autocomplete="off">
-                <button class="btn btn-success" type="submit">Save</button>
-                <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
+                <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
+                <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="btn btn-link" data-toggle="collapse">{% trans 'Cancel' %}</a>
               </div>
             </form>
           {% endif %}
@@ -93,23 +105,28 @@
 
               {% if editable and perms.indigo_api.change_amendment %}
                 <div class="dropdown float-right">
-                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    {% trans 'Options' %} <span class="caret"></span>
+                  </button>
                   <div class="dropdown-menu">
-                    <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
+                    <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">{% trans 'Change date' %}</a>
                     {% if amendment.can_delete %}
-                    <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this amendment?">Delete</button>
+                      <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this amendment?">{% trans 'Delete' %}</button>
                     {% endif %}
                   </div>
                 </div>
               {% endif %}
 
-                <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
-                <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
+              <h6 class="mb-0">
+                {% trans 'Amended by' %}
+                <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
+              </h6>
+              <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
 
               <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">
                 <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
-                <button class="btn btn-success" type="submit">Save</button>
-                <a href="#amendment-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
+                <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
+                <a href="#amendment-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">{% trans 'Cancel' %}</a>
               </div>
             </form>
           {% endif %}
@@ -134,18 +151,22 @@
                 <div class="btn-group">
                   <div class="dropdown mr-3">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="fas fa-pencil-alt"></i> Create
-                      {% if not event.initial %}
-                         amended version
+                      <i class="fas fa-pencil-alt"></i>
+                      {% if event.initial %}
+                        {% trans 'Create' %}
+                      {% else %}
+                        {% trans 'Create amended version' %}
                       {% endif %}
                     </button>
                     <div class="dropdown-menu">
                       {% for language in indigo_languages %}
-                        <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">In {{ language }}</button>
+                        <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">{{ language }}</button>
                       {% endfor %}
                     </div>
                   </div>
-                  <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}"><i class="fas fa-file-upload"></i> Import document</a>
+                  <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}">
+                    <i class="fas fa-file-upload"></i> {% trans 'Import document' %}
+                  </a>
                 </div>
               </form>
 

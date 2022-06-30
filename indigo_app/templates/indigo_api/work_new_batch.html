@@ -1,12 +1,12 @@
 {% extends "place/layout.html" %}
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
-{% block title %}Create a new batch{% endblock %}
+{% block title %}{% trans 'Create a new batch' %}{% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2 class="mt-3 mb-3">Import a batch of works from Google Sheets</h2>
+  <h2 class="mt-3 mb-3">{% trans 'Import a batch of works from Google Sheets' %}</h2>
 
   {% if error %}
     <div class="alert alert-danger" role="alert">
@@ -29,8 +29,8 @@
       <div class="card-body">
 
         <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}">Google Sheets URL</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required value="{{ form.spreadsheet_url.value|default:'' }}">
+          <label for="{{ form.spreadsheet_url.id_for_label }}">{% trans 'Google Sheets URL' %}</label>
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="{% trans 'The URL of the spreadsheet to import works from' %}" required value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
@@ -40,7 +40,7 @@
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
-                <label for="{{ form.sheet_name.id_for_label }}">Spreadsheet tab</label>
+                <label for="{{ form.sheet_name.id_for_label }}">{% trans 'Spreadsheet tab' %}</label>
                 <select class="selectpicker form-control" name="{{ form.sheet_name.name }}" id="{{ form.sheet_name.id_for_label }}" data-live-search="true">
                   {% for opt in form.sheet_name %}
                     {{ opt }}
@@ -50,17 +50,17 @@
             </div>
           </div>
         {% else %}
-          <p><b>Note:</b> The first (leftmost) sheet will be imported.</p>
+          <p><b>{% trans 'Note:' %}</b> {% trans 'The first (leftmost) sheet will be imported.' %}</p>
         {% endif %}
 
         <div class="form-group">
-          <label for="{{ form.workflow.id_for_label }}">Choose a project for newly created tasks</label>
+          <label for="{{ form.workflow.id_for_label }}">{% trans 'Choose a project for newly created tasks' %}</label>
 
           {% if form.fields.workflow.choices %}
             <div class="form-group">
               <div class="form-row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a project">
+                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project' %}">
                     {% for option in form.workflow %}
                       {{ option }}
                     {% endfor %}
@@ -72,19 +72,19 @@
               <div class="form-text text-danger">{{ err }}</div>
             {% endfor %}
           {% else %}
-            <div class="text-danger">No projects (create one and refresh)</div>
+            <div class="text-danger">{% trans 'There are no projects (create one and refresh this page)' %}</div>
           {% endif %}
 
-          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new project</a>
+          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">{% trans 'Create a new project' %}</a>
         </div>
 
       </div>
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
-          <button type="submit" name="preview" class="btn btn-primary show-progress">Preview</button>
+          <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Preview' %}</button>
         {% else %}
-          <div class="alert alert-danger">You don't have permission to create works.</div>
+          <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
         {% endif %}
       </div>
     </div>
@@ -94,26 +94,26 @@
       {% if dry_run %}
         <div class="card mt-3">
         <h4 class="card-header">
-          Preview of your import
+          {% trans 'Preview of your import' %}
         </h4>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Row</th>
-              <th>Status</th>
-              <th>Title / Error message</th>
-              <th>Type</th>
-              <th>Number</th>
-              <th>Year</th>
+              <th>{% trans 'Row' %}</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Title / Error message' %}</th>
+              <th>{% trans 'Type' %}</th>
+              <th>{% trans 'Number' %}</th>
+              <th>{% trans 'Year' %}</th>
               {% for _, property_name in extra_properties %}
                 <th>{{ property_name }}</th>
               {% endfor %}
-              <th>FRBR URI</th>
-              <th>Taxonomy</th>
-              <th>Tasks</th>
-              <th>Relationships</th>
-              <th>Notes</th>
+              <th>{% trans 'FRBR URI' %}</th>
+              <th>{% trans 'Taxonomy' %}</th>
+              <th>{% trans 'Tasks' %}</th>
+              <th>{% trans 'Relationships' %}</th>
+              <th>{% trans 'Notes' %}</th>
             </tr>
           </thead>
           <tbody>
@@ -124,18 +124,18 @@
                 </td>
                 <td class="text-nowrap">
                   {% if row.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> Ready to import
+                    <i class="fas fa-check-circle text-success"></i> {% trans 'Ready to import' %}
                   {% elif row.status == 'duplicate' %}
-                    <i class="fas fa-ban text-info"></i> Duplicate
+                    <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
                   {% elif row.errors %}
-                    <i class="fas fa-exclamation-triangle text-danger"></i> Error
+                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
                   {% endif %}
                 </td>
                 <td>
                   {% if row.status == 'success' %}
                     {{ row.work.title }}
                   {% elif row.status == 'duplicate' %}
-                    A work with this type, year and number already exists in this place.
+                    {% trans 'A work with this type, year and number already exists in this place.' %}
                   {% elif row.errors %}
                     {{ row.errors }}
                   {% endif %}
@@ -208,35 +208,35 @@
 
         <div class="card-footer">
           {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary show-progress">Refresh preview</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">Import works</button>
+            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
           {% else %}
-            <div class="alert alert-danger">You don't have permission to create works.</div>
+            <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
           {% endif %}
         </div>
       </div>
       {% else %}
         <div class="card mt-3">
         <h4 class="card-header">
-          Import complete
+          {% trans 'Import complete' %}
         </h4>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Row</th>
-              <th>Status</th>
-              <th>Title / Error message</th>
-              <th>Type</th>
-              <th>Number</th>
-              <th>Year</th>
+              <th>{% trans 'Row' %}</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Title / Error message' %}</th>
+              <th>{% trans 'Type' %}</th>
+              <th>{% trans 'Number' %}</th>
+              <th>{% trans 'Year' %}</th>
               {% for _, property_name in extra_properties %}
                 <th>{{ property_name }}</th>
               {% endfor %}
-              <th>FRBR URI</th>
-              <th>Taxonomy</th>
-              <th>Tasks</th>
-              <th>Relationships</th>
+              <th>{% trans 'FRBR URI' %}</th>
+              <th>{% trans 'Taxonomy' %}</th>
+              <th>{% trans 'Tasks' %}</th>
+              <th>{% trans 'Relationships' %}</th>
             </tr>
           </thead>
           <tbody>
@@ -247,18 +247,18 @@
                 </td>
                 <td class="text-nowrap">
                   {% if row.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> Imported
+                    <i class="fas fa-check-circle text-success"></i> {% trans 'Imported' %}
                   {% elif row.status == 'duplicate' %}
-                    <i class="fas fa-ban text-info"></i> Duplicate
+                    <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
                   {% elif row.errors %}
-                    <i class="fas fa-exclamation-triangle text-danger"></i> Error
+                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
                   {% endif %}
                 </td>
                 <td>
                   {% if row.status == 'success' %}
                     {{ row.work.title }}
                   {% elif row.status == 'duplicate' %}
-                    A work with this type, year and number already exists in this place.
+                    {% trans 'A work with this type, year and number already exists in this place.' %}
                   {% elif row.errors %}
                     {{ row.errors }}
                   {% endif %}
@@ -321,10 +321,10 @@
 
         <div class="card-footer">
           {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary show-progress">Refresh preview</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">Import works</button>
+            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
           {% else %}
-            <div class="alert alert-danger">You don't have permission to create works.</div>
+            <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
           {% endif %}
         </div>
       </div>
@@ -340,19 +340,24 @@
   {% if not works %}
     <div class="card mt-3">
       <div class="card-body">
-        Instructions:
+        {% trans 'Instructions' %}:
         <ul>
-          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc" target="_blank">Work info template</a>: 'File | Make a copy'.</li>
-          <li>Record the Spreadsheet URL under <a href="{% url 'place_settings' place=place.place_code %}" target="_blank">Settings</a>.</li>
+          <li>{% blocktrans %}Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc" target="_blank">Work info template</a>: 'File | Make a copy'.{% endblocktrans %}</li>
+          <li>
+            {% url 'place_settings' place=place.place_code as place_url %}
+            {% blocktrans trimmed %}
+              Record the Spreadsheet URL under <a href="{{ place_url }}" target="_blank">Settings</a>.
+            {% endblocktrans %}
+          </li>
           {% if bulk_creator.is_gsheets_enabled %}
-            <li>Share the spreadsheet with {{ bulk_creator.share_with }}.</li>
-            <li>Choose a spreadsheet tab and a project.</li>
+            <li>{% blocktrans with share=bulk_creator.share_with %}Share the spreadsheet with {{ share }}.{% endblocktrans %}</li>
+            <li>{% trans 'Choose a spreadsheet tab and a project.' %}</li>
           {% else %}
-            <li>Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner).</li>
-            <li>Choose a project.</li>
+            <li>{% trans "Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner)." %}</li>
+            <li>{% trans 'Choose a project.' %}</li>
           {% endif %}
-          <li><strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.</li>
-          <li><strong>Import works</strong>.</li>
+          <li>{% blocktrans %}<strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.{% endblocktrans %}</li>
+          <li><strong>{% trans 'Import works' %}</strong>.</li>
         </ul>
       </div>
     </div>

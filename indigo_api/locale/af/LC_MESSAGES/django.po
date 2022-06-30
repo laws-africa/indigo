@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"PO-Revision-Date: 2022-06-30 08:02\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -20,12 +20,8 @@ msgstr ""
 
 #: models/documents.py:290
 #, python-format
-msgid ""
-"This is the version of this document from %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s "
-"en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
 
 #: models/documents.py:292
 #, python-format
@@ -34,12 +30,8 @@ msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
 #: models/documents.py:295
 #, python-format
-msgid ""
-"This is the version of this document at %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s "
-"en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
 
 #: models/documents.py:297
 #, python-format
@@ -48,18 +40,13 @@ msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
 #: models/documents.py:300
 #, python-format
-msgid ""
-"This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
-"Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot "
-"%(end)s."
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
+msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
 
 #: models/documents.py:303
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
-"Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot "
-"%(end)s."
+msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
 
 #: models/documents.py:306
 #, python-format
@@ -67,12 +54,8 @@ msgid "This is the version of this document as it was at %(start)s."
 msgstr "Die is die weergawe van hierdie dokument soos dit was teen %(start)s."
 
 #: models/places.py:191
-msgid ""
-"Note: The original publication document is not available and this content "
-"could not be verified."
-msgstr ""
-"Let wel: Die oorspronklik gepubliseerde dokument is nie beskikbaar nie; die "
-"inhoud kon dus nie bevestig word nie."
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr "Let wel: Die oorspronklik gepubliseerde dokument is nie beskikbaar nie; die inhoud kon dus nie bevestig word nie."
 
 #: models/tasks.py:231
 msgid "Are you sure you want to submit this task for review?"
@@ -94,41 +77,23 @@ msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
-"date\">%(date)s</span>]"
-msgstr ""
-"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-"
-"date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
-"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
-"Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s(%(numtitle)s)</a> op <span class=\"repeal-date\">%(date)s</span>"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s(%(numtitle)s)</a> op <span class=\"repeal-date\">%(date)s</span>"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
-"[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
@@ -255,3 +220,4 @@ msgstr ""
 
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"
+

@@ -1,0 +1,658 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-30 09:38+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/account/base.html:17
+msgid "Terms of Use and Privacy Policy"
+msgstr ""
+
+#: templates/account/base.html:21
+#, python-format
+msgid "Need help? Please <a href=\"mailto:%(email)s\">email us</a>"
+msgstr ""
+
+#: templates/account/email.html:16
+msgid "You can use any of these email addresses to log in."
+msgstr ""
+
+#: templates/account/email.html:18
+msgid "Note:"
+msgstr ""
+
+#: templates/account/email.html:19
+msgid ""
+"We only send email notifications to your <strong>primary</strong> email "
+"address."
+msgstr ""
+
+#: templates/account/email.html:33 templates/account/login.html:28
+#: templates/account/password_reset.html:18
+msgid "Email address"
+msgstr ""
+
+#: templates/account/email.html:34
+msgid "Status"
+msgstr ""
+
+#: templates/account/email.html:45
+msgid "verified"
+msgstr ""
+
+#: templates/account/email.html:48
+msgid "unverified"
+msgstr ""
+
+#: templates/account/email.html:50
+msgid "primary"
+msgstr ""
+
+#: templates/account/email.html:58
+msgid "Re-send verification"
+msgstr ""
+
+#: templates/account/email.html:62
+msgid "Make primary"
+msgstr ""
+
+#: templates/account/email.html:63
+msgid "Remove"
+msgstr ""
+
+#: templates/account/email.html:72
+msgid "Warning:"
+msgstr ""
+
+#: templates/account/email.html:72
+msgid ""
+"You currently do not have any e-mail address set up. You should really add "
+"an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+
+#: templates/account/email.html:76
+msgid "Add an email address"
+msgstr ""
+
+#: templates/account/email.html:92
+msgid "Add email"
+msgstr ""
+
+#: templates/account/email_confirm.html:7
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: templates/account/email_confirm.html:13
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+
+#: templates/account/email_confirm.html:17
+msgid "Confirm"
+msgstr ""
+
+#: templates/account/email_confirm.html:24
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: templates/account/login.html:11
+msgid "Log In"
+msgstr ""
+
+#: templates/account/login.html:40
+msgid "Password"
+msgstr ""
+
+#: templates/account/login.html:42
+msgid "Forgot your password?"
+msgstr ""
+
+#: templates/account/login.html:54
+#: templates/account/password_reset_from_key.html:55
+#: templates/account/password_reset_from_key_done.html:10
+msgid "Log in"
+msgstr ""
+
+#: templates/account/login.html:58
+msgid "Sign up"
+msgstr ""
+
+#: templates/account/login.html:78
+#, python-format
+msgid "Log in with %(provider)s"
+msgstr ""
+
+#: templates/account/login.html:86
+#, python-format
+msgid ""
+"By logging in you agree to our <a href=\"%(tos_url)s\">Terms of Use and "
+"Privacy Policy</a>."
+msgstr ""
+
+#: templates/account/logout.html:4 templates/account/logout.html:7
+#: templates/account/logout.html:17
+msgid "Log Out"
+msgstr ""
+
+#: templates/account/logout.html:9
+msgid "Are you sure you want to log out?"
+msgstr ""
+
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:55
+msgid "Change Password"
+msgstr ""
+
+#: templates/account/password_change.html:14
+msgid "Change Your Password"
+msgstr ""
+
+#: templates/account/password_reset.html:7
+msgid "Reset Your Password"
+msgstr ""
+
+#: templates/account/password_reset.html:12
+msgid "Forgotten your password? Enter your e-mail address below, and we"
+msgstr ""
+
+#: templates/account/password_reset.html:29
+#: templates/account/password_reset_from_key.html:50
+msgid "Reset password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+msgid "Bad Token"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+#: templates/account/password_reset_from_key_done.html:7
+msgid "Reset Password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:11
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:27
+msgid "New Password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:39
+msgid "New Password (again)"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:54
+#: templates/account/password_reset_from_key_done.html:8
+msgid "Your password has been reset."
+msgstr ""
+
+#: templates/account/password_set.html:4 templates/account/password_set.html:43
+msgid "Set Password"
+msgstr ""
+
+#: templates/account/password_set.html:14
+msgid "Set Your Password"
+msgstr ""
+
+#: templates/indigo_api/_provisions_tree_commenced.html:16
+msgid "(Commenced in full)"
+msgstr ""
+
+#: templates/indigo_api/_provisions_tree_uncommenced.html:15
+msgid "(in full)"
+msgstr ""
+
+#: templates/indigo_api/_task_assign_to_menu.html:5
+#: templates/indigo_api/_task_card_single.html:112
+#: templates/indigo_api/_task_detail.html:210
+msgid "Unassign"
+msgstr ""
+
+#: templates/indigo_api/_task_assign_to_menu.html:15
+msgid "too many tasks"
+msgstr ""
+
+#: templates/indigo_api/_task_bulk_update_form.html:12
+#: templates/indigo_api/_task_card_single.html:127
+#: templates/indigo_api/_task_detail.html:219
+msgid "Assign to"
+msgstr ""
+
+#: templates/indigo_api/_task_bulk_update_form.html:18
+msgid "Update selected tasks"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:18
+#: templates/indigo_api/_task_detail.html:180
+msgid "Submit for review"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:25
+#: templates/indigo_api/_task_detail.html:148
+msgid "Are you sure you want to request changes to this task?"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:26
+#: templates/indigo_api/_task_detail.html:151
+msgid "Request changes"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:33
+#: templates/indigo_api/_task_detail.html:160
+msgid "Are you sure you want to approve this task?"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:34
+#: templates/indigo_api/_task_detail.html:163
+msgid "Approve"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:40
+msgid "Are you sure you want to remove this task?"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:41
+msgid "Remove from project"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:60
+#: templates/indigo_api/_task_detail.html:35
+msgid "Changes requested"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:98
+#: templates/indigo_api/_task_detail.html:194
+msgid "Assigned to"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:108
+msgid "Reassign"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:111
+#: templates/indigo_api/_task_detail.html:208
+msgid "Are you sure you want to unassign this task?"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:137
+msgid "Approved by"
+msgstr ""
+
+#: templates/indigo_api/_task_card_single.html:144
+msgid "Submitted by"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:8
+msgid "This task is blocked."
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:10
+msgid "These tasks must be completed first:"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:25
+msgid "assigned"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:60
+msgid "Edit task"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:78
+msgid "commented"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:98
+#, python-format
+msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:104
+#, python-format
+msgid "(<b>%(a)s</b> may have been moved or removed)"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:113
+#, python-format
+msgid ""
+"The content at <b>%(a)s</b> is not available and may have been moved or "
+"removed."
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:141
+msgid "Add comment"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:155
+msgid "Review changes"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:169
+msgid "Are you sure you want to reopen this task?"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:172
+msgid "Reopen"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:188
+#, python-format
+msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:199
+msgid "Unassigned"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:228
+msgid ""
+"Finish your other assigned tasks before assigning this task to yourself."
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:236
+msgid "Labels"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:245
+#: templates/indigo_api/_task_detail.html:274
+msgid "None"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:257
+msgid "Projects"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:288
+msgid "Blocked by"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:312
+msgid "This task is blocking these tasks:"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:11
+msgid "Resolve"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:16
+msgid "Create task"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:23
+msgid "Edit"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:24
+msgid "Delete"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:38
+msgid "Task"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:45
+#: templates/indigo_api/document/_annotations.html:46
+msgid "Comment"
+msgstr ""
+
+#: templates/indigo_api/document/_annotations.html:47
+#: templates/indigo_api/document/_attachments.html:67
+#: templates/indigo_api/document/_insert_image_modal.html:16
+msgid "Cancel"
+msgstr ""
+
+#: templates/indigo_api/document/_attachments.html:7
+msgid "Attachments"
+msgstr ""
+
+#: templates/indigo_api/document/_attachments.html:16
+#: templates/indigo_api/document/_defined_terms.html:24
+#: templates/indigo_api/document/_italics_terms.html:51
+#: templates/indigo_api/document/_properties.html:61
+#: templates/indigo_api/document/_references.html:16
+#: templates/indigo_api/document/_revisions.html:18
+msgid "Close"
+msgstr ""
+
+#: templates/indigo_api/document/_attachments.html:54
+msgid "Choose a file"
+msgstr ""
+
+#: templates/indigo_api/document/_attachments.html:66
+msgid "OK"
+msgstr ""
+
+#: templates/indigo_api/document/_defined_terms.html:7
+msgid "Defined Terms"
+msgstr ""
+
+#: templates/indigo_api/document/_defined_terms.html:12
+msgid ""
+"These are terms that are explicitly defined in this document. Always refresh "
+"defined terms before publishing a document to ensure that all references to "
+"terms are captured."
+msgstr ""
+
+#: templates/indigo_api/document/_defined_terms.html:22
+msgid "Remove defined terms"
+msgstr ""
+
+#: templates/indigo_api/document/_defined_terms.html:23
+msgid "Find and link defined terms"
+msgstr ""
+
+#: templates/indigo_api/document/_defined_terms.html:42
+msgid "No defined terms."
+msgstr ""
+
+#: templates/indigo_api/document/_insert_image_modal.html:7
+msgid "Choose an image"
+msgstr ""
+
+#: templates/indigo_api/document/_insert_image_modal.html:17
+msgid "Insert image"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:8
+msgid "Italicised terms"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:15
+msgid "In this document"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:18
+#, python-format
+msgid "In %(country)s"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:31
+#, python-format
+msgid "Terms that will be italicised in %(country)s:"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:42
+#, python-format
+msgid "No terms have been selected to be italicised in %(country)s."
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:49
+msgid "Remove italics"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:50
+msgid "Mark up italics"
+msgstr ""
+
+#: templates/indigo_api/document/_italics_terms.html:73
+msgid "No italicised terms."
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:7
+msgid "Details of this expression"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:14
+msgid "Short title"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:15
+msgid "Title"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:19
+#: templates/indigo_app/user_account/_lang_chooser.html:7
+msgid "Language"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:29
+msgid "Expression date"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:38
+msgid "initial publication"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:40
+msgid "amendment"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:42
+msgid "consolidation"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:46
+msgid ""
+"Date of this version of the document, either the publication date or an "
+"amendment date"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:49
+#: templates/indigo_api/document/show.html:104
+msgid "Manage amendments"
+msgstr ""
+
+#: templates/indigo_api/document/_properties.html:55
+msgid "Published URL:"
+msgstr ""
+
+#: templates/indigo_api/document/_references.html:7
+msgid "References"
+msgstr ""
+
+#: templates/indigo_api/document/_references.html:14
+msgid "Remove references"
+msgstr ""
+
+#: templates/indigo_api/document/_references.html:15
+msgid "Find references"
+msgstr ""
+
+#: templates/indigo_api/document/_revisions.html:9
+msgid "Previous"
+msgstr ""
+
+#: templates/indigo_api/document/_revisions.html:10
+msgid "Next"
+msgstr ""
+
+#: templates/indigo_api/document/_revisions.html:14
+msgid "Recent Changes"
+msgstr ""
+
+#: templates/indigo_api/document/_revisions.html:47
+msgid "Restore this revision"
+msgstr ""
+
+#: templates/indigo_api/document/_source_att.html:10
+msgid "Open"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:25
+msgid "published"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:26
+msgid "draft"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:27
+msgid "repealed"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:40
+#: templates/indigo_api/document/show.html:45
+msgid "Save &amp; publish"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:41
+msgid "Save draft"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:46
+msgid "Unpublish &amp; save"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:50
+msgid "You don't have permission to make changes."
+msgstr ""
+
+#: templates/indigo_api/document/show.html:56
+#, python-format
+msgid "<a href=\"%(url)s\">Log in </a> to make changes."
+msgstr ""
+
+#: templates/indigo_api/document/show.html:88
+msgid "Works"
+msgstr ""
+
+#: templates/indigo_api/document/show.html:99
+msgid "this document"
+msgstr ""
+
+#: templates/indigo_app/user_account/_lang_chooser.html:22
+msgid "Set language"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:8
+msgid "Social Network Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:10
+msgid ""
+"An error occurred while attempting to login via your social network account."
+msgstr ""
+
+#: templates/socialaccount/connections.html:14
+msgid ""
+"You can sign in to your account using any of these third party accounts:"
+msgstr ""
+
+#: templates/socialaccount/connections.html:45
+msgid ""
+"You currently have no social network accounts connected to this account."
+msgstr ""

@@ -24,21 +24,7 @@ class ResolvedAnchor(object):
 
     def resolve(self, exact):
         anchor_id = self.anchor_id
-        component = None
-
-        if '/' in anchor_id:
-            prefix, anchor_id = anchor_id.split('/', 1)
-            escaped = prefix.replace("'", "\\'")
-            # find the attachment with this id
-            results = list(self.document.doc.main.xpath(f"./a:attachments/a:attachment[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace}))
-            if len(results):
-                component = results[0]
-        else:
-            component = self.document.doc.main
-
-        if component is None:
-            return
-
+        component = self.document.doc.main
         self.exact_match = True
 
         while anchor_id:

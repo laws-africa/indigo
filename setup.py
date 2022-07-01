@@ -38,7 +38,7 @@ setup(
     packages=find_packages(exclude=['docs']),
     include_package_data=True,
 
-    python_requires='~=3.6',
+    python_requires='~=3.7',
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',
@@ -61,6 +61,7 @@ setup(
         'django-recaptcha>=1.4.0,<2.0.0',
         'django-reversion>=3.0.9',
         'django-sass-processor>=1.1',
+        'django-sass-processor-dart-sass>=0.0.1',
         'django-storages>=1.12.3',
         'django-taggit-serializer>=0.1.5',
         'django-taggit>=1.2.0,<2.0.0',
@@ -73,7 +74,6 @@ setup(
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
         'jsonpatch>=1.23',
-        'libsass>=0.21.0',
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
         'requests>=2',

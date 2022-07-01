@@ -561,7 +561,7 @@ class EPUBExporter(HTMLExporter):
     def item_id(self, item):
         parts = [item.component]
 
-        id = item.id or item.subcomponent
+        id = item.id
         if not id:
             parts.append(item.type)
             parts.append(item.num)

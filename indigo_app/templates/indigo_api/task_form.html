@@ -1,13 +1,13 @@
 {% extends "place/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
-{% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} {{ block.super }}{% endblock %}
+{% block title %}{% if task.pk %}{{ task.title }}{% else %}{% trans 'New task' %}{% endif %} {{ block.super }}{% endblock %}
 {% block view-id %}edit-task-view{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
   {% else %}
-    <div class="alert alert-danger">You don't have permission to create a task.</div>
+    <div class="alert alert-danger">{% trans "You don't have permission to create a task." %}</div>
   {% endif %}
 
   <form method="POST" action="" id="task-form">
@@ -27,7 +27,7 @@
 
           <div class="form-group">
             <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="A short description of this task">
+            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
             {% if form.title.errors %}
               <div class="text-danger">
                 {% for error in form.title.errors %}
@@ -68,30 +68,30 @@
           <div class="form-group form-row">
 
             <div class="col-md-6">
-              <label for="{{ form.work.id_for_label }}">Work</label>
+              <label for="{{ form.work.id_for_label }}">{% trans 'Work' %}</label>
               <input type="hidden" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
               <div class="work-details"></div>
               <script id="task-work-template" type="text/x-handlebars-template">
               {% verbatim %}
                 {{#if work}}
                   <div class="float-right ml-2">
-                    <button type="button" class="btn btn-outline-danger delete-work">Remove</button>
-                    <button type="button" class="btn btn-outline-primary change-work">Change</button>
+                    <button type="button" class="btn btn-outline-danger delete-work">{% endverbatim %}{% trans 'Remove' %}{% verbatim %}</button>
+                    <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Change' %}{% verbatim %}</button>
                   </div>
                   <a href="/works{{ work.frbr_uri }}">{{ work.title }}</a><br>
                   <span class="text-muted">{{ work.frbr_uri }}</span>
                 {{else}}
-                  <button type="button" class="btn btn-outline-primary change-work">Choose work</button>
+                  <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Choose work' %}{% verbatim %}</button>
                 {{/if}}
               {% endverbatim %}
               </script>
             </div>
 
             <div class="col-md-6 document-details">
-              <label for="{{ form.document.id_for_label }}">Point in time</label>
+              <label for="{{ form.document.id_for_label }}">{% trans 'Point in time' %}</label>
 
               <select name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" class="form-control">
-                <option value="">(none)</option>
+                <option value="">{% trans '(none)' %}</option>
                 {% if form.document.value %}
                   <option selected value="{{ form.document.value }}">{{ form.document.expression_date|date:'Y-m-d' }}</option>
                 {% endif %}
@@ -102,7 +102,7 @@
 
           {% if form.workflows|length %}
             <div class="form-group">
-              <label for="{{ form.workflows.id_for_label }}">Projects this task belongs to</label>
+              <label for="{{ form.workflows.id_for_label }}">{% trans 'Projects' %}</label>
               <div class="row">
                 <div class="col-md-6">
                   <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
@@ -122,21 +122,27 @@
           {% csrf_token %}
             {% if task.state == 'open' or task.state == 'pending_review' or task.state == 'blocked' %}
               {% if cancel_task_permission %}
-                <button class="btn btn-danger float-left" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+                <button class="btn btn-danger float-left" type="submit" data-confirm="{% trans 'Are you sure you want to cancel this task?' %}" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">
+                  {% trans 'Cancel task' %}
+                </button>
               {% endif %}
             {% endif %}
             {% if task.state == 'open' and block_task_permission %}
-              <button class="btn btn-danger float-left ml-2" type="submit" data-confirm="Are you sure you want to block this task?" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">Block task</button>
+              <button class="btn btn-danger float-left ml-2" type="submit" data-confirm="{% trans 'Are you sure you want to block this task?' %}" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">
+                {% trans 'Block task' %}
+              </button>
             {% elif task.state == 'blocked' and unblock_task_permission %}
-              <button class="btn btn-primary float-left ml-2" type="submit" data-confirm="Are you sure you want to unblock this task?" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">Unblock task</button>
+              <button class="btn btn-primary float-left ml-2" type="submit" data-confirm="{% trans 'Are you sure you want to unblock this task?' %}" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">
+                {% trans 'Unblock task' %}
+              </button>
             {% endif %}
           </form>
           {% if task.pk %}
-            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="btn btn-link">Cancel edit</a>
+            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="btn btn-link">{% trans 'Cancel' %}</a>
           {% else %}
-            <a href="{% url 'tasks' place=place.place_code %}" class="btn btn-link">Cancel</a>
+            <a href="{% url 'tasks' place=place.place_code %}" class="btn btn-link">{% trans 'Cancel' %}</a>
           {% endif %}
-            <button class="btn btn-success" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
+            <button class="btn btn-success" type="submit">{% if task.pk %}{% trans 'Save' %}{% else %}{% trans 'Create task' %}{% endif %}</button>
         </div>
 
       </div>

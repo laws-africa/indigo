@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: 2022-06-08 12:23\n"
+"POT-Creation-Date: 2022-06-30 16:06+0200\n"
+"PO-Revision-Date: 2022-06-30 08:01\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -70,16 +70,12 @@ msgid "Error talking to Google Sheets: %s"
 msgstr ""
 
 #: bulk_creator.py:178
-msgid ""
-"Your sheet did not import successfully; please check that you have link "
-"sharing ON (Anyone with the link)."
+msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
 msgstr ""
 
 #: bulk_creator.py:211
 #, python-format
-msgid ""
-"Unable to access spreadsheet. Is the URL correct and have you shared it with "
-"%s?"
+msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
 msgstr ""
 
 #: bulk_creator.py:217
@@ -93,8 +89,7 @@ msgstr ""
 
 #: bulk_creator.py:746
 msgid ""
-"This work's gazette (original publication document) couldn't be linked "
-"automatically.\n"
+"This work's gazette (original publication document) couldn't be linked automatically.\n"
 "\n"
 "Find it and upload it manually."
 msgstr ""
@@ -104,9 +99,7 @@ msgid "Import content"
 msgstr ""
 
 #: bulk_creator.py:752
-msgid ""
-"Import the content for this work – either the initial publication (usually a "
-"PDF of the Gazette) or a later consolidation (usually a .docx file)."
+msgid "Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file)."
 msgstr ""
 
 #: bulk_creator.py:755
@@ -116,9 +109,7 @@ msgstr ""
 #: bulk_creator.py:756
 #, python-format
 msgid ""
-"It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s "
-"(see row %(row_num)s of the spreadsheet), but it couldn't be linked "
-"automatically. This work has thus been recorded as 'Not commenced'.\n"
+"It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -138,9 +129,7 @@ msgstr ""
 #: bulk_creator.py:770
 #, python-format
 msgid ""
-"It looks like this work commences \"%(commences)s\" (see row %(row_num)s of "
-"the spreadsheet), but 'commences_on_date' wasn't given so no action has been "
-"taken.\n"
+"It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n"
 "\n"
 "If it should be linked, please do so manually."
 msgstr ""
@@ -152,9 +141,7 @@ msgstr ""
 #: bulk_creator.py:779
 #, python-format
 msgid ""
-"It looks like this work commences \"%(commences)s\" on %(date)s (see row "
-"%(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no "
-"action has been taken.\n"
+"It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -170,8 +157,7 @@ msgstr ""
 #: bulk_creator.py:796
 #, python-format
 msgid ""
-"It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of "
-"the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -188,8 +174,7 @@ msgstr ""
 #: bulk_creator.py:813
 #, python-format
 msgid ""
-"It looks like this work is amended by \"%(amending_work)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -206,12 +191,9 @@ msgstr ""
 #: bulk_creator.py:827
 #, python-format
 msgid ""
-"It looks like this work amends %(amended_title)s (%(numbered_title)s), but "
-"it couldn't be linked automatically because this work hasn't commenced yet "
-"(so there's no date for the amendment).\n"
+"It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n"
 "\n"
-"Please link the amendment manually (and apply it) when this work comes into "
-"force."
+"Please link the amendment manually (and apply it) when this work comes into force."
 msgstr ""
 
 #: bulk_creator.py:835
@@ -221,11 +203,9 @@ msgstr ""
 #: bulk_creator.py:836
 #, python-format
 msgid ""
-"Apply the amendments made by %(amending_title)s (%(numbered_title)s) on "
-"%(date)s.\n"
+"Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n"
 "\n"
-"The amendment has already been linked, so start at Step 3 of https://docs."
-"laws.africa/managing-works/amending-works."
+"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
 msgstr ""
 
 #: bulk_creator.py:845 bulk_creator.py:882
@@ -235,8 +215,7 @@ msgstr ""
 #: bulk_creator.py:846
 #, python-format
 msgid ""
-"It looks like this work was repealed by \"%(repealed_by)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -252,15 +231,11 @@ msgstr ""
 #: bulk_creator.py:859
 #, python-format
 msgid ""
-"On the spreadsheet (see row %(row_num)s), it says that this work was "
-"repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
+"On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
 "\n"
-"But this work is already listed as having been repealed by %(repealed_by)s "
-"(%(repealed_by_numbered_title)s), so the repeal information wasn't updated "
-"automatically.\n"
+"But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n"
 "\n"
-"If the old / existing repeal information was wrong, update it manually. "
-"Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
+"If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
 msgstr ""
 
 #: bulk_creator.py:873
@@ -270,9 +245,7 @@ msgstr ""
 #: bulk_creator.py:874
 #, python-format
 msgid ""
-"It looks like this work repeals %(title)s (%(numbered_title)s), but it "
-"couldn't be linked automatically because this work hasn't commenced yet (so "
-"there's no date for the repeal).\n"
+"It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n"
 "\n"
 "Please link the repeal manually when this work comes into force."
 msgstr ""
@@ -280,8 +253,7 @@ msgstr ""
 #: bulk_creator.py:883
 #, python-format
 msgid ""
-"It looks like this work was repealed by %(title)s (%(numbered_title)s), but "
-"it couldn't be linked automatically.\n"
+"It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n"
 "\n"
 "Please link it manually."
 msgstr ""
@@ -293,8 +265,7 @@ msgstr ""
 #: bulk_creator.py:892
 #, python-format
 msgid ""
-"It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s "
-"of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -310,8 +281,7 @@ msgstr ""
 #: bulk_creator.py:905
 #, python-format
 msgid ""
-"It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of "
-"the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -327,13 +297,11 @@ msgstr ""
 #: bulk_creator.py:918
 #, python-format
 msgid ""
-"On the spreadsheet (see row %(row_num)s), it says that this work is subleg "
-"under %(title)s (%(numbered_title)s).\n"
+"On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n"
 "\n"
 "But this work is already subleg under %(parent)s, so nothing was done.\n"
 "\n"
-"Double-check which work this work is subleg of and update it manually if "
-"needed. If the spreadsheet was wrong, cancel this task with a comment."
+"Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment."
 msgstr ""
 
 #: bulk_creator.py:930
@@ -343,8 +311,7 @@ msgstr ""
 #: bulk_creator.py:931
 #, python-format
 msgid ""
-"It looks like this work has the following taxonomy: \"%(topics)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -361,9 +328,7 @@ msgid "We couldn't get any useful text out of the file"
 msgstr ""
 
 #: pipelines/text.py:99
-msgid ""
-"There is not enough text in the document to import. You may need to OCR the "
-"file first."
+msgid "There is not enough text in the document to import. You may need to OCR the file first."
 msgstr ""
 
 #: settings.py:171

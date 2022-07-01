@@ -1,7 +1,7 @@
 {% extends "indigo_api/work_layout.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Import{% endblock %}
+{% block title %}{% trans 'Import' %}{% endblock %}
 {% block body-class %}{{ block.super }} sidebar-minimized{% endblock %}
 
 {% block main-content %}
@@ -16,24 +16,24 @@
         <div class="offset-md-2 col-md-8">
 
           <h4 class="mb-3">
-            Import a document
+            {% trans 'Import a document' %}
             <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="far fa-question-circle"></i></a>
           </h4>
 
           {% if form.errors or form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {% for field, error in form.errors.iteritems %}
-              <p>{{ field }}: {{ error }}</p>
-            {% endfor %}
+            <div class="alert alert-danger" role="alert">
+              {% for field, error in form.errors.iteritems %}
+                <p>{{ field }}: {{ error }}</p>
+              {% endfor %}
 
-            {% for error in form.non_field_errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
+              {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
           {% endif %}
 
           <section class="card numbered mb-3" data-num="1">
-            <h5 class="card-header">What language is the document in?</h5>
+            <h5 class="card-header">{% trans 'What language is the document in?' %}</h5>
             <div class="card-body">
               <select name="language" class="form-control">
                 {% for opt in indigo_languages %}
@@ -50,12 +50,14 @@
               <div class="file-input-field"><input type="file" id="file" name="file"></div>
 
               <div class="dropzone">
-                <h3>Drag and drop your file here</h3>
-                <h4>or</h4>
+                <h3>{% trans 'Drag and drop your file here' %}</h3>
+                <h4>{% trans 'or' %}</h4>
                 <p>
-                  <button class="btn btn-primary choose-file" type="button">Choose a file</button>
+                  <button class="btn btn-primary choose-file" type="button">{% trans 'Choose a file' %}</button>
                 </p>
-                <div class="file-detail">You can import legislation from most document formats including PDF, Word, RTF and plain text.</div>
+                <div class="file-detail">
+                  {% trans 'You can import legislation from most document formats including PDF, Word, RTF and plain text.' %}
+                </div>
               </div>
             </div>
           </section>
@@ -71,15 +73,15 @@
           <section class="card mt-3 d-none pdf-only">
             <div class="card-body form-row">
               <div class="form-group col-md-4">
-                <label>Pages to import</label>
+                <label>{% trans 'Pages to import' %}</label>
                 <input type="text" name="page_nums" class="form-control" placeholder="eg. 1-5, 7, 11" pattern="\s*\d+\s*(-\s*\d+)?(\s*,\s*\d+\s*(-\s*\d+\s*)?)*">
-                <small class="form-text text-muted">eg. 1-5, 7, 11</small>
+                <small class="form-text text-muted">{% trans 'eg.' %} 1-5, 7, 11</small>
               </div>
             </div>
           </section>
 
           <section class="card numbered mb-3 mt-3" data-num="3">
-            <h5 class="card-header">What do section titles look like?</h5>
+            <h5 class="card-header">{% trans 'What do section titles look like?' %}</h5>
             <div class="card-body">
               <div class="row">
                 <div class="col-sm-4">
@@ -110,7 +112,7 @@
                   <div class="radio">
                     <label>
                       <input type="radio" name="file_options.section_number_position" value="guess">
-                      Guess automatically
+                      {% trans 'Guess automatically' %}
                     </label>
                   </div>
                 </div>
@@ -119,7 +121,7 @@
           </section>
 
           <section class="card numbered mb-3 mt-3" data-num="4">
-            <button type="button" class="btn btn-success import" disabled="disabled">Go for it!</button>
+            <button type="button" class="btn btn-success import" disabled="disabled">{% trans 'Go for it!' %}</button>
           </section>
         </div>
       </div>
@@ -130,7 +132,7 @@
 
         <section class="progress-box" style="display: none">
           <div>
-            <p>Importing, this may take a few minutes...</p>
+            <p>{% trans 'Importing, this may take a few minutes...' %}</p>
             <div class="progress">
               <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
             </div>

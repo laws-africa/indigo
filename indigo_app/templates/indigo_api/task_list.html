@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
-{% block title %}Tasks {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Tasks' %}{{ block.super }}{% endblock %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
           </div>
 
           <div class="pl-3 border-left">
-            <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+            <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">{% trans 'New task' %}</a>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
 
     {% else %}
       <div class="card-body">
-        <p class="text-center"><em>No tasks found.</em></p>
+        <p class="text-center"><em>{% trans 'No tasks found.' %}</em></p>
       </div>
     {% endif %}
 

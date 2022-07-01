@@ -1,35 +1,35 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2022-06-30 16:06+0200\n"
+"PO-Revision-Date: 2022-06-30 08:18\n"
+"Last-Translator: Greg Kempe (longhotsummer)\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /master/indigo_za/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-File-ID: 32\n"
 
 #: toc.py:14
 msgid "Section"
-msgstr ""
+msgstr "Section"
 
 #: toc.py:29
 msgid "Article"
-msgstr ""
+msgstr "Article"
 
 #: toc.py:30
 msgid "Chapter"
-msgstr ""
+msgstr "Chapitre"
 
 #: toc.py:31
 msgid "Part"
-msgstr ""
+msgstr "Pièce"

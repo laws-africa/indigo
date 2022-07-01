@@ -1,20 +1,20 @@
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
 {% if tasks %}
 <table class="table table-striped table-sm mb-0">
   <thead>
     <tr>
       {% block table-header %}
-      <th scope="col" colspan="2">Task</th>
+      <th scope="col" colspan="2">{% trans 'Task' %}</th>
       {% if place %}
-        <th scope="col">Place</th>
+        <th scope="col">{% trans 'Place' %}</th>
       {% endif %}
       {% if hide_works %}
-        <th scope="col">Document</th>
+        <th scope="col">{% trans 'Document' %}</th>
       {% else %}
-        <th scope="col">Work or Document</th>
+        <th scope="col">{% trans 'Work or Document' %}</th>
       {% endif %}
-      <th scope="col">Updated</th>
+      <th scope="col">{% trans 'Updated' %}</th>
       {% endblock %}
     </tr>
   </thead>
@@ -44,7 +44,7 @@
       <!-- Task title -->
       <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mr-1 {% endif %}">{{ task.title }}</a>
       {% if task.changes_requested %}
-        <span class="badge badge-secondary bg-pending_review ml-1 mr-1">Changes requested</span>
+        <span class="badge badge-secondary bg-pending_review ml-1 mr-1">{% trans 'Changes requested' %}</span>
       {% endif %}
       {% for label in task.labels.all %}
         <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
@@ -89,6 +89,6 @@
 </table>
 {% else %}
 <div class="card-body">
-  <p class="alert alert-info">No tasks found</p>
+  <p class="alert alert-info">{% trans 'No tasks found' %}</p>
 </div>
 {% endif %}

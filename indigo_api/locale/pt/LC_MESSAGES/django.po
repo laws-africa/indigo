@@ -1,0 +1,222 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-30 16:06+0200\n"
+"PO-Revision-Date: 2022-06-30 08:18\n"
+"Last-Translator: Greg Kempe (longhotsummer)\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Language: pt\n"
+"X-Crowdin-File: /master/indigo_api/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-File-ID: 22\n"
+
+#: models/documents.py:290
+#, python-format
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgstr "Esta é a versão deste documento do %(start)s e inclui quaisquer alterações publicadas até %(end)s."
+
+#: models/documents.py:292
+#, python-format
+msgid "This is the version of this document from %(start)s."
+msgstr "Esta é a versão deste documento do %(start)s."
+
+#: models/documents.py:295
+#, python-format
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgstr "Esta é a versão deste documento em %(start)s e inclui quaisquer alterações publicadas até %(end)s."
+
+#: models/documents.py:297
+#, python-format
+msgid "This is the version of this document at %(start)s."
+msgstr "Esta é a versão deste documento em %(start)s."
+
+#: models/documents.py:300
+#, python-format
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
+msgstr "Esta é a versão deste documento como era de %(start)s para %(end)s."
+
+#: models/documents.py:303
+#, python-format
+msgid "This is the version of this document as it was at %(start)s to %(end)s."
+msgstr "Esta é a versão deste documento como estava em %(start)s a %(end)s."
+
+#: models/documents.py:306
+#, python-format
+msgid "This is the version of this document as it was at %(start)s."
+msgstr "Esta é a versão deste documento como estava em %(start)s."
+
+#: models/places.py:191
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr "Nota: O documento de publicação original não está disponível e este conteúdo não pôde ser verificado."
+
+#: models/tasks.py:231
+msgid "Are you sure you want to submit this task for review?"
+msgstr "Você tem certeza que deseja enviar esta tarefa para revisão?"
+
+#: models/tasks.py:233
+#, python-format
+msgid "Are you sure you want to submit this task for review on behalf of %s?"
+msgstr "Tem certeza que deseja submeter esta tarefa para análise em nome de %s?"
+
+#: models/works.py:419
+#, python-format
+msgid "No such locality for this country: %s"
+msgstr "Nenhuma localidade para este país: %s"
+
+#: models/works.py:429
+msgid "Invalid FRBR URI"
+msgstr "Invalid FRBR URI"
+
+#: templates/indigo_api/akn/_amendments.html:10
+#, python-format
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
+
+#: templates/indigo_api/akn/_amendments.html:12
+#, python-format
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</span>]"
+
+#: templates/indigo_api/akn/_amendments.html:24
+#, python-format
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> em <span class=\"repeal-date\">%(date)s</span>]"
+
+#: templates/indigo_api/akn/_amendments.html:26
+#, python-format
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> em <span class=\"repeal-date\">%(date)s</span>]"
+
+#: templates/indigo_api/akn/coverpage_act.html:39
+#, python-format
+msgid "Published in %(name)s no. %(number)s on %(date)s"
+msgstr "Publicado em %(name)s no. %(number)s em %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:41
+#, python-format
+msgid "Published in %(name)s on %(date)s"
+msgstr "Publicado em %(name)s no %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:51
+#, python-format
+msgid "Assented to on %(date)s"
+msgstr "Assentiu em %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:59
+msgid "Not commenced"
+msgstr "Não iniciado"
+
+#: templates/indigo_api/akn/coverpage_act.html:65
+#: templates/indigo_api/akn/coverpage_act.html:102
+msgid "Commencement date unknown"
+msgstr "Data de conforto desconhecida"
+
+#: templates/indigo_api/akn/coverpage_act.html:67
+#: templates/indigo_api/akn/coverpage_act.html:104
+#, python-format
+msgid "Commenced on %(date)s"
+msgstr "Comemorado em %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:75
+#: templates/indigo_api/akn/coverpage_act.html:112
+#, python-format
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "– iniciado por <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+
+#: templates/indigo_api/akn/coverpage_act.html:77
+#: templates/indigo_api/akn/coverpage_act.html:114
+#, python-format
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "– iniciado por <a href=\"%(resolver_uri)s\">%(title)s</a>"
+
+#: templates/indigo_api/akn/coverpage_act.html:81
+#: templates/indigo_api/akn/coverpage_act.html:118
+#: templates/indigo_api/akn/coverpage_act.html:164
+#, python-format
+msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "por <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+
+#: templates/indigo_api/akn/coverpage_act.html:83
+#: templates/indigo_api/akn/coverpage_act.html:120
+#: templates/indigo_api/akn/coverpage_act.html:166
+#, python-format
+msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "por <a href=\"%(resolver_uri)s\">%(title)s</a>"
+
+#: templates/indigo_api/akn/coverpage_act.html:133
+msgid "There are multiple commencements:"
+msgstr "Há várias aberturas:"
+
+#: templates/indigo_api/akn/coverpage_act.html:138
+msgid "Provisions"
+msgstr "Provisões"
+
+#: templates/indigo_api/akn/coverpage_act.html:139
+msgid "Status"
+msgstr "SItuação"
+
+#: templates/indigo_api/akn/coverpage_act.html:150
+msgid "Unknown provisions"
+msgstr "Provisões desconhecidas"
+
+#: templates/indigo_api/akn/coverpage_act.html:155
+#, python-format
+msgid "commenced on %(date)s"
+msgstr "começou em %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:157
+msgid "commenced on <i>(unknown date)</i>"
+msgstr "iniciada em <i>(data desconhecida)</i>"
+
+#: templates/indigo_api/akn/coverpage_act.html:172
+msgid "Note:"
+msgstr "Nota:"
+
+#: templates/indigo_api/akn/coverpage_act.html:184
+msgid "not yet commenced"
+msgstr "ainda não iniciado"
+
+#: templates/indigo_api/akn/export/standalone.html:17
+msgid "Table of Contents"
+msgstr "Tabela de Conteúdos"
+
+#: views/documents.py:95
+msgid "DELETE not allowed for published documents, mark as a draft first."
+msgstr "DELETE não permitido para documentos publicados, marque como rascunho primeiro."
+
+#: views/documents.py:204
+msgid "Cannot create a task for a reply annotation."
+msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
+
+#: views/documents.py:340
+msgid "Error during import"
+msgstr "Erro durante a importação"
+
+#~ msgid "Up to date as at %(date)s"
+#~ msgstr "Opgedateer tot en met %(date)s"
+
+#, fuzzy
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy
+#~| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#~ msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>."
+#~ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#, fuzzy
+#~| msgid "Not commenced"
+#~ msgid "%(provisions)s: not yet commenced."
+#~ msgstr "Nog nie in werking"
+
+#~ msgid "Commences on %(date)s unless otherwise noted"
+#~ msgstr "Aanvang op %(date)s tensy anders vermeld"

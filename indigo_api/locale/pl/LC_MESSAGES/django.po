@@ -2,17 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-20 12:30+0200\n"
-"PO-Revision-Date: 2022-06-08 15:24\n"
+"POT-Creation-Date: 2022-06-30 16:06+0200\n"
+"PO-Revision-Date: 2022-06-30 08:02\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Language: pl\n"
@@ -22,12 +20,8 @@ msgstr ""
 
 #: models/documents.py:290
 #, python-format
-msgid ""
-"This is the version of this document from %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"To jest wersja tego dokumentu od %(start)s i zawiera wszelkie poprawki "
-"opublikowane do %(end)s."
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgstr "To jest wersja tego dokumentu od %(start)s i zawiera wszelkie poprawki opublikowane do %(end)s."
 
 #: models/documents.py:292
 #, python-format
@@ -36,12 +30,8 @@ msgstr "To jest wersja tego dokumentu z %(start)s."
 
 #: models/documents.py:295
 #, python-format
-msgid ""
-"This is the version of this document at %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"To jest wersja tego dokumentu na %(start)s i zawiera wszelkie poprawki "
-"opublikowane do %(end)s."
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgstr "To jest wersja tego dokumentu na %(start)s i zawiera wszelkie poprawki opublikowane do %(end)s."
 
 #: models/documents.py:297
 #, python-format
@@ -50,8 +40,7 @@ msgstr "To jest wersja tego dokumentu w %(start)s."
 
 #: models/documents.py:300
 #, python-format
-msgid ""
-"This is the version of this document as it was from %(start)s to %(end)s."
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
 msgstr "To jest wersja tego dokumentu w wersji od %(start)s do %(end)s."
 
 #: models/documents.py:303
@@ -65,12 +54,8 @@ msgid "This is the version of this document as it was at %(start)s."
 msgstr "To jest wersja tego dokumentu w wersji %(start)s."
 
 #: models/places.py:191
-msgid ""
-"Note: The original publication document is not available and this content "
-"could not be verified."
-msgstr ""
-"Uwaga: oryginalny dokument publikacji nie jest dostępny i nie można "
-"zweryfikować tej zawartości."
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr "Uwaga: oryginalny dokument publikacji nie jest dostępny i nie można zweryfikować tej zawartości."
 
 #: models/tasks.py:231
 msgid "Are you sure you want to submit this task for review?"
@@ -92,42 +77,23 @@ msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
-"date\">%(date)s</span>]"
-msgstr ""
-"[Zmienione przez <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s (%(amending_numtitle)s)</a> w dniu <span class="
-"\"amendment-date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Zmienione przez <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> w dniu <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
-"[Zmienione przez <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
-"%(amending_title)s</a> dnia <span class=\"amendment-date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Zmienione przez <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> dnia <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
-"[Uchylony przez <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s (%(numtitle)s)</a> w dniu <span class=\"repeal-date\">%(date)s</"
-"span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Uchylony przez <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> w dniu <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
-"[Uchylony przez <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
-"%(title)s</a> dnia <span class=\"repeal-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Uchylony przez <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> dnia <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format

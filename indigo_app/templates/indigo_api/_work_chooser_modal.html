@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <div class="modal fade" id="work-chooser-box" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Choose a work</h5>
+        <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
 
@@ -23,7 +25,7 @@
             </div>
 
             <div class="col-4 col-offset-2">
-              <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
+              <input type="text" class="form-control work-chooser-search" placeholder="{% trans 'Search...'%}" autocomplete="off">
             </div>
 
           </div>
@@ -32,9 +34,9 @@
       </div>
 
       <div class="modal-footer">
-        <a href="#" class="btn btn-link create-work" target="_blank">Create a new work</a>
-        <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</a>
-        <input type="submit" class="btn btn-primary choose-work" value="OK">
+        <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
+        <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">{% trans 'Cancel' %}</a>
+        <input type="submit" class="btn btn-primary choose-work" value="{% trans 'OK' %}">
       </div>
 
     </div>
@@ -43,31 +45,31 @@
 
 
 <script id="work-chooser-table-template" type="text/x-handlebars-template">
-{% verbatim %}
 
 <table class="table table-sm table-hover work-list-table">
   <thead>
     <tr>
-      <th class="year">Year</th>
-      <th class="title">Title</th>
-      <th class="frbr_uri">FRBR URI</th>
+      <th class="year">{% trans 'Year' %}</th>
+      <th class="title">{% trans 'Title' %}</th>
+      <th class="frbr_uri">{% trans 'FRBR URI' %}</th>
     </tr>
   </thead>
   <tbody>
+  {% verbatim %}
     {{#each works}}
       <tr data-id="{{ id }}" class="{{#if chosen }}table-primary chosen{{/if}}">
         <td>{{ year }}</td>
         <td>
           {{ title }}
           {{#if stub}}
-          <span class="badge badge-info">stub</span>
+          <span class="badge badge-info">{% endverbatim %}{% trans 'stub' %}{% verbatim %}</span>
           {{/if}}
           {{#unless commenced}}
-          <span class="badge badge-info">not commenced</span>
+          <span class="badge badge-info">{% endverbatim %}{% trans 'not commenced' %}{% verbatim %}</span>
           {{/unless}}
           {{#if commenced}}
           {{#unless commencement_date}}
-          <span class="badge badge-info">commencement date unknown</span>
+          <span class="badge badge-info">{% endverbatim %}{% trans 'commencement date unknown' %}{% verbatim %}</span>
           {{/unless}}
           {{/if}}
         </td>
@@ -78,7 +80,7 @@
     {{#if pagination.hasNextPage}}
       <tr>
         <td colspan="3" class="text-center">
-          <a href="#" class="get-next-page">Load more...</a>
+          <a href="#" class="get-next-page">{% endverbatim %}{% trans 'Load more...' %}{% verbatim %}</a>
         </td>
       </tr>
     {{/if}}

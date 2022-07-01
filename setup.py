@@ -64,7 +64,7 @@ setup(
         'django-sass-processor-dart-sass>=0.0.1',
         'django-storages>=1.12.3',
         'django-taggit-serializer>=0.1.5',
-        'django-taggit>=1.2.0,<2.0.0',
+        'django-taggit>=1.2.0,<4.0.0',
         'django-templated-email>=2.3.0',
         'django-wkhtmltopdf>=3.3.0',
         'djangorestframework-xml>=1.3.0',

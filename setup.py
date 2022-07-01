@@ -58,7 +58,7 @@ setup(
         'django-fsm>=2.6.0',
         'django-languages-plus>=1.1.1',
         'django-pipeline>=1.6.11',
-        'django-recaptcha>=1.4.0,<2.0.0',
+        'django-recaptcha>=1.4.0,<4.0.0',
         'django-reversion>=3.0.9',
         'django-sass-processor>=1.1',
         'django-sass-processor-dart-sass>=0.0.1',

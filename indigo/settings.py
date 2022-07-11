@@ -81,8 +81,6 @@ INSTALLED_APPS = (
     'django_filters',
 
     # required by the Indigo API
-    'taggit',
-    'taggit_serializer',
     'countries_plus',
     'languages_plus',
     'storages',

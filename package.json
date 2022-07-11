@@ -15,8 +15,6 @@
     "bower": "^1.8.8",
     "chart.js": "^2.8.0",
     "css-loader": "^5.2.6",
-    "dom-anchor-text-position": "^4.0.0",
-    "dom-anchor-text-quote": "^4.0.2",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",

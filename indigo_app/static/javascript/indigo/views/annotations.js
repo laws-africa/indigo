@@ -253,7 +253,7 @@
       if (this.root.get('closed')) return;
 
       this.unmark();
-      range = Indigo.dom.targetToRange(this.target, this.anchorRoot);
+      range = window.indigoAkn.targetToRange(this.target, this.anchorRoot);
 
       if (range && this.mark(range)) {
         // gutter uses this for positioning
@@ -275,9 +275,10 @@
           handler = _.bind(this.markClicked, this);
 
       this.marks = [];
-      Indigo.dom.markRange(range, 'mark', function (mark) {
+      window.indigoAkn.markRange(range, 'mark', function (mark) {
         self.marks.push(mark);
         mark.addEventListener('click', handler);
+        return mark;
       });
 
       return this.marks.length > 0;
@@ -513,9 +514,8 @@
       this.removeNewButton();
 
       // don't go outside of the AKN document
-      target = Indigo.dom.rangeToTarget(this.pendingRange, this.contentContainer);
+      target = window.indigoAkn.rangeToTarget(this.pendingRange, this.contentContainer);
       if (!target) return;
-
 
       // createThread triggers add, the makeView which appends la-gutter-item
       thread = this.threads.createThread({selectors: target.selectors, anchor_id: target.anchor_id, closed: false});

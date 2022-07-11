@@ -6,7 +6,6 @@ import django.contrib.postgres.fields
 import django.db.models.deletion
 import django_fsm
 import indigo_api.models.documents
-import taggit.managers
 
 
 class Migration(migrations.Migration):
@@ -15,7 +14,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('languages_plus', '0002_auto_20141008_0947'),
-        ('taggit', '0001_initial'),
         ('countries_plus', '0005_auto_20160224_1804'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('reversion', '0001_squashed_0004_auto_20160611_1202'),
@@ -132,7 +130,9 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('deleted', models.BooleanField(default=False, help_text='Has this document been deleted?')),
                 ('language', models.ForeignKey(help_text='Language this document is in.', on_delete=django.db.models.deletion.PROTECT, to='indigo_api.Language')),
-                ('tags', taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                # this used to be a taggit.TagManager field, but that dependency has been removed. This field is
+                # retained so that the migration that removes it later still has something to work with.
+                ('tags', models.CharField(max_length=1024, null=True, blank=True)),
                 ('expression_date', models.DateField(help_text='Date of publication or latest amendment')),
                 ('created_by_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
                 ('updated_by_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),

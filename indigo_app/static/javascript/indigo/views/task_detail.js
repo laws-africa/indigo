@@ -17,11 +17,12 @@
     initialize: function() {
       this.$('[data-highlight]').each(function(i, container) {
         var target = JSON.parse(container.getAttribute('data-highlight')),
-            range = Indigo.dom.targetToRange(target, container);
+            range = window.indigoAkn.targetToRange(target, container);
 
         if (range) {
-          Indigo.dom.markRange(range, 'mark', function(m) {
+          window.indigoAkn.markRange(range, 'mark', function(m) {
             m.classList.add('active');
+            return m;
           });
         }
       });

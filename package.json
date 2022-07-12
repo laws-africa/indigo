@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
-    "@lawsafrica/indigo-akn": "^5.1.0",
+    "@lawsafrica/indigo-akn": "^5.1.1",
     "@lawsafrica/web-components": "^0.7.3-beta",
     "bootstrap": "^4.3.1",
     "bootstrap-select": "^1.13.18",
@@ -26,7 +26,7 @@
     "eslint-webpack-plugin": "^3.2.0",
     "indigo-web": "^8.1.2",
     "lodash": "^4.17.21",
-    "monaco-editor": "^0.20.0",
+    "monaco-editor": "^0.33.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.1.0",

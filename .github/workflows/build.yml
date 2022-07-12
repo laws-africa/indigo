@@ -25,9 +25,13 @@ jobs:
       - name: Build
         run: npx webpack
 
-      - name: Import indigo-web
-        # Keep the local copy of indigo-web up to date; this is only used for PDF exports
-        run: cp -R node_modules/indigo-web/scss indigo_app/static/lib/indigo-web/
+      - name: Copy node dependencies
+        # Keep the local copy of some node dependencies up to date
+        # indigo-web: only used for PDF exports
+        # monaco-editor
+        run: |
+          - cp -R node_modules/indigo-web/scss indigo_app/static/lib/indigo-web/
+          - cp -R node_modules/monaco-editor/min/vs/{base,basic-languages,editor,loader.js} indigo_app/static/lib/monaco-editor/
 
       - name: Push
         uses: EndBug/add-and-commit@v7

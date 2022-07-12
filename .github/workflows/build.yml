@@ -29,7 +29,9 @@ jobs:
         # Keep the local copy of some node dependencies up to date
         # indigo-web: only used for PDF exports
         # monaco-editor
-        run: cp node_modules/monaco-editor/min/vs/loader.js indigo_app/static/lib/monaco-editor/
+        run: |
+          cp -R node_modules/indigo-web/scss indigo_app/static/lib/indigo-web/
+          cp -R node_modules/monaco-editor/min/vs/{base,basic-languages,editor,loader.js} indigo_app/static/lib/monaco-editor/
 
       - name: Push
         uses: EndBug/add-and-commit@v7

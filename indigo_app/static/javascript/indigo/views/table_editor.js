@@ -163,7 +163,7 @@
         });
 
         // remove foreign content
-        $(this.editable).find(Indigo.dom.foreignElementsSelector).remove();
+        $(this.editable).find(window.indigoAkn.foreignElementsSelector).remove();
         this.ckeditor = CKEDITOR.inline(this.editable, this.ckeditorConfig);
         this.setupCKEditorInstance(this.ckeditor);
 

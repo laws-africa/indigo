@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
-{% block title %}Projects {{ block.super }}{% endblock %}
+{% block title %}{% trans "Projects" %} {{ block.super }}{% endblock %}
 
 {% block content %}
 
@@ -14,15 +14,17 @@
 
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-outline-secondary {% if form.state.value == 'open' %}active{% endif %}">
-              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if form.state.value == 'open' %}checked {% endif %}> Open
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if form.state.value == 'open' %}checked {% endif %}>
+              {% trans "Open" %}
             </label>
             <label class="btn btn-outline-secondary {% if form.state.value == 'closed' %}active{% endif %}">
-              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="closed" {% if form.state.value == 'closed' %}checked {% endif %}> Closed
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="closed" {% if form.state.value == 'closed' %}checked {% endif %}>
+              {% trans "Closed" %}
             </label>
           </div>
 
           <div class="ml-auto float-right">
-            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New project</a>
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">{% trans "New project" %}</a>
           </div>
 
         </div>
@@ -44,7 +46,7 @@
             <div class="mb-2">
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
               {% if workflow.priority %}
-                <span class="text-warning mr-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> Priority</span>
+                <span class="text-warning mr-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> {% trans "Priority" %}</span>
               {% endif %}
             </div>
 
@@ -54,17 +56,23 @@
 
             {% if workflow.due_date %}
               <div class="text-muted">
-                Due {{ workflow.due_date|date:"Y-m-d" }}
+                {% trans "Due on" %} {{ workflow.due_date|date:"Y-m-d" }}
                 {% if workflow.overdue %}
-                  <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+                  <i class="ml-3 fas fa-exclamation-triangle"></i> {% trans "Overdue" %}
                 {% endif %}
               </div>
             {% endif %}
 
             <div class="small text-muted">
-              Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>
               {% if workflow.created_by_user %}
-              by {% user_profile workflow.created_by_user %}
+                {% blocktrans trimmed with date=workflow.created_at|date:'c' created_at=workflow.created_at|naturaltime %}
+                  Created <span class="time-ago" data-timestamp="{{ date }}">{{ created_at }}</span> by
+                {% endblocktrans %}
+                {% user_profile workflow.created_by_user %}
+              {% else %}
+                {% blocktrans trimmed with date=workflow.created_at|date:'c' created_at=workflow.created_at|naturaltime %}
+                  Created <span class="time-ago" data-timestamp="{{ date }}">{{ created_at }}</span>
+                {% endblocktrans %}
               {% endif %}
             </div>
           </div>
@@ -77,7 +85,13 @@
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
                   </div>
                 </div>
-                <div class="col-4 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
+                <div class="col-4 text-muted">
+                  {% blocktrans trimmed with n_done=workflow.task_counts.complete count n_tasks=workflow.task_counts.total %}
+                    {{ n_done }} of {{ n_tasks }} task
+                  {% plural %}
+                    {{ n_done }} of {{ n_tasks }} tasks
+                  {% endblocktrans %}
+                </div>
               </div>
 
               <div class="row">
@@ -97,8 +111,8 @@
 
     {% else %}
       <div class="card-body text-center">
-        <p>Create projects to group and track related tasks.</p>
-        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New project</a>
+        <p>{% trans "Create projects to group and track related tasks." %}</p>
+        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">{% trans "New project" %}</a>
       </div>
     {% endif %}
 
@@ -108,7 +122,7 @@
     <nav class="mt-3">
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?state={{ form.state.value }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="?state={{ form.state.value }}&page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
         {% endif %}
 
         {% for num in paginator.page_range %}
@@ -116,7 +130,7 @@
         {% endfor %}
 
         {% if page_obj.has_next %}
-          <li class="page-item"><a class="page-link" href="?state={{ form.state.value }}&page={{ page_obj.next_page_number }}">Next</a></li>
+          <li class="page-item"><a class="page-link" href="?state={{ form.state.value }}&page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
         {% endif %}
       </ul>
     </nav>

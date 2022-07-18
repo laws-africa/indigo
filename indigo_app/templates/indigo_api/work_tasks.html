@@ -1,10 +1,13 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
-{% block title %}Tasks – {{block.super }}{% endblock %}
+{% block title %}{% trans 'Tasks' %} – {{block.super }}{% endblock %}
 
 {% block work-content %}
   <div class="text-right mb-3">
-    <a href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}" class="btn btn-success">Create task</a>
+    <a href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}" class="btn btn-success">
+      {% trans 'Create task' %}
+    </a>
   </div>
 
   <div class="card">
@@ -12,7 +15,7 @@
       {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
     {% else %}
       <div class="card-body">
-        <p class="text-center"><em>No tasks found for {{ work.title }}.</em></p>
+        <p class="text-center"><em>{% trans 'No tasks.' %}</em></p>
       </div>
     {% endif %}
   </div>

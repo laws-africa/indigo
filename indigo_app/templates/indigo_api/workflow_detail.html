@@ -1,6 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
-{% load activity_tags %}
-{% load humanize indigo_app %}
+{% load activity_tags humanize indigo_app i18n %}
 
 {% block title %}{{ workflow.title }} {{ block.super }}{% endblock %}
 
@@ -8,9 +7,9 @@
 <div class="container mt-3 mb-5">
   <div class="float-right">
     {% if not workflow.closed %}
-      <button class="btn btn-success mr-2" data-toggle="modal" data-target="#workflow-add-tasks-modal">Add tasks</button>
+      <button class="btn btn-success mr-2" data-toggle="modal" data-target="#workflow-add-tasks-modal">{% trans 'Add tasks' %}</button>
     {% endif %}
-    <a href="{% url 'workflow_edit' place=place.place_code pk=workflow.pk %}" class="btn btn-primary">Edit project</a>
+    <a href="{% url 'workflow_edit' place=place.place_code pk=workflow.pk %}" class="btn btn-primary">{% trans 'Edit project' %}</a>
   </div>
 
   <div class="d-flex mb-3">
@@ -25,12 +24,12 @@
       {% if workflow.priority or workflow.due_date %}
         <div class="text-muted">
           {% if workflow.priority %}
-            <span class="mr-3 text-warning"><i class="fas fa-exclamation-circle"></i> Priority</span>
+            <span class="mr-3 text-warning"><i class="fas fa-exclamation-circle"></i> {% trans 'Priority' %}</span>
           {% endif %}
           {% if workflow.due_date %}
-            Due {{ workflow.due_date|date:"Y-m-d" }}
+            {% trans 'Due on' %} {{ workflow.due_date|date:"Y-m-d" }}
             {% if workflow.overdue %}
-              <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+              <i class="ml-3 fas fa-exclamation-triangle"></i> {% trans 'Overdue' %}
             {% endif %}
           {% endif %}
         </div>
@@ -55,7 +54,13 @@
                   <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
                 </div>
               </div>
-              <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
+              <div class="col text-muted">
+                {% blocktrans trimmed with n_done=workflow.n_done count n_tasks=workflow.n_tasks %}
+                  {{ n_done }} of {{ n_tasks }} task
+                {% plural %}
+                  {{ n_done }} of {{ n_tasks }} tasks
+                {% endblocktrans %}
+              </div>
             </div>
           </div>
         {% endif %}
@@ -72,17 +77,17 @@
         {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True selectable=True %}
       {% else %}
         <div class="card-body text-center">
-          <p>No tasks match your filters.</p>
+          <p>{% trans 'No tasks match your filters.' %}</p>
         </div>
       {% endif %}
     {% elif workflow.closed %}
       <div class="card-body text-center">
-        <p>This project is closed; reopen it to add tasks.</p>
+        <p>{% trans "This project is closed; reopen it to add tasks." %}</p>
       </div>
     {% else %}
       <div class="card-body text-center">
-        <p>Add some tasks to this project to get going.</p>
-        <button class="btn btn-success" data-toggle="modal" data-target="#workflow-add-tasks-modal">Add tasks</button>
+        <p>{% trans "Add some tasks to this project to get going." %}</p>
+        <button class="btn btn-success" data-toggle="modal" data-target="#workflow-add-tasks-modal">{% trans "Add tasks" %}</button>
       </div>
     {% endif %}
   </div>
@@ -92,12 +97,20 @@
   {% if may_close and perms.indigo_api.close_workflow %}
     <form method="POST">
       {% csrf_token %}
-      <button type="submit" class="btn btn-success mt-2" formaction="{% url 'workflow_close' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to close this project?">Close project</button>
+      <button type="submit" class="btn btn-success mt-2"
+              formaction="{% url 'workflow_close' place=place.place_code pk=workflow.pk %}"
+              data-confirm="{% trans "Are you sure you want to close this project?" %}">
+        {% trans "Close project" %}
+      </button>
     </form>
   {% elif may_reopen and perms.indigo_api.close_workflow %}
     <form method="POST">
       {% csrf_token %}
-      <button type="submit" class="btn btn-primary mt-2" formaction="{% url 'workflow_reopen' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to reopen this project?">Reopen project</button>
+      <button type="submit" class="btn btn-primary mt-2"
+              formaction="{% url 'workflow_reopen' place=place.place_code pk=workflow.pk %}"
+              data-confirm="{% trans "Are you sure you want to reopen this project?" %}">
+        {% trans "Reopen project" %}
+      </button>
     </form>
   {% endif %}
 </div>
@@ -106,7 +119,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Choose tasks to add to this project</h5>
+        <h5 class="modal-title">{% trans "Choose tasks to add to this project" %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -120,8 +133,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary workflow-add-tasks-save">Add tasks</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+          <button type="submit" class="btn btn-primary workflow-add-tasks-save">{% trans "Add tasks" %}</button>
         </div>
       </form>
     </div>

@@ -1,32 +1,38 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
 {% block view-id %}work-related-view{% endblock %}
-{% block title %}Related works – {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Related works' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>Related works</h4>
+  <h4>{% trans 'Related works' %}</h4>
 
   {% if no_related %}
-  <div class="alert alert-primary">No related works.</div>
+    <div class="alert alert-primary">{% trans 'No related works.' %}</div>
   {% endif %}
 
   {% if family %}
-    {% include 'indigo_api/_work_related_table.html' with items=family title="Parents and children" id="parent_kids" %}
+    {% trans "Parents and children" as title %}
+    {% include 'indigo_api/_work_related_table.html' with items=family title=title id="parent_kids" %}
   {% endif %}
 
   {% if repeals %}
-    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" id="repeals" with_date=True %}
+    {% trans "Repeals" as title %}
+    {% include 'indigo_api/_work_related_table.html' with items=repeals title=title id="repeals" with_date=True %}
   {% endif %}
 
   {% if commencement %}
-    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" id="commencement" with_date=True %}
+    {% trans "Commencement" as title %}
+    {% include 'indigo_api/_work_related_table.html' with items=commencement title=title id="commencement" with_date=True %}
   {% endif %}
 
   {% if amended %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" id="amended" with_date=True %}
+    {% trans "Works amended by this work" as title %}
+    {% include 'indigo_api/_work_related_table.html' with items=amended title=title id="amended" with_date=True %}
   {% endif %}
 
   {% if amended_by %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work" id="amended_by" with_date=True %}
+    {% trans "Works amending this work" as title %}
+    {% include 'indigo_api/_work_related_table.html' with items=amended_by title=title id="amended_by" with_date=True %}
   {% endif %}
 {% endblock %}

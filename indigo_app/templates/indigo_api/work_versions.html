@@ -1,9 +1,10 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
 
-{% block title %}Changes – {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Changes' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>Changes</h4>
+  <h4>{% trans 'Changes' %}</h4>
 
   {% if page.object_list %}
     <ul class="activity-list">
@@ -22,7 +23,7 @@
       <nav>
         <ul class="pagination justify-content-center">
           {% if page.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">{% trans 'Previous' %}</a></li>
           {% endif %}
 
           {% for num in paginator.page_range %}
@@ -30,14 +31,14 @@
           {% endfor %}
 
           {% if page.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">{% trans 'Next' %}</a></li>
           {% endif %}
         </ul>
       </nav>
     {% endif %}
 
   {% else %}
-    <p class="alert alert-info">There are no recorded previous versions of this work.</p>
+    <p class="alert alert-info">{% trans 'There are no saved previous versions of this work.' %}</p>
   {% endif %}
 
 {% endblock %}

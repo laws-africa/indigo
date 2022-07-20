@@ -1,11 +1,12 @@
 {% extends "place/tabbed_layout.html" %}
+{% load i18n %}
 
-{% block title %}{% if workflow.pk %}{{ workflow.title }}{% else %}New project{% endif %} {{ block.super }}{% endblock %}
+{% block title %}{% if workflow.pk %}{{ workflow.title }}{% else %}{% trans "New project" %}{% endif %} {{ block.super }}{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
   {% else %}
-    <div class="alert alert-danger">You don't have permission to create a project.</div>
+    <div class="alert alert-danger">{% trans "You don't have permission to create a project." %}</div>
   {% endif %}
 
   <form method="POST" action="" id="workflow-form">
@@ -25,7 +26,9 @@
 
           <div class="form-group">
             <label for="{{ form.title.id_for_label }}" class="required">{{ form.title.label }}</label>
-            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="A short description of this project">
+            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+                   value="{{ form.title.value|default:'' }}" required autofocus
+                   placeholder="{% trans "A short description of this project" %}">
             {% if form.title.errors %}
               <div class="text-danger">
                 {% for error in form.title.errors %}
@@ -38,7 +41,8 @@
           <div class="form-row">
             <div class="form-group col-sm-8">
               <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
+              <textarea class="form-control" rows="4" name="{{ form.description.name }}"
+                        id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
               {% if form.description.errors %}
                 <div class="text-danger">
                   {% for error in form.description.errors %}
@@ -51,7 +55,9 @@
             <div class="col-sm-4">
               <div class="form-group">
                 <label for="{{ form.due_date.id_for_label }}">{{ form.due_date.label }}</label>
-                <input type="text" class="form-control" data-provide="datepicker" id="{{ form.due_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.due_date.html_name }}" value="{{ form.due_date.value|date:"Y-m-d"|default:'' }}">
+                <input type="text" class="form-control" data-provide="datepicker" id="{{ form.due_date.id_for_label }}"
+                       placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.due_date.html_name }}"
+                       value="{{ form.due_date.value|date:"Y-m-d"|default:'' }}">
                 {% if form.due_date.errors %}
                   <div class="text-danger">
                     {% for error in form.due_date.errors %}
@@ -62,8 +68,9 @@
               </div>
 
               <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="{{ form.priority.id_for_label }}" name="{{ form.priority.html_name }}" value="on" {% if form.priority.value %}checked{% endif %}>
-                <label class="form-check-label" for="{{ form.priority.id_for_label }}">Priority project</label>
+                <input type="checkbox" class="form-check-input" id="{{ form.priority.id_for_label }}"
+                       name="{{ form.priority.html_name }}" value="on" {% if form.priority.value %}checked{% endif %}>
+                <label class="form-check-label" for="{{ form.priority.id_for_label }}">{% trans "Priority project" %}</label>
               </div>
             </div>
           </div>
@@ -71,17 +78,23 @@
 
         <div class="card-footer text-right">
           {% if workflow.pk %}
-          <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}" class="btn btn-link">Cancel</a>
+            <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}" class="btn btn-link">{% trans "Cancel" %}</a>
           {% endif %}
 
           {% if workflow.pk and perms.indigo_api.delete_workflow %}
             <form method="POST">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger" formaction="{% url 'workflow_delete' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to permanently delete this project? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)">Delete workflow</button>
+              <button type="submit" class="btn btn-danger"
+                      formaction="{% url 'workflow_delete' place=place.place_code pk=workflow.pk %}"
+                      data-confirm="{% trans "Are you sure you want to permanently delete this project? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)" %}">
+                {% trans "Delete workflow" %}
+              </button>
             </form>
           {% endif %}
 
-          <button class="btn btn-success" type="submit">{% if workflow.pk %}Save project{% else %}Create project{% endif %}</button>
+          <button class="btn btn-success" type="submit">
+            {% if workflow.pk %}{% trans "Save project" %}{% else %}{% trans "Create project" %}{% endif %}
+          </button>
         </div>
 
       </div>

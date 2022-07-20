@@ -1,18 +1,18 @@
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 <div class="popup-content lh-compact">
   <h6>
     {{ work.title }}
     {% if work.stub %}
-      <span class="badge badge-info">stub</span>
+      <span class="badge badge-info">{% trans 'stub' %}</span>
     {% endif %}
     {% if work.repealed_date %}
-      <span class="badge badge-info">repealed</span>
+      <span class="badge badge-info">{% trans 'repealed' %}</span>
     {% endif %} 
     {% if not work.commenced %}
-      <span class="badge badge-info">not commenced</span>
+      <span class="badge badge-info">{% trans 'not commenced' %}</span>
     {% elif not work.commencement_date %}
-      <span class="badge badge-info">commencement date unknown</span>
+      <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
     {% endif %}
     <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
   </h6>
@@ -22,51 +22,104 @@
   {% endif %}
 
   {% if work.assent_date %}
-    <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
+    <p class="mb-2">{% blocktrans with date=work.assent_date|date:"Y-m-d" %}Assented to on {{ date }}{% endblocktrans %}.</p>
   {% endif %}
 
   {% if work.publication_date or work.publication_name or work.publication_document %}
     <p class="mb-2">
-      {% comment %}
-      This tag weirdness is to ensure that we can put a full-stop at the end of the line without
-      whitespace before it.
-      {% endcomment %}
-
-      Published
       {% if work.publication_date %}
-        on {{ work.publication_date|date:"Y-m-d" }}{% endif %}{% if work.publication_document or work.publication_name %}
-        in
+        {% with pub_date=work.publication_date|date:"Y-m-d" %}
+          {% if work.publication_document or work.publication_name %}
+            {% if work.publication_document %}
+              {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
+              {% publication_document_name work as pubdoc %}
+              {% blocktrans trimmed %}
+                Published on {{ pub_date }} in <a href="{{ url }}" target="_blank" rel="noopener">{{ pubdoc }}</a>.
+              {% endblocktrans %}
+            {% else %}
+              Published on {{ pub_date }} in {{ pubdoc }}.
+            {% endif %}
+          {% else %}
+            {% blocktrans trimmed %}
+              Published on {{ pub_date }}.
+            {% endblocktrans %}
+          {% endif %}
+        {% endwith %}
+
+      {% else %}
+
         {% if work.publication_document %}
-          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{% publication_document_name work %}</a>.
+          {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
+          {% publication_document_name work as pubdoc %}
+          {% blocktrans trimmed %}
+            Published in <a href="{{ url }}" target="_blank" rel="noopener">{{ pubdoc }}</a>.
+          {% endblocktrans %}
         {% else %}
-          {% publication_document_name work %}.
+          Published in {{ pubdoc }}.
         {% endif %}
-      {% else %}.
+
       {% endif %}
     </p>
   {% endif %}
 
   {% if work.commenced %}
     <p class="mb-2">
-      Commenced
-      {% if work.main_commencement and not work.main_commencement.all_provisions %}in part{% endif %}
-      on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}{% if work.commencing_work %} by
-      <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">
-        {{ work.commencing_work.title }}</a>{% endif %}.
+      {% with date=work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>"%}
+        {% if work.main_commencement and not work.main_commencement.all_provisions %}
+          {% if work.commencing_work %}
+            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
+            {% blocktrans trimmed with title=work.commencing_work.title %}
+              Commenced in part on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
+            {% endblocktrans %}
+          {% else %}
+            {% blocktrans trimmed %}
+              Commenced in part on {{ date }}.
+            {% endblocktrans %}
+          {% endif %}
+
+        {% else %}
+
+          {% if work.commencing_work %}
+            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
+            {% blocktrans trimmed with title=work.commencing_work.title %}
+              Commenced on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
+            {% endblocktrans %}
+          {% else %}
+            {% blocktrans trimmed %}
+              Commenced on {{ date }}.
+            {% endblocktrans %}
+          {% endif %}
+
+        {% endif %}
+      {% endwith %}
+
       {% if work.commencements.count > 1 %}
-        This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.
+        {% url 'work_commencements' frbr_uri=work.frbr_uri as url %}
+        {% blocktrans trimmed %}
+          This work has <a href="{{ url }}">multiple commencements</a>.
+        {% endblocktrans %}
       {% endif %}
     </p>
   {% endif %}
 
   {% if work.repealed_date %}
-    <p class="mb-2">Repealed on {{ work.repealed_date|date:"Y-m-d" }}{% if work.repealed_by %} by
-      <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>{% endif %}.
+    <p class="mb-2">
+      {% if work.repealed_by %}
+        {% url 'work' frbr_uri=work.repealed_by.frbr_uri as url %}
+        {% blocktrans trimmed with date=work.repealed_date|date:"Y-m-d" title=work.repealed_by.title %}
+          Repealed on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
+        {% endblocktrans %}
+      {% else %}
+        {% blocktrans trimmed with date=work.repealed_date|date:"Y-m-d" %}
+          Repealed on {{ date }}.
+        {% endblocktrans %}
+      {% endif %}
     </p>
   {% endif %}
 
   {% if work.parent_work %}
-    <p class="mb-2">Primary work:
+    <p class="mb-2">
+      {% trans 'Primary work' %}:
       <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
     </p>
   {% endif %}

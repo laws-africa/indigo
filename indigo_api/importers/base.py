@@ -4,8 +4,9 @@ import logging
 import re
 
 from django.core.files.uploadedfile import UploadedFile
+from docpipe.pipeline import Pipeline, PipelineContext
+from docpipe.html import parse_and_clean
 from indigo.plugins import plugins, LocaleBasedMatcher
-from indigo.pipelines.pipeline import Pipeline, PipelineContext
 import indigo.pipelines.xml as xml
 import indigo.pipelines.html as html
 import indigo.pipelines.text as text
@@ -114,7 +115,7 @@ class Importer(LocaleBasedMatcher):
     def get_docx_pipeline(self):
         return Pipeline([
             html.DocxToHtml(),
-            html.parse_and_clean,
+            parse_and_clean,
 
             html.HtmlToSlawText(),
             text.NormaliseWhitespace(),
@@ -136,7 +137,7 @@ class Importer(LocaleBasedMatcher):
     def get_html_pipeline(self):
         return Pipeline([
             text.ImportSourceFile('html_text'),
-            html.parse_and_clean,
+            parse_and_clean,
             html.HtmlToSlawText(),
             text.NormaliseWhitespace(),
             text.ParseSlawText(),

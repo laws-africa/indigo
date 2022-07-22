@@ -2,7 +2,7 @@ import re
 
 from indigo_api.importers.base import Importer
 from indigo.plugins import plugins
-from indigo.pipelines.pipeline import Stage, Pipeline
+from docpipe.pipeline import Stage, Pipeline
 
 
 @plugins.register('importer')

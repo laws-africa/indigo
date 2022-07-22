@@ -1,6 +1,6 @@
 from lxml import etree
 
-from .pipeline import Stage
+from docpipe.pipeline import Stage
 
 
 class SerialiseXml(Stage):

@@ -8,13 +8,31 @@ import { createComponent, getVue, registerComponents } from './vue';
 class IndigoApp {
   setup () {
     this.components = [];
+    this.componentLibrary = {};
     this.Vue = getVue();
 
     registerComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
 
+    this.createComponents(document);
     this.createVueComponents(document);
     window.dispatchEvent(new Event('indigo.components-created'));
+  }
+
+  createComponents (root) {
+    // create components
+    for (const element of root.querySelectorAll('[data-component]')) {
+      this.createComponent(element);
+    }
+  }
+
+  createComponent (element) {
+    const name = element.getAttribute('data-component');
+
+    if (this.componentLibrary[name]) {
+      // create the component and attach it to the HTML element
+      this.components.push(element.component = new this.componentLibrary[name](element));
+    }
   }
 
   /**
@@ -32,7 +50,7 @@ class IndigoApp {
     const name = element.getAttribute('data-vue-component');
 
     if (this.Vue.options.components[name]) {
-      // create the component and attached it to the HTML element
+      // create the component and attach it to the HTML element
       const vue = createComponent(name, { el: element });
       vue.$el.component = vue;
       this.components.push(vue);

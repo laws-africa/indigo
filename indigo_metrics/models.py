@@ -117,20 +117,22 @@ class DocumentMetrics(models.Model):
 
     @classmethod
     def create_or_update(cls, doc_id):
-        document = Document.objects.get(pk=doc_id)
-        metrics = cls.calculate(document)
+        # document may have been deleted in the meantime
+        document = Document.objects.filter(pk=doc_id).first()
+        if document:
+            metrics = cls.calculate(document)
 
-        try:
-            existing = cls.objects.get(document_id=document.pk)
-            if existing:
-                metrics.id = existing.id
-        except cls.DoesNotExist:
-            pass
+            try:
+                existing = cls.objects.get(document_id=document.pk)
+                if existing:
+                    metrics.id = existing.id
+            except cls.DoesNotExist:
+                pass
 
-        document.metrics = metrics
-        metrics.save()
+            document.metrics = metrics
+            metrics.save()
 
-        return metrics
+            return metrics
 
     @classmethod
     def calculate_for_place(cls, place_code):

@@ -1,0 +1,109 @@
+{% extends "place/insights_layout.html" %}
+{% load static sass_tags %}
+
+{% block title %}Explorer – {{ place.name }}{% endblock %}
+
+{% block insights-content %}
+<div class="container mt-3 mb-5">
+  <h3>Explorer</h3>
+
+  <form method="get" class="mb-5">
+    <label for="{{ form.xpath.id_for_label }}">XPath query</label>
+    <div class="d-flex">
+      <div class="flex-grow-1">
+        <input type="text" class="form-control text-monospace" name="{{ form.xpath.name }}" placeholder="xpath query" value="{{ form.xpath.value | default:'' }}" autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary ml-2">Go</button>
+    </div>
+
+    <small class="form-text text-muted">
+      Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href="https://lxml.de/xpathxslt.html#regular-expressions-in-xpath" target="_blank" rel="noreferrer noopener">regular expressions</a>.
+      Also see the <a href="https://devhints.io/xpath" target="_blank" rel="noreferrer noopener">XPath cheatsheet</a>.
+    </small>
+    {% if form.xpath.errors %}
+      <div class="text-danger">
+        {% for error in form.xpath.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div>
+      <label class="mr-3">Parent context:</label>
+      {% for choice in form.parent %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="parent" id="{{ choice.id_for_label }}" value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}>
+          <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.data.label }}</label>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if not locality %}
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" value="on" id="{{ form.localities.id_for_label }}" name="{{ form.localities.name }}" {% if form.localities.data %}checked{% endif %}>
+        <label class="form-check-label" for="{{ form.localities.id_for_label }}">Include localities</label>
+      </div>
+    {% endif %}
+
+    <a href="#samples" data-toggle="collapse">Examples</a>
+    <div class="collapse" id="samples">
+      <ul>
+        {% for descr, xpath, parent in samples %}
+          <li><a href="?{{ form.xpath.name }}={{ xpath|urlencode }}&parent={{ parent }}">{{ descr }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </form>
+
+  {% if matches %}
+    <p>{{ paginator.count }} match{{ paginator.count|pluralize:"es" }} in {{ n_documents }} document{{ n_documents|pluralize }}</p>
+
+    {% regroup matches by doc as doc_matches %}
+
+    {% for document, elements in doc_matches %}
+      <div class="card mb-3">
+        <h5 class="card-header">
+          <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
+        </h5>
+
+        <div class="card-body">
+          {% for elem in elements %}
+            {% if not forloop.first %}<hr>{% endif %}
+
+            <div class="row">
+              <div class="col-6">
+                <div class="akoma-ntoso country-{{ document.work.country.code }}">
+                  {{ elem.html|safe }}
+                </div>
+              </div>
+
+              <div class="col-6">
+                <pre><code class="xml">{{ elem.xml }}</code></pre>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+      <nav class="mt-4">
+        {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+      </nav>
+    {% endif %}
+
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block head-css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css">
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}

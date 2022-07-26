@@ -2,6 +2,7 @@ import json
 import re
 import urllib.parse
 from datetime import date
+from lxml import etree
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
@@ -583,3 +584,22 @@ class PlaceSettingsForm(forms.ModelForm):
     def clean_spreadsheet_url(self):
         url = self.cleaned_data.get('spreadsheet_url')
         return re.sub('/[\w#=]*$', '/', url)
+
+
+class ExplorerForm(forms.Form):
+    xpath = forms.CharField(required=True)
+    parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
+    localities = forms.BooleanField(required=False)
+
+    def clean_xpath(self):
+        value = self.cleaned_data['xpath']
+
+        try:
+            etree.XPath(value)
+        except etree.XPathError as e:
+            raise ValidationError(str(e))
+
+        return value
+
+    def data_as_url(self):
+        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')

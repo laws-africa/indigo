@@ -2,6 +2,11 @@
 Changelog
 =========
 
+17.2.0 (2022-07-26)
+----------
+
+* FEATURE: Indigo Explorer (use xpath to find documents containing certain elements).
+
 17.1.0 (2022-04-25)
 ----------
 

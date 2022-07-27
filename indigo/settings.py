@@ -144,6 +144,9 @@ INDIGO = {
     # see http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
     'DOCTYPES': [('Act', 'act')],
     'EXTRA_DOCTYPES': {},
+
+    # disable entire site except for superusers and the content API
+    'MAINTENANCE_MODE': bool(os.environ.get("INDIGO_MAINTENANCE_MODE"))
 }
 
 # Database

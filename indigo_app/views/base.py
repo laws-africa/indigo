@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
 
+from indigo_api.authz import is_maintenance_mode
 from indigo_api.models import Country
 
 
@@ -39,6 +41,9 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     must_accept_terms = True
 
     def dispatch(self, request, *args, **kwargs):
+        if is_maintenance_mode(request):
+            return self.maintenance_response(request)
+
         if self.requires_authentication():
             if not request.user.is_authenticated:
                 return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
@@ -51,6 +56,9 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
 
     def requires_authentication(self):
         return self.authentication_required or self.permission_required
+
+    def maintenance_response(self, request):
+        return TemplateResponse(request, "indigo_app/maintenance.html", status=503)
 
 
 class PlaceViewBase(AbstractAuthedIndigoView):

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-08-17 09:17\n"
+"PO-Revision-Date: 2022-08-17 10:43\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: analysis/toc/base.py:14 analysis/work_detail/base.py:48
 msgid "Act"
-msgstr "Ato"
+msgstr "Acto"
 
 #: analysis/toc/base.py:15
 msgid "Article"
@@ -277,7 +277,7 @@ msgstr "Parece que a obra primária desta obra é \"%(work)s\" (veja a linha %(r
 
 #: bulk_creator.py:904
 msgid "Link subleg"
-msgstr "Link do sub-link"
+msgstr "Link da legislação subordinada"
 
 #: bulk_creator.py:905
 #, python-format
@@ -301,9 +301,9 @@ msgstr "Verificar / atualizar o trabalho primário"
 msgid "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n\n"
 "But this work is already subleg under %(parent)s, so nothing was done.\n\n"
 "Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment."
-msgstr "Na planilha (ver linha %(row_num)s), diz que este trabalho está subleg abaixo de %(title)s (%(numbered_title)s).\n\n"
-"Mas este trabalho já está superado com %(parent)s, então nada foi feito.\n\n"
-"Verifique de novo qual trabalho este trabalho é subleg e atualize-o manualmente se necessário. Se a planilha estava errada, cancele esta tarefa com um comentário."
+msgstr "Na planilha (ver linha %(row_num)s), diz que esta obra está sob legislação subordinada abaixo de %(title)s (%(numbered_title)s).\n\n"
+"Mas esta obra já está sob legislação subordinada abaixo de %(parent)s, então nada foi feito.\n\n"
+"Verifique novamente qual obra esta obra está sob legislação subordinada e atualize-o manualmente se necessário. Se a planilha estava errada, cancele esta tarefa com um comentário."
 
 #: bulk_creator.py:930
 msgid "Link taxonomy"

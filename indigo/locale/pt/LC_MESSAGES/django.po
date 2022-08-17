@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-08-17 10:43\n"
+"PO-Revision-Date: 2022-08-17 11:38\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -212,7 +212,7 @@ msgstr "Aplicar as alterações feitas por %(amending_title)s (%(numbered_title)
 
 #: bulk_creator.py:845 bulk_creator.py:882
 msgid "Link repeal"
-msgstr "Rejeição de link"
+msgstr "Revogação do link"
 
 #: bulk_creator.py:846
 #, python-format
@@ -221,7 +221,7 @@ msgid "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(ro
 "– a typo in the spreadsheet\n"
 "– the repealing work doesn't exist on the system.\n\n"
 "Please link the repeal manually."
-msgstr "Parece que esta obra foi revogada pelo\"%(repealed_by)s\" (veja a linha %(row_num)s da planilha), mas não pôde ser conectada automaticamente.\n\n"
+msgstr "Parece que esta obra foi revogada pelo\"%(repealed_by)s\" (veja a linha %(row_num)s da planilha), mas não pôde ser vinculada automaticamente.\n\n"
 "Possíveis razões:\n"
 "- um erro de digitação na planilha\n"
 "- o trabalho de revogação não existe no sistema.\n\n"
@@ -229,7 +229,7 @@ msgstr "Parece que esta obra foi revogada pelo\"%(repealed_by)s\" (veja a linha 
 
 #: bulk_creator.py:858
 msgid "Check / update repeal"
-msgstr "Verificar / atualizar revogação"
+msgstr "Verificar / actualizar revogação"
 
 #: bulk_creator.py:859
 #, python-format

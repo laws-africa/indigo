@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-06-30 15:31\n"
+"PO-Revision-Date: 2022-08-17 07:09\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -28,7 +28,7 @@ msgstr "Artigo"
 
 #: analysis/toc/base.py:16
 msgid "By-law"
-msgstr "Sub-lei"
+msgstr "Estatuto"
 
 #: analysis/toc/base.py:17
 msgid "Chapter"
@@ -67,7 +67,7 @@ msgstr "Capítulo %(cap)s"
 #: bulk_creator.py:171
 #, python-format
 msgid "Error talking to Google Sheets: %s"
-msgstr "Erro ao conversar com Google Sheets: %s"
+msgstr "Erro ao comunicar com Google Sheets: %s"
 
 #: bulk_creator.py:178
 msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."

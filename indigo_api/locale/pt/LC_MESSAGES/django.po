@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-06-30 15:31\n"
+"PO-Revision-Date: 2022-08-17 11:38\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -161,7 +161,7 @@ msgstr "Provisões"
 
 #: templates/indigo_api/akn/coverpage_act.html:139
 msgid "Status"
-msgstr "SItuação"
+msgstr "Status"
 
 #: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
@@ -170,7 +170,7 @@ msgstr "Provisões desconhecidas"
 #: templates/indigo_api/akn/coverpage_act.html:155
 #, python-format
 msgid "commenced on %(date)s"
-msgstr "começou em %(date)s"
+msgstr "iniciada em %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 msgid "commenced on <i>(unknown date)</i>"
@@ -186,7 +186,7 @@ msgstr "ainda não iniciado"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr "Tabela de Conteúdos"
+msgstr "Índice"
 
 #: views/documents.py:95
 msgid "DELETE not allowed for published documents, mark as a draft first."

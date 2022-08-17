@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-08-17 11:38\n"
+"PO-Revision-Date: 2022-08-17 12:51\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -59,21 +59,21 @@ msgstr "Nota: O documento de publicação original não está disponível e este
 
 #: models/tasks.py:231
 msgid "Are you sure you want to submit this task for review?"
-msgstr "Você tem certeza que deseja enviar esta tarefa para revisão?"
+msgstr "Tem certeza que quer submeter esta tarefa para revisão?"
 
 #: models/tasks.py:233
 #, python-format
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
-msgstr "Tem certeza que deseja submeter esta tarefa para análise em nome de %s?"
+msgstr "Tem certeza que quer submeter esta tarefa para revisão em nome de %s?"
 
 #: models/works.py:419
 #, python-format
 msgid "No such locality for this country: %s"
-msgstr "Nenhuma localidade para este país: %s"
+msgstr "Não existe tal localidade para este país: %s"
 
 #: models/works.py:429
 msgid "Invalid FRBR URI"
-msgstr "Invalid FRBR URI"
+msgstr "FRBR URI Inválido"
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
@@ -108,7 +108,7 @@ msgstr "Publicado em %(name)s no %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr "Assentiu em %(date)s"
+msgstr "Aprovado em %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
@@ -117,13 +117,13 @@ msgstr "Não iniciado"
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr "Data de conforto desconhecida"
+msgstr "Data de início desconhecida"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr "Comemorado em %(date)s"
+msgstr "Iniciado em %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
@@ -153,7 +153,7 @@ msgstr "por <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr "Há várias aberturas:"
+msgstr "Há vários inícios:"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"

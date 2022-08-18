@@ -654,16 +654,22 @@ class PlaceExplorerView(PlaceViewBase, ListView):
         if not self.form.is_valid():
             return []
 
-        documents = Document.objects \
-            .undeleted() \
-            .filter(work__country=self.country) \
-            .order_by('title', '-expression_date')
+        if self.form.cleaned_data['global_search']:
+            documents = Document.objects \
+                .undeleted() \
+                .order_by('title', '-expression_date')
 
-        if self.locality:
-            documents = documents.filter(work__locality=self.locality)
-        elif not self.form.cleaned_data['localities']:
-            # explicitly exclude localities
-            documents = documents.filter(work__locality=None)
+        else:
+            documents = Document.objects \
+                .undeleted() \
+                .filter(work__country=self.country) \
+                .order_by('title', '-expression_date')
+
+            if self.locality:
+                documents = documents.filter(work__locality=self.locality)
+            elif not self.form.cleaned_data['localities']:
+                # explicitly exclude localities
+                documents = documents.filter(work__locality=None)
 
         return self.find(documents, self.form.cleaned_data['xpath'])
 

@@ -590,6 +590,7 @@ class ExplorerForm(forms.Form):
     xpath = forms.CharField(required=True)
     parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
     localities = forms.BooleanField(required=False)
+    global_search = forms.BooleanField(required=False)
 
     def clean_xpath(self):
         value = self.cleaned_data['xpath']

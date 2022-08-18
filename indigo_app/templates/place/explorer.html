@@ -38,6 +38,11 @@
       {% endfor %}
     </div>
 
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" value="on" id="{{ form.global_search.id_for_label }}" name="{{ form.global_search.name }}" {% if form.global_search.data %}checked{% endif %}>
+      <label class="form-check-label" for="{{ form.global_search.id_for_label }}">Global search</label>
+    </div>
+
     {% if not locality %}
       <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="on" id="{{ form.localities.id_for_label }}" name="{{ form.localities.name }}" {% if form.localities.data %}checked{% endif %}>
@@ -72,9 +77,9 @@
 
             <div class="row">
               <div class="col-6">
-                <div class="akoma-ntoso country-{{ document.work.country.code }}">
+                <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}">
                   {{ elem.html|safe }}
-                </div>
+                </la-akoma-ntoso>
               </div>
 
               <div class="col-6">

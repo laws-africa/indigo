@@ -1,14 +1,14 @@
 {% extends "indigo_app/user_account/layout.html" %}
 {% load i18n socialaccount %}
 
-{% block title%}Social accounts {{ block.super }}{% endblock %}
+{% block title%}{% trans "Social accounts" %} {{ block.super }}{% endblock %}
 {% block account-sidebar %}
   {% include 'indigo_app/user_account/_sidebar.html' with active='social' %}
 {% endblock %}
 
 {% block account-content %}
 <div class="card mb-5">
-  <h5 class="card-header">Social accounts</h5>
+  <h5 class="card-header">{% trans "Social accounts" %}</h5>
   <div class="card-body">
     {% if form.accounts %}
     <p>{% blocktrans %}You can sign in to your account using any of these third party accounts:{% endblocktrans %}</p>
@@ -32,7 +32,8 @@
               <form method="post" action="{% url 'socialaccount_connections' %}">
                 {% csrf_token %}
                 <input type="hidden" name="account" value="{{ base_account.id }}">
-                <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm="Really remove this social account?">Disconnect</button>
+                <button class="btn btn-sm btn-outline-danger" type="submit"
+                        data-confirm="{% trans "Really remove this social account?" %}">{% trans "Disconnect" %}</button>
               </form>
             </td>
           </tr>
@@ -47,9 +48,9 @@
 
     {% get_providers as socialaccount_providers %}
     {% if socialaccount_providers %}
-      <h5 class="mt-4">Connect a social account</h5>
+      <h5 class="mt-4">{% trans "Connect a social account" %}</h5>
 
-      <p class="mb-4">Connecting to a social account allows you to use it to login to Indigo.</p>
+      <p class="mb-4">{% trans "Connecting to a social account allows you to use it to login to Indigo." %}</p>
 
       <div class="row">
         <div class="col-md-6">
@@ -57,7 +58,8 @@
             {% for provider in socialaccount_providers %}
             <li>
               <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='connect' %}">
-                <i class="fab fa-fw fa-{{ provider.id }}"></i> Connect to {{provider.name}}
+                <i class="fab fa-fw fa-{{ provider.id }}"></i>
+                {% trans "Connect to" %} {{provider.name}}
               </a>
             </li>
             {% endfor %}

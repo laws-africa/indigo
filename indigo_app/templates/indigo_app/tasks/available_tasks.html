@@ -1,12 +1,12 @@
 {% extends "indigo_app/tasks/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
-{% block title %}Available tasks{% endblock %}
+{% block title %}{% trans "Available tasks" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-3">
   {% if priority_workflows %}
-    <h4>Priority projects</h4>
+    <h4>{% trans "Priority projects" %}</h4>
 
     <div class="mb-3 row">
       {% for workflow in priority_workflows %}
@@ -15,15 +15,15 @@
             <div class="card-body">
               <div class="mb-2">
                 <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-                <span class="mr-3 text-warning text-nowrap"><i class="fas fa-exclamation-circle"></i> Priority</span>
+                <span class="mr-3 text-warning text-nowrap"><i class="fas fa-exclamation-circle"></i> {% trans "Priority" %}</span>
               </div>
 
               <div class="text-muted">
                 <span class="mr-2">{{ workflow.country.name }}{% if workflow.locality %} › {{ workflow.locality.name }}{% endif %}</span>
                 {% if workflow.due_date %}
-                  Due {{ workflow.due_date|date:"Y-m-d" }}
+                  {% trans "Due" %} {{ workflow.due_date|date:"Y-m-d" }}
                   {% if workflow.overdue %}
-                    <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+                    <i class="ml-3 fas fa-exclamation-triangle"></i> {% trans "Overdue" %}
                   {% endif %}
                 {% endif %}
               </div>
@@ -49,7 +49,7 @@
     </div>
   {% endif %}
 
-  <h4>Available tasks <span class="badge badge-light">{{ paginator.count }}</span></h4>
+  <h4>{% trans "Available tasks" %} <span class="badge badge-light">{{ paginator.count }}</span></h4>
 
   <div class="card">
     <div class="card-header">
@@ -58,15 +58,18 @@
 
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-outline-secondary {% if not form.state.value.0 %}active{% endif %}">
-              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="" {% if not form.state.value %}checked{% endif %}> Available tasks
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="" {% if not form.state.value %}checked{% endif %}>
+              {% trans "Available tasks" %}
             </label>
             <label class="btn btn-outline-secondary {% if 'open' in form.state.value %}active{% endif %}">
               <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if 'open' in form.state.value %}checked{% endif %}>
-              <i class="fas fa-sm fa-fw task-icon-open"></i> Open
+              <i class="fas fa-sm fa-fw task-icon-open"></i>
+              {% trans "Open" %}
             </label>
             <label class="btn btn-outline-secondary {% if 'pending_review' in form.state.value %}active{% endif %}">
               <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="pending_review" {% if 'pending_review' in form.state.value %}checked{% endif %}>
-              <i class="fas fa-sm fa-fw task-icon-pending_review"></i> Pending review
+              <i class="fas fa-sm fa-fw task-icon-pending_review"></i>
+              {% trans "Pending review" %}
             </label>
           </div>
           <select class="form-control selectpicker notooltip col-2 ml-2"
@@ -95,7 +98,7 @@
       {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
     {% else %}
       <div class="card-body">
-        <p class="text-center"><em>No tasks found.</em></p>
+        <p class="text-center"><em>{% trans "No tasks found." %}</em></p>
       </div>
     {% endif %}
   </div>

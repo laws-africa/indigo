@@ -1,7 +1,7 @@
 {% extends "indigo_app/tasks/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 
-{% block title %}My tasks{% endblock %}
+{% block title %}{% trans "My tasks" %}{% endblock %}
 
 {% block content %}
 <div class="container mt-3">

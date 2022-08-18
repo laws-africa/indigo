@@ -1,6 +1,7 @@
 {% extends "indigo_app/user_account/layout.html" %}
+{% load i18n %}
 
-{% block title%}Edit Profile {{ block.super }}{% endblock %}
+{% block title%}{% trans "Edit Profile" %} {{ block.super }}{% endblock %}
 {% block account-sidebar %}
   {% include 'indigo_app/user_account/_sidebar.html' with active='profile' %}
 {% endblock %}
@@ -53,7 +54,7 @@
       </div>
     </div>
     <div class="card-footer">
-      <button type="submit" class="btn btn-success">Save</button>
+      <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
     </div>
   </div>
 

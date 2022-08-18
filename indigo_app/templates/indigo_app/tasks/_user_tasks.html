@@ -1,3 +1,4 @@
+{% load i18n %}
 
 <div class="row">
   <div class="{% if current_wide %}col-md-6{% else %}col-md{% endif %}">
@@ -5,9 +6,9 @@
       <div class="card-body">
         <h6 class="text-center mb-3">
           {% if request.user == user %}
-            <span>Your current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
+            <span>{% trans 'Your current tasks' %} <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
           {% else %}
-            <span>Current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
+            <span>{% trans 'Current tasks' %} <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
           {% endif %}
         </h6>
         {% if open_assigned_tasks %}
@@ -17,9 +18,11 @@
         {% else %}
         <p class="mx-3">
           {% if request.user == user %}
-            You don't have any assigned tasks right now.
+            {% trans "You don't have any assigned tasks right now." %}
           {% else %}
-            {{ user.first_name|default:user.username }} doesn't have any assigned tasks right now.
+            {% blocktrans trimmed with username=user.first_name|default:user.username %}
+              {{ username }} doesn't have any assigned tasks right now.
+            {% endblocktrans %}
           {% endif %}
         </p>
         {% endif %}
@@ -31,7 +34,7 @@
     <div class="card task-list-card">
       <div class="card-body">
         <h6 class="text-center mb-3">
-          <span>Tasks waiting for approval <span class="text-muted">({{ tasks_pending_approval|length }})</span></span>
+          <span>{% trans "Tasks waiting for approval" %}<span class="text-muted">({{ tasks_pending_approval|length }})</span></span>
         </h6>
         {% if tasks_pending_approval %}
         {% for task in tasks_pending_approval %}
@@ -39,9 +42,13 @@
         {% endfor %}
         {% else %}
           {% if request.user == user %}
-            You have no tasks waiting for approval.</p>
+            <p>{% trans "You have no tasks waiting for approval." %}</p>
           {% else %}
-            <p class="mx-3">{{ user.first_name|default:user.username }} has no tasks waiting for approval.</p>
+            <p class="mx-3">
+              {% blocktrans trimmed with username=user.first_name|default:user.username %}
+                {{ username }} has no tasks waiting for approval.
+              {% endblocktrans %}
+            </p>
           {% endif %}
         {% endif %}
       </div>
@@ -53,9 +60,9 @@
       <div class="card-body">
         <h6 class="text-center mb-3">
           {% if request.user == user %}
-            <span>Your recently approved tasks <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
+            <span>{% trans "Your recently approved tasks" %} <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
           {% else %}
-          <span>Recently approved tasks <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
+          <span>{% trans "Recently approved tasks" %} <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
           {% endif %}
         </h6>
           {% if tasks_recently_approved %}
@@ -64,9 +71,13 @@
             {% endfor %}
           {% else %}
             {% if request.user == user %}
-              You have no tasks that have been approved.</p>
+              <p>{% trans "You have no tasks that have been approved." %}</p>
             {% else %}
-              <p class="mx-3">{{ user.first_name|default:user.username }} has no tasks that have been approved.</p>
+              <p class="mx-3">
+                {% blocktrans trimmed with username=user.first_name|default:user.username %}
+                  {{ username }} has no tasks that have been approved.
+                {% endblocktrans %}
+              </p>
             {% endif %}
           {% endif %}
         </div>

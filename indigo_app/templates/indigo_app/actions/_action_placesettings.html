@@ -1,5 +1,6 @@
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 {% with action.action_object as place_settings %}
-    the settings for <a href="{% url 'place' place=place_settings.place.place_code %}">{{ place_settings.place }}</a>
+  {% trans 'the settings for' %}
+  <a href="{% url 'place' place=place_settings.place.place_code %}">{{ place_settings.place }}</a>
 {% endwith %}

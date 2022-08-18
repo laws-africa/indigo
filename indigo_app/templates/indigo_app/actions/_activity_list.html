@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% if actions %}
   <ul class="activity-list">
     {% if reverse_order %}
@@ -15,5 +17,5 @@
     {% endif %}
   </ul>
 {% else %}
-  <p>No recent activity :(</p>
+  <p>{% trans 'No recent activity' %} :(</p>
 {% endif %}

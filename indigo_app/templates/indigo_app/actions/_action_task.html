@@ -1,17 +1,18 @@
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 {% with action.action_object as task %}
   {% if this_task %}
-    this task
+    {% trans 'this task' %}
   {% else %}
-    the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+    {% trans 'the task' %}
+    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
 
     {% if not action.target %}
       {% if task.work %}
         {% if ignore_work %}
-          on this work
+          {% trans 'on this work' %}
         {% else %}
-          on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+          {% trans 'on the work' %} <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
           {% if task.document %}
             @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
           {% endif %}
@@ -22,9 +23,9 @@
 
   {% if action.target.target_actions.content_type.model == 'user' %}
     {% if action.verb == 'requested changes to' %}
-      from
+      {% trans 'from' %}
     {% else %}
-      to
+      {% trans 'to' %}
     {% endif %}
     {% user_profile action.target %}
   {% endif %}
@@ -32,14 +33,14 @@
   {% if action.target.target_actions.content_type.model == 'workflow' %}
     {% with action.target as workflow %}
       {% if action.verb == 'added' %}
-        to
+        {% trans 'to' %}
       {% elif action.verb == 'removed' %}
-        from
+        {% trans 'from' %}
       {% endif %}
       {% if this_workflow %}
-        this project
+        {% trans 'this project' %}
       {% else %}
-        the project <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+        {% trans 'the project' %} <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
       {% endif %}
     {% endwith %}
   {% endif %}
@@ -51,10 +52,10 @@
   {% endif %}
 
   {% if action.verb == 'submitted' %}
-    for review
+    {% trans 'for review' %}
   {% endif %}
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
+    {% trans 'in' %} <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
   {% endif %}
 {% endwith %}

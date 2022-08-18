@@ -1,10 +1,16 @@
 {% load indigo_app %}
-{% block top_contributors %}
+{% block top_contributors i18n %}
 
   <ul class="list-unstyled mb-0">
     {% for user in top_contributors %}
       <li class="mb-2">
-        <span class="float-right">{{ user.task_count }} task{{ user.task_count|pluralize }}</span>
+        <span class="float-right">
+          {% blocktrans trimmed count counter=user.task_count %}
+            {{ counter }} task
+          {% plural %}
+            {{ counter }} tasks
+          {% endblocktrans %}
+        </span>
         {% user_profile_photo_thumbnail user.user %}
         {% user_profile user.user %}
       </li>

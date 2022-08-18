@@ -113,6 +113,8 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         # page counts
         for c in context['countries']:
             c.n_pages = DocumentMetrics.calculate_for_place(c.code)['n_pages'] or 0
+            # ensure zeroes
+            c.n_works = c.n_works or 0
 
         return context
 

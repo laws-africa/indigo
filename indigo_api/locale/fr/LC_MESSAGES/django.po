@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-06-30 15:31\n"
+"PO-Revision-Date: 2022-08-31 16:01\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -73,7 +73,7 @@ msgstr "Localité introuvable pour ce pays : %s"
 
 #: models/works.py:429
 msgid "Invalid FRBR URI"
-msgstr "Invalid FRBR URI"
+msgstr "FRBR URI invalide"
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
@@ -108,16 +108,16 @@ msgstr "Publié dans %(name)s le %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr "Assisté le %(date)s"
+msgstr "Acceptée le %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
-msgstr "Non démarré"
+msgstr "Non commencé"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr "Date de début inconnue"
+msgstr "Date de commencement inconnue"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
@@ -153,7 +153,7 @@ msgstr "par <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr "Il y a plusieurs débuts :"
+msgstr "Il y a plusieurs commencements :"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
@@ -170,7 +170,7 @@ msgstr "Dispositions inconnues"
 #: templates/indigo_api/akn/coverpage_act.html:155
 #, python-format
 msgid "commenced on %(date)s"
-msgstr "a commencé le %(date)s"
+msgstr "commencé le %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 msgid "commenced on <i>(unknown date)</i>"

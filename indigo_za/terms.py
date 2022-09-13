@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 
 from indigo.analysis.terms.base import BaseTermsFinder
@@ -21,7 +20,7 @@ class TermsFinderENG(BaseTermsFinder):
     locale = (None, 'eng', None)
 
     heading_re = re.compile(r'.*(definition|interpretation)', re.IGNORECASE)
-    term_re = re.compile(r'^\s*["“”](.+?)["“”]')
+    term_re = re.compile(r'''^\s*["'‘“«](.+?)["'’”»]''')
 
 
 @plugins.register('terms')

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from lxml import etree
@@ -27,11 +25,11 @@ class TermsFinderENGTestCase(APITestCase):
         <listIntroduction>"authorised officer" includes-</listIntroduction>
         <item eId="sec_1__hcontainer_1__list_3__item_a">
           <num>(a)</num>
-          <p>a person in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic Act to be an authorised officer; and</p>
+          <p>a "person" in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic Act to be an authorised officer; and</p>
         </item>
         <item eId="sec_1__hcontainer_1__list_3__item_b">
           <num>(b)</num>
-          <p>a person appointed as an inspector by the City as contemplated in section 86 of the National Land Transport Act, 2009 (Act No. 5 of 2009);</p>
+          <p>a "person" appointed as an inspector by the City as contemplated in section 86 of the National Land Transport Act, 2009 (Act No. 5 of 2009);</p>
         </item>
       </blockList>
     </content>
@@ -53,11 +51,11 @@ class TermsFinderENGTestCase(APITestCase):
         <listIntroduction>"<def refersTo="#term-authorised_officer">authorised officer</def>" includes-</listIntroduction>
         <item eId="sec_1__hcontainer_1__list_3__item_a">
           <num>(a)</num>
-          <p>a person in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_a__term_1">Act</term> to be an authorised officer; and</p>
+          <p>a "person" in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_a__term_1">Act</term> to be an authorised officer; and</p>
         </item>
         <item eId="sec_1__hcontainer_1__list_3__item_b">
           <num>(b)</num>
-          <p>a person appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_2">Act</term> No. 5 of 2009);</p>
+          <p>a "person" appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_2">Act</term> No. 5 of 2009);</p>
         </item>
       </blockList>
     </content>
@@ -187,7 +185,7 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>“Act“ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p>“Act” means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
     </content>
   </hcontainer>
 </section>"""))
@@ -201,7 +199,65 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Act">“<def refersTo="#term-Act">Act</def>“ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p refersTo="#term-Act">“<def refersTo="#term-Act">Act</def>” means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>
+    </body>
+  
+''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
+
+    def test_fancy_quotes2(self):
+        doc = Document(work=self.work, content=document_fixture(xml="""
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p>‘Act’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>"""))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+      
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p refersTo="#term-Act">‘<def refersTo="#term-Act">Act</def>’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>
+    </body>
+  
+''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
+
+    def test_fancy_quotes3(self):
+        doc = Document(work=self.work, content=document_fixture(xml="""
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p>«Act» means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>"""))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+      
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p refersTo="#term-Act">«<def refersTo="#term-Act">Act</def>» means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
     </content>
   </hcontainer>
 </section>

@@ -46,6 +46,9 @@
       this.theme_def = {
         base: 'vs',
         inherit: true,
+        colors: {
+          'editor.foreground': '#000000'
+        },
         rules: [
           {token: 'string', foreground: '008000'},
           {token: 'constant.numeric', foreground: '0000FF'},

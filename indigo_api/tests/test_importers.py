@@ -123,7 +123,7 @@ finish""")
 
 """{| 
 |-
-! colspan="2" | header one 
+! colspan="2" | header one
 ! header two
 ! header three
 |-

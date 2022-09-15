@@ -10,7 +10,7 @@ import lxml.html.builder
 from lxml import etree
 from xmldiff import main as xmldiff_main, formatting
 
-from indigo.xmlutils import unwrap_element
+from docpipe.xmlutils import unwrap_element
 
 log = logging.getLogger(__name__)
 

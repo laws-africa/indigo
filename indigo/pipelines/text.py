@@ -5,7 +5,8 @@ from django.utils.translation import gettext as _
 from lxml import etree
 from cobalt.akn import AkomaNtosoDocument
 
-from .pipeline import Stage, shell
+from docpipe.pipeline import Stage
+from .pipeline import shell
 
 
 class ImportSourceFile(Stage):

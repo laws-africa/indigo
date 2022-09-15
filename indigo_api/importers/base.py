@@ -5,6 +5,7 @@ import re
 
 from django.core.files.uploadedfile import UploadedFile
 from docpipe.pipeline import Pipeline, PipelineContext
+from docpipe.pdf import PdfToText
 from docpipe.html import parse_and_clean
 from indigo.plugins import plugins, LocaleBasedMatcher
 import indigo.pipelines.xml as xml
@@ -126,7 +127,7 @@ class Importer(LocaleBasedMatcher):
     def get_pdf_pipeline(self):
         return Pipeline([
             pdf.PdfExtractPages(),
-            pdf.PdfToText(),
+            PdfToText(),
             text.MinTextRequired(),
             text.NormaliseWhitespace(),
 

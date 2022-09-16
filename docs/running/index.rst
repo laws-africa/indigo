@@ -48,28 +48,32 @@ Installing Indigo Locally
 
     $ pip install -r requirements.txt
 
-5. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password ``indigo``, and create a corresponding database called ``indigo``::
+5. Install sass. The simplest is to install the node version (below), otherwise see the `sass installation docs <https://sass-lang.com/install>`_.::
+
+   $ npm install -g sass
+
+6. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password ``indigo``, and create a corresponding database called ``indigo``::
 
     $ sudo su - postgres -c 'createuser -d -P indigo'
     $ sudo su - postgres -c 'createdb indigo'
 
-6. Run the Django database migrations to setup the initial database::
+7. Run the Django database migrations to setup the initial database::
 
     $ python manage.py migrate
     $ python manage.py update_countries_plus
     $ python manage.py loaddata languages_data.json.gz
 
-7. Then create the superuser::
+8. Then create the superuser::
 
     $ python manage.py createsuperuser
 
-8. Finally, run the server::
+9. Finally, run the server::
 
     $ python manage.py runserver
 
-9. Visit the website to login: http://localhost:8000/
+10. Visit the website to login: http://localhost:8000/
 
-10. Configure a language and a country:
+11. Configure a language and a country:
 
    * Visit http://localhost:8000/admin
    * Under **Indigo API** click Languages, then click Add Language in the top right corner
@@ -78,7 +82,7 @@ Installing Indigo Locally
    * Choose a country and primary language from the dropdown lists
    * Click Save
 
-11. Now go back to http://localhost:8000/ and your country will be included in the list.
+12. Now go back to http://localhost:8000/ and your country will be included in the list.
 
 Ruby dependencies
 .................

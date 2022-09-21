@@ -2,6 +2,11 @@
 Changelog
 =========
 
+17.3.1 (???)
+----------
+
+* NEW: Allow subclasses of BaseTermsFinder to use alternation in `term_re`.
+
 17.0.0 (2022-03-07)
 ----------
 

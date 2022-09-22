@@ -214,7 +214,7 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>‘Act’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p> ‘Act’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
     </content>
   </hcontainer>
 </section>"""))
@@ -228,7 +228,7 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Act">‘<def refersTo="#term-Act">Act</def>’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p refersTo="#term-Act"> ‘<def refersTo="#term-Act">Act</def>’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
     </content>
   </hcontainer>
 </section>
@@ -258,6 +258,35 @@ class TermsFinderENGTestCase(APITestCase):
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
       <p refersTo="#term-Act">«<def refersTo="#term-Act">Act</def>» means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>
+    </body>
+  
+''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
+
+    def test_mixed_quotes(self):
+        doc = Document(work=self.work, content=document_fixture(xml="""
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p>"Women’s Police Network Sub-sub Committee" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </hcontainer>
+</section>"""))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+      
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <hcontainer eId="sec_1__hcontainer_1">
+    <content>
+      <p refersTo="#term-Women_s_Police_Network_Sub_sub_Committee">"<def refersTo="#term-Women_s_Police_Network_Sub_sub_Committee">Women’s Police Network Sub-sub Committee</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
     </content>
   </hcontainer>
 </section>

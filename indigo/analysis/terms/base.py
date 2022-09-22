@@ -16,7 +16,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
     """
 
     heading_re = None  # subclasses must define this
-    term_re = None     # subclasses must define this, the first (group) must be the matched term
+    term_re = None     # subclasses must define this, the matched term must be in a (group)
     non_alphanum_re = re.compile(r'\W', re.UNICODE)
 
     ancestors = ['item', 'point', 'blockList', 'list', 'paragraph', 'subsection', 'section', 'chapter', 'part', 'p']
@@ -101,7 +101,13 @@ class BaseTermsFinder(LocaleBasedMatcher):
 
                 match = self.term_re.search(container.text)
                 if match:
-                    self.mark_definition(container, match.group(1), match.start(1), match.end(1))
+                    # the term is in group(1) or higher: skip all `None`s
+                    n = 0
+                    m = None
+                    while not m:
+                        n += 1
+                        m = match.group(n)
+                    self.mark_definition(container, match.group(n), match.start(n), match.end(n))
 
     def mark_definition(self, container, term, start_pos, end_pos):
         """ Update the container node to wrap the given term in a definition tag.

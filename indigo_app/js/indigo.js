@@ -1,7 +1,13 @@
 import * as vueComponents from './components';
 import '@lawsafrica/web-components/dist/components/la-akoma-ntoso';
+import '@lawsafrica/web-components/dist/components/la-decorate-external-refs';
+import '@lawsafrica/web-components/dist/components/la-decorate-internal-refs';
+import '@lawsafrica/web-components/dist/components/la-decorate-terms';
 import '@lawsafrica/web-components/dist/components/la-gutter';
 import '@lawsafrica/web-components/dist/components/la-gutter-item';
+import '@lawsafrica/web-components/dist/components/la-table-of-contents';
+import '@lawsafrica/web-components/dist/components/la-table-of-contents-controller';
+import '@lawsafrica/web-components/dist/components/la-toc-item';
 import './compat-imports';
 import { createComponent, getVue, registerComponents } from './vue';
 

@@ -355,11 +355,11 @@ class Work(WorkMixin, models.Model):
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works')
     locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
-    doctype = models.CharField(max_length=64, null=False, help_text="FRBR doctype")
-    subtype = models.CharField(max_length=512, null=True, help_text="FRBR subtype")
-    actor = models.CharField(max_length=512, null=True, help_text="FRBR actor")
-    date = models.CharField(max_length=10, null=False, help_text="FRBR date")
-    number = models.CharField(max_length=512, null=False, help_text="FRBR number")
+    doctype = models.CharField(max_length=64, null=False, blank=True, help_text="FRBR doctype")
+    subtype = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR subtype")
+    actor = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR actor")
+    date = models.CharField(max_length=10, null=False, blank=True, help_text="FRBR date")
+    number = models.CharField(max_length=512, null=False, blank=True, help_text="FRBR number")
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")

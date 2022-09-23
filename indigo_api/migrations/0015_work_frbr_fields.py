@@ -13,27 +13,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='work',
             name='actor',
-            field=models.CharField(help_text='FRBR actor', max_length=512, null=True),
+            field=models.CharField(help_text='FRBR actor', max_length=512, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='work',
             name='date',
-            field=models.CharField(help_text='FRBR date', max_length=10, null=True),
+            field=models.CharField(help_text='FRBR date', max_length=10, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='work',
             name='doctype',
-            field=models.CharField(help_text='FRBR doctype', max_length=64, null=True),
+            field=models.CharField(help_text='FRBR doctype', max_length=64, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='work',
             name='number',
-            field=models.CharField(help_text='FRBR number', max_length=512, null=True),
+            field=models.CharField(help_text='FRBR number', max_length=512, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='work',
             name='subtype',
-            field=models.CharField(help_text='FRBR subtype', max_length=512, null=True),
+            field=models.CharField(help_text='FRBR subtype', max_length=512, null=True, blank=True),
         ),
         migrations.AlterField(
             model_name='annotation',

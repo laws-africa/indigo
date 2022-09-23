@@ -106,28 +106,12 @@ class WorkMixin(object):
         return self._work_uri
 
     @property
-    def date(self):
-        return self.work_uri.date
-
-    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
     @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
     def nature(self):
-        return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
-
-    @property
-    def actor(self):
-        return self.work_uri.actor
+        return self.doctype
 
     @property
     def repeal(self):
@@ -371,6 +355,12 @@ class Work(WorkMixin, models.Model):
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works')
     locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
+    doctype = models.CharField(max_length=64, null=False, help_text="FRBR doctype")
+    subtype = models.CharField(max_length=512, null=True, help_text="FRBR subtype")
+    actor = models.CharField(max_length=512, null=True, help_text="FRBR actor")
+    date = models.CharField(max_length=10, null=False, help_text="FRBR date")
+    number = models.CharField(max_length=512, null=False, help_text="FRBR number")
+
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
@@ -446,6 +436,13 @@ class Work(WorkMixin, models.Model):
 
         if not self.repealed_by:
             self.repealed_date = None
+
+        # extract FRBR URI fields
+        self.doctype = self.work_uri.doctype
+        self.subtype = self.work_uri.subtype
+        self.actor = self.work_uri.actor
+        self.date = self.work_uri.date
+        self.number = self.work_uri.number
 
         return super(Work, self).save(*args, **kwargs)
 

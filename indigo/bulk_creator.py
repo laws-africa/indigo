@@ -326,6 +326,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             try:
                 work.full_clean()
+                work.set_frbr_uri_fields()
                 if not self.dry_run:
                     work.save_with_revision(self.user)
 

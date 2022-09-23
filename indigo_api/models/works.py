@@ -437,14 +437,16 @@ class Work(WorkMixin, models.Model):
         if not self.repealed_by:
             self.repealed_date = None
 
+        self.set_frbr_uri_fields()
+        return super(Work, self).save(*args, **kwargs)
+
+    def set_frbr_uri_fields(self):
         # extract FRBR URI fields
         self.doctype = self.work_uri.doctype
         self.subtype = self.work_uri.subtype
         self.actor = self.work_uri.actor
         self.date = self.work_uri.date
         self.number = self.work_uri.number
-
-        return super(Work, self).save(*args, **kwargs)
 
     def save_with_revision(self, user, comment=None):
         """ Save this work and create a new revision at the same time.

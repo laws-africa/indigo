@@ -11,6 +11,9 @@
       "updated_by_user": 1,
       "publication_date": "2014-04-02",
       "frbr_uri": "/akn/za/act/2014/10",
+      "doctype": "act",
+      "date": "2014",
+      "number": "10",
       "properties": {
         "cap": "52"
       }
@@ -26,7 +29,10 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
-      "frbr_uri": "/akn/za/act/1998/2"
+      "frbr_uri": "/akn/za/act/1998/2",
+      "doctype": "act",
+      "date": "1998",
+      "number": "2"
     }
   },
   {
@@ -42,6 +48,9 @@
       "commenced": true,
       "assent_date": "2010-04-01",
       "frbr_uri": "/akn/za/act/2010/1",
+      "doctype": "act",
+      "date": "2010",
+      "number": "1",
       "publication_date": "2010-05-01"
     }
   },
@@ -56,6 +65,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2001/8",
+      "doctype": "act",
+      "date": "2001",
+      "number": "8",
       "publication_date": "1999-01-01",
       "as_at_date_override": "2012-03-04",
       "consolidation_note_override": "A special consolidation note just for this work",
@@ -76,7 +88,10 @@
       "updated_by_user": 1,
       "stub": true,
       "publication_date": "2010-02-03",
-      "frbr_uri": "/akn/za/act/2010/2"
+      "frbr_uri": "/akn/za/act/2010/2",
+      "doctype": "act",
+      "date": "2010",
+      "number": "2"
     }
   },
   {
@@ -89,7 +104,10 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
-      "frbr_uri": "/akn/za/act/1900/1"
+      "frbr_uri": "/akn/za/act/1900/1",
+      "doctype": "act",
+      "date": "1900",
+      "number": "1"
     }
   },
   {
@@ -103,6 +121,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/1945/1",
+      "doctype": "act",
+      "date": "1945",
+      "number": "1",
       "publication_date": "1945-10-12"
     }
   },
@@ -117,6 +138,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/1880/1",
+      "doctype": "act",
+      "date": "1880",
+      "number": "1",
       "taxonomies" : [1,5],
       "publication_date": "1880-10-12"
     }
@@ -133,6 +157,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za-cpt/act/2005/1",
+      "doctype": "act",
+      "date": "2005",
+      "number": "1",
       "taxonomies" : [1,5],
       "publication_date": "2005-02-03"
     }
@@ -148,6 +175,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/1996/constitution",
+      "doctype": "act",
+      "date": "1996",
+      "number": "constitution",
       "publication_date": "1996-12-18"
     }
   },
@@ -162,6 +192,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2021/1",
+      "doctype": "act",
+      "date": "2021",
+      "number": "1",
       "publication_date": "2020-01-01"
     }
   },
@@ -176,6 +209,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2017/17",
+      "doctype": "act",
+      "date": "2017",
+      "number": "17",
       "publication_date": "2017-01-01"
     }
   },
@@ -190,6 +226,9 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/akn/za/act/2016/16",
+      "doctype": "act",
+      "date": "2016",
+      "number": "16",
       "publication_date": "2016-01-01"
     }
   }

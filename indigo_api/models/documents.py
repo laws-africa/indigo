@@ -110,24 +110,12 @@ class DocumentMixin(object):
     this document functionality.
     """
     @property
-    def date(self):
-        return self.work_uri.date
-
-    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
     @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
     def nature(self):
         return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
 
     @property
     def country(self):
@@ -136,10 +124,6 @@ class DocumentMixin(object):
     @property
     def locality(self):
         return self.work_uri.locality
-
-    @property
-    def actor(self):
-        return self.work_uri.actor
 
     @property
     def django_language(self):
@@ -351,6 +335,22 @@ class Document(DocumentMixin, models.Model):
 
     # caching attributes
     _expression_uri = None
+
+    @property
+    def date(self):
+        return self.work_uri.date
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def actor(self):
+        return self.work_uri.actor
 
     @property
     def doc(self):

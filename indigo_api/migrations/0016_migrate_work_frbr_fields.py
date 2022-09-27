@@ -21,7 +21,7 @@ def forwards(apps, schema_editor):
         work.actor = work_uri.actor
         work.date = work_uri.date
         work.number = work_uri.number
-        work.save()
+        work.save(update_fields=['doctype', 'subtype', 'actor', 'date', 'number'])
 
 
 class Migration(migrations.Migration):

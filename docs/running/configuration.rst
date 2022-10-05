@@ -107,6 +107,11 @@ Options that can be set using environment variables:
 
   The number of recent document versions to keep when pruning document versions. Defaults to 5.
 
+* ``SENTRY_DSN``
+
+  If this is set error reporting will be enabled and handled using `Sentry.io <https://sentry.io>`_. See
+  `Where to Find Your DSN <https://docs.sentry.io/product/sentry-basics/dsn-explainer/#where-to-find-your-dsn>`_.
+
 Options that must be set in your ``settings.py``:
 
 * ``INDIGO.DOCTYPES``

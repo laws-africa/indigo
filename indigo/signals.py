@@ -7,31 +7,35 @@ import sentry_sdk
 # monitor background tasks
 @receiver(task_started)
 def bg_task_started(sender, **kwargs):
-    transaction = sentry_sdk.start_transaction(op="task")
-    # fake an entry into the context
-    transaction.__enter__()
+    if not settings.DEBUG and settings.SENTRY_DSN:
+        transaction = sentry_sdk.start_transaction(op="task")
+        # fake an entry into the context
+        transaction.__enter__()
 
 
 @receiver(task_successful)
 def bg_task_success(sender, completed_task, **kwargs):
-    transaction = sentry_sdk.Hub.current.scope.transaction
-    if transaction:
-        transaction.name = completed_task.task_name
+    if not settings.DEBUG and settings.SENTRY_DSN:
+        transaction = sentry_sdk.Hub.current.scope.transaction
+        if transaction:
+            transaction.name = completed_task.task_name
 
 
 # capture background tasks errors
 @receiver(task_error)
 def bg_task_error(sender, task, **kwargs):
-    transaction = sentry_sdk.Hub.current.scope.transaction
-    if transaction:
-        transaction.name = task.task_name
+    if not settings.DEBUG and settings.SENTRY_DSN:
+        transaction = sentry_sdk.Hub.current.scope.transaction
+        if transaction:
+            transaction.name = task.task_name
 
-    sentry_sdk.capture_exception()
+        sentry_sdk.capture_exception()
 
 
 @receiver(task_finished)
 def bg_task_finished(sender, **kwargs):
-    transaction = sentry_sdk.Hub.current.scope.transaction
-    if transaction:
-        # fake an exit from the transaction context
-        transaction.__exit__(None, None, None)
+    if not settings.DEBUG and settings.SENTRY_DSN:
+        transaction = sentry_sdk.Hub.current.scope.transaction
+        if transaction:
+            # fake an exit from the transaction context
+            transaction.__exit__(None, None, None)

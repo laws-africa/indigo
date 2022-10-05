@@ -488,6 +488,10 @@ ADMINS = []
 # Sentry configuration
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
+# Sample 50% of requests for performance metrics by default or use the configured
+# environment variable which is a number between 0 (0% of errors sent) and 1 (100% of errors sent).
+SENTRY_SAMPLE_RATE = os.environ.get('SENTRY_SAMPLE_RATE', 0.5)
+
 if not DEBUG and SENTRY_DSN:
     sentry_logging = LoggingIntegration(
         level=logging.INFO,  # Capture info and above as breadcrumbs
@@ -498,5 +502,5 @@ if not DEBUG and SENTRY_DSN:
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), sentry_logging],
         send_default_pii=True,
-        traces_sample_rate=0.5,  # sample 50% of requests for performance metrics
+        traces_sample_rate=SENTRY_SAMPLE_RATE,
     )

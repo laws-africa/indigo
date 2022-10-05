@@ -129,9 +129,6 @@ INDIGO = {
     # If an email fails to send, should we raise an exception?
     'EMAIL_FAIL_SILENTLY': False,
 
-    # Should JS errors be logged and emailed to admins the same way python errors are?
-    'REPORT_JS_ERRORS': True,
-
     # permanently delete documents deleted this many days ago. Set to 0 to disable.
     'PRUNE_DELETED_DOCUMENT_DAYS': 90,
     # delete document versions older than this...

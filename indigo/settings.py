@@ -490,7 +490,7 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 # Sample 50% of requests for performance metrics by default or use the configured
 # environment variable which is a number between 0 (0% of errors sent) and 1 (100% of errors sent).
-SENTRY_SAMPLE_RATE = os.environ.get('SENTRY_SAMPLE_RATE', 0.5)
+SENTRY_SAMPLE_RATE = float(os.environ.get('SENTRY_SAMPLE_RATE', 0.5))
 
 if not DEBUG and SENTRY_DSN:
     sentry_logging = LoggingIntegration(

@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 
 import json
@@ -15,6 +17,7 @@ def general(request):
         'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         'USER_JSON': serialise_user(request),
         'MAINTENANCE_MODE': settings.INDIGO['MAINTENANCE_MODE'],
+        'SENTRY_DSN': os.environ.get('SENTRY_DSN'),
     }
 
 

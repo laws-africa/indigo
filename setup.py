@@ -81,6 +81,7 @@ setup(
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
         'xmldiff>=2.4',
+        'sentry-sdk>=1.4,<=1.9.8',
 
         # for indigo_social
         'pillow>=5.2.0',

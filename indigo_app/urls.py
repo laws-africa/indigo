@@ -1,7 +1,7 @@
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView, TemplateView
 
-from .views import users, works, documents, tasks, places, workflows, misc
+from .views import users, works, documents, tasks, places, workflows
 
 
 urlpatterns = [
@@ -89,6 +89,5 @@ urlpatterns = [
     path('tasks/priority/', tasks.AvailableTasksView.as_view(priority=True, tab='priority_tasks'), name='priority_tasks'),
 
     path('comments/', include('django_comments.urls')),
-    path('jserror', misc.JSErrorView.as_view(), name='jserror'),
 
 ]

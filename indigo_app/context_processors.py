@@ -15,6 +15,7 @@ def general(request):
         'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         'USER_JSON': serialise_user(request),
         'MAINTENANCE_MODE': settings.INDIGO['MAINTENANCE_MODE'],
+        'SENTRY_DSN': settings.SENTRY_DSN,
     }
 
 

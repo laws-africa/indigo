@@ -7,10 +7,15 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+import logging
+
 from django.utils.translation import gettext_lazy as _
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -123,9 +128,6 @@ INDIGO = {
 
     # If an email fails to send, should we raise an exception?
     'EMAIL_FAIL_SILENTLY': False,
-
-    # Should JS errors be logged and emailed to admins the same way python errors are?
-    'REPORT_JS_ERRORS': True,
 
     # permanently delete documents deleted this many days ago. Set to 0 to disable.
     'PRUNE_DELETED_DOCUMENT_DAYS': 90,
@@ -482,3 +484,23 @@ USE_NATIVE_JSONFIELD = True
 # Each item in the list should be a tuple of (Full name, email address). Example:
 # [('Indigo Admin', 'indigoadmin@example.com')]
 ADMINS = []
+
+# Sentry configuration
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+
+# Sample 50% of requests for performance metrics by default or use the configured
+# environment variable which is a number between 0 (0% of errors sent) and 1 (100% of errors sent).
+SENTRY_SAMPLE_RATE = float(os.environ.get('SENTRY_SAMPLE_RATE', 0.5))
+
+if not DEBUG and SENTRY_DSN:
+    sentry_logging = LoggingIntegration(
+        level=logging.INFO,  # Capture info and above as breadcrumbs
+        event_level=None,  # Don't send errors based on log messages
+    )
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), sentry_logging],
+        send_default_pii=True,
+        traces_sample_rate=SENTRY_SAMPLE_RATE,
+    )

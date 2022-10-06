@@ -67,23 +67,6 @@ function bootstrapIndigo(exports) {
       Indigo.progressView.pop();
     });
 
-  // error tracking with GA
-  window.addEventListener('error', function(e) {
-    $.ajax({
-      type: 'POST',
-      url: '/jserror',
-      data: {
-        message: e.message,
-        filename: e.filename,
-        lineno: e.lineno,
-        colno: e.colno,
-        url: document.location.href,
-        stack: e.error ? e.error.stack : '',
-      },
-      global: false,
-    });
-  });
-
   // datepicker
   $.fn.datepicker.defaults.format = "yyyy-mm-dd";
   $.fn.datepicker.defaults.autoclose = true;

@@ -29,6 +29,31 @@
       </script>
     {% endif %}
 
+    {% if not DEBUG and SENTRY_DSN %}
+      <!-- sentry -->
+      <script
+        src="https://browser.sentry-cdn.com/7.14.1/bundle.min.js"
+        integrity="sha384-vPp0Gj27MNRav/IYIXvgedLDHtd9x9RMgYbVS4pgRCPaeOB296tWMH66Rm8CP3ZO"
+        crossorigin="anonymous"
+      ></script>
+      <script>
+        window.addEventListener('load', function () {
+          Sentry.init({
+            dsn: '{{ SENTRY_DSN }}',
+            denyUrls: [
+              // ignore ckeditor errors
+              'ckeditor',
+            ],
+            ignoreErrors: [
+              'ResizeObserver loop limit exceeded',
+              'Non-Error promise rejection captured with keys: abort, always, catch, done, fail',
+              'ResizeObserver loop completed with undelivered notifications.'
+            ]
+          });
+        });
+      </script>
+    {% endif %}
+
     {% block head-css %}
     <link rel="stylesheet" href="{% sass_src 'stylesheets/app.scss' %}">
     {% endblock %}

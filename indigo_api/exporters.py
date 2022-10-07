@@ -406,11 +406,16 @@ class EPUBExporter(HTMLExporter):
     def add_css(self):
         self.stylesheets = []
 
-        # compile scss and add the file
-        processor = SassProcessor()
-        processor.processor_enabled = True
-        path = processor('stylesheets/export-epub.scss')
-        with processor.source_storage.open(path) as f:
+        path = 'stylesheets/export-epub.css'
+        static_path = find_static(path)
+        if not static_path:
+            # compile the scss, this is mostly only for unit tests, because the sass is compiled with compilescss
+            # in production
+            processor = SassProcessor()
+            processor.processor_enabled = True
+            static_path = find_static(processor('stylesheets/export-epub.scss'))
+
+        with open(static_path) as f:
             css = f.read()
         self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
         self.stylesheets.append(path)

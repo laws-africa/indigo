@@ -36,6 +36,9 @@ from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions
     RevisionPermissions
 from ..utils import filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
+from indigo_metrics.models import DocumentEditActivity
+from indigo_api.serializers import DocumentEditActivitySerializer
+
 
 log = logging.getLogger(__name__)
 
@@ -316,6 +319,19 @@ class DocumentActivityViewSet(DocumentResourceView,
         if activity:
             activity.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DocumentEditActivityViewset(DocumentResourceView, CreateAPIView):
+    queryset = DocumentEditActivity.objects
+    serializer_class = DocumentEditActivitySerializer
+    http_method_names = ['post']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ParseView(DocumentResourceView, APIView):

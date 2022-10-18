@@ -16,7 +16,7 @@ from django_comments.models import Comment
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework import mixins, viewsets, renderers, status
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
 from reversion import revisions as reversion

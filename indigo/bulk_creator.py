@@ -537,7 +537,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if not repealing_work:
             # a work with the given FRBR URI / title wasn't found
-            self.create_task(row.work, row, task_type='no-repeal-match')
+            self.create_task(row.work, row, task_type='no-repealed-by-match')
 
         elif row.work.repealed_by and row.work.repealed_by != repealing_work:
             # the work was already marked as repealed by a different work
@@ -571,7 +571,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if not repealed_work:
             # a work with the given FRBR URI / title wasn't found
-            return self.create_task(row.work, row, task_type='no-repeal-match')
+            return self.create_task(row.work, row, task_type='no-repeals-match')
 
         elif isinstance(repealed_work, Work) and \
                 repealed_work.repealed_by and repealed_work.repealed_by != row.work:
@@ -842,8 +842,8 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 'date': amendment.date,
             }
 
-        elif task_type == 'no-repeal-match':
-            task.title = _('Link repeal')
+        elif task_type == 'no-repealed-by-match':
+            task.title = _('Link repealed by')
             task.description = _('''It looks like this work was repealed by "%(repealed_by)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
@@ -852,6 +852,19 @@ Possible reasons:
 
 Please link the repeal manually.''') % {
                 'repealed_by': row.repealed_by,
+                'row_num': row.row_number,
+            }
+
+        elif task_type == 'no-repeals-match':
+            task.title = _('Link repeal')
+            task.description = _('''It looks like this work repeals "%(repeals)s" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.
+
+Possible reasons:
+– a typo in the spreadsheet
+– the repealed work doesn't exist on the system.
+
+Please link the repeal manually.''') % {
+                'repeals': row.repeals,
                 'row_num': row.row_number,
             }
 

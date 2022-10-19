@@ -882,7 +882,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual([], main3.notes)
         self.assertEqual([], main3.relationships)
-        self.assertEqual(['link gazette', 'import content', 'no repeal match'], main3.tasks)
+        self.assertEqual(['link gazette', 'import content', 'no repealed by match'], main3.tasks)
 
         # live
         works = self.get_works(False, 'repeals_passive.csv')
@@ -900,7 +900,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(main2.repealed_by)
         self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
         self.assertIsNone(main3.repealed_by)
-        self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
+        self.assertIn('Link repealed by', [t.title for t in main3.tasks.all()])
         self.assertEqual(main4.repealed_by, repeal3)
         self.assertEqual(main4.repealed_date, datetime.date(2020, 6, 1))
 
@@ -945,7 +945,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Stub'], repeal3.notes)
         self.assertEqual([], repeal3.relationships)
-        self.assertEqual(['link gazette', 'no repeal match'], repeal3.tasks)
+        self.assertEqual(['link gazette', 'no repeals match'], repeal3.tasks)
 
         # live
         works = self.get_works(False, 'repeals_active.csv')

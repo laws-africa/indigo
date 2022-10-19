@@ -882,7 +882,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual([], main3.notes)
         self.assertEqual([], main3.relationships)
-        self.assertEqual(['link gazette', 'import content', 'no repeal match'], main3.tasks)
+        self.assertEqual(['link gazette', 'import content', 'no repealed by match'], main3.tasks)
 
         # live
         works = self.get_works(False, 'repeals_passive.csv')
@@ -945,7 +945,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Stub'], repeal3.notes)
         self.assertEqual([], repeal3.relationships)
-        self.assertEqual(['link gazette', 'no repeal match'], repeal3.tasks)
+        self.assertEqual(['link gazette', 'no repeals match'], repeal3.tasks)
 
         # live
         works = self.get_works(False, 'repeals_active.csv')

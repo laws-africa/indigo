@@ -5,6 +5,7 @@ from itertools import chain
 from lxml import etree
 
 from indigo.plugins import LocaleBasedMatcher
+from schemas import AkomaNtoso30
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +20,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
     term_re = None     # subclasses must define this, the matched term must be in a (group)
     non_alphanum_re = re.compile(r'\W', re.UNICODE)
 
-    ancestors = ['item', 'point', 'blockList', 'list', 'paragraph', 'subsection', 'section', 'chapter', 'part', 'p']
+    # elements with headings to look for definitions in
+    defn_hier = AkomaNtoso30.hier_elements
+    # elements on which to attach the main refersTo for the definition
+    ancestors = defn_hier + ['item', 'p', 'blockList']
     # elements which must not be checked for references to terms
     no_term_markup = ['term', 'ref', 'remark']
 
@@ -58,7 +62,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.ref_tag = '{%s}ref' % self.ns
         self.no_term_markup = ['{%s}%s' % (self.ns, x) for x in self.no_term_markup]
 
-        self.basic_unit_xpath = etree.XPath('//a:section', namespaces=self.nsmap)
+        self.defn_hier_xpath = etree.XPath(
+            '|'.join(f'//a:{x}' for x in self.defn_hier),
+            namespaces=self.nsmap)
         self.heading_xpath = etree.XPath('a:heading', namespaces=self.nsmap)
         self.defn_containers_xpath = etree.XPath('.//a:p|.//a:listIntroduction', namespaces=self.nsmap)
         self.text_xpath = etree.XPath('//a:body//text()', namespaces=self.nsmap)
@@ -136,7 +142,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
     def definition_sections(self, doc):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
-        for section in self.basic_unit_xpath(doc):
+        for section in self.defn_hier_xpath(doc):
             # sections with headings like Definitions
             heading = self.heading_xpath(section)
             if not heading or not self.heading_re.match(heading[0].text or ''):

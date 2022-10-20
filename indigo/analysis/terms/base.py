@@ -5,7 +5,7 @@ from itertools import chain
 from lxml import etree
 
 from indigo.plugins import LocaleBasedMatcher
-from schemas import AkomaNtoso30
+from cobalt.schemas import AkomaNtoso30
 
 log = logging.getLogger(__name__)
 

@@ -10,7 +10,7 @@ from indigo.plugins import plugins, LocaleBasedMatcher
 
 # Ensure that these translations are included by makemessages
 from indigo.xmlutils import closest
-from schemas import AkomaNtoso30
+from cobalt.schemas import AkomaNtoso30
 
 _('Act')
 _('Article')

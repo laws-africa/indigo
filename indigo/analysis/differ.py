@@ -1,3 +1,4 @@
+import copy
 import html
 from difflib import SequenceMatcher
 import logging
@@ -8,17 +9,53 @@ import jsonpatch
 import lxml.html
 import lxml.html.builder
 from lxml import etree
-from xmldiff import main as xmldiff_main, formatting
+from xmldiff import formatting
+from xmldiff.diff import Differ
+from cobalt.schemas import AkomaNtoso30
 
 from docpipe.xmlutils import unwrap_element
 
 log = logging.getLogger(__name__)
 
 
+class IgnoringDiffer(Differ):
+    """ Ignores most data- attributes.
+    """
+    allowed = ['data-refersto']
+
+    def node_attribs(self, node):
+        attribs = dict(node.attrib)
+        for k in list(attribs.keys()):
+            if k.startswith('data-') and k not in self.allowed:
+                del attribs[k]
+        return attribs
+
+
+class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
+    """ Ignores most data- attributes.
+    """
+    allowed = IgnoringDiffer.allowed
+
+    def get_placeholder(self, element, ttype, close_ph):
+        # remove attributes we don't want to diff
+        if any(x.startswith('data-') for x in element.attrib):
+            element = copy.copy(element)
+            for k in list(element.attrib):
+                if k.startswith('data-') and k not in self.allowed:
+                    del element.attrib[k]
+        return super().get_placeholder(element, ttype, close_ph)
+
+
 class HTMLFormatter(formatting.XMLFormatter):
     """ Formats xmldiff output for HTML AKN documents.
     """
     xslt_filename = os.path.join(os.path.dirname(__file__), 'xmldiff.xslt')
+
+    def __init__(self, normalize=formatting.WS_NONE, pretty_print=True, text_tags=(), formatting_tags=()):
+        super().__init__(normalize, pretty_print, text_tags, formatting_tags)
+        self.placeholderer = IgnoringPlaceholderMaker(
+            text_tags=text_tags, formatting_tags=formatting_tags
+        )
 
     def render(self, result):
         with open(self.xslt_filename) as f:
@@ -38,10 +75,11 @@ class HTMLFormatter(formatting.XMLFormatter):
 class AKNHTMLDiffer:
     """ Helper class to diff AKN documents using xmldiff.
     """
-    akn_text_tags = 'p listIntroduction heading'.split()
+    akn_text_tags = 'p listIntroduction listWrapUp heading subheading crossHeading'.split()
     html_text_tags = 'h1 h2 h3 h4 h5'.split()
-    keep_ids_tags = 'chapter part section subsection subpart article table'
+    keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter
+    differ_class = Differ
     xmldiff_options = {
         'F': 0.75,
         # using data-refersto helps to xmldiff to handle definitions that move around
@@ -62,10 +100,24 @@ class AKNHTMLDiffer:
         self.preprocess(new_tree)
 
         formatter = self.get_formatter()
-        diff = xmldiff_main.diff_trees(old_tree, new_tree, formatter=formatter, diff_options=self.xmldiff_options)
+        diff = self.diff_trees(old_tree, new_tree, formatter=formatter, diff_options=self.xmldiff_options)
         self.postprocess(diff)
 
         return diff
+
+    def diff_trees(self, left, right, diff_options, formatter):
+        """Takes two lxml root elements or element trees"""
+        if formatter is not None:
+            formatter.prepare(left, right)
+        if diff_options is None:
+            diff_options = {}
+        differ = self.differ_class(**diff_options)
+        diffs = differ.diff(left, right)
+
+        if formatter is None:
+            return list(diffs)
+
+        return formatter.format(diffs, left)
 
     def get_formatter(self):
         # in html, AKN elements are recognised using classes
@@ -81,19 +133,20 @@ class AKNHTMLDiffer:
         self.strip_namespace(tree)
 
     def stash_ids(self, tree):
-        """ Stashes id attributes for tags that they aren't actually useful for.
+        """ Stashes id attributes for tags that they aren't actually useful for. Data- attributes are ignored,
+        so it's save to move them there.
         """
         # ids should only be considered unique for these elements
         allow = set(f'akn-{t}' for t in self.keep_ids_tags)
         for node in tree.xpath('//*[@id]'):
             if node.attrib.get('class') not in allow:
-                node.attrib['x-id'] = node.attrib.pop('id')
+                node.attrib['data-id'] = node.attrib.pop('id')
 
     def unstash_ids(self, tree):
         """ Restores id attributes stashed by stash_ids
         """
-        for node in tree.xpath('//*[@x-id]'):
-            node.attrib['id'] = node.attrib.pop('x-id')
+        for node in tree.xpath('//*[@data-id]'):
+            node.attrib['id'] = node.attrib.pop('data-id')
 
     def wrap_pairs(self, diff):
         """ wrap del + ins pairs in <span class="diff-pair">

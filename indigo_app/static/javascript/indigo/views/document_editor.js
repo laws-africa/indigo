@@ -698,21 +698,20 @@
           // ask the editor to returns its contents
           .saveChanges()
           .done(function() {
-            (async function() {
-              var response = await fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
-                method: 'POST',
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRFToken": Indigo.csrfToken
-                },
-                body: JSON.stringify(sourceEditor.editTimes)
-              });
+            fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": Indigo.csrfToken
+              },
+              body: JSON.stringify(sourceEditor.editTimes)
+            }).then(response => {
               if(response.ok) {
                 sourceEditor.editTimes = [];
               } else {
                 alert('Could not save time spent on this document');
               }
-            })();
+            });
 
             // save the model
             self.saveModel().done(ok).fail(fail);

@@ -11,7 +11,7 @@
     el: 'body',
     events: {
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
-      'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
+      'click .text-editor-buttons .btn.cancel': 'onCancelClick',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
@@ -28,6 +28,8 @@
       this.editing = false;
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
+      this.editStartedAt = null;
+      this.editTimes = [];
 
       this.grammarName = this.parent.model.tradition().settings.grammar.name;
       this.grammarModel = new Indigo.grammars.registry[this.grammarName](
@@ -45,6 +47,10 @@
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
+      this.tableEditor.on('discard', function () {
+        this.editStartedAt = null;
+      }, this);
+      this.tableEditor.on('save', this.addNewEditTime, this);
 
       this.$toolbar = $('.document-editor-toolbar');
 
@@ -52,6 +58,7 @@
 
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
+
     },
 
     setupTextEditor: function() {
@@ -99,6 +106,7 @@
     fullEdit: function(e) {
       e.preventDefault();
       this.editFragmentText(this.parent.fragment);
+      this.editStartedAt = new Date().toISOString();
     },
 
     quickEdit: function(e) {
@@ -148,11 +156,20 @@
       this.$('.document-sheet-container').scrollTop(0);
     },
 
+    addNewEditTime: function(e) {
+      this.editTimes.push({
+        started_at: this.editStartedAt,
+        ended_at: new Date().toISOString()
+      });
+    },
+
     saveTextEditor: function(e) {
+      this.addNewEditTime();
       var self = this;
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
+
 
       // should we delete the item?
       if (!content.trim() && fragmentRule !== 'akomaNtoso') {
@@ -234,6 +251,11 @@
         .fail(function(xhr, status, error) {
           deferred.reject(xhr, status, error);
         });
+    },
+
+    onCancelClick() {
+      this.editStartedAt = null;
+      this.closeTextEditor();
     },
 
     closeTextEditor: function(e) {
@@ -429,6 +451,7 @@
     },
 
     editTable: function(e) {
+      this.editStartedAt = new Date().toISOString();
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
 
@@ -670,10 +693,27 @@
         ok();
 
       } else {
-        this.sourceEditor
+        var sourceEditor = this.sourceEditor;
+        sourceEditor
           // ask the editor to returns its contents
           .saveChanges()
           .done(function() {
+            (async function() {
+              var response = await fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
+                method: 'POST',
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": Indigo.csrfToken
+                },
+                body: JSON.stringify(sourceEditor.editTimes)
+              });
+              if(response.ok) {
+                sourceEditor.editTimes = [];
+              } else {
+                alert('Could not save time spent on this document');
+              }
+            })();
+
             // save the model
             self.saveModel().done(ok).fail(fail);
           })

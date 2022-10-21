@@ -94,6 +94,10 @@ button.btn-link.help {
     // work around a Chrome rendering bug with sections that
     // are very short
     min-height: 100%;
+
+    la-akoma-ntoso {
+      overflow-x: auto;
+    }
   }
 
   .quick-editable {

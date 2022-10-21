@@ -38,7 +38,7 @@ class Language(models.Model):
 
     @classmethod
     def for_code(cls, code):
-        return cls.objects.get(language__iso_639_2B=code)
+        return cls.objects.get(language__iso_639_2T=code)
 
 
 class Country(models.Model):

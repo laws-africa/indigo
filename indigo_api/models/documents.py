@@ -62,7 +62,7 @@ class DocumentQuerySet(models.QuerySet):
 
         # filter on language
         if frbr_uri.language:
-            query = query.filter(language__language__iso_639_2B=frbr_uri.language)
+            query = query.filter(language__language__iso_639_2T=frbr_uri.language)
 
         # filter on expression date
         expr_date = frbr_uri.expression_date

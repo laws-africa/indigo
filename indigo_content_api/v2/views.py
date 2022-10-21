@@ -260,7 +260,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         queryset = queryset\
             .latest_expression()\
             .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])\
-            .filter(language__language__iso_639_2B=self.country.primary_language.code)
+            .filter(language__language__iso_639_2T=self.country.primary_language.code)
         if queryset.count() == 0:
             raise Http404
         return queryset

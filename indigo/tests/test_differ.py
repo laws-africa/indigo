@@ -76,6 +76,7 @@ class AttributeDifferTestCase(TestCase):
 
         self.assertEqual(
             as_html(diff),
+            '<p>Some text <span class="diff-pair"><del>bold text and a tail.</del><ins>&#xA0;</ins></span><b class="ins ">bold text</b><ins> and a tail.</ins></p>',
         )
 
     def test_more_refs_added(self):

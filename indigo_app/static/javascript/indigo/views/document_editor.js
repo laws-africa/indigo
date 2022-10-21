@@ -47,10 +47,8 @@
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
-      this.tableEditor.on('discard', function () {
-        this.editStartedAt = null;
-      }, this);
-      this.tableEditor.on('save', this.addNewEditTime, this);
+      this.tableEditor.on('discard', this.editActivityCancelled, this);
+      this.tableEditor.on('save', this.editActivityEnded, this);
 
       this.$toolbar = $('.document-editor-toolbar');
 
@@ -59,6 +57,22 @@
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
 
+    },
+
+    editActivityStarted: function() {
+      this.editStartedAt = new Date().toISOString();
+    },
+
+    editActivityEnded: function() {
+      this.editTimes.push({
+        started_at: this.editStartedAt,
+        ended_at: new Date().toISOString()
+      });
+      this.editStartedAt = null
+    },
+
+    editActivityCancelled: function() {
+      this.editStartedAt = null;
     },
 
     setupTextEditor: function() {
@@ -106,7 +120,6 @@
     fullEdit: function(e) {
       e.preventDefault();
       this.editFragmentText(this.parent.fragment);
-      this.editStartedAt = new Date().toISOString();
     },
 
     quickEdit: function(e) {
@@ -123,6 +136,7 @@
 
     editFragmentText: function(fragment) {
       var self = this;
+      this.editActivityStarted()
 
       this.editing = true;
       this.fragment = fragment;
@@ -156,15 +170,8 @@
       this.$('.document-sheet-container').scrollTop(0);
     },
 
-    addNewEditTime: function(e) {
-      this.editTimes.push({
-        started_at: this.editStartedAt,
-        ended_at: new Date().toISOString()
-      });
-    },
-
     saveTextEditor: function(e) {
-      this.addNewEditTime();
+      this.editActivityEnded();
       var self = this;
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
@@ -254,7 +261,7 @@
     },
 
     onCancelClick() {
-      this.editStartedAt = null;
+      this.editActivityCancelled();
       this.closeTextEditor();
     },
 
@@ -451,7 +458,7 @@
     },
 
     editTable: function(e) {
-      this.editStartedAt = new Date().toISOString();
+      this.editActivityStarted();
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
 
@@ -680,6 +687,25 @@
       return (!this.sourceEditor.editing || confirm("You will lose your changes, are you sure?"));
     },
 
+    saveEditTimes: function() {
+      var sourceEditor = this.sourceEditor;
+      fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": Indigo.csrfToken
+        },
+        body: JSON.stringify(sourceEditor.editTimes)
+      }).then(function(response) {
+        if(response.ok) {
+          sourceEditor.editTimes = [];
+        } else {
+          console.log('Response data from save edit times request', response);
+          throw new Error('Could not save time spent on this document');
+        }
+      })
+    },
+
     // Save the content of the editor, returns a Deferred
     save: function() {
       var self = this,
@@ -693,28 +719,13 @@
         ok();
 
       } else {
-        var sourceEditor = this.sourceEditor;
-        sourceEditor
           // ask the editor to returns its contents
+        this.sourceEditor
           .saveChanges()
           .done(function() {
-            fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
-              method: 'POST',
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": Indigo.csrfToken
-              },
-              body: JSON.stringify(sourceEditor.editTimes)
-            }).then(response => {
-              if(response.ok) {
-                sourceEditor.editTimes = [];
-              } else {
-                alert('Could not save time spent on this document');
-              }
-            });
-
             // save the model
             self.saveModel().done(ok).fail(fail);
+            self.saveEditTimes();
           })
           .fail(fail);
       }

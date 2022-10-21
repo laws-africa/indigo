@@ -68,7 +68,7 @@
         started_at: this.editStartedAt,
         ended_at: new Date().toISOString()
       });
-      this.editStartedAt = null
+      this.editStartedAt = null;
     },
 
     editActivityCancelled: function() {
@@ -136,7 +136,7 @@
 
     editFragmentText: function(fragment) {
       var self = this;
-      this.editActivityStarted()
+      this.editActivityStarted();
 
       this.editing = true;
       this.fragment = fragment;
@@ -703,7 +703,7 @@
           console.log('Response data from save edit times request', response);
           throw new Error('Could not save time spent on this document');
         }
-      })
+      });
     },
 
     // Save the content of the editor, returns a Deferred

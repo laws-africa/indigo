@@ -3,6 +3,7 @@ from math import ceil
 import datetime
 import logging
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection, models, transaction
 from django.db.models import Sum
@@ -263,3 +264,16 @@ class DailyPlaceMetrics(models.Model):
 
         metrics.n_activities += 1
         metrics.save()
+
+
+class DocumentEditActivity(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='edit_activities')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    started_at = models.DateTimeField()
+    ended_at = models.DateTimeField()
+    duration_secs = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        time_diff = self.ended_at - self.started_at
+        self.duration_secs = time_diff.total_seconds()
+        return super().save(*args, **kwargs)

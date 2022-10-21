@@ -44,6 +44,7 @@ api/documents/(?P<document_id>[0-9]+)/render/coverpage\Z
 api/documents/(?P<document_id>[0-9]+)/parse\Z
 api/documents/(?P<document_id>[0-9]+)/diff\Z
 api/documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$
+api/documents/(?P<document_id>[0-9]+)/activity/edits\Z
 api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
 """.split()
 

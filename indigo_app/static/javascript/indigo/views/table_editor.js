@@ -107,6 +107,7 @@
       }
 
       this.parent.render();
+      this.trigger('save');
     },
 
     discardChanges: function(e, force) {
@@ -121,6 +122,7 @@
       // undo changes
       $(editable).empty();
       editable.appendChild(originalTable);
+      this.trigger('discard');
     },
 
     // start editing an HTML table

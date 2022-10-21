@@ -31,7 +31,7 @@ class Language(models.Model):
     def code(self):
         """ 3 letter language code.
         """
-        return self.language.iso_639_2B
+        return self.language.iso_639_2T
 
     def __str__(self):
         return str(self.language)

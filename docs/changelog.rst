@@ -6,6 +6,8 @@ Changelog
 ----------
 
 * NEW: Allow subclasses of BaseTermsFinder to use alternation in `term_re`.
+* BREAKING: use ISO-639-2T language codes rather than ISO-639-2B. This impacts documents in these language codes: tib cze wel ger gre baq per fre arm ice geo mao mac may bur dut rum slo alb chi.
+  After this upgrade, you must run `python manage.py upgrade_languages` to convert documents with the old code to the new code.
 
 17.0.0 (2022-03-07)
 ----------

@@ -10,6 +10,7 @@ from indigo.plugins import plugins, LocaleBasedMatcher
 
 # Ensure that these translations are included by makemessages
 from indigo.xmlutils import closest
+from cobalt.schemas import AkomaNtoso30
 
 _('Act')
 _('Article')
@@ -81,12 +82,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     toc_elements = [
         # top-level
         'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
-        # hierarchical elements
-        'alinea', 'article', 'book', 'chapter', 'clause', 'division', 'indent', 'level', 'list',
-        'paragraph', 'part', 'point', 'proviso', 'rule', 'section',
-        'subchapter', 'subclause', 'subdivision', 'sublist', 'subparagraph', 'subpart', 'subrule',
-        'subsection', 'subtitle', 'title', 'tome', 'transitional',
-    ]
+    ] + AkomaNtoso30.hier_elements
     """ Elements we include in the table of contents, without their XML namespace.
         Base includes the following from the from the AKN schema:
         - all `hierarchicalStructure` elements, except:

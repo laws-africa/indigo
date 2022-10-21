@@ -42,7 +42,7 @@ setup(
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',
-        'cobalt>=6.0',
+        'cobalt>=6.1',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
@@ -80,7 +80,8 @@ setup(
         'whitenoise>=5.3.0',
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
-        'xmldiff>=2.4',
+        # unreleased version of xmldiff that allows us to ignore attributes when diffing
+        'xmldiff @ git+https://github.com/Shoobx/xmldiff@6980256b10ffa41b5ab80716e63a608f587126db#egg=xmldiff',
         'sentry-sdk>=1.4,<=1.9.8',
 
         # for indigo_social

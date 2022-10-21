@@ -51,5 +51,7 @@
     "url": "https://github.com/laws-africa/indigo/issues"
   },
   "homepage": "https://github.com/laws-africa/indigo#readme",
-  "dependencies": {}
+  "dependencies": {
+    "@lawsafrica/bluebell-monaco": "^4.5.1"
+  }
 }

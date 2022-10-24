@@ -441,7 +441,7 @@ class WorkFilterForm(forms.Form):
         elif self.cleaned_data.get('commencement') == 'no':
             queryset = queryset.filter(commenced=False)
         elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
+            queryset = queryset.filter(commencements__main=True, commencements__date__isnull=True).filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'partial':
             # ignore uncommenced works, include works that have any uncommenced provisions
             work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
@@ -454,7 +454,7 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']
                 end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
+                queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
 
         return queryset
 

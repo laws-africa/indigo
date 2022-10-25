@@ -214,7 +214,8 @@ class DocumentMixin(object):
 
             Returns True or False.
 
-            Returns True if all dates after the current expression are arbitrary.
+            Returns True if all dates after the current expression are arbitrary. An arbitrary date is
+            one that isn't an initial date or an amendment date.
 
             Returns False if the document doesn't yet have an expression date
              or if the work doesn't yet have possible expression dates.

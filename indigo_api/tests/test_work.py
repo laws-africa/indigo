@@ -171,3 +171,10 @@ class WorkTestCase(TestCase):
             ],
             self.work.possible_expression_dates()
         )
+
+    def test_no_initial_date(self):
+        self.work.publication_date = None
+        self.work.commencements.all().delete()
+        self.assertEqual([],
+            self.work.possible_expression_dates()
+        )

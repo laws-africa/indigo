@@ -196,7 +196,11 @@ class WorkMixin(object):
         consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
 
         # the initial date is the publication date, or the earliest of the consolidation and commencement dates
-        initial = self.publication_date or min(consolidation_dates + [x for x in [self.commencement_date] if x])
+        try:
+            initial = self.publication_date or min(consolidation_dates + [x for x in [self.commencement_date] if x])
+        except ValueError:
+            # list was empty
+            initial = None
 
         all_dates = set(amendment_dates + consolidation_dates)
         dates = [

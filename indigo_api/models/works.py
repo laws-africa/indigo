@@ -192,9 +192,12 @@ class WorkMixin(object):
         """ Return a list of dicts each describing a possible expression date on a work, in descending date order.
         Each has a date and specifies whether it is an amendment, consolidation, and/or initial expression.
         """
-        initial = self.publication_date or self.commencement_date
         amendment_dates = [a.date for a in self.amendments.all()]
         consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
+
+        # the initial date is the publication date, or the earliest of the consolidation and commencement dates
+        initial = self.publication_date or min(consolidation_dates + [x for x in [self.commencement_date] if x])
+
         all_dates = set(amendment_dates + consolidation_dates)
         dates = [
             {'date': date,

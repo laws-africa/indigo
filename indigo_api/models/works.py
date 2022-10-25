@@ -223,7 +223,10 @@ class WorkMixin(object):
 
     @cached_property
     def main_commencement(self):
-        return self.commencements.filter(main=True).first()
+        if self.commencements.exists():
+            for c in list(self.commencements.all()):
+                if c.main:
+                    return c
 
     def first_commencement_date(self):
         first = self.commencements.first()

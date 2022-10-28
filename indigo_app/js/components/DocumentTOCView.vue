@@ -245,6 +245,9 @@ export default {
 </script>
 
 <style>
+  .toc-controller-wrapper {
+    padding-bottom: 50px;
+  }
   .toc-controller-wrapper .popover {
     max-width: 200px !important;
   }

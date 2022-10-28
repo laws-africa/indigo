@@ -71,7 +71,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], row3.relationships)
         self.assertEqual(['link gazette', 'import content'], row3.tasks)
 
-        # work with commencement_date set to '9999-01-01' is imported without the commencement_date
+        # work with commencement_date set to '9999-01-01' is imported as 
+        # commenced but without a commencement_date
         row4 = works[3]
         self.assertEqual('success', row4.status)
         self.assertEqual('Unknown commencement date', row4.work.title)

@@ -97,7 +97,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_live(self):
         works = self.get_works(False, 'basic.csv')
-        self.assertEqual(3, len(works))
+        self.assertEqual(4, len(works))
 
         work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
         row1 = works[0]
@@ -387,7 +387,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], date_only.tasks)
 
         # commenced_by only
-        self.assertEqual([], commenced_by_only.notes)
+        self.assertEqual(['Unknown commencement date'], commenced_by_only.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/5 - '
                           'Commencement notice 1 (about to be imported) '
                           'on (unknown)'],

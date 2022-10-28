@@ -34,7 +34,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
-        self.assertEqual(3, len(works))
+        self.assertEqual(4, len(works))
 
         row1 = works[0]
         self.assertEqual('success', row1.status)
@@ -70,6 +70,21 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Uncommenced'], row3.notes)
         self.assertEqual([], row3.relationships)
         self.assertEqual(['link gazette', 'import content'], row3.tasks)
+
+        # work with commencement_date set to '9999-01-01' is imported without the commencement_date
+        row4 = works[3]
+        self.assertEqual('success', row4.status)
+        self.assertEqual('Unknown commencement date', row4.work.title)
+        self.assertEqual('act', row4.work.nature)
+        self.assertEqual('64', row4.work.number)
+        self.assertEqual('2013', row4.work.year)
+        self.assertEqual(datetime.date(2013, 10, 21), row4.work.publication_date)
+        self.assertEqual(None, row4.work.commencement_date)
+        self.assertTrue(row4.work.commenced)
+        self.assertFalse(row4.work.stub)
+        self.assertEqual(['Unknown commencement date'], row4.notes)
+        self.assertEqual([], row4.relationships)
+        self.assertEqual(['import content'], row4.tasks)
 
         # not actually created though
         with self.assertRaises(Work.DoesNotExist):

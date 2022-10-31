@@ -636,6 +636,11 @@ class Colophon(models.Model):
         return str(self.name)
 
 
+class AnnotationManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('created_by_user')
+
+
 class Annotation(models.Model):
     document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE)
     created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
@@ -647,6 +652,8 @@ class Annotation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
     selectors = JSONField(null=True)
+
+    objects = AnnotationManager()
 
     def resolve_anchor(self):
         if self.anchor_id and self.document:

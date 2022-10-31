@@ -75,7 +75,7 @@ class XlsxExporter:
                 try:
                     commencement = commencements_active[n]
                     sheet.write(row, columns.index('commences'), uri_title(commencement.commenced_work))
-                    sheet.write(row, columns.index('commences_on_date'), commencement.date or '(unknown)', date_format)
+                    sheet.write(row, columns.index('commences_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
 
@@ -88,7 +88,7 @@ class XlsxExporter:
                     if commencement == info.get('work').main_commencement and not commencement.commencing_work:
                         return
                     sheet.write(row, columns.index('commenced_by'), uri_title(commencement.commencing_work))
-                    sheet.write(row, columns.index('commenced_on_date'), commencement.date or '(unknown)', date_format)
+                    sheet.write(row, columns.index('commenced_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
 
@@ -240,7 +240,9 @@ def write_works(workbook, queryset):
         works_sheet.write(row, 8, work.publication_number)
         works_sheet.write(row, 9, work.assent_date, date_format)
         works_sheet.write(row, 10, work.commenced)
-        works_sheet.write(row, 11, work.commencement_date, date_format)
+        if work.commenced:
+            works_sheet.write(row, 11, work.commencement_date or datetime.date(9999, 1, 1), date_format)
+
         works_sheet.write(row, 12, work.repealed_date, date_format)
         works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
         works_sheet.write(row, 14, work.stub)

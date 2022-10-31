@@ -403,9 +403,19 @@ class BaseBulkCreator(LocaleBasedMatcher):
             getattr(row, 'commencement_date', None) or
             getattr(row, 'commenced_on_date', None) or
             row.commenced_by)
+
+        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
+        if (getattr(row, 'commencement_date', None) and getattr(row, 'commencement_date').year == 9999) or \
+                (getattr(row, 'commenced_on_date', None) and getattr(row, 'commenced_on_date').year == 9999):
+            row.commencement_date = None
+            row.commenced_on_date = None
+
         if self.dry_run:
             if not row.commenced:
                 row.notes.append('Uncommenced')
+            elif row.commenced and not row.commencement_date and not row.commenced_on_date:
+                row.notes.append('Unknown commencement date')
+
             if row.stub:
                 row.notes.append('Stub')
 

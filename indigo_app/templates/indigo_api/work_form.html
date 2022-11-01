@@ -109,10 +109,10 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
-              <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
+              <input type="checkbox" class="form-check-input" id="{{ form.principal.id_for_label }}" name="{{ form.principal.html_name }}" value="on" {% if form.principal.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.principal.id_for_label }}">{% trans 'Principal work' %}</label>
               <p class="form-text text-muted">
-                {% trans "Check this option for commencing or amending works that are not captured in detail." %}
+                {% trans "Check this option for a new act, a new by-law, or a new set of regulations." %}
               </p>
             </div>
           </div>
@@ -135,6 +135,16 @@
         </div>
 
         <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
+              <p class="form-text text-muted">
+                {% trans "Check this option for commencing or amending works that are not captured in detail." %}
+              </p>
+            </div>
+          </div>
+
           <div class="form-group col-md-6">
             {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
             {% if topic_groups %}

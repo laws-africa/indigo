@@ -381,7 +381,7 @@ class Work(WorkMixin, models.Model):
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
 
-    principal = models.BooleanField(null=False, default=False, help_text="Is this work a new act or by-law, or a new set of regulations?")
+    principal = models.BooleanField(null=False, default=False, help_text="Principal works are not simply repeals, amendments or commencements, and should have full text content.")
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties

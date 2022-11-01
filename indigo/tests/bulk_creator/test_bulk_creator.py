@@ -34,7 +34,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
-        self.assertEqual(4, len(works))
+        self.assertEqual(5, len(works))
 
         row1 = works[0]
         self.assertEqual('success', row1.status)
@@ -87,6 +87,21 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], row4.relationships)
         self.assertEqual(['import content'], row4.tasks)
 
+        row5 = works[4]
+        self.assertEqual('success', row5.status)
+        self.assertEqual('Principal work', row5.work.title)
+        self.assertEqual('act', row5.work.nature)
+        self.assertEqual('76', row5.work.number)
+        self.assertEqual('2012', row5.work.year)
+        self.assertEqual(datetime.date(2012, 10, 21), row5.work.publication_date)
+        self.assertEqual(None, row5.work.commencement_date)
+        self.assertTrue(row5.work.commenced)
+        self.assertFalse(row5.work.stub)
+        self.assertTrue(row5.work.principal)
+        self.assertEqual(['Unknown commencement date'], row5.notes)
+        self.assertEqual([], row5.relationships)
+        self.assertEqual(['link gazette', 'import content'], row5.tasks)
+
         # not actually created though
         with self.assertRaises(Work.DoesNotExist):
             Work.objects.get(frbr_uri='/akn/za/act/2020/1')
@@ -97,7 +112,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_live(self):
         works = self.get_works(False, 'basic.csv')
-        self.assertEqual(4, len(works))
+        self.assertEqual(5, len(works))
 
         work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
         row1 = works[0]

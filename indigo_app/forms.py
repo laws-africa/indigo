@@ -295,7 +295,7 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
+    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('temporary', 'Temporary stubs'), ('permanent', 'Permanent stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')], initial=['published', 'draft'])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
@@ -355,6 +355,10 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(stub=False)
         elif self.cleaned_data.get('stub') == 'only':
             queryset = queryset.filter(stub=True)
+        elif self.cleaned_data.get('stub') == 'temporary':
+            queryset = queryset.filter(stub=True, principal=True)
+        elif self.cleaned_data.get('stub') == 'permanent':
+            queryset = queryset.filter(stub=True, principal=False)
 
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:

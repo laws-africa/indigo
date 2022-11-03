@@ -16,7 +16,8 @@ def backfill_principal_works(apps, schema_editor):
     db_alias = schema_editor.connection.alias
 
     for work in Work.objects.using(db_alias).iterator(100):
-        if work.document_set.exists() or not work.parent_work:
+        if work.document_set.exists() or (not work.commencements_made.exists() and
+                not work.repealed_works.exists() and not work.amendments_made.exists()):
             log.info(f'\nMarking {work.frbr_uri} as a principal work...')
             work.principal = True
             work.save()

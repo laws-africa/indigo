@@ -182,7 +182,7 @@
         <div class="form-row">
           {% block publication-date %}
           <div class="form-group col">
-            <label for="{{ form.publication_date.id_for_label }}" class="required">{% trans 'Publication date' %}</label>
+            <label for="{{ form.publication_date.id_for_label }}" class="{% if not work.pk and not publication_date_optional %}required{% endif %}">{% trans 'Publication date' %}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
           </div>

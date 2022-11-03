@@ -55,6 +55,7 @@ class RowValidationFormBase(forms.Form):
                                         error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # other info
     stub = forms.BooleanField(required=False)
+    principal = forms.BooleanField(required=False)
     taxonomy = forms.CharField(required=False)
     # passive relationships
     primary_work = forms.CharField(required=False)
@@ -318,7 +319,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for attribute in ['title',
                               'publication_name', 'publication_number',
                               'assent_date', 'publication_date',
-                              'commenced', 'stub']:
+                              'commenced', 'stub', 'principal']:
                 setattr(work, attribute, getattr(row, attribute, None))
             work.created_by_user = self.user
             work.updated_by_user = self.user

@@ -594,7 +594,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'numbered_title',
             'publication_name', 'publication_number', 'publication_date', 'publication_document',
             'commenced', 'commencements', 'commencing_work', 'commencement_date', 'commencement_note',
-            'assent_date', 'stub',
+            'assent_date', 'stub', 'principal',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',
 

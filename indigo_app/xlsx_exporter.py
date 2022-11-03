@@ -26,7 +26,7 @@ class XlsxExporter:
                             'subtype', 'number', 'year',
                             'publication_name', 'publication_number',
                             'assent_date', 'publication_date', 'commencement_date',
-                            'stub', 'taxonomy',
+                            'stub', 'principal', 'taxonomy',
                             'primary_work',
                             'commenced_by', 'commenced_on_date',
                             'amended_by', 'amended_on_date',
@@ -111,6 +111,8 @@ class XlsxExporter:
             elif field == 'locality':
                 to_write = work.locality.code if work.locality else ''
             elif field == 'stub' and work.stub:
+                to_write = '✔'
+            elif field == 'principal' and work.principal:
                 to_write = '✔'
             elif field == 'taxonomy':
                 to_write = '; '.join(t.slug for t in work.taxonomies.all())

@@ -51,6 +51,7 @@ class Country(models.Model):
         null=True,
         blank=True
     )
+    publication_date_optional = models.BooleanField(default=False, null=False, help_text='Are publication dates optional in this country?')
 
     class Meta:
         ordering = ['country__name']

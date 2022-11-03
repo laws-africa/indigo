@@ -207,7 +207,6 @@ class AddWorkView(PlaceViewBase, CreateView):
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
     is_create = True
-    PUB_DATE_OPTIONAL_COUNTRIES = []
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()
@@ -233,7 +232,7 @@ class AddWorkView(PlaceViewBase, CreateView):
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['doctypes'] = self.doctypes()
-        context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
+        context['publication_date_optional'] = self.country.publication_date_optional
 
         return context
 

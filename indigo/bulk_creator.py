@@ -86,6 +86,7 @@ class RowValidationFormBase(forms.Form):
             if locality else []
         self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
         self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
+        self.fields['publication_date'].required = not country.publication_date_optional
 
     def get_doctypes_for_country(self, country_code):
         return [[d[1].lower(), d[0]] for d in
@@ -97,21 +98,12 @@ class RowValidationFormBase(forms.Form):
         return re.sub('[\u2028 ]+', ' ', title)
 
 
-class ChapterMixin(forms.Form):
+class ChapterMixin:
     """ Includes (optional) Chapter (cap) field.
     For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
     for the relevant country in settings.INDIGO['WORK_PROPERTIES']
     """
     cap = forms.CharField(required=False)
-
-
-class PublicationDateOptionalRowValidationForm(RowValidationFormBase):
-    """ Make `publication_date` optional on bulk creation.
-    To make it optional for individual work creation, also add the country code to
-    AddWorkView.PUB_DATE_OPTIONAL_COUNTRIES in apps.IndigoLawsAfricaConfig.
-    """
-    publication_date = forms.DateField(required=False,
-                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
 
 
 @plugins.register('bulk-creator')

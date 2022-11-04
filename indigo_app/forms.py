@@ -513,7 +513,7 @@ class CountryAdminForm(forms.ModelForm):
 
     class Meta:
         model = Country
-        fields = ('country', 'primary_language', 'italics_terms')
+        exclude = []
 
     def clean_italics_terms(self):
         # strip blanks and duplications

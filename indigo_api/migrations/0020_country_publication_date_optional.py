@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0017_work_frbr_fields_non_null'),
+        ('indigo_api', '0019_backfill_principal_works'),
     ]
 
     operations = [

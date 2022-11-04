@@ -34,7 +34,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
-        self.assertEqual(4, len(works))
+        self.assertEqual(5, len(works))
 
         row1 = works[0]
         self.assertEqual('success', row1.status)
@@ -43,6 +43,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row1.work.year)
         self.assertEqual(datetime.date(2020, 1, 1), row1.work.publication_date)
         self.assertFalse(row1.work.stub)
+        self.assertFalse(row1.work.principal)
         self.assertFalse(row1.work.commenced)
         self.assertEqual(['Uncommenced'], row1.notes)
         self.assertEqual([], row1.relationships)
@@ -55,6 +56,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row2.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row2.work.publication_date)
         self.assertTrue(row2.work.stub)
+        self.assertFalse(row2.work.principal)
         self.assertEqual(['Uncommenced', 'Stub'], row2.notes)
         self.assertEqual([], row2.relationships)
         self.assertEqual(['link gazette'], row2.tasks)
@@ -67,6 +69,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row3.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row3.work.publication_date)
         self.assertFalse(row3.work.stub)
+        self.assertFalse(row3.work.principal)
         self.assertEqual(['Uncommenced'], row3.notes)
         self.assertEqual([], row3.relationships)
         self.assertEqual(['link gazette', 'import content'], row3.tasks)
@@ -83,9 +86,25 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(None, row4.work.commencement_date)
         self.assertTrue(row4.work.commenced)
         self.assertFalse(row4.work.stub)
+        self.assertFalse(row4.work.principal)
         self.assertEqual(['Unknown commencement date'], row4.notes)
         self.assertEqual([], row4.relationships)
         self.assertEqual(['import content'], row4.tasks)
+
+        row5 = works[4]
+        self.assertEqual('success', row5.status)
+        self.assertEqual('Principal work', row5.work.title)
+        self.assertEqual('act', row5.work.nature)
+        self.assertEqual('76', row5.work.number)
+        self.assertEqual('2012', row5.work.year)
+        self.assertEqual(datetime.date(2012, 10, 21), row5.work.publication_date)
+        self.assertEqual(None, row5.work.commencement_date)
+        self.assertTrue(row5.work.commenced)
+        self.assertFalse(row5.work.stub)
+        self.assertTrue(row5.work.principal)
+        self.assertEqual(['Unknown commencement date'], row5.notes)
+        self.assertEqual([], row5.relationships)
+        self.assertEqual(['link gazette', 'import content'], row5.tasks)
 
         # not actually created though
         with self.assertRaises(Work.DoesNotExist):
@@ -97,7 +116,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
     def test_basic_live(self):
         works = self.get_works(False, 'basic.csv')
-        self.assertEqual(4, len(works))
+        self.assertEqual(5, len(works))
 
         work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
         row1 = works[0]
@@ -107,6 +126,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', work1.year)
         self.assertEqual(datetime.date(2020, 1, 1), work1.publication_date)
         self.assertFalse(work1.stub)
+        self.assertFalse(work1.principal)
         # no 'notes' when not in preview
         self.assertEqual([], row1.notes)
         self.assertEqual([], row1.relationships)
@@ -124,6 +144,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', work2.year)
         self.assertEqual(datetime.date(2020, 6, 1), work2.publication_date)
         self.assertTrue(work2.stub)
+        self.assertFalse(work2.principal)
         # no 'notes' when not in preview
         self.assertEqual([], row2.notes)
         self.assertEqual([], row2.relationships)
@@ -140,6 +161,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', work3.year)
         self.assertEqual(datetime.date(2020, 6, 1), work3.publication_date)
         self.assertFalse(work3.stub)
+        self.assertFalse(work3.principal)
         # no 'notes' when not in preview
         self.assertEqual([], row3.notes)
         self.assertEqual([], row3.relationships)

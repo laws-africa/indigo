@@ -83,6 +83,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     parent_work = serializers.SerializerMethodField()
     custom_properties = serializers.JSONField(source='work.labeled_properties')
     stub = serializers.BooleanField(source='work.stub')
+    principal = serializers.BooleanField(source='work.principal')
 
     class Meta:
         model = Document

@@ -83,6 +83,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     parent_work = serializers.SerializerMethodField()
     custom_properties = serializers.JSONField(source='work.labeled_properties')
     stub = serializers.BooleanField(source='work.stub')
+    principal = serializers.BooleanField(source='work.principal')
 
     class Meta:
         model = Document
@@ -97,7 +98,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time', 'parent_work', 'custom_properties',
-            'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'type_name',
+            'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'principal', 'type_name',
 
             'links',
         )

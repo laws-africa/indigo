@@ -9,7 +9,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
     "@lawsafrica/indigo-akn": "^5.2.1",
-    "@lawsafrica/web-components": "^0.8.0-beta",
+    "@lawsafrica/law-widgets": "^1.1.0",
     "bootstrap": "^4.3.1",
     "bootstrap-select": "^1.13.18",
     "bower": "^1.8.8",

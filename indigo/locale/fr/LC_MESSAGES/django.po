@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-08-31 16:01\n"
+"PO-Revision-Date: 2022-11-10 14:57\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -40,7 +40,7 @@ msgstr "Avis du Gouvernement"
 
 #: analysis/toc/base.py:19
 msgid "Part"
-msgstr "Pièce"
+msgstr "Partie"
 
 #: analysis/toc/base.py:20
 msgid "Section"

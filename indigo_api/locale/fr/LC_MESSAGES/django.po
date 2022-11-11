@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-30 16:06+0200\n"
-"PO-Revision-Date: 2022-06-30 15:31\n"
+"PO-Revision-Date: 2022-08-31 16:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -41,7 +41,7 @@ msgstr "Ceci est la version de ce document à %(start)s."
 #: models/documents.py:300
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr "Il s'agit de la version de ce document telle qu'elle était de %(start)s à %(end)s."
+msgstr "Il s'agit de la version de ce document telle qu'elle était du %(start)s au %(end)s."
 
 #: models/documents.py:303
 #, python-format
@@ -59,7 +59,7 @@ msgstr "Remarque : le document de publication original n'est pas disponible et c
 
 #: models/tasks.py:231
 msgid "Are you sure you want to submit this task for review?"
-msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour révision?"
+msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour examen ?"
 
 #: models/tasks.py:233
 #, python-format
@@ -73,7 +73,7 @@ msgstr "Localité introuvable pour ce pays : %s"
 
 #: models/works.py:429
 msgid "Invalid FRBR URI"
-msgstr "Invalid FRBR URI"
+msgstr "FRBR URI invalide"
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
@@ -98,7 +98,7 @@ msgstr "[Abandonné par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr "Publié dans %(name)s no. %(number)s le %(date)s"
+msgstr "Publié dans %(name)s nº %(number)s le %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:41
 #, python-format
@@ -108,16 +108,16 @@ msgstr "Publié dans %(name)s le %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr "Assisté le %(date)s"
+msgstr "Acceptée le %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
-msgstr "Non démarré"
+msgstr "Non commencé"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr "Date de début inconnue"
+msgstr "Date de commencement inconnue"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
@@ -153,7 +153,7 @@ msgstr "par <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr "Il y a plusieurs débuts :"
+msgstr "Il y a plusieurs commencements :"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
@@ -170,7 +170,7 @@ msgstr "Dispositions inconnues"
 #: templates/indigo_api/akn/coverpage_act.html:155
 #, python-format
 msgid "commenced on %(date)s"
-msgstr "a commencé le %(date)s"
+msgstr "commencé le %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 msgid "commenced on <i>(unknown date)</i>"
@@ -178,7 +178,7 @@ msgstr "a commencé le <i>(date inconnue)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"
-msgstr "Note :"
+msgstr "Remarque :"
 
 #: templates/indigo_api/akn/coverpage_act.html:184
 msgid "not yet commenced"

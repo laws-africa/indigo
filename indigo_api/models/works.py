@@ -336,6 +336,10 @@ class WorkMixin(object):
             commencements_count += 1
         return commencements_count
 
+    @property
+    def has_consolidation(self):
+        return self.arbitrary_expression_dates.exists()
+
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 

@@ -697,11 +697,11 @@
         },
         body: JSON.stringify(sourceEditor.editTimes)
       }).then(function(response) {
+
         if(response.ok) {
           sourceEditor.editTimes = [];
         } else {
-          console.log('Response data from save edit times request', JSON.stringify(response));
-          throw new Error('Could not save time spent on this document');
+          throw new Error(response.statusText);
         }
       });
     },

@@ -697,12 +697,13 @@
         },
         body: JSON.stringify(sourceEditor.editTimes)
       }).then(function(response) {
-
         if(response.ok) {
           sourceEditor.editTimes = [];
         } else {
-          throw new Error(response.statusText);
+          return Promise.reject(response);
         }
+      }).catch(function (response) {
+        console.log(response.statusText);
       });
     },
 

@@ -110,7 +110,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
-            'language', 'repeal', 'amendments', 'points_in_time', 'parent_work', 'custom_properties',
+            'language', 'repeal', 'amendments', 'work_amendments', 'points_in_time', 'parent_work', 'custom_properties',
             'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'principal', 'type_name',
 
             'links',

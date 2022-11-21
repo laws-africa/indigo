@@ -69,14 +69,13 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
 
 
 class AmendmentSerializer(serializers.ModelSerializer):
-    date = serializers.DateField(source='date')
     amending_title = serializers.CharField(source='amending_work.title')
     amending_uri = serializers.CharField(source='amending_work.frbr_uri')
 
     class Meta:
         model = Amendment
         fields = (
-            'amending_work', 'date',
+            'date', 'amending_title', 'amending_uri'
         )
         read_only_fields = fields
 

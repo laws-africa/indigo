@@ -12,7 +12,6 @@ from lxml import etree
 from xmldiff import formatting
 from xmldiff.diff import Differ
 from cobalt.schemas import AkomaNtoso30
-
 from docpipe.xmlutils import unwrap_element
 
 log = logging.getLogger(__name__)
@@ -88,8 +87,55 @@ class AKNHTMLDiffer:
         'fast_match': True,
     }
 
+    def preprocess_xml_str(self, xml_str):
+        """ Run pre-processing on XML before doing HTML diffs.
+
+        This removes <term> elements.
+        """
+        root = etree.fromstring(xml_str)
+        root = self.preprocess_xml_tree(root)
+        return etree.tostring(root, encoding='utf-8')
+
+    def preprocess_xml_tree(self, root):
+        """ Run pre-processing on XML before doing HTML diffs.
+
+        This removes <term> elements.
+        """
+        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
+            unwrap_element(elem)
+
+        return root
+
+    def count_differences(self, diff_tree):
+        """ Counts the number of differences in a diff tree."""
+        return len(diff_tree.xpath('//ins|//del|//*[contains(@class, "ins") or contains(@class, "del")]'))
+
+    def diff_html_str(self, old_html, new_html):
+        """ Diffs two HTML strings for a single element and returns a string HTML diff.
+
+        :return: None if there are no differences, otherwise a string with an HTML diff.
+        """
+        if not old_html and not new_html:
+            return None
+
+        if old_html == new_html:
+            return None
+
+        if not old_html:
+            # it's newly added
+            return '<ins>' + new_html + '</ins>'
+
+        if not new_html:
+            # it was deleted
+            return '<del>' + old_html + '</del>'
+
+        old_tree = lxml.html.fromstring(old_html)
+        new_tree = lxml.html.fromstring(new_html)
+        diff = self.diff_html(old_tree, new_tree)
+        return lxml.html.tostring(diff, encoding='unicode')
+
     def diff_html(self, old_tree, new_tree):
-        """ Compares two trees, and returns a tree with annotated differences.
+        """ Compares two html trees, and returns a tree with annotated differences.
         """
         if old_tree is None:
             new_tree.tag = 'div'
@@ -183,7 +229,12 @@ class AKNHTMLDiffer:
 
 
 class AttributeDiffer:
+    """ Differ that compares attributes and attribute dictionaries.
+    """
     html_differ_class = AKNHTMLDiffer
+
+    def __init__(self):
+        self.html_differ = self.html_differ_class()
 
     def attr_title(self, attr):
         return attr.title().replace('_', ' ')
@@ -331,27 +382,3 @@ class AttributeDiffer:
         right = ''.join(right)
 
         return left, right
-
-    def diff_document_html(self, old_tree, new_tree):
-        diff = self.html_differ_class().diff_html(old_tree, new_tree)
-        n_changes = len(diff.xpath('//ins|//del|//*[contains(@class, "ins") or contains(@class, "del")]'))
-        return n_changes, diff
-
-    def preprocess_document_diff(self, xml_str):
-        """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
-        """
-        root = etree.fromstring(xml_str)
-        root = self.preprocess_xml_diff(root)
-        return etree.tostring(root, encoding='utf-8')
-
-    def preprocess_xml_diff(self, root):
-        """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
-        """
-        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
-            unwrap_element(elem)
-
-        return root

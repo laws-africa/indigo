@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from cobalt import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Amendment
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
@@ -68,6 +68,18 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
                                    kwargs={'frbr_uri': uri, 'filename': instance.filename})
 
 
+class AmendmentSerializer(serializers.ModelSerializer):
+    amending_title = serializers.CharField(source='amending_work.title')
+    amending_uri = serializers.CharField(source='amending_work.frbr_uri')
+
+    class Meta:
+        model = Amendment
+        fields = (
+            'date', 'amending_title', 'amending_uri'
+        )
+        read_only_fields = fields
+
+
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Serializer for published documents.
 
@@ -80,6 +92,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     as_at_date = serializers.DateField(source='work.as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
     commencements = CommencementSerializer(many=True, source='work.commencements')
+    work_amendments = AmendmentSerializer(many=True, source='work.amendments')
     parent_work = serializers.SerializerMethodField()
     custom_properties = serializers.JSONField(source='work.labeled_properties')
     stub = serializers.BooleanField(source='work.stub')
@@ -97,7 +110,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
-            'language', 'repeal', 'amendments', 'points_in_time', 'parent_work', 'custom_properties',
+            'language', 'repeal', 'amendments', 'work_amendments', 'points_in_time', 'parent_work', 'custom_properties',
             'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'principal', 'type_name',
 
             'links',

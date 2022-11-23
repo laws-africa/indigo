@@ -45,9 +45,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row1.work.year)
         self.assertEqual(datetime.date(2020, 1, 1), row1.work.publication_date)
         self.assertFalse(row1.work.stub)
-        self.assertFalse(row1.work.principal)
+        self.assertTrue(row1.work.principal)
         self.assertFalse(row1.work.commenced)
-        self.assertEqual(['Uncommenced'], row1.notes)
+        self.assertEqual(['Uncommenced', 'Principal work'], row1.notes)
         self.assertEqual([], row1.relationships)
         self.assertEqual(['link gazette', 'import content'], row1.tasks)
 
@@ -71,8 +71,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', row3.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row3.work.publication_date)
         self.assertFalse(row3.work.stub)
-        self.assertFalse(row3.work.principal)
-        self.assertEqual(['Uncommenced'], row3.notes)
+        self.assertTrue(row3.work.principal)
+        self.assertEqual(['Uncommenced', 'Principal work'], row3.notes)
         self.assertEqual([], row3.relationships)
         self.assertEqual(['link gazette', 'import content'], row3.tasks)
 
@@ -88,8 +88,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(None, row4.work.commencement_date)
         self.assertTrue(row4.work.commenced)
         self.assertFalse(row4.work.stub)
-        self.assertFalse(row4.work.principal)
-        self.assertEqual(['Unknown commencement date'], row4.notes)
+        self.assertTrue(row4.work.principal)
+        self.assertEqual(['Unknown commencement date', 'Principal work'], row4.notes)
         self.assertEqual([], row4.relationships)
         self.assertEqual(['link gazette', 'import content'], row4.tasks)
 
@@ -104,7 +104,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertTrue(row5.work.commenced)
         self.assertFalse(row5.work.stub)
         self.assertTrue(row5.work.principal)
-        self.assertEqual(['Unknown commencement date'], row5.notes)
+        self.assertEqual(['Unknown commencement date', 'Principal work'], row5.notes)
         self.assertEqual([], row5.relationships)
         self.assertEqual(['link gazette', 'import content'], row5.tasks)
 
@@ -128,7 +128,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', work1.year)
         self.assertEqual(datetime.date(2020, 1, 1), work1.publication_date)
         self.assertFalse(work1.stub)
-        self.assertFalse(work1.principal)
+        self.assertTrue(work1.principal)
         # no 'notes' when not in preview
         self.assertEqual([], row1.notes)
         self.assertEqual([], row1.relationships)
@@ -163,7 +163,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('2020', work3.year)
         self.assertEqual(datetime.date(2020, 6, 1), work3.publication_date)
         self.assertFalse(work3.stub)
-        self.assertFalse(work3.principal)
+        self.assertTrue(work3.principal)
         # no 'notes' when not in preview
         self.assertEqual([], row3.notes)
         self.assertEqual([], row3.relationships)
@@ -393,12 +393,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
         commenced_on_date_only = works[7]
 
         # uncommenced
-        self.assertEqual(['Uncommenced'], uncommenced.notes)
+        self.assertEqual(['Uncommenced', 'Principal work'], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
         self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
 
         # both
-        self.assertEqual([], both.notes)
+        self.assertEqual(['Principal work'], both.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/5 - '
                           'Commencement notice 1 (about to be imported) '
                           'on 2020-06-05'],
@@ -406,12 +406,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], both.tasks)
 
         # date only
-        self.assertEqual([], date_only.notes)
+        self.assertEqual(['Principal work'], date_only.notes)
         self.assertEqual([], date_only.relationships)
         self.assertEqual(['link gazette', 'import content'], date_only.tasks)
 
         # commenced_by only
-        self.assertEqual(['Unknown commencement date'], commenced_by_only.notes)
+        self.assertEqual(['Unknown commencement date', 'Principal work'], commenced_by_only.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/5 - '
                           'Commencement notice 1 (about to be imported) '
                           'on (unknown)'],
@@ -424,12 +424,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette'], commencement_notice.tasks)
 
         # error
-        self.assertEqual([], error.notes)
+        self.assertEqual(['Principal work'], error.notes)
         self.assertEqual([], error.relationships)
         self.assertEqual(['link gazette', 'import content', 'link commencement passive'], error.tasks)
 
         # commenced_by_and_commenced_on_date
-        self.assertEqual([], commenced_by_and_commenced_on_date.notes)
+        self.assertEqual(['Principal work'], commenced_by_and_commenced_on_date.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/5 - '
                           'Commencement notice 1 (about to be imported) '
                           'on 2020-08-01'],
@@ -437,7 +437,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['link gazette', 'import content'], commenced_by_and_commenced_on_date.tasks)
 
         # commenced_on_date_only
-        self.assertEqual([], commenced_on_date_only.notes)
+        self.assertEqual(['Principal work'], commenced_on_date_only.notes)
         self.assertEqual([], commenced_on_date_only.relationships)
         self.assertEqual(['link gazette', 'import content'], commenced_on_date_only.tasks)
 
@@ -565,7 +565,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNotNone(now_commenced.commenced_by)
         # but commencement object doesn't exist yet
         self.assertIsNone(now_commenced.work.commencement_date)
-        self.assertEqual([], now_commenced.notes)
+        self.assertEqual(['Principal work'], now_commenced.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/9 - '
                           'Commencement notice 2 (about to be imported) '
                           'on 2020-09-01'],
@@ -604,17 +604,17 @@ class BaseBulkCreatorTest(testcases.TestCase):
         commencement_notice_3 = works[5]
 
         # uncommenced
-        self.assertEqual(['Uncommenced'], uncommenced.notes)
+        self.assertEqual(['Uncommenced', 'Principal work'], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
         self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
 
         # both
-        self.assertEqual([], both.notes)
+        self.assertEqual(['Principal work'], both.notes)
         self.assertEqual([], both.relationships)
         self.assertEqual(['link gazette', 'import content'], both.tasks)
 
         # commenced_by only
-        self.assertEqual(['Uncommenced'], commenced_by_only.notes)
+        self.assertEqual(['Uncommenced', 'Principal work'], commenced_by_only.notes)
         self.assertEqual([], commenced_by_only.relationships)
         self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
 
@@ -755,7 +755,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', amend2.status)
         self.assertEqual('success', error.status)
 
-        self.assertEqual([], main.notes)
+        self.assertEqual(['Principal work'], main.notes)
         self.assertEqual([], main.relationships)
         self.assertEqual(['link gazette', 'import content'], main.tasks)
 
@@ -816,10 +816,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', amend_1.status)
         self.assertEqual('success', amend_2.status)
         self.assertEqual('success', amend_3.status)
-        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], main.notes)
-        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe1.notes)
-        self.assertEqual(['Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe2.notes)
-        self.assertEqual(['Duplicate in batch'], dupe3.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work"], main.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe1.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work"], dupe2.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch'], dupe3.notes)
         self.assertEqual(['Stub'], amend_1.notes)
         self.assertEqual(['Stub'], amend_2.notes)
         self.assertEqual(['Stub'], amend_3.notes)
@@ -912,15 +912,15 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', repeal2.status)
         self.assertEqual('success', main3.status)
 
-        self.assertEqual([], main1.notes)
+        self.assertEqual(['Principal work'], main1.notes)
         self.assertEqual(['Repealed by /akn/za/act/2020/2 (about to be imported)'], main1.relationships)
         self.assertEqual(['link gazette', 'import content'], main1.tasks)
 
-        self.assertEqual([], main2.notes)
+        self.assertEqual(['Principal work'], main2.notes)
         self.assertEqual(['Repealed by /akn/za/act/2020/4 (about to be imported)'], main2.relationships)
         self.assertEqual(['link gazette', 'import content'], main2.tasks)
 
-        self.assertEqual([], main3.notes)
+        self.assertEqual(['Principal work'], main3.notes)
         self.assertEqual([], main3.relationships)
         self.assertEqual(['link gazette', 'import content', 'no repealed by match'], main3.tasks)
 
@@ -962,7 +962,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', repeal2.status)
         self.assertEqual('success', repeal3.status)
 
-        self.assertEqual([], main1.notes)
+        self.assertEqual(['Principal work'], main1.notes)
         self.assertEqual([], main1.relationships)
         self.assertEqual(['link gazette', 'import content'], main1.tasks)
 
@@ -975,7 +975,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Repeals /akn/za/act/2020/1 (about to be imported)'], repealfail.relationships)
         self.assertEqual(['link gazette'], repealfail.tasks)
 
-        self.assertEqual([], main2.notes)
+        self.assertEqual(['Principal work'], main2.notes)
         self.assertEqual([], main2.relationships)
         self.assertEqual(['link gazette', 'import content'], main2.tasks)
 
@@ -1016,7 +1016,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         work2 = works[1]
         self.assertEqual('success', work1.status)
         self.assertEqual('success', work2.status)
-        self.assertEqual(['Duplicate in batch'], work1.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch'], work1.notes)
         self.assertEqual(['Uncommenced', 'Stub', 'Duplicate in batch'], work2.notes)
 
         # live

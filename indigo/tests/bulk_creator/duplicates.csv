@@ -1,3 +1,3 @@
-country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
-Za,,Testy 1,,,1,2020,,,,2020-01-01,2020-01-01,,,,,,,,,,,,,,,,
-zA,,Testy 2,,,1,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,should be Act 2,
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,principal (✔),stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+Za,,Testy 1,,,1,2020,,,,2020-01-01,2020-01-01,x,,,,,,,,,,,,,,,,
+zA,,Testy 2,,,1,2020,,,,2020-06-01,,,x,,,,,,,,,,,,,,should be Act 2,

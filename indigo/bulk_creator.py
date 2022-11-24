@@ -287,7 +287,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self.works
 
     def create_work(self, row, idx):
-        # handle spreadsheet that still uses 'principal'
+        # handle spreadsheet that still only uses 'principal'
         row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
         row = self.validate_row(row)
         row.status = None
@@ -338,7 +338,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
                 self.link_publication_document(work, row)
 
-                if not work.stub:
+                if work.principal:
                     self.create_task(work, row, task_type='import-content')
 
                 row.work = work
@@ -411,6 +411,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             if row.stub:
                 row.notes.append('Stub')
+            if row.principal:
+                row.notes.append('Principal work')
 
         return row
 

@@ -499,7 +499,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
         local_tree = lxml.html.fromstring(local_html or "<div></div>")
         remote_tree = lxml.html.fromstring(remote_html) if remote_html else None
 
-        diff = differ.diff_html(local_tree, remote_tree)
+        diff = differ.diff_html(remote_tree, local_tree)
         n_changes = differ.count_differences(diff)
         diff = lxml.html.tostring(diff, encoding='unicode')
 

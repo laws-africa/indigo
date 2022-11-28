@@ -697,11 +697,13 @@
         },
         body: JSON.stringify(sourceEditor.editTimes)
       }).then(function(response) {
-
         if(response.ok) {
           sourceEditor.editTimes = [];
         } else {
-          throw new Error(response.statusText);
+          console.log('Edit times',JSON.stringify(sourceEditor.editTimes));
+          response.text().then(text => {
+            throw new Error(text);
+          });
         }
       });
     },

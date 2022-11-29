@@ -64,6 +64,7 @@
     },
 
     editActivityEnded: function() {
+      if(!this.editStartedAt) return;
       this.editTimes.push({
         started_at: this.editStartedAt,
         ended_at: new Date().toISOString()

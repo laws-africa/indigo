@@ -1,12 +1,14 @@
-{% extends "place/layout.html" %}
+{% extends "place/tabbed_layout.html" %}
 {% load indigo_app i18n %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
-{% block title %}{% trans 'Create a new batch' %}{% endblock %}
+{% block title %}{% trans 'Create works in bulk' %}{% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2 class="mt-3 mb-3">{% trans 'Import a batch of works from Google Sheets' %}</h2>
+  {% block heading %}
+    <h2 class="mt-3 mb-3">{% trans 'Create works in bulk from Google Sheets' %}</h2>
+  {% endblock %}
 
   {% if error %}
     <div class="alert alert-danger" role="alert">
@@ -30,7 +32,7 @@
 
         <div class="form-group">
           <label for="{{ form.spreadsheet_url.id_for_label }}">{% trans 'Google Sheets URL' %}</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="{% trans 'The URL of the spreadsheet to import works from' %}" required value="{{ form.spreadsheet_url.value|default:'' }}">
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="{% trans 'The URL of the spreadsheet' %}" required value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
@@ -77,6 +79,8 @@
 
           <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">{% trans 'Create a new project' %}</a>
         </div>
+
+        {% block columns %}{% endblock %}
 
       </div>
 
@@ -342,7 +346,11 @@
       <div class="card-body">
         {% trans 'Instructions' %}:
         <ul>
-          <li>{% blocktrans %}Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc" target="_blank">Work info template</a>: 'File | Make a copy'.{% endblocktrans %}</li>
+          <li>
+            {% with "https://docs.google.com/spreadsheets/d/1L1S2ahVHFE69zIacgGNRwZ20MslMmJlXfQ7OQUk83qQ" as template_href %}
+              {% blocktrans %}Make a copy of the <a href="{{ template_href }}" target="_blank">Legislation index template</a>: 'File | Make a copy'.{% endblocktrans %}
+            {% endwith %}
+          </li>
           <li>
             {% url 'place_settings' place=place.place_code as place_url %}
             {% blocktrans trimmed %}
@@ -353,7 +361,7 @@
             <li>{% blocktrans with share=bulk_creator.share_with %}Share the spreadsheet with {{ share }}.{% endblocktrans %}</li>
             <li>{% trans 'Choose a spreadsheet tab and a project.' %}</li>
           {% else %}
-            <li>{% trans "Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner)." %}</li>
+            <li>{% trans "Make it accessible by turning link sharing on: 'Share | General access | Anyone with the link' (top-right corner)." %}</li>
             <li>{% trans 'Choose a project.' %}</li>
           {% endif %}
           <li>{% blocktrans %}<strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.{% endblocktrans %}</li>

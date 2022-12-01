@@ -1,0 +1,31 @@
+{% extends "indigo_api/work_bulk_import.html" %}
+{% load indigo_app i18n %}
+
+{% block view-id %}bulk-import-works-view{% endblock %}
+{% block title %}{% trans 'Update works in bulk' %}{% endblock %}
+
+{% block heading %}
+  <h2 class="mt-3 mb-3">{% trans 'Update works in bulk from Google Sheets' %}</h2>
+{% endblock %}
+
+{% block columns %}
+  <div class="form-group">
+    <label for="{{ form.update_columns.id_for_label }}">{% trans 'Choose columns to update' %}</label>
+
+    <div class="form-group">
+      <div class="form-row">
+        <div class="col-md-6">
+          <select class="selectpicker form-control" multiple name="{{ form.update_columns.name }}" id="{{ form.update_columns.id_for_label }}" data-none-selected-text="{% trans '(Choose at least one column to update)' %}" data-live-search="true">
+            {% for option in form.update_columns %}
+              {{ option }}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+    {% for err in form.update_columns.errors %}
+      <div class="form-text text-danger">{{ err }}</div>
+    {% endfor %}
+  </div>
+
+{% endblock %}

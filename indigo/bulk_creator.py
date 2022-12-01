@@ -79,8 +79,7 @@ class RowValidationFormBase(forms.Form):
     repeals_on_date = forms.DateField(required=False,
                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
 
-    def __init__(self, country, locality, subtypes, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def setup_choices(self, country, locality, subtypes):
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
             if locality else []
@@ -223,7 +222,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self._service
 
     def get_row_validation_form(self, country, locality, subtypes, row_data):
-        return self.row_validation_form_class(country, locality, subtypes, row_data)
+        form = self.row_validation_form_class(row_data)
+        form.setup_choices(country, locality, subtypes)
+        return form
 
     def create_works(self, table, dry_run, workflow):
         self.workflow = workflow

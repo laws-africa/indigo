@@ -701,6 +701,11 @@
         if(response.ok) {
           sourceEditor.editTimes = [];
         } else {
+          // Track user details
+          Sentry.setUser({
+            id: Indigo.Preloads.user.id,
+            username: Indigo.Preloads.user.username
+          });
           console.log('Edit times',JSON.stringify(sourceEditor.editTimes));
           response.text().then(text => {
             throw new Error(text);

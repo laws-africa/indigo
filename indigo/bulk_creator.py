@@ -309,54 +309,51 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.frbr_uri = frbr_uri
             work.country = self.country
             work.locality = self.locality
+            for attribute in ['title',
+                              'publication_name', 'publication_number',
+                              'assent_date', 'publication_date',
+                              'commenced', 'stub', 'principal']:
+                setattr(work, attribute, getattr(row, attribute, None))
             work.created_by_user = self.user
-            self.set_work_attributes_and_save(work, row)
+            work.updated_by_user = self.user
+            self.add_extra_properties(work, row)
+
+            try:
+                work.full_clean()
+                work.set_frbr_uri_fields()
+                if not self.dry_run:
+                    work.save_with_revision(self.user)
+
+                    # signals
+                    if not self.testing:
+                        work_changed.send(sender=work.__class__, work=work, request=self.request)
+
+                # info for linking publication document
+                row.params = {
+                    'date': work.publication_date,
+                    'number': work.publication_number,
+                    'publication': work.publication_name,
+                    'country': self.country.place_code,
+                    'locality': self.locality.code if self.locality else None,
+                }
+
+                self.link_publication_document(work, row)
+
+                if work.principal:
+                    self.create_task(work, row, task_type='import-content')
+
+                row.work = work
+                row.status = 'success'
+
+            except ValidationError as e:
+                if hasattr(e, 'message_dict'):
+                    row.errors = ' '.join(
+                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                    )
+                else:
+                    row.errors = str(e)
 
         return row
-
-    def set_work_attributes_and_save(self, work, row):
-        for attribute in ['title',
-                          'publication_name', 'publication_number',
-                          'assent_date', 'publication_date',
-                          'commenced', 'stub', 'principal']:
-            setattr(work, attribute, getattr(row, attribute, None))
-        work.updated_by_user = self.user
-        self.add_extra_properties(work, row)
-
-        try:
-            work.full_clean()
-            work.set_frbr_uri_fields()
-            if not self.dry_run:
-                work.save_with_revision(self.user)
-
-                # signals
-                if not self.testing:
-                    work_changed.send(sender=work.__class__, work=work, request=self.request)
-
-            # info for linking publication document
-            row.params = {
-                'date': work.publication_date,
-                'number': work.publication_number,
-                'publication': work.publication_name,
-                'country': self.country.place_code,
-                'locality': self.locality.code if self.locality else None,
-            }
-
-            self.link_publication_document(work, row)
-
-            if work.principal:
-                self.create_task(work, row, task_type='import-content')
-
-            row.work = work
-            row.status = 'success'
-
-        except ValidationError as e:
-            if hasattr(e, 'message_dict'):
-                row.errors = ' '.join(
-                    ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                )
-            else:
-                row.errors = str(e)
 
     def transform_aliases(self, row):
         """ Adds the term the platform expects to `row` for validation (and later saving).

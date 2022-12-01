@@ -59,6 +59,7 @@ urlpatterns = [
 
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/update-batch/$', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
+from django.forms import SelectMultiple
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -209,6 +210,36 @@ class BatchCreateWorkForm(forms.Form):
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
+
+
+class ColumnSelectWidget(SelectMultiple):
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['country', 'locality', 'doctype', 'subtype', 'number', 'year']
+
+    def create_option(self, *args, **kwargs):
+        option = super().create_option(*args, **kwargs)
+
+        option['attrs']['disabled'] = option['value'] in self.core_fields
+        if option['value'] in self.core_fields:
+            option['label'] += ' (core field)'
+
+        return option
+
+
+class BatchUpdateWorkForm(BatchCreateWorkForm):
+    update_columns = forms.MultipleChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from indigo.bulk_creator import RowValidationFormBase
+        row_validation_form = RowValidationFormBase()
+        fields = list(row_validation_form.fields)
+        self.fields['update_columns'].widget = ColumnSelectWidget()
+        # TODO: better way of including cap? (ChapterMixin doesn't work)
+        # TODO: include actor? (core field so can't update anyway, and rarely used)
+        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields]
+                                                 + [('cap', 'Chapter')])
+        self.fields['update_columns'].choices.sort(key=lambda x: x[1])
 
 
 class ImportDocumentForm(forms.Form):

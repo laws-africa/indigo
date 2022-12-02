@@ -33,7 +33,7 @@ class XLSXExporterTest(testcases.TestCase):
             content = csv_file.read()
             reader = csv.reader(io.StringIO(content))
             table = list(reader)
-            return self.creator.create_works(table, dry_run, None)
+            return self.creator.create_works(table, dry_run, {})
 
     def write_works(self, works, filename):
         filename = os.path.join(os.path.dirname(__file__), filename)

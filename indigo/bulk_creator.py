@@ -245,7 +245,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return rows
 
     def create_works(self, table, dry_run, form_data):
-        self.workflow = form_data['workflow']
+        self.workflow = form_data.get('workflow')
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
@@ -1061,7 +1061,7 @@ class BaseBulkUpdater(BaseBulkCreator):
         return rows
 
     def create_works(self, table, dry_run, form_data):
-        self.update_columns = form_data['update_columns']
+        self.update_columns = form_data.get('update_columns')
         super().create_works(table, dry_run, form_data)
 
     def create_or_update(self, row):

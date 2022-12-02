@@ -32,6 +32,7 @@ class SpreadsheetRow:
 
 
 class RowValidationFormBase(forms.Form):
+    # TODO: get base Work fields from Work so that it stays up to date?
     # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
     # core details
     country = forms.ChoiceField(required=True)
@@ -226,13 +227,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         form.setup_choices(country, locality, subtypes)
         return form
 
-    def create_works(self, table, dry_run, workflow):
-        self.workflow = workflow
-        self.subtypes = Subtype.objects.all()
-        self.dry_run = dry_run
-
-        self.works = []
-
+    def get_rows_from_table(self, table):
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
 
@@ -244,11 +239,21 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for row in table[1:]
         ]
 
-        for idx, row in enumerate(rows):
-            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if row.get('ignore') or not any(row.values()):
-                continue
+        # skip 'ignore' and blank rows
+        rows = [r for r in rows if (not r.get('ignore')) and any(r.values())]
 
+        return rows
+
+    def create_works(self, table, dry_run, form_data):
+        self.workflow = form_data['workflow']
+        self.subtypes = Subtype.objects.all()
+        self.dry_run = dry_run
+
+        self.works = []
+
+        rows = self.get_rows_from_table(table)
+
+        for idx, row in enumerate(rows):
             self.works.append(self.create_work(row, idx))
 
         self.check_preview_duplicates()
@@ -287,18 +292,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         return self.works
 
-    def create_work(self, row, idx):
-        # handle spreadsheet that still only uses 'principal'
-        row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
-        row = self.validate_row(row)
-        row.status = None
-        row.row_number = idx + 2
-
-        if row.errors:
-            return row
-
+    def create_or_update(self, row):
         frbr_uri = self.get_frbr_uri(row)
-
         try:
             row.work = Work.objects.get(frbr_uri=frbr_uri)
             row.status = 'duplicate'
@@ -352,6 +347,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     )
                 else:
                     row.errors = str(e)
+
+    def create_work(self, row, idx):
+        # handle spreadsheet that still only uses 'principal'
+        row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
+        row = self.validate_row(row)
+        row.status = None
+        row.row_number = idx + 2
+
+        if row.errors:
+            return row
+
+        self.create_or_update(row)
 
         return row
 
@@ -1018,3 +1025,108 @@ Possible reasons:
         for row in self.works:
             if hasattr(row, 'work') and row.work.pk == work.pk:
                 row.work = work
+
+
+@plugins.register('bulk-updater')
+class BaseBulkUpdater(BaseBulkCreator):
+    """ Update works in bulk from a google sheets spreadsheet.
+    """
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields? add 'actor'?
+    core_fields = ['country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    update_columns = None
+
+    def get_rows_from_table(self, table):
+        # clean up headers
+        headers = [h.split(' ')[0].lower() for h in table[0]]
+
+        # Transform rows into list of dicts for easy access.
+        # The rows in table only have entries up to the last non-empty cell,
+        # so we ensure that we have at least an empty string for every header.
+        columns = self.update_columns + self.core_fields
+        rows = []
+        for row in table[1:]:
+            row_dict = {}
+            ignore = False
+            for i, header in enumerate(headers):
+                value = row[i].strip() if i < len(row) else ''
+                if header == 'ignore' and value:
+                    ignore = True
+                    break
+                if header and header in columns:
+                    row_dict[header] = value
+            # skip 'ignore' and blank rows
+            if not ignore and any(row_dict.values()):
+                rows.append(row_dict)
+
+        return rows
+
+    def create_works(self, table, dry_run, form_data):
+        self.update_columns = form_data['update_columns']
+        super().create_works(table, dry_run, form_data)
+
+    def create_or_update(self, row):
+        frbr_uri = self.get_frbr_uri(row)
+        try:
+            work = Work.objects.get(frbr_uri=frbr_uri)
+            # TODO:
+            #  - update relevant columns (self.update_columns)
+            #  - stash old values where changed to show in Preview; use a form?
+
+            row.work = work
+            row.status = 'success'
+
+        except Work.DoesNotExist as e:
+            # TODO:
+            #  - add error message
+            #  - add a new status, or reuse 'duplicate' and tweak template?
+            row.errors = []
+            return row
+
+    def validate_row(self, row):
+        # TODO: cut down on repetition
+        self.transform_aliases(row)
+
+        # lowercase country, locality, doctype and subtype
+        row['country'] = row.get('country', '').lower()
+        row['locality'] = row.get('locality', '').lower()
+        row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
+        row['subtype'] = row.get('subtype', '').lower()
+
+        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
+
+        errors = form.errors
+        self.transform_error_aliases(errors)
+
+        # TODO: only care about core_fields and update_columns: don't set other attributes
+        #  - subclass SpreadsheetRow?
+        #  - or manipulate form.cleaned_data before instantiating?
+        row = SpreadsheetRow(form.cleaned_data, errors)
+        # has the work (implicitly) commenced?
+        # if the commencement date has an error, the row won't have the attribute
+        row.commenced = bool(
+            getattr(row, 'commencement_date', None) or
+            getattr(row, 'commenced_on_date', None) or
+            row.commenced_by)
+
+        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
+        if (getattr(row, 'commencement_date', None) and getattr(row, 'commencement_date').year == 9999) or \
+                (getattr(row, 'commenced_on_date', None) and getattr(row, 'commenced_on_date').year == 9999):
+            row.commencement_date = None
+            row.commenced_on_date = None
+
+        if self.dry_run:
+            if not row.commenced:
+                row.notes.append('Uncommenced')
+            elif row.commenced and not row.commencement_date and not row.commenced_on_date:
+                row.notes.append('Unknown commencement date')
+
+            if row.stub:
+                row.notes.append('Stub')
+            if row.principal:
+                row.notes.append('Principal work')
+
+        return row
+
+    def check_preview_duplicates(self):
+        # TODO: how do we want to treat duplicates during update?
+        pass

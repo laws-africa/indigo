@@ -80,6 +80,12 @@
       window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
       {% if user.is_authenticated %}
       window.Indigo.Preloads.user = {{ USER_JSON|safe }};
+      window.addEventListener('load', function () {
+        Sentry.setUser({
+          id: window.Indigo.Preloads.user.id,
+          username: window.Indigo.Preloads.user.username
+        });
+      });
       {% endif %}
     </script>
 

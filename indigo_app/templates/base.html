@@ -38,6 +38,12 @@
       ></script>
       <script>
         window.addEventListener('load', function () {
+          {% if user.is_authenticated %}
+          Sentry.setUser({
+            id: window.Indigo.Preloads.user.id,
+            username: window.Indigo.Preloads.user.username
+          });
+          {% endif %}
           Sentry.init({
             dsn: '{{ SENTRY_DSN }}',
             denyUrls: [
@@ -80,12 +86,6 @@
       window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
       {% if user.is_authenticated %}
       window.Indigo.Preloads.user = {{ USER_JSON|safe }};
-      window.addEventListener('load', function () {
-        Sentry.setUser({
-          id: window.Indigo.Preloads.user.id,
-          username: window.Indigo.Preloads.user.username
-        });
-      });
       {% endif %}
     </script>
 

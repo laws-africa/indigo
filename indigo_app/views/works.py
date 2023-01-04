@@ -944,6 +944,7 @@ class BatchUpdateWorkView(BatchAddWorkView):
     bulk_creator_kw = 'bulk-updater'
     bulk_creator_verb = 'Updated'
 
+
 class ImportDocumentView(WorkViewBase, FormView):
     """ View to import a document as an expression for a work.
 

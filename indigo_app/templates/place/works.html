@@ -14,8 +14,8 @@
         {% if perms.indigo_api.bulk_add_work %}
           <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">Bulk importer</a>
-            <a class="dropdown-item" href="{% url 'update_batch_work' place=place.place_code %}">Bulk updater</a>
+            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
+            <a class="dropdown-item" href="{% url 'update_batch_work' place=place.place_code %}">Update work batch</a>
           </div>
         {% endif %}
       </div>

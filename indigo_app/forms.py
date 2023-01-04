@@ -214,7 +214,7 @@ class BatchCreateWorkForm(forms.Form):
 
 class ColumnSelectWidget(SelectMultiple):
     # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
-    core_fields = ['country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
 
     def create_option(self, *args, **kwargs):
         option = super().create_option(*args, **kwargs)
@@ -233,10 +233,9 @@ class BatchUpdateWorkForm(BatchCreateWorkForm):
         super().__init__(*args, **kwargs)
         from indigo.bulk_creator import RowValidationFormBase
         row_validation_form = RowValidationFormBase()
-        fields = list(row_validation_form.fields)
+        fields = list(row_validation_form.fields) + ['actor']
         self.fields['update_columns'].widget = ColumnSelectWidget()
         # TODO: better way of including cap? (ChapterMixin doesn't work)
-        # TODO: include actor? (core field so can't update anyway, and rarely used)
         self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields]
                                                  + [('cap', 'Chapter')])
         self.fields['update_columns'].choices.sort(key=lambda x: x[1])

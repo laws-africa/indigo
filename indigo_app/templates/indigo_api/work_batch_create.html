@@ -2,12 +2,12 @@
 {% load indigo_app i18n %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
-{% block title %}{% trans 'Create works in bulk' %}{% endblock %}
+{% block title %}{% trans 'Create a new batch' %}{% endblock %}
 
 {% block content %}
 <div class="container">
   {% block heading %}
-    <h2 class="mt-3 mb-3">{% trans 'Create works in bulk from Google Sheets' %}</h2>
+    <h2 class="mt-3 mb-3">{% trans 'Import a batch of works from Google Sheets' %}</h2>
   {% endblock %}
 
   {% if error %}

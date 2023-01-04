@@ -1,11 +1,11 @@
-{% extends "indigo_api/work_bulk_import.html" %}
+{% extends "indigo_api/work_batch_create.html" %}
 {% load indigo_app i18n %}
 
 {% block view-id %}bulk-import-works-view{% endblock %}
-{% block title %}{% trans 'Update works in bulk' %}{% endblock %}
+{% block title %}{% trans 'Update an existing batch' %}{% endblock %}
 
 {% block heading %}
-  <h2 class="mt-3 mb-3">{% trans 'Update works in bulk from Google Sheets' %}</h2>
+  <h2 class="mt-3 mb-3">{% trans 'Update a batch of works from Google Sheets' %}</h2>
 {% endblock %}
 
 {% block columns %}

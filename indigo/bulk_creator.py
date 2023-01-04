@@ -1031,11 +1031,13 @@ Possible reasons:
 class BaseBulkUpdater(BaseBulkCreator):
     """ Update works in bulk from a google sheets spreadsheet.
     """
-    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields? add 'actor'?
-    core_fields = ['country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
     update_columns = None
 
     def get_rows_from_table(self, table):
+        """ Differs from parent method in that only the selected columns and core fields are included for each row.
+        """
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
 

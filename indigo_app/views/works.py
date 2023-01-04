@@ -855,13 +855,14 @@ class WorkPublicationDocumentView(WorkViewBase, View):
 
 
 class BatchAddWorkView(PlaceViewBase, FormView):
-    template_name = 'indigo_api/work_bulk_import.html'
+    template_name = 'indigo_api/work_batch_create.html'
     # permissions
     permission_required = ('indigo_api.bulk_add_work',)
     form_class = BatchCreateWorkForm
 
     _bulk_creator = None
     bulk_creator_kw = 'bulk-creator'
+    bulk_creator_verb = 'Imported'
 
     @property
     def bulk_creator(self):
@@ -929,7 +930,7 @@ class BatchAddWorkView(PlaceViewBase, FormView):
 
                 works = self.bulk_creator.create_works(table, dry_run, form.cleaned_data)
                 if not dry_run:
-                    messages.success(self.request, f"Imported {len([w for w in works if w.status == 'success'])} works.")
+                    messages.success(self.request, f"{self.bulk_creator_verb} {len([w for w in works if w.status == 'success'])} works.")
             except ValidationError as e:
                 error = str(e)
 
@@ -938,9 +939,10 @@ class BatchAddWorkView(PlaceViewBase, FormView):
 
 
 class BatchUpdateWorkView(BatchAddWorkView):
-    template_name = 'indigo_api/work_bulk_update.html'
+    template_name = 'indigo_api/work_batch_update.html'
     form_class = BatchUpdateWorkForm
     bulk_creator_kw = 'bulk-updater'
+    bulk_creator_verb = 'Updated'
 
 class ImportDocumentView(WorkViewBase, FormView):
     """ View to import a document as an expression for a work.

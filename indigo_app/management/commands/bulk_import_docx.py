@@ -109,7 +109,7 @@ class Command(BaseCommand):
         # hard-coded for Namibian docxes
         importer.section_number_position = 'after-title'
         upload = UploadedFile(file=docx_file,
-                              content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                              content_type=DOCX_MIME_TYPE,
                               size=filesize)
 
         try:
@@ -123,7 +123,7 @@ class Command(BaseCommand):
 
         att = Attachment()
         att.filename = filename
-        att.mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        att.mime_type = DOCX_MIME_TYPE
         att.document = document
         att.size = filesize
         att.file.save(att.filename, docx_file)

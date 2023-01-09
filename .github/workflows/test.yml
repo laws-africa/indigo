@@ -33,7 +33,6 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '2.7'
-        bundler-cache: true
     - name: Set up Node
       uses: actions/setup-node@v2-beta
       with:
@@ -45,6 +44,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install psycopg2==2.8.6
         pip install .[test]
+        bundle install
         npm install -g jshint sass
     - name: Run tests
       env:

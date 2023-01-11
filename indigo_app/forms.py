@@ -245,9 +245,8 @@ class BatchUpdateWorkForm(BatchCreateWorkForm):
         row_validation_form = RowValidationFormBase
         fields = list(row_validation_form.base_fields) + ['actor']
         self.fields['update_columns'].widget = ColumnSelectWidget()
-        # TODO: better way of including cap? (ChapterMixin doesn't work)
-        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields]
-                                                 + [('cap', 'Chapter')])
+        # TODO: include place's extra properties
+        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields])
         self.fields['update_columns'].choices.sort(key=lambda x: x[1])
 
 

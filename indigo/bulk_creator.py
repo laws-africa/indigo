@@ -483,16 +483,21 @@ class BaseBulkCreator(LocaleBasedMatcher):
         locality_code = self.locality.code if self.locality else None
         finder = plugins.for_locale('publications', self.country.code, None, locality_code)
 
+        def create_link_gazette_task():
+            existing_task = Task.objects.filter(work=work, code='link-gazette').first()
+            if not existing_task:
+                self.create_task(work, row, task_type='link-gazette')
+
         if not finder or not row.params.get('date'):
-            return self.create_task(work, row, task_type='link-gazette')
+            return create_link_gazette_task()
 
         try:
             publications = finder.find_publications(row.params)
         except requests.HTTPError:
-            return self.create_task(work, row, task_type='link-gazette')
+            return create_link_gazette_task()
 
         if len(publications) != 1:
-            return self.create_task(work, row, task_type='link-gazette')
+            return create_link_gazette_task()
 
         if not self.dry_run:
             pub_doc_details = publications[0]

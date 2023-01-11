@@ -114,6 +114,45 @@ class RowValidationFormBase(forms.Form):
         title = self.cleaned_data.get('title')
         return re.sub('[\u2028 ]+', ' ', title)
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # has the work (implicitly) commenced?
+        # if the commencement date has an error, the row won't have the attribute
+        cleaned_data['commenced'] = bool(
+            cleaned_data.get('commencement_date') or
+            cleaned_data.get('commenced_on_date') or
+            cleaned_data.get('commenced_by')
+        )
+
+        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
+        commencement_date = cleaned_data.get('commencement_date') or datetime.date.today()
+        commenced_on_date = cleaned_data.get('commenced_on_date') or datetime.date.today()
+        if commencement_date.year == 9999 or commenced_on_date.year == 9999:
+            cleaned_data['commencement_date'] = None
+            cleaned_data['commenced_on_date'] = None
+
+        return cleaned_data
+
+
+class RowValidationFormUpdate(RowValidationFormBase):
+    def __init__(self, country, locality, subtypes, default_doctype, data=None, columns=None, *args, **kwargs):
+        super().__init__(country, locality, subtypes, default_doctype, data, *args, **kwargs)
+        self.update_columns = columns
+        self.fields['publication_date'].required = False
+        self.fields['title'].required = False
+        # remove all unused fields
+        fields = list(self.fields)
+        for field in fields:
+            if field not in columns:
+                del self.fields[field]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        del cleaned_data['commenced']
+
+        return cleaned_data
+
 
 class ChapterMixin:
     """ Includes (optional) Chapter (cap) field.
@@ -405,19 +444,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
         self.transform_error_aliases(errors)
 
         row = SpreadsheetRow(form.cleaned_data, errors)
-        # has the work (implicitly) commenced?
-        # if the commencement date has an error, the row won't have the attribute
-        row.commenced = bool(
-            getattr(row, 'commencement_date', None) or
-            getattr(row, 'commenced_on_date', None) or
-            row.commenced_by)
+        self.add_notes(row)
 
-        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
-        if (getattr(row, 'commencement_date', None) and getattr(row, 'commencement_date').year == 9999) or \
-                (getattr(row, 'commenced_on_date', None) and getattr(row, 'commenced_on_date').year == 9999):
-            row.commencement_date = None
-            row.commenced_on_date = None
+        return row
 
+    def add_notes(self, row):
         if self.dry_run:
             if not row.commenced:
                 row.notes.append('Uncommenced')
@@ -428,8 +459,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.notes.append('Stub')
             if row.principal:
                 row.notes.append('Principal work')
-
-        return row
 
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.country,
@@ -1038,6 +1067,7 @@ Possible reasons:
 class BaseBulkUpdater(BaseBulkCreator):
     """ Update works in bulk from a google sheets spreadsheet.
     """
+    row_validation_form_class = RowValidationFormUpdate
     # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
     core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
     update_columns = None

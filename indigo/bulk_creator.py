@@ -1,3 +1,4 @@
+import datetime
 import re
 import csv
 import io
@@ -32,7 +33,6 @@ class SpreadsheetRow:
 
 
 class RowValidationFormBase(forms.Form):
-    # TODO: get base Work fields from Work so that it stays up to date?
     # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
     # core details
     country = forms.ChoiceField(required=True)
@@ -80,7 +80,10 @@ class RowValidationFormBase(forms.Form):
     repeals_on_date = forms.DateField(required=False,
                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
 
-    def setup_choices(self, country, locality, subtypes):
+    def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
+        self.default_doctype = default_doctype
+        data = self.sanitize_incoming(data)
+        super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
             if locality else []
@@ -92,6 +95,20 @@ class RowValidationFormBase(forms.Form):
         return [[d[1].lower(), d[0]] for d in
                 settings.INDIGO['DOCTYPES'] +
                 settings.INDIGO['EXTRA_DOCTYPES'].get(country_code, [])]
+
+    def sanitize_incoming(self, data):
+        if data:
+            data = data.copy()
+            country = data.get('country', '')
+            data['country'] = country.lower()
+            locality = data.get('locality', '')
+            data['locality'] = locality.lower()
+            doctype = data.get('doctype', '')
+            data['doctype'] = doctype.lower() or self.default_doctype
+            subtype = data.get('subtype', '')
+            data['subtype'] = subtype.lower()
+
+        return data
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
@@ -222,10 +239,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self._service = build('sheets', 'v4', credentials=credentials)
         return self._service
 
-    def get_row_validation_form(self, country, locality, subtypes, row_data):
-        form = self.row_validation_form_class(row_data)
-        form.setup_choices(country, locality, subtypes)
-        return form
+    def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data)
 
     def get_rows_from_table(self, table):
         # clean up headers
@@ -385,15 +400,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def validate_row(self, row):
         self.transform_aliases(row)
-
-        # lowercase country, locality, doctype and subtype
-        row['country'] = row.get('country', '').lower()
-        row['locality'] = row.get('locality', '').lower()
-        row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
-        row['subtype'] = row.get('subtype', '').lower()
-
-        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
-
+        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, self.default_doctype, row)
         errors = form.errors
         self.transform_error_aliases(errors)
 

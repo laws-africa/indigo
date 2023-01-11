@@ -232,8 +232,8 @@ class BatchUpdateWorkForm(BatchCreateWorkForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from indigo.bulk_creator import RowValidationFormBase
-        row_validation_form = RowValidationFormBase()
-        fields = list(row_validation_form.fields) + ['actor']
+        row_validation_form = RowValidationFormBase
+        fields = list(row_validation_form.base_fields) + ['actor']
         self.fields['update_columns'].widget = ColumnSelectWidget()
         # TODO: better way of including cap? (ChapterMixin doesn't work)
         self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields]

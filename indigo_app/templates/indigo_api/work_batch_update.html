@@ -29,3 +29,155 @@
   </div>
 
 {% endblock %}
+
+{% block work-list %}
+  {% if works %}
+    {% if dry_run %}
+      <div class="card mt-3">
+        <h4 class="card-header">
+          {% trans 'Preview of your update' %}
+        </h4>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans 'Row' %}</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Title / Error message' %}</th>
+              <th>{% trans 'FRBR URI' %}</th>
+              <th>{% trans 'Tasks' %}</th>
+              <th>{% trans 'Changes' %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in works %}
+              <tr>
+                <td>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                </td>
+                <td class="text-nowrap">
+                  {% if row.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> {% trans 'Ready to update' %}
+                  {% elif row.status == 'no-change' %}
+                    <i class="fas fa-ban text-info"></i> {% trans 'No change' %}
+                  {% elif row.errors %}
+                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.status %}
+                    {{ row.work.title }}
+                  {% elif row.errors %}
+                    {{ row.errors }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.errors %}
+                    —
+                  {% else %}
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.tasks %}
+                    <ul class="pl-0">
+                      {% for task in row.tasks %}
+                        <li>{{ task|capfirst }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.notes %}
+                    <ul class="pl-0">
+                      {% for note in row.notes %}
+                        <li>{{ note }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="card-footer">
+          {% if perms.indigo_api.bulk_add_work %}
+            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Update works' %}</button>
+          {% else %}
+            <div class="alert alert-danger">{% trans "You don't have permission to update works." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="card mt-3">
+        <h4 class="card-header">
+          {% trans 'Update complete' %}
+        </h4>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans 'Row' %}</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Title / Error message' %}</th>
+              <th>{% trans 'FRBR URI' %}</th>
+              <th>{% trans 'Tasks' %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in works %}
+              <tr>
+                <td>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                </td>
+                <td class="text-nowrap">
+                  {% if row.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> {% trans 'Updated' %}
+                  {% elif row.status == 'no-change' %}
+                    <i class="fas fa-ban text-info"></i> {% trans 'No change' %}
+                  {% elif row.errors %}
+                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.status %}
+                    {{ row.work.title }}
+                  {% elif row.errors %}
+                    {{ row.errors }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.errors %}
+                    —
+                  {% else %}
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.tasks.exists %}
+                    <ul class="pl-0">
+                      {% for task in row.work.tasks.all %}
+                        <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="card-footer">
+          {% if perms.indigo_api.bulk_add_work %}
+            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Update works' %}</button>
+          {% else %}
+            <div class="alert alert-danger">{% trans "You don't have permission to update works." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}

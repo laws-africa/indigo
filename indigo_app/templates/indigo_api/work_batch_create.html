@@ -93,248 +93,250 @@
       </div>
     </div>
 
-    {% if works %}
-      {% with place.settings.work_properties.items|dictsort:0 as extra_properties %}
-      {% if dry_run %}
-        <div class="card mt-3">
-        <h4 class="card-header">
-          {% trans 'Preview of your import' %}
-        </h4>
+    {% block work-list %}
+      {% if works %}
+        {% with place.settings.work_properties.items|dictsort:0 as extra_properties %}
+        {% if dry_run %}
+          <div class="card mt-3">
+            <h4 class="card-header">
+              {% trans 'Preview of your import' %}
+            </h4>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>{% trans 'Row' %}</th>
-              <th>{% trans 'Status' %}</th>
-              <th>{% trans 'Title / Error message' %}</th>
-              <th>{% trans 'Type' %}</th>
-              <th>{% trans 'Number' %}</th>
-              <th>{% trans 'Year' %}</th>
-              {% for _, property_name in extra_properties %}
-                <th>{{ property_name }}</th>
-              {% endfor %}
-              <th>{% trans 'FRBR URI' %}</th>
-              <th>{% trans 'Taxonomy' %}</th>
-              <th>{% trans 'Tasks' %}</th>
-              <th>{% trans 'Relationships' %}</th>
-              <th>{% trans 'Notes' %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in works %}
-              <tr>
-                <td>
-                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
-                </td>
-                <td class="text-nowrap">
-                  {% if row.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> {% trans 'Ready to import' %}
-                  {% elif row.status == 'duplicate' %}
-                    <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
-                  {% elif row.errors %}
-                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.status == 'success' %}
-                    {{ row.work.title }}
-                  {% elif row.status == 'duplicate' %}
-                    {% trans 'A work with this type, year and number already exists in this place.' %}
-                  {% elif row.errors %}
-                    {{ row.errors }}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.work.subtype %}
-                    {{ row.work.subtype }}
-                  {% elif not row.errors %}
-                    {{ row.work.nature }}
-                  {% endif %}
-                </td>
-                <td>
-                  {{ row.work.number }}
-                </td>
-                <td>
-                  {{ row.work.year }}
-                </td>
-                {% for property_code, _ in extra_properties %}
-                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>{% trans 'Row' %}</th>
+                  <th>{% trans 'Status' %}</th>
+                  <th>{% trans 'Title / Error message' %}</th>
+                  <th>{% trans 'Type' %}</th>
+                  <th>{% trans 'Number' %}</th>
+                  <th>{% trans 'Year' %}</th>
+                  {% for _, property_name in extra_properties %}
+                    <th>{{ property_name }}</th>
+                  {% endfor %}
+                  <th>{% trans 'FRBR URI' %}</th>
+                  <th>{% trans 'Taxonomy' %}</th>
+                  <th>{% trans 'Tasks' %}</th>
+                  <th>{% trans 'Relationships' %}</th>
+                  <th>{% trans 'Notes' %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in works %}
+                  <tr>
+                    <td>
+                      <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                    </td>
+                    <td class="text-nowrap">
+                      {% if row.status == 'success' %}
+                        <i class="fas fa-check-circle text-success"></i> {% trans 'Ready to import' %}
+                      {% elif row.status == 'duplicate' %}
+                        <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
+                      {% elif row.errors %}
+                        <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.status == 'success' %}
+                        {{ row.work.title }}
+                      {% elif row.status == 'duplicate' %}
+                        {% trans 'A work with this type, year and number already exists in this place.' %}
+                      {% elif row.errors %}
+                        {{ row.errors }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.work.subtype %}
+                        {{ row.work.subtype }}
+                      {% elif not row.errors %}
+                        {{ row.work.nature }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ row.work.number }}
+                    </td>
+                    <td>
+                      {{ row.work.year }}
+                    </td>
+                    {% for property_code, _ in extra_properties %}
+                      <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+                    {% endfor %}
+                    <td>
+                      {% if row.errors %}
+                        —
+                      {% elif row.status == 'duplicate' %}
+                        <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                      {% else %}
+                        {{ row.work.frbr_uri }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.taxonomies %}
+                        <ul class="pl-0">
+                          {% for taxonomy in row.taxonomies %}
+                            <li>{{ taxonomy }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.tasks %}
+                        <ul class="pl-0">
+                          {% for task in row.tasks %}
+                            <li>{{ task|capfirst }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.relationships %}
+                        <ul class="pl-0">
+                          {% for relationship in row.relationships %}
+                            <li>{{ relationship }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.notes %}
+                        <ul class="pl-0">
+                          {% for note in row.notes %}
+                            <li>{{ note }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </td>
+                  </tr>
                 {% endfor %}
-                <td>
-                  {% if row.errors %}
-                    —
-                  {% elif row.status == 'duplicate' %}
-                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
-                  {% else %}
-                    {{ row.work.frbr_uri }}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.taxonomies %}
-                    <ul class="pl-0">
-                      {% for taxonomy in row.taxonomies %}
-                        <li>{{ taxonomy }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.tasks %}
-                    <ul class="pl-0">
-                      {% for task in row.tasks %}
-                        <li>{{ task|capfirst }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.relationships %}
-                    <ul class="pl-0">
-                      {% for relationship in row.relationships %}
-                        <li>{{ relationship }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.notes %}
-                    <ul class="pl-0">
-                      {% for note in row.notes %}
-                        <li>{{ note }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
 
-        <div class="card-footer">
-          {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
-          {% else %}
-            <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
-          {% endif %}
-        </div>
-      </div>
-      {% else %}
-        <div class="card mt-3">
-        <h4 class="card-header">
-          {% trans 'Import complete' %}
-        </h4>
+            <div class="card-footer">
+              {% if perms.indigo_api.add_work %}
+                <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+                <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
+              {% else %}
+                <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <div class="card mt-3">
+          <h4 class="card-header">
+            {% trans 'Import complete' %}
+          </h4>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>{% trans 'Row' %}</th>
-              <th>{% trans 'Status' %}</th>
-              <th>{% trans 'Title / Error message' %}</th>
-              <th>{% trans 'Type' %}</th>
-              <th>{% trans 'Number' %}</th>
-              <th>{% trans 'Year' %}</th>
-              {% for _, property_name in extra_properties %}
-                <th>{{ property_name }}</th>
-              {% endfor %}
-              <th>{% trans 'FRBR URI' %}</th>
-              <th>{% trans 'Taxonomy' %}</th>
-              <th>{% trans 'Tasks' %}</th>
-              <th>{% trans 'Relationships' %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in works %}
+          <table class="table">
+            <thead>
               <tr>
-                <td>
-                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
-                </td>
-                <td class="text-nowrap">
-                  {% if row.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> {% trans 'Imported' %}
-                  {% elif row.status == 'duplicate' %}
-                    <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
-                  {% elif row.errors %}
-                    <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.status == 'success' %}
-                    {{ row.work.title }}
-                  {% elif row.status == 'duplicate' %}
-                    {% trans 'A work with this type, year and number already exists in this place.' %}
-                  {% elif row.errors %}
-                    {{ row.errors }}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.work.subtype %}
-                    {{ row.work.subtype }}
-                  {% elif not row.errors %}
-                    {{ row.work.nature }}
-                  {% endif %}
-                </td>
-                <td>
-                  {{ row.work.number }}
-                </td>
-                <td>
-                  {{ row.work.year }}
-                </td>
-                {% for property_code, _ in extra_properties %}
-                  <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+                <th>{% trans 'Row' %}</th>
+                <th>{% trans 'Status' %}</th>
+                <th>{% trans 'Title / Error message' %}</th>
+                <th>{% trans 'Type' %}</th>
+                <th>{% trans 'Number' %}</th>
+                <th>{% trans 'Year' %}</th>
+                {% for _, property_name in extra_properties %}
+                  <th>{{ property_name }}</th>
                 {% endfor %}
-                <td>
-                  {% if row.errors %}
-                    —
-                  {% else %}
-                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.work.taxonomies.exists %}
-                    <ul class="pl-0">
-                      {% for t in row.work.taxonomies.all %}
-                        <li>{{ t }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.work.tasks.exists %}
-                    <ul class="pl-0">
-                      {% for task in row.work.tasks.all %}
-                        <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if row.relationships %}
-                    <ul class="pl-0">
-                      {% for relationship in row.relationships %}
-                        <li>{{ relationship }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </td>
+                <th>{% trans 'FRBR URI' %}</th>
+                <th>{% trans 'Taxonomy' %}</th>
+                <th>{% trans 'Tasks' %}</th>
+                <th>{% trans 'Relationships' %}</th>
               </tr>
-            {% endfor %}
-          </tbody>
+            </thead>
+            <tbody>
+              {% for row in works %}
+                <tr>
+                  <td>
+                    <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                  </td>
+                  <td class="text-nowrap">
+                    {% if row.status == 'success' %}
+                      <i class="fas fa-check-circle text-success"></i> {% trans 'Imported' %}
+                    {% elif row.status == 'duplicate' %}
+                      <i class="fas fa-ban text-info"></i> {% trans 'Duplicate' %}
+                    {% elif row.errors %}
+                      <i class="fas fa-exclamation-triangle text-danger"></i> {% trans 'Error' %}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if row.status == 'success' %}
+                      {{ row.work.title }}
+                    {% elif row.status == 'duplicate' %}
+                      {% trans 'A work with this type, year and number already exists in this place.' %}
+                    {% elif row.errors %}
+                      {{ row.errors }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if row.work.subtype %}
+                      {{ row.work.subtype }}
+                    {% elif not row.errors %}
+                      {{ row.work.nature }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{ row.work.number }}
+                  </td>
+                  <td>
+                    {{ row.work.year }}
+                  </td>
+                  {% for property_code, _ in extra_properties %}
+                    <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
+                  {% endfor %}
+                  <td>
+                    {% if row.errors %}
+                      —
+                    {% else %}
+                      <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if row.work.taxonomies.exists %}
+                      <ul class="pl-0">
+                        {% for t in row.work.taxonomies.all %}
+                          <li>{{ t }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if row.work.tasks.exists %}
+                      <ul class="pl-0">
+                        {% for task in row.work.tasks.all %}
+                          <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if row.relationships %}
+                      <ul class="pl-0">
+                        {% for relationship in row.relationships %}
+                          <li>{{ relationship }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
 
-        </table>
+          </table>
 
-        <div class="card-footer">
-          {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
-          {% else %}
-            <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
-          {% endif %}
+          <div class="card-footer">
+            {% if perms.indigo_api.add_work %}
+              <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
+              <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
+            {% else %}
+              <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
+        {% endif %}
+        {% endwith %}
       {% endif %}
-      {% endwith %}
-    {% endif %}
+    {% endblock %}
   </form>
 
   <div class="progress d-none mt-3" id="import-progress">

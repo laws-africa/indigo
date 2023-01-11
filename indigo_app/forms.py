@@ -210,18 +210,28 @@ class BatchCreateWorkForm(forms.Form):
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
+    tasks = forms.MultipleChoiceField(
+        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
 
 
 class ColumnSelectWidget(SelectMultiple):
     # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
     core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    unavailable_fields = [
+        'commencement_date', 'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
+        'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
+        'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
+        'primary_work', 'subleg',
+    ]
 
     def create_option(self, *args, **kwargs):
         option = super().create_option(*args, **kwargs)
 
-        option['attrs']['disabled'] = option['value'] in self.core_fields
+        option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
         if option['value'] in self.core_fields:
-            option['label'] += ' (core field)'
+            option['label'] += 'Core field: '
+        if option['value'] in self.unavailable_fields:
+            option['label'] += 'Unavailable: '
 
         return option
 

@@ -379,7 +379,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     if not self.testing:
                         work_changed.send(sender=work.__class__, work=work, request=self.request)
 
-                # info for linking publication document
+                # link publication document
                 row.params = {
                     'date': work.publication_date,
                     'number': work.publication_number,
@@ -387,9 +387,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     'country': self.country.place_code,
                     'locality': self.locality.code if self.locality else None,
                 }
-
                 self.link_publication_document(work, row)
 
+                # create import task for principal works
                 if work.principal:
                     self.create_task(work, row, task_type='import-content')
 
@@ -1082,12 +1082,48 @@ class BaseBulkUpdater(BaseBulkCreator):
         frbr_uri = self.get_frbr_uri(row)
         try:
             work = Work.objects.get(frbr_uri=frbr_uri)
-            # TODO:
-            #  - update relevant columns (self.update_columns)
-            #  - stash old values where changed to show in Preview; use a form?
+            update = False
+            # TODO: update extra properties
+            for column in self.update_columns:
+                val = getattr(row, column)
+                old_val = getattr(work, column)
+                if old_val != val:
+                    update = True
+                    setattr(work, column, val)
+                    row.notes.append(f'{column}: {old_val} → {val}')
+
+            if update:
+                work.updated_by_user = self.user
+                try:
+                    work.full_clean()
+                    if not self.dry_run:
+                        work.save_with_revision(self.user)
+                        # signals
+                        if not self.testing:
+                            work_changed.send(sender=work.__class__, work=work, request=self.request)
+
+                    # TODO: link publication document (with caveats)
+
+                    # create import task for principal works (if there isn't one)
+                    if work.principal:
+                        import_task = Task.objects.filter(work=work, code='import-content').first()
+                        if not import_task:
+                            self.create_task(work, row, task_type='import-content')
+
+                    row.status = 'success'
+
+                except ValidationError as e:
+                    if hasattr(e, 'message_dict'):
+                        row.errors = ' '.join(
+                            ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                        )
+                    else:
+                        row.errors = str(e)
+
+            else:
+                row.status = 'no-change'
 
             row.work = work
-            row.status = 'success'
 
         except Work.DoesNotExist:
             row.errors = f'Work not found for FRBR URI: {frbr_uri}'

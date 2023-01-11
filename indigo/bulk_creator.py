@@ -1074,33 +1074,6 @@ class BaseBulkUpdater(BaseBulkCreator):
     core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
     update_columns = None
 
-    def get_rows_from_table(self, table):
-        """ Differs from parent method in that only the selected columns and core fields are included for each row.
-        """
-        # clean up headers
-        headers = [h.split(' ')[0].lower() for h in table[0]]
-
-        # Transform rows into list of dicts for easy access.
-        # The rows in table only have entries up to the last non-empty cell,
-        # so we ensure that we have at least an empty string for every header.
-        columns = self.update_columns + self.core_fields
-        rows = []
-        for row in table[1:]:
-            row_dict = {}
-            ignore = False
-            for i, header in enumerate(headers):
-                value = row[i].strip() if i < len(row) else ''
-                if header == 'ignore' and value:
-                    ignore = True
-                    break
-                if header and header in columns:
-                    row_dict[header] = value
-            # skip 'ignore' and blank rows
-            if not ignore and any(row_dict.values()):
-                rows.append(row_dict)
-
-        return rows
-
     def create_works(self, table, dry_run, form_data):
         self.update_columns = form_data.get('update_columns')
         super().create_works(table, dry_run, form_data)
@@ -1123,50 +1096,9 @@ class BaseBulkUpdater(BaseBulkCreator):
             row.errors = []
             return row
 
-    def validate_row(self, row):
-        # TODO: cut down on repetition
-        self.transform_aliases(row)
-
-        # lowercase country, locality, doctype and subtype
-        row['country'] = row.get('country', '').lower()
-        row['locality'] = row.get('locality', '').lower()
-        row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
-        row['subtype'] = row.get('subtype', '').lower()
-
-        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
-
-        errors = form.errors
-        self.transform_error_aliases(errors)
-
-        # TODO: only care about core_fields and update_columns: don't set other attributes
-        #  - subclass SpreadsheetRow?
-        #  - or manipulate form.cleaned_data before instantiating?
-        row = SpreadsheetRow(form.cleaned_data, errors)
-        # has the work (implicitly) commenced?
-        # if the commencement date has an error, the row won't have the attribute
-        row.commenced = bool(
-            getattr(row, 'commencement_date', None) or
-            getattr(row, 'commenced_on_date', None) or
-            row.commenced_by)
-
-        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
-        if (getattr(row, 'commencement_date', None) and getattr(row, 'commencement_date').year == 9999) or \
-                (getattr(row, 'commenced_on_date', None) and getattr(row, 'commenced_on_date').year == 9999):
-            row.commencement_date = None
-            row.commenced_on_date = None
-
-        if self.dry_run:
-            if not row.commenced:
-                row.notes.append('Uncommenced')
-            elif row.commenced and not row.commencement_date and not row.commenced_on_date:
-                row.notes.append('Unknown commencement date')
-
-            if row.stub:
-                row.notes.append('Stub')
-            if row.principal:
-                row.notes.append('Principal work')
-
-        return row
+    def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data,
+                                              columns=self.core_fields + self.update_columns)
 
     def check_preview_duplicates(self):
         # TODO: how do we want to treat duplicates during update?

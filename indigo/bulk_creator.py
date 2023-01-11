@@ -1088,12 +1088,15 @@ class BaseBulkUpdater(BaseBulkCreator):
         try:
             work = Work.objects.get(frbr_uri=frbr_uri)
             update = False
+            publication_details_changed = False
             # TODO: update extra properties
             for column in self.update_columns:
                 val = getattr(row, column)
                 old_val = getattr(work, column)
                 if old_val != val:
                     update = True
+                    if column in ['publication_date', 'publication_number', 'publication_name']:
+                        publication_details_changed = True
                     setattr(work, column, val)
                     row.notes.append(f'{column}: {old_val} → {val}')
 
@@ -1107,7 +1110,17 @@ class BaseBulkUpdater(BaseBulkCreator):
                         if not self.testing:
                             work_changed.send(sender=work.__class__, work=work, request=self.request)
 
-                    # TODO: link publication document (with caveats)
+                    # try to link publication document (if there isn't one)
+                    publication_document = PublicationDocument.objects.filter(work=work).first()
+                    if not publication_document and publication_details_changed:
+                        row.params = {
+                            'date': work.publication_date,
+                            'number': work.publication_number,
+                            'publication': work.publication_name,
+                            'country': self.country.place_code,
+                            'locality': self.locality.code if self.locality else None,
+                        }
+                        self.link_publication_document(work, row)
 
                     # create import task for principal works (if there isn't one)
                     if work.principal:

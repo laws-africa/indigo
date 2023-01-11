@@ -311,7 +311,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self.works.append(self.create_work(row, idx))
 
         self.check_preview_duplicates()
+        self.update_relationships()
 
+        return self.works
+
+    def update_relationships(self):
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
         for row in self.works:
             if row.status and row.commenced:
@@ -343,8 +347,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
                 if row.repeals:
                     self.link_repeal_active(row)
-
-        return self.works
 
     def create_or_update(self, row):
         frbr_uri = self.get_frbr_uri(row)
@@ -1168,4 +1170,11 @@ class BaseBulkUpdater(BaseBulkCreator):
 
     def check_preview_duplicates(self):
         # TODO: how do we want to treat duplicates during update?
+        pass
+
+    def update_relationships(self):
+        pass
+
+    def add_notes(self, row):
+        # TODO: add notes?
         pass

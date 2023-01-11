@@ -1076,7 +1076,7 @@ class BaseBulkUpdater(BaseBulkCreator):
 
     def create_works(self, table, dry_run, form_data):
         self.update_columns = form_data.get('update_columns')
-        super().create_works(table, dry_run, form_data)
+        return super().create_works(table, dry_run, form_data)
 
     def create_or_update(self, row):
         frbr_uri = self.get_frbr_uri(row)

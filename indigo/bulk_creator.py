@@ -1089,11 +1089,8 @@ class BaseBulkUpdater(BaseBulkCreator):
             row.work = work
             row.status = 'success'
 
-        except Work.DoesNotExist as e:
-            # TODO:
-            #  - add error message
-            #  - add a new status, or reuse 'duplicate' and tweak template?
-            row.errors = []
+        except Work.DoesNotExist:
+            row.errors = f'Work not found for FRBR URI: {frbr_uri}'
             return row
 
     def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):

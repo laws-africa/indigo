@@ -385,12 +385,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.status = 'success'
 
             except ValidationError as e:
-                if hasattr(e, 'message_dict'):
-                    row.errors = ' '.join(
-                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                    )
-                else:
-                    row.errors = str(e)
+                self.add_error(row, e)
 
     def provisionally_save(self, work):
         if not self.dry_run:
@@ -398,6 +393,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
             # signals
             if not self.testing:
                 work_changed.send(sender=work.__class__, work=work, request=self.request)
+
+    def add_error(self, row, e):
+        if hasattr(e, 'message_dict'):
+            row.errors = ' '.join(
+                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+            )
+        else:
+            row.errors = str(e)
 
     def create_work(self, row, idx):
         # handle spreadsheet that still only uses 'principal'
@@ -1126,12 +1129,7 @@ class BaseBulkUpdater(BaseBulkCreator):
                     row.status = 'success'
 
                 except ValidationError as e:
-                    if hasattr(e, 'message_dict'):
-                        row.errors = ' '.join(
-                            ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                        )
-                    else:
-                        row.errors = str(e)
+                    self.add_error(row, e)
 
             else:
                 row.status = 'no-change'

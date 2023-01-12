@@ -90,7 +90,8 @@ class RowValidationFormBase(forms.Form):
 
     def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
         self.default_doctype = default_doctype
-        data = self.sanitize_incoming(data)
+        # handle spreadsheet that still only uses 'principal'
+        data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
         super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
@@ -103,14 +104,6 @@ class RowValidationFormBase(forms.Form):
         return [[d[1].lower(), d[0]] for d in
                 settings.INDIGO['DOCTYPES'] +
                 settings.INDIGO['EXTRA_DOCTYPES'].get(country_code, [])]
-
-    def sanitize_incoming(self, data):
-        if data:
-            data = data.copy()
-            # handle spreadsheet that still only uses 'principal'
-            data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
-
-        return data
 
     def clean_title(self):
         title = self.cleaned_data.get('title')

@@ -33,14 +33,20 @@ class SpreadsheetRow:
             setattr(self, k, v)
 
 
+class LowerChoiceField(forms.ChoiceField):
+    def to_python(self, value):
+        value = super().to_python(value)
+        return value.lower()
+
+
 class RowValidationFormBase(forms.Form):
     # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
     # core details
-    country = forms.ChoiceField(required=True)
-    locality = forms.ChoiceField(required=False)
+    country = LowerChoiceField(required=True)
+    locality = LowerChoiceField(required=False)
     title = forms.CharField()
-    doctype = forms.ChoiceField(required=True)
-    subtype = forms.ChoiceField(required=False)
+    doctype = LowerChoiceField(required=True)
+    subtype = LowerChoiceField(required=False)
     number = forms.CharField(validators=[
         RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
     ])
@@ -101,15 +107,8 @@ class RowValidationFormBase(forms.Form):
     def sanitize_incoming(self, data):
         if data:
             data = data.copy()
-            # lowercase choices
-            country = data.get('country', '')
-            data['country'] = country.lower()
-            locality = data.get('locality', '')
-            data['locality'] = locality.lower()
-            doctype = data.get('doctype', '')
-            data['doctype'] = doctype.lower() or self.default_doctype
-            subtype = data.get('subtype', '')
-            data['subtype'] = subtype.lower()
+            # use default doctype if none was given
+            data['doctype'] = data.get('doctype') or self.default_doctype
             # handle spreadsheet that still only uses 'principal'
             data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
 

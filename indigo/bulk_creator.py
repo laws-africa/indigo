@@ -99,6 +99,7 @@ class RowValidationFormBase(forms.Form):
     def sanitize_incoming(self, data):
         if data:
             data = data.copy()
+            # lowercase choices
             country = data.get('country', '')
             data['country'] = country.lower()
             locality = data.get('locality', '')
@@ -107,6 +108,8 @@ class RowValidationFormBase(forms.Form):
             data['doctype'] = doctype.lower() or self.default_doctype
             subtype = data.get('subtype', '')
             data['subtype'] = subtype.lower()
+            # handle spreadsheet that still only uses 'principal'
+            data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
 
         return data
 
@@ -403,8 +406,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
             row.errors = str(e)
 
     def create_work(self, row, idx):
-        # handle spreadsheet that still only uses 'principal'
-        row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
         row = self.validate_row(row)
         row.status = None
         row.row_number = idx + 2

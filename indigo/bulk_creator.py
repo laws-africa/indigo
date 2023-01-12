@@ -45,7 +45,7 @@ class RowValidationFormBase(forms.Form):
     country = LowerChoiceField(required=True)
     locality = LowerChoiceField(required=False)
     title = forms.CharField()
-    doctype = LowerChoiceField(required=True)
+    doctype = LowerChoiceField(required=False)
     subtype = LowerChoiceField(required=False)
     number = forms.CharField(validators=[
         RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
@@ -107,8 +107,6 @@ class RowValidationFormBase(forms.Form):
     def sanitize_incoming(self, data):
         if data:
             data = data.copy()
-            # use default doctype if none was given
-            data['doctype'] = data.get('doctype') or self.default_doctype
             # handle spreadsheet that still only uses 'principal'
             data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
 
@@ -117,6 +115,10 @@ class RowValidationFormBase(forms.Form):
     def clean_title(self):
         title = self.cleaned_data.get('title')
         return re.sub('[\u2028 ]+', ' ', title)
+
+    def clean_doctype(self):
+        doctype = self.cleaned_data.get('doctype')
+        return doctype or self.default_doctype
 
     def clean(self):
         cleaned_data = super().clean()

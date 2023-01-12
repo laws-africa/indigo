@@ -64,6 +64,7 @@
     },
 
     editActivityEnded: function() {
+      if(!this.editStartedAt) return;
       this.editTimes.push({
         started_at: this.editStartedAt,
         ended_at: new Date().toISOString()
@@ -697,11 +698,13 @@
         },
         body: JSON.stringify(sourceEditor.editTimes)
       }).then(function(response) {
-
         if(response.ok) {
           sourceEditor.editTimes = [];
         } else {
-          throw new Error(response.statusText);
+          console.log('Edit times',JSON.stringify(sourceEditor.editTimes));
+          response.text().then(text => {
+            throw new Error(text);
+          });
         }
       });
     },

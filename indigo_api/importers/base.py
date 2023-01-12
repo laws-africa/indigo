@@ -14,6 +14,8 @@ import indigo.pipelines.text as text
 import indigo.pipelines.pdf as pdf
 from indigo_api.serializers import AttachmentSerializer
 
+DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
 
 class ImportContext(PipelineContext):
     """ The context that is passed to import pipeline stages to share information.
@@ -176,8 +178,7 @@ class Importer(LocaleBasedMatcher):
             self.log.info("Processing upload as an AKN XML file")
             self.import_from_xml(upload, doc)
 
-        elif (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                or upload.name.endswith('.docx')):
+        elif (upload.content_type == DOCX_MIME_TYPE or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
             self.log.info("Processing upload as a DOCX file")
             self.import_from_docx(upload, doc)

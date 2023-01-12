@@ -111,8 +111,8 @@ class DocumentMetrics(models.Model):
         metrics.n_bytes = len(document.document_xml)
         metrics.n_provisions = len(document.all_provisions())
         metrics.n_words = n_words
-        # average of 250 words per page
-        metrics.n_pages = ceil(n_words / 250)
+        # average of 370 words per page
+        metrics.n_pages = ceil(n_words / 370)
 
         return metrics
 

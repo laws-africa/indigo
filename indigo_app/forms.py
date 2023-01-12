@@ -221,7 +221,7 @@ class ColumnSelectWidget(SelectMultiple):
         'commencement_date', 'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
         'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
         'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
-        'primary_work', 'subleg',
+        'primary_work', 'subleg', 'taxonomy'
     ]
 
     def create_option(self, *args, **kwargs):

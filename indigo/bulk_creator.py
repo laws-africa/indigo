@@ -1090,6 +1090,7 @@ class BaseBulkUpdater(BaseBulkCreator):
             update = False
             publication_details_changed = False
             # TODO: update extra properties
+            # TODO: update taxonomies?
             for column in self.update_columns:
                 val = getattr(row, column)
                 old_val = getattr(work, column)

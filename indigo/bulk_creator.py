@@ -375,13 +375,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 self.provisionally_save(work)
 
                 # link publication document
-                row.params = {
-                    'date': work.publication_date,
-                    'number': work.publication_number,
-                    'publication': work.publication_name,
-                    'country': self.country.place_code,
-                    'locality': self.locality.code if self.locality else None,
-                }
                 self.link_publication_document(work, row)
 
                 # create import task for principal works
@@ -482,25 +475,30 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 work.properties[extra_property] = str(getattr(row, extra_property) or '')
 
     def link_publication_document(self, work, row):
+        country_code = self.country.code
         locality_code = self.locality.code if self.locality else None
-        finder = plugins.for_locale('publications', self.country.code, None, locality_code)
+        date = work.publication_date
+        params = {
+            'date': date,
+            'number': work.publication_number,
+            'publication': work.publication_name,
+            'country': country_code,
+            'locality': locality_code,
+        }
+        finder = plugins.for_locale('publications', country_code, None, locality_code)
 
-        def create_link_gazette_task():
-            existing_task = Task.objects.filter(work=work, code='link-gazette').first()
-            if not existing_task:
-                self.create_task(work, row, task_type='link-gazette')
-
-        if not finder or not row.params.get('date'):
-            return create_link_gazette_task()
+        if not finder or not date:
+            return self.create_link_gazette_task(work, row)
 
         try:
-            publications = finder.find_publications(row.params)
+            publications = finder.find_publications(params)
         except requests.HTTPError:
-            return create_link_gazette_task()
+            return self.create_link_gazette_task(work, row)
 
         if len(publications) != 1:
-            return create_link_gazette_task()
+            return self.create_link_gazette_task(work, row)
 
+        # success; create the publication document
         if not self.dry_run:
             pub_doc_details = publications[0]
             pub_doc = PublicationDocument()
@@ -509,6 +507,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             pub_doc.trusted_url = pub_doc_details.get('url')
             pub_doc.size = pub_doc_details.get('size')
             pub_doc.save()
+
+    def create_link_gazette_task(self, work, row):
+        existing_task = Task.objects.filter(work=work, code='link-gazette').first()
+        if not existing_task:
+            self.create_task(work, row, task_type='link-gazette')
 
     def check_preview_duplicates(self):
         if self.dry_run:
@@ -1112,13 +1115,6 @@ class BaseBulkUpdater(BaseBulkCreator):
                     # try to link publication document (if there isn't one)
                     publication_document = PublicationDocument.objects.filter(work=work).first()
                     if not publication_document and publication_details_changed:
-                        row.params = {
-                            'date': work.publication_date,
-                            'number': work.publication_number,
-                            'publication': work.publication_name,
-                            'country': self.country.place_code,
-                            'locality': self.locality.code if self.locality else None,
-                        }
                         self.link_publication_document(work, row)
 
                     # create import task for principal works (if there isn't one)

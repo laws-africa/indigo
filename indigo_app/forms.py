@@ -229,9 +229,9 @@ class ColumnSelectWidget(SelectMultiple):
 
         option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
         if option['value'] in self.core_fields:
-            option['label'] += 'Core field: '
+            option['label'] = f'Core field: {option["label"]}'
         if option['value'] in self.unavailable_fields:
-            option['label'] += 'Unavailable: '
+            option['label'] = f'Unavailable: {option["label"]}'
 
         return option
 

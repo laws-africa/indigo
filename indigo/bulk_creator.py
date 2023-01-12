@@ -28,6 +28,7 @@ class SpreadsheetRow:
         self.relationships = []
         self.tasks = []
         self.taxonomies = []
+        self.status = None
         for k, v in data.items():
             setattr(self, k, v)
 
@@ -79,6 +80,7 @@ class RowValidationFormBase(forms.Form):
     repeals = forms.CharField(required=False)
     repeals_on_date = forms.DateField(required=False,
                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
+    row_number = forms.IntegerField()
 
     def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
         self.default_doctype = default_doctype
@@ -311,7 +313,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         rows = self.get_rows_from_table(table)
 
         for idx, row in enumerate(rows):
-            self.works.append(self.create_work(row, idx))
+            row['row_number'] = idx + 2
+            self.works.append(self.create_work(row))
 
         self.check_preview_duplicates()
         self.update_relationships()
@@ -405,10 +408,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         else:
             row.errors = str(e)
 
-    def create_work(self, row, idx):
+    def create_work(self, row):
         row = self.validate_row(row)
-        row.status = None
-        row.row_number = idx + 2
 
         if row.errors:
             return row

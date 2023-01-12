@@ -372,12 +372,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             try:
                 work.full_clean()
                 work.set_frbr_uri_fields()
-                if not self.dry_run:
-                    work.save_with_revision(self.user)
-
-                    # signals
-                    if not self.testing:
-                        work_changed.send(sender=work.__class__, work=work, request=self.request)
+                self.provisionally_save(work)
 
                 # link publication document
                 row.params = {
@@ -403,6 +398,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     )
                 else:
                     row.errors = str(e)
+
+    def provisionally_save(self, work):
+        if not self.dry_run:
+            work.save_with_revision(self.user)
+            # signals
+            if not self.testing:
+                work_changed.send(sender=work.__class__, work=work, request=self.request)
 
     def create_work(self, row, idx):
         # handle spreadsheet that still only uses 'principal'
@@ -1105,11 +1107,7 @@ class BaseBulkUpdater(BaseBulkCreator):
                 work.updated_by_user = self.user
                 try:
                     work.full_clean()
-                    if not self.dry_run:
-                        work.save_with_revision(self.user)
-                        # signals
-                        if not self.testing:
-                            work_changed.send(sender=work.__class__, work=work, request=self.request)
+                    self.provisionally_save(work)
 
                     # try to link publication document (if there isn't one)
                     publication_document = PublicationDocument.objects.filter(work=work).first()

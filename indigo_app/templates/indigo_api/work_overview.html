@@ -185,6 +185,15 @@
                         {{ work.consolidation_note }}
                       </dd>
                     {% endif %}
+
+                    {% if work.disclaimer %}
+                      <dt>
+                        {% trans 'Disclaimer' %}
+                      </dt>
+                      <dd>
+                        {{ work.disclaimer|linebreaks }}
+                      </dd>
+                    {% endif %}
                   </dl>
                 </div>
               </div>

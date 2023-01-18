@@ -90,8 +90,6 @@ class RowValidationFormBase(forms.Form):
 
     def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
         self.default_doctype = default_doctype
-        # handle spreadsheet that still only uses 'principal'
-        data['stub'] = data.get('stub') if 'stub' in data else not data.get('principal')
         super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
@@ -115,6 +113,9 @@ class RowValidationFormBase(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # handle spreadsheet that still only uses 'principal'
+        cleaned_data['stub'] = cleaned_data.get('stub') if 'stub' in self.data else not cleaned_data.get('principal')
 
         # has the work (implicitly) commenced?
         # if the commencement date has an error, the row won't have the attribute

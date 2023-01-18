@@ -397,6 +397,30 @@
       </div>
     </div>
 
+    <div class="card mb-3" id="disclaimer">
+      <h5 class="card-header">{% trans 'Disclaimer' %}</h5>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="{{ form.disclaimer.id_for_label }}">{{ form.disclaimer.label }}</label>
+            <textarea class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}">{{ form.disclaimer.value|default:'' }}</textarea>
+            <p class="form-text text-muted">
+              {% blocktrans trimmed %}
+                Disclaimer for this work; it will be shown on all expressions.
+              {% endblocktrans %}
+            </p>
+            {% if form.disclaimer.errors %}
+              <div class="text-danger">
+                {% for error in form.disclaimer.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% block work-form-repeal %}
     <div class="card mb-3" id="repeal">
       <h5 class="card-header">{% trans 'Repeal' %}</h5>

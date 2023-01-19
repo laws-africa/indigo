@@ -32,7 +32,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
             content = csv_file.read()
             reader = csv.reader(io.StringIO(content))
             table = list(reader)
-            return self.creator.create_works(table, dry_run, None)
+            return self.creator.create_works(table, dry_run, {})
 
     def test_basic_preview(self, mock):
         works = self.get_works(True, 'basic.csv')

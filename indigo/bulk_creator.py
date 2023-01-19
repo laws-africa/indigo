@@ -1,3 +1,4 @@
+import datetime
 import re
 import csv
 import io
@@ -27,18 +28,25 @@ class SpreadsheetRow:
         self.relationships = []
         self.tasks = []
         self.taxonomies = []
+        self.status = None
         for k, v in data.items():
             setattr(self, k, v)
+
+
+class LowerChoiceField(forms.ChoiceField):
+    def to_python(self, value):
+        value = super().to_python(value)
+        return value.lower()
 
 
 class RowValidationFormBase(forms.Form):
     # See descriptions, examples of the fields at https://docs.laws.africa/managing-works/bulk-imports-spreadsheet
     # core details
-    country = forms.ChoiceField(required=True)
-    locality = forms.ChoiceField(required=False)
+    country = LowerChoiceField(required=True)
+    locality = LowerChoiceField(required=False)
     title = forms.CharField()
-    doctype = forms.ChoiceField(required=True)
-    subtype = forms.ChoiceField(required=False)
+    doctype = LowerChoiceField(required=False)
+    subtype = LowerChoiceField(required=False)
     number = forms.CharField(validators=[
         RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
     ])
@@ -78,9 +86,11 @@ class RowValidationFormBase(forms.Form):
     repeals = forms.CharField(required=False)
     repeals_on_date = forms.DateField(required=False,
                                       error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
+    row_number = forms.IntegerField()
 
-    def __init__(self, country, locality, subtypes, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
+        self.default_doctype = default_doctype
+        super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
             if locality else []
@@ -96,6 +106,52 @@ class RowValidationFormBase(forms.Form):
     def clean_title(self):
         title = self.cleaned_data.get('title')
         return re.sub('[\u2028 ]+', ' ', title)
+
+    def clean_doctype(self):
+        doctype = self.cleaned_data.get('doctype')
+        return doctype or self.default_doctype
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # handle spreadsheet that still only uses 'principal'
+        cleaned_data['stub'] = cleaned_data.get('stub') if 'stub' in self.data else not cleaned_data.get('principal')
+
+        # has the work (implicitly) commenced?
+        # if the commencement date has an error, the row won't have the attribute
+        cleaned_data['commenced'] = bool(
+            cleaned_data.get('commencement_date') or
+            cleaned_data.get('commenced_on_date') or
+            cleaned_data.get('commenced_by')
+        )
+
+        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
+        commencement_date = cleaned_data.get('commencement_date') or datetime.date.today()
+        commenced_on_date = cleaned_data.get('commenced_on_date') or datetime.date.today()
+        if commencement_date.year == 9999 or commenced_on_date.year == 9999:
+            cleaned_data['commencement_date'] = None
+            cleaned_data['commenced_on_date'] = None
+
+        return cleaned_data
+
+
+class RowValidationFormUpdate(RowValidationFormBase):
+    def __init__(self, country, locality, subtypes, default_doctype, data=None, columns=None, *args, **kwargs):
+        super().__init__(country, locality, subtypes, default_doctype, data, *args, **kwargs)
+        self.update_columns = columns
+        self.fields['publication_date'].required = False
+        self.fields['title'].required = False
+        # remove all unused fields
+        fields = list(self.fields)
+        for field in fields:
+            if field not in columns:
+                del self.fields[field]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        del cleaned_data['commenced']
+
+        return cleaned_data
 
 
 class ChapterMixin:
@@ -222,16 +278,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self._service = build('sheets', 'v4', credentials=credentials)
         return self._service
 
-    def get_row_validation_form(self, country, locality, subtypes, row_data):
-        return self.row_validation_form_class(country, locality, subtypes, row_data)
+    def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data)
 
-    def create_works(self, table, dry_run, workflow):
-        self.workflow = workflow
-        self.subtypes = Subtype.objects.all()
-        self.dry_run = dry_run
-
-        self.works = []
-
+    def get_rows_from_table(self, table):
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
 
@@ -243,15 +293,30 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for row in table[1:]
         ]
 
-        for idx, row in enumerate(rows):
-            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if row.get('ignore') or not any(row.values()):
-                continue
+        # skip 'ignore' and blank rows
+        rows = [r for r in rows if (not r.get('ignore')) and any(r.values())]
 
-            self.works.append(self.create_work(row, idx))
+        return rows
+
+    def create_works(self, table, dry_run, form_data):
+        self.workflow = form_data.get('workflow')
+        self.subtypes = Subtype.objects.all()
+        self.dry_run = dry_run
+
+        self.works = []
+
+        rows = self.get_rows_from_table(table)
+
+        for idx, row in enumerate(rows):
+            row['row_number'] = idx + 2
+            self.works.append(self.create_work(row))
 
         self.check_preview_duplicates()
+        self.update_relationships()
 
+        return self.works
+
+    def update_relationships(self):
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
         for row in self.works:
             if row.status and row.commenced:
@@ -284,20 +349,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if row.repeals:
                     self.link_repeal_active(row)
 
-        return self.works
-
-    def create_work(self, row, idx):
-        # handle spreadsheet that still only uses 'principal'
-        row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
-        row = self.validate_row(row)
-        row.status = None
-        row.row_number = idx + 2
-
-        if row.errors:
-            return row
-
+    def create_or_update(self, row):
         frbr_uri = self.get_frbr_uri(row)
-
         try:
             row.work = Work.objects.get(frbr_uri=frbr_uri)
             row.status = 'duplicate'
@@ -320,24 +373,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
             try:
                 work.full_clean()
                 work.set_frbr_uri_fields()
-                if not self.dry_run:
-                    work.save_with_revision(self.user)
+                self.provisionally_save(work)
 
-                    # signals
-                    if not self.testing:
-                        work_changed.send(sender=work.__class__, work=work, request=self.request)
-
-                # info for linking publication document
-                row.params = {
-                    'date': work.publication_date,
-                    'number': work.publication_number,
-                    'publication': work.publication_name,
-                    'country': self.country.place_code,
-                    'locality': self.locality.code if self.locality else None,
-                }
-
+                # link publication document
                 self.link_publication_document(work, row)
 
+                # create import task for principal works
                 if work.principal:
                     self.create_task(work, row, task_type='import-content')
 
@@ -345,12 +386,30 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.status = 'success'
 
             except ValidationError as e:
-                if hasattr(e, 'message_dict'):
-                    row.errors = ' '.join(
-                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                    )
-                else:
-                    row.errors = str(e)
+                self.add_error(row, e)
+
+    def provisionally_save(self, work):
+        if not self.dry_run:
+            work.save_with_revision(self.user)
+            # signals
+            if not self.testing:
+                work_changed.send(sender=work.__class__, work=work, request=self.request)
+
+    def add_error(self, row, e):
+        if hasattr(e, 'message_dict'):
+            row.errors = ' '.join(
+                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+            )
+        else:
+            row.errors = str(e)
+
+    def create_work(self, row):
+        row = self.validate_row(row)
+
+        if row.errors:
+            return row
+
+        self.create_or_update(row)
 
         return row
 
@@ -377,32 +436,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def validate_row(self, row):
         self.transform_aliases(row)
-
-        # lowercase country, locality, doctype and subtype
-        row['country'] = row.get('country', '').lower()
-        row['locality'] = row.get('locality', '').lower()
-        row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
-        row['subtype'] = row.get('subtype', '').lower()
-
-        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
-
+        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, self.default_doctype, row)
         errors = form.errors
         self.transform_error_aliases(errors)
 
         row = SpreadsheetRow(form.cleaned_data, errors)
-        # has the work (implicitly) commenced?
-        # if the commencement date has an error, the row won't have the attribute
-        row.commenced = bool(
-            getattr(row, 'commencement_date', None) or
-            getattr(row, 'commenced_on_date', None) or
-            row.commenced_by)
+        self.add_notes(row)
 
-        # if commencement_date or commenced_on_date is set to any day in the year 9999, clear both
-        if (getattr(row, 'commencement_date', None) and getattr(row, 'commencement_date').year == 9999) or \
-                (getattr(row, 'commenced_on_date', None) and getattr(row, 'commenced_on_date').year == 9999):
-            row.commencement_date = None
-            row.commenced_on_date = None
+        return row
 
+    def add_notes(self, row):
         if self.dry_run:
             if not row.commenced:
                 row.notes.append('Uncommenced')
@@ -413,8 +456,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.notes.append('Stub')
             if row.principal:
                 row.notes.append('Principal work')
-
-        return row
 
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.country,
@@ -434,20 +475,30 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 work.properties[extra_property] = str(getattr(row, extra_property) or '')
 
     def link_publication_document(self, work, row):
+        country_code = self.country.code
         locality_code = self.locality.code if self.locality else None
-        finder = plugins.for_locale('publications', self.country.code, None, locality_code)
+        date = work.publication_date
+        params = {
+            'date': date,
+            'number': work.publication_number,
+            'publication': work.publication_name,
+            'country': country_code,
+            'locality': locality_code,
+        }
+        finder = plugins.for_locale('publications', country_code, None, locality_code)
 
-        if not finder or not row.params.get('date'):
-            return self.create_task(work, row, task_type='link-gazette')
+        if not finder or not date:
+            return self.create_link_gazette_task(work, row)
 
         try:
-            publications = finder.find_publications(row.params)
+            publications = finder.find_publications(params)
         except requests.HTTPError:
-            return self.create_task(work, row, task_type='link-gazette')
+            return self.create_link_gazette_task(work, row)
 
         if len(publications) != 1:
-            return self.create_task(work, row, task_type='link-gazette')
+            return self.create_link_gazette_task(work, row)
 
+        # success; create the publication document
         if not self.dry_run:
             pub_doc_details = publications[0]
             pub_doc = PublicationDocument()
@@ -456,6 +507,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             pub_doc.trusted_url = pub_doc_details.get('url')
             pub_doc.size = pub_doc_details.get('size')
             pub_doc.save()
+
+    def create_link_gazette_task(self, work, row):
+        existing_task = Task.objects.filter(work=work, code='link-gazette').first()
+        if not existing_task:
+            self.create_task(work, row, task_type='link-gazette')
 
     def check_preview_duplicates(self):
         if self.dry_run:
@@ -1017,3 +1073,81 @@ Possible reasons:
         for row in self.works:
             if hasattr(row, 'work') and row.work.pk == work.pk:
                 row.work = work
+
+
+@plugins.register('bulk-updater')
+class BaseBulkUpdater(BaseBulkCreator):
+    """ Update works in bulk from a google sheets spreadsheet.
+    """
+    row_validation_form_class = RowValidationFormUpdate
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    update_columns = None
+
+    def create_works(self, table, dry_run, form_data):
+        self.update_columns = form_data.get('update_columns')
+        return super().create_works(table, dry_run, form_data)
+
+    def create_or_update(self, row):
+        frbr_uri = self.get_frbr_uri(row)
+        try:
+            work = Work.objects.get(frbr_uri=frbr_uri)
+            update = False
+            publication_details_changed = False
+            # TODO: update extra properties
+            # TODO: update taxonomies?
+            for column in self.update_columns:
+                val = getattr(row, column)
+                old_val = getattr(work, column)
+                if old_val != val:
+                    update = True
+                    if column in ['publication_date', 'publication_number', 'publication_name']:
+                        publication_details_changed = True
+                    setattr(work, column, val)
+                    row.notes.append(f'{column}: {old_val} → {val}')
+
+            if update:
+                work.updated_by_user = self.user
+                try:
+                    work.full_clean()
+                    self.provisionally_save(work)
+
+                    # try to link publication document (if there isn't one)
+                    publication_document = PublicationDocument.objects.filter(work=work).first()
+                    if not publication_document and publication_details_changed:
+                        self.link_publication_document(work, row)
+
+                    # create import task for principal works (if there isn't one)
+                    if work.principal:
+                        import_task = Task.objects.filter(work=work, code='import-content').first()
+                        if not import_task:
+                            self.create_task(work, row, task_type='import-content')
+
+                    row.status = 'success'
+
+                except ValidationError as e:
+                    self.add_error(row, e)
+
+            else:
+                row.status = 'no-change'
+
+            row.work = work
+
+        except Work.DoesNotExist:
+            row.errors = f'Work not found for FRBR URI: {frbr_uri}'
+            return row
+
+    def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data,
+                                              columns=self.core_fields + self.update_columns)
+
+    def check_preview_duplicates(self):
+        # TODO: how do we want to treat duplicates during update?
+        pass
+
+    def update_relationships(self):
+        pass
+
+    def add_notes(self, row):
+        # TODO: add notes?
+        pass

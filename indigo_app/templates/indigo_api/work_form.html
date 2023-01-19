@@ -403,7 +403,7 @@
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.disclaimer.id_for_label }}">{{ form.disclaimer.label }}</label>
-            <textarea class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}">{{ form.disclaimer.value|default:'' }}</textarea>
+            <input type="text" class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}" value="{{ form.disclaimer.value|default:'' }}">
             <p class="form-text text-muted">
               {% blocktrans trimmed %}
                 Disclaimer for this work; it will be shown on all expressions.

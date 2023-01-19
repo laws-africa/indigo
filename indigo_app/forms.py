@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
+from django.forms import SelectMultiple
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -210,6 +211,44 @@ class BatchCreateWorkForm(forms.Form):
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
+    tasks = forms.MultipleChoiceField(
+        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
+
+
+class ColumnSelectWidget(SelectMultiple):
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    unavailable_fields = [
+        'commencement_date', 'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
+        'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
+        'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
+        'primary_work', 'subleg', 'taxonomy'
+    ]
+
+    def create_option(self, *args, **kwargs):
+        option = super().create_option(*args, **kwargs)
+
+        option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
+        if option['value'] in self.core_fields:
+            option['label'] = f'Core field: {option["label"]}'
+        if option['value'] in self.unavailable_fields:
+            option['label'] = f'Unavailable: {option["label"]}'
+
+        return option
+
+
+class BatchUpdateWorkForm(BatchCreateWorkForm):
+    update_columns = forms.MultipleChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from indigo.bulk_creator import RowValidationFormBase
+        row_validation_form = RowValidationFormBase
+        fields = list(row_validation_form.base_fields) + ['actor']
+        self.fields['update_columns'].widget = ColumnSelectWidget()
+        # TODO: include place's extra properties
+        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields])
+        self.fields['update_columns'].choices.sort(key=lambda x: x[1])
 
 
 class ImportDocumentForm(forms.Form):

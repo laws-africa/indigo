@@ -79,6 +79,7 @@ class AKNHTMLDiffer:
     keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter
     differ_class = Differ
+    preprocess_strip_tags = ['term']
     xmldiff_options = {
         'F': 0.75,
         # using data-refersto helps to xmldiff to handle definitions that move around
@@ -89,21 +90,17 @@ class AKNHTMLDiffer:
 
     def preprocess_xml_str(self, xml_str):
         """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
         """
         root = etree.fromstring(xml_str)
         root = self.preprocess_xml_tree(root)
         return etree.tostring(root, encoding='utf-8')
 
     def preprocess_xml_tree(self, root):
-        """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
+        """ Run pre-processing on XML before doing HTML diffs. This helps to make the diffs less confusing.
         """
-        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
+        xpath = '|'.join(f'//a:{x}' for x in self.preprocess_strip_tags)
+        for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
             unwrap_element(elem)
-
         return root
 
     def count_differences(self, diff_tree):

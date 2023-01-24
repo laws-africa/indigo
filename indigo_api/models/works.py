@@ -396,6 +396,7 @@ class Work(WorkMixin, models.Model):
 
     as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
+    disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

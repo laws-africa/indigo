@@ -65,6 +65,7 @@ class RowValidationFormBase(forms.Form):
     stub = forms.BooleanField(required=False)
     principal = forms.BooleanField(required=False)
     taxonomy = forms.CharField(required=False)
+    disclaimer = forms.CharField(required=False)
     # passive relationships
     primary_work = forms.CharField(required=False)
     commenced_by = forms.CharField(required=False)
@@ -364,7 +365,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for attribute in ['title',
                               'publication_name', 'publication_number',
                               'assent_date', 'publication_date',
-                              'commenced', 'stub', 'principal']:
+                              'commenced', 'stub', 'principal', 'disclaimer']:
                 setattr(work, attribute, getattr(row, attribute, None))
             work.created_by_user = self.user
             work.updated_by_user = self.user
@@ -456,6 +457,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.notes.append('Stub')
             if row.principal:
                 row.notes.append('Principal work')
+            if row.disclaimer:
+                row.notes.append(f'Disclaimer: {row.disclaimer}')
 
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.country,

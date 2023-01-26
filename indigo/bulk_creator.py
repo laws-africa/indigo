@@ -155,7 +155,7 @@ class RowValidationFormUpdate(RowValidationFormBase):
         return cleaned_data
 
 
-class ChapterMixin:
+class ChapterMixin(forms.Form):
     """ Includes (optional) Chapter (cap) field.
     For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
     for the relevant country in settings.INDIGO['WORK_PROPERTIES']

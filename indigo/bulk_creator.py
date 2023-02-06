@@ -142,7 +142,8 @@ class RowValidationFormUpdate(RowValidationFormBase):
         self.update_columns = columns
         self.fields['publication_date'].required = False
         self.fields['title'].required = False
-        # remove all unused fields
+        # remove all unused fields (except row_number)
+        columns.append('row_number')
         fields = list(self.fields)
         for field in fields:
             if field not in columns:

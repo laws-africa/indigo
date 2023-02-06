@@ -294,6 +294,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for row in table[1:]
         ]
 
+        # add row numbers here, before removing 'ignore' and blank ones
+        for idx, row in enumerate(rows):
+            if any(row.values()):
+                row['row_number'] = idx + 2
+
         # skip 'ignore' and blank rows
         rows = [r for r in rows if (not r.get('ignore')) and any(r.values())]
 
@@ -308,8 +313,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         rows = self.get_rows_from_table(table)
 
-        for idx, row in enumerate(rows):
-            row['row_number'] = idx + 2
+        for row in rows:
             self.works.append(self.create_work(row))
 
         self.check_preview_duplicates()

@@ -162,10 +162,9 @@ class EditWorkView(WorkViewBase, UpdateView):
             old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
-                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
-                    doc.expression_date = self.work.publication_date
-                    doc.save()
+                self.work.update_documents_at_publication_date(old_date, self.work.publication_date)
 
+        # TODO: move this onto work; it should happen on bulk update as well
         # if the work title changes, ensure matching document titles do too
         if 'title' in form.changed_data:
             old_title = form.initial['title']

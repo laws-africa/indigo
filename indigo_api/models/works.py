@@ -458,6 +458,22 @@ class Work(WorkMixin, models.Model):
         self.date = self.work_uri.date
         self.number = self.work_uri.number
 
+    def update_documents_at_publication_date(self, old_publication_date, new_publication_date):
+        """ Updates the expression dates of all documents at the old publication date to the new one.
+        """
+        from .documents import Document
+        for document in Document.objects.filter(work=self, expression_date=old_publication_date):
+            document.expression_date = new_publication_date
+            document.save()
+
+    def update_document_titles(self, old_title, new_title):
+        """ Updates the titles of all documents that currently have the old title.
+        """
+        from .documents import Document
+        for document in Document.objects.filter(work=self, title=old_title):
+            document.title = new_title
+            document.save()
+
     def save_with_revision(self, user, comment=None):
         """ Save this work and create a new revision at the same time.
         """

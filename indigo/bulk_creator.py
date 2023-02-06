@@ -142,7 +142,8 @@ class RowValidationFormUpdate(RowValidationFormBase):
         self.update_columns = columns
         self.fields['publication_date'].required = False
         self.fields['title'].required = False
-        # remove all unused fields
+        # remove all unused fields (except row_number)
+        columns.append('row_number')
         fields = list(self.fields)
         for field in fields:
             if field not in columns:
@@ -294,6 +295,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for row in table[1:]
         ]
 
+        # add row numbers here, before removing 'ignore' and blank ones
+        for idx, row in enumerate(rows):
+            if any(row.values()):
+                row['row_number'] = idx + 2
+
         # skip 'ignore' and blank rows
         rows = [r for r in rows if (not r.get('ignore')) and any(r.values())]
 
@@ -308,8 +314,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         rows = self.get_rows_from_table(table)
 
-        for idx, row in enumerate(rows):
-            row['row_number'] = idx + 2
+        for row in rows:
             self.works.append(self.create_work(row))
 
         self.check_preview_duplicates()
@@ -389,9 +394,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
             except ValidationError as e:
                 self.add_error(row, e)
 
-    def provisionally_save(self, work):
+    def provisionally_save(self, work, old_publication_date=None, new_publication_date=None, old_title=None, new_title=None):
         if not self.dry_run:
             work.save_with_revision(self.user)
+            if old_publication_date and new_publication_date:
+                work.update_documents_at_publication_date(old_publication_date, new_publication_date)
+
+            if old_title and new_title:
+                work.update_document_titles(old_title, new_title)
+
             # signals
             if not self.testing:
                 work_changed.send(sender=work.__class__, work=work, request=self.request)
@@ -1097,6 +1108,10 @@ class BaseBulkUpdater(BaseBulkCreator):
             work = Work.objects.get(frbr_uri=frbr_uri)
             update = False
             publication_details_changed = False
+            old_publication_date = None
+            new_publication_date = None
+            old_title = None
+            new_title = None
             # TODO: update extra properties
             # TODO: update taxonomies?
             for column in self.update_columns:
@@ -1106,6 +1121,13 @@ class BaseBulkUpdater(BaseBulkCreator):
                     update = True
                     if column in ['publication_date', 'publication_number', 'publication_name']:
                         publication_details_changed = True
+                    # stash details for updating publication date, title on documents
+                    if column == 'publication_date':
+                        old_publication_date = old_val
+                        new_publication_date = val
+                    if column == 'title':
+                        old_title = old_val
+                        new_title = val
                     setattr(work, column, val)
                     row.notes.append(f'{column}: {old_val} → {val}')
 
@@ -1113,7 +1135,7 @@ class BaseBulkUpdater(BaseBulkCreator):
                 work.updated_by_user = self.user
                 try:
                     work.full_clean()
-                    self.provisionally_save(work)
+                    self.provisionally_save(work, old_publication_date=old_publication_date, new_publication_date=new_publication_date, old_title=old_title, new_title=new_title)
 
                     # try to link publication document (if there isn't one)
                     publication_document = PublicationDocument.objects.filter(work=work).first()

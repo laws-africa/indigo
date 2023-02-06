@@ -162,17 +162,13 @@ class EditWorkView(WorkViewBase, UpdateView):
             old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
-                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
-                    doc.expression_date = self.work.publication_date
-                    doc.save()
+                self.work.update_documents_at_publication_date(old_date, self.work.publication_date)
 
         # if the work title changes, ensure matching document titles do too
         if 'title' in form.changed_data:
             old_title = form.initial['title']
             if old_title:
-                for doc in Document.objects.filter(work=self.work, title=old_title):
-                    doc.title = self.work.title
-                    doc.save()
+                self.work.update_document_titles(old_title, self.work.title)
 
         if form.has_changed():
             # rename publication-document if frbr_uri has changed

@@ -466,6 +466,14 @@ class Work(WorkMixin, models.Model):
             document.expression_date = new_publication_date
             document.save()
 
+    def update_document_titles(self, old_title, new_title):
+        """ Updates the titles of all documents that currently have the old title.
+        """
+        from .documents import Document
+        for document in Document.objects.filter(work=self, title=old_title):
+            document.title = new_title
+            document.save()
+
     def save_with_revision(self, user, comment=None):
         """ Save this work and create a new revision at the same time.
         """

@@ -759,33 +759,35 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        amended_work = self.find_work(row.amends)
-        if not amended_work:
-            return self.create_task(row.work, row, task_type='link-amendment-active')
+        amended_works = [x.strip() for x in row.amends.split('\n') if x.strip()]
+        for a in amended_works:
+            amended_work = self.find_work(a)
+            if not amended_work:
+                return self.create_task(row.work, row, task_type='link-amendment-active')
 
-        date = row.amends_on_date or row.commencement_date or row.work.commencement_date
-        if not date:
-            return self.create_task(row.work, row,
-                                    task_type='link-amendment-pending-commencement',
-                                    amended_work=amended_work)
+            date = row.amends_on_date or row.commencement_date or row.work.commencement_date
+            if not date:
+                return self.create_task(row.work, row,
+                                        task_type='link-amendment-pending-commencement',
+                                        amended_work=amended_work)
 
-        row.relationships.append(f'Amends {amended_work} on {date}')
-        if self.dry_run:
-            row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
-        else:
-            amendment, new = Amendment.objects.get_or_create(
-                amended_work=amended_work,
-                amending_work=row.work,
-                date=date,
-                defaults={
-                    'created_by_user': self.user,
-                },
-            )
+            row.relationships.append(f'Amends {amended_work} on {date}')
+            if self.dry_run:
+                row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
+            else:
+                amendment, new = Amendment.objects.get_or_create(
+                    amended_work=amended_work,
+                    amending_work=row.work,
+                    date=date,
+                    defaults={
+                        'created_by_user': self.user,
+                    },
+                )
 
-            if new:
-                self.create_task(amended_work, row,
-                                 task_type='apply-amendment',
-                                 amendment=amendment)
+                if new:
+                    self.create_task(amended_work, row,
+                                     task_type='apply-amendment',
+                                     amendment=amendment)
 
     def link_taxonomy(self, row):
         topics = [x.strip() for x in row.taxonomy.split(';') if x.strip()]

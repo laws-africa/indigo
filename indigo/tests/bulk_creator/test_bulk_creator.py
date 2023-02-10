@@ -750,14 +750,21 @@ class BaseBulkCreatorTest(testcases.TestCase):
         amend1 = works[1]
         amend2 = works[2]
         error = works[3]
+        other_main = works[4]
+
         self.assertEqual('success', main.status)
         self.assertEqual('success', amend1.status)
         self.assertEqual('success', amend2.status)
         self.assertEqual('success', error.status)
+        self.assertEqual('success', other_main.status)
 
         self.assertEqual(['Principal work'], main.notes)
         self.assertEqual([], main.relationships)
         self.assertEqual(['link gazette', 'import content'], main.tasks)
+
+        self.assertEqual(['Principal work'], other_main.notes)
+        self.assertEqual([], other_main.relationships)
+        self.assertEqual(['link gazette', 'import content'], other_main.tasks)
 
         self.assertEqual(
             ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
@@ -765,10 +772,15 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported) on 2020-06-01'], amend1.relationships)
         self.assertEqual(['link gazette'], amend1.tasks)
 
-        self.assertEqual(
-            ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
+        self.assertEqual([
+            'Stub',
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)",
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1x – Other Main (about to be imported)"],
             amend2.notes)
-        self.assertEqual(['Amends /akn/za/act/2020/1 – Main (about to be imported) on 2020-08-01'], amend2.relationships)
+        self.assertEqual([
+            'Amends /akn/za/act/2020/1 – Main (about to be imported) on 2020-08-01',
+            'Amends /akn/za/act/2020/1x – Other Main (about to be imported) on 2020-08-01',
+        ], amend2.relationships)
         self.assertEqual(['link gazette'], amend2.tasks)
 
         self.assertEqual(['Stub'], error.notes)
@@ -781,6 +793,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         amend1 = works[1].work
         amend2 = works[2].work
         error = works[3].work
+        other_main = works[4].work
 
         amendments = main.amendments.all()
         self.assertEqual(2, len(amendments))
@@ -791,8 +804,19 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(datetime.date(2020, 6, 1), dates)
         self.assertIn(datetime.date(2020, 8, 1), dates)
 
+        amendments = other_main.amendments.all()
+        self.assertEqual(1, len(amendments))
+        amenders = [a.amending_work for a in amendments]
+        self.assertNotIn(amend1, amenders)
+        self.assertIn(amend2, amenders)
+        dates = [a.date for a in amendments]
+        self.assertIn(datetime.date(2020, 8, 1), dates)
+
         main_tasks = [t.title for t in main.tasks.all()]
         self.assertEqual(2, main_tasks.count('Apply amendment'))
+
+        other_main_tasks = [t.title for t in other_main.tasks.all()]
+        self.assertEqual(1, other_main_tasks.count('Apply amendment'))
 
         error_tasks = [t.title for t in error.tasks.all()]
         self.assertIn('Link amendment (active)', error_tasks)

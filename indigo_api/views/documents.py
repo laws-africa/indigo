@@ -167,8 +167,16 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     permission_classes = DEFAULT_PERMS + (ModelPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
-        return super().filter_queryset(queryset).filter(document=self.document)
-    
+        # TODO: filter out closed annotations as well?
+        #  they won't be displayed, so they may as well be excluded from the start
+        # qs = super().filter_queryset(queryset).filter(document=self.document, closed=False)
+        qs = super().filter_queryset(queryset).filter(document=self.document)
+        exclude_these = [a.pk for a in qs if a.task and
+                         (not a.task.work or
+                          (a.task.document and a.task.document != self.document))]
+        qs = qs.exclude(pk__in=exclude_these)
+        return qs
+
     def list(self, request, **kwargs):
         queryset = list(self.filter_queryset(self.get_queryset()))
         task_content_type = ContentType.objects.get_for_model(Task)

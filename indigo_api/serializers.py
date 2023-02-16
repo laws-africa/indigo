@@ -449,7 +449,7 @@ class TaskSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     country = serializers.CharField(source='country.code', default=None)
     locality = serializers.CharField(source='locality.code', default=None)
-    work = serializers.CharField(source='work.frbr_uri')
+    work = serializers.CharField(allow_null=True, source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
     view_url = serializers.SerializerMethodField()
@@ -477,7 +477,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('task_detail', request=self.context['request'], kwargs={
-            'place': instance.work.place.place_code,
+            'place': instance.place.place_code,
             'pk': instance.pk,
         })
 

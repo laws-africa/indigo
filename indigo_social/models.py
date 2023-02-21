@@ -1,22 +1,16 @@
-# -*- coding: utf-8 -*-
-import os
 import random
 import string
+from urllib.request import urlretrieve, urlcleanup
 
+from allauth.account.signals import user_signed_up
+from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.models import User
-from django.templatetags.static import static
 from django.core.files import File
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.templatetags.static import static
 from django.urls import reverse
-
-
-from urllib.request import urlretrieve, urlcleanup
-
-from allauth.account.signals import user_signed_up
-from allauth.socialaccount.models import SocialLogin, SocialAccount
-from allauth.socialaccount.signals import pre_social_login, social_account_added, social_account_updated
 
 
 def user_profile_photo_path(instance, filename):
@@ -38,6 +32,9 @@ def retrieve_social_profile_photo(user_profile, url):
 
 
 class UserProfile(models.Model):
+    class Meta:
+        permissions = (('audit_user_activity', 'Can audit user activity'),)
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True, default='', help_text="A short bio")
     qualifications = models.TextField(blank=True, null=True, default='', help_text="Qualifications")
@@ -58,7 +55,7 @@ class UserProfile(models.Model):
         if not self.profile_photo:
             return static('images/avatars/default_avatar.svg')
         return reverse('indigo_social:user_profile_photo', kwargs={'username': self.user.username, 'nonce': self.profile_photo_nonce})
-    
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, **kwargs):

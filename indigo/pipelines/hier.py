@@ -1,10 +1,8 @@
 import re
-import string
-
-import cssutils
 
 from docpipe.pipeline import Stage, Pipeline
-from indigo_la_tradition.pipelines.base import chomp_left, is_centered
+
+from indigo.pipelines.base import chomp_left, is_centered
 
 
 class IdentifySections(Stage):

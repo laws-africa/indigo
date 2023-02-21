@@ -1,9 +1,9 @@
 import re
-import string
 
 from docpipe.pipeline import Stage, Pipeline
-from indigo_la_tradition.pipelines.base import chomp_left
-from indigo_la_tradition.pipelines.hier import IndentBlocks
+
+from indigo.pipelines.base import chomp_left
+from indigo.pipelines.hier import IndentBlocks
 
 
 class MarkPreface(Stage):

@@ -3,12 +3,10 @@ import shutil
 import tempfile
 from zipfile import BadZipFile
 
-from lxml import etree
 import mammoth
-
-from indigo_api.utils import filename_candidates, find_best_static
-from .pipeline import ImportAttachment
 from docpipe.pipeline import Stage
+
+from .pipeline import ImportAttachment
 
 log = logging.getLogger(__name__)
 
@@ -70,21 +68,3 @@ class DocxToHtml(Stage):
             raise ValueError("This doesn't seem to be a valid DOCX file.")
 
         context.html_text = html
-
-
-class HtmlToSlawText(Stage):
-    """ Transform HTML into Slaw-friendly text.
-
-    Reads: context.html
-    Writes: context.text
-    """
-    html_to_text_xsl_prefix = 'xsl/html_to_akn_text_'
-
-    def __call__(self, context):
-        candidates = filename_candidates(context.doc, prefix=self.html_to_text_xsl_prefix, suffix='.xsl')
-        xslt_filename = find_best_static(candidates)
-        if not xslt_filename:
-            raise ValueError(f"Couldn't find XSLT file to use for {context.doc}, tried: {candidates}")
-
-        xslt = etree.XSLT(etree.parse(xslt_filename))
-        context.text = str(xslt(context.html))

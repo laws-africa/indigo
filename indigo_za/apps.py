@@ -7,7 +7,6 @@ class IndigoZAAppConfig(AppConfig):
 
     def ready(self):
         # ensure our plugins are pulled in
-        import indigo_za.importer  # noqa
         import indigo_za.publications  # noqa
         import indigo_za.refs  # noqa
         import indigo_za.terms  # noqa

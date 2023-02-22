@@ -16,8 +16,9 @@ from indigo.pipelines import DoctypePipeline
 from indigo.pipelines.base import HtmlToBluebellText, ParseBluebellText, SimplifyHtml, RemoveInlines, \
     CleanTableStyles, WrapAnnotations
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.importers.pipelines import text_cleanup, RemoveBoilerplate, UnbreakLines, BreakLines, \
+    CorrectSubsectionNumSpaces
 from indigo_api.serializers import AttachmentSerializer
-from indigo_za.importer import text_cleanup, RemoveBoilerplate, UnbreakLines, BreakLines, CorrectSubsectionNumSpaces
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 

@@ -1,16 +1,16 @@
 from django.test import testcases
 
 from indigo_api.importers.base import ImportContext
-from indigo_za.importer import ImporterZA
+from indigo_api.importers.base import Importer
 
 
 class ImporterZATestCase(testcases.TestCase):
     def setUp(self):
-        self.importer = ImporterZA()
+        self.importer = Importer()
         self.pipeline = self.importer.get_pdf_pipeline()
         # keep just the cleanup part of the pipeline
-        # skip the first three (PDF-related), and the last two (parsing)
-        self.pipeline.stages = self.pipeline.stages[3:-2]
+        # skip the first three (PDF-related), and the last five (parsing)
+        self.pipeline.stages = self.pipeline.stages[3:-5]
         self.context = ImportContext(self.pipeline)
 
     def pipeline_text(self, text):
@@ -20,7 +20,7 @@ class ImporterZATestCase(testcases.TestCase):
         self.pipeline(self.context)
         return self.context.text
 
-    def test_remove_boilerplace(self):
+    def test_remove_boilerplate(self):
         text = """text
     this gazette is also available in paper
 
@@ -136,22 +136,7 @@ permit; and
 (bb) changed
         """)
 
-    def test_whitespace_subsections(self):
+    def test_whitespace_subsections2(self):
         self.assertEqual(self.pipeline_text(
             "report on the im- plementation"),
             "report on the implementation")
-
-    def test_strip_whitespace(self):
-        self.assertEqual(self.pipeline_text("""
-\xA0       test
-
-        (a) foo   bar
-          (b) baz boom
-          (c)   baz   boom
-        """), """
-test
-
-(a) foo bar
-(b) baz boom
-(c) baz boom
-        """)

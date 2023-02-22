@@ -1,44 +1,6 @@
 import re
 
-from indigo_api.importers.base import Importer
-from indigo.plugins import plugins
 from docpipe.pipeline import Stage, Pipeline
-
-
-@plugins.register('importer')
-class ImporterZA(Importer):
-    """ Importer for the South African tradition.
-    """
-    locale = ('za', None, None)
-
-    def get_pdf_pipeline(self):
-        pipeline = super().get_pdf_pipeline()
-
-        # add specific cleanup before the normal pipeline's parse and serialize stages
-        for x in [
-            text_cleanup,
-            RemoveBoilerplate(),
-            UnbreakLines(),
-            BreakLines(),
-            CorrectSubsectionNumSpaces(),
-        ]:
-            pipeline.stages.insert(-2, x)
-        return pipeline
-
-    def get_docx_pipeline(self):
-        pipeline = super().get_docx_pipeline()
-        pipeline.stages.insert(-2, text_cleanup)
-        return pipeline
-
-    def get_html_pipeline(self):
-        pipeline = super().get_html_pipeline()
-        pipeline.stages.insert(-2, text_cleanup)
-        return pipeline
-
-    def get_file_pipeline(self):
-        pipeline = super().get_file_pipeline()
-        pipeline.stages.insert(-2, text_cleanup)
-        return pipeline
 
 
 class UnbreakLines(Stage):

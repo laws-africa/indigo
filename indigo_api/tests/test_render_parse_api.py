@@ -82,14 +82,21 @@ class RenderParseAPITest(APITestCase):
     def test_parse_text_fragment(self):
         response = self.client.post('/api/documents/1/parse', {
             'content': """
-                Chapter 2
-                The Beginning
-                1. First Verse
-                κόσμε
-                (1) In the beginning
-                (2) There was nothing and an Act no 2 of 2010.
+CHAPTER 2 - The Beginning
+
+  SECTION 1. - First Verse
+
+    κόσμε
+
+    SUBSEC (1)
+
+      In the beginning
+
+    SUBSEC (2)
+
+      There was nothing and an Act no 2 of 2010.
             """,
-            'fragment': 'chapter',
+            'fragment': 'hier_element_block',
             'id_prefix': 'prefix',
             'language': 'eng',
         })
@@ -97,7 +104,15 @@ class RenderParseAPITest(APITestCase):
         self.maxDiff = None
         self.assertEqual(
             response.data['output'],
-            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"><chapter eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading><section eId="sec_1"><num>1.</num><heading>First Verse</heading><hcontainer eId="sec_1__hcontainer_1" name="hcontainer"><content><p>κόσμε</p></content></hcontainer><subsection eId="sec_1__subsec_1"><num>(1)</num><content><p>In the beginning</p></content></subsection><subsection eId="sec_1__subsec_2"><num>(2)</num><content><p>There was nothing and an Act no 2 of 2010.</p></content></subsection></section></chapter></akomaNtoso>'
+            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">'
+            '<chapter eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
+            '<section eId="prefix__chp_2__sec_1"><num>1.</num><heading>First Verse</heading>'
+            '<intro><p eId="prefix__chp_2__sec_1__intro__p_1">κόσμε</p></intro>'
+            '<subsection eId="prefix__chp_2__sec_1__subsec_1"><num>(1)</num>'
+            '<content><p eId="prefix__chp_2__sec_1__subsec_1__p_1">In the beginning</p></content></subsection>'
+            '<subsection eId="prefix__chp_2__sec_1__subsec_2"><num>(2)</num>'
+            '<content><p eId="prefix__chp_2__sec_1__subsec_2__p_1">There was nothing and an Act no 2 of 2010.</p>'
+            '</content></subsection></section></chapter></akomaNtoso>'
         )
 
     def test_parse_text_with_components(self):
@@ -130,14 +145,14 @@ SCHEDULE Annexure A
 
   CROSSHEADING (Regulation 1)
 
-  Part 1 - 
+  PART 1 - 
 
     PARA 1. Ambulance services
 
     PARA 2. Casualties services
 
 
-  Part 2 - 
+  PART 2 - 
 
     SEC 1. - Agriculture and forestry
 

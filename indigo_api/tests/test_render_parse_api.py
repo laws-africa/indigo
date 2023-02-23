@@ -147,9 +147,13 @@ SCHEDULE Annexure A
 
   PART 1 - 
 
-    PARA 1. Ambulance services
+    PARA 1.
 
-    PARA 2. Casualties services
+      Ambulance services
+
+    PARA 2.
+
+      Casualties services
 
 
   PART 2 - 

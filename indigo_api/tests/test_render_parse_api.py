@@ -121,48 +121,56 @@ By order of the President
 
 BODY
 
-15. Regulations to bind State
+SEC 15. - Regulations to bind State
 
-These regulations bind the State.
+  These regulations bind the State.
 
-SCHEDULE
-HEADING Annexure A
-SUBHEADING Critical services
+SCHEDULE Annexure A
+  SUBHEADING Critical services
 
-CROSSHEADING (Regulation 1)
+  CROSSHEADING (Regulation 1)
 
-Part 1 - 
+  Part 1 - 
 
-PARA 1. Ambulance services
+    PARA 1. Ambulance services
 
-PARA 2. Casualties services
+    PARA 2. Casualties services
 
 
-Part 2 - 
+  Part 2 - 
 
-1. Agriculture and forestry
+    SEC 1. - Agriculture and forestry
 
-Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.
+      Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.
 
-2. Fishing
+    SEC 2. - Fishing
 
-Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.
+      Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.
 
-SCHEDULE
-HEADING Annexure B
-SUBHEADING Essential goods
+SCHEDULE Annexure B
+  SUBHEADING Essential goods
 
-CROSSHEADING (Regulation 1)
+  CROSSHEADING (Regulation 1)
 
-PARA 1. Food:
+  PARA 1.
 
-    (a) any food product, including water and non-alcoholic beverages;
+    Food:
 
-    (b) animal food; and
+    SUBPARA (a)
 
-    (c) chemicals, packaging and ancillary products used in the production of any food product.
+      any food product, including water and non-alcoholic beverages;
 
-PARA 4. Fuel, including coal and gas.
+    SUBPARA (b)
+
+      animal food; and
+
+    SUBPARA (c)
+
+      chemicals, packaging and ancillary products used in the production of any food product.
+
+  PARA 4.
+
+    Fuel, including coal and gas.
 
             """,
             'id_prefix': 'prefix',

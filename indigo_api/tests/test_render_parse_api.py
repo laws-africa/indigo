@@ -107,7 +107,7 @@ CHAPTER 2 - The Beginning
         self.assertEqual(
             response.data['output'],
             '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">'
-            '<chapter eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
+            '<chapter xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
             '<section eId="prefix__chp_2__sec_1"><num>1.</num><heading>First Verse</heading>'
             '<intro><p eId="prefix__chp_2__sec_1__intro__p_1">κόσμε</p></intro>'
             '<subsection eId="prefix__chp_2__sec_1__subsec_1"><num>(1)</num>'

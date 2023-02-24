@@ -1,0 +1,106 @@
+PREFACE 
+
+  TABLE
+    TR
+      TC{valign top|style width: 100%}
+        Box 1. Structure of Ramsar Information Sheet – 2012 revision
+
+        Part 0. Summary Paragraph
+
+        0. Summary description of the Ramsar Site
+
+        Part 1. Administrative and locational details
+
+        Part 1.1 About this form
+
+        1. Name and address of those responsible for compiling this form
+
+        2. Period of collection of data and information used to compile the sheet
+
+        3. Country
+
+        4. Name of Ramsar Site
+
+        5. Designation of new ramsar Site or update of information related to an existing site
+
+        6. Changes to the site since its designation or earlier update
+
+        Part 1.2 About the Site’s location
+
+        7. Defining the site
+
+        8. Geographical coordinates
+
+        9. General location
+
+        10. Area of Ramsar Site
+
+        11. Biogeography
+
+        Part 2. Why is this site internationally important? (Criteria for designation)
+
+        12. Ramsar Criteria and their justification
+
+        Part 3. What is the site like? (Ecological character description)
+
+        13. What are the critical ecological components, processes and services that determine the ecological character of this Ramsar Site?
+
+        Part 3.1 Ecological components
+
+        14. Climate
+
+        15. Geomorphic setting
+
+        16. What wetland type(s) are in the site?
+
+        17. Plant species
+
+        18. Animal species
+
+        19. Soil
+
+        20. Water regime
+
+        21. Sediment regime
+
+        22. Water pH
+
+        23. Water salinity
+
+        24. Dissolved or suspended nutrients in water
+
+        25. Physical features of the surrounding area from which influences may affect the Ramsar Site
+
+        Part 3.2 Ecological processes
+
+        Part 3.3 Ecosystem services
+
+        26. Ecosystem services/benefits
+
+        27. Social or cultural values
+
+        Part 4. How is the site managed? (Conservation and management)
+
+        Part 4.1 Land tenure and responsibilities (‘Managers’)
+
+        28. Land tenure/ownership
+
+        29. Management authority
+
+        Part 4.2 Ecological character threats and responses (‘Management’)
+
+        30. Factors (actual or likely) adversely affecting the site’s ecological character, including changes in land and water use and development projects
+
+        31. Conservation measures taken
+
+        32. Management planning
+
+        33. Planning for restoration
+
+        34. Conservation measures proposed but not yet implemented
+
+        35. Bibliographic references
+
+        Part 5. Providing additional information relevant to this Ramsar Site
+
+

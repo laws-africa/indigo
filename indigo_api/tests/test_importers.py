@@ -1,8 +1,12 @@
+import os
 from io import StringIO
 
+from cobalt import FrbrUri
 from django.test import TestCase
+from docpipe.pipeline import PipelineContext
+from lxml import etree
 
-
+from indigo.pipelines.base import WrapAnnotations
 from indigo_api.importers.base import parse_page_nums, Importer, ImportContext
 from indigo_api.models import Document, Work, Language
 
@@ -28,6 +32,722 @@ class ImporterTestCase(TestCase):
         self.assertEqual(parse_page_nums(" , ,  "), [])
 
 
+class ImporterBluebellTestCase(TestCase):
+    maxDiff = None
+    # show diffs, no matter how big
+    _diffThreshold = 999999999
+
+    def setUp(self):
+        self.importer = Importer()
+        self.maxDiff = None
+        self.pipeline = self.importer.html_to_bluebell()
+        self.context = ImportContext(self.pipeline)
+        self.context.frbr_uri = FrbrUri.parse('/akn/za/act/2020/1')
+
+    def html_to_bluebell(self, html):
+        """ Run the provided html text through the pipeline and return the resulting context.text
+        """
+        self.context.html_text = html
+        self.pipeline(self.context)
+        return self.context.text
+
+    def run_file_test(self, prefix, update=False):
+        html = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/{prefix}.html')).read()
+
+        self.context.html_text = html
+        self.context.pipeline(self.context)
+
+        actual = self.context.text + '\n'
+        if update:
+            # update the fixture to match the actual
+            open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/{prefix}.txt'), 'w').write(actual)
+        expected = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/{prefix}.txt')).read()
+        self.assertMultiLineEqual(expected, actual)
+
+    def test_zw_cpa(self):
+        self.run_file_test("zw-cpa")
+
+    def test_za_cpa(self):
+        self.run_file_test("za-cpa")
+
+    def test_mu_convention(self):
+        self.run_file_test("mu-convention")
+
+    def test_tables(self):
+        self.run_file_test("tables")
+
+    def test_debate(self):
+        self.context.frbr_uri = FrbrUri.parse('/akn/za/debate/2020/1')
+        self.run_file_test("debate")
+
+    def test_hierarchicalize(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH 1.
+
+    First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm
+
+  PARAGRAPH 1.1.1.
+
+    Nested paragraph.
+
+    Text text text.
+
+  PARAGRAPH 1.1.2
+
+    Also this one.
+
+    1.1.3Not this one.
+
+  PARAGRAPH 123
+
+    Section
+""".strip(),
+            self.html_to_bluebell("""
+<p>1. First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm</p>
+
+<p>1.1.1. Nested paragraph.</p>
+
+<p>Text text text.</p>
+
+<p>1.1.2 Also this one.</p>
+
+<p>1.1.3Not this one.</p>
+
+<p>123 Section</p>""").strip())
+
+    def test_identify_sections(self):
+        self.assertMultiLineEqual(
+            """BODY 
+
+  SECTION 1. - Section heading
+
+    Section body
+
+  SECTION 2. - Section heading that is extra long and verbose but is bold and therefore can safely be taken as a section heading
+
+    Section 2 body that is substantial and shouldn't be mistaken for a section heading, so that the next line is a paragraph.
+
+    PARAGRAPH 3.
+
+      Numbered paragraph with a very long body that looks like a section heading but is not and should not be mistaken for a section heading.""",
+            self.html_to_bluebell("""
+<p>1. Section heading</p>
+<p>Section body</p>
+
+<p><b>2.</b> <b>Section heading that is extra long and verbose but is bold and therefore can safely be taken as a section heading</p>
+<p>Section 2 body that is substantial and shouldn't be mistaken for a section heading, so that the next line is a paragraph.</p>
+
+<p>3. Numbered paragraph with a very long body that looks like a section heading but is not and should not be mistaken for a section heading.</p>
+    """).strip())
+
+    def test_escape(self):
+        self.assertMultiLineEqual(
+            """BODY 
+
+  SECTION 1. - Section heading
+
+    \SECTION should be escaped
+
+    these should be escaped:
+
+    \{\{
+
+    \PREAMBLE
+
+    \{\{""",
+            self.html_to_bluebell("""
+<p>1. Section heading</p>
+<p>SECTION should be escaped</p>
+
+<p>these should be escaped:</p>
+<p>{{</p>
+<p>PREAMBLE</p>
+<ul>
+  <li>{{</li>
+</ul>
+""").strip())
+
+    def test_preface_preamble(self):
+        self.assertMultiLineEqual(
+            """PREFACE 
+
+  Preface
+
+  Some text
+
+PREAMBLE 
+
+  Preamble
+
+  Some text
+
+BODY 
+
+  SECTION 1. - Section heading
+
+    Section body
+
+    These should be ignored
+
+    Preface
+
+    Preamble""",
+            self.html_to_bluebell("""
+<p>Preface</p>
+<p>Some text</p>
+<p>Preamble</p>
+<p>Some text</p>
+<p>1. Section heading</p>
+<p>Section body</p>
+
+<p>These should be ignored</p>
+<p>Preface</p>
+<p>Preamble</p>
+""").strip())
+
+    def test_section_headings(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 2.
+
+    SUBSECTION (1)
+
+      directly into subsection no heading
+
+  SECTION 3. - A short heading
+
+    SUBSECTION (1)
+
+      directly into subsection but with a heading
+
+  SECTION 4. - A very long heading that is too long to normally look like a heading but is bold, and therefore assumed to be a section heading
+
+    SUBSECTION (1)
+
+      directly into subsection but with a heading
+
+      PARAGRAPH 5.
+
+        looks like a section initially but should be a paragraph
+
+      PARAGRAPH 6.
+
+        because the next element is not its content, but another akn-block!
+""".strip(),
+            self.html_to_bluebell("""
+<p>2. (1) directly into subsection no heading</p>
+
+<p>A short heading</p>
+<p>3. (1) directly into subsection but with a heading</p>
+
+<p><b>A very long heading that is too long to normally look like a heading but is bold, and therefore assumed to be a section heading</b></p>
+<p>4. (1) directly into subsection but with a heading</p>
+<p>5. looks like a section initially but should be a paragraph</p>
+<p>6. because the next element is not its content, but another akn-block!</p>
+""").strip())
+
+    def test_schedules(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+SCHEDULE  - FIRST SCHEDULE
+  SUBHEADING (Sections 5(3) and (4))
+
+  Body
+
+SCHEDULE  - 1 Heading
+
+  Body
+
+SCHEDULE 
+
+  Body
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>FIRST SCHEDULE (Sections 5(3) and (4))</p>
+<p>Body</p>
+
+<p>Schedule 1 Heading</p>
+<p>Body</p>
+
+<p>Schedule</p>
+<p>Body</p>
+""").strip())
+
+    def test_annexes(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 1. - Heading
+
+    Section body
+
+ANNEX  - FIRST ANNEX
+  SUBHEADING (Sections 5(3) and (4))
+
+  Body
+
+  SECTION 1. - Heading in annex
+
+    Section body in annex
+
+ANNEX  - 1 Heading
+
+  Body
+
+ANNEX 
+
+  Body
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>1. Heading</p>
+<p>Section body</p>
+
+<p>FIRST ANNEX (Sections 5(3) and (4))</p>
+<p>Body</p>
+
+<p>1. Heading in annex</p>
+<p>Section body in annex</p>
+
+<p>Annexure 1 Heading</p>
+<p>Body</p>
+
+<p>Annex</p>
+<p>Body</p>
+""").strip())
+
+    def test_subparagraphs_1(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (a)
+
+    foo
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+    SUBPARAGRAPH (iii)
+
+      item
+
+      SUBPARAGRAPH (aa)
+
+        item
+
+      SUBPARAGRAPH (bb)
+
+        item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(a) foo</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+<p>(iii) item</p>
+<p>(aa) item</p>
+<p>(bb) item</p>
+""").strip())
+
+    def test_subparagraphs_2(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (a)
+
+    foo
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+  PARAGRAPH (c)
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(a) foo</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+<p>(c) item</p>
+""").strip())
+
+    def test_subparagraphs_hij(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (h)
+
+    item
+
+  PARAGRAPH (i)
+
+    item
+
+  PARAGRAPH (j)
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(h) item</p>
+<p>(i) item</p>
+<p>(j) item</p>
+""").strip())
+
+    def test_subparagraphs_hi(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (h)
+
+    item
+
+  PARAGRAPH (i)
+
+    item
+
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(h) item</p>
+<p>(i) item</p>
+""").strip())
+
+    def test_subparagraphs_hij_i_ii_iii(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (h)
+
+    item
+
+  PARAGRAPH (i)
+
+    item
+
+  PARAGRAPH (j)
+
+    item
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+    SUBPARAGRAPH (iii)
+
+      item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(h) item</p>
+<p>(i) item</p>
+<p>(j) item</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+<p>(iii) item</p>
+""").strip())
+
+    def test_subparagraphs_hij_I_II_j(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (h)
+
+    item
+
+  PARAGRAPH (i)
+
+    item
+
+    SUBPARAGRAPH (I)
+
+      item
+
+    SUBPARAGRAPH (II)
+
+      item
+
+  PARAGRAPH (j)
+
+    item
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(h) item</p>
+<p>(i) item</p>
+<p>(I) item</p>
+<p>(II) item</p>
+<p>(j) item</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+""").strip())
+
+    def test_subparagraphs_uvx(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (u)
+
+    item
+
+  PARAGRAPH (v)
+
+    item
+
+  PARAGRAPH (w)
+
+    item
+
+  PARAGRAPH (x)
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(u) item</p>
+<p>(v) item</p>
+<p>(w) item</p>
+<p>(x) item</p>
+""").strip())
+
+    def test_subparagraphs_yz_aa_bb(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (y)
+
+    item
+
+  PARAGRAPH (z)
+
+    item
+
+  PARAGRAPH (aa)
+
+    item
+
+  PARAGRAPH (bb)
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(y) item</p>
+<p>(z) item</p>
+<p>(aa) item</p>
+<p>(bb) item</p>
+""").strip())
+
+    def test_subparagraphs_z_AA_BB(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (z)
+
+    item
+
+    SUBPARAGRAPH (AA)
+
+      item
+
+    SUBPARAGRAPH (BB)
+
+      item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(z) item</p>
+<p>(AA) item</p>
+<p>(BB) item</p>
+""").strip())
+
+    def test_subparagraphs_deeply_nested(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (a)
+
+    item
+
+  PARAGRAPH (b)
+
+    item
+
+    SUBPARAGRAPH (i)
+
+      item
+
+      SUBPARAGRAPH (aa)
+
+        item
+
+      SUBPARAGRAPH (bb)
+
+        item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+  PARAGRAPH (c)
+
+    item
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+    SUBPARAGRAPH (iii)
+
+      item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(a) item</p>
+<p>(b) item</p>
+<p>(i) item</p>
+<p>(aa) item</p>
+<p>(bb) item</p>
+<p>(ii) item</p>
+<p>(c) item</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+<p>(iii) item</p>
+""").strip())
+
+    def test_subparagraphs_h_i_ii_i(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (h)
+
+    item
+
+    SUBPARAGRAPH (i)
+
+      item
+
+    SUBPARAGRAPH (ii)
+
+      item
+
+  PARAGRAPH (i)
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>(h) item</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+<p>(i) item</p>
+""").strip())
+
+    def test_subparagraphs_dotted_nums(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH 9.2.1
+
+    item
+
+    SUBPARAGRAPH 9.2.1.1
+
+      item
+
+    SUBPARAGRAPH 9.2.1.2
+
+      item
+
+  PARAGRAPH 9.2.2
+
+    item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>9.2.1 item</p>
+<p>9.2.1.1 item</p>
+<p>9.2.1.2 item</p>
+<p>9.2.2 item</p>
+""").strip())
+
+    def test_wrap_annotations(self):
+        context = PipelineContext(pipeline=None)
+        xml = '''
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <content>
+    <p>hi</p>
+    <p>[Regular annotation.]</p>
+    <p>[Annotation with a 2<sup>nd</sup> in it<i>]</i></p>
+    <p><b>[</b>Annotation that starts with a bold open]</p>
+    <p>[inline annotation (or is it?)] with text following</p>
+    <p>[text in squares] [and some more]</p>
+  </content>
+</akomaNtoso>
+'''
+        context.xml = etree.fromstring(xml)
+        WrapAnnotations()(context)
+        new_xml_text = etree.tostring(context.xml, encoding='unicode')
+        self.assertMultiLineEqual('''<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <content>
+    <p>hi</p>
+    <p><remark status="editorial">[Regular annotation.]</remark></p>
+    <p><remark status="editorial">[Annotation with a 2<sup>nd</sup> in it<i>]</i></remark></p>
+    <p><remark status="editorial"><b>[</b>Annotation that starts with a bold open]</remark></p>
+    <p>[inline annotation (or is it?)] with text following</p>
+    <p>[text in squares] [and some more]</p>
+  </content>
+</akomaNtoso>''', new_xml_text)
+
+
 class ImporterDocxTestCase(TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'drafts']
 
@@ -38,11 +758,12 @@ class ImporterDocxTestCase(TestCase):
         self.work = Work.objects.get(pk=1)
         self.doc = Document(work=self.work, language=Language.objects.first())
 
-        # remove the docx to html conversion, and the slaw parsing,
-        # but keep the cleanup and the html-to-slaw parts
-        self.pipeline.stages = self.pipeline.stages[1:-2]
+        # remove the docx to html conversion, and the bluebell parsing,
+        # but keep the html-to-bluebell stages
+        self.pipeline.stages = self.pipeline.stages[1].stages
         self.context = ImportContext(self.pipeline)
         self.context.doc = self.doc
+        self.context.frbr_uri = self.work.work_uri
 
     def pipeline_html(self, html):
         """ Run the provided html text through the pipeline and return the resulting context.text
@@ -68,7 +789,9 @@ and
 newlines</p>
 """).strip(),
 
-"""some non-breaking spaces
+"""PREFACE 
+
+  some non-breaking spaces
 
 some tabs and newlines""")
 
@@ -77,9 +800,12 @@ some tabs and newlines""")
 <p>some <sup></sup> empty tags <sup></sup></p>
 """).strip(),
 
-"""some empty tags""")
+"""PREFACE 
+
+  some  empty tags""")
 
     def test_merge_ul(self):
+        # TODO: nuke this test?
         self.assertMultiLineEqual(self.pipeline_html("""
 <p>text</p>
 <ul>
@@ -91,15 +817,18 @@ some tabs and newlines""")
 <p>finish</p>
 """).strip(),
 
-"""text
+"""PREFACE 
 
-* item 1
-* item 2
+  text
 
+  item 1
 
-finish""")
+  item 2
+
+  finish""")
 
     def test_cleanup_tables(self):
+        # TODO: tweak pipeline stages for tests?
         self.assertMultiLineEqual(self.pipeline_html("""
 <table class="bordered" style="font-size: 20px">
   <thead>
@@ -121,17 +850,28 @@ finish""")
 </table>
 """).strip(),
 
-"""{| 
-|-
-! colspan="2" | header one
-! header two
-! header three
-|-
-| cell one
-| cell two
-| cell three
-|-
-|}""")
+"""PREFACE 
+
+  TABLE.bordered{style font-size: 20px}
+    TR
+      TH.header{colspan 2|style width: 100%}
+        header one
+
+      TH{style height: 2em}
+        header two
+
+      TH
+        header three
+
+    TR
+      TC{style width: 100%}
+        cell one
+
+      TC
+        cell two
+
+      TC
+        cell three""")
 
 
 class ImporterPDFTestCase(TestCase):

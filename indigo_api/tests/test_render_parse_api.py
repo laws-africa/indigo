@@ -80,7 +80,6 @@ class RenderParseAPITest(APITestCase):
         assert_in('Act 10 of 2014', response.data['output'])
 
     def test_parse_text_fragment(self):
-        # TODO: fragment isn't being set correctly? because both akomaNtoso and chapter are getting their xmlns set.
         response = self.client.post('/api/documents/1/parse', {
             'content': """
 CHAPTER 2 - The Beginning
@@ -103,10 +102,12 @@ CHAPTER 2 - The Beginning
         })
         self.assertEqual(response.status_code, 200)
         self.maxDiff = None
+        # TODO: is it okay for  xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+        #  to be set on both chapter and wrapping akomaNtoso tag?
         self.assertEqual(
             response.data['output'],
             '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">'
-            '<chapter eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
+            '<chapter xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
             '<section eId="prefix__chp_2__sec_1"><num>1.</num><heading>First Verse</heading>'
             '<intro><p eId="prefix__chp_2__sec_1__intro__p_1">κόσμε</p></intro>'
             '<subsection eId="prefix__chp_2__sec_1__subsec_1"><num>(1)</num>'

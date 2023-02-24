@@ -828,7 +828,7 @@ some tabs and newlines""")
   finish""")
 
     def test_cleanup_tables(self):
-        # TODO: tweak pipeline stages for tests?
+        # TODO: tweak pipeline stages and output for this test? (real-life table imports work)
         self.assertMultiLineEqual(self.pipeline_html("""
 <table class="bordered" style="font-size: 20px">
   <thead>
@@ -855,23 +855,13 @@ some tabs and newlines""")
   TABLE.bordered{style font-size: 20px}
     TR
       TH.header{colspan 2|style width: 100%}
-        header one
-
-      TH{style height: 2em}
-        header two
-
-      TH
-        header three
-
-    TR
+header one      TH{style height: 2em}
+header two      TH
+header three    TR
       TC{style width: 100%}
-        cell one
-
-      TC
-        cell two
-
-      TC
-        cell three""")
+cell one      TC
+cell two      TC
+cell three""")
 
 
 class ImporterPDFTestCase(TestCase):

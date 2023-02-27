@@ -316,7 +316,7 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/xml')
         self.assertEqual(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="sec_1"><num>1.</num>
         <content>
-          <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
+          <p>tester😀</p><p/><p><img class="akn-img" src="media/test-image.png"/></p>
         </content>
       </section>
     
@@ -327,7 +327,7 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'text/html')
         self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
 <span class="akn-content">
-          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
+          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img class="akn-img" data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
 ''')
 

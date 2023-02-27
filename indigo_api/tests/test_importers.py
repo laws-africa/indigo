@@ -834,17 +834,17 @@ some tabs and newlines""")
   <thead>
     <tr>
       <th class="header" colspan="2" width="80%">
-        <span style="font-weight: bold">header</span> one
+        <p><span style="font-weight: bold">header</span> one</p>
       </th>
-      <th style="height: 2em; border-bottom: 1px solid red">header two</th>
-      <th>header three</th>
+      <th style="height: 2em; border-bottom: 1px solid red"><p>header two</p></th>
+      <th><p>header three</p></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td width="90%">cell one</td>
-      <td>cell two</td>
-      <td>cell three</td>
+      <td width="90%"><p>cell one</p></td>
+      <td><p>cell two</p></td>
+      <td><p>cell three</p></td>
     </tr>
   </tbody>
 </table>
@@ -855,13 +855,23 @@ some tabs and newlines""")
   TABLE.bordered{style font-size: 20px}
     TR
       TH.header{colspan 2|style width: 100%}
-header one      TH{style height: 2em}
-header two      TH
-header three    TR
+        header one
+
+      TH{style height: 2em}
+        header two
+
+      TH
+        header three
+
+    TR
       TC{style width: 100%}
-cell one      TC
-cell two      TC
-cell three""")
+        cell one
+
+      TC
+        cell two
+
+      TC
+        cell three""")
 
 
 class ImporterPDFTestCase(TestCase):

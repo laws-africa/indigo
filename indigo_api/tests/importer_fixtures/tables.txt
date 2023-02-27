@@ -103,4 +103,25 @@ PREFACE
 
         Part 5. Providing additional information relevant to this Ramsar Site
 
+  TABLE.bordered{style font-size: 20px}
+    TR
+      TH.header{colspan 2|style width: 100%}
+        header one
+
+      TH{style height: 2em}
+        header two
+
+      TH
+        header three
+
+    TR
+      TC{style width: 100%}
+        cell one
+
+      TC
+        cell two
+
+      TC
+        cell three
+
 

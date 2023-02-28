@@ -348,11 +348,12 @@ class ParseView(DocumentResourceView, APIView):
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
+        text = serializer.validated_data.get('content')
         try:
-            text = serializer.validated_data.get('content')
             xml = importer.parse_from_text(text, frbr_uri)
         except ValueError as e:
-            log.warning("Error during import: %s" % str(e), exc_info=e)
+            log.warning(f"Error during import: {e}", exc_info=e)
+            log.warning(f"Full text being parsed (delimited with ---XXX---):\n---XXX---\n{text}\n---XXX---")
             raise ValidationError({'content': str(e) or _("Error during import")})
 
         if not fragment:

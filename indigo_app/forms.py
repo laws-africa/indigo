@@ -244,7 +244,7 @@ class BatchUpdateWorkForm(BatchCreateWorkForm):
         super().__init__(*args, **kwargs)
         from indigo.bulk_creator import RowValidationFormBase
         row_validation_form = RowValidationFormBase
-        fields = list(row_validation_form.base_fields) + ['actor']
+        fields = list(row_validation_form.base_fields)
         fields.remove('row_number')
         self.fields['update_columns'].widget = ColumnSelectWidget()
         # TODO: include place's extra properties

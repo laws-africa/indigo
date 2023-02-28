@@ -21,6 +21,9 @@ from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendmen
 from indigo_api.signals import work_changed
 
 
+no_spaces_validator = RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
+
+
 class SpreadsheetRow:
     def __init__(self, data, errors):
         self.errors = errors
@@ -47,12 +50,11 @@ class RowValidationFormBase(forms.Form):
     title = forms.CharField()
     doctype = LowerChoiceField(required=False)
     subtype = LowerChoiceField(required=False)
-    number = forms.CharField(validators=[
-        RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
-    ])
+    number = forms.CharField(validators=[no_spaces_validator])
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', __('Must be a year (yyyy).'))
     ])
+    actor = forms.CharField(required=False, validators=[no_spaces_validator])
     # publication details
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
@@ -478,7 +480,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                            subtype=row.subtype,
                            date=row.year,
                            number=row.number,
-                           actor=getattr(row, 'actor', None))
+                           actor=row.actor)
 
         return frbr_uri.work_uri().lower()
 

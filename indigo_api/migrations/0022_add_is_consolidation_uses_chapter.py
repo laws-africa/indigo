@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='placesettings',
             name='is_consolidation',
-            field=models.BooleanField(default=False, help_text='Is a consolidation being worked on in this country?'),
+            field=models.BooleanField(default=False, help_text='Is a consolidation being worked on in this place?'),
         ),
         migrations.AddField(
             model_name='placesettings',
             name='uses_chapter',
-            field=models.BooleanField(default=False, help_text='Are Chapters used for Acts in this country?'),
+            field=models.BooleanField(default=False, help_text='Are Chapters used for Acts in this place?'),
         ),
     ]

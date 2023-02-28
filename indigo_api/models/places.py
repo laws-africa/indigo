@@ -190,8 +190,8 @@ class PlaceSettings(models.Model):
     no_publication_document_text = models.CharField(
         max_length=1024, null=False, blank=True,
         default=_('Note: The original publication document is not available and this content could not be verified.'))
-    is_consolidation = models.BooleanField(default=False, null=False, help_text='Is a consolidation being worked on in this country?')
-    uses_chapter = models.BooleanField(default=False, null=False, help_text='Are Chapters used for Acts in this country?')
+    is_consolidation = models.BooleanField(default=False, null=False, help_text='Is a consolidation being worked on in this place?')
+    uses_chapter = models.BooleanField(default=False, null=False, help_text='Are Chapters used for Acts in this place?')
 
     @property
     def place(self):

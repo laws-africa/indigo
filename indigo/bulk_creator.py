@@ -246,6 +246,17 @@ class BaseBulkCreator(LocaleBasedMatcher):
         self.user = request.user
         self.testing = False
 
+        place = self.locality or self.country
+        if place.settings.uses_chapter:
+            self.basic_work_attributes += ['cap']
+            self.row_validation_form_class = RowValidationFormChapterIncluded
+        if place.settings.is_consolidation:
+            self.is_consolidation = True
+            self.consolidation_date = place.settings.as_at_date
+            self.row_validation_form_class = RowValidationFormConsolidationDateIncluded
+        if place.settings.is_consolidation and place.settings.uses_chapter:
+            self.row_validation_form_class = RowValidationFormChapterAndConsolidationDateIncluded
+
     def gsheets_id_from_url(self, url):
         match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', url)
         if match:

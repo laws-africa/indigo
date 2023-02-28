@@ -179,6 +179,13 @@ class RowValidationFormConsolidationDateIncluded(ConsolidationDateMixin, RowVali
     pass
 
 
+class RowValidationFormChapterIncluded(ChapterMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - the Chapter number (cap) is recorded.
+    """
+    pass
+
+
 class RowValidationFormChapterAndConsolidationDateIncluded(ChapterMixin, ConsolidationDateMixin, RowValidationFormBase):
     """ Differs from RowValidationFormBase in that:
     - the Chapter number (cap) is recorded

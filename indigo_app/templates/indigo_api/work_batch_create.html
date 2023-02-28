@@ -111,6 +111,9 @@
                   <th>{% trans 'Type' %}</th>
                   <th>{% trans 'Number' %}</th>
                   <th>{% trans 'Year' %}</th>
+                  {% if place.settings.uses_chapter %}
+                    <th>{% trans 'Cap.' %}</th>
+                  {% endif %}
                   {% for _, property_name in extra_properties %}
                     <th>{{ property_name }}</th>
                   {% endfor %}
@@ -158,6 +161,9 @@
                     <td>
                       {{ row.work.year }}
                     </td>
+                    {% if place.settings.uses_chapter %}
+                      <td>{{ row.work.cap }}</td>
+                    {% endif %}
                     {% for property_code, _ in extra_properties %}
                       <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
                     {% endfor %}
@@ -235,6 +241,9 @@
                 <th>{% trans 'Type' %}</th>
                 <th>{% trans 'Number' %}</th>
                 <th>{% trans 'Year' %}</th>
+                {% if place.settings.uses_chapter %}
+                  <th>{% trans 'Cap.' %}</th>
+                {% endif %}
                 {% for _, property_name in extra_properties %}
                   <th>{{ property_name }}</th>
                 {% endfor %}
@@ -281,6 +290,9 @@
                   <td>
                     {{ row.work.year }}
                   </td>
+                  {% if place.settings.uses_chapter %}
+                    <td>{{ row.work.cap }}</td>
+                  {% endif %}
                   {% for property_code, _ in extra_properties %}
                     <td>{% if row.work %}{{ row.work.properties|lookup:property_code }}{% endif %}</td>
                   {% endfor %}

@@ -160,10 +160,31 @@ class RowValidationFormUpdate(RowValidationFormBase):
 
 class ChapterMixin(forms.Form):
     """ Includes (optional) Chapter (cap) field.
-    For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
-    for the relevant country in settings.INDIGO['WORK_PROPERTIES']
+    For this field to be recorded on bulk creation, set `uses_cap` as True on the relevant Country.
     """
     cap = forms.CharField(required=False)
+
+
+class ConsolidationDateMixin(forms.Form):
+    """ Includes (optional) consolidation_date field.
+    For this field to be recorded on bulk creation, set `is_consolidation` as True on the relevant Country.
+    """
+    consolidation_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+
+
+class RowValidationFormConsolidationDateIncluded(ConsolidationDateMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - a consolidation date is recorded per row.
+    """
+    pass
+
+
+class RowValidationFormChapterAndConsolidationDateIncluded(ChapterMixin, ConsolidationDateMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - the Chapter number (cap) is recorded
+    - a consolidation date is recorded per row.
+    """
+    pass
 
 
 @plugins.register('bulk-creator')

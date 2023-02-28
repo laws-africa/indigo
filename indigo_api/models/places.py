@@ -205,10 +205,16 @@ class PlaceSettings(models.Model):
         country settings.
         """
         places = settings.INDIGO['WORK_PROPERTIES']
+        props = None
 
+        # get base properties from settings
         if self.locality:
             props = places.get(self.locality.place_code)
-            if props is not None:
-                return props
+        if props is None:
+            props = places.get(self.country.place_code, {})
 
-        return places.get(self.country.place_code, {})
+        # optionally add / overwrite cap
+        if self.uses_chapter:
+            props['cap'] = 'Chapter (Cap.)'
+
+        return props

@@ -52,6 +52,8 @@ class Country(models.Model):
         blank=True
     )
     publication_date_optional = models.BooleanField(default=False, null=False, help_text='Are publication dates optional in this country?')
+    is_consolidation = models.BooleanField(default=False, null=False, help_text='Is a consolidation being worked on in this country?')
+    uses_chapter = models.BooleanField(default=False, null=False, help_text='Are Chapters used for Acts in this country?')
 
     class Meta:
         ordering = ['country__name']

@@ -92,6 +92,7 @@ class RowValidationFormBase(forms.Form):
     row_number = forms.IntegerField()
 
     def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
+        place = locality or country
         self.default_doctype = default_doctype
         super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
@@ -99,7 +100,7 @@ class RowValidationFormBase(forms.Form):
             if locality else []
         self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
         self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
-        self.fields['publication_date'].required = not country.publication_date_optional
+        self.fields['publication_date'].required = not place.settings.publication_date_optional
 
     def get_doctypes_for_country(self, country_code):
         return [[d[1].lower(), d[0]] for d in

@@ -85,7 +85,8 @@
               <label class="mb-0" for="{{ form.is_consolidation.id_for_label }}">Consolidation</label>
               <p class="form-text text-muted">
                 Is a consolidation being worked on in this place?<br>
-                If checked, a Consolidation point in time will be created on bulk import for all principal works from the year up to the year of the given consolidation date. In other words, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will not be created for that Act.</p>
+                If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br>
+                For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import.</p>
             </div>
           </div>
         </div>

@@ -220,6 +220,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
         }
     """
 
+    basic_work_attributes = ['title', 'publication_name', 'publication_number', 'assent_date', 'publication_date',
+                             'commenced', 'stub', 'principal', 'disclaimer']
+
     log = logging.getLogger(__name__)
 
     _service = None
@@ -403,10 +406,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.frbr_uri = frbr_uri
             work.country = self.country
             work.locality = self.locality
-            for attribute in ['title',
-                              'publication_name', 'publication_number',
-                              'assent_date', 'publication_date',
-                              'commenced', 'stub', 'principal', 'disclaimer']:
+            for attribute in self.basic_work_attributes:
                 setattr(work, attribute, getattr(row, attribute, None))
             work.created_by_user = self.user
             work.updated_by_user = self.user

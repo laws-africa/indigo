@@ -227,7 +227,7 @@ class AddWorkView(PlaceViewBase, CreateView):
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['doctypes'] = self.doctypes()
-        context['publication_date_optional'] = self.country.publication_date_optional
+        context['publication_date_optional'] = self.place.settings.publication_date_optional
 
         return context
 

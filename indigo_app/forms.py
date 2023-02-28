@@ -618,7 +618,7 @@ class PlaceSettingsForm(forms.ModelForm):
     class Meta:
         model = PlaceSettings
         fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text',
-                  'consolidation_note', 'is_consolidation', 'uses_chapter')
+                  'consolidation_note', 'is_consolidation', 'uses_chapter', 'publication_date_optional')
 
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(

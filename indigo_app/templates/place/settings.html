@@ -102,6 +102,16 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.publication_date_optional.id_for_label }}" name="{{ form.publication_date_optional.html_name }}" value="on" {% if form.publication_date_optional.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.publication_date_optional.id_for_label }}">Publication date optional</label>
+              <p class="form-text text-muted">Is the publication date optional in this place?</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="card-footer text-right">

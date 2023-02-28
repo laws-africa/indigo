@@ -17,7 +17,7 @@ from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
-    VocabularyTopic, TaskLabel
+    VocabularyTopic, TaskLabel, ArbitraryExpressionDate
 from indigo_api.signals import work_changed
 
 
@@ -480,7 +480,38 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         self.create_or_update(row)
 
+        if self.should_add_consolidation(row):
+            self.add_consolidation_pit(row)
+
         return row
+
+    def get_consolidation_date(self, row):
+        if hasattr(row, 'consolidation_date'):
+            return row.consolidation_date
+        return self.consolidation_date
+
+    def should_add_consolidation(self, row):
+        if self.is_consolidation:
+            # only add a consolidation PiT if the work is from before the consolidation date
+            consolidation_date = self.get_consolidation_date(row)
+            return row.status == 'success' and \
+                   row.principal and \
+                   consolidation_date and \
+                   consolidation_date.year >= int(row.year)
+
+    def add_consolidation_pit(self, row):
+        consolidation_date = self.get_consolidation_date(row)
+        if self.dry_run:
+            row.notes.append(f'A consolidation will be created at {consolidation_date}')
+
+        else:
+            arbitrary_expression_date = ArbitraryExpressionDate(
+                date=consolidation_date,
+                description=f'Automatically added based on the given consolidation date',
+                work=row.work,
+                created_by_user=self.user
+            )
+            arbitrary_expression_date.save()
 
     def transform_aliases(self, row):
         """ Adds the term the platform expects to `row` for validation (and later saving).

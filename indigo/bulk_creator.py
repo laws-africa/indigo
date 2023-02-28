@@ -200,6 +200,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
         Can be subclassed / mixed in to add fields or making existing fields optional.
     """
 
+    country = None
+    locality = None
+    request = None
+    user = None
+    testing = False
+
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
@@ -220,6 +226,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
     _gsheets_secret = None
 
     GSHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+
+    def setup(self, country, locality, request):
+        self.country = country
+        self.locality = locality
+        self.request = request
+        self.user = request.user
+        self.testing = False
 
     def gsheets_id_from_url(self, url):
         match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', url)

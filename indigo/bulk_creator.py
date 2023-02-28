@@ -212,6 +212,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     request = None
     user = None
     testing = False
+    is_consolidation = False
+    consolidation_date = None
 
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')

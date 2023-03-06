@@ -178,7 +178,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.creator.locality = jhb
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(5, len(works))
+        self.assertEqual(8, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -203,6 +203,21 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row5.status)
         self.assertEqual('''{"subtype": [{"message": "Select a valid choice. ln is not one of the available choices.", "code": "invalid_choice"}]}''',
                          row5.errors.as_json())
+
+        row6 = works[5]
+        self.assertIsNone(row6.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row6.errors.as_json())
+
+        row7 = works[5]
+        self.assertIsNone(row7.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row7.errors.as_json())
+
+        row8 = works[5]
+        self.assertIsNone(row8.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row8.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')

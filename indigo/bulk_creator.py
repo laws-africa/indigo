@@ -48,7 +48,7 @@ class RowValidationFormBase(forms.Form):
     doctype = LowerChoiceField(required=False)
     subtype = LowerChoiceField(required=False)
     number = forms.CharField(validators=[
-        RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
+        RegexValidator(r'^[\w-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
     ])
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', __('Must be a year (yyyy).'))

@@ -67,7 +67,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', row3.status)
         self.assertEqual('Testy 3', row3.work.title)
         self.assertEqual('debatereport', row3.work.nature)
-        self.assertEqual('1', row3.work.number)
+        self.assertEqual('et-à-l-information-financière', row3.work.number)
         self.assertEqual('2020', row3.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row3.work.publication_date)
         self.assertFalse(row3.work.stub)
@@ -155,11 +155,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
 
-        work3 = Work.objects.get(frbr_uri='/akn/za/debatereport/2020/1')
+        work3 = Work.objects.get(frbr_uri='/akn/za/debatereport/2020/et-à-l-information-financière')
         row3 = works[2]
         self.assertEqual(work3, row3.work)
         self.assertEqual('Testy 3', work3.title)
-        self.assertEqual('1', work3.number)
+        self.assertEqual('et-à-l-information-financière', work3.number)
         self.assertEqual('2020', work3.year)
         self.assertEqual(datetime.date(2020, 6, 1), work3.publication_date)
         self.assertFalse(work3.stub)

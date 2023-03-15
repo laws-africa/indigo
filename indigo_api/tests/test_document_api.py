@@ -285,7 +285,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'withslashes.txt')
 
-    def test_document_pdf(self, mock):
+    def test_document_pdf(self):
         response = self.client.get('/api/documents/1.pdf')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/pdf')

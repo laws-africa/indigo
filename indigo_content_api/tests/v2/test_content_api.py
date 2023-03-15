@@ -81,7 +81,7 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/xml')
         self.assertIn('<akomaNtoso', response.content.decode('utf-8'))
 
-    def test_published_pdf(self, mock):
+    def test_published_pdf(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10.pdf')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/pdf')
@@ -144,7 +144,7 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(len(response.data['results']), 1)
 
-    def test_published_listing_pdf(self, mock):
+    def test_published_listing_pdf(self):
         response = self.client.get(self.api_path + '/akn/za/act.pdf')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/pdf')

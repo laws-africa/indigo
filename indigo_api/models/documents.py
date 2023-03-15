@@ -196,14 +196,9 @@ class DocumentMixin(object):
         exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
         return exporter.render(self, element=element)
 
-    def to_pdf(self, **kwargs):
+    def to_pdf(self):
         pdf_exporter = plugins.for_document('pdf-exporter', self)
-        return pdf_exporter.render(self, **kwargs)
-
-    def element_to_pdf(self, element):
-        """ Render a child element of this document into PDF. """
-        pdf_exporter = plugins.for_document('pdf-exporter', self)
-        return pdf_exporter.render(self, element=element)
+        return pdf_exporter.render(self)
 
     def is_consolidation(self):
         return self.expression_date in [c.date for c in self.work.arbitrary_expression_dates.all()]

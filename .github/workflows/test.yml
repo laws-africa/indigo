@@ -51,4 +51,4 @@ jobs:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
       run: |
         coverage run manage.py test
-        jshint indigo_app/static/javascript/indigo/
+        jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js

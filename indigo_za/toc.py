@@ -21,8 +21,6 @@ def section_title(item):
 class TOCBuilderZA(TOCBuilderBase):
     locale = ('za', None, None)
 
-    toc_elements = TOCBuilderBase.toc_elements + ['item']
-
     toc_non_unique_components = ['chapter', 'part', 'subpart']
 
     titles = {

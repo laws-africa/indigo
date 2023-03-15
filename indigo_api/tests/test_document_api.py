@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import tempfile
 from mock import patch
 import datetime

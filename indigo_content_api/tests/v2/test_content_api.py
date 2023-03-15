@@ -150,7 +150,8 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act.pdf')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/pdf')
-        self.assertIn('pdf-content', response.content.decode('utf-8'))
+        # we don't support rendering more than one PDF (see PDFRenderer.render)
+        self.assertEqual('', response.content.decode('utf-8'))
 
     def test_published_listing_pagination(self):
         response = self.client.get(self.api_path + '/akn/za/')

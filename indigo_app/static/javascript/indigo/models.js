@@ -51,6 +51,8 @@
       // originally triggered by a content change
       if (options && options.fromContent) return;
 
+      // rewrite all eIds before setting the content
+      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
@@ -110,25 +112,9 @@
         }
       }
 
-      // ensure attachment ids are correct, we could have deleted an attachment
-      if (oldNode.tagName === 'attachment') {
-        this.fixAttachmentIds();
-      }
-
+      // domChanged will rewrite all eIds
       this.trigger('change:dom');
       return first;
-    },
-
-    /** Ensures attachments have sequential eId numbering.
-     */
-    fixAttachmentIds: function() {
-      var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
-      const rewriter = new indigoAkn.EidRewriter();
-
-      for (var i = 0; i < result.snapshotLength; i++) {
-        const element = result.snapshotItem(i);
-        rewriter.rewriteEidPrefix(element, element.getAttribute('eId'), 'att_' + (i + 1));
-      }
     },
 
     /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.

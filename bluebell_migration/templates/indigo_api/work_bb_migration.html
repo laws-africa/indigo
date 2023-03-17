@@ -1,0 +1,36 @@
+{% extends "indigo_api/work_layout.html" %}
+
+{% block title %}Bluebell Migration – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  <h4>Bluebell Migration</h4>
+
+  {% if not must_migrate %}
+    <div class="alert alert-success">This work does NOT need to be migrated from slaw to bluebell.</div>
+  {% else %}
+    <div class="alert alert-warning">This work has documents that must be migrated from slaw to bluebell.</div>
+
+    <ul> Bluebell migration:
+      {% for doc in docs %}
+        <li>
+          <a href="{% url 'bb_migrate_document' frbr_uri=doc.frbr_uri doc_id=doc.id %}">
+            {{ doc }}
+            {% if doc.deleted %}<span class="badge badge-info">deleted</span>{% endif %}
+            {% if doc.must_migrate %}<span class="badge badge-warning">must migrate</span>{% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <ul> Blocklist migration:
+      {% for doc in docs %}
+        <li>
+          <a href="{% url 'bl_migrate_document' frbr_uri=doc.frbr_uri doc_id=doc.id %}">
+            {{ doc }}
+            {% if doc.deleted %}<span class="badge badge-info">deleted</span>{% endif %}
+            {% if doc.must_migrate %}<span class="badge badge-warning">must migrate</span>{% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

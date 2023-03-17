@@ -1,0 +1,132 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load sass_tags %}
+
+{% block title %}Bluebell Migration – {{ block.super }}{% endblock %}
+
+{% block head-css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% sass_src 'stylesheets/indigo-la-tradition.scss' %}">
+{% endblock %}
+
+{% block main-content %}
+  <div class="container-fluid pt-3 pb-5">
+    <h4>
+      {% if doc.deleted %}
+        #{{ doc.pk }} {{ doc.title }} <span class="badge badge-info">deleted</span>
+      {% else %}
+        <a href="{% url 'document' doc_id=doc.pk %}">#{{ doc.pk }} {{ doc.title }}</a>
+      {% endif %}
+    </h4>
+
+    <div class="mb-3">
+      <a href="{% url 'bb_migrate_work' frbr_uri=work.frbr_uri %}">&lt; Back</a>
+    </div>
+
+    {% if not must_migrate %}
+      <div class="alert alert-success">This document does NOT need to be migrated from slaw to bluebell.</div>
+    {% else %}
+      <div class="alert alert-warning">This document must be migrated from slaw to bluebell.</div>
+
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <a class="nav-link active" href="#stability" data-toggle="tab">
+            Stability check
+            {% if stability_passed %}
+              <i class="fa fa-check-circle text-success"></i>
+            {% else %}
+              <i class="fa fa-exclamation-triangle text-danger"></i>
+            {% endif %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#content-fingerprint" data-toggle="tab">
+            Content fingerprint check
+            {% if content_fingerprint_passed %}
+              <i class="fa fa-check-circle text-success"></i>
+            {% else %}
+              <i class="fa fa-exclamation-triangle text-danger"></i>
+            {% endif %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#validation" data-toggle="tab">
+            Validation
+            {% if validates %}
+              <i class="fa fa-check-circle text-success"></i>
+            {% else %}
+              <i class="fa fa-exclamation-triangle text-danger"></i>
+            {% endif %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#migrated-xml" data-toggle="tab">Original vs migrated XML</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#migrated-unparsed" data-toggle="tab">Original vs migrated unparsed</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#migrated-quality" data-toggle="tab">Re-parsed XML vs migrated XML</a>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="stability" role="tabpanel">
+          {% if stability_passed %}
+            <div class="alert alert-success">
+              The migrated XML is stable and doesn't change after being unparsed and reparsed.
+            </div>
+          {% else %}
+            <div class="alert alert-danger">
+              The migrated XML is NOT stable! Differences between the migrated and re-parsed migrated XML are shown below.
+            </div>
+
+            {{ stability_diff|safe }}
+          {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="content-fingerprint" role="tabpanel">
+          {% if content_fingerprint_passed %}
+            <div class="alert alert-success">
+              The migrated content fingerprint matches the original.
+            </div>
+          {% else %}
+            <div class="alert alert-danger">
+              The migrated content fingerprint does not match the original! Differences between the original and migrated are shown below.
+            </div>
+
+            {{ content_fingerprint_diff|safe }}
+          {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="validation" role="tabpanel">
+          {% if validates %}
+            <div class="alert alert-success">
+              The migrated content is valid AKN XML.
+            </div>
+          {% else %}
+            <div class="alert alert-danger">
+              The migrated content doesn't validate: {{ validation_errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="migrated-xml" role="tabpanel">
+          {{ xml_diff|safe }}
+        </div>
+
+        <div class="tab-pane fade" id="migrated-unparsed" role="tabpanel">
+          {{ unparsed_diff|safe }}
+        </div>
+
+        <div class="tab-pane fade" id="migrated-quality" role="tabpanel">
+          {{ quality_diff|safe }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

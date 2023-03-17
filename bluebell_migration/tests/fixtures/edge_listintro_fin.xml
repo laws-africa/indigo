@@ -1,0 +1,232 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion" name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias name="title" value="Work with uncommenced provisions, only one commencement so far"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2021-10-11" name="" number="" showAs=""/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef date="2021-10-20" eId="amendment-2021-10-20" source="#amendment-0-source" type="amendment"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_2">
+        <num>2.</num>
+        <heading>Subparagraphs</heading>
+        <subsection eId="sec_2__subsec_2A">
+          <num>(2A)</num>
+          <heading>intro edge cases</heading>
+          <intro>
+            <p eId="sec_2__subsec_2A__intro__p_1">before list</p>
+            <table eId="sec_2__subsec_2A__intro__table_1">
+              <tr>
+                <th>
+                  <p eId="sec_2__subsec_2A__intro__table_1__p_1">Heading 1</p>
+                </th>
+                <th>
+                  <p eId="sec_2__subsec_2A__intro__table_1__p_2">Heading 2</p>
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <p eId="sec_2__subsec_2A__intro__table_1__p_3">Content 1</p>
+                </td>
+                <td>
+                  <p eId="sec_2__subsec_2A__intro__table_1__p_4">Content 2</p>
+                </td>
+              </tr>
+            </table>
+            <p eId="sec_2__subsec_2A__intro__p_2">second intro p</p>
+          </intro>
+          <paragraph eId="sec_2__subsec_2A__para_a">
+            <num>(a)</num>
+            <heading>unlikely heading</heading>
+            <subheading>unlikely subheading</subheading>
+            <intro>
+              <p eId="sec_2__subsec_2A__para_a__intro__p_1">first para.</p>
+              <table eId="sec_2__subsec_2A__para_a__intro__table_1">
+                <tr>
+                  <th>
+                    <p eId="sec_2__subsec_2A__para_a__intro__table_1__p_1">Heading 1</p>
+                  </th>
+                  <th>
+                    <p eId="sec_2__subsec_2A__para_a__intro__table_1__p_2">Heading 2</p>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <p eId="sec_2__subsec_2A__para_a__intro__table_1__p_3">Content 1</p>
+                  </td>
+                  <td>
+                    <p eId="sec_2__subsec_2A__para_a__intro__table_1__p_4">Content 2</p>
+                  </td>
+                </tr>
+              </table>
+              <p eId="sec_2__subsec_2A__para_a__intro__p_2">first para / intro</p>
+            </intro>
+            <subparagraph eId="sec_2__subsec_2A__para_a__subpara_i">
+              <num>(i)</num>
+              <intro>
+                <p eId="sec_2__subsec_2A__para_a__subpara_i__intro__p_1">first subpara.</p>
+                <p eId="sec_2__subsec_2A__para_a__subpara_i__intro__p_2">first subpara / intro</p>
+              </intro>
+              <subparagraph eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A">
+                <num>(A)</num>
+                <intro>
+                  <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__intro__p_1">first item</p>
+                  <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__intro__p_2">second p of first item</p>
+                  <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__intro__p_3">intro to subitems:</p>
+                </intro>
+                <subparagraph eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__subpara_I">
+                  <num>(I)</num>
+                  <content>
+                    <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                  </content>
+                </subparagraph>
+                <subparagraph eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__subpara_II">
+                  <num>(II)</num>
+                  <content>
+                    <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                    <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_A__subpara_II__p_2">p2 of second subitem</p>
+                  </content>
+                </subparagraph>
+              </subparagraph>
+              <subparagraph eId="sec_2__subsec_2A__para_a__subpara_i__subpara_B">
+                <num>(B)</num>
+                <content>
+                  <p eId="sec_2__subsec_2A__para_a__subpara_i__subpara_B__p_1">second item</p>
+                </content>
+              </subparagraph>
+            </subparagraph>
+            <subparagraph eId="sec_2__subsec_2A__para_a__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="sec_2__subsec_2A__para_a__subpara_ii__p_1">second subpara</p>
+              </content>
+            </subparagraph>
+          </paragraph>
+          <paragraph eId="sec_2__subsec_2A__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_2__subsec_2A__para_b__p_1">second para</p>
+            </content>
+          </paragraph>
+          <hcontainer eId="sec_2__subsec_2A__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="sec_2__subsec_2A__hcontainer_1__p_1">second p</p>
+              <p eId="sec_2__subsec_2A__hcontainer_1__p_2">more</p>
+              <p eId="sec_2__subsec_2A__hcontainer_1__p_3">intro:</p>
+            </content>
+          </hcontainer>
+          <paragraph eId="sec_2__subsec_2A__para_a_2">
+            <num>(a)</num>
+            <intro>
+              <p eId="sec_2__subsec_2A__para_a_2__intro__p_1">first para</p>
+            </intro>
+            <subparagraph eId="sec_2__subsec_2A__para_a_2__subpara_i">
+              <num>(i)</num>
+              <intro>
+                <p eId="sec_2__subsec_2A__para_a_2__subpara_i__intro__p_1">first subpara</p>
+              </intro>
+              <subparagraph eId="sec_2__subsec_2A__para_a_2__subpara_i__subpara_A">
+                <num>(A)</num>
+                <content>
+                  <p eId="sec_2__subsec_2A__para_a_2__subpara_i__subpara_A__p_1">first item</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="sec_2__subsec_2A__para_a_2__subpara_i__subpara_B">
+                <num>(B)</num>
+                <content>
+                  <p eId="sec_2__subsec_2A__para_a_2__subpara_i__subpara_B__p_1">second item</p>
+                </content>
+              </subparagraph>
+            </subparagraph>
+            <subparagraph eId="sec_2__subsec_2A__para_a_2__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="sec_2__subsec_2A__para_a_2__subpara_ii__p_1">second subpara</p>
+              </content>
+            </subparagraph>
+          </paragraph>
+          <paragraph eId="sec_2__subsec_2A__para_b_2">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_2__subsec_2A__para_b_2__p_1">second para</p>
+            </content>
+          </paragraph>
+          <hcontainer eId="sec_2__subsec_2A__hcontainer_2" name="hcontainer">
+            <content>
+              <p eId="sec_2__subsec_2A__hcontainer_2__p_1">more</p>
+              <p eId="sec_2__subsec_2A__hcontainer_2__p_2">intro:</p>
+            </content>
+          </hcontainer>
+          <paragraph eId="sec_2__subsec_2A__para_a_3">
+            <num>(a)</num>
+            <intro>
+              <p eId="sec_2__subsec_2A__para_a_3__intro__p_1">first para</p>
+            </intro>
+            <subparagraph eId="sec_2__subsec_2A__para_a_3__subpara_i">
+              <num>(i)</num>
+              <intro>
+                <p eId="sec_2__subsec_2A__para_a_3__subpara_i__intro__p_1">first subpara</p>
+              </intro>
+              <subparagraph eId="sec_2__subsec_2A__para_a_3__subpara_i__subpara_A">
+                <num>(A)</num>
+                <content>
+                  <p eId="sec_2__subsec_2A__para_a_3__subpara_i__subpara_A__p_1">first item</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="sec_2__subsec_2A__para_a_3__subpara_i__subpara_B">
+                <num>(B)</num>
+                <content>
+                  <p eId="sec_2__subsec_2A__para_a_3__subpara_i__subpara_B__p_1">second item</p>
+                </content>
+              </subparagraph>
+            </subparagraph>
+            <subparagraph eId="sec_2__subsec_2A__para_a_3__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="sec_2__subsec_2A__para_a_3__subpara_ii__p_1">second subpara</p>
+              </content>
+            </subparagraph>
+          </paragraph>
+          <paragraph eId="sec_2__subsec_2A__para_b_3">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_2__subsec_2A__para_b_3__p_1">second para</p>
+            </content>
+          </paragraph>
+          <wrapUp>
+            <p eId="sec_2__subsec_2A__wrapup__p_1">wrap for section</p>
+          </wrapUp>
+        </subsection>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

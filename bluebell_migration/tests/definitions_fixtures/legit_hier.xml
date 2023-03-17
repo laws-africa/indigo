@@ -1,0 +1,234 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#Laws-Africa">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2022/1/!main"/>
+          <FRBRuri value="/akn/za/act/2022/1"/>
+          <FRBRalias value="Definitions hier defs" name="title"/>
+          <FRBRdate date="2022" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2022/1/eng@2022-07-08/!main"/>
+          <FRBRuri value="/akn/za/act/2022/1/eng@2022-07-08"/>
+          <FRBRdate date="2022-07-08" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2022/1/eng@2022-07-08/!main"/>
+          <FRBRuri value="/akn/za/act/2022/1/eng@2022-07-08"/>
+          <FRBRdate date="2022-07-14" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication showAs="" name="" date="2022-05-19" number=""/>
+      <references source="#Laws-Africa">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCTerm eId="term-Appeal_Board" showAs="Appeal Board" href="/ontology/term/this.eng.Appeal_Board"/>
+        <TLCTerm eId="term-authorized_officer" showAs="authorized officer" href="/ontology/term/this.eng.authorized_officer"/>
+        <TLCTerm eId="term-Committee" showAs="Committee" href="/ontology/term/this.eng.Committee"/>
+        <TLCTerm eId="term-Conventions" showAs="Conventions" href="/ontology/term/this.eng.Conventions"/>
+        <TLCTerm eId="term-member_of_the_family" showAs="member of the family" href="/ontology/term/this.eng.member_of_the_family"/>
+        <TLCTerm eId="term-Minister" showAs="Minister" href="/ontology/term/this.eng.Minister"/>
+        <TLCTerm eId="term-OAU_Convention_on_Refugees__1969" showAs="OAU Convention on Refugees, 1969" href="/ontology/term/this.eng.OAU_Convention_on_Refugees__1969"/>
+        <TLCTerm eId="term-prescribed" showAs="prescribed" href="/ontology/term/this.eng.prescribed"/>
+        <TLCTerm eId="term-protected_person" showAs="protected person" href="/ontology/term/this.eng.protected_person"/>
+        <TLCTerm eId="term-Protocol_on_Refugees__1967" showAs="Protocol on Refugees, 1967" href="/ontology/term/this.eng.Protocol_on_Refugees__1967"/>
+        <TLCTerm eId="term-Public_Service_Commission" showAs="Public Service Commission" href="/ontology/term/this.eng.Public_Service_Commission"/>
+        <TLCTerm eId="term-UN_Convention_on_Refugees__1951" showAs="UN Convention on Refugees, 1951" href="/ontology/term/this.eng.UN_Convention_on_Refugees__1951"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Definitions</heading>
+        <intro>
+          <p eId="sec_1__intro__p_1">In this Act, unless the context otherwise indicates -</p>
+        </intro>
+        <paragraph eId="sec_1__para_1">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1__p_1" refersTo="#term-Appeal_Board">“<def refersTo="#term-Appeal_Board">Appeal Board</def>” means the Namibia Refugees Appeal Board established by section 28(1);</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_2">
+          <num>1</num>
+          <intro>
+            <p eId="sec_1__para_1_2__intro__p_1" refersTo="#term-authorized_officer">“<def refersTo="#term-authorized_officer">authorized officer</def>” means any person -</p>
+          </intro>
+          <subparagraph eId="sec_1__para_1_2__subpara_a">
+            <num>(a)</num>
+            <intro>
+              <p eId="sec_1__para_1_2__subpara_a__intro__p_1">who is an <term refersTo="#term-authorized_officer" eId="sec_1__para_1_2__subpara_a__intro__p_1__term_1">authorized officer</term> in terms of:</p>
+            </intro>
+            <subparagraph eId="sec_1__para_1_2__subpara_a__subpara_i">
+              <num>(i)</num>
+              <content>
+                <p eId="sec_1__para_1_2__subpara_a__subpara_i__p_1">subsection (1) of section 29; or</p>
+              </content>
+            </subparagraph>
+            <subparagraph eId="sec_1__para_1_2__subpara_a__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="sec_1__para_1_2__subpara_a__subpara_ii__p_1">subsection (2) of section 30; or</p>
+              </content>
+            </subparagraph>
+          </subparagraph>
+          <paragraph eId="sec_1__para_1_2__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_1__para_1_2__para_b__p_1">who is appointed as an <term refersTo="#term-authorized_officer" eId="sec_1__para_1_2__para_b__p_1__term_1">authorized officer</term> under subsection (2) of that section; “Commissioner” means the Commissioner for Refugees appointed in terms of section 6;</p>
+            </content>
+          </paragraph>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_3">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_3__p_1" refersTo="#term-Committee">“<def refersTo="#term-Committee">Committee</def>” means the Namibia Refugees Committee established by section 7(1);</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_4">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_4__p_1" refersTo="#term-Conventions">“<def refersTo="#term-Conventions">Conventions</def>” means the <term refersTo="#term-UN_Convention_on_Refugees__1951" eId="sec_1__para_1_4__p_1__term_1">UN Convention on Refugees, 1951</term>, as amended by the <term refersTo="#term-Protocol_on_Refugees__1967" eId="sec_1__para_1_4__p_1__term_2">Protocol on Refugees, 1967</term>, and the <term refersTo="#term-OAU_Convention_on_Refugees__1969" eId="sec_1__para_1_4__p_1__term_3">OAU Convention on Refugees, 1969</term>;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_5">
+          <num>1</num>
+          <intro>
+            <p eId="sec_1__para_1_5__intro__p_1" refersTo="#term-member_of_the_family">“<def refersTo="#term-member_of_the_family">member of the family</def>”, in relation to any refugee(whether recognized or not), means -</p>
+          </intro>
+          <paragraph eId="sec_1__para_1_5__para_a">
+            <num>(a)</num>
+            <content>
+              <p eId="sec_1__para_1_5__para_a__p_1">any spouseof such refugee; or</p>
+            </content>
+          </paragraph>
+          <paragraph eId="sec_1__para_1_5__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_1__para_1_5__para_b__p_1">any unmarried child of such refugeeunder the age of 18 years; or</p>
+            </content>
+          </paragraph>
+          <paragraph eId="sec_1__para_1_5__para_c">
+            <num>(c)</num>
+            <content>
+              <p eId="sec_1__para_1_5__para_c__p_1">any person who is related to such refugeeby affinity or consanguinity and who is dependent upon such refugee;</p>
+            </content>
+          </paragraph>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_6">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_6__p_1" refersTo="#term-Minister">“<def refersTo="#term-Minister">Minister</def>” means the Minister of Home Affairs;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_7">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_7__p_1" refersTo="#term-OAU_Convention_on_Refugees__1969">“<def refersTo="#term-OAU_Convention_on_Refugees__1969">OAU Convention on Refugees, 1969</def>” means the Organization of African Unity Convention Governing the Specific Aspects of Refugee Problems in Africa of 10 September 1969;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_8">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_8__p_1" refersTo="#term-prescribed">“<def refersTo="#term-prescribed">prescribed</def>” means prescribed by regulation made under section 31, and “prescribe” shall have a corresponding meaning;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_9">
+          <num>1</num>
+          <intro>
+            <p eId="sec_1__para_1_9__intro__p_1" refersTo="#term-protected_person">“<def refersTo="#term-protected_person">protected person</def>” means -</p>
+          </intro>
+          <paragraph eId="sec_1__para_1_9__para_a">
+            <num>(a)</num>
+            <content>
+              <p eId="sec_1__para_1_9__para_a__p_1">a member of the familyof a recognized refugee; or</p>
+            </content>
+          </paragraph>
+          <paragraph eId="sec_1__para_1_9__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_1__para_1_9__para_b__p_1">a person who is permitted in terms of section 17(3) or (4) to continue to remain in Namibia;</p>
+            </content>
+          </paragraph>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_10">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_10__p_1" refersTo="#term-Protocol_on_Refugees__1967">“<def refersTo="#term-Protocol_on_Refugees__1967">Protocol on Refugees, 1967</def>” means the Protocol Relating to the Status of Refugees of 31 January 1967;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_11">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_11__p_1" refersTo="#term-Public_Service_Commission">“<def refersTo="#term-Public_Service_Commission">Public Service Commission</def>” means the Public Service Commission established in terms of Article 112(1) of the Namibian Constitution;</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_1_12">
+          <num>1</num>
+          <content>
+            <p eId="sec_1__para_1_12__p_1" refersTo="#term-UN_Convention_on_Refugees__1951">“<def refersTo="#term-UN_Convention_on_Refugees__1951">UN Convention on Refugees, 1951</def>” means the United Nations Convention Relating to the Status of Refugees of 28 July 1951.</p>
+          </content>
+        </paragraph>
+      </section>
+      <section eId="sec_2">
+        <num>2.</num>
+        <heading>Application of <term refersTo="#term-Conventions" eId="sec_2__term_1">Conventions</term></heading>
+        <subsection eId="sec_2__subsec_1">
+          <num>(1)</num>
+          <content>
+            <p eId="sec_2__subsec_1__p_1">Subject to the provisions of this Act, the provisions of the <term refersTo="#term-Conventions" eId="sec_2__subsec_1__p_1__term_1">Conventions</term> which are set out in the Schedule to this Act shall be observed and shall have the force and effect of law in Namibia.</p>
+          </content>
+        </subsection>
+        <subsection eId="sec_2__subsec_2">
+          <num>(2)</num>
+          <intro>
+            <p eId="sec_2__subsec_2__intro__p_1">In the application of the <term refersTo="#term-Conventions" eId="sec_2__subsec_2__intro__p_1__term_1">Conventions</term> in terms of subsection (1), a reference in the <term refersTo="#term-Conventions" eId="sec_2__subsec_2__intro__p_1__term_2">Conventions</term> to -</p>
+          </intro>
+          <paragraph eId="sec_2__subsec_2__para_a">
+            <num>(a)</num>
+            <content>
+              <p eId="sec_2__subsec_2__para_a__p_1">a Contracting State, shall be construed as a reference to Namibia; and</p>
+            </content>
+          </paragraph>
+          <paragraph eId="sec_2__subsec_2__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_2__subsec_2__para_b__p_1">Contracting States, shall be construed as including Namibia.</p>
+            </content>
+          </paragraph>
+        </subsection>
+      </section>
+      <section eId="sec_3">
+        <num>3.</num>
+        <heading>Meaning of “refugee”</heading>
+        <intro>
+          <p eId="sec_3__intro__p_1">For the purposes of this Act, a person shall be a refugee if -</p>
+        </intro>
+        <paragraph eId="sec_3__para_a">
+          <num>(a)</num>
+          <content>
+            <p eId="sec_3__para_a__p_1">owing to a well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion, he or she is outside the country of his or her nationality and is unable or, owing to such fear, is unwilling to avail himself or herself of the protection of that country; or</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_3__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_3__para_b__p_1">not having a nationality and being outside the country of his or her former habitual residence, he or she is unable or, owing to a well-founded fear of being persecuted for reasons of race, religion, membership of a particular social group or political opinion, is unwilling to return to it; or</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_3__para_c">
+          <num>(c)</num>
+          <content>
+            <p eId="sec_3__para_c__p_1">owing to external aggression, occupation, foreign domination or events seriously disturbing public order in either part or the whole of his or her country of origin or nationality, he or she is compelled to leave his or her place of habitual residence in order to seek refuge in another place outside his or her country of origin or nationality.</p>
+          </content>
+        </paragraph>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

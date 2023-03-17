@@ -1,0 +1,489 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+          <FRBRalias value="Basic" name="title"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="xx-playground"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2021-06-17"/>
+      <references source="#cobalt">
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+      </references>
+    </meta>
+    <body>
+      <hcontainer name="hcontainer" eId="hcontainer_1">
+        <crossHeading eId="hcontainer_1__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_2">
+        <content>
+          <p eId="hcontainer_2__p_1">preceding</p>
+        </content>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_3">
+        <crossHeading eId="hcontainer_3__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_4">
+        <content>
+          <blockList eId="hcontainer_4__list_1">
+            <listIntroduction eId="hcontainer_4__list_1__intro_1">intro:</listIntroduction>
+            <item eId="hcontainer_4__list_1__item_a">
+              <num>(a)</num>
+              <p eId="hcontainer_4__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="hcontainer_4__list_1__item_b">
+              <num>(b)</num>
+              <p eId="hcontainer_4__list_1__item_b__p_1">second para</p>
+            </item>
+            <listWrapUp eId="hcontainer_4__list_1__wrapup_1">wrap</listWrapUp>
+          </blockList>
+        </content>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_5">
+        <crossHeading eId="hcontainer_5__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_6">
+        <content>
+          <p eId="hcontainer_6__p_1">intervening</p>
+        </content>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_7">
+        <crossHeading eId="hcontainer_7__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_8">
+        <content>
+          <blockList eId="hcontainer_8__list_1">
+            <listIntroduction eId="hcontainer_8__list_1__intro_1">intro:</listIntroduction>
+            <item eId="hcontainer_8__list_1__item_a">
+              <num>(a)</num>
+              <p eId="hcontainer_8__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="hcontainer_8__list_1__item_b">
+              <num>(b)</num>
+              <p eId="hcontainer_8__list_1__item_b__p_1">second para</p>
+            </item>
+            <listWrapUp eId="hcontainer_8__list_1__wrapup_1">wrap</listWrapUp>
+          </blockList>
+        </content>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_9">
+        <crossHeading eId="hcontainer_9__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_10">
+        <content>
+          <p eId="hcontainer_10__p_1">following</p>
+        </content>
+      </hcontainer>
+      <hcontainer name="hcontainer" eId="hcontainer_11">
+        <crossHeading eId="hcontainer_11__crossHeading_1">crshd</crossHeading>
+      </hcontainer>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Section 1 heading</heading>
+        <crossHeading eId="sec_1__crossHeading_1">crshd</crossHeading>
+        <hcontainer name="hcontainer" eId="sec_1__hcontainer_1">
+          <content>
+            <p eId="sec_1__hcontainer_1__p_1">preceding</p>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_1__crossHeading_2">crshd</crossHeading>
+        <hcontainer name="hcontainer" eId="sec_1__hcontainer_2">
+          <content>
+            <blockList eId="sec_1__hcontainer_2__list_1">
+              <listIntroduction eId="sec_1__hcontainer_2__list_1__intro_1">intro:</listIntroduction>
+              <item eId="sec_1__hcontainer_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="sec_1__hcontainer_2__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="sec_1__hcontainer_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="sec_1__hcontainer_2__list_1__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="sec_1__hcontainer_2__list_1__wrapup_1">wrap</listWrapUp>
+            </blockList>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_1__crossHeading_3">crshd</crossHeading>
+        <hcontainer name="hcontainer" eId="sec_1__hcontainer_3">
+          <content>
+            <p eId="sec_1__hcontainer_3__p_1">intervening</p>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_1__crossHeading_4">crshd</crossHeading>
+        <hcontainer name="hcontainer" eId="sec_1__hcontainer_4">
+          <content>
+            <blockList eId="sec_1__hcontainer_4__list_1">
+              <listIntroduction eId="sec_1__hcontainer_4__list_1__intro_1">intro:</listIntroduction>
+              <item eId="sec_1__hcontainer_4__list_1__item_a">
+                <num>(a)</num>
+                <p eId="sec_1__hcontainer_4__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="sec_1__hcontainer_4__list_1__item_b">
+                <num>(b)</num>
+                <p eId="sec_1__hcontainer_4__list_1__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="sec_1__hcontainer_4__list_1__wrapup_1">wrap</listWrapUp>
+            </blockList>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_1__crossHeading_5">crshd</crossHeading>
+        <hcontainer name="hcontainer" eId="sec_1__hcontainer_5">
+          <content>
+            <p eId="sec_1__hcontainer_5__p_1">following</p>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_1__crossHeading_6">crshd</crossHeading>
+      </section>
+      <part eId="part_A">
+        <num>A</num>
+        <heading>Part A heading</heading>
+        <crossHeading eId="part_A__crossHeading_1">crshd</crossHeading>
+        <section eId="part_A__sec_2">
+          <num>2.</num>
+          <heading>Section 2 heading</heading>
+          <crossHeading eId="part_A__sec_2__crossHeading_1">crshd</crossHeading>
+          <hcontainer name="hcontainer" eId="part_A__sec_2__hcontainer_1">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_1__p_1">preceding</p>
+            </content>
+          </hcontainer>
+          <crossHeading eId="part_A__sec_2__crossHeading_2">crshd</crossHeading>
+          <hcontainer name="hcontainer" eId="part_A__sec_2__hcontainer_2">
+            <content>
+              <blockList eId="part_A__sec_2__hcontainer_2__list_1">
+                <listIntroduction eId="part_A__sec_2__hcontainer_2__list_1__intro_1">intro:</listIntroduction>
+                <item eId="part_A__sec_2__hcontainer_2__list_1__item_a">
+                  <num>(a)</num>
+                  <p eId="part_A__sec_2__hcontainer_2__list_1__item_a__p_1">first para</p>
+                </item>
+                <item eId="part_A__sec_2__hcontainer_2__list_1__item_b">
+                  <num>(b)</num>
+                  <p eId="part_A__sec_2__hcontainer_2__list_1__item_b__p_1">second para</p>
+                </item>
+                <listWrapUp eId="part_A__sec_2__hcontainer_2__list_1__wrapup_1">wrap</listWrapUp>
+              </blockList>
+            </content>
+          </hcontainer>
+          <crossHeading eId="part_A__sec_2__crossHeading_3">crshd</crossHeading>
+          <hcontainer name="hcontainer" eId="part_A__sec_2__hcontainer_3">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_3__p_1">intervening</p>
+            </content>
+          </hcontainer>
+          <crossHeading eId="part_A__sec_2__crossHeading_4">crshd</crossHeading>
+          <hcontainer name="hcontainer" eId="part_A__sec_2__hcontainer_4">
+            <content>
+              <blockList eId="part_A__sec_2__hcontainer_4__list_1">
+                <listIntroduction eId="part_A__sec_2__hcontainer_4__list_1__intro_1">intro:</listIntroduction>
+                <item eId="part_A__sec_2__hcontainer_4__list_1__item_a">
+                  <num>(a)</num>
+                  <p eId="part_A__sec_2__hcontainer_4__list_1__item_a__p_1">first para</p>
+                </item>
+                <item eId="part_A__sec_2__hcontainer_4__list_1__item_b">
+                  <num>(b)</num>
+                  <p eId="part_A__sec_2__hcontainer_4__list_1__item_b__p_1">second para</p>
+                </item>
+                <listWrapUp eId="part_A__sec_2__hcontainer_4__list_1__wrapup_1">wrap</listWrapUp>
+              </blockList>
+            </content>
+          </hcontainer>
+          <crossHeading eId="part_A__sec_2__crossHeading_5">crshd</crossHeading>
+          <hcontainer name="hcontainer" eId="part_A__sec_2__hcontainer_5">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_5__p_1">following</p>
+            </content>
+          </hcontainer>
+          <crossHeading eId="part_A__sec_2__crossHeading_6">crshd</crossHeading>
+        </section>
+        <crossHeading eId="part_A__crossHeading_2">crshd</crossHeading>
+      </part>
+    </body>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Title</subheading>
+        <doc name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 1" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_1">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_1__p_1">preceding</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_2">crshd</crossHeading>
+            </hcontainer>
+            <blockList eId="att_1__list_1">
+              <listIntroduction eId="att_1__list_1__intro_1">intro:</listIntroduction>
+              <item eId="att_1__list_1__item_a">
+                <num>(a)</num>
+                <p eId="att_1__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="att_1__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_1__list_1__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="att_1__list_1__wrapup_1">wrap</listWrapUp>
+            </blockList>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_3">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_1__p_2">intervening</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_4">crshd</crossHeading>
+            </hcontainer>
+            <blockList eId="att_1__list_2">
+              <listIntroduction eId="att_1__list_2__intro_1">intro:</listIntroduction>
+              <item eId="att_1__list_2__item_a">
+                <num>(a)</num>
+                <p eId="att_1__list_2__item_a__p_1">first para</p>
+              </item>
+              <item eId="att_1__list_2__item_b">
+                <num>(b)</num>
+                <p eId="att_1__list_2__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="att_1__list_2__wrapup_1">wrap</listWrapUp>
+            </blockList>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_5">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_1__p_3">following</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_1__crossHeading_6">crshd</crossHeading>
+            </hcontainer>
+            <paragraph eId="att_1__para_1">
+              <num>1.</num>
+              <crossHeading eId="att_1__para_1__crossHeading_1">crshd</crossHeading>
+              <hcontainer name="hcontainer" eId="att_1__para_1__hcontainer_1">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_1__p_1">preceding</p>
+                </content>
+              </hcontainer>
+              <crossHeading eId="att_1__para_1__crossHeading_2">crshd</crossHeading>
+              <hcontainer name="hcontainer" eId="att_1__para_1__hcontainer_2">
+                <content>
+                  <blockList eId="att_1__para_1__hcontainer_2__list_1">
+                    <listIntroduction eId="att_1__para_1__hcontainer_2__list_1__intro_1">intro:</listIntroduction>
+                    <item eId="att_1__para_1__hcontainer_2__list_1__item_a">
+                      <num>(a)</num>
+                      <p eId="att_1__para_1__hcontainer_2__list_1__item_a__p_1">first para</p>
+                    </item>
+                    <item eId="att_1__para_1__hcontainer_2__list_1__item_b">
+                      <num>(b)</num>
+                      <p eId="att_1__para_1__hcontainer_2__list_1__item_b__p_1">second para</p>
+                    </item>
+                    <listWrapUp eId="att_1__para_1__hcontainer_2__list_1__wrapup_1">wrap</listWrapUp>
+                  </blockList>
+                </content>
+              </hcontainer>
+              <crossHeading eId="att_1__para_1__crossHeading_3">crshd</crossHeading>
+              <hcontainer name="hcontainer" eId="att_1__para_1__hcontainer_3">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_3__p_1">intervening</p>
+                </content>
+              </hcontainer>
+              <crossHeading eId="att_1__para_1__crossHeading_4">crshd</crossHeading>
+              <hcontainer name="hcontainer" eId="att_1__para_1__hcontainer_4">
+                <content>
+                  <blockList eId="att_1__para_1__hcontainer_4__list_1">
+                    <listIntroduction eId="att_1__para_1__hcontainer_4__list_1__intro_1">intro:</listIntroduction>
+                    <item eId="att_1__para_1__hcontainer_4__list_1__item_a">
+                      <num>(a)</num>
+                      <p eId="att_1__para_1__hcontainer_4__list_1__item_a__p_1">first para</p>
+                    </item>
+                    <item eId="att_1__para_1__hcontainer_4__list_1__item_b">
+                      <num>(b)</num>
+                      <p eId="att_1__para_1__hcontainer_4__list_1__item_b__p_1">second para</p>
+                    </item>
+                    <listWrapUp eId="att_1__para_1__hcontainer_4__list_1__wrapup_1">wrap</listWrapUp>
+                  </blockList>
+                </content>
+              </hcontainer>
+              <crossHeading eId="att_1__para_1__crossHeading_5">crshd</crossHeading>
+              <hcontainer name="hcontainer" eId="att_1__para_1__hcontainer_5">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_5__p_1">following</p>
+                </content>
+              </hcontainer>
+              <crossHeading eId="att_1__para_1__crossHeading_6">crshd</crossHeading>
+            </paragraph>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_2">
+        <heading>Schedule 2</heading>
+        <subheading>Title</subheading>
+        <doc name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 2" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_1">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_2__p_1">preceding</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_2">crshd</crossHeading>
+            </hcontainer>
+            <blockList eId="att_2__list_1">
+              <listIntroduction eId="att_2__list_1__intro_1">intro:</listIntroduction>
+              <item eId="att_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="att_2__list_1__item_a__p_1">preceding</p>
+                <blockList eId="att_2__list_1__item_a__list_1">
+                  <listIntroduction eId="att_2__list_1__item_a__list_1__intro_1">intro:</listIntroduction>
+                  <item eId="att_2__list_1__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <p eId="att_2__list_1__item_a__list_1__item_i__p_1">first subpara</p>
+                  </item>
+                  <item eId="att_2__list_1__item_a__list_1__item_ii">
+                    <num>(ii)</num>
+                    <p eId="att_2__list_1__item_a__list_1__item_ii__p_1">second subpara</p>
+                  </item>
+                  <listWrapUp eId="att_2__list_1__item_a__list_1__wrapup_1">wrap</listWrapUp>
+                </blockList>
+                <p eId="att_2__list_1__item_a__p_2">intervening</p>
+                <blockList eId="att_2__list_1__item_a__list_2">
+                  <listIntroduction eId="att_2__list_1__item_a__list_2__intro_1">intro:</listIntroduction>
+                  <item eId="att_2__list_1__item_a__list_2__item_i">
+                    <num>(i)</num>
+                    <p eId="att_2__list_1__item_a__list_2__item_i__p_1">first subpara</p>
+                  </item>
+                  <item eId="att_2__list_1__item_a__list_2__item_ii">
+                    <num>(ii)</num>
+                    <p eId="att_2__list_1__item_a__list_2__item_ii__p_1">second subpara</p>
+                  </item>
+                  <listWrapUp eId="att_2__list_1__item_a__list_2__wrapup_1">wrap</listWrapUp>
+                </blockList>
+                <p eId="att_2__list_1__item_a__p_3">following</p>
+              </item>
+              <item eId="att_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_2__list_1__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="att_2__list_1__wrapup_1">wrap</listWrapUp>
+            </blockList>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_3">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_2__p_2">intervening</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_4">crshd</crossHeading>
+            </hcontainer>
+            <blockList eId="att_2__list_2">
+              <listIntroduction eId="att_2__list_2__intro_1">intro:</listIntroduction>
+              <item eId="att_2__list_2__item_a">
+                <num>(a)</num>
+                <p eId="att_2__list_2__item_a__p_1">preceding</p>
+                <blockList eId="att_2__list_2__item_a__list_1">
+                  <listIntroduction eId="att_2__list_2__item_a__list_1__intro_1">intro:</listIntroduction>
+                  <item eId="att_2__list_2__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <p eId="att_2__list_2__item_a__list_1__item_i__p_1">first subpara</p>
+                  </item>
+                  <item eId="att_2__list_2__item_a__list_1__item_ii">
+                    <num>(ii)</num>
+                    <p eId="att_2__list_2__item_a__list_1__item_ii__p_1">second subpara</p>
+                  </item>
+                  <listWrapUp eId="att_2__list_2__item_a__list_1__wrapup_1">wrap</listWrapUp>
+                </blockList>
+                <p eId="att_2__list_2__item_a__p_2">intervening</p>
+                <blockList eId="att_2__list_2__item_a__list_2">
+                  <listIntroduction eId="att_2__list_2__item_a__list_2__intro_1">intro:</listIntroduction>
+                  <item eId="att_2__list_2__item_a__list_2__item_i">
+                    <num>(i)</num>
+                    <p eId="att_2__list_2__item_a__list_2__item_i__p_1">first subpara</p>
+                  </item>
+                  <item eId="att_2__list_2__item_a__list_2__item_ii">
+                    <num>(ii)</num>
+                    <p eId="att_2__list_2__item_a__list_2__item_ii__p_1">second subpara</p>
+                  </item>
+                  <listWrapUp eId="att_2__list_2__item_a__list_2__wrapup_1">wrap</listWrapUp>
+                </blockList>
+                <p eId="att_2__list_2__item_a__p_3">following</p>
+              </item>
+              <item eId="att_2__list_2__item_b">
+                <num>(b)</num>
+                <p eId="att_2__list_2__item_b__p_1">second para</p>
+              </item>
+              <listWrapUp eId="att_2__list_2__wrapup_1">wrap</listWrapUp>
+            </blockList>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_5">crshd</crossHeading>
+            </hcontainer>
+            <p eId="att_2__p_3">following</p>
+            <hcontainer name="hcontainer">
+              <crossHeading eId="att_2__crossHeading_6">crshd</crossHeading>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>

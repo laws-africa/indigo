@@ -16,7 +16,7 @@ def forward(apps, schema_editor):
 
     for country in Country.objects.using(db_alias).filter(publication_date_optional=True):
         log.info(f"\nMarking {country.country.name}'s place settings as publication_date_optional = True ...")
-        place_settings = PlaceSettings.objects.using(db_alias).get(country=country)
+        place_settings = PlaceSettings.objects.using(db_alias).get(country=country, locality=None)
         place_settings.publication_date_optional = True
         place_settings.save()
 
@@ -27,7 +27,8 @@ def backward(apps, schema_editor):
     PlaceSettings = apps.get_model('indigo_api', 'PlaceSettings')
     db_alias = schema_editor.connection.alias
 
-    for place_settings in PlaceSettings.objects.using(db_alias).filter(publication_date_optional=True):
+    # only get the country-level place settings, as only country can be updated
+    for place_settings in PlaceSettings.objects.using(db_alias).filter(publication_date_optional=True, locality=None):
         country = place_settings.country
         log.info(f"\nMarking {country.country.name} as publication_date_optional = True ...")
         country.publication_date_optional = True

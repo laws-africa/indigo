@@ -21,7 +21,7 @@ from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendmen
 from indigo_api.signals import work_changed
 
 
-no_spaces_validator = RegexValidator(r'^[a-zA-Z0-9-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
+no_spaces_validator = RegexValidator(r'^[\w-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
 
 
 class SpreadsheetRow:

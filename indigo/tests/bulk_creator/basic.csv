@@ -1,6 +1,6 @@
 country,locality,title,cap,doctype,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,principal (✔),stub (✔),taxonomy,primary_work,commenced_by,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
 Za,,Testy 1,,,,1,2020,,,,2020-01-01,,x,,,,,,,,,,,,,,,,
 zA,,Testy 2,,,,2,2020,,,,2020-06-01,,,x,,,,,,,,,,,,,,,
-zA,,Testy 3,,debateReport,,1,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,,,
+zA,,Testy 3,,debateReport,,et-à-l-information-financière,2020,,,,2020-06-01,,x,,,,,,,,,,,,,,,,
 ZA,,Unknown commencement date,,act,,64,2013,Government Gazette,36949,2013-10-03,2013-10-21,9999-01-01,x,,,,,,,,,,,,,,,,
 ZA,,Principal work,,act,,76,2012,,,2012-10-03,2012-10-21,9999-01-01,x,,,,,,,,,,,,,,,,

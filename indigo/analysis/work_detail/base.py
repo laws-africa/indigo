@@ -24,6 +24,11 @@ class BaseWorkDetail(LocaleBasedMatcher):
         """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
         This usually differs from the short title. May return None.
         """
+        # check chapter first
+        if work.place.settings.uses_chapter and work.properties.get('cap'):
+            # eg. Chapter 2
+            return _('Chapter %(cap)s') % {'cap': work.properties['cap']}
+
         number = work.number
         doctype = work.work_uri.doctype
         subtype = work.work_uri.subtype
@@ -58,14 +63,3 @@ class BaseWorkDetail(LocaleBasedMatcher):
             return _(uri.subtype.upper())
 
         return _('Act')
-
-
-class ChapterWorkDetail(BaseWorkDetail):
-    """ Takes Chapter numbers into account when working out a work's numbered title.
-    """
-    def work_numbered_title(self, work):
-        if work.properties.get('cap'):
-            # eg. Chapter 2
-            return _('Chapter %(cap)s') % {'cap': work.properties['cap']}
-
-        return super().work_numbered_title(work)

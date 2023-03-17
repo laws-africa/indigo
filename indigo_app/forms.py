@@ -244,7 +244,7 @@ class BatchUpdateWorkForm(BatchCreateWorkForm):
         super().__init__(*args, **kwargs)
         from indigo.bulk_creator import RowValidationFormBase
         row_validation_form = RowValidationFormBase
-        fields = list(row_validation_form.base_fields) + ['actor']
+        fields = list(row_validation_form.base_fields)
         fields.remove('row_number')
         self.fields['update_columns'].widget = ColumnSelectWidget()
         # TODO: include place's extra properties
@@ -617,7 +617,8 @@ class NewCommencementForm(forms.ModelForm):
 class PlaceSettingsForm(forms.ModelForm):
     class Meta:
         model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text', 'consolidation_note')
+        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text',
+                  'consolidation_note', 'is_consolidation', 'uses_chapter', 'publication_date_optional')
 
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(

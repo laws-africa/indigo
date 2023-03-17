@@ -227,7 +227,7 @@ class AddWorkView(PlaceViewBase, CreateView):
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['doctypes'] = self.doctypes()
-        context['publication_date_optional'] = self.country.publication_date_optional
+        context['publication_date_optional'] = self.place.settings.publication_date_optional
 
         return context
 
@@ -865,11 +865,7 @@ class BatchAddWorkView(PlaceViewBase, FormView):
         if not self._bulk_creator:
             locality_code = self.locality.code if self.locality else None
             self._bulk_creator = plugins.for_locale(self.bulk_creator_kw, self.country.code, None, locality_code)
-            self._bulk_creator.country = self.country
-            self._bulk_creator.locality = self.locality
-            self._bulk_creator.request = self.request
-            self._bulk_creator.user = self.request.user
-            self._bulk_creator.testing = False
+            self._bulk_creator.setup(self.country, self.locality, self.request)
         return self._bulk_creator
 
     def get_initial(self):

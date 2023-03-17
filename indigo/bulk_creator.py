@@ -17,8 +17,11 @@ from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
-    VocabularyTopic, TaskLabel
+    VocabularyTopic, TaskLabel, ArbitraryExpressionDate
 from indigo_api.signals import work_changed
+
+
+no_spaces_validator = RegexValidator(r'^[\w-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
 
 
 class SpreadsheetRow:
@@ -47,12 +50,11 @@ class RowValidationFormBase(forms.Form):
     title = forms.CharField()
     doctype = LowerChoiceField(required=False)
     subtype = LowerChoiceField(required=False)
-    number = forms.CharField(validators=[
-        RegexValidator(r'^[\w-]+$', __("No spaces or punctuation allowed (use '-' for spaces)."))
-    ])
+    number = forms.CharField(validators=[no_spaces_validator])
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', __('Must be a year (yyyy).'))
     ])
+    actor = forms.CharField(required=False, validators=[no_spaces_validator])
     # publication details
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
@@ -90,6 +92,7 @@ class RowValidationFormBase(forms.Form):
     row_number = forms.IntegerField()
 
     def __init__(self, country, locality, subtypes, default_doctype, data=None, *args, **kwargs):
+        place = locality or country
         self.default_doctype = default_doctype
         super().__init__(data, *args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
@@ -97,7 +100,7 @@ class RowValidationFormBase(forms.Form):
             if locality else []
         self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
         self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
-        self.fields['publication_date'].required = not country.publication_date_optional
+        self.fields['publication_date'].required = not place.settings.publication_date_optional
 
     def get_doctypes_for_country(self, country_code):
         return [[d[1].lower(), d[0]] for d in
@@ -158,10 +161,38 @@ class RowValidationFormUpdate(RowValidationFormBase):
 
 class ChapterMixin(forms.Form):
     """ Includes (optional) Chapter (cap) field.
-    For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
-    for the relevant country in settings.INDIGO['WORK_PROPERTIES']
+    For this field to be recorded on bulk creation, set `uses_cap` as True on the relevant PlaceSettings.
     """
     cap = forms.CharField(required=False)
+
+
+class ConsolidationDateMixin(forms.Form):
+    """ Includes (optional) consolidation_date field.
+    For this field to be recorded on bulk creation, set `is_consolidation` as True on the relevant PlaceSettings.
+    """
+    consolidation_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+
+
+class RowValidationFormConsolidationDateIncluded(ConsolidationDateMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - a consolidation date is recorded per row.
+    """
+    pass
+
+
+class RowValidationFormChapterIncluded(ChapterMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - the Chapter number (cap) is recorded.
+    """
+    pass
+
+
+class RowValidationFormChapterAndConsolidationDateIncluded(ChapterMixin, ConsolidationDateMixin, RowValidationFormBase):
+    """ Differs from RowValidationFormBase in that:
+    - the Chapter number (cap) is recorded
+    - a consolidation date is recorded per row.
+    """
+    pass
 
 
 @plugins.register('bulk-creator')
@@ -177,6 +208,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
         Can be subclassed / mixed in to add fields or making existing fields optional.
     """
 
+    country = None
+    locality = None
+    request = None
+    user = None
+    testing = False
+    is_consolidation = False
+    consolidation_date = None
+
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
@@ -191,12 +230,32 @@ class BaseBulkCreator(LocaleBasedMatcher):
         }
     """
 
+    basic_work_attributes = ['title', 'publication_name', 'publication_number', 'assent_date', 'publication_date',
+                             'commenced', 'stub', 'principal', 'disclaimer']
+
     log = logging.getLogger(__name__)
 
     _service = None
     _gsheets_secret = None
 
     GSHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+
+    def setup(self, country, locality, request):
+        self.country = country
+        self.locality = locality
+        self.request = request
+        self.user = request.user
+        self.testing = False
+
+        place = self.locality or self.country
+        if place.settings.uses_chapter:
+            self.row_validation_form_class = RowValidationFormChapterIncluded
+        if place.settings.is_consolidation:
+            self.is_consolidation = True
+            self.consolidation_date = place.settings.as_at_date
+            self.row_validation_form_class = RowValidationFormConsolidationDateIncluded
+            if place.settings.uses_chapter:
+                self.row_validation_form_class = RowValidationFormChapterAndConsolidationDateIncluded
 
     def gsheets_id_from_url(self, url):
         match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', url)
@@ -367,10 +426,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.frbr_uri = frbr_uri
             work.country = self.country
             work.locality = self.locality
-            for attribute in ['title',
-                              'publication_name', 'publication_number',
-                              'assent_date', 'publication_date',
-                              'commenced', 'stub', 'principal', 'disclaimer']:
+            for attribute in self.basic_work_attributes:
                 setattr(work, attribute, getattr(row, attribute, None))
             work.created_by_user = self.user
             work.updated_by_user = self.user
@@ -423,7 +479,38 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         self.create_or_update(row)
 
+        if self.should_add_consolidation(row):
+            self.add_consolidation_pit(row)
+
         return row
+
+    def get_consolidation_date(self, row):
+        if hasattr(row, 'consolidation_date'):
+            return row.consolidation_date
+        return self.consolidation_date
+
+    def should_add_consolidation(self, row):
+        if self.is_consolidation:
+            # only add a consolidation PiT if the work is from before the consolidation date
+            consolidation_date = self.get_consolidation_date(row)
+            return row.status == 'success' and \
+                   row.principal and \
+                   consolidation_date and \
+                   consolidation_date.year >= int(row.year)
+
+    def add_consolidation_pit(self, row):
+        consolidation_date = self.get_consolidation_date(row)
+        if self.dry_run:
+            row.notes.append(f'A consolidation will be created at {consolidation_date}')
+
+        else:
+            arbitrary_expression_date = ArbitraryExpressionDate(
+                date=consolidation_date,
+                description=f'Automatically added based on the given consolidation date',
+                work=row.work,
+                created_by_user=self.user
+            )
+            arbitrary_expression_date.save()
 
     def transform_aliases(self, row):
         """ Adds the term the platform expects to `row` for validation (and later saving).
@@ -478,7 +565,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                            subtype=row.subtype,
                            date=row.year,
                            number=row.number,
-                           actor=getattr(row, 'actor', None))
+                           actor=row.actor)
 
         return frbr_uri.work_uri().lower()
 

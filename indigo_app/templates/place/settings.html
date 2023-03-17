@@ -78,6 +78,41 @@
           {% endif %}
         </div>
 
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.is_consolidation.id_for_label }}" name="{{ form.is_consolidation.html_name }}" value="on" {% if form.is_consolidation.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.is_consolidation.id_for_label }}">Consolidation</label>
+              <p class="form-text text-muted">
+                Is a consolidation being worked on in this place?<br>
+                If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br>
+                For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.uses_chapter.id_for_label }}" name="{{ form.uses_chapter.html_name }}" value="on" {% if form.uses_chapter.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.uses_chapter.id_for_label }}">Uses Chapter</label>
+              <p class="form-text text-muted">
+                Are Chapters used for Acts in this place?<br>
+                If checked, the 'cap' column will be recorded on bulk import.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.publication_date_optional.id_for_label }}" name="{{ form.publication_date_optional.html_name }}" value="on" {% if form.publication_date_optional.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.publication_date_optional.id_for_label }}">Publication date optional</label>
+              <p class="form-text text-muted">Is the publication date optional in this place?</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="card-footer text-right">

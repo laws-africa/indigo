@@ -51,7 +51,6 @@ class Country(models.Model):
         null=True,
         blank=True
     )
-    publication_date_optional = models.BooleanField(default=False, null=False, help_text='Are publication dates optional in this country?')
 
     class Meta:
         ordering = ['country__name']
@@ -190,6 +189,9 @@ class PlaceSettings(models.Model):
     no_publication_document_text = models.CharField(
         max_length=1024, null=False, blank=True,
         default=_('Note: The original publication document is not available and this content could not be verified.'))
+    publication_date_optional = models.BooleanField(default=False, null=False, help_text='Are publication dates optional in this place?')
+    is_consolidation = models.BooleanField(default=False, null=False, help_text='Is a consolidation being worked on in this place?')
+    uses_chapter = models.BooleanField(default=False, null=False, help_text='Are Chapters used for Acts in this place?')
 
     @property
     def place(self):
@@ -203,10 +205,16 @@ class PlaceSettings(models.Model):
         country settings.
         """
         places = settings.INDIGO['WORK_PROPERTIES']
+        props = None
 
+        # get base properties from settings
         if self.locality:
             props = places.get(self.locality.place_code)
-            if props is not None:
-                return props
+        if props is None:
+            props = places.get(self.country.place_code, {})
 
-        return places.get(self.country.place_code, {})
+        # optionally add / overwrite cap
+        if self.uses_chapter:
+            props['cap'] = 'Chapter (Cap.)'
+
+        return props

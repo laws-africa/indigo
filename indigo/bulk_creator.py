@@ -486,7 +486,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def get_consolidation_date(self, row):
         if hasattr(row, 'consolidation_date'):
-            return row.consolidation_date
+            # this row may have a blank consolidation_date – fall back to the place's as-as date
+            return row.consolidation_date or self.consolidation_date
+        # the spreadsheet doesn't have a consolidation_date column – use the place's as-as date
         return self.consolidation_date
 
     def should_add_consolidation(self, row):

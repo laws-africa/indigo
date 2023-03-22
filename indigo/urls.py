@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/', include('indigo_api.urls')),
     path('resolver/', include('indigo_resolver.urls')),
     path('', include('indigo_social.urls')),
+    path('', include('bluebell_migration.urls')),
     path('', include('indigo_app.urls')),
 
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),

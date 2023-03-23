@@ -4,7 +4,7 @@ from lxml import etree
 
 from indigo_app.views.works import WorkViewBase
 
-from bluebell_migration.migrate import SlawToBluebell, DefsParaToBlocklist, diff_table, pretty_c14n
+from bluebell_migration.migrate import SlawToBluebell, diff_table, pretty_c14n
 from bluebell.parser import AkomaNtosoParser
 
 
@@ -72,8 +72,3 @@ class DocumentViewBluebellMigration(WorkViewBase, DetailView):
             context['quality_diff'] = diff_table(migrated_xml, reparsed_xml, "Migrated XML", "Re-parsed original")
 
         return context
-
-
-class DocumentViewBluebellMigrationBl(DocumentViewBluebellMigration):
-    template_name_suffix = '_bl_migration_doc'
-    migration = DefsParaToBlocklist

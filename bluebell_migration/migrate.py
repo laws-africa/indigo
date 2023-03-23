@@ -99,6 +99,7 @@ class SlawToBluebell(DataMigration):
         self.fix_crossheadings(xml)
 
         BlocklistToPara().migrate_xml(xml)
+        DefsParaToBlocklist().migrate_xml(xml)
 
         self.normalise(xml)
         self.eid_mappings = self.id_generator.rewrite_all_eids(xml)
@@ -449,7 +450,7 @@ class SlawToBluebell(DataMigration):
 
 
 class BlocklistToPara:
-    """ This is designed to be run AFTER the SlawToBluebell migration.
+    """ Change blockLists to paragraph/subparagraph[/subparagraph].
     """
     def __init__(self):
         self.ns = AKN_NAMESPACES[DEFAULT_VERSION]
@@ -628,9 +629,9 @@ class DoNotMigrate(Exception):
         self.msg = kwargs.get('msg')
 
 
-class DefsParaToBlocklist(SlawToBluebell):
-    """ This is designed to be run, separately, AFTER the BlocklistToPara migration
-         which happens during the SlawToBluebell migration.
+class DefsParaToBlocklist:
+    """ Change paragraphs/subparagraphs (back) into blockLists for defined terms.
+        This is designed to be run immediately after the BlocklistToPara migration during the SlawToBluebell migration.
         Works on the following language documents so far:
         - English
         - Afrikaans
@@ -638,7 +639,8 @@ class DefsParaToBlocklist(SlawToBluebell):
     """
 
     def __init__(self):
-        super().__init__()
+        self.maker = get_maker()
+        self.ns = AKN_NAMESPACES[DEFAULT_VERSION]
         self.nsmap = {'a': self.ns}
         # these are basically interchangeable so we should look for both
         para_subpara = ['paragraph', 'subparagraph']
@@ -678,18 +680,10 @@ class DefsParaToBlocklist(SlawToBluebell):
             2. Transform each <p> followed by <(sub)paragraph>s into a <blockList> (including nested <(sub)paragraph>s).
             3. Reconfigure the structure of any transformed parent elements to be:
                 <element>/<content>/<p>|<blockList>
-            4. Finally, update the eIds.
         """
         defs_elements = list(self.definition_elements(xml))
-        if not defs_elements:
-            raise DoNotMigrate(msg='No target definitions elements found')
-
         for defs in defs_elements:
             self.process_defs(defs)
-
-        self.eid_mappings = self.id_generator.rewrite_all_eids(xml)
-
-        return True, xml
 
     def definition_elements(self, xml):
         """ Yield sections that definitely contain at least one <def>.
@@ -893,51 +887,6 @@ class DefsParaToBlocklist(SlawToBluebell):
         """
         xml = etree.fromstring(document.document_xml)
         return bool(self.needs_migration_xpath(xml))
-
-
-class DefsParaToBlocklistImport(DefsParaToBlocklist):
-    """ Look for 'definitions' headings in all hierarchical elements, not just section.
-    """
-
-    def __init__(self):
-        super().__init__()
-        """ possible 'definitions' elements that we care about:
-        - hierarchical element
-        - with a heading
-        - and without a <content> child (because only block elements are allowed in <content>)
-        """
-        self.potential_defs_elements_xpath = etree.XPath(
-            '|'.join([f'//a:{x}[a:heading][not(a:content)]' for x in AKN_HIERARCHICAL]),
-            namespaces=self.nsmap)
-        self.heading_re = re.compile(r'.*(definition|interpretation|woordbepaling|woordomskrywing)', re.IGNORECASE)
-        self.subsection_xpath = etree.XPath(f'a:subsection', namespaces=self.nsmap)
-
-    def definition_elements(self, xml):
-        """ Yield sections (or other elements) that potentially contain definitions of terms.
-            (This is based on their headings.)
-            Yield subsections within the sections instead (if they don't contain <content>).
-            Might yield nothing if the section or subsections don't contain paras/subparas.
-        """
-        for elem in self.potential_defs_elements_xpath(xml):
-            heading = elem.find('a:heading', namespaces=self.nsmap)
-            if not self.heading_re.match(heading.text or ''):
-                continue
-
-            subsections = self.subsection_xpath(elem)
-            for subsection in subsections:
-                # a subsection within a defs section that contains paras/subparas
-                if self.para_subpara_xpath(subsection):
-                    yield subsection
-
-            if not subsections:
-                yield elem
-
-    def should_migrate(self, document):
-        """ Migrate all documents that contain at least one definition element.
-        """
-        xml = etree.fromstring(document.document_xml)
-        for _ in self.definition_elements(xml):
-            return True
 
 
 def pretty_c14n(xml_text):

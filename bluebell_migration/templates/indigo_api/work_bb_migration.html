@@ -21,16 +21,5 @@
         </li>
       {% endfor %}
     </ul>
-    <ul> Blocklist migration:
-      {% for doc in docs %}
-        <li>
-          <a href="{% url 'bl_migrate_document' frbr_uri=doc.frbr_uri doc_id=doc.id %}">
-            {{ doc }}
-            {% if doc.deleted %}<span class="badge badge-info">deleted</span>{% endif %}
-            {% if doc.must_migrate %}<span class="badge badge-warning">must migrate</span>{% endif %}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
   {% endif %}
 {% endblock %}

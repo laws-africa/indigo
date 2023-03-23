@@ -31,15 +31,23 @@ class Command(BaseCommand):
         parser.add_argument('--no-versions', action='store_true', default=False,
                             help='Don\'t migrate document versions.'
                             )
+        parser.add_argument('--skip-list', type=str,
+                            help='List of Work FRBR URIs that should NOT be migrated, semicolon-separated, e.g. '
+                                 '/akn/za/act/1962/58;/akn/za-cpt/act/by-law/2020/beekeeping'
+                            )
 
     def setup(self, options):
         self.commit = options['commit']
         self.check = not(options['no_checks'])
         self.migrate_versions = not options['no_versions']
         self.eidMappings = {}
+        skip_list = options.get('skip_list') or ''
+        self.skip_list = skip_list.split(';')
+        self.manually_update = []
 
     def finish_up(self):
-        # write eid mappings to stdout
+        self.stderr.write(f'Manually update these (skipped during migration): {self.manually_update}')
+        # write eid mappings to stdout (everything else goes to stderr)
         self.stdout.write(json.dumps(self.eidMappings))
 
     def handle(self, *args, **options):
@@ -94,8 +102,18 @@ class Command(BaseCommand):
             self.stderr.write(self.style.NOTICE(f'  Updated {count} commencement provisions'))
 
     def migrate_doc(self, doc):
+        # check FRBR URI against skip list
+        if doc.work.frbr_uri in self.skip_list:
+            self.manually_update.append(doc.pk)
+            raise DoNotMigrate(msg=f'  Skipping because in skip list: {doc}')
+
         old_xml = doc.document_xml
-        self.migration.migrate_document(doc)
+        try:
+            self.migration.migrate_document(doc)
+        except DoNotMigrate:
+            self.manually_update.append(doc.pk)
+            raise
+
         # save eid mappings
         self.eidMappings[doc.id] = dict(self.migration.eid_mappings)
 

@@ -85,8 +85,8 @@ the location of this file.
         <!-- <auto-detect/> -->
 
         <!-- register the fonts in the `fonts` directory -->
-        <!-- when running locally, replace `app` with the full path to indigo_fop -->
-        <directory>/app/indigo_fop/fonts</directory>
+        <!-- when running locally, replace `app` with the full path to indigo_api -->
+        <directory>/app/indigo_api/fonts</directory>
 
       </fonts>
 

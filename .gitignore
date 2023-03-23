@@ -10,4 +10,3 @@ docs/_build
 node_modules/
 .coverage
 *.egg-info
-.ruby-version

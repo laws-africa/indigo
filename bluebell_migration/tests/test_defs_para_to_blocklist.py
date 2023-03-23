@@ -3,7 +3,7 @@ import os
 
 from django.test import TestCase
 
-from bluebell_migration.migrate import DefsParaToBlocklist, IdGenerator
+from bluebell_migration.migrate import SlawToBluebell, IdGenerator
 
 
 class DefsParaToBlocklistTestCase(TestCase):
@@ -12,7 +12,7 @@ class DefsParaToBlocklistTestCase(TestCase):
         self.id_generator = IdGenerator()
 
     def run_it(self, fname):
-        migration = DefsParaToBlocklist()
+        migration = SlawToBluebell()
 
         old = os.path.join(os.path.dirname(__file__), 'definitions_fixtures', f'{fname}.xml')
         with open(old, 'r') as old:

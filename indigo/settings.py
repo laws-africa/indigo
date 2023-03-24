@@ -61,9 +61,6 @@ INSTALLED_APPS = (
     # base indigo installation
     'indigo',
 
-    # bluebell migration
-    'bluebell_migration',
-
     'background_task',
     'actstream',
 

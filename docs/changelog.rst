@@ -2,6 +2,31 @@
 Changelog
 =========
 
+18.0.0 (???)
+-------------------
+
+Important
+.........
+
+This version starts using bluebell, not slaw, for parsing documents. This cannot be undone.
+
+You **must** upgrade to this version before upgrading to future versions.
+
+Upgrade process
+...............
+
+1. **Make a backup of your database before proceeding**
+2. Install Indigo version 18.0.0.
+3. Install `bluebell_migration` as one of your installation's INSTALLED_APPS in settings.py.
+4. Run the `bb_migrate` management command. See the test inputs and outputs for examples of how the XML will be transformed.
+5. Remove `bluebell_migration` from INSTALLED_APPS, as this is a once-off update.
+
+Changes
+.......
+
+* NEW: Bluebell, not slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
+* NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing `titles` on subclasses.)
+
 17.3.1 (???)
 ----------
 

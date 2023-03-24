@@ -10,22 +10,37 @@ Important
 
 This version starts using bluebell, not slaw, for parsing documents. This cannot be undone.
 
+Bluebell introduces the following improvements:
+
+* Support for all AKN hierarchical elements out of the box.
+* Support for AKN subflows: quotes and footnotes.
+* A consistent mark-up pattern for all hierarchical elements, making it a matter of simply replacing a keyword rather than looking up the syntax for different elements.
+* Support for paragraph and subparagraph, rather than using blocklists for everything below section.
+* Significant whitespace / use of indentation puts the power in the user's hands as to when exactly an element ends. This means you can now have standalone text, followed by a deeply nested hierarchical element that itself contains introductory and wrap-up text, with more standalone text before the next hierarchical element, if needed.
+
 You **must** upgrade to this version before upgrading to future versions.
+
+Note: it is technically possible to upgrade to this version of indigo without updating your existing documents, and simply use the new mark-up.
+
+However, the new importer takes advantage of the richer mark-up capabilities of bluebell, so using the new importer for new documents and leaving old documents as is will lead to an inconsistent database, and we cannot guarantee that future data migrations will work if you do not update your existing documents.
 
 Upgrade process
 ...............
 
 1. **Make a backup of your database before proceeding**
-2. Install Indigo version 18.0.0.
-3. Install `bluebell_migration` as one of your installation's INSTALLED_APPS in settings.py.
-4. Run the `bb_migrate` management command. See the test inputs and outputs for examples of how the XML will be transformed.
-5. Remove `bluebell_migration` from INSTALLED_APPS, as this is a once-off update.
+2. Install Indigo version 18.0.0 and apply any outstanding migrations.
+3. Install ``bluebell_migration`` as one of your installation's INSTALLED_APPS in settings.py.
+4. Run the ``bb_migrate`` management command. See the test inputs and outputs for examples of how the XML will be transformed.
+5. Remove ``bluebell_migration`` from INSTALLED_APPS, as this is a once-off update.
 
 Changes
 .......
 
+* BREAKING: ImporterZA and ToCBuilderZA have been removed; plugins that subclass them should subclass the base Importer and TOCBuilderBase instead.
+* BREAKING: Importer now uses pipelines. See https://github.com/laws-africa/docpipe for details. Subclasses will need to be updated.
 * NEW: Bluebell, not slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
 * NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing `titles` on subclasses.)
+* law-widgets - styling for all AKN elements, including introductory and wrap-up text, and the new subflows mentioned above.
 
 17.3.1 (???)
 ----------

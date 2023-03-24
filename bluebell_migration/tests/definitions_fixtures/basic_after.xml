@@ -1,7 +1,7 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act name="act">
     <meta>
-      <identification source="#Laws-Africa">
+      <identification source="#Indigo-Platform">
         <FRBRWork>
           <FRBRthis value="/akn/na/act/1999/2/!main"/>
           <FRBRuri value="/akn/na/act/1999/2"/>
@@ -26,8 +26,8 @@
         </FRBRManifestation>
       </identification>
       <publication showAs="Government Gazette" name="Government Gazette" date="1999-03-19" number="2065"/>
-      <references source="#Laws-Africa">
-        <TLCOrganization eId="Laws-Africa" href="https://edit.laws.africa" showAs="Laws.Africa"/>
+      <references source="#Indigo-Platform">
+        <TLCOrganization showAs="Indigo Platform" eId="Indigo-Platform" href="http://localhost:8000"/>
       </references>
     </meta>
     <body>

@@ -1,7 +1,7 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act name="act">
     <meta>
-      <identification source="#Laws-Africa">
+      <identification source="#Indigo-Platform">
         <FRBRWork>
           <FRBRthis value="/akn/za/act/2022/1/!main"/>
           <FRBRuri value="/akn/za/act/2022/1"/>
@@ -26,8 +26,8 @@
         </FRBRManifestation>
       </identification>
       <publication showAs="" name="" date="2022-05-19" number=""/>
-      <references source="#Laws-Africa">
-        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+      <references source="#Indigo-Platform">
+        <TLCOrganization showAs="Indigo Platform" eId="Indigo-Platform" href="http://localhost:8000"/>
         <TLCTerm eId="term-Appeal_Board" showAs="Appeal Board" href="/ontology/term/this.eng.Appeal_Board"/>
         <TLCTerm eId="term-authorized_officer" showAs="authorized officer" href="/ontology/term/this.eng.authorized_officer"/>
         <TLCTerm eId="term-Committee" showAs="Committee" href="/ontology/term/this.eng.Committee"/>

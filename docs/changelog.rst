@@ -39,7 +39,7 @@ Changes
 * BREAKING: ImporterZA and ToCBuilderZA have been removed; plugins that subclass them should subclass the base Importer and TOCBuilderBase instead.
 * BREAKING: Importer now uses pipelines. See https://github.com/laws-africa/docpipe for details. Subclasses will need to be updated.
 * NEW: Bluebell, not slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
-* NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing `titles` on subclasses.)
+* NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing ``titles`` on subclasses.)
 * law-widgets - styling for all AKN elements, including introductory and wrap-up text, and the new subflows mentioned above.
 
 17.3.1 (???)

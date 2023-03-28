@@ -30,7 +30,7 @@ Upgrade process
 1. **Make a backup of your database before proceeding**
 2. Install Indigo version 18.0.0 and apply any outstanding migrations.
 3. Install ``bluebell_migration`` as one of your installation's INSTALLED_APPS in settings.py.
-4. Run the ``bb_migrate`` management command. See the test inputs and outputs for examples of how the XML will be transformed.
+4. **Before editing any documents in the new editor**, run the ``bb_migrate`` management command. See the test inputs and outputs for examples of how the XML will be transformed.
 5. Remove ``bluebell_migration`` from INSTALLED_APPS, as this is a once-off update.
 
 Changes
@@ -38,7 +38,9 @@ Changes
 
 * BREAKING: ImporterZA and ToCBuilderZA have been removed; plugins that subclass them should subclass the base Importer and TOCBuilderBase instead.
 * BREAKING: Importer now uses pipelines. See https://github.com/laws-africa/docpipe for details. Subclasses will need to be updated.
-* NEW: Bluebell, not slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
+* BREAKING: Bluebell, not slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
+
+  Simply reparsing a document in bluebell, without changing any of the content or structure, will already make basic improvements like using ``intro``, ``hcontainer``, and ``wrapUp``. Running the upgrade process above will transform most blockLists into paragraphs with nested subparagraphs. If your project overrides any of the XSL in indigo, it will likely need an update regardless of whether you run the upgrade process described above.
 * NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing ``titles`` on subclasses.)
 * law-widgets - styling for all AKN elements, including introductory and wrap-up text, and the new subflows mentioned above.
 

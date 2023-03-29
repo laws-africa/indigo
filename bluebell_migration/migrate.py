@@ -91,7 +91,7 @@ class SlawToBluebell(DataMigration):
         xml = etree.fromstring(xml)
 
         # apply xslt
-        xml = str(self.xslt(xml))
+        xml = etree.tostring(self.xslt(xml), encoding='unicode')
         xml = etree.fromstring(xml)
 
         self.table_br_to_p(xml, 'br')
@@ -362,7 +362,7 @@ class SlawToBluebell(DataMigration):
         """
         xml = etree.fromstring(xml_str)
         # apply xslt to prepare for comparison, removing certain things that make differences harder to visualise
-        xml = str(self.diff_xslt(xml))
+        xml = etree.tostring(self.diff_xslt(xml), encoding='unicode')
         # canonicalise and pretty-print
         return pretty_c14n(xml)
 
@@ -452,7 +452,7 @@ class SlawToBluebell(DataMigration):
     def unpretty(self, xml):
         """ Un-pretty-prints XML.
         """
-        return str(self.unpretty_xslt(etree.fromstring(xml)))
+        return etree.tostring(self.unpretty_xslt(etree.fromstring(xml)), encoding='unicode')
 
 
 class BlocklistToPara:

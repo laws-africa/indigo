@@ -82,6 +82,13 @@
   <xsl:template match="a:*[self::a:preface or self::a:preamble or self::a:conclusions or self::a:i or self::a:b
                            or self::a:listIntroduction or self::a:attachments][not(node())]" />
 
+  <!-- hcontainers with empty content need a p -->
+  <xsl:template match="a:hcontainer/a:content[not(node())]">
+    <content>
+      <p eId="hcontainer_1__p_1"/>
+    </content>
+  </xsl:template>
+
   <!-- remove empty p tags at the start and end of table cells -->
   <xsl:template match="a:*[self::a:th or self::a:td]/a:p[not(node()) and not(preceding-sibling::a:*) and following-sibling::a:*]" />
   <xsl:template match="a:*[self::a:th or self::a:td]/a:p[not(node()) and preceding-sibling::a:* and not(following-sibling::a:*)]" />

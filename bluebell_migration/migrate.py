@@ -94,7 +94,9 @@ class SlawToBluebell(DataMigration):
         xml = str(self.xslt(xml))
         xml = etree.fromstring(xml)
 
-        self.table_br_to_p(xml)
+        self.table_br_to_p(xml, 'br')
+        self.table_br_to_p(xml, 'eol')
+        self.table_nuke_blank_ps(xml)
         self.migrate_attachment_names_and_alias(xml)
         self.fix_crossheadings(xml)
 
@@ -109,8 +111,8 @@ class SlawToBluebell(DataMigration):
 
         return True, xml
 
-    def table_br_to_p(self, xml):
-        """ Change br's in p's to consecutive p's in tables, going backwards.
+    def table_br_to_p(self, xml, tag_name):
+        """ Change br's (or eol's) in p's to consecutive p's in tables, going backwards.
 
             <p>foo<br/>bar<br/>with a <term>term</term></p>
         becomes
@@ -147,10 +149,10 @@ class SlawToBluebell(DataMigration):
               bold tail
             </p>
         """
-        for br in reversed(xml.xpath('//a:*[self::a:td or self::a:th]/a:p//a:br[not(ancestor::a:remark)]', namespaces={'a': self.ns})):
+        for tag_name in reversed(xml.xpath(f'//a:*[self::a:td or self::a:th]/a:p//a:{tag_name}[not(ancestor::a:remark)]', namespaces={'a': self.ns})):
             # duplicate ancestors on the way back up to containing p, so that b and i get included
             new_el = None
-            el = br
+            el = tag_name
             prev_new_el = None
             while el.tag != f'{{{self.ns}}}p':
                 parent = el.getparent()
@@ -173,10 +175,12 @@ class SlawToBluebell(DataMigration):
                 prev_new_el = new_el
                 el = el.getparent()
 
-            br.getparent().remove(br)
+            tag_name.getparent().remove(tag_name)
             el.addnext(new_el)
 
-        # remove empty p tags in tables, unless they don't have siblings
+    def table_nuke_blank_ps(self, xml):
+        """ remove empty p tags in tables, unless they don't have siblings
+        """
         for p in xml.xpath('//a:*[self::a:td or self::a:th]/a:p[not(node())]', namespaces={'a': self.ns}):
             if p.getprevious() is not None or p.getnext() is not None:
                 parent = p.getparent()
@@ -403,6 +407,8 @@ class SlawToBluebell(DataMigration):
         xml = self.preclean_xml_string(xml)
         # replace one or more br's with newlines
         xml = re.sub(r'(<br/>)+', '\n', xml)
+        # replace one or more eol's with newlines
+        xml = re.sub(r'(<eol/>)+', '\n', xml)
         xml = etree.fromstring(xml)
 
         # replace images with text

@@ -5,6 +5,13 @@
 
   <xsl:output method="xml" encoding="utf8" />
 
+  <!-- in num nuke term, or any other intervening tag, but keep their text as a direct child -->
+  <xsl:template match="a:num[a:*]">
+    <num>
+      <xsl:apply-templates select=".//text()" />
+    </num>
+  </xsl:template>
+
   <!-- unwrap hcontainers -->
   <xsl:template match="a:*[self::a:part or self::a:section or self::a:article or self::a:chapter or self::a:subsection
                            or self::a:subpart or self::a:division or self::a:paragraph or self::a:subparagraph]/a:hcontainer[@name='hcontainer']">

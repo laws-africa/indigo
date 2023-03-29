@@ -80,7 +80,7 @@
 
   <!-- ignore some empty elements -->
   <xsl:template match="a:*[self::a:preface or self::a:preamble or self::a:conclusions or self::a:i or self::a:b
-                           or self::a:listIntroduction][not(node())]" />
+                           or self::a:listIntroduction or self::a:attachments][not(node())]" />
 
   <!-- remove empty p tags at the start and end of table cells -->
   <xsl:template match="a:*[self::a:th or self::a:td]/a:p[not(node()) and not(preceding-sibling::a:*) and following-sibling::a:*]" />

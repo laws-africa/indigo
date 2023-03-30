@@ -247,6 +247,16 @@ class SlawToBluebell(DataMigration):
                 if kid.tail:
                     kid.tail = kid.tail.rstrip()
 
+        # strip whitespace at the start and end of attributes; normalise to single spaces within
+        # TODO: narrow xpath to only grab elements that have a space in any of their attributes?
+        for el in xml.xpath('//a:*', namespaces={'a': xml.nsmap[None]}):
+            for a, val in el.attrib.items():
+                # skip value and src, as these won't be cleaned up by bluebell
+                if a not in ['src', 'value']:
+                    newval = re.sub(r'\s{2,}', ' ', val.lstrip().rstrip())
+                    if val != newval:
+                        el.set(a, newval)
+
         # strip whitespace just after br's in multi-line remarks
         for br in xml.xpath('//a:remark/a:br', namespaces={'a': xml.nsmap[None]}):
             if br.tail:

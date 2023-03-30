@@ -95,7 +95,7 @@
 
   <!-- ignore some empty elements -->
   <xsl:template match="a:*[self::a:preface or self::a:preamble or self::a:conclusions or self::a:i or self::a:b
-                           or self::a:listIntroduction or self::a:attachments][not(node())]" />
+                           or self::a:listIntroduction or self::a:attachments or self::a:table][not(node())]" />
 
   <!-- hcontainers with empty content need a p -->
   <xsl:template match="a:hcontainer/a:content[not(node())]">

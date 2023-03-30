@@ -62,11 +62,26 @@
   <xsl:template match="a:*[self::a:subsection or self::a:section or self::a:paragraph or self::a:article]/a:content[
                          a:p[not(node()) and not(preceding-sibling::*) and not(following-sibling::*)]]" />
 
+  <!-- update old-style crossHeadings: skip 'heading' -->
+  <xsl:template match="a:hcontainer[@name='crossheading']">
+    <crossHeading>
+      <xsl:apply-templates select="a:heading/node()"/>
+    </crossHeading>
+  </xsl:template>
+
   <!-- crossHeadings at the top level must be wrapped in hcontainer -->
-  <xsl:template match="a:body/a:crossHeading | a:mainBody/a:crossHeading">
+  <xsl:template match="a:body/a:crossHeading | a:mainBody/a:crossHeading | a:body/a:hcontainer[@name='crossheading'] | a:mainBody/a:hcontainer[@name='crossheading']">
     <hcontainer name="hcontainer">
       <crossHeading>
-        <xsl:apply-templates />
+        <xsl:choose>
+          <!-- old-style crossHeadings: skip 'heading' -->
+          <xsl:when test="self::a:hcontainer">
+            <xsl:apply-templates select="a:heading/node()"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates />
+          </xsl:otherwise>
+        </xsl:choose>
       </crossHeading>
     </hcontainer>
   </xsl:template>

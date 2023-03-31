@@ -24,7 +24,7 @@ class SlawToBluebellTestCase(TestCase):
         xml = self.migration.unpretty(xml)
         xml = etree.fromstring(xml)
 
-        self.migration.table_br_to_p(xml)
+        self.migration.table_br_to_p(xml, 'br')
 
         xml = pretty_c14n(etree.tostring(xml, encoding='unicode'))
         self.assertMultiLineEqual("""<td xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">

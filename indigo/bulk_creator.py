@@ -452,6 +452,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def provisionally_save(self, work, old_publication_date=None, new_publication_date=None, old_title=None, new_title=None):
         if not self.dry_run:
+            if not work.pk:
+                work.properties['created_in_bulk'] = True
             work.save_with_revision(self.user)
             if old_publication_date and new_publication_date:
                 work.update_documents_at_publication_date(old_publication_date, new_publication_date)

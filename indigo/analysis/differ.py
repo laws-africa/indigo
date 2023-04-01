@@ -120,11 +120,11 @@ class AKNHTMLDiffer:
 
         if not old_html:
             # it's newly added
-            return '<ins>' + new_html + '</ins>'
+            return '<div class="ins">' + new_html + '</div>'
 
         if not new_html:
             # it was deleted
-            return '<del>' + old_html + '</del>'
+            return '<div class="del">' + old_html + '</div>'
 
         old_tree = lxml.html.fromstring(old_html)
         new_tree = lxml.html.fromstring(new_html)

@@ -186,7 +186,7 @@
     },
 
     numberChanged: function(model, value, options) {
-      model.set('number', value.replace(/[^a-z\d-]+/gi, '-').replace(/--+/g, '-'));
+      model.set('number', value.replace(/[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"'“”‘’‟„‛‚«»‹›]+/gi, '-').replace(/--+/g, '-'));
     },
 
     setDirty: function() {

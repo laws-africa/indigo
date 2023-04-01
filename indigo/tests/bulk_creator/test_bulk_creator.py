@@ -2,7 +2,6 @@ import csv
 import io
 import os
 import datetime
-from unittest.mock import patch
 
 from django.conf import settings
 from django.test import testcases
@@ -12,7 +11,6 @@ from indigo_api.models import Country, Work, VocabularyTopic, Locality
 from indigo_app.models import User
 
 
-@patch("indigo_za.publications.PublicationFinderZA.find_publications", return_value=list())
 class BaseBulkCreatorTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'subtype']
 
@@ -34,7 +32,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
             table = list(reader)
             return self.creator.create_works(table, dry_run, {})
 
-    def test_basic_preview(self, mock):
+    def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
         self.assertEqual(5, len(works))
 
@@ -67,7 +65,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual('success', row3.status)
         self.assertEqual('Testy 3', row3.work.title)
         self.assertEqual('debatereport', row3.work.nature)
-        self.assertEqual('1', row3.work.number)
+        self.assertEqual('et-à-l-information-financière', row3.work.number)
         self.assertEqual('2020', row3.work.year)
         self.assertEqual(datetime.date(2020, 6, 1), row3.work.publication_date)
         self.assertFalse(row3.work.stub)
@@ -116,7 +114,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         with self.assertRaises(Work.DoesNotExist):
             Work.objects.get(frbr_uri='/akn/za/debatereport/2020/1')
 
-    def test_basic_live(self, mock):
+    def test_basic_live(self):
         works = self.get_works(False, 'basic.csv')
         self.assertEqual(5, len(works))
 
@@ -155,11 +153,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
 
-        work3 = Work.objects.get(frbr_uri='/akn/za/debatereport/2020/1')
+        work3 = Work.objects.get(frbr_uri='/akn/za/debatereport/2020/et-à-l-information-financière')
         row3 = works[2]
         self.assertEqual(work3, row3.work)
         self.assertEqual('Testy 3', work3.title)
-        self.assertEqual('1', work3.number)
+        self.assertEqual('et-à-l-information-financière', work3.number)
         self.assertEqual('2020', work3.year)
         self.assertEqual(datetime.date(2020, 6, 1), work3.publication_date)
         self.assertFalse(work3.stub)
@@ -173,12 +171,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Import content', task_titles)
 
-    def test_errors(self, mock):
+    def test_errors(self):
         jhb = Locality.objects.get(pk=1)
         self.creator.locality = jhb
         # preview
         works = self.get_works(True, 'errors.csv')
-        self.assertEqual(5, len(works))
+        self.assertEqual(8, len(works))
 
         row1 = works[0]
         self.assertIsNone(row1.status)
@@ -203,6 +201,21 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIsNone(row5.status)
         self.assertEqual('''{"subtype": [{"message": "Select a valid choice. ln is not one of the available choices.", "code": "invalid_choice"}]}''',
                          row5.errors.as_json())
+
+        row6 = works[5]
+        self.assertIsNone(row6.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row6.errors.as_json())
+
+        row7 = works[5]
+        self.assertIsNone(row7.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row7.errors.as_json())
+
+        row8 = works[5]
+        self.assertIsNone(row8.status)
+        self.assertEqual('''{"number": [{"message": "No spaces or punctuation allowed (use '-' for spaces).", "code": "invalid"}]}''',
+                         row8.errors.as_json())
 
         # live
         works = self.get_works(False, 'errors.csv')
@@ -242,7 +255,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
             '''{"subtype": [{"message": "Select a valid choice. ln is not one of the available choices.", "code": "invalid_choice"}]}''',
             row5.errors.as_json())
 
-    def test_get_frbr_uri(self, mock):
+    def test_get_frbr_uri(self):
         row = SpreadsheetRow({}, {})
         # not enough details
         with self.assertRaises(AttributeError):
@@ -269,7 +282,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # now both subtype and actor are included
         self.assertEqual('/akn/za/act/gn/edith/2020/27', uri)
 
-    def test_find_work(self, mock):
+    def test_find_work(self):
         self.creator.works = []
         # live
         self.creator.dry_run = False
@@ -305,7 +318,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         work = self.creator.find_work(given_string)
         self.assertEqual("/akn/za/act/2020/1 - I'm being imported in the same batch (about to be imported)", work)
 
-    def test_link_parents(self, mock):
+    def test_link_parents(self):
         # preview
         works = self.get_works(True, 'parents.csv')
         row2 = works[1]
@@ -324,7 +337,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in lonely_child.tasks.all()]
         self.assertIn('Link primary work', task_titles)
 
-    def test_link_children(self, mock):
+    def test_link_children(self):
         # preview
         works = self.get_works(True, 'children.csv')
         row1 = works[0]
@@ -380,7 +393,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # child 3 will now be linked
         self.assertEqual(new_parent, child3.parent_work)
 
-    def test_link_commencements_passive(self, mock):
+    def test_link_commencements_passive(self):
         # preview (commencement objects aren't created)
         works = self.get_works(True, 'commencements_passive.csv')
         uncommenced = works[0]
@@ -593,7 +606,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Import content', task_titles)
 
-    def test_link_commencements_active(self, mock):
+    def test_link_commencements_active(self):
         # preview (commencement objects aren't created)
         works = self.get_works(True, 'commencements_active.csv')
         uncommenced = works[0]
@@ -743,7 +756,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
 
-    def test_link_amendments_active(self, mock):
+    def test_link_amendments_active(self):
         # preview
         works = self.get_works(True, 'amendments_active.csv')
         main = works[0]
@@ -823,7 +836,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         # TODO: add test for amendment of duplicate main work
 
-    def test_link_amendments_passive(self, mock):
+    def test_link_amendments_passive(self):
         # preview
         works = self.get_works(True, 'amendments_passive.csv')
         main = works[0]
@@ -922,7 +935,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Link amendment (pending commencement)', task_titles)
 
-    def test_link_repeals_passive(self, mock):
+    def test_link_repeals_passive(self):
         # preview
         works = self.get_works(True, 'repeals_passive.csv')
         main1 = works[0]
@@ -968,7 +981,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(main4.repealed_by, repeal3)
         self.assertEqual(main4.repealed_date, datetime.date(2020, 6, 1))
 
-    def test_link_repeals_active(self, mock):
+    def test_link_repeals_active(self):
         # TODO: add test for check-update-repeal
         # preview
         works = self.get_works(True, 'repeals_active.csv')
@@ -1033,7 +1046,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(main3.repealed_by, repeal4)
         self.assertEqual(main3.repealed_date, datetime.date(2020, 6, 1))
 
-    def test_duplicates(self, mock):
+    def test_duplicates(self):
         # preview
         works = self.get_works(True, 'duplicates.csv')
         work1 = works[0]
@@ -1054,7 +1067,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], work1.notes)
         self.assertEqual([], work2.notes)
 
-    def test_link_taxonomies(self, mock):
+    def test_link_taxonomies(self):
         children = VocabularyTopic.objects.get(pk=3)
         communications = VocabularyTopic.objects.get(pk=4)
         topic_with_comma = VocabularyTopic.objects.get(pk=7)
@@ -1113,7 +1126,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(3, len(w2_tasks))
         self.assertEqual(3, len(w3_tasks))
 
-    def test_subtypes(self, mock):
+    def test_subtypes(self):
         # dry run
         works = self.get_works(True, 'subtypes.csv')
 

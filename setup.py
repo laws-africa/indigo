@@ -67,7 +67,7 @@ setup(
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]
-        'bluebell @ git+https://github.com/laws-africa/bluebell@0a5c6f52871aa75f6563f90ea630403d8306ee7b',
+        'bluebell @ git+https://github.com/laws-africa/bluebell@f8d8f813b3a16816e12994a5d5254a9fda11e2e1',
         'docpipe @ git+https://github.com/laws-africa/docpipe@97c371fd7e28041481581a1d43952b401bb6b119',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',

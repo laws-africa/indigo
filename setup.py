@@ -82,7 +82,7 @@ setup(
         'XlsxWriter>=1.2.6',
         # unreleased version of xmldiff that allows us to ignore attributes when diffing
         'xmldiff @ git+https://github.com/Shoobx/xmldiff@6980256b10ffa41b5ab80716e63a608f587126db#egg=xmldiff',
-        'sentry-sdk>=1.4,<=1.9.8',
+        'sentry-sdk>=1.16.0',
 
         # for indigo_social
         'pillow>=5.2.0',

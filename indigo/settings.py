@@ -505,4 +505,7 @@ if not DEBUG and SENTRY_DSN:
         integrations=[DjangoIntegration(), sentry_logging],
         send_default_pii=True,
         traces_sample_rate=SENTRY_SAMPLE_RATE,
+        _experiments={
+            "profiles_sample_rate": 1.0,
+        },
     )

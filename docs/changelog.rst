@@ -29,7 +29,7 @@ Note: it is technically possible to proceed without migrating your existing docu
 Upgrade process
 ...............
 
-1. **Make a backup of your database before proceeding**
+1. **Make a backup of your database before proceeding**.
 2. Install Indigo version 18.0.0 and apply any outstanding Django migrations with ``python manage.py migrate``.
 3. Add ``bluebell_migration`` as one of your installation's INSTALLED_APPS in settings.py.
 4. **Before editing any documents in the new editor**, run the Bluebell Migration on your database using the ``bb_migrate`` management command. For more details, see below.
@@ -43,6 +43,12 @@ This version of Indigo includes a management command for migrating your existing
 The ``python manage.py bb_migrate`` command will validate the migration of your documents and give you a chance to check and resolve any issues before migration takes place. The command can be run for each place (country) in your database separately, if necessary, using the ``--place`` option.
 
 The command will output guidance to help you debug and resolve migration issues, if any.
+
+Some potential migration issues due to bluebell's stricter markup:
+
+* ``<br/>`` elements are no longer supported in tables: separate ``<p></p>``s (before and after each break) will be used instead.
+
+* double inline markup is not supported in bluebell: ``****bold** text**`` will be converted into ``\***\*bold** text\*\*`` in bluebell markup, or ``*<b>*bold</b> text**`` in the XML.
 
 Once you are ready to migrate, run the command with the ``--commit`` flag to commit changes. The migration is done in a transaction and can safely be cancelled before it is complete.
 

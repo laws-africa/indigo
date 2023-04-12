@@ -133,7 +133,8 @@ class PDFRenderer(BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         self.renderer_context = renderer_context
 
-        if not hasattr(data, 'frbr_uri') and not isinstance(data, list):
+        # we don't support rendering more than one PDF
+        if not hasattr(data, 'frbr_uri') or isinstance(data, list):
             return ''
 
         view = renderer_context['view']
@@ -151,16 +152,12 @@ class PDFRenderer(BaseRenderer):
         exporter = self.get_exporter()
         exporter.resolver = resolver_url(request, request.GET.get('resolver'))
 
-        if isinstance(data, list):
-            # render many
-            pdf = exporter.render_many(data)
-        elif not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
             # whole document
             pdf = exporter.render(data)
         else:
-            # just one element
-            exporter.toc = False
-            pdf = exporter.render(data, view.element)
+            # we don't support rendering partial PDFs
+            return ''
 
         # cache it
         if key:

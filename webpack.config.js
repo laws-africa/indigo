@@ -67,5 +67,20 @@ const appConfig = {
   ]
 };
 
+const bluebellMonaco = {
+  entry: './indigo_app/js/bluebell-monaco.src.js',
+  mode: 'production',
+  module: {
+    rules: [{
+      test: /\.css$/,
+      use: ['css-loader']
+    }],
+  },
+  output: {
+    filename: 'bluebell-monaco.js',
+    path: path.resolve(__dirname, 'indigo_app/static/javascript/indigo'),
+  }
+};
 
-module.exports = [legacyConfig, appConfig];
+
+module.exports = [legacyConfig, appConfig, bluebellMonaco];

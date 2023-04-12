@@ -1,0 +1,216 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion" name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias name="title" value="Work with uncommenced provisions, only one commencement so far"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2021-10-11" name="" number="" showAs=""/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef date="2021-10-20" eId="amendment-2021-10-20" source="#amendment-0-source" type="amendment"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_4">
+        <num>4.</num>
+        <heading>Heading</heading>
+        <intro>
+          <p eId="sec_4__intro__p_1">first p</p>
+          <table eId="sec_4__intro__table_1">
+            <tr>
+              <th>
+                <p eId="sec_4__intro__table_1__p_1">Heading 1</p>
+              </th>
+              <th>
+                <p eId="sec_4__intro__table_1__p_2">Heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="sec_4__intro__table_1__p_3">Content 1</p>
+              </td>
+              <td>
+                <p eId="sec_4__intro__table_1__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+          <p eId="sec_4__intro__p_2">second p</p>
+        </intro>
+        <crossHeading eId="sec_4__crossHeading_1">crossheading</crossHeading>
+        <hcontainer eId="sec_4__hcontainer_1" name="hcontainer">
+          <content>
+            <p eId="sec_4__hcontainer_1__p_1">more just text</p>
+            <p eId="sec_4__hcontainer_1__p_2">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="sec_4__para_a">
+          <num>(a)</num>
+          <hcontainer eId="sec_4__para_a__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="sec_4__para_a__hcontainer_1__p_1">first para</p>
+            </content>
+          </hcontainer>
+          <subparagraph eId="sec_4__para_a__subpara_i">
+            <num>(i)</num>
+            <hcontainer eId="sec_4__para_a__subpara_i__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="sec_4__para_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="sec_4__para_a__subpara_i__subpara_A">
+              <num>(A)</num>
+              <content>
+                <p eId="sec_4__para_a__subpara_i__subpara_A__p_1">first item</p>
+              </content>
+            </subparagraph>
+            <subparagraph eId="sec_4__para_a__subpara_i__subpara_B">
+              <num>(B)</num>
+              <content>
+                <p eId="sec_4__para_a__subpara_i__subpara_B__p_1">second item</p>
+              </content>
+            </subparagraph>
+          </subparagraph>
+          <subparagraph eId="sec_4__para_a__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_4__para_a__subpara_ii__p_1">second subpara</p>
+            </content>
+          </subparagraph>
+        </paragraph>
+        <paragraph eId="sec_4__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_4__para_b__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="sec_4__hcontainer_2" name="hcontainer">
+          <content>
+            <p eId="sec_4__hcontainer_2__p_1">second p</p>
+          </content>
+        </hcontainer>
+        <crossHeading eId="sec_4__crossHeading_2">hi</crossHeading>
+        <hcontainer eId="sec_4__hcontainer_3" name="hcontainer">
+          <content>
+            <p eId="sec_4__hcontainer_3__p_1">more</p>
+            <p eId="sec_4__hcontainer_3__p_2">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="sec_4__para_a_2">
+          <num>(a)</num>
+          <hcontainer eId="sec_4__para_a_2__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="sec_4__para_a_2__hcontainer_1__p_1">first para</p>
+            </content>
+          </hcontainer>
+          <subparagraph eId="sec_4__para_a_2__subpara_i">
+            <num>(i)</num>
+            <hcontainer eId="sec_4__para_a_2__subpara_i__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="sec_4__para_a_2__subpara_i__hcontainer_1__p_1">first subpara</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="sec_4__para_a_2__subpara_i__subpara_A">
+              <num>(A)</num>
+              <content>
+                <p eId="sec_4__para_a_2__subpara_i__subpara_A__p_1">first item</p>
+              </content>
+            </subparagraph>
+            <subparagraph eId="sec_4__para_a_2__subpara_i__subpara_B">
+              <num>(B)</num>
+              <content>
+                <p eId="sec_4__para_a_2__subpara_i__subpara_B__p_1">second item</p>
+              </content>
+            </subparagraph>
+          </subparagraph>
+          <subparagraph eId="sec_4__para_a_2__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_4__para_a_2__subpara_ii__p_1">second subpara</p>
+            </content>
+          </subparagraph>
+        </paragraph>
+        <paragraph eId="sec_4__para_b_2">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_4__para_b_2__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="sec_4__hcontainer_4" name="hcontainer">
+          <content>
+            <p eId="sec_4__hcontainer_4__p_1">more</p>
+            <p eId="sec_4__hcontainer_4__p_2">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="sec_4__para_a_3">
+          <num>(a)</num>
+          <hcontainer eId="sec_4__para_a_3__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="sec_4__para_a_3__hcontainer_1__p_1">first para</p>
+            </content>
+          </hcontainer>
+          <subparagraph eId="sec_4__para_a_3__subpara_i">
+            <num>(i)</num>
+            <hcontainer eId="sec_4__para_a_3__subpara_i__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="sec_4__para_a_3__subpara_i__hcontainer_1__p_1">first subpara</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="sec_4__para_a_3__subpara_i__subpara_A">
+              <num>(A)</num>
+              <content>
+                <p eId="sec_4__para_a_3__subpara_i__subpara_A__p_1">first item</p>
+              </content>
+            </subparagraph>
+            <subparagraph eId="sec_4__para_a_3__subpara_i__subpara_B">
+              <num>(B)</num>
+              <content>
+                <p eId="sec_4__para_a_3__subpara_i__subpara_B__p_1">second item</p>
+              </content>
+            </subparagraph>
+          </subparagraph>
+          <subparagraph eId="sec_4__para_a_3__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_4__para_a_3__subpara_ii__p_1">second subpara</p>
+            </content>
+          </subparagraph>
+        </paragraph>
+        <paragraph eId="sec_4__para_b_3">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_4__para_b_3__p_1">second para</p>
+          </content>
+        </paragraph>
+        <crossHeading eId="sec_4__crossHeading_3">hi</crossHeading>
+        <wrapUp>
+          <p eId="sec_4__wrapup__p_1">wrap for section 4</p>
+        </wrapUp>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

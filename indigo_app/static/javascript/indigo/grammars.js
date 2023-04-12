@@ -5,6 +5,8 @@
   Indigo = exports.Indigo;
 
   Indigo.grammars = {
-    registry: {}
+    registry: {
+      bluebell: exports.bluebellMonaco.BluebellGrammarModel
+    }
   };
 })(window);

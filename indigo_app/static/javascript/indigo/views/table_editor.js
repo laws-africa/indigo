@@ -18,6 +18,7 @@
       'click .table-delete-column': 'deleteColumn',
       'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
+      'click .table-toggle-border': 'toggleBorder',
       'click .table-text-left': 'alignTextLeft',
       'click .table-text-center': 'alignTextCenter',
       'click .table-text-right': 'alignTextRight',
@@ -58,8 +59,8 @@
                         'b; i; u; p;' +
                         'sup; sub;' +
                         'table[id, data-eid]; thead; tbody; tr;' +
-                        'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
-                        'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
+                        'th(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];' +
+                        'td(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];',
       };
     },
 
@@ -258,18 +259,22 @@
 
     updateToolbar: function() {
       var selected = this.getSelectedCells(),
-          alignment = {};
+          alignment = {},
+          border = false;
 
       // toggle alignment buttons
       selected.forEach(function(cell) {
         if (cell.classList.contains('akn--text-center')) alignment.center = (alignment.center || 0) + 1;
         else if (cell.classList.contains('akn--text-right')) alignment.right = (alignment.right || 0) + 1;
         else alignment.left = (alignment.left || 0) + 1;
+        border = border || cell.classList.contains('akn--no-border');
       });
 
       $('.table-text-left, .table-text-center, .table-text-right').removeClass('active');
       alignment = _.keys(alignment);
-      if (alignment.length == 1) $('.table-text-' + alignment[0]).addClass('active');
+      if (alignment.length === 1) $('.table-text-' + alignment[0]).addClass('active');
+
+      $('.table-toggle-border').toggleClass('active', border);
     },
 
     insertRowAbove: function() {
@@ -335,6 +340,16 @@
           self.renameNode(cell, makeHeading ? 'th' : 'td'),
           cell);
       });
+    },
+
+    toggleBorder: function(e) {
+      var cells = this.getSelectedCells(),
+          setBorder = !_.any(cells, function(c) { return c.classList.contains('akn--no-border'); });
+
+      this.getSelectedCells().forEach(function(cell) {
+        cell.classList.toggle('akn--no-border', setBorder);
+      });
+      this.updateToolbar();
     },
 
     alignTextCenter: function(e) {

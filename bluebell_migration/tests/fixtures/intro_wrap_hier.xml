@@ -1,0 +1,302 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+          <FRBRalias name="title" value="Basic"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="xx-playground"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2021-06-17" name="" number="" showAs=""/>
+      <references source="#cobalt">
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+      </references>
+    </meta>
+    <preface>
+      <blockList eId="preface__list_1">
+        <listIntroduction eId="preface__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preface__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preface__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preface__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preface__list_1__item_b__p_1">second para</p>
+        </item>
+        <listWrapUp eId="preface__list_1__wrapup_1">wrap</listWrapUp>
+      </blockList>
+    </preface>
+    <preamble>
+      <blockList eId="preamble__list_1">
+        <listIntroduction eId="preamble__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preamble__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preamble__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preamble__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preamble__list_1__item_b__p_1">second para</p>
+        </item>
+        <listWrapUp eId="preamble__list_1__wrapup_1">wrap</listWrapUp>
+      </blockList>
+    </preamble>
+    <body>
+      <hcontainer eId="hcontainer_1" name="hcontainer">
+        <hcontainer eId="hcontainer_1__hcontainer_1" name="hcontainer">
+          <content>
+            <p eId="hcontainer_1__hcontainer_1__p_1">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="hcontainer_1__para_a">
+          <num>(a)</num>
+          <content>
+            <p eId="hcontainer_1__para_a__p_1">first para</p>
+          </content>
+        </paragraph>
+        <paragraph eId="hcontainer_1__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="hcontainer_1__para_b__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="hcontainer_1__hcontainer_2" name="hcontainer">
+          <content>
+            <p eId="hcontainer_1__hcontainer_2__p_1">wrap</p>
+          </content>
+        </hcontainer>
+      </hcontainer>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Section 1 heading</heading>
+        <hcontainer eId="sec_1__hcontainer_1" name="hcontainer">
+          <content>
+            <p eId="sec_1__hcontainer_1__p_1">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="sec_1__para_a">
+          <num>(a)</num>
+          <content>
+            <p eId="sec_1__para_a__p_1">first para</p>
+          </content>
+        </paragraph>
+        <paragraph eId="sec_1__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_1__para_b__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="sec_1__hcontainer_2" name="hcontainer">
+          <content>
+            <p eId="sec_1__hcontainer_2__p_1">wrap</p>
+          </content>
+        </hcontainer>
+      </section>
+      <part eId="part_A">
+        <num>A</num>
+        <heading>Part A heading</heading>
+        <section eId="part_A__sec_2">
+          <num>2.</num>
+          <heading>Section 2 heading</heading>
+          <hcontainer eId="part_A__sec_2__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_1__p_1">intro:</p>
+            </content>
+          </hcontainer>
+          <paragraph eId="part_A__sec_2__para_a">
+            <num>(a)</num>
+            <content>
+              <p eId="part_A__sec_2__para_a__p_1">first para</p>
+            </content>
+          </paragraph>
+          <paragraph eId="part_A__sec_2__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="part_A__sec_2__para_b__p_1">second para</p>
+            </content>
+          </paragraph>
+          <hcontainer eId="part_A__sec_2__hcontainer_2" name="hcontainer">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_2__p_1">wrap</p>
+            </content>
+          </hcontainer>
+        </section>
+      </part>
+    </body>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias name="title" value="Schedule 1"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer eId="att_1__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="att_1__hcontainer_1__p_1">intro:</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="att_1__para_a">
+              <num>(a)</num>
+              <content>
+                <p eId="att_1__para_a__p_1">first para</p>
+              </content>
+            </paragraph>
+            <paragraph eId="att_1__para_b">
+              <num>(b)</num>
+              <content>
+                <p eId="att_1__para_b__p_1">second para</p>
+              </content>
+            </paragraph>
+            <hcontainer eId="att_1__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="att_1__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="att_1__para_1">
+              <num>1.</num>
+              <hcontainer eId="att_1__para_1__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_1__p_1">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="att_1__para_1__subpara_a">
+                <num>(a)</num>
+                <content>
+                  <p eId="att_1__para_1__subpara_a__p_1">first para</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="att_1__para_1__subpara_b">
+                <num>(b)</num>
+                <content>
+                  <p eId="att_1__para_1__subpara_b__p_1">second para</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="att_1__para_1__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </paragraph>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_2">
+        <heading>Schedule 2</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias name="title" value="Schedule 2"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer eId="att_2__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="att_2__hcontainer_1__p_1">intro:</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="att_2__para_a">
+              <num>(a)</num>
+              <hcontainer eId="att_2__para_a__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="att_2__para_a__hcontainer_1__p_1">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="att_2__para_a__subpara_i">
+                <num>(i)</num>
+                <content>
+                  <p eId="att_2__para_a__subpara_i__p_1">first subpara</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="att_2__para_a__subpara_ii">
+                <num>(ii)</num>
+                <content>
+                  <p eId="att_2__para_a__subpara_ii__p_1">second subpara</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="att_2__para_a__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="att_2__para_a__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </paragraph>
+            <paragraph eId="att_2__para_b">
+              <num>(b)</num>
+              <content>
+                <p eId="att_2__para_b__p_1">second para</p>
+              </content>
+            </paragraph>
+            <hcontainer eId="att_2__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="att_2__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>

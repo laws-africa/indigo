@@ -509,3 +509,7 @@ if not DEBUG and SENTRY_DSN:
             "profiles_sample_rate": 1.0,
         },
     )
+
+# where does the fop binary live?
+FOP_CMD = os.environ.get("FOP_CMD", "fop")
+FOP_CONFIG = os.environ.get("FOP_CONFIG", "/app/indigo_api/fop.xconf")

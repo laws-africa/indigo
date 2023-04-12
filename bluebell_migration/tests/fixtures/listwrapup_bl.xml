@@ -1,0 +1,59 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act" contains="singleVersion">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias value="Work with uncommenced provisions, only one commencement so far" name="title"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2021-10-11"/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef eId="amendment-2021-10-20" date="2021-10-20" type="amendment" source="#amendment-0-source"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <blockList eId="sec_1__list_1">
+            <item eId="sec_1__list_1__item_a">
+              <num>(a)</num>
+              <p eId="sec_1__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="sec_1__list_1__item_b">
+              <num>(b)</num>
+              <p eId="sec_1__list_1__item_b__p_1">second para</p>
+            </item>
+            <listWrapUp eId="sec_1A__list_1__wrapup_1">and a wrap</listWrapUp>
+          </blockList>
+          <p eId="sec_1A__p_1">not a wrap</p>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

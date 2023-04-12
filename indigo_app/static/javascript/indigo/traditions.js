@@ -72,15 +72,24 @@
   Indigo.traditions.default = new Indigo.Tradition({
     country: null,
     grammar: {
-      name: 'slaw',
+      name: 'bluebell',
       fragments: {
-        chapter: 'chapters',
-        part: 'parts',
-        section: 'sections',
-        attachment: 'schedules',
-        attachments: 'schedules_container',
+        article: 'hier_element_block',
+        attachment: 'attachment',
+        attachments: 'attachments',
+        chapter: 'hier_element_block',
+        division: 'hier_element_block',
+        paragraph: 'hier_element_block',
+        part: 'hier_element_block',
+        rule: 'hier_element_block',
+        section: 'hier_element_block',
+        subdivision: 'hier_element_block',
+        subpart: 'hier_element_block',
+        debateSection: 'speech_container',
+        speech: 'speech_group',
       },
-      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-attachment, .akn-attachments',
+      // TODO: add .akn-attachments, .akn-component, .akn-components?
+      quickEditable: '.akn-article, .akn-attachment, .akn-chapter, .akn-division, .akn-paragraph, .akn-part, .akn-rule, .akn-section, .akn-subdivision, .akn-subpart, .akn-debateSection, .akn-speech',
     },
     // list of names of linter functions applicable to this location
     linters: [],
@@ -88,19 +97,26 @@
     annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
                  ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
                  ".akn-article, .akn-paragraph, .akn-subheading, .akn-item, table",
+    // TODO: include all / more AkomaNtoso30.hier_elements here?
     toc: {
       elements: {
         akomaNtoso: 1,
+        article: 1,
         attachment: 1,
         attachments: 1,
         chapter: 1,
         conclusions: 1,
         coverpage: 1,
+        division: 1,
+        paragraph: 1,
         part: 1,
         preamble: 1,
         preface: 1,
+        rule: 1,
         section: 1,
+        subdivision: 1,
         subpart: 1,
+        debateSection: 1,
       },
       // elements we exclude from the TOC because they contain sub-documents or subflows
       deadends: {
@@ -142,6 +158,12 @@
           var name = meta.parentElement.getAttribute('name') || '(untitled)';
           return name.slice(0, 1).toLocaleUpperCase() + name.slice(1);
         },
+        debateSection: function(i) {
+          return (i.num || i.heading ? i.num + (i.num && i.heading ? " – " : '') + i.heading : 'Debate section');
+        },
+        article      : function(i) {
+          return "Art. " + i.num + (i.heading ? " – " + i.heading : '');
+          }
       },
     },
   });

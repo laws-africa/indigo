@@ -1,0 +1,190 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act" contains="singleVersion">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias value="Work with uncommenced provisions, only one commencement so far" name="title"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2021-10-11"/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef eId="amendment-2021-10-20" date="2021-10-20" type="amendment" source="#amendment-0-source"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <preface>
+      <blockList eId="preface__list_1">
+        <listIntroduction eId="preface__list_1__intro_1">Intro text:</listIntroduction>
+        <item eId="preface__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preface__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preface__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preface__list_1__item_b__p_1">second para</p>
+          <p eId="preface__list_1__item_b__p_2">second p of second para</p>
+        </item>
+        <listWrapUp eId="preface__list_1__wrapup_1">Not (yet) wrap</listWrapUp>
+      </blockList>
+    </preface>
+    <preamble>
+      <blockList eId="preamble__list_1">
+        <listIntroduction eId="preamble__list_1__intro_1">Intro text:</listIntroduction>
+        <item eId="preamble__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preamble__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preamble__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preamble__list_1__item_b__p_1">second para</p>
+          <p eId="preamble__list_1__item_b__p_2">second p of second para</p>
+        </item>
+        <listWrapUp eId="preamble__list_1__wrapup_1">Not (yet) wrap</listWrapUp>
+      </blockList>
+    </preamble>
+    <body>
+      <hcontainer name="hcontainer" eId="hcontainer_1">
+        <content>
+          <blockList eId="hcontainer_1__list_1">
+            <listIntroduction eId="hcontainer_1__list_1__intro_1">Intro text:</listIntroduction>
+            <item eId="hcontainer_1__list_1__item_a">
+              <num>(a)</num>
+              <p eId="hcontainer_1__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="hcontainer_1__list_1__item_b">
+              <num>(b)</num>
+              <p eId="hcontainer_1__list_1__item_b__p_1">second para</p>
+              <p eId="hcontainer_1__list_1__item_b__p_2">second p of second para</p>
+            </item>
+            <listWrapUp eId="hcontainer_1__list_1__wrapup_1">Yes a wrap</listWrapUp>
+          </blockList>
+          <p eId="hcontainer_1__p_1">Not a wrap</p>
+        </content>
+      </hcontainer>
+    </body>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 1" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-02-24/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-02-24"/>
+                <FRBRdate date="2022-03-25" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-02-24/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-02-24"/>
+                <FRBRdate date="2022-03-25" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer name="hcontainer" eId="hcontainer_1">
+              <crossHeading eId="att_1__crossHeading_1">section 3</crossHeading>
+            </hcontainer>
+            <blockList eId="att_1__list_1">
+              <listIntroduction eId="att_1__list_1__intro_1">Intro text:</listIntroduction>
+              <item eId="att_1__list_1__item_a">
+                <num>(a)</num>
+                <p eId="att_1__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="att_1__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_1__list_1__item_b__p_1">second para</p>
+                <p eId="att_1__list_1__item_b__p_2">second p of second para</p>
+              </item>
+              <listWrapUp eId="att_1__list_1__wrapup_1">Yes a wrap</listWrapUp>
+            </blockList>
+            <p eId="att_1__p_1">Not a wrap</p>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_2">
+        <heading>Schedule 2</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 1" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-02-24/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-02-24"/>
+                <FRBRdate date="2022-03-25" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-02-24/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-02-24"/>
+                <FRBRdate date="2022-03-25" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <blockList eId="att_2__list_1">
+              <listIntroduction eId="att_2__list_1__intro_1">Intro text:</listIntroduction>
+              <item eId="att_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="att_2__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="att_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_2__list_1__item_b__p_1">second para</p>
+                <p eId="att_2__list_1__item_b__p_2">second p of second para</p>
+              </item>
+              <listWrapUp eId="att_2__list_1__wrapup_1">Yes a wrap</listWrapUp>
+            </blockList>
+            <p eId="att_2__p_1">Not a wrap</p>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>

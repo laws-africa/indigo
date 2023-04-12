@@ -1,17 +1,23 @@
-import tempfile
-import shutil
 import logging
 import re
+import shutil
+import tempfile
 
 from django.core.files.uploadedfile import UploadedFile
-from docpipe.pipeline import Pipeline, PipelineContext
+from docpipe.html import parse_and_clean, TextToHtmlText, SplitPOnBr, RemoveEmptyParagraphs
 from docpipe.pdf import PdfToText
-from docpipe.html import parse_and_clean
-from indigo.plugins import plugins, LocaleBasedMatcher
-import indigo.pipelines.xml as xml
+from docpipe.pipeline import Pipeline, PipelineContext
+
 import indigo.pipelines.html as html
-import indigo.pipelines.text as text
 import indigo.pipelines.pdf as pdf
+import indigo.pipelines.text as text
+import indigo.pipelines.xml as xml
+from indigo.pipelines import DoctypePipeline
+from indigo.pipelines.base import HtmlToBluebellText, ParseBluebellText, SimplifyHtml, RemoveInlines, \
+    CleanTableStyles, WrapAnnotations
+from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.importers.pipelines import text_cleanup, RemoveBoilerplate, UnbreakLines, BreakLines, \
+    CorrectSubsectionNumSpaces
 from indigo_api.serializers import AttachmentSerializer
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -79,7 +85,7 @@ def parse_page_nums(pages):
 
 @plugins.register('importer')
 class Importer(LocaleBasedMatcher):
-    """ Imports documents and parses text into Akoma Ntoso using a pipelines.
+    """ Imports documents and parses text into Akoma Ntoso using pipelines.
     """
     log = logging.getLogger(__name__)
 
@@ -103,7 +109,7 @@ class Importer(LocaleBasedMatcher):
 
     page_nums = None
     """ Pages to import for document types that support it, or None to import them all.
-    
+
     This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
     """
 
@@ -115,14 +121,28 @@ class Importer(LocaleBasedMatcher):
         self.xml_pipeline = self.get_xml_pipeline()
         self.parse_pipeline = self.get_parse_pipeline()
 
+    def html_to_bluebell(self):
+        return Pipeline([
+            parse_and_clean,
+            SimplifyHtml(),
+            CleanTableStyles(),
+            SplitPOnBr(),
+            RemoveEmptyParagraphs(),
+
+            DoctypePipeline(),
+            RemoveInlines(),
+
+            HtmlToBluebellText(),
+            # now cleanup resulting bluebell text
+            text_cleanup,
+        ])
+
     def get_docx_pipeline(self):
         return Pipeline([
             html.DocxToHtml(),
-            parse_and_clean,
-
-            html.HtmlToSlawText(),
-            text.NormaliseWhitespace(),
-            text.ParseSlawText(),
+            self.html_to_bluebell(),
+            ParseBluebellText(),
+            WrapAnnotations(),
             xml.SerialiseXml(),
         ])
 
@@ -131,19 +151,28 @@ class Importer(LocaleBasedMatcher):
             pdf.PdfExtractPages(),
             PdfToText(),
             text.MinTextRequired(),
-            text.NormaliseWhitespace(),
 
-            text.ParseSlawText(),
+            text_cleanup,
+            RemoveBoilerplate(),
+            UnbreakLines(),
+            BreakLines(),
+            CorrectSubsectionNumSpaces(),
+
+            # convert text to basic html, then do html treatment
+            TextToHtmlText(),
+            self.html_to_bluebell(),
+            ParseBluebellText(),
+            WrapAnnotations(),
+
             xml.SerialiseXml(),
         ])
 
     def get_html_pipeline(self):
         return Pipeline([
             text.ImportSourceFile('html_text'),
-            parse_and_clean,
-            html.HtmlToSlawText(),
-            text.NormaliseWhitespace(),
-            text.ParseSlawText(),
+            self.html_to_bluebell(),
+            ParseBluebellText(),
+            WrapAnnotations(),
             xml.SerialiseXml(),
         ])
 
@@ -151,8 +180,10 @@ class Importer(LocaleBasedMatcher):
         # basic file pipeline, assume plain text
         return Pipeline([
             text.ImportSourceFile(),
-            text.NormaliseWhitespace(),
-            text.ParseSlawText(),
+            TextToHtmlText(),
+            self.html_to_bluebell(),
+            ParseBluebellText(),
+            WrapAnnotations(),
             xml.SerialiseXml(),
         ])
 
@@ -163,8 +194,8 @@ class Importer(LocaleBasedMatcher):
 
     def get_parse_pipeline(self):
         return Pipeline([
-            text.ParseSlawText(),
-            xml.SerialiseXml()
+            ParseBluebellText(),
+            xml.SerialiseXml(),
         ])
 
     def import_from_upload(self, upload, doc, request):

@@ -2,6 +2,69 @@
 Changelog
 =========
 
+18.0.0 (???)
+-------------------
+
+Important
+.........
+
+You **must** upgrade to this version before upgrading to future versions.
+
+This version replaces `Slaw <https://github.com/laws-africa/slaw>`_ with `Bluebell <https://github.com/laws-africa/bluebell>`_ for parsing documents. This cannot be undone.
+
+This version completely eliminates any requirements for Ruby to be installed.
+
+Bluebell is written in Python, is faster and more flexible than Slaw, and introduces the following improvements:
+
+* Support for all AKN hierarchical elements out of the box.
+* Support for AKN subflows: quotes and footnotes.
+* A consistent mark-up pattern for all hierarchical elements, making it a matter of simply replacing a keyword rather than looking up the syntax for different elements.
+* Support for paragraph and subparagraph, rather than using blocklists for everything below section.
+* Significant whitespace / use of indentation puts the power in the user's hands as to when exactly an element ends. This means you can now have standalone text, followed by a deeply nested hierarchical element that itself contains introductory and wrap-up text, with more standalone text before the next hierarchical element, if needed.
+
+It is **strongly recommended** to run the Bluebell Migration on your existing documents to take advantage of richer markup and ensure valid Akoma Ntoso XML.
+
+Note: it is technically possible to proceed without migrating your existing documents. However, this will mean that new documents and old documents will have different XML and will lead to an inconsistent database. We cannot guarantee that future data migrations will work if you do not migrate your existing documents.
+
+Upgrade process
+...............
+
+1. **Make a backup of your database before proceeding**.
+2. Install Indigo version 18.0.0 and apply any outstanding Django migrations with ``python manage.py migrate``.
+3. Add ``bluebell_migration`` as one of your installation's INSTALLED_APPS in settings.py.
+4. **Before editing any documents in the new editor**, run the Bluebell Migration on your database using the ``bb_migrate`` management command. For more details, see below.
+5. Remove ``bluebell_migration`` from INSTALLED_APPS, as this is a once-off migration.
+
+Bluebell migration
+..................
+
+This version of Indigo includes a management command for migrating your existing documents into an improved version of Akoma Ntoso XML. This prepares your documents for use with Bluebell and ensures better consistency and validation with the Akoma Ntoso XML standard.
+
+The ``python manage.py bb_migrate`` command will validate the migration of your documents and give you a chance to check and resolve any issues before migration takes place. The command can be run for each place (country) in your database separately, if necessary, using the ``--place`` option.
+
+The command will output guidance to help you debug and resolve migration issues, if any.
+
+Some potential migration issues due to bluebell's stricter markup:
+
+* ``<br/>`` elements are no longer supported in tables: separate ``<p></p>``s (before and after each break) will be used instead.
+
+* double inline markup is not supported in bluebell: ``****bold** text**`` will be converted into ``\***\*bold** text\*\*`` in bluebell markup, or ``*<b>*bold</b> text**`` in the XML.
+
+Once you are ready to migrate, run the command with the ``--commit`` flag to commit changes. The migration is done in a transaction and can safely be cancelled before it is complete.
+
+Note: the migration make take a long time to complete if you have many documents in your database.
+
+Changes
+.......
+
+* BREAKING: ImporterZA and TOCBuilderZA have been removed; plugins that subclass them should subclass the base Importer and TOCBuilderBase instead.
+* BREAKING: Importer now uses pipelines. See https://github.com/laws-africa/docpipe for details. Subclasses will need to be updated.
+* BREAKING: Bluebell, not Slaw, is now used for parsing documents. This means all AKN hierarchical elements are supported in the editor by default. See https://github.com/laws-africa/bluebell and https://docs.laws.africa/markup-guide for information on the new mark-up patterns.
+
+  Simply reparsing a document in bluebell, without changing any of the content or structure, will already make basic improvements like using ``intro``, ``hcontainer``, and ``wrapUp``. Running the Bluebell Migration process described above will transform most blockLists into paragraphs with nested subparagraphs. If your project overrides any of the XSL in indigo, it will likely need an update regardless of whether you run the upgrade process described above.
+* NEW: Friendly titles for all AKN hierarchical elements are now supported by TOCBuilderBase. (It is still possible to override them using the existing ``titles`` on subclasses.)
+* law-widgets - styling for all AKN elements, including introductory and wrap-up text, and the new subflows mentioned above.
+
 17.3.1 (???)
 ----------
 

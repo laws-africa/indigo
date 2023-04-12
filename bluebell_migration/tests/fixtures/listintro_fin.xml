@@ -1,0 +1,88 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion" name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias name="title" value="Work with uncommenced provisions, only one commencement so far"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2021-10-11" name="" number="" showAs=""/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef date="2021-10-20" eId="amendment-2021-10-20" source="#amendment-0-source" type="amendment"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_2">
+        <num>2.</num>
+        <heading>Basic subparagraphs</heading>
+        <subsection eId="sec_2__subsec_2">
+          <num>(2)</num>
+          <heading>para, subpara, item, all with intros</heading>
+          <intro>
+            <p eId="sec_2__subsec_2__intro__p_1">with intro:</p>
+          </intro>
+          <paragraph eId="sec_2__subsec_2__para_a">
+            <num>(a)</num>
+            <intro>
+              <p eId="sec_2__subsec_2__para_a__intro__p_1">first para / intro</p>
+            </intro>
+            <subparagraph eId="sec_2__subsec_2__para_a__subpara_i">
+              <num>(i)</num>
+              <intro>
+                <p eId="sec_2__subsec_2__para_a__subpara_i__intro__p_1">first subpara / intro</p>
+              </intro>
+              <subparagraph eId="sec_2__subsec_2__para_a__subpara_i__subpara_A">
+                <num>(A)</num>
+                <content>
+                  <p eId="sec_2__subsec_2__para_a__subpara_i__subpara_A__p_1">first item</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="sec_2__subsec_2__para_a__subpara_i__subpara_B">
+                <num>(B)</num>
+                <content>
+                  <p eId="sec_2__subsec_2__para_a__subpara_i__subpara_B__p_1">second item</p>
+                </content>
+              </subparagraph>
+            </subparagraph>
+            <subparagraph eId="sec_2__subsec_2__para_a__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="sec_2__subsec_2__para_a__subpara_ii__p_1">second subpara</p>
+              </content>
+            </subparagraph>
+          </paragraph>
+          <paragraph eId="sec_2__subsec_2__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="sec_2__subsec_2__para_b__p_1">second para</p>
+            </content>
+          </paragraph>
+        </subsection>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

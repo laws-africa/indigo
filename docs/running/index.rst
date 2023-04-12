@@ -17,9 +17,8 @@ Indigo requires:
 
 * Python 3.8+
 * PostgreSQL 9.3+
-* Ruby 2.7.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
-* `wkhtmltopdf <https://wkhtmltopdf.org/>`_ for generating PDFs
+* `Apache FOP 2.4+ <https://xmlgraphics.apache.org/fop/>`_  for generating PDFs
 * `pdftotext <https://poppler.freedesktop.org/>`_ for reading PDFs
 
 Optional but useful:
@@ -84,25 +83,10 @@ Installing Indigo Locally
 
 12. Now go back to http://localhost:8000/ and your country will be included in the list.
 
-Ruby dependencies
-.................
-
-You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.6.
-
-Once you've installed Ruby, install Bundler and the Indigo dependencies::
-
-    $ gem install bundler
-    $ bundle install
-
-You can test that Slaw is installed::
-
-    $ slaw --version
-    slaw 10.6.0
-
 PDF support
 ...........
 
-Indigo creates PDF files using `wkhtmltopdf <https://wkhtmltopdf.org/>`_. Install it as appropriate for your platform.
+Indigo creates PDF files using `Apache FOP 2.4+ <https://xmlgraphics.apache.org/fop/>`_. Install it as appropriate for your platform.
 
 Indigo reads from PDF files using pdftotext, which is part of the `poppler-utils <https://poppler.freedesktop.org/>`_ package. Install it as appropriate for your platform.
 

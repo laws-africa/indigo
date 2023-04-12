@@ -1186,10 +1186,14 @@ Possible reasons:
 class BaseBulkUpdater(BaseBulkCreator):
     """ Update works in bulk from a google sheets spreadsheet.
     """
-    row_validation_form_class = RowValidationFormUpdate
     # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
     core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
     update_columns = None
+
+    def setup(self, country, locality, request):
+        # super will overwrite the row_validation_form_class
+        super().setup(country, locality, request)
+        self.row_validation_form_class = RowValidationFormUpdate
 
     def create_works(self, table, dry_run, form_data):
         self.update_columns = form_data.get('update_columns')

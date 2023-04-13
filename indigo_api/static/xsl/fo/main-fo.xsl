@@ -7,7 +7,8 @@
                 xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <xsl:output method="xml"/>
 
-  <xsl:include href="variables.xsl"/>
+  <xsl:include href="_inlines.xsl"/>
+  <xsl:include href="_variables.xsl"/>
 
   <xsl:strip-space elements="*"/>
   <!-- TODO: what is / isn't this list? -->
@@ -102,32 +103,6 @@
   </xsl:template>
 
   <!-- inlines: bold, italics, underline, superscript, subscript -->
-  <xsl:template match="akn:b">
-    <fo:inline font-weight="bold">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-  <xsl:template match="akn:i">
-    <fo:inline font-style="italic">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-  <xsl:template match="akn:u">
-    <fo:inline text-decoration="underline">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-  <xsl:template match="akn:sup">
-    <fo:inline baseline-shift="super" font-size="{$fontsize-small}">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-  <xsl:template match="akn:sub">
-    <fo:inline baseline-shift="sub" font-size="{$fontsize-small}">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-
   <!-- linebreaks in own block but with no top margin -->
   <xsl:template match="akn:br">
     <fo:block>

@@ -22,7 +22,8 @@ def default_fop_config():
     font_path = FOP_FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
     with open(fop_config, 'r+') as f:
         out = re.sub('__FONT_PATH__', font_path, f.read())
-        f.truncate()
+        f.truncate(0)
+        f.seek(0)
         f.write(out)
     return fop_config
 

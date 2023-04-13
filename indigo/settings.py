@@ -513,3 +513,4 @@ if not DEBUG and SENTRY_DSN:
 # where does the fop binary live?
 FOP_CMD = os.environ.get("FOP_CMD", "fop")
 FOP_CONFIG = os.environ.get("FOP_CONFIG")
+FONT_PATH = os.environ.get("FONT_PATH")

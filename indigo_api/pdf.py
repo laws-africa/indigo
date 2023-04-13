@@ -1,13 +1,31 @@
 import logging
+import os.path
+import re
 import subprocess
 
 from django.conf import settings
-
 
 log = logging.getLogger(__name__)
 
 FOP_CMD = settings.FOP_CMD
 FOP_CONFIG = settings.FOP_CONFIG
+FONT_PATH = settings.FONT_PATH
+
+
+def default_fop_config():
+    """ Get the full path to the default fop config file, indigo_api/fop.xconf.
+        Edit the file by replacing __FONT_PATH__ with the full path to the fonts folder.
+        The fonts folder can be given in settings, or the default indigo_api/fonts will be used.
+        :return the full path to the (edited) default fop config file.
+    """
+    fop_config = os.path.join(os.path.dirname(__file__), 'fop.xconf')
+    font_path = FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
+    # TODO: is there a way to do this in place instead?
+    with open(fop_config, 'r+') as f:
+        out = re.sub('__FONT_PATH__', font_path, f.read())
+        f.seek(0)
+        f.write(out)
+    return fop_config
 
 
 def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False):
@@ -21,14 +39,15 @@ def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False)
     :param output_fo: should the output be the FO XML?
     """
     args = [FOP_CMD]
+    fop_config_file = FOP_CONFIG or default_fop_config()
+
     if output_fo:
         # output XML FO, rather than pdf
         args.extend(['-foout', outf_name])
     else:
         args.extend(['-pdf', outf_name])
 
-    if FOP_CONFIG:
-        args.extend(['-c', FOP_CONFIG])
+    args.extend(['-c', fop_config_file])
 
     if xml_fo:
         # xml fo, no stylesheet

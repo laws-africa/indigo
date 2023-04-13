@@ -2,6 +2,7 @@ import json
 import re
 import urllib.parse
 from datetime import date
+from lxml import etree
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
@@ -9,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
+from django.forms import SelectMultiple
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -25,7 +27,8 @@ class WorkForm(forms.ModelForm):
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
-            'stub', 'taxonomies', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
+            'stub', 'principal', 'taxonomies', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
+            'disclaimer',
         )
 
     # The user can provide either a file attachment, or a trusted
@@ -208,6 +211,45 @@ class BatchCreateWorkForm(forms.Form):
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
+    tasks = forms.MultipleChoiceField(
+        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
+
+
+class ColumnSelectWidget(SelectMultiple):
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    unavailable_fields = [
+        'commencement_date', 'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
+        'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
+        'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
+        'primary_work', 'subleg', 'taxonomy'
+    ]
+
+    def create_option(self, *args, **kwargs):
+        option = super().create_option(*args, **kwargs)
+
+        option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
+        if option['value'] in self.core_fields:
+            option['label'] = f'Core field: {option["label"]}'
+        if option['value'] in self.unavailable_fields:
+            option['label'] = f'Unavailable: {option["label"]}'
+
+        return option
+
+
+class BatchUpdateWorkForm(BatchCreateWorkForm):
+    update_columns = forms.MultipleChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from indigo.bulk_creator import RowValidationFormBase
+        row_validation_form = RowValidationFormBase
+        fields = list(row_validation_form.base_fields)
+        fields.remove('row_number')
+        self.fields['update_columns'].widget = ColumnSelectWidget()
+        # TODO: include place's extra properties
+        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields])
+        self.fields['update_columns'].choices.sort(key=lambda x: x[1])
 
 
 class ImportDocumentForm(forms.Form):
@@ -294,7 +336,7 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
+    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('temporary', 'Temporary stubs'), ('permanent', 'Permanent stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')], initial=['published', 'draft'])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
@@ -354,6 +396,10 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(stub=False)
         elif self.cleaned_data.get('stub') == 'only':
             queryset = queryset.filter(stub=True)
+        elif self.cleaned_data.get('stub') == 'temporary':
+            queryset = queryset.filter(stub=True, principal=True)
+        elif self.cleaned_data.get('stub') == 'permanent':
+            queryset = queryset.filter(stub=True, principal=False)
 
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:
@@ -440,7 +486,7 @@ class WorkFilterForm(forms.Form):
         elif self.cleaned_data.get('commencement') == 'no':
             queryset = queryset.filter(commenced=False)
         elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
+            queryset = queryset.filter(commencements__main=True, commencements__date__isnull=True).filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'partial':
             # ignore uncommenced works, include works that have any uncommenced provisions
             work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
@@ -453,7 +499,7 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']
                 end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
+                queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
 
         return queryset
 
@@ -508,7 +554,7 @@ class CountryAdminForm(forms.ModelForm):
 
     class Meta:
         model = Country
-        fields = ('country', 'primary_language', 'italics_terms')
+        exclude = []
 
     def clean_italics_terms(self):
         # strip blanks and duplications
@@ -571,7 +617,8 @@ class NewCommencementForm(forms.ModelForm):
 class PlaceSettingsForm(forms.ModelForm):
     class Meta:
         model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text', 'consolidation_note')
+        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text',
+                  'consolidation_note', 'is_consolidation', 'uses_chapter', 'publication_date_optional')
 
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(
@@ -583,3 +630,23 @@ class PlaceSettingsForm(forms.ModelForm):
     def clean_spreadsheet_url(self):
         url = self.cleaned_data.get('spreadsheet_url')
         return re.sub('/[\w#=]*$', '/', url)
+
+
+class ExplorerForm(forms.Form):
+    xpath = forms.CharField(required=True)
+    parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
+    localities = forms.BooleanField(required=False)
+    global_search = forms.BooleanField(required=False)
+
+    def clean_xpath(self):
+        value = self.cleaned_data['xpath']
+
+        try:
+            etree.XPath(value)
+        except etree.XPathError as e:
+            raise ValidationError(str(e))
+
+        return value
+
+    def data_as_url(self):
+        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')

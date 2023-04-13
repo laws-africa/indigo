@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import datetime
 
 from django.test import TestCase
@@ -154,4 +153,28 @@ class WorkTestCase(TestCase):
                 {'date': datetime.date(2017, 2, 23),
                  'initial': True},
             ]
+        )
+
+    def test_possible_expression_dates_future_commencement(self):
+        """ Use the consolidation date if the commencement date is in the future and the publication date is not known.
+        """
+        # the work commences on 2016-07-15
+        self.work.publication_date = None
+        consolidation = ArbitraryExpressionDate(work=self.work, date='2010-01-01', created_by_user_id=1)
+        consolidation.save()
+        self.assertEqual(
+            [
+                {'date': datetime.date(2010, 1, 1),
+                 'amendment': False,
+                 'consolidation': True,
+                 'initial': True},
+            ],
+            self.work.possible_expression_dates()
+        )
+
+    def test_no_initial_date(self):
+        self.work.publication_date = None
+        self.work.commencements.all().delete()
+        self.assertEqual([],
+            self.work.possible_expression_dates()
         )

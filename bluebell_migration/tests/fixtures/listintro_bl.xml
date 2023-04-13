@@ -1,0 +1,82 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act" contains="singleVersion">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2021/6/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6"/>
+          <FRBRalias value="Work with uncommenced provisions, only one commencement so far" name="title"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="6"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-08-12" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="sot"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2021/6/sot@2022-08-12/!main"/>
+          <FRBRuri value="/akn/za/act/2021/6/sot@2022-08-12"/>
+          <FRBRdate date="2022-03-16" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2021-10-11"/>
+      <lifecycle source="#Laws-Africa">
+        <eventRef eId="amendment-2021-10-20" date="2021-10-20" type="amendment" source="#amendment-0-source"/>
+      </lifecycle>
+      <references source="#cobalt">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+        <passiveRef eId="amendment-0-source" href="/akn/za/act/2021/6" showAs="Work with uncommenced provisions, only one commencement so far"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="sec_2">
+        <num>2.</num>
+        <heading>Basic subparagraphs</heading>
+        <subsection eId="sec_2__subsec_2">
+          <num>(2)</num>
+          <heading>para, subpara, item, all with intros</heading>
+          <content>
+            <blockList eId="sec_2__subsec_2__list_1">
+              <listIntroduction eId="sec_2__subsec_2__list_1__intro_1">with intro:</listIntroduction>
+              <item eId="sec_2__subsec_2__list_1__item_a">
+                <num>(a)</num>
+                <blockList eId="sec_2__subsec_2__list_1__item_a__list_1">
+                  <listIntroduction eId="sec_2__subsec_2__list_1__item_a__list_1__intro_1">first para / intro</listIntroduction>
+                  <item eId="sec_2__subsec_2__list_1__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <blockList eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1">
+                      <listIntroduction eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1__intro_1">first subpara / intro</listIntroduction>
+                      <item eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1__item_A">
+                        <num>(A)</num>
+                        <p eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1__item_A__p_1">first item</p>
+                      </item>
+                      <item eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1__item_B">
+                        <num>(B)</num>
+                        <p eId="sec_2__subsec_2__list_1__item_a__list_1__item_i__list_1__item_B__p_1">second item</p>
+                      </item>
+                    </blockList>
+                  </item>
+                  <item eId="sec_2__subsec_2__list_1__item_a__list_1__item_ii">
+                    <num>(ii)</num>
+                    <p eId="sec_2__subsec_2__list_1__item_a__list_1__item_ii__p_1">second subpara</p>
+                  </item>
+                </blockList>
+              </item>
+              <item eId="sec_2__subsec_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="sec_2__subsec_2__list_1__item_b__p_1">second para</p>
+              </item>
+            </blockList>
+          </content>
+        </subsection>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

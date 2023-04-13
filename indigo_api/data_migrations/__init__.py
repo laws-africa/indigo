@@ -3,7 +3,8 @@ import json
 from django.utils.encoding import force_text
 from lxml import etree
 
-from indigo.xmlutils import unwrap_element, rewrite_ids
+from indigo.xmlutils import rewrite_ids
+from docpipe.xmlutils import unwrap_element
 
 
 class DataMigration:

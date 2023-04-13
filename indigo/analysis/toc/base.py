@@ -1,25 +1,26 @@
 import re
 from functools import lru_cache
 
+from cobalt.schemas import AkomaNtoso30
+from django.utils.translation import override, ugettext as _
 from lxml import etree
 
-from django.utils.translation import override, ugettext as _
-
 from indigo.plugins import plugins, LocaleBasedMatcher
-
-
-# Ensure that these translations are included by makemessages
 from indigo.xmlutils import closest
 
+# Ensure that these translations are included by makemessages
+# TODO: include all AkomaNtoso30.hier_elements here
 _('Act')
 _('Article')
 _('By-law')
 _('Chapter')
 _('Government Notice')
+_('Paragraph')
 _('Part')
 _('Section')
 _('Preface')
 _('Preamble')
+_('Subpart')
 
 
 @lru_cache(maxsize=None)
@@ -81,12 +82,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     toc_elements = [
         # top-level
         'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
-        # hierarchical elements
-        'alinea', 'article', 'book', 'chapter', 'clause', 'division', 'indent', 'level', 'list',
-        'paragraph', 'part', 'point', 'proviso', 'rule', 'section',
-        'subchapter', 'subclause', 'subdivision', 'sublist', 'subparagraph', 'subpart', 'subrule',
-        'subsection', 'subtitle', 'title', 'tome', 'transitional',
-    ]
+    ] + AkomaNtoso30.hier_elements
     """ Elements we include in the table of contents, without their XML namespace.
         Base includes the following from the from the AKN schema:
         - all `hierarchicalStructure` elements, except:
@@ -100,16 +96,19 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ Elements we don't check or recurse into because they contain sub-documents or subflows.
     """
 
-    toc_non_unique_components = ['chapter', 'part']
-    """ These TOC elements (tag names without namespaces) aren't numbered uniquely throughout the document
-    and will need their parent components for context. Subclasses must provide this.
-    """
-
     titles = {}
     """ Dict from toc elements (tag names without namespaces) to functions that take a :class:`TOCElement` instance
     and return a string title for that element.
 
-    Include the special item `default` to handle elements not in the list.
+    Include the special item `default` to handle elements not in the list. This will override the behaviour in default_title.
+    """
+
+    titles_with_optional_type = ['section']
+    """ List of elements that should only include the type in the title if there is no heading.
+    """
+
+    titles_without_type = ['subpart', 'attachment']
+    """ List of elements that should never include the type in the title.
     """
 
     component_elements = ['component', 'attachment']
@@ -246,12 +245,61 @@ class TOCBuilderBase(LocaleBasedMatcher):
         return self.default_title(item)
 
     def default_title(self, item):
-        if item.heading:
+        """ Generates a default title for a given item, including the type, number, and/or heading as appropriate.
+        """
+        if item.type in self.titles_without_type:
+            return self.title_without_type(item)
+
+        if item.type in self.titles_with_optional_type:
+            return self.title_with_optional_type(item)
+
+        return self.title_with_type(item)
+
+    def title_with_type(self, item):
+        """ Generates a title for a given item, including the number and/or heading as appropriate.
+            Always includes the type.
+            Examples:
+                Article                     no num or heading
+                Chapter 1.                  num but no heading
+                Part – The Heading          heading but no num
+                Article A. – The Heading    num and heading
+        """
+        return type_title(item.type, self.language) \
+            + (' ' + item.num if item.num is not None else '') \
+            + (f' – {item.heading}' if item.heading is not None else '')
+
+    def title_with_optional_type(self, item):
+        """ Generates a title for a given item, including the type, number, and/or heading as appropriate.
+            Only includes the type if there's no heading.
+            Examples:
+                Section             no num or heading
+                Section 1.          num but no heading
+                The Heading         heading but no num
+                A. – The Heading    num and heading
+        """
+        if item.heading is not None:
+            title = f'{item.num} {item.heading}' if item.num is not None else item.heading
+        else:
+            title = type_title(item.type, self.language) + (f' {item.num}' if item.num is not None else '')
+        return title
+
+    def title_without_type(self, item):
+        """ Generates a title for a given item, including the number and/or heading as appropriate.
+            Never includes the type.
+            Examples:
+                                    no num or heading
+                1.                  num but no heading
+                The Heading         heading but no num
+                A. – The Heading    num and heading
+        """
+        if item.num is not None and item.heading is not None:
+            title = f'{item.num} – {item.heading}'
+        elif item.num is not None:
+            title = item.num
+        elif item.heading is not None:
             title = item.heading
         else:
-            title = type_title(item.type, self.language)
-            if item.num:
-                title += ' ' + item.num
+            title = ''
 
         return title
 

@@ -143,6 +143,11 @@
                       {% endif %}
                     </dd>
 
+                    {% if work.principal %}
+                      <dt>{% trans 'Principal work' %}</dt>
+                      <dd>{% trans 'Principal works are not simply repeals, amendments or commencements, and should have full text content.' %}</dd>
+                    {% endif %}
+
                     {% if work.parent_work %}
                       <dt>{% trans 'Primary work' %}</dt>
                       <dd>
@@ -178,6 +183,15 @@
                       </dt>
                       <dd>
                         {{ work.consolidation_note }}
+                      </dd>
+                    {% endif %}
+
+                    {% if work.disclaimer %}
+                      <dt>
+                        {% trans 'Disclaimer' %}
+                      </dt>
+                      <dd>
+                        {{ work.disclaimer }}
                       </dd>
                     {% endif %}
                   </dl>

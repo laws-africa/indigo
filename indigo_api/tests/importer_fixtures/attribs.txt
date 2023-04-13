@@ -1,0 +1,35 @@
+BODY
+  SEC.cls{style background-color:red} 1 - Simple
+
+    P.cls just class
+
+    P.cls{style background-color:blue} class and attribs
+
+  SEC 2 - Tables
+
+    TABLE.cls{style background-color:orange}
+      TR
+        TC.cls{style background-color:green|rowspan 1}
+          Cell with attribs
+
+        TH.cls{style background-color:purple}
+          Heading with attribs
+
+  CROSSHEADING.cls{style background-color:pink} Crossheading with attribs (not yet supported)
+
+  SEC 3 - Items
+
+    ITEMS.cls{style background-color:lime}
+      An intro
+
+      ITEM 1
+        an item - attribs on items not yet supported
+
+  SEC 4 - Bullets
+
+    BULLETS.cls{style background-color:lime}
+      * item 1
+      * item 2
+
+  end
+

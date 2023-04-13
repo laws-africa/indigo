@@ -62,7 +62,7 @@ class DocumentQuerySet(models.QuerySet):
 
         # filter on language
         if frbr_uri.language:
-            query = query.filter(language__language__iso_639_2B=frbr_uri.language)
+            query = query.filter(language__language__iso_639_2T=frbr_uri.language)
 
         # filter on expression date
         expr_date = frbr_uri.expression_date
@@ -110,24 +110,12 @@ class DocumentMixin(object):
     this document functionality.
     """
     @property
-    def date(self):
-        return self.work_uri.date
-
-    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
     @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
     def nature(self):
         return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
 
     @property
     def country(self):
@@ -136,10 +124,6 @@ class DocumentMixin(object):
     @property
     def locality(self):
         return self.work_uri.locality
-
-    @property
-    def actor(self):
-        return self.work_uri.actor
 
     @property
     def django_language(self):
@@ -212,14 +196,9 @@ class DocumentMixin(object):
         exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
         return exporter.render(self, element=element)
 
-    def to_pdf(self, **kwargs):
+    def to_pdf(self):
         pdf_exporter = plugins.for_document('pdf-exporter', self)
-        return pdf_exporter.render(self, **kwargs)
-
-    def element_to_pdf(self, element):
-        """ Render a child element of this document into PDF. """
-        pdf_exporter = plugins.for_document('pdf-exporter', self)
-        return pdf_exporter.render(self, element=element)
+        return pdf_exporter.render(self)
 
     def is_consolidation(self):
         return self.expression_date in [c.date for c in self.work.arbitrary_expression_dates.all()]
@@ -230,7 +209,8 @@ class DocumentMixin(object):
 
             Returns True or False.
 
-            Returns True if all dates after the current expression are arbitrary.
+            Returns True if all dates after the current expression are arbitrary. An arbitrary date is
+            one that isn't an initial date or an amendment date.
 
             Returns False if the document doesn't yet have an expression date
              or if the work doesn't yet have possible expression dates.
@@ -351,6 +331,22 @@ class Document(DocumentMixin, models.Model):
 
     # caching attributes
     _expression_uri = None
+
+    @property
+    def date(self):
+        return self.work_uri.date
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def actor(self):
+        return self.work_uri.actor
 
     @property
     def doc(self):
@@ -635,6 +631,11 @@ class Colophon(models.Model):
         return str(self.name)
 
 
+class AnnotationManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('created_by_user')
+
+
 class Annotation(models.Model):
     document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE)
     created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
@@ -646,6 +647,8 @@ class Annotation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
     selectors = JSONField(null=True)
+
+    objects = AnnotationManager()
 
     def resolve_anchor(self):
         if self.anchor_id and self.document:

@@ -1,3 +1,3 @@
-country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,stub (✔),taxonomy,primary_work,commenced_by,commenced_on_date,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
-ZA,,Now commenced,,,1,2020,,,,2020-01-01,,,,,/akn/za/act/2020/9 - Commencement notice 2,2020-09-01,,,,,,,,,,,,
-ZA,,Commencement notice 2,,,9,2020,,,,2020-08-01,2020-07-01,x,,,,,,,,,,,,,,,,
+country,locality,title,cap,subtype (blank for Acts),number,year,publication_name,publication_number,assent_date,publication_date,commencement_date,principal (✔),stub (✔),taxonomy,primary_work,commenced_by,commenced_on_date,amended_by,repealed_by,subleg,commences,commences_on_date,amends,repeals,Ignore (x) or in (✔),frbr_uri,frbr_uri_title,comments,LINKS ETC (add columns as needed)
+ZA,,Now commenced,,,1,2020,,,,2020-01-01,,x,,,,/akn/za/act/2020/9 - Commencement notice 2,2020-09-01,,,,,,,,,,,,
+ZA,,Commencement notice 2,,,9,2020,,,,2020-08-01,2020-07-01,,x,,,,,,,,,,,,,,,,

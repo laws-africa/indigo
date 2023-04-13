@@ -1,82 +1,100 @@
-# -*- coding: utf-8 -*-
-from unittest import TestCase
+from django.test import TestCase
 
-import lxml.html
-
-from indigo.analysis.differ import AttributeDiffer
+from indigo.analysis.differ import AttributeDiffer, AKNHTMLDiffer
 
 
-def as_tree(html):
-    return lxml.html.fromstring(html)
+class AKNHTMLDifferTestCase(TestCase):
+    maxDiff = None
 
-
-def as_html(tree):
-    return lxml.html.tostring(tree, encoding='utf-8').decode('utf-8')
-
-
-class AttributeDifferTestCase(TestCase):
     def setUp(self):
-        self.differ = AttributeDiffer()
+        self.differ = AKNHTMLDiffer()
 
     def test_text_changed(self):
-        old = as_tree('<p>abc 123</p>')
-        new = as_tree('<p>def 456</p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>abc 123</p>',
+            '<p>def 456</p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p><span class="diff-pair"><del>abc 123</del><ins>def 456</ins></span></p>',
+            diff,
         )
 
     def test_text_partially_changed(self):
-        old = as_tree('<p>some old text</p>')
-        new = as_tree('<p>some new text</p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>some old text</p>',
+            '<p>some new text</p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p>some <span class="diff-pair"><del>old</del><ins>new</ins></span> text</p>',
+            diff,
         )
 
     def test_text_partially_changed_with_elements(self):
-        old = as_tree('<p>some old text <b>no change</b> text <i>no change</i></p>')
-        new = as_tree('<p>some new text <b>no change</b> text <i>no change</i></p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>some old text <b>no change</b> text <i>no change</i></p>',
+            '<p>some new text <b>no change</b> text <i>no change</i></p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p>some <span class="diff-pair"><del>old</del><ins>new</ins></span> text <b>no change</b> text <i>no change</i></p>',
+            diff,
         )
 
     def test_tail_changed(self):
-        old = as_tree('<p>something <b>bold</b> 123 xx <i>and</i> same </p>')
-        new = as_tree('<p>something <b>bold</b> 456 xx <i>and</i> same </p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>something <b>bold</b> 123 xx <i>and</i> same </p>',
+            '<p>something <b>bold</b> 456 xx <i>and</i> same </p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p>something <b>bold</b> <span class="diff-pair"><del>123</del><ins>456</ins></span> xx <i>and</i> same </p>',
+            diff,
         )
 
     def test_inline_tag_removed(self):
-        old = as_tree('<p>Some text <b>bold text</b> and a tail.</p>')
-        new = as_tree('<p>Some text bold text and a tail.</p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>Some text <b>bold text</b> and a tail.</p>',
+            '<p>Some text bold text and a tail.</p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p>Some text <ins>bold text and a tail.</ins><b class="del ">bold text</b> and a tail.</p>',
+            diff,
         )
 
     def test_inline_tag_added(self):
-        old = as_tree('<p>Some text bold text and a tail.</p>')
-        new = as_tree('<p>Some text <b>bold text</b> and a tail.</p>')
-        n_changes, diff = self.differ.diff_document_html(old, new)
+        diff = self.differ.diff_html_str(
+            '<p>Some text bold text and a tail.</p>',
+            '<p>Some text <b>bold text</b> and a tail.</p>'
+        )
 
         self.assertEqual(
-            as_html(diff),
             '<p>Some text <span class="diff-pair"><del>bold text and a tail.</del><ins>&#xA0;</ins></span><b class="ins ">bold text</b><ins> and a tail.</ins></p>',
+            diff,
         )
+
+    def test_more_refs_added(self):
+        """ When adding a new ref to a p tag, the other refs should not be considered different.
+        """
+        diff = self.differ.diff_html_str(
+            '<p class="akn-p">Some text <a class="akn-ref" href="https://example.com" data-href="https://example.com" id="ref_1" data-eid="ref_1">link</a>.</p>',
+            '<p class="akn-p">Some text <a class="akn-ref" href="https://example.com" data-href="https://example.com" id="ref_1" data-eid="ref_1">new</a> and'
+            ' <a class="akn-ref" href="https://example.com" data-href="https://example.com" id="ref_2" data-eid="ref_2">link</a>.</p>'
+        )
+
+        self.assertEqual(
+            '<p class="akn-p">Some text <a class="ins akn-ref" href="https://example.com">new</a><ins> and </ins><a class="akn-ref" href="https://example.com">link</a>.</p>',
+            diff,
+        )
+
+
+class AttributeDifferTestCase(TestCase):
+    maxDiff = None
+
+    def setUp(self):
+        self.differ = AttributeDiffer()
 
     def test_diff_lists_deleted(self):
         diffs = self.differ.diff_lists('test', 'Test', ['1', '2', '3'], ['1', '3'])

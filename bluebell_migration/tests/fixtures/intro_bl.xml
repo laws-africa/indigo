@@ -1,0 +1,233 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+          <FRBRalias value="Basic" name="title"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="xx-playground"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+          <FRBRdate date="2022-03-26" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2021-06-17"/>
+      <references source="#cobalt">
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+      </references>
+    </meta>
+    <preface>
+      <blockList eId="preface__list_1">
+        <listIntroduction eId="preface__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preface__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preface__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preface__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preface__list_1__item_b__p_1">second para</p>
+        </item>
+      </blockList>
+    </preface>
+    <preamble>
+      <blockList eId="preamble__list_1">
+        <listIntroduction eId="preamble__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preamble__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preamble__list_1__item_a__p_1">first para</p>
+        </item>
+        <item eId="preamble__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preamble__list_1__item_b__p_1">second para</p>
+        </item>
+      </blockList>
+    </preamble>
+    <body>
+      <hcontainer name="hcontainer" eId="hcontainer_1">
+        <content>
+          <blockList eId="hcontainer_1__list_1">
+            <listIntroduction eId="hcontainer_1__list_1__intro_1">intro:</listIntroduction>
+            <item eId="hcontainer_1__list_1__item_a">
+              <num>(a)</num>
+              <p eId="hcontainer_1__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="hcontainer_1__list_1__item_b">
+              <num>(b)</num>
+              <p eId="hcontainer_1__list_1__item_b__p_1">second para</p>
+            </item>
+          </blockList>
+        </content>
+      </hcontainer>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Section 1 heading</heading>
+        <content>
+          <blockList eId="sec_1__list_1">
+            <listIntroduction eId="sec_1__list_1__intro_1">intro:</listIntroduction>
+            <item eId="sec_1__list_1__item_a">
+              <num>(a)</num>
+              <p eId="sec_1__list_1__item_a__p_1">first para</p>
+            </item>
+            <item eId="sec_1__list_1__item_b">
+              <num>(b)</num>
+              <p eId="sec_1__list_1__item_b__p_1">second para</p>
+            </item>
+          </blockList>
+        </content>
+      </section>
+      <part eId="part_A">
+        <num>A</num>
+        <heading>Part A heading</heading>
+        <section eId="part_A__sec_2">
+          <num>2.</num>
+          <heading>Section 2 heading</heading>
+          <content>
+            <blockList eId="part_A__sec_2__list_1">
+              <listIntroduction eId="part_A__sec_2__list_1__intro_1">intro:</listIntroduction>
+              <item eId="part_A__sec_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="part_A__sec_2__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="part_A__sec_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="part_A__sec_2__list_1__item_b__p_1">second para</p>
+              </item>
+            </blockList>
+          </content>
+        </section>
+      </part>
+    </body>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 1" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <blockList eId="att_1__list_1">
+              <listIntroduction eId="att_1__list_1__intro_1">intro:</listIntroduction>
+              <item eId="att_1__list_1__item_a">
+                <num>(a)</num>
+                <p eId="att_1__list_1__item_a__p_1">first para</p>
+              </item>
+              <item eId="att_1__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_1__list_1__item_b__p_1">second para</p>
+              </item>
+            </blockList>
+            <paragraph eId="att_1__para_1">
+              <num>1.</num>
+              <content>
+                <blockList eId="att_1__para_1__list_1">
+                  <listIntroduction eId="att_1__para_1__list_1__intro_1">intro:</listIntroduction>
+                  <item eId="att_1__para_1__list_1__item_a">
+                    <num>(a)</num>
+                    <p eId="att_1__para_1__list_1__item_a__p_1">first para</p>
+                  </item>
+                  <item eId="att_1__para_1__list_1__item_b">
+                    <num>(b)</num>
+                    <p eId="att_1__para_1__list_1__item_b__p_1">second para</p>
+                  </item>
+                </blockList>
+              </content>
+            </paragraph>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_2">
+        <heading>Schedule 2</heading>
+        <subheading>Title</subheading>
+        <doc contains="originalVersion" name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias value="Schedule 2" name="title"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-26/!schedule_2"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-26"/>
+                <FRBRdate date="2022-03-26" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <blockList eId="att_2__list_1">
+              <listIntroduction eId="att_2__list_1__intro_1">intro:</listIntroduction>
+              <item eId="att_2__list_1__item_a">
+                <num>(a)</num>
+                <blockList eId="att_2__list_1__item_a__list_1">
+                  <listIntroduction eId="att_2__list_1__item_a__list_1__intro_1">intro:</listIntroduction>
+                  <item eId="att_2__list_1__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <p eId="att_2__list_1__item_a__list_1__item_i__p_1">first subpara</p>
+                  </item>
+                  <item eId="att_2__list_1__item_a__list_1__item_ii">
+                    <num>(ii)</num>
+                    <p eId="att_2__list_1__item_a__list_1__item_ii__p_1">second subpara</p>
+                  </item>
+                </blockList>
+              </item>
+              <item eId="att_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="att_2__list_1__item_b__p_1">second para</p>
+              </item>
+            </blockList>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>

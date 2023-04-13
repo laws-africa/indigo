@@ -1,0 +1,8 @@
+{% for entry in toc %}
+  <div name="toc-level">
+    <tocItem id="{{ entry.id }}">{{ entry.title }}</tocItem>
+    {% if entry.children %}
+      {% include "indigo_api/akn/export/_pdf_toc_entry.xml" with toc=entry.children %}
+    {% endif %}
+  </div>
+{% endfor %}

@@ -3,12 +3,14 @@
   flex-direction: row;
 
   .content {
-    flex: 80%;
+    width: 80%;
+    flex: 0 0 80%;
     position: relative;
   }
 
   .gutter {
-    flex: 20%;
+    width: 20%;
+    flex: 0 0 20%;
     position: relative;
 
     .gutter-items {

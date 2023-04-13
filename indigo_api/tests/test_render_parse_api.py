@@ -82,22 +82,39 @@ class RenderParseAPITest(APITestCase):
     def test_parse_text_fragment(self):
         response = self.client.post('/api/documents/1/parse', {
             'content': """
-                Chapter 2
-                The Beginning
-                1. First Verse
-                κόσμε
-                (1) In the beginning
-                (2) There was nothing and an Act no 2 of 2010.
+CHAPTER 2 - The Beginning
+
+  SECTION 1. - First Verse
+
+    κόσμε
+
+    SUBSEC (1)
+
+      In the beginning
+
+    SUBSEC (2)
+
+      There was nothing and an Act no 2 of 2010.
             """,
-            'fragment': 'chapter',
+            'fragment': 'hier_element_block',
             'id_prefix': 'prefix',
             'language': 'eng',
         })
         self.assertEqual(response.status_code, 200)
         self.maxDiff = None
+        # TODO: is it okay for  xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
+        #  to be set on both chapter and wrapping akomaNtoso tag?
         self.assertEqual(
             response.data['output'],
-            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"><chapter eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading><section eId="sec_1"><num>1.</num><heading>First Verse</heading><hcontainer eId="sec_1__hcontainer_1" name="hcontainer"><content><p>κόσμε</p></content></hcontainer><subsection eId="sec_1__subsec_1"><num>(1)</num><content><p>In the beginning</p></content></subsection><subsection eId="sec_1__subsec_2"><num>(2)</num><content><p>There was nothing and an Act no 2 of 2010.</p></content></subsection></section></chapter></akomaNtoso>'
+            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">'
+            '<chapter xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="prefix__chp_2"><num>2</num><heading>The Beginning</heading>'
+            '<section eId="prefix__chp_2__sec_1"><num>1.</num><heading>First Verse</heading>'
+            '<intro><p eId="prefix__chp_2__sec_1__intro__p_1">κόσμε</p></intro>'
+            '<subsection eId="prefix__chp_2__sec_1__subsec_1"><num>(1)</num>'
+            '<content><p eId="prefix__chp_2__sec_1__subsec_1__p_1">In the beginning</p></content></subsection>'
+            '<subsection eId="prefix__chp_2__sec_1__subsec_2"><num>(2)</num>'
+            '<content><p eId="prefix__chp_2__sec_1__subsec_2__p_1">There was nothing and an Act no 2 of 2010.</p>'
+            '</content></subsection></section></chapter></akomaNtoso>'
         )
 
     def test_parse_text_with_components(self):
@@ -121,48 +138,60 @@ By order of the President
 
 BODY
 
-15. Regulations to bind State
+SEC 15. - Regulations to bind State
 
-These regulations bind the State.
+  These regulations bind the State.
 
-SCHEDULE
-HEADING Annexure A
-SUBHEADING Critical services
+SCHEDULE Annexure A
+  SUBHEADING Critical services
 
-CROSSHEADING (Regulation 1)
+  CROSSHEADING (Regulation 1)
 
-Part 1 - 
+  PART 1 - 
 
-PARA 1. Ambulance services
+    PARA 1.
 
-PARA 2. Casualties services
+      Ambulance services
+
+    PARA 2.
+
+      Casualties services
 
 
-Part 2 - 
+  PART 2 - 
 
-1. Agriculture and forestry
+    SEC 1. - Agriculture and forestry
 
-Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.
+      Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.
 
-2. Fishing
+    SEC 2. - Fishing
 
-Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.
+      Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.
 
-SCHEDULE
-HEADING Annexure B
-SUBHEADING Essential goods
+SCHEDULE Annexure B
+  SUBHEADING Essential goods
 
-CROSSHEADING (Regulation 1)
+  CROSSHEADING (Regulation 1)
 
-PARA 1. Food:
+  PARA 1.
 
-    (a) any food product, including water and non-alcoholic beverages;
+    Food:
 
-    (b) animal food; and
+    SUBPARA (a)
 
-    (c) chemicals, packaging and ancillary products used in the production of any food product.
+      any food product, including water and non-alcoholic beverages;
 
-PARA 4. Fuel, including coal and gas.
+    SUBPARA (b)
+
+      animal food; and
+
+    SUBPARA (c)
+
+      chemicals, packaging and ancillary products used in the production of any food product.
+
+  PARA 4.
+
+    Fuel, including coal and gas.
 
             """,
             'id_prefix': 'prefix',
@@ -178,7 +207,7 @@ PARA 4. Fuel, including coal and gas.
         self.assertEqual(
             actual,
             '''<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-  <act contains="originalVersion" name="act"><meta>
+  <act name="act"><meta>
       <identification source="">
         <FRBRWork>
           <FRBRthis value="/akn/za/act/2014/10/!main"/>
@@ -204,7 +233,7 @@ PARA 4. Fuel, including coal and gas.
       </identification>
       <publication date="2014-02-12" name="Name of publication" showAs="Name of publication" number="22"/>
     </meta>
-    <preface><p>Under the powers vested in me by Sub-Article (5) of Article 26 of the Namibian Constitution, I, subsequent to having declared by Proclamation No. 7 of 18 March of 2020 that a State of Emergency exists in the whole of Namibia following a worldwide outbreak of the disease known as Coronavirus Disease 2019 (COVID-19) -</p><p>(a) make the regulations set out in the Schedule; and</p><p>(b) repeal the Stage 3: State of Emergency - Covid-19 Regulations published under Proclamation No. 32 of 6 July 2020.</p><p>Given under my Hand and the Seal of the Republic of Namibia at Windhoek, this 22nd day of July, Two Thousand and Twenty.</p><p>Hage G. Geingob</p><p>President</p><p>By order of the President</p></preface><body><section eId="sec_15"><num>15.</num><heading>Regulations to bind State</heading><hcontainer eId="sec_15__hcontainer_1" name="hcontainer"><content><p>These regulations bind the State.</p></content></hcontainer></section></body><attachments><attachment eId="att_1"><heading>Annexure A</heading><subheading>Critical services</subheading><doc name="schedule"><meta><identification source="#slaw"><FRBRWork><FRBRthis value="/akn/za/act/2014/10/!annexurea"/><FRBRuri value="/akn/za/act/2014/10"/><FRBRalias value="Annexure A"/><FRBRdate date="2014" name="Generation"/><FRBRauthor href="#council"/><FRBRcountry value="za"/><FRBRnumber value="10"/></FRBRWork><FRBRExpression><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!annexurea"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="1980-01-01" name="Generation"/><FRBRauthor href="#council"/><FRBRlanguage language="eng"/></FRBRExpression><FRBRManifestation><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!annexurea"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href="#slaw"/></FRBRManifestation></identification></meta><mainBody><crossHeading eId="att_1__crossHeading_1">(Regulation 1)</crossHeading><part eId="att_1__part_1"><num>1</num><hcontainer eId="att_1__part_1__hcontainer_1" name="hcontainer"><content><p>PARA 1. Ambulance services</p><p>PARA 2. Casualties services</p></content></hcontainer></part><part eId="att_1__part_2"><num>2</num><section eId="att_1__part_2__sec_1"><num>1.</num><heading>Agriculture and forestry</heading><hcontainer eId="att_1__part_2__sec_1__hcontainer_1" name="hcontainer"><content><p>Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.</p></content></hcontainer></section><section eId="att_1__part_2__sec_2"><num>2.</num><heading>Fishing</heading><hcontainer eId="att_1__part_2__sec_2__hcontainer_1" name="hcontainer"><content><p>Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.</p></content></hcontainer></section></part></mainBody></doc></attachment><attachment eId="att_2"><heading>Annexure B</heading><subheading>Essential goods</subheading><doc name="schedule"><meta><identification source="#slaw"><FRBRWork><FRBRthis value="/akn/za/act/2014/10/!annexureb"/><FRBRuri value="/akn/za/act/2014/10"/><FRBRalias value="Annexure B"/><FRBRdate date="2014" name="Generation"/><FRBRauthor href="#council"/><FRBRcountry value="za"/><FRBRnumber value="10"/></FRBRWork><FRBRExpression><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!annexureb"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="1980-01-01" name="Generation"/><FRBRauthor href="#council"/><FRBRlanguage language="eng"/></FRBRExpression><FRBRManifestation><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!annexureb"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href="#slaw"/></FRBRManifestation></identification></meta><mainBody><crossHeading eId="att_2__crossHeading_1">(Regulation 1)</crossHeading><hcontainer eId="att_2__hcontainer_1" name="hcontainer"><content><blockList eId="att_2__hcontainer_1__list_1"><listIntroduction>PARA 1. Food:</listIntroduction><item eId="att_2__hcontainer_1__list_1__item_a"><num>(a)</num><p>any food product, including water and non-alcoholic beverages;</p></item><item eId="att_2__hcontainer_1__list_1__item_b"><num>(b)</num><p>animal food; and</p></item><item eId="att_2__hcontainer_1__list_1__item_c"><num>(c)</num><p>chemicals, packaging and ancillary products used in the production of any food product.</p></item></blockList><p>PARA 4. Fuel, including coal and gas.</p></content></hcontainer></mainBody></doc></attachment></attachments></act>
+    <preface><p eId="prefix__preface__p_1">Under the powers vested in me by Sub-Article (5) of Article 26 of the Namibian Constitution, I, subsequent to having declared by Proclamation No. 7 of 18 March of 2020 that a State of Emergency exists in the whole of Namibia following a worldwide outbreak of the disease known as Coronavirus Disease 2019 (COVID-19) -</p><p eId="prefix__preface__p_2">(a) make the regulations set out in the Schedule; and</p><p eId="prefix__preface__p_3">(b) repeal the Stage 3: State of Emergency - Covid-19 Regulations published under Proclamation No. 32 of 6 July 2020.</p><p eId="prefix__preface__p_4">Given under my Hand and the Seal of the Republic of Namibia at Windhoek, this 22nd day of July, Two Thousand and Twenty.</p><p eId="prefix__preface__p_5">Hage G. Geingob</p><p eId="prefix__preface__p_6">President</p><p eId="prefix__preface__p_7">By order of the President</p></preface><body><section eId="prefix__sec_15"><num>15.</num><heading>Regulations to bind State</heading><content><p eId="prefix__sec_15__p_1">These regulations bind the State.</p></content></section></body><attachments><attachment eId="prefix__att_1"><heading>Annexure A</heading><subheading>Critical services</subheading><doc name="schedule"><meta><identification source="#Indigo-Platform"><FRBRWork><FRBRthis value="/akn/za/act/2014/10/!schedule_1"/><FRBRuri value="/akn/za/act/2014/10"/><FRBRalias value="Annexure A" name="title"/><FRBRdate date="2014" name="Generation"/><FRBRauthor href=""/><FRBRcountry value="za"/><FRBRnumber value="10"/></FRBRWork><FRBRExpression><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!schedule_1"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href=""/><FRBRlanguage language="eng"/></FRBRExpression><FRBRManifestation><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!schedule_1"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href=""/></FRBRManifestation></identification></meta><mainBody><hcontainer name="hcontainer" eId="prefix__att_1__hcontainer_1"><crossHeading eId="prefix__att_1__hcontainer_1__crossHeading_1">(Regulation 1)</crossHeading></hcontainer><part eId="prefix__att_1__part_1"><num>1</num><paragraph eId="prefix__att_1__part_1__para_1"><num>1.</num><content><p eId="prefix__att_1__part_1__para_1__p_1">Ambulance services</p></content></paragraph><paragraph eId="prefix__att_1__part_1__para_2"><num>2.</num><content><p eId="prefix__att_1__part_1__para_2__p_1">Casualties services</p></content></paragraph></part><part eId="prefix__att_1__part_2"><num>2</num><section eId="prefix__att_1__part_2__sec_1"><num>1.</num><heading>Agriculture and forestry</heading><content><p eId="prefix__att_1__part_2__sec_1__p_1">Agricultural production and value chains (animal husbandry, agronomic and horticulture) supply related operations, including farming, veterinary and phyto-sanitary provider services, pest control services, feed and chemical and fertilizer providers. Millers and logistics services.</p></content></section><section eId="prefix__att_1__part_2__sec_2"><num>2.</num><heading>Fishing</heading><content><p eId="prefix__att_1__part_2__sec_2__p_1">Harvesting of fish (including artisanal fishing other than for leisure), cultivation of fish and value chain activities relating to fish, as part of food production for Namibia and for export; maintenance of fishing vessels and maintenance of fishing processing plants.</p></content></section></part></mainBody></doc></attachment><attachment eId="prefix__att_2"><heading>Annexure B</heading><subheading>Essential goods</subheading><doc name="schedule"><meta><identification source="#Indigo-Platform"><FRBRWork><FRBRthis value="/akn/za/act/2014/10/!schedule_2"/><FRBRuri value="/akn/za/act/2014/10"/><FRBRalias value="Annexure B" name="title"/><FRBRdate date="2014" name="Generation"/><FRBRauthor href=""/><FRBRcountry value="za"/><FRBRnumber value="10"/></FRBRWork><FRBRExpression><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!schedule_2"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href=""/><FRBRlanguage language="eng"/></FRBRExpression><FRBRManifestation><FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!schedule_2"/><FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/><FRBRdate date="TODAY" name="Generation"/><FRBRauthor href=""/></FRBRManifestation></identification></meta><mainBody><hcontainer name="hcontainer" eId="prefix__att_2__hcontainer_1"><crossHeading eId="prefix__att_2__hcontainer_1__crossHeading_1">(Regulation 1)</crossHeading></hcontainer><paragraph eId="prefix__att_2__para_1"><num>1.</num><intro><p eId="prefix__att_2__para_1__intro__p_1">Food:</p></intro><subparagraph eId="prefix__att_2__para_1__subpara_a"><num>(a)</num><content><p eId="prefix__att_2__para_1__subpara_a__p_1">any food product, including water and non-alcoholic beverages;</p></content></subparagraph><subparagraph eId="prefix__att_2__para_1__subpara_b"><num>(b)</num><content><p eId="prefix__att_2__para_1__subpara_b__p_1">animal food; and</p></content></subparagraph><subparagraph eId="prefix__att_2__para_1__subpara_c"><num>(c)</num><content><p eId="prefix__att_2__para_1__subpara_c__p_1">chemicals, packaging and ancillary products used in the production of any food product.</p></content></subparagraph></paragraph><paragraph eId="prefix__att_2__para_4"><num>4.</num><content><p eId="prefix__att_2__para_4__p_1">Fuel, including coal and gas.</p></content></paragraph></mainBody></doc></attachment></attachments></act>
 </akomaNtoso>
 '''
         )

@@ -17,9 +17,8 @@ Indigo requires:
 
 * Python 3.8+
 * PostgreSQL 9.3+
-* Ruby 2.7.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
-* `wkhtmltopdf <https://wkhtmltopdf.org/>`_ for generating PDFs
+* `Apache FOP 2.4+ <https://xmlgraphics.apache.org/fop/>`_  for generating PDFs
 * `pdftotext <https://poppler.freedesktop.org/>`_ for reading PDFs
 
 Optional but useful:
@@ -48,28 +47,32 @@ Installing Indigo Locally
 
     $ pip install -r requirements.txt
 
-5. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password ``indigo``, and create a corresponding database called ``indigo``::
+5. Install sass. The simplest is to install the node version (below), otherwise see the `sass installation docs <https://sass-lang.com/install>`_.::
+
+   $ npm install -g sass
+
+6. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password ``indigo``, and create a corresponding database called ``indigo``::
 
     $ sudo su - postgres -c 'createuser -d -P indigo'
     $ sudo su - postgres -c 'createdb indigo'
 
-6. Run the Django database migrations to setup the initial database::
+7. Run the Django database migrations to setup the initial database::
 
     $ python manage.py migrate
     $ python manage.py update_countries_plus
     $ python manage.py loaddata languages_data.json.gz
 
-7. Then create the superuser::
+8. Then create the superuser::
 
     $ python manage.py createsuperuser
 
-8. Finally, run the server::
+9. Finally, run the server::
 
     $ python manage.py runserver
 
-9. Visit the website to login: http://localhost:8000/
+10. Visit the website to login: http://localhost:8000/
 
-10. Configure a language and a country:
+11. Configure a language and a country:
 
    * Visit http://localhost:8000/admin
    * Under **Indigo API** click Languages, then click Add Language in the top right corner
@@ -78,27 +81,12 @@ Installing Indigo Locally
    * Choose a country and primary language from the dropdown lists
    * Click Save
 
-11. Now go back to http://localhost:8000/ and your country will be included in the list.
-
-Ruby dependencies
-.................
-
-You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.6.
-
-Once you've installed Ruby, install Bundler and the Indigo dependencies::
-
-    $ gem install bundler
-    $ bundle install
-
-You can test that Slaw is installed::
-
-    $ slaw --version
-    slaw 10.6.0
+12. Now go back to http://localhost:8000/ and your country will be included in the list.
 
 PDF support
 ...........
 
-Indigo creates PDF files using `wkhtmltopdf <https://wkhtmltopdf.org/>`_. Install it as appropriate for your platform.
+Indigo creates PDF files using `Apache FOP 2.4+ <https://xmlgraphics.apache.org/fop/>`_. Install it as appropriate for your platform.
 
 Indigo reads from PDF files using pdftotext, which is part of the `poppler-utils <https://poppler.freedesktop.org/>`_ package. Install it as appropriate for your platform.
 

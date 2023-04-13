@@ -1,0 +1,617 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+          <FRBRalias name="title" value="Subparagraphs"/>
+          <FRBRdate date="2021" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="xx-playground"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-29/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-29"/>
+          <FRBRdate date="2022-03-29" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-29/!main"/>
+          <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-29"/>
+          <FRBRdate date="2022-03-29" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2021-06-17" name="" number="" showAs=""/>
+      <references source="#cobalt">
+        <TLCOrganization eId="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+      </references>
+    </meta>
+    <preface>
+      <p eId="preface__p_1">preceding</p>
+      <blockList eId="preface__list_1">
+        <listIntroduction eId="preface__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preface__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preface__list_1__item_a__p_1">first para</p>
+          <blockList eId="preface__list_1__item_a__list_1">
+            <listIntroduction eId="preface__list_1__item_a__list_1__intro_1">intro:</listIntroduction>
+            <item eId="preface__list_1__item_a__list_1__item_i">
+              <num>(i)</num>
+              <p eId="preface__list_1__item_a__list_1__item_i__p_1">first subpara</p>
+              <blockList eId="preface__list_1__item_a__list_1__item_i__list_1">
+                <listIntroduction eId="preface__list_1__item_a__list_1__item_i__list_1__intro_1">intro:</listIntroduction>
+                <item eId="preface__list_1__item_a__list_1__item_i__list_1__item_A">
+                  <num>(A)</num>
+                  <p eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__p_1">first item</p>
+                  <blockList eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1">
+                    <listIntroduction eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__intro_1">intro:</listIntroduction>
+                    <item eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_I">
+                      <num>(I)</num>
+                      <p eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_I__p_1">first subitem</p>
+                    </item>
+                    <item eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_II">
+                      <num>(II)</num>
+                      <p eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_II__p_1">second subitem</p>
+                    </item>
+                    <listWrapUp eId="preface__list_1__item_a__list_1__item_i__list_1__item_A__list_1__wrapup_1">wrap</listWrapUp>
+                  </blockList>
+                </item>
+                <item eId="preface__list_1__item_a__list_1__item_i__list_1__item_B">
+                  <num>(B)</num>
+                  <p eId="preface__list_1__item_a__list_1__item_i__list_1__item_B__p_1">second item</p>
+                </item>
+                <listWrapUp eId="preface__list_1__item_a__list_1__item_i__list_1__wrapup_1">wrap</listWrapUp>
+              </blockList>
+            </item>
+            <item eId="preface__list_1__item_a__list_1__item_ii">
+              <num>(ii)</num>
+              <p eId="preface__list_1__item_a__list_1__item_ii__p_1">second subpara</p>
+            </item>
+            <listWrapUp eId="preface__list_1__item_a__list_1__wrapup_1">wrap</listWrapUp>
+          </blockList>
+        </item>
+        <item eId="preface__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preface__list_1__item_b__p_1">second para</p>
+        </item>
+        <listWrapUp eId="preface__list_1__wrapup_1">wrap</listWrapUp>
+      </blockList>
+      <p eId="preface__p_2">following</p>
+    </preface>
+    <preamble>
+      <p eId="preamble__p_1">preceding</p>
+      <blockList eId="preamble__list_1">
+        <listIntroduction eId="preamble__list_1__intro_1">intro:</listIntroduction>
+        <item eId="preamble__list_1__item_a">
+          <num>(a)</num>
+          <p eId="preamble__list_1__item_a__p_1">first para</p>
+          <blockList eId="preamble__list_1__item_a__list_1">
+            <listIntroduction eId="preamble__list_1__item_a__list_1__intro_1">intro:</listIntroduction>
+            <item eId="preamble__list_1__item_a__list_1__item_i">
+              <num>(i)</num>
+              <p eId="preamble__list_1__item_a__list_1__item_i__p_1">first subpara</p>
+              <blockList eId="preamble__list_1__item_a__list_1__item_i__list_1">
+                <listIntroduction eId="preamble__list_1__item_a__list_1__item_i__list_1__intro_1">intro:</listIntroduction>
+                <item eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A">
+                  <num>(A)</num>
+                  <p eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__p_1">first item</p>
+                  <blockList eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1">
+                    <listIntroduction eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__intro_1">intro:</listIntroduction>
+                    <item eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_I">
+                      <num>(I)</num>
+                      <p eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_I__p_1">first subitem</p>
+                    </item>
+                    <item eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_II">
+                      <num>(II)</num>
+                      <p eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__item_II__p_1">second subitem</p>
+                    </item>
+                    <listWrapUp eId="preamble__list_1__item_a__list_1__item_i__list_1__item_A__list_1__wrapup_1">wrap</listWrapUp>
+                  </blockList>
+                </item>
+                <item eId="preamble__list_1__item_a__list_1__item_i__list_1__item_B">
+                  <num>(B)</num>
+                  <p eId="preamble__list_1__item_a__list_1__item_i__list_1__item_B__p_1">second item</p>
+                </item>
+                <listWrapUp eId="preamble__list_1__item_a__list_1__item_i__list_1__wrapup_1">wrap</listWrapUp>
+              </blockList>
+            </item>
+            <item eId="preamble__list_1__item_a__list_1__item_ii">
+              <num>(ii)</num>
+              <p eId="preamble__list_1__item_a__list_1__item_ii__p_1">second subpara</p>
+            </item>
+            <listWrapUp eId="preamble__list_1__item_a__list_1__wrapup_1">wrap</listWrapUp>
+          </blockList>
+        </item>
+        <item eId="preamble__list_1__item_b">
+          <num>(b)</num>
+          <p eId="preamble__list_1__item_b__p_1">second para</p>
+        </item>
+        <listWrapUp eId="preamble__list_1__wrapup_1">wrap</listWrapUp>
+      </blockList>
+      <p eId="preamble__p_2">following</p>
+    </preamble>
+    <body>
+      <hcontainer eId="hcontainer_1" name="hcontainer">
+        <hcontainer eId="hcontainer_1__hcontainer_1" name="hcontainer">
+          <content>
+            <p eId="hcontainer_1__hcontainer_1__p_1">preceding</p>
+            <p eId="hcontainer_1__hcontainer_1__p_2">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="hcontainer_1__para_a">
+          <num>(a)</num>
+          <hcontainer eId="hcontainer_1__para_a__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="hcontainer_1__para_a__hcontainer_1__p_1">first para</p>
+              <p eId="hcontainer_1__para_a__hcontainer_1__p_2">intro:</p>
+            </content>
+          </hcontainer>
+          <subparagraph eId="hcontainer_1__para_a__subpara_i">
+            <num>(i)</num>
+            <hcontainer eId="hcontainer_1__para_a__subpara_i__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="hcontainer_1__para_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+                <p eId="hcontainer_1__para_a__subpara_i__hcontainer_1__p_2">intro:</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="hcontainer_1__para_a__subpara_i__subpara_A">
+              <num>(A)</num>
+              <hcontainer eId="hcontainer_1__para_a__subpara_i__subpara_A__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="hcontainer_1__para_a__subpara_i__subpara_A__hcontainer_1__p_1">first item</p>
+                  <p eId="hcontainer_1__para_a__subpara_i__subpara_A__hcontainer_1__p_2">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="hcontainer_1__para_a__subpara_i__subpara_A__subpara_I">
+                <num>(I)</num>
+                <content>
+                  <p eId="hcontainer_1__para_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="hcontainer_1__para_a__subpara_i__subpara_A__subpara_II">
+                <num>(II)</num>
+                <content>
+                  <p eId="hcontainer_1__para_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="hcontainer_1__para_a__subpara_i__subpara_A__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="hcontainer_1__para_a__subpara_i__subpara_A__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </subparagraph>
+            <subparagraph eId="hcontainer_1__para_a__subpara_i__subpara_B">
+              <num>(B)</num>
+              <content>
+                <p eId="hcontainer_1__para_a__subpara_i__subpara_B__p_1">second item</p>
+              </content>
+            </subparagraph>
+            <hcontainer eId="hcontainer_1__para_a__subpara_i__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="hcontainer_1__para_a__subpara_i__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+          </subparagraph>
+          <subparagraph eId="hcontainer_1__para_a__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="hcontainer_1__para_a__subpara_ii__p_1">second subpara</p>
+            </content>
+          </subparagraph>
+          <hcontainer eId="hcontainer_1__para_a__hcontainer_2" name="hcontainer">
+            <content>
+              <p eId="hcontainer_1__para_a__hcontainer_2__p_1">wrap</p>
+            </content>
+          </hcontainer>
+        </paragraph>
+        <paragraph eId="hcontainer_1__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="hcontainer_1__para_b__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="hcontainer_1__hcontainer_2" name="hcontainer">
+          <content>
+            <p eId="hcontainer_1__hcontainer_2__p_1">wrap</p>
+            <p eId="hcontainer_1__hcontainer_2__p_2">following</p>
+          </content>
+        </hcontainer>
+      </hcontainer>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Section 1 heading</heading>
+        <hcontainer eId="sec_1__hcontainer_1" name="hcontainer">
+          <content>
+            <p eId="sec_1__hcontainer_1__p_1">preceding</p>
+            <p eId="sec_1__hcontainer_1__p_2">intro:</p>
+          </content>
+        </hcontainer>
+        <paragraph eId="sec_1__para_a">
+          <num>(a)</num>
+          <hcontainer eId="sec_1__para_a__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="sec_1__para_a__hcontainer_1__p_1">first para</p>
+              <p eId="sec_1__para_a__hcontainer_1__p_2">intro:</p>
+            </content>
+          </hcontainer>
+          <subparagraph eId="sec_1__para_a__subpara_i">
+            <num>(i)</num>
+            <hcontainer eId="sec_1__para_a__subpara_i__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="sec_1__para_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+                <p eId="sec_1__para_a__subpara_i__hcontainer_1__p_2">intro:</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="sec_1__para_a__subpara_i__subpara_A">
+              <num>(A)</num>
+              <hcontainer eId="sec_1__para_a__subpara_i__subpara_A__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="sec_1__para_a__subpara_i__subpara_A__hcontainer_1__p_1">first item</p>
+                  <p eId="sec_1__para_a__subpara_i__subpara_A__hcontainer_1__p_2">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="sec_1__para_a__subpara_i__subpara_A__subpara_I">
+                <num>(I)</num>
+                <content>
+                  <p eId="sec_1__para_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                </content>
+              </subparagraph>
+              <subparagraph eId="sec_1__para_a__subpara_i__subpara_A__subpara_II">
+                <num>(II)</num>
+                <content>
+                  <p eId="sec_1__para_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="sec_1__para_a__subpara_i__subpara_A__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="sec_1__para_a__subpara_i__subpara_A__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </subparagraph>
+            <subparagraph eId="sec_1__para_a__subpara_i__subpara_B">
+              <num>(B)</num>
+              <content>
+                <p eId="sec_1__para_a__subpara_i__subpara_B__p_1">second item</p>
+              </content>
+            </subparagraph>
+            <hcontainer eId="sec_1__para_a__subpara_i__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="sec_1__para_a__subpara_i__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+          </subparagraph>
+          <subparagraph eId="sec_1__para_a__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_1__para_a__subpara_ii__p_1">second subpara</p>
+            </content>
+          </subparagraph>
+          <hcontainer eId="sec_1__para_a__hcontainer_2" name="hcontainer">
+            <content>
+              <p eId="sec_1__para_a__hcontainer_2__p_1">wrap</p>
+            </content>
+          </hcontainer>
+        </paragraph>
+        <paragraph eId="sec_1__para_b">
+          <num>(b)</num>
+          <content>
+            <p eId="sec_1__para_b__p_1">second para</p>
+          </content>
+        </paragraph>
+        <hcontainer eId="sec_1__hcontainer_2" name="hcontainer">
+          <content>
+            <p eId="sec_1__hcontainer_2__p_1">wrap</p>
+            <p eId="sec_1__hcontainer_2__p_2">following</p>
+          </content>
+        </hcontainer>
+      </section>
+      <part eId="part_A">
+        <num>A</num>
+        <heading>Part A heading</heading>
+        <intro>
+          <p eId="part_A__intro__p_1">before crossheading</p>
+        </intro>
+        <crossHeading eId="part_A__crossHeading_1">crshd</crossHeading>
+        <section eId="part_A__sec_2">
+          <num>2.</num>
+          <heading>Section 2 heading</heading>
+          <hcontainer eId="part_A__sec_2__hcontainer_1" name="hcontainer">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_1__p_1">preceding</p>
+              <p eId="part_A__sec_2__hcontainer_1__p_2">intro:</p>
+            </content>
+          </hcontainer>
+          <paragraph eId="part_A__sec_2__para_a">
+            <num>(a)</num>
+            <hcontainer eId="part_A__sec_2__para_a__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="part_A__sec_2__para_a__hcontainer_1__p_1">first para</p>
+                <p eId="part_A__sec_2__para_a__hcontainer_1__p_2">intro:</p>
+              </content>
+            </hcontainer>
+            <subparagraph eId="part_A__sec_2__para_a__subpara_i">
+              <num>(i)</num>
+              <hcontainer eId="part_A__sec_2__para_a__subpara_i__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="part_A__sec_2__para_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+                  <p eId="part_A__sec_2__para_a__subpara_i__hcontainer_1__p_2">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="part_A__sec_2__para_a__subpara_i__subpara_A">
+                <num>(A)</num>
+                <hcontainer eId="part_A__sec_2__para_a__subpara_i__subpara_A__hcontainer_1" name="hcontainer">
+                  <content>
+                    <p eId="part_A__sec_2__para_a__subpara_i__subpara_A__hcontainer_1__p_1">first item</p>
+                    <p eId="part_A__sec_2__para_a__subpara_i__subpara_A__hcontainer_1__p_2">intro:</p>
+                  </content>
+                </hcontainer>
+                <subparagraph eId="part_A__sec_2__para_a__subpara_i__subpara_A__subpara_I">
+                  <num>(I)</num>
+                  <content>
+                    <p eId="part_A__sec_2__para_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                  </content>
+                </subparagraph>
+                <subparagraph eId="part_A__sec_2__para_a__subpara_i__subpara_A__subpara_II">
+                  <num>(II)</num>
+                  <content>
+                    <p eId="part_A__sec_2__para_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                  </content>
+                </subparagraph>
+                <hcontainer eId="part_A__sec_2__para_a__subpara_i__subpara_A__hcontainer_2" name="hcontainer">
+                  <content>
+                    <p eId="part_A__sec_2__para_a__subpara_i__subpara_A__hcontainer_2__p_1">wrap</p>
+                  </content>
+                </hcontainer>
+              </subparagraph>
+              <subparagraph eId="part_A__sec_2__para_a__subpara_i__subpara_B">
+                <num>(B)</num>
+                <content>
+                  <p eId="part_A__sec_2__para_a__subpara_i__subpara_B__p_1">second item</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="part_A__sec_2__para_a__subpara_i__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="part_A__sec_2__para_a__subpara_i__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </subparagraph>
+            <subparagraph eId="part_A__sec_2__para_a__subpara_ii">
+              <num>(ii)</num>
+              <content>
+                <p eId="part_A__sec_2__para_a__subpara_ii__p_1">second subpara</p>
+              </content>
+            </subparagraph>
+            <hcontainer eId="part_A__sec_2__para_a__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="part_A__sec_2__para_a__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+          </paragraph>
+          <paragraph eId="part_A__sec_2__para_b">
+            <num>(b)</num>
+            <content>
+              <p eId="part_A__sec_2__para_b__p_1">second para</p>
+            </content>
+          </paragraph>
+          <hcontainer eId="part_A__sec_2__hcontainer_2" name="hcontainer">
+            <content>
+              <p eId="part_A__sec_2__hcontainer_2__p_1">wrap</p>
+              <p eId="part_A__sec_2__hcontainer_2__p_2">following</p>
+            </content>
+          </hcontainer>
+        </section>
+      </part>
+    </body>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Title</subheading>
+        <doc name="schedule">
+          <meta>
+            <identification source="#Laws-Africa">
+              <FRBRWork>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1"/>
+                <FRBRalias name="title" value="Schedule 1"/>
+                <FRBRdate date="2021" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRcountry value="xx-playground"/>
+                <FRBRnumber value="1"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-29/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-29"/>
+                <FRBRdate date="2022-03-29" name="Generation"/>
+                <FRBRauthor href=""/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/xx-playground/act/2021/1/eng@2022-03-29/!schedule_1"/>
+                <FRBRuri value="/akn/xx-playground/act/2021/1/eng@2022-03-29"/>
+                <FRBRdate date="2022-03-29" name="Generation"/>
+                <FRBRauthor href=""/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <p eId="att_1__p_1">preceding</p>
+            <hcontainer eId="att_1__hcontainer_1" name="hcontainer">
+              <content>
+                <p eId="att_1__hcontainer_1__p_1">intro:</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="att_1__para_a">
+              <num>(a)</num>
+              <hcontainer eId="att_1__para_a__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_a__hcontainer_1__p_1">first para</p>
+                  <p eId="att_1__para_a__hcontainer_1__p_2">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="att_1__para_a__subpara_i">
+                <num>(i)</num>
+                <hcontainer eId="att_1__para_a__subpara_i__hcontainer_1" name="hcontainer">
+                  <content>
+                    <p eId="att_1__para_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+                    <p eId="att_1__para_a__subpara_i__hcontainer_1__p_2">intro:</p>
+                  </content>
+                </hcontainer>
+                <subparagraph eId="att_1__para_a__subpara_i__subpara_A">
+                  <num>(A)</num>
+                  <hcontainer eId="att_1__para_a__subpara_i__subpara_A__hcontainer_1" name="hcontainer">
+                    <content>
+                      <p eId="att_1__para_a__subpara_i__subpara_A__hcontainer_1__p_1">first item</p>
+                      <p eId="att_1__para_a__subpara_i__subpara_A__hcontainer_1__p_2">intro:</p>
+                    </content>
+                  </hcontainer>
+                  <subparagraph eId="att_1__para_a__subpara_i__subpara_A__subpara_I">
+                    <num>(I)</num>
+                    <content>
+                      <p eId="att_1__para_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                    </content>
+                  </subparagraph>
+                  <subparagraph eId="att_1__para_a__subpara_i__subpara_A__subpara_II">
+                    <num>(II)</num>
+                    <content>
+                      <p eId="att_1__para_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                    </content>
+                  </subparagraph>
+                  <hcontainer eId="att_1__para_a__subpara_i__subpara_A__hcontainer_2" name="hcontainer">
+                    <content>
+                      <p eId="att_1__para_a__subpara_i__subpara_A__hcontainer_2__p_1">wrap</p>
+                    </content>
+                  </hcontainer>
+                </subparagraph>
+                <subparagraph eId="att_1__para_a__subpara_i__subpara_B">
+                  <num>(B)</num>
+                  <content>
+                    <p eId="att_1__para_a__subpara_i__subpara_B__p_1">second item</p>
+                  </content>
+                </subparagraph>
+                <hcontainer eId="att_1__para_a__subpara_i__hcontainer_2" name="hcontainer">
+                  <content>
+                    <p eId="att_1__para_a__subpara_i__hcontainer_2__p_1">wrap</p>
+                  </content>
+                </hcontainer>
+              </subparagraph>
+              <subparagraph eId="att_1__para_a__subpara_ii">
+                <num>(ii)</num>
+                <content>
+                  <p eId="att_1__para_a__subpara_ii__p_1">second subpara</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="att_1__para_a__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_a__hcontainer_2__p_1">wrap</p>
+                </content>
+              </hcontainer>
+            </paragraph>
+            <paragraph eId="att_1__para_b">
+              <num>(b)</num>
+              <content>
+                <p eId="att_1__para_b__p_1">second para</p>
+              </content>
+            </paragraph>
+            <hcontainer eId="att_1__hcontainer_2" name="hcontainer">
+              <content>
+                <p eId="att_1__hcontainer_2__p_1">wrap</p>
+              </content>
+            </hcontainer>
+            <p eId="att_1__p_2">following</p>
+            <paragraph eId="att_1__para_1">
+              <num>1.</num>
+              <hcontainer eId="att_1__para_1__hcontainer_1" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_1__p_1">preceding</p>
+                  <p eId="att_1__para_1__hcontainer_1__p_2">intro:</p>
+                </content>
+              </hcontainer>
+              <subparagraph eId="att_1__para_1__subpara_a">
+                <num>(a)</num>
+                <hcontainer eId="att_1__para_1__subpara_a__hcontainer_1" name="hcontainer">
+                  <content>
+                    <p eId="att_1__para_1__subpara_a__hcontainer_1__p_1">first para</p>
+                    <p eId="att_1__para_1__subpara_a__hcontainer_1__p_2">intro:</p>
+                  </content>
+                </hcontainer>
+                <subparagraph eId="att_1__para_1__subpara_a__subpara_i">
+                  <num>(i)</num>
+                  <hcontainer eId="att_1__para_1__subpara_a__subpara_i__hcontainer_1" name="hcontainer">
+                    <content>
+                      <p eId="att_1__para_1__subpara_a__subpara_i__hcontainer_1__p_1">first subpara</p>
+                      <p eId="att_1__para_1__subpara_a__subpara_i__hcontainer_1__p_2">intro:</p>
+                    </content>
+                  </hcontainer>
+                  <subparagraph eId="att_1__para_1__subpara_a__subpara_i__subpara_A">
+                    <num>(A)</num>
+                    <hcontainer eId="att_1__para_1__subpara_a__subpara_i__subpara_A__hcontainer_1" name="hcontainer">
+                      <content>
+                        <p eId="att_1__para_1__subpara_a__subpara_i__subpara_A__hcontainer_1__p_1">first item</p>
+                        <p eId="att_1__para_1__subpara_a__subpara_i__subpara_A__hcontainer_1__p_2">intro:</p>
+                      </content>
+                    </hcontainer>
+                    <subparagraph eId="att_1__para_1__subpara_a__subpara_i__subpara_A__subpara_I">
+                      <num>(I)</num>
+                      <content>
+                        <p eId="att_1__para_1__subpara_a__subpara_i__subpara_A__subpara_I__p_1">first subitem</p>
+                      </content>
+                    </subparagraph>
+                    <subparagraph eId="att_1__para_1__subpara_a__subpara_i__subpara_A__subpara_II">
+                      <num>(II)</num>
+                      <content>
+                        <p eId="att_1__para_1__subpara_a__subpara_i__subpara_A__subpara_II__p_1">second subitem</p>
+                      </content>
+                    </subparagraph>
+                    <hcontainer eId="att_1__para_1__subpara_a__subpara_i__subpara_A__hcontainer_2" name="hcontainer">
+                      <content>
+                        <p eId="att_1__para_1__subpara_a__subpara_i__subpara_A__hcontainer_2__p_1">wrap</p>
+                      </content>
+                    </hcontainer>
+                  </subparagraph>
+                  <subparagraph eId="att_1__para_1__subpara_a__subpara_i__subpara_B">
+                    <num>(B)</num>
+                    <content>
+                      <p eId="att_1__para_1__subpara_a__subpara_i__subpara_B__p_1">second item</p>
+                    </content>
+                  </subparagraph>
+                  <hcontainer eId="att_1__para_1__subpara_a__subpara_i__hcontainer_2" name="hcontainer">
+                    <content>
+                      <p eId="att_1__para_1__subpara_a__subpara_i__hcontainer_2__p_1">wrap</p>
+                    </content>
+                  </hcontainer>
+                </subparagraph>
+                <subparagraph eId="att_1__para_1__subpara_a__subpara_ii">
+                  <num>(ii)</num>
+                  <content>
+                    <p eId="att_1__para_1__subpara_a__subpara_ii__p_1">second subpara</p>
+                  </content>
+                </subparagraph>
+                <hcontainer eId="att_1__para_1__subpara_a__hcontainer_2" name="hcontainer">
+                  <content>
+                    <p eId="att_1__para_1__subpara_a__hcontainer_2__p_1">wrap</p>
+                  </content>
+                </hcontainer>
+              </subparagraph>
+              <subparagraph eId="att_1__para_1__subpara_b">
+                <num>(b)</num>
+                <content>
+                  <p eId="att_1__para_1__subpara_b__p_1">second para</p>
+                </content>
+              </subparagraph>
+              <hcontainer eId="att_1__para_1__hcontainer_2" name="hcontainer">
+                <content>
+                  <p eId="att_1__para_1__hcontainer_2__p_1">wrap</p>
+                  <p eId="att_1__para_1__hcontainer_2__p_2">following</p>
+                </content>
+              </hcontainer>
+            </paragraph>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>

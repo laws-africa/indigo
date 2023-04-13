@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import tempfile
 from mock import patch
 import datetime
@@ -285,7 +283,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'withslashes.txt')
 
-    @patch.object(PDFExporter, '_wkhtmltopdf', return_value='pdf-content')
+    @patch.object(PDFExporter, 'render', return_value='pdf-content')
     def test_document_pdf(self, mock):
         response = self.client.get('/api/documents/1.pdf')
         assert_equal(response.status_code, 200)

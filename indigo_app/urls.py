@@ -1,7 +1,7 @@
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView, TemplateView
 
-from .views import users, works, documents, tasks, places, workflows, misc
+from .views import users, works, documents, tasks, places, workflows
 
 
 urlpatterns = [
@@ -24,6 +24,7 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/$', places.PlaceWorksView.as_view(), name='place_works'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/activity$', places.PlaceActivityView.as_view(), name='place_activity'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/metrics$', places.PlaceMetricsView.as_view(), name='place_metrics'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/explorer$', places.PlaceExplorerView.as_view(), name='place_explorer'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/settings', places.PlaceSettingsView.as_view(), name='place_settings'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/index.xlsx', places.PlaceWorksIndexView.as_view(), name='works_index'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/localities', places.PlaceLocalitiesView.as_view(), name='place_localities'),
@@ -58,6 +59,7 @@ urlpatterns = [
 
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/update-batch/$', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),
@@ -88,6 +90,5 @@ urlpatterns = [
     path('tasks/priority/', tasks.AvailableTasksView.as_view(priority=True, tab='priority_tasks'), name='priority_tasks'),
 
     path('comments/', include('django_comments.urls')),
-    path('jserror', misc.JSErrorView.as_view(), name='jserror'),
 
 ]

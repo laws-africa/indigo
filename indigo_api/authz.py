@@ -1,5 +1,21 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS, DjangoModelPermissions
 
+from django.conf import settings
+
+
+def is_maintenance_mode(request):
+    return settings.INDIGO['MAINTENANCE_MODE'] and not request.user.is_staff
+
+
+class NotMaintenanceMode(BasePermission):
+    """ Only allows staff when in maintenance mode.
+    """
+    def has_permission(self, request, view):
+        return not is_maintenance_mode(request)
+
+    def has_object_permission(self, request, view, obj):
+        return not is_maintenance_mode(request)
+
 
 class ModelPermissions(DjangoModelPermissions):
     """ Similar to DjangoModelPermissions, but read-only operations require view permissions.

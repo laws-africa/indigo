@@ -1,0 +1,88 @@
+{% load humanize %}
+{% load static %}
+<frontMatter xmlns="{{ ns }}">
+{% block coverpage %}
+  <container name="coverpage">
+  {% block first_page_header %}
+    <div name="first-page-header">
+      <h4>Indigo</h4>
+      <img src="{% static 'images/logo.png' %}" alt="Indigo logo" class="right-align"/>
+    </div>
+  {% endblock %}
+  {% block place %}
+    <div name="place">
+      {% if document.work.locality %}{{ document.work.locality.name }}{% if include_country %},{% endif %}{% endif %}
+      {% if include_country %}{{ document.work.country.name }}{% endif %}
+    </div>
+  {% endblock %}
+  {% block title %}
+    <div name="title-block">
+      {% if document.work.parent_work %}
+        <div name="parent-work-title">
+          {{ document.work.parent_work.title }}
+        </div>
+      {% endif %}
+      <div name="short-title">
+        {{ document.title }}
+      </div>
+      {% if document.work.numbered_title %}
+        <div name="numbered-title">
+          {{ document.work.numbered_title }}
+        </div>
+      {% endif %}
+    </div>
+  {% endblock %}
+  {% block expression-detail %}
+    <div name="expression-detail">
+      <p>Document date: {{ document.expression_date|date:"j E Y" }}</p>
+      <p>FRBR URI: {{ document.expression_frbr_uri }}</p>
+    </div>
+  {% endblock %}
+  {% block updates %}
+    <div name="updates-block">
+      <p>Please note that there may have been updates since this file was created.</p>
+      <p>PDF created on {% now "j E Y" %} at {% now "H:i" %}.</p>
+      {% if document.work.as_at_date %}
+        <p><i>Collection last checked for updates: {{ document.work.as_at_date|date:"j E Y" }}</i>.</p>
+      {% endif %}
+    </div>
+  {% endblock %}
+  {% block about %}
+    <div name="about">
+      <h4>About this collection</h4>
+      <p>
+        The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference.
+      </p>
+    </div>
+  {% endblock %}
+  {% block contact %}
+  {% endblock %}
+  {% block licence %}
+    <div name="licence">
+      <p>
+        There is no copyright on the legislative content of this document.<br/>
+        This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely.
+      </p>
+    </div>
+  {% endblock %}
+  </container>
+{% endblock %}
+{% block toc %}
+  {% if toc %}
+    <container name="toc">
+      <h3>{{ document.title }}</h3>
+      <h3>Contents</h3>
+      <toc>
+        {% for entry in toc %}
+          <div name="toc-level">
+            <tocItem id="{{ entry.id }}">{{ entry.title }}</tocItem>
+            {% if entry.children %}
+              {% include "indigo_api/akn/export/_pdf_toc_entry.xml" with toc=entry.children %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </toc>
+    </container>
+  {% endif %}
+{% endblock %}
+</frontMatter>

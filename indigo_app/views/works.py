@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 import logging
 from collections import Counter
@@ -27,7 +26,7 @@ from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
+from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -163,17 +162,13 @@ class EditWorkView(WorkViewBase, UpdateView):
             old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
-                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
-                    doc.expression_date = self.work.publication_date
-                    doc.save()
+                self.work.update_documents_at_publication_date(old_date, self.work.publication_date)
 
         # if the work title changes, ensure matching document titles do too
         if 'title' in form.changed_data:
             old_title = form.initial['title']
             if old_title:
-                for doc in Document.objects.filter(work=self.work, title=old_title):
-                    doc.title = self.work.title
-                    doc.save()
+                self.work.update_document_titles(old_title, self.work.title)
 
         if form.has_changed():
             # rename publication-document if frbr_uri has changed
@@ -207,7 +202,6 @@ class AddWorkView(PlaceViewBase, CreateView):
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
     is_create = True
-    PUB_DATE_OPTIONAL_COUNTRIES = []
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()
@@ -233,7 +227,7 @@ class AddWorkView(PlaceViewBase, CreateView):
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['doctypes'] = self.doctypes()
-        context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
+        context['publication_date_optional'] = self.place.settings.publication_date_optional
 
         return context
 
@@ -857,23 +851,21 @@ class WorkPublicationDocumentView(WorkViewBase, View):
 
 
 class BatchAddWorkView(PlaceViewBase, FormView):
-    template_name = 'indigo_api/work_new_batch.html'
+    template_name = 'indigo_api/work_batch_create.html'
     # permissions
     permission_required = ('indigo_api.bulk_add_work',)
     form_class = BatchCreateWorkForm
 
     _bulk_creator = None
+    bulk_creator_kw = 'bulk-creator'
+    bulk_creator_verb = 'Imported'
 
     @property
     def bulk_creator(self):
         if not self._bulk_creator:
             locality_code = self.locality.code if self.locality else None
-            self._bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
-            self._bulk_creator.country = self.country
-            self._bulk_creator.locality = self.locality
-            self._bulk_creator.request = self.request
-            self._bulk_creator.user = self.request.user
-            self._bulk_creator.testing = False
+            self._bulk_creator = plugins.for_locale(self.bulk_creator_kw, self.country.code, None, locality_code)
+            self._bulk_creator.setup(self.country, self.locality, self.request)
         return self._bulk_creator
 
     def get_initial(self):
@@ -911,7 +903,7 @@ class BatchAddWorkView(PlaceViewBase, FormView):
         return form
 
     def get_context_data(self, **kwargs):
-        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['bulk_creator'] = self.bulk_creator
         return context
 
@@ -921,24 +913,28 @@ class BatchAddWorkView(PlaceViewBase, FormView):
         dry_run = 'preview' in form.data
 
         if ('import' in form.data or 'preview' in form.data) and (
-            # either no gsheets, or we have a sheet name
-            not self.bulk_creator.is_gsheets_enabled or form.cleaned_data.get('sheet_name')):
-
-            workflow = form.cleaned_data['workflow']
-
+                # either no gsheets, or we have a sheet name
+                not self.bulk_creator.is_gsheets_enabled or form.cleaned_data.get('sheet_name')):
             try:
                 table = self.bulk_creator.get_datatable(
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
 
-                works = self.bulk_creator.create_works(table, dry_run, workflow)
+                works = self.bulk_creator.create_works(table, dry_run, form.cleaned_data)
                 if not dry_run:
-                    messages.success(self.request, f"Imported {len([w for w in works if w.status == 'success'])} works.")
+                    messages.success(self.request, f"{self.bulk_creator_verb} {len([w for w in works if w.status == 'success'])} works.")
             except ValidationError as e:
                 error = str(e)
 
         context_data = self.get_context_data(works=works, error=error, form=form, dry_run=dry_run)
         return self.render_to_response(context_data)
+
+
+class BatchUpdateWorkView(BatchAddWorkView):
+    template_name = 'indigo_api/work_batch_update.html'
+    form_class = BatchUpdateWorkForm
+    bulk_creator_kw = 'bulk-updater'
+    bulk_creator_verb = 'Updated'
 
 
 class ImportDocumentView(WorkViewBase, FormView):

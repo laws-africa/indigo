@@ -26,7 +26,7 @@ class XlsxExporter:
                             'subtype', 'number', 'year',
                             'publication_name', 'publication_number',
                             'assent_date', 'publication_date', 'commencement_date',
-                            'stub', 'taxonomy',
+                            'stub', 'principal', 'taxonomy',
                             'primary_work',
                             'commenced_by', 'commenced_on_date',
                             'amended_by', 'amended_on_date',
@@ -75,7 +75,7 @@ class XlsxExporter:
                 try:
                     commencement = commencements_active[n]
                     sheet.write(row, columns.index('commences'), uri_title(commencement.commenced_work))
-                    sheet.write(row, columns.index('commences_on_date'), commencement.date or '(unknown)', date_format)
+                    sheet.write(row, columns.index('commences_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
 
@@ -88,7 +88,7 @@ class XlsxExporter:
                     if commencement == info.get('work').main_commencement and not commencement.commencing_work:
                         return
                     sheet.write(row, columns.index('commenced_by'), uri_title(commencement.commencing_work))
-                    sheet.write(row, columns.index('commenced_on_date'), commencement.date or '(unknown)', date_format)
+                    sheet.write(row, columns.index('commenced_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
 
@@ -111,6 +111,8 @@ class XlsxExporter:
             elif field == 'locality':
                 to_write = work.locality.code if work.locality else ''
             elif field == 'stub' and work.stub:
+                to_write = '✔'
+            elif field == 'principal' and work.principal:
                 to_write = '✔'
             elif field == 'taxonomy':
                 to_write = '; '.join(t.slug for t in work.taxonomies.all())
@@ -240,7 +242,9 @@ def write_works(workbook, queryset):
         works_sheet.write(row, 8, work.publication_number)
         works_sheet.write(row, 9, work.assent_date, date_format)
         works_sheet.write(row, 10, work.commenced)
-        works_sheet.write(row, 11, work.commencement_date, date_format)
+        if work.commenced:
+            works_sheet.write(row, 11, work.commencement_date or datetime.date(9999, 1, 1), date_format)
+
         works_sheet.write(row, 12, work.repealed_date, date_format)
         works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
         works_sheet.write(row, 14, work.stub)

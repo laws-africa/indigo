@@ -106,28 +106,12 @@ class WorkMixin(object):
         return self._work_uri
 
     @property
-    def date(self):
-        return self.work_uri.date
-
-    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
     @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
     def nature(self):
-        return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
-
-    @property
-    def actor(self):
-        return self.work_uri.actor
+        return self.doctype
 
     @property
     def repeal(self):
@@ -208,9 +192,16 @@ class WorkMixin(object):
         """ Return a list of dicts each describing a possible expression date on a work, in descending date order.
         Each has a date and specifies whether it is an amendment, consolidation, and/or initial expression.
         """
-        initial = self.publication_date or self.commencement_date
         amendment_dates = [a.date for a in self.amendments.all()]
         consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
+
+        # the initial date is the publication date, or the earliest of the consolidation and commencement dates
+        try:
+            initial = self.publication_date or min(consolidation_dates + [x for x in [self.commencement_date] if x])
+        except ValueError:
+            # list was empty
+            initial = None
+
         all_dates = set(amendment_dates + consolidation_dates)
         dates = [
             {'date': date,
@@ -239,10 +230,7 @@ class WorkMixin(object):
 
     @cached_property
     def main_commencement(self):
-        if self.commencements.exists():
-            for c in list(self.commencements.all()):
-                if c.main:
-                    return c
+        return self.commencements.filter(main=True).first()
 
     def first_commencement_date(self):
         first = self.commencements.first()
@@ -348,6 +336,10 @@ class WorkMixin(object):
             commencements_count += 1
         return commencements_count
 
+    @property
+    def has_consolidation(self):
+        return self.arbitrary_expression_dates.exists()
+
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
@@ -371,6 +363,12 @@ class Work(WorkMixin, models.Model):
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works')
     locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
+    doctype = models.CharField(max_length=64, null=False, blank=True, help_text="FRBR doctype")
+    subtype = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR subtype")
+    actor = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR actor")
+    date = models.CharField(max_length=10, null=False, blank=True, help_text="FRBR date")
+    number = models.CharField(max_length=512, null=False, blank=True, help_text="FRBR number")
+
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
@@ -387,6 +385,7 @@ class Work(WorkMixin, models.Model):
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
 
+    principal = models.BooleanField(null=False, default=False, help_text="Principal works are not simply repeals, amendments or commencements, and should have full text content.")
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
@@ -397,6 +396,7 @@ class Work(WorkMixin, models.Model):
 
     as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
+    disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -447,7 +447,32 @@ class Work(WorkMixin, models.Model):
         if not self.repealed_by:
             self.repealed_date = None
 
+        self.set_frbr_uri_fields()
         return super(Work, self).save(*args, **kwargs)
+
+    def set_frbr_uri_fields(self):
+        # extract FRBR URI fields
+        self.doctype = self.work_uri.doctype
+        self.subtype = self.work_uri.subtype
+        self.actor = self.work_uri.actor
+        self.date = self.work_uri.date
+        self.number = self.work_uri.number
+
+    def update_documents_at_publication_date(self, old_publication_date, new_publication_date):
+        """ Updates the expression dates of all documents at the old publication date to the new one.
+        """
+        from .documents import Document
+        for document in Document.objects.filter(work=self, expression_date=old_publication_date):
+            document.expression_date = new_publication_date
+            document.save()
+
+    def update_document_titles(self, old_title, new_title):
+        """ Updates the titles of all documents that currently have the old title.
+        """
+        from .documents import Document
+        for document in Document.objects.filter(work=self, title=old_title):
+            document.title = new_title
+            document.save()
 
     def save_with_revision(self, user, comment=None):
         """ Save this work and create a new revision at the same time.
@@ -530,11 +555,13 @@ def post_save_work(sender, instance, **kwargs):
 
     # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance,
-                    place_code=instance.place.place_code)
+        if instance.created_by_user:
+            action.send(instance.created_by_user, verb='created', action_object=instance,
+                        place_code=instance.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance,
-                    place_code=instance.place.place_code)
+        if instance.updated_by_user:
+            action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                        place_code=instance.place.place_code)
 
 
 # version tracking

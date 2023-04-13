@@ -1,0 +1,116 @@
+BODY
+  SEC 1 - Simple
+
+    A basic {{^{{FOOTNOTE 1}}}} footnote.
+
+    FOOTNOTE 1
+      Footnote content
+
+  SEC 2 - Tables
+
+    Footnotes in table cells.
+
+    TABLE
+      TR
+        TC
+          Cell with {{^{{FOOTNOTE 1}}}}.
+
+          FOOTNOTE 1
+            Text of first footnote
+
+        TC
+          Cell with {{^{{FOOTNOTE 2}}}}.
+
+          FOOTNOTE 2
+            Text of second footnote
+
+  SEC 3 - Lists
+
+    ITEMS
+      An intro {{^{{FOOTNOTE 1}}}} footnote.
+      FOOTNOTE 1
+        listIntro footnote content
+
+      ITEM 1
+        Item with a {{^{{FOOTNOTE 1}}}} footnote.
+        FOOTNOTE 1
+          Item footnote content
+
+      A wrapup {{^{{FOOTNOTE 2}}}} footnote.
+      FOOTNOTE 2
+        wrapup footnote content
+
+  CROSSHEADING Crossheading with a {{^{{FOOTNOTE 3}}}} footnote.
+  FOOTNOTE 3
+    crossheading footnote content
+
+  DIVISION - Footnotes in headings and subheadings
+    ARTICLE - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE y
+        Subheading footnote content
+      FOOTNOTE x
+        Heading footnote content
+
+    CHAPTER - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE y
+        Subheading footnote content
+      FOOTNOTE x
+        Heading footnote content
+
+    DIVISION - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    RULE - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    SEC - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    SUBDIVISION - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    SUBSEC - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    SUBPART - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    SUBRULE - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content
+
+    PART - Footnotes in {{^{{FOOTNOTE x}}}} headings
+      SUBHEADING A subheading {{^{{FOOTNOTE y}}}} footnote
+      FOOTNOTE x
+        Heading footnote content
+      FOOTNOTE y
+        Subheading footnote content

@@ -3,6 +3,7 @@ from collections import defaultdict, Counter
 from datetime import timedelta, date
 from itertools import chain, groupby
 import json
+from lxml import etree
 
 from actstream import action
 from actstream.models import Action
@@ -17,13 +18,13 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
+from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, ExplorerForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
 
@@ -619,6 +620,120 @@ class PlaceMetricsView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
         ])
 
         return context
+
+
+class PlaceExplorerView(PlaceViewBase, ListView):
+    template_name = 'place/explorer.html'
+    tab = 'insights'
+    insights_tab = 'explorer'
+    paginate_by = 50
+    context_object_name = 'matches'
+
+    def get(self, request, *args, **kwargs):
+        self.form = ExplorerForm(request.GET)
+        return super().get(request, *args, **kwargs)
+
+    def has_permission(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+        context['n_documents'] = self.n_documents
+        self.prettify(context['matches'])
+
+        context['samples'] = [
+            ('List introductions containing remarks', '//a:subsection//a:blockList/a:listIntroduction/a:remark', '2'),
+            ('Adjacent block lists', '//a:blockList/following-sibling::*[1][self::a:blockList]', '1'),
+        ]
+
+        return context
+
+    def get_queryset(self):
+        self.n_documents = 0
+
+        if not self.form.is_valid():
+            return []
+
+        if self.form.cleaned_data['global_search']:
+            documents = Document.objects \
+                .undeleted() \
+                .order_by('title', '-expression_date')
+
+        else:
+            documents = Document.objects \
+                .undeleted() \
+                .filter(work__country=self.country) \
+                .order_by('title', '-expression_date')
+
+            if self.locality:
+                documents = documents.filter(work__locality=self.locality)
+            elif not self.form.cleaned_data['localities']:
+                # explicitly exclude localities
+                documents = documents.filter(work__locality=None)
+
+        return self.find(documents, self.form.cleaned_data['xpath'])
+
+    def find(self, documents, xpath):
+        """ Return elements that match an xpath expression in a collection of documents.
+        """
+        matches = []
+
+        for doc in documents:
+            namespaces = {
+                'a': doc.doc.namespace,
+                're': 'http://exslt.org/regular-expressions',
+            }
+            try:
+                elems = list(doc.doc.main.xpath(xpath, namespaces=namespaces))
+            except Exception as e:
+                self.form.add_error('xpath', str(e))
+                return []
+
+            if elems:
+                self.n_documents += 1
+                try:
+                    matches.extend([{
+                        'doc': doc,
+                        'element': self.normalise(e),
+                    } for e in elems])
+                except ValueError as e:
+                    self.form.add_error('xpath', str(e))
+
+        return matches
+
+    def normalise(self, e):
+        # text nodes and attribute values
+        if isinstance(e, etree._ElementUnicodeResult):
+            return e.getparent()
+
+        if not isinstance(e, etree.ElementBase):
+            raise ValueError(f'Expression must produce elements, but found {e.__class__.__name__} instead.')
+
+        return e
+
+    def prettify(self, matches):
+        parent = self.form.cleaned_data['parent']
+
+        def parent_context(e):
+            if parent == '1':
+                return e.getparent()
+            if parent == '2':
+                return e.getparent().getparent()
+            return e
+
+        for match in matches:
+            elem = match['element']
+            context = parent_context(elem)
+            match['xml'] = etree.tostring(context, encoding='utf-8', pretty_print=True).decode('utf-8')
+
+            if self.form.cleaned_data['parent']:
+                # we're adding context, so decorate with an attribute we use in the HTML to highlight the real matched element
+                elem.attrib['match'] = '1'
+                elem = parent_context(elem)
+
+            match['html'] = match['doc'].element_to_html(elem)
 
 
 class PlaceSettingsView(PlaceViewBase, UpdateView):

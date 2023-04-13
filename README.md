@@ -11,7 +11,7 @@ It is a Django python web application using:
 
 * [Django](http://djangoproject.com/)
 * [Cobalt](http://cobalt.readthedocs.io/en/latest/) -- a lightweight Python library for working with Akoma Ntoso
-* [Slaw](https://rubygems.org/gems/slaw) -- a Ruby Gem for generating Akoma Ntoso from PDFs and other documents
+* [Bluebell](https://github.com/laws-africa/bluebell) -- a generic Akoma Ntoso 3 parser, supporting all hierarchical elements and multiple document types
 * [django-rest-framework](http://www.django-rest-framework.org/)
 
 Read the [full documentation at indigo.readthedocs.io](http://indigo.readthedocs.io/en/latest/index.html).

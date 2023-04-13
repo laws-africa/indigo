@@ -1,6 +1,6 @@
 from lxml import etree
 
-from indigo.xmlutils import wrap_text
+from docpipe.xmlutils import wrap_text
 
 
 class TextPatternMarker:

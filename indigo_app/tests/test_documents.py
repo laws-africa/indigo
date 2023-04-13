@@ -100,7 +100,12 @@ class DocumentViewsTest(testcases.TestCase):
         # check the doc
         doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
         self.assertEqual(doc.draft, True)
-        self.assertIn('a text file with badly formed</p><p>HTML', doc.content, msg='missing imported html')
+        self.assertIn('<preface><p eId="preface__p_1">a text file with</p>'
+                      '<p eId="preface__p_2">badly formed</p>'
+                      '<p eId="preface__p_3">HTML</p></preface>'
+                      '<body><hcontainer name="hcontainer" eId="hcontainer_1">'
+                      '<content><p eId="hcontainer_1__p_1"/></content></hcontainer></body>',
+                      doc.content, msg='missing imported html')
         self.assertEqual(len(doc.attachments.all()), 1)
 
     def test_create_from_pdf_with_page_nums(self):

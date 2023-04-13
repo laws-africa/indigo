@@ -109,10 +109,10 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
-              <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
+              <input type="checkbox" class="form-check-input" id="{{ form.principal.id_for_label }}" name="{{ form.principal.html_name }}" value="on" {% if form.principal.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.principal.id_for_label }}">{% trans 'Principal work' %}</label>
               <p class="form-text text-muted">
-                {% trans "Check this option for commencing or amending works that are not captured in detail." %}
+                {% trans "Principal works are not simply repeals, amendments or commencements, and should have full text content." %}
               </p>
             </div>
           </div>
@@ -135,6 +135,16 @@
         </div>
 
         <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
+              <p class="form-text text-muted">
+                {% trans "Check this option for commencing or amending works that are not captured in detail." %}
+              </p>
+            </div>
+          </div>
+
           <div class="form-group col-md-6">
             {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
             {% if topic_groups %}
@@ -182,7 +192,7 @@
         <div class="form-row">
           {% block publication-date %}
           <div class="form-group col">
-            <label for="{{ form.publication_date.id_for_label }}" class="required">{% trans 'Publication date' %}</label>
+            <label for="{{ form.publication_date.id_for_label }}" class="{% if not work.pk and not publication_date_optional %}required{% endif %}">{% trans 'Publication date' %}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
           </div>
@@ -378,6 +388,30 @@
             {% if form.consolidation_note_override.errors %}
               <div class="text-danger">
                 {% for error in form.consolidation_note_override.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3" id="disclaimer">
+      <h5 class="card-header">{% trans 'Disclaimer' %}</h5>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="{{ form.disclaimer.id_for_label }}">{{ form.disclaimer.label }}</label>
+            <input type="text" class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}" value="{{ form.disclaimer.value|default:'' }}">
+            <p class="form-text text-muted">
+              {% blocktrans trimmed %}
+                Disclaimer for this work; it will be shown on all expressions.
+              {% endblocktrans %}
+            </p>
+            {% if form.disclaimer.errors %}
+              <div class="text-danger">
+                {% for error in form.disclaimer.errors %}
                   <p>{{ error }}</p>
                 {% endfor %}
               </div>

@@ -16,7 +16,7 @@ from django_comments.models import Comment
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework import mixins, viewsets, renderers, status
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
 from reversion import revisions as reversion
@@ -26,7 +26,7 @@ from cobalt import StructuredDocument
 import lxml.html.diff
 from lxml.etree import LxmlError
 
-from indigo.analysis.differ import AttributeDiffer
+from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
@@ -36,6 +36,9 @@ from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions
     RevisionPermissions
 from ..utils import filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
+from indigo_metrics.models import DocumentEditActivity
+from indigo_api.serializers import DocumentEditActivitySerializer
+
 
 log = logging.getLogger(__name__)
 
@@ -247,25 +250,25 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         # most recent version just before this one
         old_version = self.get_queryset().filter(id__lt=version.id).first()
 
-        differ = AttributeDiffer()
+        differ = AKNHTMLDiffer()
 
         if old_version:
             old_document = old_version._object_version.object
-            old_document.document_xml = differ.preprocess_document_diff(old_document.document_xml)
+            old_document.document_xml = differ.preprocess_xml_str(old_document.document_xml)
             old_html = old_document.to_html()
         else:
             old_html = ""
 
         new_document = version._object_version.object
-        new_document.document_xml = differ.preprocess_document_diff(new_document.document_xml)
+        new_document.document_xml = differ.preprocess_xml_str(new_document.document_xml)
         new_html = new_document.to_html()
 
         old_tree = lxml.html.fromstring(old_html) if old_html else None
         new_tree = lxml.html.fromstring(new_html)
-        n_changes, diff = differ.diff_document_html(old_tree, new_tree)
 
-        if not isinstance(diff, str):
-            diff = lxml.html.tostring(diff, encoding='unicode')
+        diff = differ.diff_html(old_tree, new_tree)
+        n_changes = differ.count_differences(diff)
+        diff = lxml.html.tostring(diff, encoding='unicode')
 
         # TODO: include other diff'd attributes
 
@@ -318,6 +321,19 @@ class DocumentActivityViewSet(DocumentResourceView,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class DocumentEditActivityViewset(DocumentResourceView, CreateAPIView):
+    queryset = DocumentEditActivity.objects
+    serializer_class = DocumentEditActivitySerializer
+    http_method_names = ['post']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
@@ -332,11 +348,12 @@ class ParseView(DocumentResourceView, APIView):
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
+        text = serializer.validated_data.get('content')
         try:
-            text = serializer.validated_data.get('content')
             xml = importer.parse_from_text(text, frbr_uri)
         except ValueError as e:
-            log.warning("Error during import: %s" % str(e), exc_info=e)
+            log.warning(f"Error during import: {e}", exc_info=e)
+            log.warning(f"Full text being parsed (delimited with ---XXX---):\n---XXX---\n{text}\n---XXX---")
             raise ValidationError({'content': str(e) or _("Error during import")})
 
         if not fragment:
@@ -450,7 +467,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
         serializer = DocumentDiffSerializer(instance=self.document, data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
-        differ = AttributeDiffer()
+        differ = AKNHTMLDiffer()
 
         local_doc = self.document
 
@@ -458,8 +475,8 @@ class DocumentDiffView(DocumentResourceView, APIView):
         remote_doc = Document.objects.get(pk=local_doc.pk)
         serializer.fields['document'].update_document(local_doc, serializer.validated_data['document'])
 
-        local_doc.content = differ.preprocess_document_diff(local_doc.document_xml).decode('utf-8')
-        remote_doc.content = differ.preprocess_document_diff(remote_doc.document_xml).decode('utf-8')
+        local_doc.content = differ.preprocess_xml_str(local_doc.document_xml).decode('utf-8')
+        remote_doc.content = differ.preprocess_xml_str(remote_doc.document_xml).decode('utf-8')
 
         element_id = serializer.validated_data.get('element_id')
         if element_id:
@@ -482,10 +499,10 @@ class DocumentDiffView(DocumentResourceView, APIView):
 
         local_tree = lxml.html.fromstring(local_html or "<div></div>")
         remote_tree = lxml.html.fromstring(remote_html) if remote_html else None
-        n_changes, diff = differ.diff_document_html(remote_tree, local_tree)
 
-        if not isinstance(diff, str):
-            diff = lxml.html.tostring(diff, encoding='utf-8')
+        diff = differ.diff_html(remote_tree, local_tree)
+        n_changes = differ.count_differences(diff)
+        diff = lxml.html.tostring(diff, encoding='unicode')
 
         # TODO: include other diff'd attributes
 

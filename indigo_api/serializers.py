@@ -18,6 +18,7 @@ import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
     PublicationDocument, Task, VocabularyTopic, Commencement
+from indigo_metrics.models import DocumentEditActivity
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -448,7 +449,7 @@ class TaskSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     country = serializers.CharField(source='country.code', default=None)
     locality = serializers.CharField(source='locality.code', default=None)
-    work = serializers.CharField(source='work.frbr_uri')
+    work = serializers.CharField(allow_null=True, source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
     view_url = serializers.SerializerMethodField()
@@ -476,7 +477,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if not instance.pk:
             return None
         return reverse('task_detail', request=self.context['request'], kwargs={
-            'place': instance.work.place.place_code,
+            'place': instance.place.place_code,
             'pk': instance.pk,
         })
 
@@ -593,7 +594,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'numbered_title',
             'publication_name', 'publication_number', 'publication_date', 'publication_document',
             'commenced', 'commencements', 'commencing_work', 'commencement_date', 'commencement_note',
-            'assent_date', 'stub',
+            'assent_date', 'stub', 'principal',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',
 
@@ -668,3 +669,15 @@ class DocumentDiffSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['document'].instance = self.instance
+
+
+class DocumentEditActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DocumentEditActivity
+        fields = ('id', 'started_at', 'ended_at')
+        read_only_fields = ('duration_secs',)
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        validated_data['document'] = self.context['document']
+        return super(DocumentEditActivitySerializer, self).create(validated_data)

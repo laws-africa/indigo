@@ -1,3 +1,4 @@
+import copy
 import html
 from difflib import SequenceMatcher
 import logging
@@ -8,17 +9,52 @@ import jsonpatch
 import lxml.html
 import lxml.html.builder
 from lxml import etree
-from xmldiff import main as xmldiff_main, formatting
-
-from indigo.xmlutils import unwrap_element
+from xmldiff import formatting
+from xmldiff.diff import Differ
+from cobalt.schemas import AkomaNtoso30
+from docpipe.xmlutils import unwrap_element
 
 log = logging.getLogger(__name__)
+
+
+class IgnoringDiffer(Differ):
+    """ Ignores most data- attributes.
+    """
+    allowed = ['data-refersto']
+
+    def node_attribs(self, node):
+        attribs = dict(node.attrib)
+        for k in list(attribs.keys()):
+            if k.startswith('data-') and k not in self.allowed:
+                del attribs[k]
+        return attribs
+
+
+class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
+    """ Ignores most data- attributes.
+    """
+    allowed = IgnoringDiffer.allowed
+
+    def get_placeholder(self, element, ttype, close_ph):
+        # remove attributes we don't want to diff
+        if any(x.startswith('data-') for x in element.attrib):
+            element = copy.copy(element)
+            for k in list(element.attrib):
+                if k.startswith('data-') and k not in self.allowed:
+                    del element.attrib[k]
+        return super().get_placeholder(element, ttype, close_ph)
 
 
 class HTMLFormatter(formatting.XMLFormatter):
     """ Formats xmldiff output for HTML AKN documents.
     """
     xslt_filename = os.path.join(os.path.dirname(__file__), 'xmldiff.xslt')
+
+    def __init__(self, normalize=formatting.WS_NONE, pretty_print=True, text_tags=(), formatting_tags=()):
+        super().__init__(normalize, pretty_print, text_tags, formatting_tags)
+        self.placeholderer = IgnoringPlaceholderMaker(
+            text_tags=text_tags, formatting_tags=formatting_tags
+        )
 
     def render(self, result):
         with open(self.xslt_filename) as f:
@@ -38,10 +74,12 @@ class HTMLFormatter(formatting.XMLFormatter):
 class AKNHTMLDiffer:
     """ Helper class to diff AKN documents using xmldiff.
     """
-    akn_text_tags = 'p listIntroduction heading'.split()
+    akn_text_tags = 'p listIntroduction listWrapUp heading subheading crossHeading'.split()
     html_text_tags = 'h1 h2 h3 h4 h5'.split()
-    keep_ids_tags = 'chapter part section subsection subpart article table'
+    keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter
+    differ_class = Differ
+    preprocess_strip_tags = ['term']
     xmldiff_options = {
         'F': 0.75,
         # using data-refersto helps to xmldiff to handle definitions that move around
@@ -50,8 +88,51 @@ class AKNHTMLDiffer:
         'fast_match': True,
     }
 
+    def preprocess_xml_str(self, xml_str):
+        """ Run pre-processing on XML before doing HTML diffs.
+        """
+        root = etree.fromstring(xml_str)
+        root = self.preprocess_xml_tree(root)
+        return etree.tostring(root, encoding='utf-8')
+
+    def preprocess_xml_tree(self, root):
+        """ Run pre-processing on XML before doing HTML diffs. This helps to make the diffs less confusing.
+        """
+        xpath = '|'.join(f'//a:{x}' for x in self.preprocess_strip_tags)
+        for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
+            unwrap_element(elem)
+        return root
+
+    def count_differences(self, diff_tree):
+        """ Counts the number of differences in a diff tree."""
+        return len(diff_tree.xpath('//ins|//del|//*[contains(@class, "ins") or contains(@class, "del")]'))
+
+    def diff_html_str(self, old_html, new_html):
+        """ Diffs two HTML strings for a single element and returns a string HTML diff.
+
+        :return: None if there are no differences, otherwise a string with an HTML diff.
+        """
+        if not old_html and not new_html:
+            return None
+
+        if old_html == new_html:
+            return None
+
+        if not old_html:
+            # it's newly added
+            return '<div class="ins">' + new_html + '</div>'
+
+        if not new_html:
+            # it was deleted
+            return '<div class="del">' + old_html + '</div>'
+
+        old_tree = lxml.html.fromstring(old_html)
+        new_tree = lxml.html.fromstring(new_html)
+        diff = self.diff_html(old_tree, new_tree)
+        return lxml.html.tostring(diff, encoding='unicode')
+
     def diff_html(self, old_tree, new_tree):
-        """ Compares two trees, and returns a tree with annotated differences.
+        """ Compares two html trees, and returns a tree with annotated differences.
         """
         if old_tree is None:
             new_tree.tag = 'div'
@@ -62,10 +143,24 @@ class AKNHTMLDiffer:
         self.preprocess(new_tree)
 
         formatter = self.get_formatter()
-        diff = xmldiff_main.diff_trees(old_tree, new_tree, formatter=formatter, diff_options=self.xmldiff_options)
+        diff = self.diff_trees(old_tree, new_tree, formatter=formatter, diff_options=self.xmldiff_options)
         self.postprocess(diff)
 
         return diff
+
+    def diff_trees(self, left, right, diff_options, formatter):
+        """Takes two lxml root elements or element trees"""
+        if formatter is not None:
+            formatter.prepare(left, right)
+        if diff_options is None:
+            diff_options = {}
+        differ = self.differ_class(**diff_options)
+        diffs = differ.diff(left, right)
+
+        if formatter is None:
+            return list(diffs)
+
+        return formatter.format(diffs, left)
 
     def get_formatter(self):
         # in html, AKN elements are recognised using classes
@@ -81,19 +176,20 @@ class AKNHTMLDiffer:
         self.strip_namespace(tree)
 
     def stash_ids(self, tree):
-        """ Stashes id attributes for tags that they aren't actually useful for.
+        """ Stashes id attributes for tags that they aren't actually useful for. Data- attributes are ignored,
+        so it's save to move them there.
         """
         # ids should only be considered unique for these elements
         allow = set(f'akn-{t}' for t in self.keep_ids_tags)
         for node in tree.xpath('//*[@id]'):
             if node.attrib.get('class') not in allow:
-                node.attrib['x-id'] = node.attrib.pop('id')
+                node.attrib['data-id'] = node.attrib.pop('id')
 
     def unstash_ids(self, tree):
         """ Restores id attributes stashed by stash_ids
         """
-        for node in tree.xpath('//*[@x-id]'):
-            node.attrib['id'] = node.attrib.pop('x-id')
+        for node in tree.xpath('//*[@data-id]'):
+            node.attrib['id'] = node.attrib.pop('data-id')
 
     def wrap_pairs(self, diff):
         """ wrap del + ins pairs in <span class="diff-pair">
@@ -130,7 +226,12 @@ class AKNHTMLDiffer:
 
 
 class AttributeDiffer:
+    """ Differ that compares attributes and attribute dictionaries.
+    """
     html_differ_class = AKNHTMLDiffer
+
+    def __init__(self):
+        self.html_differ = self.html_differ_class()
 
     def attr_title(self, attr):
         return attr.title().replace('_', ' ')
@@ -278,27 +379,3 @@ class AttributeDiffer:
         right = ''.join(right)
 
         return left, right
-
-    def diff_document_html(self, old_tree, new_tree):
-        diff = self.html_differ_class().diff_html(old_tree, new_tree)
-        n_changes = len(diff.xpath('//ins|//del|//*[contains(@class, "ins") or contains(@class, "del")]'))
-        return n_changes, diff
-
-    def preprocess_document_diff(self, xml_str):
-        """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
-        """
-        root = etree.fromstring(xml_str)
-        root = self.preprocess_xml_diff(root)
-        return etree.tostring(root, encoding='utf-8')
-
-    def preprocess_xml_diff(self, root):
-        """ Run pre-processing on XML before doing HTML diffs.
-
-        This removes <term> elements.
-        """
-        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
-            unwrap_element(elem)
-
-        return root

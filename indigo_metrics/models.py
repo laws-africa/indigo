@@ -3,6 +3,7 @@ from math import ceil
 import datetime
 import logging
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection, models, transaction
 from django.db.models import Sum
@@ -110,27 +111,29 @@ class DocumentMetrics(models.Model):
         metrics.n_bytes = len(document.document_xml)
         metrics.n_provisions = len(document.all_provisions())
         metrics.n_words = n_words
-        # average of 250 words per page
-        metrics.n_pages = ceil(n_words / 250)
+        # average of 370 words per page
+        metrics.n_pages = ceil(n_words / 370)
 
         return metrics
 
     @classmethod
     def create_or_update(cls, doc_id):
-        document = Document.objects.get(pk=doc_id)
-        metrics = cls.calculate(document)
+        # document may have been deleted in the meantime
+        document = Document.objects.filter(pk=doc_id).first()
+        if document:
+            metrics = cls.calculate(document)
 
-        try:
-            existing = cls.objects.get(document_id=document.pk)
-            if existing:
-                metrics.id = existing.id
-        except cls.DoesNotExist:
-            pass
+            try:
+                existing = cls.objects.get(document_id=document.pk)
+                if existing:
+                    metrics.id = existing.id
+            except cls.DoesNotExist:
+                pass
 
-        document.metrics = metrics
-        metrics.save()
+            document.metrics = metrics
+            metrics.save()
 
-        return metrics
+            return metrics
 
     @classmethod
     def calculate_for_place(cls, place_code):
@@ -261,3 +264,16 @@ class DailyPlaceMetrics(models.Model):
 
         metrics.n_activities += 1
         metrics.save()
+
+
+class DocumentEditActivity(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='edit_activities')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    started_at = models.DateTimeField()
+    ended_at = models.DateTimeField()
+    duration_secs = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        time_diff = self.ended_at - self.started_at
+        self.duration_secs = time_diff.total_seconds()
+        return super().save(*args, **kwargs)

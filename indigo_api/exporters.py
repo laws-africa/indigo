@@ -1,25 +1,26 @@
+import logging
 import os
 import re
 import shutil
 import tempfile
-import urllib.parse
-import logging
-import subprocess
+from collections import defaultdict
 
 import lxml.html
+import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
 from ebooklib import epub
 from languages_plus.models import Language
+from lxml import etree
 from lxml import etree as ET
 from sass_processor.processor import SassProcessor
-from wkhtmltopdf import make_absolute_paths, wkhtmltopdf
 
+from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo_api.models import Colophon
+from indigo_api.pdf import run_fop
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
-
 
 log = logging.getLogger(__name__)
 
@@ -139,211 +140,284 @@ class HTMLExporter:
 
 @plugins.register('pdf-exporter')
 class PDFExporter(HTMLExporter, LocaleBasedMatcher):
-    """ Exports (renders) AKN documents as PDFs.
+    """ Exports (renders) AKN documents as PDFs using FOP.
     """
     locale = (None, None, None)
+    resolver_url = settings.RESOLVER_URL
 
-    def __init__(self, toc=True, colophon=True, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.toc = toc
-        self.colophon = colophon
+    # list of countries that shouldn't be included in the coverpage
+    dont_include_countries = []
 
     def render(self, document, element=None):
-        self.media_url = 'doc-0/'
-        html = super().render(document, element=element)
-
-        # embed the HTML into the PDF container
-        html = render_to_string('indigo_api/akn/export/pdf.html', {
-            'documents': [(document, html)],
-        })
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            html = self.save_attachments(html, document, 'doc-0/media/', tmpdir)
-            return self.to_pdf(html, tmpdir, document=document)
-
-    def render_many(self, documents, **kwargs):
-        html = []
+        # we don't support rendering partial PDFs
+        if element:
+            raise NotImplementedError
+        log.info(f'Rendering PDF for document {document.pk} ({document.frbr_uri})')
+        self.insert_coverpage(document)
+        self.insert_frontmatter(document)
+        self.insert_proprietary_metadata(document)
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            # render individual documents
-            for i, doc in enumerate(documents):
-                self.media_url = f'doc-{i}/'
-                doc_html = super().render(doc, **kwargs)
-                self.save_attachments(doc_html, doc, f'doc-{i}/media/', tmpdir)
+            # copy over assets required by our templates, like logos and coats of arms
+            # stash_assets updates the paths to static images in document.doc.main
+            self.stash_assets(document, tmpdir)
 
-                html.append(doc_html)
+            # copy images on each document
+            self.stash_images(document, tmpdir)
 
-            # combine and embed the HTML into the PDF container
-            html = render_to_string('indigo_api/akn/export/pdf.html', {
-                'documents': list(zip(documents, html)),
-            })
+            # use the resolver for the appropriate external links (done for coverpage separately)
+            self.adjust_refs(document.doc)
+            # make eIds in the XML unique; else FOP complains
+            self.make_eids_unique(document.doc)
+            # fix tables to have the right number of columns and rows; else FOP complains
+            self.resize_tables(document.doc)
+            # write the XML to file
+            xml = etree.tostring(document.doc.main, encoding='unicode')
+            xml_file = os.path.join(tmpdir, 'raw.xml')
+            with open(xml_file, "wb") as f:
+                f.write(xml.encode('utf-8'))
 
-            return self.to_pdf(html, tmpdir, documents=documents)
+            outf = tempfile.NamedTemporaryFile('rb', dir=tmpdir, suffix='.pdf')
+            run_fop(outf.name, tmpdir, xml_file, self.find_xsl_fo(document))
+            return outf.read()
 
-    def save_attachments(self, html, document, prefix, tmpdir):
-        """ Place attachments needed by the html of this document into tmpdir. Only attachments
-        referenced using the given prefix are saved.
+    def insert_coverpage(self, document):
+        """ Generates the coverpage and inserts it before the body in the XML.
+            The document's document_xml isn't updated.
         """
-        html = lxml.html.fromstring(html)
-        prefix_len = len(prefix)
+        coverpage = self.render_coverpage(document)
+        coverpage_xml = etree.fromstring(self.html_to_xml(coverpage))
+        # insert the coverpage before the main content (preface / preamble / body)
+        document.doc.meta.addnext(coverpage_xml)
 
-        # gather up the attachments that occur in the html
-        imgs = [img for img in html.iter('img') if img.get('src', '').startswith(prefix)]
-        fnames = set(img.get('src')[prefix_len:] for img in imgs)
-
-        # ensure the media directory exists
-        media_dir = os.path.join(tmpdir, prefix)
-        os.makedirs(media_dir, exist_ok=True)
-
-        for attachment in document.attachments.all():
-            # the src attribute values in fnames are URL-quoted
-            if urllib.parse.quote(attachment.filename) in fnames:
-                # save the attachment into tmpdir
-                fname = os.path.join(media_dir, attachment.filename)
-                with open(fname, "wb") as f:
-                    shutil.copyfileobj(attachment.file, f)
-
-        # make img references absolute
-        # see https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2660
-        for img in imgs:
-            img.set('src', os.path.join(tmpdir, img.get('src')))
-
-        return lxml.html.tostring(html, encoding='unicode')
-
-    def to_pdf(self, html, dirname, document=None, documents=None):
-        options = self.pdf_options()
-        args = [
-            '--allow', dirname,
-            '--allow', settings.MEDIA_ROOT,
-            '--allow', settings.STATIC_ROOT,
-        ]
-
-        # for debugging, an array of (filename, content) tuples
-        files = []
-
-        # this makes all paths, such as stylesheets and javascript, use
-        # absolute file paths so that wkhtmltopdf finds them
-        html = make_absolute_paths(html)
-
-        # keep this around so that the file doesn't get cleaned up
-        # before it's used
-        colophon_f = None
-        if self.colophon:
-            colophon = self.render_colophon(document=document, documents=documents)
-            if colophon:
-                colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-                colophon_f.write(colophon.encode('utf-8'))
-                colophon_f.flush()
-                args.extend(['cover', 'file://' + colophon_f.name])
-                files.append((colophon_f.name, colophon))
-
-        toc_xsl = options.pop('xsl-style-sheet')
-        if self.toc:
-            args.extend(['toc', '--xsl-style-sheet', toc_xsl])
-
-        with tempfile.NamedTemporaryFile(suffix='.html', dir=dirname) as f:
-            f.write(html.encode('utf-8'))
-            f.flush()
-            args.append('file://' + f.name)
-            files.append((f.name, html))
-
-            try:
-                return self._wkhtmltopdf(args, **options)
-            except subprocess.CalledProcessError as e:
-                files = '\n'.join(f'{name}:\n---\n{value}\n---' for name, value in files)
-                log.warning(f"wkhtmltopdf failed. args: {args}. options: {options}. files: \n{files}")
-                raise
-
-    def render_colophon(self, document=None, documents=None):
-        """ Find the colophon template this document and render it, returning
-        the rendered HTML. This renders the colophon using a wrapper
-        template to ensure it's a full HTML document.
+    def html_to_xml(self, html_string):
+        """ Convert an HTML string into a valid XML string.
         """
-        colophon = self.find_colophon(document or documents[0])
-        if colophon:
-            # find the wrapper template
-            candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_colophon_', suffix='.html')
-            best = find_best_template(candidates)
-            if not best:
-                raise ValueError("Couldn't find colophon file for PDF.")
+        xslt = etree.XSLT(etree.parse(find_static('xsl/html_to_xml.xsl')))
+        return str(xslt(lxml.html.fromstring(html_string)))
 
-            colophon_wrapper = get_template(best).origin.name
-            html = render_to_string(colophon_wrapper, {
-                'colophon': colophon,
-                'document': document,
-                'documents': documents,
-            })
-            return make_absolute_paths(html)
+    def insert_frontmatter(self, document):
+        """ Generates the frontmatter and inserts it before the body (and coverpage if present) in the XML.
+            The document's document_xml isn't updated.
+        """
+        frontmatter = render_to_string(self.frontmatter_template(document), self.get_frontmatter_context(document))
+        frontmatter_xml = etree.fromstring(frontmatter)
+        # insert the frontmatter before the coverpage, or the main content (preface / preamble / body)
+        document.doc.meta.addnext(frontmatter_xml)
 
-    def _wkhtmltopdf(self, *args, **kwargs):
-        # wkhtmltopdf sometimes fails with a transient error, so try multiple times
-        attempts = 0
-        while True:
-            try:
-                attempts += 1
-                return wkhtmltopdf(*args, **kwargs)
-            except subprocess.CalledProcessError as e:
-                if attempts < 3:
-                    log.info("Retrying after wkhtmltopdf error")
-                else:
-                    raise e
+    def frontmatter_template(self, document):
+        return self.find_template(document, prefix='export/pdf_frontmatter_', suffix='.xml')
 
-    def pdf_options(self):
-        # See https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/
-        # for background on the two circle canon for calculating margins for an A4 page.
-        #
-        # To calculate margins for a page of width W and height H, plug the following
-        # equation into Wolfram Alpha, and read off the smaller of the two pairs of
-        # values for s (the side margin) and t (the top/bottom margin) in mm.
-        #
-        # y=Mx; (x-W/2)^2+(y-(H-W/2))^2=(W/2)^2; s=W-x; t=H-y; M = H/W; H=297; W=210
-        #
-        # or use this link: http://wolfr.am/8BoqtzV5
-        #
-        # Target margins are: 36.3mm (top, bottom); 25.6mm (left, right)
-        # We want to pull the footer (7.5mm high) into the margin, so we decrease
-        # the margin slightly
+    def get_frontmatter_context(self, document):
+        toc = document.table_of_contents()
+        for e in descend_toc_pre_order(toc):
+            if e.basic_unit or e.type in ['component', 'attachment']:
+                e.children = []
+        toc = [e.as_dict() for e in toc if e.type not in ['preface', 'preamble']]
 
-        header_font = 'Georgia, "Times New Roman", serif'
-        header_font_size = '8'
-        header_spacing = 5
-        margin_top = 36.3 - header_spacing
-        margin_bottom = 36.3 - header_spacing
-        margin_left = 25.6
-
-        options = {
-            'page-size': 'A4',
-            'margin-top': '%.2fmm' % margin_top,
-            'margin-bottom': '%2.fmm' % margin_bottom,
-            'margin-left': '%.2fmm' % margin_left,
-            'margin-right': '%.2fmm' % margin_left,
-            'header-left': '[section]',
-            'header-spacing': '%.2f' % header_spacing,
-            'header-right': self.document.work.place.name,
-            'header-font-name': header_font,
-            'header-font-size': header_font_size,
-            'header-line': True,
-            'footer-html': self.footer_html(),
-            'footer-line': True,
-            'footer-spacing': '%.2f' % header_spacing,
-            'xsl-style-sheet': self.toc_xsl(),
+        return {
+            'document': document,
+            'ns': document.doc.namespace,
+            'toc': toc,
+            'include_country': document.country not in self.dont_include_countries,
         }
 
-        return options
+    def insert_proprietary_metadata(self, document):
+        # TODO: add the full path to main-fo.xsl to document.doc.meta.proprietary,
+        #  so that subclasses can import it without having to copy it.
+        pass
 
-    def toc_xsl(self):
-        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_toc_', suffix='.xsl')
-        best = find_best_template(candidates)
-        if not best:
-            raise ValueError("Couldn't find TOC XSL file for PDF.")
-        return get_template(best).origin.name
+    def stash_assets(self, document, tmpdir):
+        """ Stash assets that are either hard-coded into our templates, or provided by Django. These are stashed
+        into 'assets', separately from document media which are stored in 'media'.
 
-    def footer_html(self):
-        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_footer_', suffix='.html')
-        best = find_best_template(candidates)
+        Filenames relative to /static/ are preserved. For example:
+
+        * /static/images/foo/bar.png -> assets/images/foo/bar.png
+        """
+        assets_dir = os.path.join(tmpdir, 'assets')
+        os.makedirs(assets_dir)
+
+        images = set()
+
+        # static images
+        # these are usually logos from the frontMatter or a coat of arms from the coverpage
+        static_images = [img for img in
+                         document.doc.main.xpath('//a:img[@src] | //img[@src]', namespaces={'a': document.doc.namespace})
+                         if img.get('src').startswith('/static/')]
+        for img in static_images:
+            # strip /static/ from src and add to images
+            src = img.get('src')[8:]
+            images.add(src)
+            # rewrite paths to be assets/foo/bar
+            img.set('src', f'assets/{src}')
+
+        # copy static images
+        for fname in images:
+            local_fname = find_static(fname)
+            if not local_fname:
+                # try removing the hash fingerprint for static assets, if present. Otherwise find_static can't find it.
+                # images/coat-of-arms-na.6f5ffc9916ea.jpg -> images/coat-of-arms-na.jpg
+                fname2 = re.sub(r'\.[a-f0-9]+(\.\w+)$', '\\1', fname)
+                log.info(f"Static file for {fname} not found, trying {fname2}")
+                local_fname = find_static(fname2)
+
+            if local_fname:
+                to_path = os.path.join(assets_dir, fname)
+                log.info(f"Stashing {local_fname} to {to_path}")
+                os.makedirs(os.path.dirname(to_path), exist_ok=True)
+                shutil.copyfile(local_fname, to_path)
+            else:
+                log.warning(f"Static file for {fname} not found")
+
+        # subclasses may want to add to the assets directory
+        return assets_dir
+
+    def stash_images(self, document, tmpdir):
+        mediadir = os.path.join(tmpdir, 'media')
+        os.makedirs(mediadir)
+
+        for attachment in document.attachments.all():
+            if attachment.mime_type.startswith('image/'):
+                # copy file into media/<pk>/
+                dest = os.path.join(mediadir, attachment.filename)
+                log.info(f"Stashing image {attachment.filename} to {dest}")
+                with open(dest, "wb") as f:
+                    for chunk in attachment.file.chunks():
+                        f.write(chunk)
+
+    def adjust_refs(self, doc):
+        """ Prefix absolute hrefs into fully-qualified URLs.
+        """
+        for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
+            if ref.attrib['href'].startswith('/'):
+                ref.attrib['href'] = self.resolver_url + ref.attrib['href']
+
+    def make_eids_unique(self, doc):
+        """ Ensure there are no duplicate eIds.
+        """
+        all_eids = set()
+
+        def ensure_unique(eid):
+            if eid not in all_eids:
+                return eid
+            return ensure_unique(eid + '_x')
+
+        for elem in doc.root.xpath('//a:*[@eId]', namespaces={'a': doc.namespace}):
+            current = elem.attrib['eId']
+            new = ensure_unique(current)
+            all_eids.add(new)
+            if new != current:
+                elem.attrib['eId'] = new
+
+    def resize_tables(self, doc):
+        """ Ensure that tables have the correct number of columns and rows, otherwise
+        PDF generation fails.
+        """
+        for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
+            matrix = self.map_table(table, doc)
+
+            # max number of rows and columns
+            n_rows = len(matrix)
+            n_cols = max(len(row) for row in matrix.values()) if n_rows else 0
+
+            # adjust rows
+            missing_rows = n_rows - len(table.xpath('a:tr', namespaces={'a': doc.namespace}))
+            for y in range(missing_rows):
+                log.debug(f"Adding missing row in table {table.get('eId')}")
+                table.append(doc.maker('tr'))
+
+            # adjust cells
+            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
+                missing_cells = n_cols - len(matrix[y])
+                for x in range(missing_cells):
+                    log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
+                    row.append(doc.maker('td'))
+
+            # add colgroup element with each column and its width
+            column_widths = [0 for _ in range(n_cols)]
+            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                # lets us derive the column from the current cell and all previously spanned columns in each row
+                offset = 0
+                for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
+                    # ignore cells with a colspan other than 1
+                    # (assumes that if there is a colspan it's a positive integer)
+                    colspan = int(cell.get('colspan', '1'))
+                    offset += colspan - 1
+                    if colspan > 1:
+                        continue
+
+                    # ignore cells for which the column width has already been set
+                    if column_widths[x + offset]:
+                        continue
+
+                    # set the width if there is one
+                    cell_style = cell.get('style', '')
+                    if cell_style.startswith('width:'):
+                        try:
+                            column_widths[x + offset] = math.floor(float(cell_style[6:].strip(' %;')))
+                        except ValueError:
+                            continue
+
+            # if the total is > 100% and any columns are missing a width, just use defaults
+            if sum(column_widths) > 100 and 0 in column_widths:
+                column_widths = [0 for _ in range(n_cols)]
+
+            # spread the remaining available space evenly between any columns that don't have a width
+            # (including if none of them do)
+            missing_width_indexes = [i for i, w in enumerate(column_widths) if not w]
+            default_width = math.floor((100 - sum(column_widths)) / (len(missing_width_indexes) or 1))
+            for i in missing_width_indexes:
+                column_widths[i] = default_width
+
+            # normalise columns so that total is 100%
+            normalizr = 100 / sum(column_widths) if column_widths else 1
+            for i, w in enumerate(column_widths):
+                column_widths[i] = w * normalizr
+
+            colgroup = doc.maker('colgroup')
+            for width in column_widths:
+                colgroup.append(doc.maker('col', width=f'{width}%'))
+
+            # insert the colgroup at the top of the table
+            table.insert(0, colgroup)
+
+    def map_table(self, table, doc):
+        """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.
+
+        See http://stackoverflow.com/questions/13407348/table-cellindex-and-rowindex-with-colspan-rowspan
+        """
+
+        def rows(t):
+            return t.xpath('a:tr', namespaces={'a': doc.namespace})
+
+        def cells(r):
+            return r.xpath('a:td | a:th', namespaces={'a': doc.namespace})
+
+        matrix = defaultdict(lambda: defaultdict(dict))
+        for y, row in enumerate(rows(table)):
+            for x, cell in enumerate(cells(row)):
+                # skip already occupied cells in current row
+                while matrix[y][x]:
+                    x += 1
+
+                # mark matrix elements occupied by current cell with true
+                for x in range(x, x + int(cell.get('colspan', 1))):
+                    for yy in range(y, y + int(cell.get('rowspan', 1))):
+                        matrix[yy][x] = True
+
+        return matrix
+
+    def find_xsl_fo(self, document):
+        """ Return the filename of an XSL-FO template to use to render this document.
+
+        The normal Django static file system is used to find the file. The first file found is used.
+        """
+        candidates = filename_candidates(document, prefix='xsl/fo/fo_', suffix='.xsl')
+        best = find_best_static(candidates)
         if not best:
-            raise ValueError("Couldn't find footer file for PDF.")
-        return get_template(best).origin.name
+            raise ValueError("Couldn't find FO-XSLT file to use for %s, tried: %s" % (document, candidates))
+        return best
 
 
 class EPUBExporter(HTMLExporter):
@@ -406,11 +480,16 @@ class EPUBExporter(HTMLExporter):
     def add_css(self):
         self.stylesheets = []
 
-        # compile scss and add the file
-        processor = SassProcessor()
-        processor.processor_enabled = True
-        path = processor('stylesheets/export-epub.scss')
-        with processor.source_storage.open(path) as f:
+        path = 'stylesheets/export-epub.css'
+        static_path = find_static(path)
+        if not static_path:
+            # compile the scss, this is mostly only for unit tests, because the sass is compiled with compilescss
+            # in production
+            processor = SassProcessor()
+            processor.processor_enabled = True
+            static_path = find_static(processor('stylesheets/export-epub.scss'))
+
+        with open(static_path) as f:
             css = f.read()
         self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
         self.stylesheets.append(path)

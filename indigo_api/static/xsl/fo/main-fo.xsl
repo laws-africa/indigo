@@ -116,24 +116,6 @@
     </fo:block>
   </xsl:template>
 
-  <!-- annotations (editorial remarks) -->
-  <xsl:template match="akn:remark[@status='editorial']">
-    <xsl:choose>
-      <xsl:when test="position()=1 and position()=last()">
-        <fo:block keep-with-previous="always">
-          <fo:inline font-style="italic">
-            <xsl:apply-templates/>
-          </fo:inline>
-        </fo:block>
-      </xsl:when>
-      <xsl:otherwise>
-        <fo:inline font-style="italic">
-          <xsl:apply-templates/>
-        </fo:inline>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
   <!-- quotes are indented from both sides relative to their parent -->
   <!-- TODO: test and adjust once quotes are supported -->
   <xsl:template match="akn:embeddedStructure">

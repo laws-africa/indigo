@@ -35,4 +35,11 @@
     </fo:inline>
   </xsl:template>
 
+  <!-- defined terms -->
+  <xsl:template match="akn:def">
+    <fo:inline font-weight="bold">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+
 </xsl:stylesheet>

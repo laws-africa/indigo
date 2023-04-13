@@ -1,16 +1,16 @@
-{% block subject %}Achievement unlocked - {{ badge.name }}{% endblock %}
+{% block subject %}{% trans "Achievement unlocked" %} - {{ badge.name }}{% endblock %}
 
 {% block html %}
 {% include 'templated_email/_header.html' %}
 
-<h3 style="text-align: center">Achievement Unlocked!</h3>
+<h3 style="text-align: center">{% trans "Achievement unlocked!" %}</h3>
 <h1 style="text-align: center">{{ badge.name }}</h1>
 
-<p>Congratulations {{ recipient.first_name }}, you've unlocked the <b>{{ badge.name }}</b> badge:</p>
+<p>{% blocktrans trimmed with name=recipient.first_name badge=badge.name %}Congratulations {{ name }}, you've unlocked the <b>{{ badge }}</b> badge:</p>
 
 <p>{{ badge.description }}</p>
 
-<p>Nice work!</p>
+<p>{% trans "Nice work!" %}</p>
 
 <hr>
 {% include 'templated_email/_footer.html' %}

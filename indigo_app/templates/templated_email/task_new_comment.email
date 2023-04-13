@@ -1,10 +1,11 @@
-{% block subject %}Task #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
+{% load i18n %}
+{% block subject %}{% trans "Task" %} #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
 
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
   <p>
-    {{ comment.user.get_full_name }} commented on
+    {% blocktrans trimmed with name=comment.user.get_full_name %}{{ name }} commented on {% endblocktrans %}
     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}"> Task #{{ task.pk }} – {{ task.title }}</a>:
 
     <hr>

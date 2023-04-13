@@ -45,11 +45,13 @@
   <!-- annotations (editorial remarks) -->
   <xsl:template match="akn:remark[@status='editorial']">
     <xsl:choose>
+      <!-- when it's the only child, treat it as a block -->
       <xsl:when test="position()=1 and position()=last()">
         <fo:block keep-with-previous="always" font-style="italic">
           <xsl:apply-templates/>
         </fo:block>
       </xsl:when>
+      <!-- otherwise, treat it as an inline -->
       <xsl:otherwise>
         <fo:inline font-style="italic">
           <xsl:apply-templates/>

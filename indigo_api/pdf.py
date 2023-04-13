@@ -23,7 +23,7 @@ def default_fop_config():
     # TODO: is there a way to do this in place instead?
     with open(fop_config, 'r+') as f:
         out = re.sub('__FONT_PATH__', font_path, f.read())
-        f.seek(0)
+        f.truncate()
         f.write(out)
     return fop_config
 

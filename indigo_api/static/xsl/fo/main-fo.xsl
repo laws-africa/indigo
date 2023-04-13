@@ -3,7 +3,6 @@
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
                 xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <xsl:output method="xml"/>
 

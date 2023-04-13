@@ -11,6 +11,7 @@
   <xsl:include href="_coverpage.xsl"/>
   <xsl:include href="_front-matter.xsl"/>
   <xsl:include href="_inlines.xsl"/>
+  <xsl:include href="_preface-preamble.xsl"/>
   <xsl:include href="_toc.xsl"/>
   <xsl:include href="_variables.xsl"/>
 
@@ -113,31 +114,6 @@
     <fo:block>
       <xsl:apply-templates select="./*[not(self::akn:frontMatter)]"/>
     </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:preface|akn:preamble">
-    <fo:block margin-top="{$para-spacing}*2">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:preface/akn:p">
-    <fo:block margin-top="{$para-spacing}">
-      <!-- optional styling of 'ACT' in the preface -->
-      <xsl:if test="text()='ACT'">
-        <xsl:attribute name="text-align">center</xsl:attribute>
-        <xsl:attribute name="keep-with-next">always</xsl:attribute>
-        <xsl:attribute name="font-size"><xsl:value-of select="$fontsize-h1"/></xsl:attribute>
-        <xsl:attribute name="font-weight">bold</xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:longTitle">
-    <fo:inline font-weight="bold">
-      <xsl:apply-templates/>
-    </fo:inline>
   </xsl:template>
 
   <!-- defined terms -->

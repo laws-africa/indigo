@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 FOP_CMD = settings.FOP_CMD
 FOP_CONFIG = settings.FOP_CONFIG
-FONT_PATH = settings.FONT_PATH
+FOP_FONT_PATH = settings.FOP_FONT_PATH
 
 
 def default_fop_config():
@@ -19,7 +19,7 @@ def default_fop_config():
         :return the full path to the (edited) default fop config file.
     """
     fop_config = os.path.join(os.path.dirname(__file__), 'fop.xconf')
-    font_path = FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
+    font_path = FOP_FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
     # TODO: is there a way to do this in place instead?
     with open(fop_config, 'r+') as f:
         out = re.sub('__FONT_PATH__', font_path, f.read())

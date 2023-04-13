@@ -102,14 +102,6 @@
     </fo:root>
   </xsl:template>
 
-  <!-- inlines: bold, italics, underline, superscript, subscript -->
-  <!-- linebreaks in own block but with no top margin -->
-  <xsl:template match="akn:br">
-    <fo:block>
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
   <!-- the front matter -->
   <xsl:template match="akn:frontMatter">
     <!-- TODO: background image (different on first page) -->

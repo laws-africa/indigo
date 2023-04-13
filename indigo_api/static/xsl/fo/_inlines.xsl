@@ -46,10 +46,8 @@
   <xsl:template match="akn:remark[@status='editorial']">
     <xsl:choose>
       <xsl:when test="position()=1 and position()=last()">
-        <fo:block keep-with-previous="always">
-          <fo:inline font-style="italic">
-            <xsl:apply-templates/>
-          </fo:inline>
+        <fo:block keep-with-previous="always" font-style="italic">
+          <xsl:apply-templates/>
         </fo:block>
       </xsl:when>
       <xsl:otherwise>

@@ -1,24 +1,26 @@
 {% extends "place/insights_layout.html" %}
-{% load static sass_tags %}
+{% load static sass_tags i18n %}
 
 {% block title %}Explorer – {{ place.name }}{% endblock %}
 
 {% block insights-content %}
 <div class="container mt-3 mb-5">
-  <h3>Explorer</h3>
+  <h3>{% trans "Explorer" %}</h3>
 
   <form method="get" class="mb-5">
-    <label for="{{ form.xpath.id_for_label }}">XPath query</label>
+    <label for="{{ form.xpath.id_for_label }}">{% trans "XPath query" %}</label>
     <div class="d-flex">
       <div class="flex-grow-1">
         <input type="text" class="form-control text-monospace" name="{{ form.xpath.name }}" placeholder="xpath query" value="{{ form.xpath.value | default:'' }}" autofocus>
       </div>
-      <button type="submit" class="btn btn-primary ml-2">Go</button>
+      <button type="submit" class="btn btn-primary ml-2">{% trans "Go" %}</button>
     </div>
 
     <small class="form-text text-muted">
+      {% blocktrans trimmed %}
       Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href="https://lxml.de/xpathxslt.html#regular-expressions-in-xpath" target="_blank" rel="noreferrer noopener">regular expressions</a>.
       Also see the <a href="https://devhints.io/xpath" target="_blank" rel="noreferrer noopener">XPath cheatsheet</a>.
+      {% endblock %}
     </small>
     {% if form.xpath.errors %}
       <div class="text-danger">
@@ -29,7 +31,7 @@
     {% endif %}
 
     <div>
-      <label class="mr-3">Parent context:</label>
+      <label class="mr-3">{% trans "Parent context" %}:</label>
       {% for choice in form.parent %}
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="parent" id="{{ choice.id_for_label }}" value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}>
@@ -40,17 +42,17 @@
 
     <div class="form-check mb-2">
       <input class="form-check-input" type="checkbox" value="on" id="{{ form.global_search.id_for_label }}" name="{{ form.global_search.name }}" {% if form.global_search.data %}checked{% endif %}>
-      <label class="form-check-label" for="{{ form.global_search.id_for_label }}">Global search</label>
+      <label class="form-check-label" for="{{ form.global_search.id_for_label }}">{% trans "Global search" %}</label>
     </div>
 
     {% if not locality %}
       <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="on" id="{{ form.localities.id_for_label }}" name="{{ form.localities.name }}" {% if form.localities.data %}checked{% endif %}>
-        <label class="form-check-label" for="{{ form.localities.id_for_label }}">Include localities</label>
+        <label class="form-check-label" for="{{ form.localities.id_for_label }}">{% trans "Include localities" %}</label>
       </div>
     {% endif %}
 
-    <a href="#samples" data-toggle="collapse">Examples</a>
+    <a href="#samples" data-toggle="collapse">{% trans "Examples" %}</a>
     <div class="collapse" id="samples">
       <ul>
         {% for descr, xpath, parent in samples %}
@@ -61,7 +63,21 @@
   </form>
 
   {% if matches %}
-    <p>{{ paginator.count }} match{{ paginator.count|pluralize:"es" }} in {{ n_documents }} document{{ n_documents|pluralize }}</p>
+    <p>
+      {% blocktrans trimmed count counter=paginator.count %}
+        {% blocktrans trimmed count counter=n_documents %}
+          {{ paginator.count }} match in {{ n_documents }} document
+        {% plural %}
+          {{ paginator.count }} match in {{ n_documents }} documents
+        {% endblocktrans %}}
+      {% plural %}
+        {% blocktrans trimmed count counter=n_documents %}
+          {{ paginator.count }} matches in {{ n_documents }} document
+        {% plural %}
+          {{ paginator.count }} matches in {{ n_documents }} documents
+        {% endblocktrans %}
+      {% endblocktrans %}
+    </p>
 
     {% regroup matches by doc as doc_matches %}
 

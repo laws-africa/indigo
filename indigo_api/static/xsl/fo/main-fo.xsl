@@ -116,22 +116,6 @@
     </fo:block>
   </xsl:template>
 
-  <!-- quotes are indented from both sides relative to their parent -->
-  <!-- TODO: test and adjust once quotes are supported -->
-  <xsl:template match="akn:embeddedStructure">
-    <fo:block-container margin-top="{$para-spacing-quote}" margin-bottom="{$para-spacing-quote}" keep-with-previous="always">
-      <fo:block start-indent="{$indent-quote}" end-indent="{$indent-quote}">
-        <!-- don't include opening quote here if the quote doesn't start with a p -->
-        <xsl:if test="akn:p">
-          <xsl:call-template name="start-quote">
-            <xsl:with-param name="quote-char" select="@startQuote"/>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:apply-templates/>
-      </fo:block>
-    </fo:block-container>
-  </xsl:template>
-
   <!-- outdent the opening quote so that the blocks in the quote line up visually -->
   <xsl:template name="start-quote">
     <xsl:param name="quote-char"/>

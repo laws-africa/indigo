@@ -6,58 +6,12 @@
                 xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
                 xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <xsl:output method="xml"/>
+
+  <xsl:include href="variables.xsl"/>
+
   <xsl:strip-space elements="*"/>
   <!-- TODO: what is / isn't this list? -->
   <xsl:preserve-space elements="akn:a akn:affectedDocument akn:b akn:block akn:caption akn:change akn:concept akn:courtType akn:date akn:def akn:del akn:docCommittee akn:docDate akn:docIntroducer akn:docJurisdiction akn:docNumber akn:docProponent akn:docPurpose akn:docStage akn:docStatus akn:docTitle akn:docType akn:docketNumber akn:entity akn:event akn:extractText akn:fillIn akn:from akn:heading akn:i akn:inline akn:ins akn:judge akn:lawyer akn:legislature akn:li akn:listConclusion akn:listIntroduction akn:location akn:mmod akn:mod akn:mref akn:narrative akn:neutralCitation akn:num akn:object akn:omissis akn:opinion akn:organization akn:outcome akn:p akn:party akn:person akn:placeholder akn:process akn:quantity akn:quotedText akn:recordedTime akn:ref akn:relatedDocument akn:remark akn:rmod akn:role akn:rref akn:scene akn:session akn:shortTitle akn:signature akn:span akn:sub akn:subheading akn:summary akn:sup akn:term akn:tocItem akn:u akn:vote"/>
-
-  <!-- variables -->
-  <xsl:variable name="font-fam">PT Serif</xsl:variable>
-  <xsl:variable name="font-fam-frontmatter">PT Sans</xsl:variable>
-  <xsl:variable name="font-fam-headings">PT Sans</xsl:variable>
-  <xsl:variable name="fontsize">9pt</xsl:variable>
-  <!-- 15.3pt -->
-  <xsl:variable name="fontsize-h1">
-    <xsl:value-of select="$fontsize"/> * 1.7
-  </xsl:variable>
-  <!-- 11.25pt -->
-  <xsl:variable name="fontsize-h2">
-    <xsl:value-of select="$fontsize"/> * 1.25
-  </xsl:variable>
-  <!-- 10.26pt -->
-  <xsl:variable name="fontsize-h3">
-    <xsl:value-of select="$fontsize"/> * 1.14
-  </xsl:variable>
-  <!-- 9pt -->
-  <xsl:variable name="fontsize-h4" select="$fontsize"/>
-  <!-- 7.2pt -->
-  <xsl:variable name="fontsize-footnote">
-    <xsl:value-of select="$fontsize"/> * 0.8
-  </xsl:variable>
-  <!-- 11.25pt -->
-  <xsl:variable name="fontsize-frontmatter" select="$fontsize-h2"/>
-  <!-- 9pt -->
-  <xsl:variable name="fontsize-frontmatter-small" select="$fontsize"/>
-  <!-- 6pt -->
-  <xsl:variable name="fontsize-small">
-    <xsl:value-of select="$fontsize"/> * 0.66
-  </xsl:variable>
-  <!-- 10pt -->
-  <xsl:variable name="para-spacing">0.8em</xsl:variable>
-  <xsl:variable name="para-spacing-quote">
-    <xsl:value-of select="$para-spacing"/> * 1.5
-  </xsl:variable>
-  <xsl:variable name="para-spacing-table">
-    <xsl:value-of select="$para-spacing"/> * 2
-  </xsl:variable>
-  <xsl:variable name="indent">3em</xsl:variable>
-  <xsl:variable name="indent-quote">2em</xsl:variable>
-  <xsl:variable name="indent-toc">1.5em</xsl:variable>
-  <xsl:variable name="link-colour">#D04242</xsl:variable>
-  <xsl:variable name="link-colour-internal">#3E1313</xsl:variable>
-  <xsl:variable name="accent-colour">#D04242</xsl:variable>
-  <xsl:variable name="white">#FFFFFF</xsl:variable>
-  <xsl:variable name="warning-colour">#7C2727</xsl:variable>
-  <xsl:variable name="table-border-colour">#DDDDDD</xsl:variable>
 
   <!-- root template -->
   <xsl:template match="/">

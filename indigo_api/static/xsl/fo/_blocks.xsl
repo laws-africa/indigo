@@ -12,4 +12,14 @@
     </fo:block>
   </xsl:template>
 
+  <!-- crossheadings -->
+  <!-- TODO: don't match on hcontainer named 'crossheading' in future -->
+  <xsl:template match="akn:hcontainer[@name='crossheading']|akn:crossHeading">
+    <fo:block start-indent="0" margin-top="{$para-spacing}*1.5" font-size="{$fontsize-h3}" text-align="center">
+      <fo:inline font-weight="bold" font-style="italic">
+        <xsl:apply-templates/>
+      </fo:inline>
+    </fo:block>
+  </xsl:template>
+
 </xsl:stylesheet>

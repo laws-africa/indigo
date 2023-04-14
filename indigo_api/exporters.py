@@ -315,6 +315,16 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         PDF generation fails.
         """
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
+            # a cell can't span more rows than actually come after it
+            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
+
+                for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
+                    rowspan = int(cell.get('rowspan', 1))
+                    if rowspan > 1:
+                        # rowspan is the smaller of the current rowspan, and the actual number of rows (plus this one)
+                        cell.set('rowspan', str(min(rowspan, actual + 1)))
+
             matrix = self.map_table(table, doc)
 
             # max number of rows and columns

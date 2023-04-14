@@ -20,6 +20,13 @@
     </fo:block>
   </xsl:template>
 
+  <!-- wrapUp -->
+  <xsl:template match="akn:wrapUp">
+    <fo:block margin-top="{$para-spacing}">
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+
   <!-- any p tag in the body if it isn't a first child should be in its own block, e.g.
    - second or third p in a section, paragraph, or quote
    - p in a paragraph after a quote

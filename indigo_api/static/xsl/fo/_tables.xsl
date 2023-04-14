@@ -5,7 +5,6 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <!-- TODO: make tables totally unindented so that they're properly centered -->
   <xsl:template match="akn:table">
     <fo:table width="100%" table-layout="fixed"
               margin-top="{$para-spacing-table}" margin-bottom="{$para-spacing-table}"
@@ -16,15 +15,13 @@
     </fo:table>
   </xsl:template>
 
-  <!-- TODO: revert to single / once HTML is converted to XSLT first -->
-  <xsl:template match="akn:table//akn:tr">
+  <xsl:template match="akn:tr">
     <fo:table-row>
       <xsl:apply-templates/>
     </fo:table-row>
   </xsl:template>
 
-  <!-- TODO: revert to single / once HTML is converted to XSLT first -->
-  <xsl:template match="akn:table//akn:tr/akn:th | akn:table//akn:tr/akn:td">
+  <xsl:template match="akn:th | akn:td">
     <fo:table-cell border-style="solid" border-color="{$table-border-colour}" padding="6pt">
       <xsl:if test="@colspan">
         <xsl:attribute name="number-columns-spanned"><xsl:value-of select="@colspan"/></xsl:attribute>

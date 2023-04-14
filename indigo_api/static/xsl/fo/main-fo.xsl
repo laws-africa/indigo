@@ -8,6 +8,7 @@
 
   <xsl:include href="_blocks.xsl"/>
   <xsl:include href="_coverpage.xsl"/>
+  <xsl:include href="_footnotes.xsl"/>
   <xsl:include href="_front-matter.xsl"/>
   <xsl:include href="_hier.xsl"/>
   <xsl:include href="_inlines.xsl"/>
@@ -115,29 +116,6 @@
     <fo:block>
       <xsl:apply-templates select="./*[not(self::akn:frontMatter)]"/>
     </fo:block>
-  </xsl:template>
-
-  <!-- footnotes -->
-  <!-- TODO: test and adjust once footnotes are supported -->
-  <xsl:template match="akn:authorialNote">
-    <fo:footnote>
-      <fo:inline>
-        <xsl:apply-templates select="@marker"/>
-      </fo:inline>
-      <fo:footnote-body>
-        <fo:block-container margin="0">
-          <fo:block margin-top="{$para-spacing}" font-size="{$fontsize-footnote}">
-            <fo:inline-container width="0" margin-left="-{$indent}"
-                                 baseline-shift="super" font-size="{$fontsize-small}">
-              <fo:block>
-                <xsl:apply-templates select="@marker"/>
-              </fo:block>
-            </fo:inline-container>
-            <xsl:apply-templates/>
-          </fo:block>
-        </fo:block-container>
-      </fo:footnote-body>
-    </fo:footnote>
   </xsl:template>
 
   <!-- tables -->

@@ -5,7 +5,6 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <!-- TODO: test and adjust once footnotes are supported -->
   <xsl:template match="akn:authorialNote">
     <fo:footnote>
       <fo:inline>

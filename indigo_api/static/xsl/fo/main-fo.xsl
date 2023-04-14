@@ -12,6 +12,7 @@
   <xsl:include href="_hier.xsl"/>
   <xsl:include href="_inlines.xsl"/>
   <xsl:include href="_preface-preamble.xsl"/>
+  <xsl:include href="_quotes.xsl"/>
   <xsl:include href="_toc.xsl"/>
   <xsl:include href="_variables.xsl"/>
 
@@ -114,16 +115,6 @@
     <fo:block>
       <xsl:apply-templates select="./*[not(self::akn:frontMatter)]"/>
     </fo:block>
-  </xsl:template>
-
-  <!-- outdent the opening quote so that the blocks in the quote line up visually -->
-  <xsl:template name="start-quote">
-    <xsl:param name="quote-char"/>
-    <fo:inline-container width="0" margin-left="-{string-length($quote-char)}*6pt">
-      <fo:block>
-        <xsl:apply-templates select="$quote-char"/>
-      </fo:block>
-    </fo:inline-container>
   </xsl:template>
 
   <!-- footnotes -->

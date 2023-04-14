@@ -21,4 +21,14 @@
     </fo:block-container>
   </xsl:template>
 
+  <!-- outdent the opening quote so that the blocks in the quote line up visually -->
+  <xsl:template name="start-quote">
+    <xsl:param name="quote-char"/>
+    <fo:inline-container width="0" margin-left="-{string-length($quote-char)}*6pt">
+      <fo:block>
+        <xsl:apply-templates select="$quote-char"/>
+      </fo:block>
+    </fo:inline-container>
+  </xsl:template>
+
 </xsl:stylesheet>

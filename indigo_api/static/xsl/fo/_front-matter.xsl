@@ -6,7 +6,6 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template match="akn:frontMatter">
-    <!-- TODO: background image (different on first page) -->
     <fo:block font-family="{$font-fam-frontmatter}" font-size="{$fontsize-frontmatter-small}">
       <xsl:apply-templates/>
     </fo:block>
@@ -18,7 +17,7 @@
     </fo:block>
   </xsl:template>
 
-  <!-- TODO: make this less brittle, will be overridden per place and h4 won't always be there, might need more than 10% for right-aligned multiple logos, or there might be none, etc. -->
+  <!-- TODO: make this less brittle, can be overridden per place and h4 won't always be there, might need more than 10% for right-aligned multiple logos, or there might be none, etc. -->
   <xsl:template match="akn:div[@name='first-page-header']">
     <fo:block border-bottom-style="solid" border-bottom-color="{$accent-colour}">
       <fo:inline-container width="90%">
@@ -38,7 +37,7 @@
     </fo:block>
   </xsl:template>
 
-  <xsl:template match="akn:div[@name='parent-work-title']">
+  <xsl:template match="akn:div[@name='parent-work-title' or @name='numbered-title']">
     <fo:block font-size="{$fontsize-frontmatter}">
       <xsl:apply-templates/>
     </fo:block>
@@ -50,31 +49,13 @@
     </fo:block>
   </xsl:template>
 
-  <xsl:template match="akn:div[@name='numbered-title']">
-    <fo:block font-size="{$fontsize-frontmatter}">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
   <xsl:template match="akn:div[@name='expression-detail']">
     <fo:block margin-top="{$para-spacing}*2">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
 
-  <xsl:template match="akn:div[@name='updates-block']">
-    <fo:block margin-top="{$para-spacing}*4">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:div[@name='about']">
-    <fo:block margin-top="{$para-spacing}*4">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:div[@name='licence']">
+  <xsl:template match="akn:div[@name='updates-block' or @name='about' or @name='licence']">
     <fo:block margin-top="{$para-spacing}*4">
       <xsl:apply-templates/>
     </fo:block>

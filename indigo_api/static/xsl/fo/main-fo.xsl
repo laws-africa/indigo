@@ -11,6 +11,7 @@
   <xsl:include href="_footnotes.xsl"/>
   <xsl:include href="_front-matter.xsl"/>
   <xsl:include href="_hier.xsl"/>
+  <xsl:include href="_images.xsl"/>
   <xsl:include href="_inlines.xsl"/>
   <xsl:include href="_preface-preamble.xsl"/>
   <xsl:include href="_quotes.xsl"/>
@@ -117,25 +118,6 @@
     <fo:block>
       <xsl:apply-templates select="./*[not(self::akn:frontMatter)]"/>
     </fo:block>
-  </xsl:template>
-
-  <!-- images -->
-  <!-- TODO: make images totally unindented so that they're properly centered -->
-  <xsl:template match="akn:img">
-    <xsl:choose>
-      <xsl:when test="position()=1 and position()=last()">
-        <!-- standalone images -->
-        <fo:block start-indent="0" text-align="center" margin-top="{$para-spacing}">
-          <fo:external-graphic src="{@src}" width="100%"
-                               content-height="100%" content-width="scale-to-fit"/>
-        </fo:block>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-- inline images -->
-        <fo:external-graphic src="{@src}" width="auto"
-                             content-height="100%" content-width="scale-to-fit"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 
   <!-- links (only if href isn't empty) -->

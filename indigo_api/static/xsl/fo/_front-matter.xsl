@@ -69,36 +69,8 @@
     </fo:block>
   </xsl:template>
 
-  <xsl:template match="akn:div[@name='update-button']">
-    <fo:block margin-top="{$para-spacing}">
-      <fo:basic-link external-destination="{akn:a/@href}">
-        <fo:inline-container width="20%">
-          <fo:block color="{$white}" background-color="{$accent-colour}" fox:border-radius="4pt" padding-top="4pt" padding-bottom="4pt" text-align="center">
-            <xsl:apply-templates select="akn:a"/>
-          </fo:block>
-        </fo:inline-container>
-      </fo:basic-link>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:div[@name='update-qr']">
-    <fo:block>
-      <fo:inline-container width="20%">
-        <fo:block>
-          <xsl:apply-templates/>
-        </fo:block>
-      </fo:inline-container>
-    </fo:block>
-  </xsl:template>
-
   <xsl:template match="akn:div[@name='about']">
     <fo:block margin-top="{$para-spacing}*4">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <xsl:template match="akn:div[@name='contact']">
-    <fo:block margin-top="{$para-spacing}*2">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>

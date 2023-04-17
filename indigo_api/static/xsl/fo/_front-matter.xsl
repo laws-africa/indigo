@@ -103,7 +103,7 @@
     </fo:block>
   </xsl:template>
 
-  <xsl:template match="akn:div[@name='license']">
+  <xsl:template match="akn:div[@name='licence']">
     <fo:block margin-top="{$para-spacing}*4">
       <xsl:apply-templates/>
     </fo:block>

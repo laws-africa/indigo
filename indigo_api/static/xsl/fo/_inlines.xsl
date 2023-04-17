@@ -60,4 +60,20 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- links (only if href isn't empty) -->
+  <xsl:template match="akn:a[@href!='' and not(parent::akn:div[@name='update-button'])]|akn:ref[@href!='']">
+    <xsl:choose>
+      <xsl:when test="starts-with(@href, '#')">
+        <fo:basic-link internal-destination="{substring-after(@href, '#')}" color="{$link-colour-internal}" text-decoration="underline">
+          <xsl:apply-templates/>
+        </fo:basic-link>
+      </xsl:when>
+      <xsl:otherwise>
+        <fo:basic-link external-destination="{@href}" color="{$link-colour}" text-decoration="underline">
+          <xsl:apply-templates/>
+        </fo:basic-link>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 </xsl:stylesheet>

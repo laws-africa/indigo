@@ -9,7 +9,7 @@
    - heading centered
    - content
    -->
-  <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subchapter|akn:subclause|akn:subdivision|akn:subpart">
+  <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subchapter|akn:subclause|akn:subdivision|akn:subpart|akn:subtitle|akn:title|akn:tome">
     <fo:block-container>
       <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0" font-weight="bold">
         <!-- keyword before certain containers -->
@@ -27,6 +27,12 @@
         </xsl:if>
         <xsl:if test="self::akn:part">
           <xsl:text>Part </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:title">
+          <xsl:text>Title </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:tome">
+          <xsl:text>Tome </xsl:text>
         </xsl:if>
         <!-- num is always rendered (if there is one) -->
         <xsl:apply-templates select="akn:num"/>

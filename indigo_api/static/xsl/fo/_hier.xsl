@@ -86,12 +86,12 @@
     <xsl:apply-templates select="./*[not(self::akn:heading|self::akn:subheading)]"/>
   </xsl:template>
 
-  <!-- section (basic unit)
+  <!-- basic unit
    - number to the side, bold (if present)
    - heading in bold (if present)
    - content in next block regardless of whether there's a heading
    -->
-  <xsl:template match="akn:section">
+  <xsl:template match="akn:section|akn:rule">
     <fo:block-container>
       <fo:block start-indent="{$indent}" margin-top="{$para-spacing}*2" font-size="{$fontsize-h3}" widows="2" orphans="2" id="{@eId}">
         <!-- 'float' number to the side, in bold; deal with opening quote character if relevant -->
@@ -117,7 +117,7 @@
             <xsl:apply-templates select="akn:heading"/>
           </fo:inline>
         </xsl:if>
-        <!-- regardless of whether a section has a heading, the content comes in its own block after the num -->
+        <!-- regardless of whether a basic unit has a heading, the content comes in its own block after the num -->
         <fo:block margin-top="{$para-spacing}" font-size="{$fontsize}" keep-with-previous="always">
           <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
         </fo:block>

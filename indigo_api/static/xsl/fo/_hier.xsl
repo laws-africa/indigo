@@ -9,11 +9,17 @@
    - heading centered
    - content
    -->
-  <xsl:template match="akn:article|akn:chapter|akn:division|akn:part|akn:subdivision|akn:subpart">
+  <xsl:template match="akn:article|akn:book|akn:chapter|akn:division|akn:part|akn:subdivision|akn:subpart">
     <fo:block-container>
       <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0">
         <fo:inline font-weight="bold">
           <xsl:choose>
+            <xsl:when test="self::akn:article">
+              <xsl:text>Article </xsl:text>
+            </xsl:when>
+            <xsl:when test="self::akn:book">
+              <xsl:text>Book </xsl:text>
+            </xsl:when>
             <xsl:when test="self::akn:chapter">
               <xsl:text>Chapter </xsl:text>
             </xsl:when>
@@ -25,7 +31,7 @@
           <!-- only include dash / break before the heading if there is a heading -->
           <xsl:if test="akn:heading">
             <xsl:choose>
-              <xsl:when test="self::akn:chapter or self::akn:article">
+              <xsl:when test="self::akn:article or self::akn:book or self::akn:chapter">
                 <fo:block>
                   <xsl:apply-templates select="akn:heading"/>
                 </fo:block>
@@ -34,7 +40,7 @@
                 <xsl:text> – </xsl:text>
                 <xsl:apply-templates select="akn:heading"/>
               </xsl:when>
-              <!-- don't include dash in subpart if there is no num (because it has no prefix) -->
+              <!-- don't include dash in division, subdivision, subpart if there is no num (because it has no prefix) -->
               <xsl:otherwise>
                 <xsl:if test="akn:num">
                   <xsl:text> – </xsl:text>

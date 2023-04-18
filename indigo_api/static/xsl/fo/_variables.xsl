@@ -43,6 +43,7 @@
   </xsl:variable>
   <xsl:variable name="indent">3em</xsl:variable>
   <xsl:variable name="indent-quote">2em</xsl:variable>
+  <xsl:variable name="indent-bullets">1.5em</xsl:variable>
   <xsl:variable name="indent-toc">1.5em</xsl:variable>
   <xsl:variable name="link-colour">#D04242</xsl:variable>
   <xsl:variable name="link-colour-internal">#3E1313</xsl:variable>

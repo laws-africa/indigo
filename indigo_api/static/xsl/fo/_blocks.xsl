@@ -43,7 +43,7 @@
   </xsl:template>
 
   <!-- p -->
-  <xsl:template match="akn:frontMatter//akn:p | akn:preface//akn:p | akn:preamble//akn:p | akn:mainBody/akn:p">
+  <xsl:template match="akn:frontMatter//akn:p | akn:preface//akn:p[not(parent::akn:li)] | akn:preamble//akn:p[not(parent::akn:li)] | akn:mainBody/akn:p">
     <fo:block margin-top="{$para-spacing}">
       <xsl:apply-templates/>
     </fo:block>

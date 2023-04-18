@@ -136,7 +136,7 @@
    - heading in bold (if present)
    - content
    -->
-  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional">
+  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|akn:ul/akn:li">
     <fo:block-container>
       <fo:block start-indent="{$indent}" margin-top="{$para-spacing}" widows="2" orphans="2" id="{@eId}">
         <!-- 'float' number to the side -->
@@ -151,6 +151,19 @@
                 </xsl:call-template>
               </xsl:if>
               <xsl:apply-templates select="akn:num"/>
+            </fo:block>
+          </fo:inline-container>
+        </xsl:if>
+        <xsl:if test="self::akn:li">
+          <fo:inline-container width="0" height="0" margin-left="-{$indent-bullets}">
+            <fo:block>
+              <!-- include the opening quote here if the quote didn't start with a p (and this is the first element) -->
+              <xsl:if test="parent::akn:ul/parent::akn:embeddedStructure and not(preceding-sibling::*) and not(parent::akn:ul/preceding-sibling::*)">
+                <xsl:call-template name="start-quote">
+                  <xsl:with-param name="quote-char" select="parent::akn:ul/parent::akn:embeddedStructure/@startQuote"/>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:text>&#x2022;</xsl:text>
             </fo:block>
           </fo:inline-container>
         </xsl:if>

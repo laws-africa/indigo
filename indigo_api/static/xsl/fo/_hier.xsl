@@ -136,7 +136,7 @@
    - heading in bold (if present)
    - content
    -->
-  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|akn:ul/akn:li">
+  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|akn:ul[not(@class='notice-list')]/akn:li">
     <fo:block-container>
       <fo:block start-indent="{$indent}" margin-top="{$para-spacing}" widows="2" orphans="2" id="{@eId}">
         <!-- 'float' number to the side -->

@@ -38,7 +38,7 @@
           <xsl:choose>
             <!-- certain containers get their heading on the next line -->
             <xsl:when test="self::akn:article or self::akn:book or self::akn:chapter">
-              <fo:block>
+              <fo:block keep-with-previous="always">
                 <xsl:apply-templates select="akn:heading"/>
               </fo:block>
             </xsl:when>

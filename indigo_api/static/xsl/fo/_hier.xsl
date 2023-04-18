@@ -11,48 +11,55 @@
    -->
   <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subdivision|akn:subpart">
     <fo:block-container>
-      <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0">
-        <fo:inline font-weight="bold">
+      <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0" font-weight="bold">
+        <!-- keyword before certain containers -->
+        <xsl:if test="self::akn:article">
+          <xsl:text>Article </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:book">
+          <xsl:text>Book </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:clause">
+          <xsl:text>Clause </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:chapter">
+          <xsl:text>Chapter </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::akn:part">
+          <xsl:text>Part </xsl:text>
+        </xsl:if>
+        <!-- num is always rendered (if there is one) -->
+        <xsl:apply-templates select="akn:num"/>
+        <xsl:if test="akn:heading">
+          <!-- final character of num (if there is one) -->
+          <xsl:variable name="terminus">
+            <xsl:value-of select="substring(akn:num, string-length(akn:num))"/>
+          </xsl:variable>
           <xsl:choose>
-            <xsl:when test="self::akn:article">
-              <xsl:text>Article </xsl:text>
+            <!-- certain containers get their heading on the next line -->
+            <xsl:when test="self::akn:article or self::akn:book or self::akn:chapter">
+              <fo:block>
+                <xsl:apply-templates select="akn:heading"/>
+              </fo:block>
             </xsl:when>
-            <xsl:when test="self::akn:book">
-              <xsl:text>Book </xsl:text>
+            <!-- certain containers get a dash before the heading, unless there is a num and it ends in a stop or colon -->
+            <xsl:when test="self::akn:clause or self::akn:part">
+              <xsl:if test="not($terminus='.' or $terminus=':')">
+                <xsl:text> –</xsl:text>
+              </xsl:if>
+              <xsl:text> </xsl:text>
+              <xsl:apply-templates select="akn:heading"/>
             </xsl:when>
-            <xsl:when test="self::akn:clause">
-              <xsl:text>Clause </xsl:text>
-            </xsl:when>
-            <xsl:when test="self::akn:chapter">
-              <xsl:text>Chapter </xsl:text>
-            </xsl:when>
-            <xsl:when test="self::akn:part">
-              <xsl:text>Part </xsl:text>
-            </xsl:when>
+            <!-- all other containers get a dash before the heading, only if there is a num and it doesn't end in a stop or colon -->
+            <xsl:otherwise>
+              <xsl:if test="akn:num and not($terminus='.' or $terminus=':')">
+                <xsl:text> –</xsl:text>
+              </xsl:if>
+              <xsl:text> </xsl:text>
+              <xsl:apply-templates select="akn:heading"/>
+            </xsl:otherwise>
           </xsl:choose>
-          <xsl:apply-templates select="akn:num"/>
-          <!-- only include dash / break before the heading if there is a heading -->
-          <xsl:if test="akn:heading">
-            <xsl:choose>
-              <xsl:when test="self::akn:article or self::akn:book or self::akn:chapter">
-                <fo:block>
-                  <xsl:apply-templates select="akn:heading"/>
-                </fo:block>
-              </xsl:when>
-              <xsl:when test="self::akn:clause or self::akn:part">
-                <xsl:text> – </xsl:text>
-                <xsl:apply-templates select="akn:heading"/>
-              </xsl:when>
-              <!-- don't include dash in division, subdivision, subpart if there is no num (because it has no prefix) -->
-              <xsl:otherwise>
-                <xsl:if test="akn:num">
-                  <xsl:text> – </xsl:text>
-                </xsl:if>
-                <xsl:apply-templates select="akn:heading"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:if>
-        </fo:inline>
+        </xsl:if>
       </fo:block>
       <fo:block margin-top="{$para-spacing}">
         <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>

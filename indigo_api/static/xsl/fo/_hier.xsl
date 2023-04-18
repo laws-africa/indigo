@@ -120,7 +120,7 @@
    - heading in bold (if present)
    - content
    -->
-  <xsl:template match="akn:subsection|akn:paragraph|akn:subparagraph|akn:blockList/akn:item">
+  <xsl:template match="akn:alinea|akn:blockList/akn:item|akn:paragraph|akn:subparagraph|akn:subsection">
     <fo:block-container>
       <fo:block start-indent="{$indent}" margin-top="{$para-spacing}" widows="2" orphans="2" id="{@eId}">
         <!-- 'float' number to the side -->

@@ -43,13 +43,13 @@
           </xsl:variable>
           <xsl:choose>
             <!-- certain containers get their heading on the next line -->
-            <xsl:when test="self::akn:article or self::akn:book or self::akn:chapter">
+            <xsl:when test="self::akn:book or self::akn:chapter or self::akn:title or self::akn:tome">
               <fo:block keep-with-previous="always">
                 <xsl:apply-templates select="akn:heading"/>
               </fo:block>
             </xsl:when>
             <!-- certain containers get a dash before the heading, unless there is a num and it ends in a stop or colon -->
-            <xsl:when test="self::akn:clause or self::akn:part">
+            <xsl:when test="self::akn:article or self::akn:clause or self::akn:part">
               <xsl:if test="not($terminus='.' or $terminus=':')">
                 <xsl:text> –</xsl:text>
               </xsl:if>

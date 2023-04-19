@@ -131,6 +131,45 @@
     </fo:block-container>
   </xsl:template>
 
+  <!-- TODO / WIP: make all generic hierarchical elements into list-items -->
+  <xsl:template name="hier">
+    <xsl:param name="depth"/>
+    <xsl:variable name="list-block-start-indent">
+      <xsl:value-of select="$depth * $indent-int"/>em
+    </xsl:variable>
+    <xsl:variable name="list-item-body-start-indent">
+      <xsl:value-of select="($depth * $indent-int) + $indent-int"/>em
+    </xsl:variable>
+    <xsl:variable name="local-para-spacing">
+      <xsl:choose>
+        <xsl:when test="preceding::*[1][self::akn:num]">0</xsl:when>
+        <xsl:otherwise><xsl:value-of select="$para-spacing"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <fo:list-block start-indent="{$list-block-start-indent}" margin-top="{$local-para-spacing}">
+      <fo:list-item>
+        <fo:list-item-label>
+          <fo:block>
+            <xsl:value-of select="akn:num"/>
+          </fo:block>
+        </fo:list-item-label>
+        <fo:list-item-body start-indent="{$list-item-body-start-indent}">
+          <fo:block id="{@eId}">
+            <xsl:apply-templates select="./*[not(self::akn:num)]"/>
+          </fo:block>
+        </fo:list-item-body>
+      </fo:list-item>
+    </fo:list-block>
+  </xsl:template>
+
+  <xsl:template match="akn:paragraph|akn:subparagraph">
+    <xsl:variable name="depth">
+      <xsl:value-of select="count(ancestor::akn:paragraph|ancestor::akn:subparagraph) + 1"/>
+    </xsl:variable>
+    <xsl:call-template name="hier">
+      <xsl:with-param name="depth" select="$depth"/>
+    </xsl:call-template>
+  </xsl:template>
   <!-- all other hierarchical and numbered elements
    - number to the side (if present)
    - heading in bold (if present)

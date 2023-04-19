@@ -41,6 +41,7 @@
   <xsl:variable name="para-spacing-table">
     <xsl:value-of select="$para-spacing"/> * 2
   </xsl:variable>
+  <xsl:variable name="indent-int">3</xsl:variable>
   <xsl:variable name="indent">3em</xsl:variable>
   <xsl:variable name="indent-quote">2em</xsl:variable>
   <xsl:variable name="indent-bullets">1.5em</xsl:variable>

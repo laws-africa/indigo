@@ -210,12 +210,13 @@
 
   <xsl:template match="akn:paragraph|akn:subparagraph">
     <xsl:variable name="depth">
-      <xsl:value-of select="count(ancestor::akn:paragraph|ancestor::akn:subparagraph) + 1"/>
+      <xsl:value-of select="count(ancestor::akn:paragraph|ancestor::akn:rule|ancestor::akn:section|ancestor::akn:subparagraph)"/>
     </xsl:variable>
     <xsl:call-template name="hier">
       <xsl:with-param name="depth" select="$depth"/>
     </xsl:call-template>
   </xsl:template>
+
   <!-- all other hierarchical and numbered elements
    - number to the side (if present)
    - heading in bold (if present)

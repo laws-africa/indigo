@@ -92,6 +92,46 @@
     <xsl:apply-templates select="./*[not(self::akn:heading|self::akn:subheading)]"/>
   </xsl:template>
 
+  <!-- TODO / WIP: make all basic units into list-items -->
+  <xsl:template name="basic-unit">
+    <xsl:param name="depth"/>
+    <xsl:variable name="list-block-start-indent">
+      <xsl:value-of select="$depth * $indent-int"/>em
+    </xsl:variable>
+    <xsl:variable name="list-item-body-start-indent">
+      <xsl:value-of select="($depth * $indent-int) + $indent-int"/>em
+    </xsl:variable>
+    <fo:list-block start-indent="{$list-block-start-indent}" margin-top="{$para-spacing}">
+      <fo:list-item>
+        <fo:list-item-label>
+          <fo:block font-weight="bold" font-size="{$fontsize-h3}">
+            <xsl:value-of select="akn:num"/>
+          </fo:block>
+        </fo:list-item-label>
+        <fo:list-item-body start-indent="{$list-item-body-start-indent}">
+          <fo:block id="{@eId}">
+            <xsl:if test="akn:heading">
+              <fo:inline font-weight="bold" font-size="{$fontsize-h3}">
+                <xsl:apply-templates select="akn:heading"/>
+              </fo:inline>
+              <fo:block margin-top="{$para-spacing}"/>
+            </xsl:if>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+          </fo:block>
+        </fo:list-item-body>
+      </fo:list-item>
+    </fo:list-block>
+  </xsl:template>
+
+  <xsl:template match="akn:section|akn:rule">
+    <xsl:variable name="depth">
+      <xsl:value-of select="count(ancestor::akn:section|ancestor::akn:rule)"/>
+    </xsl:variable>
+    <xsl:call-template name="basic-unit">
+      <xsl:with-param name="depth" select="$depth"/>
+    </xsl:call-template>
+  </xsl:template>
+
   <!-- basic unit
    - number to the side, bold (if present)
    - heading in bold (if present)

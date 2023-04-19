@@ -155,7 +155,13 @@
         </fo:list-item-label>
         <fo:list-item-body start-indent="{$list-item-body-start-indent}">
           <fo:block id="{@eId}">
-            <xsl:apply-templates select="./*[not(self::akn:num)]"/>
+            <xsl:if test="akn:heading">
+              <fo:inline font-weight="bold">
+                <xsl:apply-templates select="akn:heading"/>
+              </fo:inline>
+              <fo:block margin-top="{$para-spacing}"/>
+            </xsl:if>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
           </fo:block>
         </fo:list-item-body>
       </fo:list-item>

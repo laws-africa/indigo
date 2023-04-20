@@ -42,44 +42,11 @@
     </fo:block>
   </xsl:template>
 
-  <!-- p -->
-  <xsl:template match="akn:frontMatter//akn:p | akn:preface//akn:p[not(parent::akn:li)] | akn:preamble//akn:p[not(parent::akn:li)] | akn:mainBody/akn:p">
+  <xsl:template match="akn:listIntroduction | akn:listWrapUp | akn:p">
     <fo:block margin-top="{$para-spacing}">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <!-- any p tag in the body if it isn't a first child should be in its own block, e.g.
-   - second or third p in a section, paragraph, or quote
-   - p in a paragraph after a quote
-   -->
-  <!-- TODO: Update blockList below to paragraph|subparagraph after Bluebell migration -->
-  <xsl:template match="akn:p[position() &gt; 1 or preceding-sibling::akn:blockList] | akn:hcontainer ">
-    <fo:block margin-top="{$para-spacing}">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
-  <!-- blockList/listIntroduction goes in a block if it's not the first paragraph -->
-  <xsl:template match="akn:listIntroduction">
-    <xsl:variable name="parent-position">
-      <xsl:value-of select="count(parent::akn:blockList/preceding-sibling::akn:p) + 1"/>
-    </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="$parent-position &gt; 1">
-        <fo:block margin-top="{$para-spacing}">
-          <xsl:apply-templates/>
-        </fo:block>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- wrapUps -->
-  <xsl:template match="akn:wrapUp | akn:listWrapUp">
-    <fo:block margin-top="{$para-spacing}">
+      <xsl:if test="parent::akn:intro">
+        <xsl:attribute name="keep-with-next">always</xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>

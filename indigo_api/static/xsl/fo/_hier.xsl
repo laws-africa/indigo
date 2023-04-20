@@ -159,49 +159,36 @@
   </xsl:template>
 
   <!-- TODO / WIP: make all generic hierarchical elements into list-items -->
-  <xsl:template name="hier">
-    <xsl:param name="depth"/>
-    <xsl:variable name="list-block-start-indent">
-      <xsl:value-of select="$depth * $indent-int"/>em
-    </xsl:variable>
-    <xsl:variable name="list-item-body-start-indent">
-      <xsl:value-of select="($depth * $indent-int) + $indent-int"/>em
-    </xsl:variable>
-    <xsl:variable name="local-para-spacing">
-      <xsl:choose>
-        <xsl:when test="preceding::*[1][self::akn:num]">0</xsl:when>
-        <xsl:otherwise><xsl:value-of select="$para-spacing"/></xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <fo:list-block start-indent="{$list-block-start-indent}" margin-top="{$local-para-spacing}">
-      <fo:list-item>
-        <fo:list-item-label>
-          <fo:block>
-            <xsl:value-of select="akn:num"/>
-          </fo:block>
-        </fo:list-item-label>
-        <fo:list-item-body start-indent="{$list-item-body-start-indent}">
-          <fo:block id="{@eId}">
-            <xsl:if test="akn:heading">
-              <fo:inline font-weight="bold">
-                <xsl:apply-templates select="akn:heading"/>
-              </fo:inline>
-              <fo:block margin-top="{$para-spacing}"/>
-            </xsl:if>
-            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
-          </fo:block>
-        </fo:list-item-body>
-      </fo:list-item>
-    </fo:list-block>
-  </xsl:template>
-
-  <xsl:template match="akn:paragraph|akn:subparagraph">
-    <xsl:variable name="depth">
-      <xsl:value-of select="count(ancestor::akn:paragraph|ancestor::akn:rule|ancestor::akn:section|ancestor::akn:subparagraph)"/>
-    </xsl:variable>
-    <xsl:call-template name="hier">
-      <xsl:with-param name="depth" select="$depth"/>
-    </xsl:call-template>
+  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|
+                       akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|
+                       akn:li[not(parent::akn:ul[@class='notice-list'])]">
+    <!-- use a block container to retain relative indentation (nesting depth) -->
+    <fo:block-container>
+      <fo:list-block start-indent="0">
+        <fo:list-item id="{@eId}">
+          <fo:list-item-label>
+            <fo:block margin-top="{$para-spacing}">
+              <xsl:value-of select="akn:num"/>
+              <!-- bullets for li -->
+              <xsl:if test="self::akn:li">
+                <xsl:text>&#x2022;</xsl:text>
+              </xsl:if>
+            </fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body start-indent="{$indent}">
+            <fo:block>
+              <!-- optional heading in its own block -->
+              <xsl:if test="akn:heading">
+                <fo:block margin-top="{$para-spacing}" font-weight="bold">
+                  <xsl:apply-templates select="akn:heading"/>
+                </fo:block>
+              </xsl:if>
+              <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+      </fo:list-block>
+    </fo:block-container>
   </xsl:template>
 
   <!-- all other hierarchical and numbered elements

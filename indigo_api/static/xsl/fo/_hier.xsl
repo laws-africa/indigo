@@ -112,9 +112,7 @@
               </xsl:if>
             </fo:block>
             <!-- basic unit content always goes below the num -->
-            <fo:block>
-              <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
-            </fo:block>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
           </fo:list-item-body>
         </fo:list-item>
       </fo:list-block>

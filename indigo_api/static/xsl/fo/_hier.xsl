@@ -109,13 +109,15 @@
           </fo:block>
         </fo:list-item-label>
         <fo:list-item-body start-indent="{$list-item-body-start-indent}">
-          <fo:block>
-            <xsl:if test="akn:heading">
-              <fo:inline font-weight="bold" font-size="{$fontsize-h3}">
-                <xsl:apply-templates select="akn:heading"/>
-              </fo:inline>
-              <fo:block margin-top="{$para-spacing}"/>
+          <!-- basic units always get a heading; use a non-breaking space if it's missing for alignment -->
+          <fo:block font-weight="bold" font-size="{$fontsize-h3}" keep-with-next="always">
+            <xsl:apply-templates select="akn:heading"/>
+            <xsl:if test="not(akn:heading)">
+              <xsl:text>&#160;</xsl:text>
             </xsl:if>
+          </fo:block>
+          <!-- basic unit content always goes below the num -->
+          <fo:block>
             <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
           </fo:block>
         </fo:list-item-body>

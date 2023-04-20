@@ -102,14 +102,14 @@
       <xsl:value-of select="($depth * $indent-int) + $indent-int"/>em
     </xsl:variable>
     <fo:list-block start-indent="{$list-block-start-indent}" margin-top="{$para-spacing}*2">
-      <fo:list-item>
+      <fo:list-item id="{@eId}">
         <fo:list-item-label>
           <fo:block font-weight="bold" font-size="{$fontsize-h3}">
             <xsl:value-of select="akn:num"/>
           </fo:block>
         </fo:list-item-label>
         <fo:list-item-body start-indent="{$list-item-body-start-indent}">
-          <fo:block id="{@eId}">
+          <fo:block>
             <xsl:if test="akn:heading">
               <fo:inline font-weight="bold" font-size="{$fontsize-h3}">
                 <xsl:apply-templates select="akn:heading"/>

@@ -211,7 +211,7 @@
           <fo:list-item-body start-indent="{$indent}">
             <!-- optional heading in its own block -->
             <xsl:if test="akn:heading">
-              <fo:block margin-top="{$para-spacing}" font-weight="bold">
+              <fo:block margin-top="{$para-spacing}" font-weight="bold" keep-with-next="always">
                 <!-- optionally include startQuote character with heading -->
                 <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*) and not(akn:num)">
                   <xsl:call-template name="start-quote">

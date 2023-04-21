@@ -130,6 +130,10 @@
             </fo:block>
             <!-- basic unit content always goes below the num -->
             <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+            <!-- if this element doesn't have content, force an empty block for the heading to keep with next -->
+            <xsl:if test="not(./*[not(self::akn:num|self::akn:heading)]//text())">
+              <fo:block/>
+            </xsl:if>
           </fo:list-item-body>
         </fo:list-item>
       </fo:list-block>

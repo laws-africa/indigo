@@ -102,7 +102,7 @@
             <fo:block font-weight="bold" font-size="{$fontsize-h3}">
               <!-- optionally include startQuote character with num -->
               <xsl:choose>
-                <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
+                <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*) and akn:num">
                   <xsl:call-template name="start-quote">
                     <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
                     <xsl:with-param name="num" select="akn:num"/>
@@ -117,6 +117,12 @@
           <fo:list-item-body start-indent="{$indent}">
             <!-- basic units always get a heading; use a non-breaking space if it's missing for alignment -->
             <fo:block font-weight="bold" font-size="{$fontsize-h3}" keep-with-next="always">
+              <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*) and not(akn:num)">
+                <xsl:call-template name="start-quote">
+                  <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+                  <xsl:with-param name="num" select="akn:num"/>
+                </xsl:call-template>
+              </xsl:if>
               <xsl:apply-templates select="akn:heading"/>
               <xsl:if test="not(akn:heading)">
                 <xsl:text>&#160;</xsl:text>

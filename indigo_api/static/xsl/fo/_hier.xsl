@@ -193,15 +193,13 @@
             </fo:block>
           </fo:list-item-label>
           <fo:list-item-body start-indent="{$indent}">
-            <fo:block>
-              <!-- optional heading in its own block -->
-              <xsl:if test="akn:heading">
-                <fo:block margin-top="{$para-spacing}" font-weight="bold">
-                  <xsl:apply-templates select="akn:heading"/>
-                </fo:block>
-              </xsl:if>
-              <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
-            </fo:block>
+            <!-- optional heading in its own block -->
+            <xsl:if test="akn:heading">
+              <fo:block margin-top="{$para-spacing}" font-weight="bold">
+                <xsl:apply-templates select="akn:heading"/>
+              </fo:block>
+            </xsl:if>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
           </fo:list-item-body>
         </fo:list-item>
       </fo:list-block>

@@ -246,9 +246,14 @@
                 <xsl:apply-templates select="akn:heading"/>
               </fo:block>
             </xsl:if>
-            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+            <xsl:if test="akn:subheading">
+              <fo:block font-weight="bold" keep-with-next="always">
+                <xsl:apply-templates select="akn:subheading"/>
+              </fo:block>
+            </xsl:if>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading|self::akn:subheading)]"/>
             <!-- if this element doesn't have content, force an empty block for the heading to keep with next -->
-            <xsl:if test="not(./*[not(self::akn:num|self::akn:heading)]//text())">
+            <xsl:if test="not(./*[not(self::akn:num|self::akn:heading|self::akn:subheading)]//text())">
               <fo:block/>
             </xsl:if>
           </fo:list-item-body>

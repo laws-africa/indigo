@@ -8,7 +8,7 @@
   <xsl:template match="akn:table">
     <fo:table width="100%" table-layout="fixed"
               margin-top="{$para-spacing-table}" margin-bottom="{$para-spacing-table}"
-              keep-together="1">
+              keep-together.within-page="1">
       <fo:table-body>
         <xsl:apply-templates/>
       </fo:table-body>

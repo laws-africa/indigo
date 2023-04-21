@@ -21,6 +21,7 @@
       <xsl:if test="position()=1">
         <xsl:call-template name="start-quote">
           <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+          <xsl:with-param name="num" select="akn:num"/>
         </xsl:call-template>
       </xsl:if>
       <xsl:apply-templates/>
@@ -30,9 +31,11 @@
   <!-- outdent the opening quote so that the blocks in the quote line up visually -->
   <xsl:template name="start-quote">
     <xsl:param name="quote-char"/>
+    <xsl:param name="num"/>
     <fo:inline-container width="0" margin-left="-{string-length($quote-char)}*4pt">
-      <fo:block>
+      <fo:block margin-top="-{$para-spacing}">
         <xsl:apply-templates select="$quote-char"/>
+        <xsl:apply-templates select="$num"/>
       </fo:block>
     </fo:inline-container>
   </xsl:template>

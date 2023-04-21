@@ -100,7 +100,18 @@
         <fo:list-item id="{@eId}">
           <fo:list-item-label>
             <fo:block font-weight="bold" font-size="{$fontsize-h3}">
-              <xsl:value-of select="akn:num"/>
+              <!-- optionally include startQuote character with num -->
+              <xsl:choose>
+                <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
+                  <xsl:call-template name="start-quote">
+                    <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+                    <xsl:with-param name="num" select="akn:num"/>
+                  </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="akn:num"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </fo:block>
           </fo:list-item-label>
           <fo:list-item-body start-indent="{$indent}">

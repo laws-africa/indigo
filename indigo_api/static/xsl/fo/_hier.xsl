@@ -75,7 +75,7 @@
           </xsl:choose>
         </xsl:if>
         <xsl:if test="akn:subheading">
-          <fo:block font-weight="bold" font-size="{$fontsize-h3}" keep-with-next="always">
+          <fo:block font-weight="bold" font-size="{$fontsize-h3}">
             <xsl:apply-templates select="akn:subheading"/>
           </fo:block>
         </xsl:if>

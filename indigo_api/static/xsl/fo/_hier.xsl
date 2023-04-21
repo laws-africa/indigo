@@ -117,6 +117,7 @@
           <fo:list-item-body start-indent="{$indent}">
             <!-- basic units always get a heading; use a non-breaking space if it's missing for alignment -->
             <fo:block font-weight="bold" font-size="{$fontsize-h3}" keep-with-next="always">
+              <!-- optionally include startQuote character with heading -->
               <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*) and not(akn:num)">
                 <xsl:call-template name="start-quote">
                   <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
@@ -189,7 +190,18 @@
         <fo:list-item id="{@eId}">
           <fo:list-item-label>
             <fo:block margin-top="{$para-spacing}">
-              <xsl:value-of select="akn:num"/>
+              <!-- optionally include startQuote character with num -->
+              <xsl:choose>
+                <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*) and akn:num">
+                  <xsl:call-template name="start-quote">
+                    <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+                    <xsl:with-param name="num" select="akn:num"/>
+                  </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="akn:num"/>
+                </xsl:otherwise>
+              </xsl:choose>
               <!-- bullets for li -->
               <xsl:if test="self::akn:li">
                 <xsl:text>&#x2022;</xsl:text>
@@ -200,6 +212,13 @@
             <!-- optional heading in its own block -->
             <xsl:if test="akn:heading">
               <fo:block margin-top="{$para-spacing}" font-weight="bold">
+                <!-- optionally include startQuote character with heading -->
+                <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*) and not(akn:num)">
+                  <xsl:call-template name="start-quote">
+                    <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+                    <xsl:with-param name="num" select="akn:num"/>
+                  </xsl:call-template>
+                </xsl:if>
                 <xsl:apply-templates select="akn:heading"/>
               </fo:block>
             </xsl:if>

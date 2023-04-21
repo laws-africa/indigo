@@ -183,7 +183,7 @@
   <!-- TODO / WIP: make all generic hierarchical elements into list-items -->
   <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|
                        akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|
-                       akn:li[not(parent::akn:ul[@class='notice-list'])]">
+                       akn:li[not(parent::akn:ul[@class='notice-list'] or parent::akn:ol[@class='amendment-list'])]">
     <!-- use a block container to retain relative indentation (nesting depth) -->
     <fo:block-container>
       <fo:list-block start-indent="0">

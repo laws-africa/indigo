@@ -66,9 +66,14 @@
             </xsl:otherwise>
           </xsl:choose>
         </xsl:if>
+        <xsl:if test="akn:subheading">
+          <fo:block font-weight="bold" font-size="{$fontsize-h3}">
+            <xsl:apply-templates select="akn:subheading"/>
+          </fo:block>
+        </xsl:if>
       </fo:block>
       <fo:block margin-top="{$para-spacing}">
-        <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+        <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading|self::akn:subheading)]"/>
       </fo:block>
     </fo:block-container>
   </xsl:template>

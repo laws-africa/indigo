@@ -12,6 +12,14 @@
   <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subchapter|akn:subclause|akn:subdivision|akn:subpart|akn:subtitle|akn:title|akn:tome">
     <fo:block-container>
       <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0" font-weight="bold">
+        <!-- optionally include startQuote character -->
+        <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
+          <xsl:call-template name="start-quote">
+            <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
+            <!-- num needs to be a nonexistent node, so pass something that'll never exist -->
+            <xsl:with-param name="num" select="parent::akn:embeddedStructure/akn:num"/>
+          </xsl:call-template>
+        </xsl:if>
         <!-- keyword before certain containers -->
         <xsl:if test="self::akn:article">
           <xsl:text>Article </xsl:text>

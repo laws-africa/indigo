@@ -198,6 +198,12 @@
                     <xsl:with-param name="num" select="akn:num"/>
                   </xsl:call-template>
                 </xsl:when>
+                <xsl:when test="parent::akn:ul/parent::akn:embeddedStructure and not(preceding-sibling::*) and not(parent::akn:ul/preceding-sibling::*)">
+                  <xsl:call-template name="start-quote">
+                    <xsl:with-param name="quote-char" select="parent::akn:ul/parent::akn:embeddedStructure/@startQuote"/>
+                    <xsl:with-param name="num" select="akn:num"/>
+                  </xsl:call-template>
+                </xsl:when>
                 <xsl:otherwise>
                   <xsl:value-of select="akn:num"/>
                 </xsl:otherwise>

@@ -142,8 +142,13 @@
                 <xsl:text>&#160;</xsl:text>
               </xsl:if>
             </fo:block>
+            <xsl:if test="akn:subheading">
+              <fo:block font-weight="bold" font-size="{$fontsize-h4}" keep-with-next="always">
+                <xsl:apply-templates select="akn:subheading"/>
+              </fo:block>
+            </xsl:if>
             <!-- basic unit content always goes below the num -->
-            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
+            <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading|self::akn:subheading)]"/>
             <!-- if this element doesn't have content, force an empty block for the heading to keep with next -->
             <xsl:if test="not(./*[not(self::akn:num|self::akn:heading)]//text())">
               <fo:block/>

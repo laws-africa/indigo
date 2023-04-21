@@ -42,6 +42,7 @@
     </fo:block>
   </xsl:template>
 
+  <!-- p and friends -->
   <xsl:template match="akn:listIntroduction | akn:listWrapUp | akn:p">
     <fo:block margin-top="{$para-spacing}">
       <xsl:if test="parent::akn:intro">

@@ -105,7 +105,12 @@
     <xsl:apply-templates select="./*[not(self::akn:heading|self::akn:subheading)]"/>
   </xsl:template>
 
-  <!-- TODO / WIP: make all basic units into list-items -->
+  <!-- basic unit
+   - startQuote if it's the first element in the quote
+   - number to the side, bold (if present)
+   - heading in bold (if present)
+   - subheading in bold (if present)
+   - content in next block regardless of whether there's a heading -->
   <xsl:template match="akn:rule|akn:section">
     <!-- use a block container to retain relative indentation (nesting depth) -->
     <fo:block-container>
@@ -159,46 +164,15 @@
     </fo:block-container>
   </xsl:template>
 
-  <!-- basic unit
-   - number to the side, bold (if present)
+  <!-- all other hierarchical and numbered elements
+   - startQuote if it's the first element in the quote
+   - number to the side (if present)
    - heading in bold (if present)
-   - content in next block regardless of whether there's a heading
-   -->
-  <xsl:template match="akn:section|akn:rule">
-    <fo:block-container>
-      <fo:block start-indent="{$indent}" margin-top="{$para-spacing}*2" font-size="{$fontsize-h3}" widows="2" orphans="2" id="{@eId}">
-        <!-- 'float' number to the side, in bold; deal with opening quote character if relevant -->
-        <xsl:if test="akn:num">
-          <fo:inline-container width="0" height="0" margin-left="-{$indent}">
-            <fo:block>
-              <!-- include the opening quote here if the quote didn't start with a p (and this is the first element) -->
-              <!-- TODO: test and adjust once quotes are supported -->
-              <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
-                <xsl:call-template name="start-quote">
-                  <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
-                </xsl:call-template>
-              </xsl:if>
-              <fo:inline font-weight="bold">
-                <xsl:apply-templates select="akn:num"/>
-              </fo:inline>
-            </fo:block>
-          </fo:inline-container>
-        </xsl:if>
-        <!-- heading in bold -->
-        <xsl:if test="akn:heading">
-          <fo:inline font-weight="bold">
-            <xsl:apply-templates select="akn:heading"/>
-          </fo:inline>
-        </xsl:if>
-        <!-- regardless of whether a basic unit has a heading, the content comes in its own block after the num -->
-        <fo:block margin-top="{$para-spacing}" font-size="{$fontsize}" keep-with-previous="always">
-          <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
-        </fo:block>
-      </fo:block>
-    </fo:block-container>
-  </xsl:template>
+   - subheading in bold (if present)
+   - content: either lined up with num or below heading/subheading
 
-  <!-- TODO / WIP: make all generic hierarchical elements into list-items -->
+   note: using list items means that when a parent element doesn't have content, the nums line up
+   e.g. (1) (a) (i) content -->
   <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|
                        akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|
                        akn:li[not(parent::akn:ul[@class='notice-list'] or parent::akn:ol[@class='amendment-list'])]">
@@ -259,64 +233,6 @@
           </fo:list-item-body>
         </fo:list-item>
       </fo:list-block>
-    </fo:block-container>
-  </xsl:template>
-
-  <!-- all other hierarchical and numbered elements
-   - number to the side (if present)
-   - heading in bold (if present)
-   - content
-   -->
-  <xsl:template match="akn:alinea|akn:indent|akn:blockList/akn:item|akn:level|akn:list|akn:paragraph|akn:point|akn:proviso|akn:sublist|akn:subparagraph|akn:subrule|akn:subsection|akn:transitional|akn:ul[not(@class='notice-list')]/akn:li">
-    <fo:block-container>
-      <fo:block start-indent="{$indent}" margin-top="{$para-spacing}" widows="2" orphans="2" id="{@eId}">
-        <!-- 'float' number to the side -->
-        <xsl:if test="akn:num">
-          <fo:inline-container width="0" height="0" margin-left="-{$indent}">
-            <fo:block>
-              <!-- include the opening quote here if the quote didn't start with a p (and this is the first element) -->
-              <!-- TODO: test and adjust once quotes are supported -->
-              <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
-                <xsl:call-template name="start-quote">
-                  <xsl:with-param name="quote-char" select="parent::akn:embeddedStructure/@startQuote"/>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:apply-templates select="akn:num"/>
-            </fo:block>
-          </fo:inline-container>
-        </xsl:if>
-        <xsl:if test="self::akn:li">
-          <fo:inline-container width="0" height="0" margin-left="-{$indent-bullets}">
-            <fo:block>
-              <!-- include the opening quote here if the quote didn't start with a p (and this is the first element) -->
-              <xsl:if test="parent::akn:ul/parent::akn:embeddedStructure and not(preceding-sibling::*) and not(parent::akn:ul/preceding-sibling::*)">
-                <xsl:call-template name="start-quote">
-                  <xsl:with-param name="quote-char" select="parent::akn:ul/parent::akn:embeddedStructure/@startQuote"/>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:text>&#x2022;</xsl:text>
-            </fo:block>
-          </fo:inline-container>
-        </xsl:if>
-        <!-- heading in bold -->
-        <xsl:if test="akn:heading">
-          <fo:inline font-weight="bold">
-            <xsl:apply-templates select="akn:heading"/>
-          </fo:inline>
-        </xsl:if>
-        <xsl:choose>
-          <!-- if the element had a heading, the content comes in its own block -->
-          <xsl:when test="akn:heading">
-            <fo:block margin-top="{$para-spacing}" keep-with-previous="always">
-              <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading)]"/>
-            </fo:block>
-          </xsl:when>
-          <!-- when there's no heading, the num and the content fall into the same block -->
-          <xsl:otherwise>
-            <xsl:apply-templates select="./*[not(self::akn:num)]"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </fo:block>
     </fo:block-container>
   </xsl:template>
 

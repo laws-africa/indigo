@@ -23,6 +23,18 @@
     </fo:inline>
   </xsl:template>
 
+  <xsl:template match="akn:ins">
+    <fo:inline text-decoration="underline">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+
+  <xsl:template match="akn:del">
+    <fo:inline text-decoration="line-through">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+
   <xsl:template match="akn:sup">
     <fo:inline baseline-shift="super" font-size="{$fontsize-small}">
       <xsl:apply-templates/>

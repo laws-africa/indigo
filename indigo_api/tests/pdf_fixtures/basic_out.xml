@@ -103,7 +103,7 @@
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em">But it does have two subsections.</fo:block>
-                          <fo:block margin-top="0.8em">And the second subsection has:</fo:block>
+                          <fo:block margin-top="0.8em" keep-with-next="always">And the second subsection has:</fo:block>
                           <fo:block-container>
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_2__list_1__item_a">
@@ -140,7 +140,7 @@
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em">It actually has three subsections.</fo:block>
-                          <fo:block margin-top="0.8em">And the third subsection has:</fo:block>
+                          <fo:block margin-top="0.8em" keep-with-next="always">And the third subsection has:</fo:block>
                           <fo:block-container>
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_3__list_1__item_a">
@@ -165,7 +165,7 @@
                               </fo:list-item>
                             </fo:list-block>
                           </fo:block-container>
-                          <fo:block margin-top="0.8em">with an exception.</fo:block>
+                          <fo:block margin-top="0.8em" keep-with-previous="always">with an exception.</fo:block>
                         </fo:list-item-body>
                       </fo:list-item>
                     </fo:list-block>
@@ -235,7 +235,7 @@
                                       </fo:list-item>
                                     </fo:list-block>
                                   </fo:block-container>
-                                  <fo:block margin-top="0.8em">with an exception; and</fo:block>
+                                  <fo:block margin-top="0.8em" keep-with-previous="always">with an exception; and</fo:block>
                                 </fo:list-item-body>
                               </fo:list-item>
                             </fo:list-block>
@@ -273,7 +273,7 @@
                                       </fo:list-item>
                                     </fo:list-block>
                                   </fo:block-container>
-                                  <fo:block margin-top="0.8em">with an exception.</fo:block>
+                                  <fo:block margin-top="0.8em" keep-with-previous="always">with an exception.</fo:block>
                                 </fo:list-item-body>
                               </fo:list-item>
                             </fo:list-block>
@@ -318,7 +318,7 @@
                       </fo:list-item>
                     </fo:list-block>
                   </fo:block-container>
-                  <fo:block margin-top="0.8em">And some wrap up text for the section.</fo:block>
+                  <fo:block margin-top="0.8em" keep-with-previous="always">And some wrap up text for the section.</fo:block>
                 </fo:list-item-body>
               </fo:list-item>
             </fo:list-block>

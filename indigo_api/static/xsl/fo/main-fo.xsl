@@ -20,7 +20,7 @@
   <xsl:include href="_variables.xsl"/>
 
   <xsl:strip-space elements="*"/>
-  <!-- TODO: what is / isn't this list? -->
+  <!-- preserve whitespace for inline elements that can legitimately contain meaningful whitespace -->
   <xsl:preserve-space elements="akn:a akn:affectedDocument akn:b akn:block akn:caption akn:change akn:concept akn:courtType akn:date akn:def akn:del akn:docCommittee akn:docDate akn:docIntroducer akn:docJurisdiction akn:docNumber akn:docProponent akn:docPurpose akn:docStage akn:docStatus akn:docTitle akn:docType akn:docketNumber akn:entity akn:event akn:extractText akn:fillIn akn:from akn:heading akn:i akn:inline akn:ins akn:judge akn:lawyer akn:legislature akn:li akn:listConclusion akn:listIntroduction akn:location akn:mmod akn:mod akn:mref akn:narrative akn:neutralCitation akn:num akn:object akn:omissis akn:opinion akn:organization akn:outcome akn:p akn:party akn:person akn:placeholder akn:process akn:quantity akn:quotedText akn:recordedTime akn:ref akn:relatedDocument akn:remark akn:rmod akn:role akn:rref akn:scene akn:session akn:shortTitle akn:signature akn:span akn:sub akn:subheading akn:summary akn:sup akn:term akn:tocItem akn:u akn:vote"/>
 
   <!-- root template -->

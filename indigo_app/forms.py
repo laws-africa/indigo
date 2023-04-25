@@ -167,10 +167,11 @@ class DocumentForm(forms.ModelForm):
 class UserEditorForm(forms.ModelForm):
     first_name = forms.CharField(label='First name')
     last_name = forms.CharField(label='Last name')
+    language = forms.ChoiceField(label='Language', choices=settings.LANGUAGES)
 
     class Meta:
         model = Editor
-        fields = ('country',)
+        fields = ('country', 'language')
 
     def save(self, commit=True):
         super(UserEditorForm, self).save()

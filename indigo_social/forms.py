@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 import sys
 from io import BytesIO
 
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import _lazy_re_compile, RegexValidator
+from django.conf import settings
 from PIL import Image
 
 from indigo_api.models import Country, User
@@ -25,6 +25,7 @@ class UserProfileForm(forms.ModelForm):
     username = forms.CharField(label='Username', validators=[validate_username])
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
     new_profile_photo = forms.ImageField(label='Profile photo', required=False)
+    language = forms.ChoiceField(label='Language', choices=settings.LANGUAGES)
 
     class Meta:
         model = UserProfile
@@ -67,6 +68,7 @@ class UserProfileForm(forms.ModelForm):
         self.instance.user.last_name = self.cleaned_data['last_name']
         self.instance.user.username = self.cleaned_data['username']
         self.instance.user.editor.country = self.cleaned_data['country']
+        self.instance.user.editor.language = self.cleaned_data['language']
         self.instance.user.editor.save()
         self.instance.user.save()
 

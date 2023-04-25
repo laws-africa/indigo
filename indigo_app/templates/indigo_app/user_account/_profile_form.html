@@ -1,0 +1,55 @@
+<div class="form-group">
+  <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+  <input type="text" class="form-control" name="{{ form.first_name.html_name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value|default:'' }}" required>
+  {% if form.first_name.errors %}
+    <div class="text-danger">
+      {% for error in form.first_name.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="form-group">
+  <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+  <input type="text" class="form-control" name="{{ form.last_name.html_name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value|default:'' }}" required>
+  {% if form.last_name.errors %}
+    <div class="text-danger">
+      {% for error in form.last_name.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="form-group">
+  <label for="{{ form.language.id_for_label }}">{{ form.language.label }}</label>
+  <select class="form-control" name="{{ form.language.html_name }}" id="{{ form.language.id_for_label }}" required>
+    {% for val, label in form.fields.language.choices %}
+      <option value="{{ val }}" {% if val == form.language.value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  {% if form.language.errors %}
+    <div class="text-danger">
+      {% for error in form.language.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="form-group">
+  <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
+  <select class="form-control" name="{{ form.country.html_name }}" id="{{ form.country.id_for_label }}" required>
+    {% for val, label in form.fields.country.choices %}
+      <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  {% if form.country.errors %}
+    <div class="text-danger">
+      {% for error in form.country.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

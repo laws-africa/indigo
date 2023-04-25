@@ -30,7 +30,7 @@
           {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-primary mt-2" data-confirm="Are you sure you want to award this badge to this user?">{% trans "Award badge" %}</button>
+        <button type="submit" class="btn btn-primary mt-2" data-confirm="{% trans "Are you sure?" %}">{% trans "Award badge" %}</button>
       </form>
 
       <hr>
@@ -45,7 +45,7 @@
           {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-danger mt-2" data-confirm="Are you sure you want to remove this badge from this user?">{% trans "Remove badge" %}</button>
+        <button type="submit" class="btn btn-danger mt-2" data-confirm="{% trans "Are you sure?" %}">{% trans "Remove badge" %}</button>
       </form>
     {% endif %}
   </div>

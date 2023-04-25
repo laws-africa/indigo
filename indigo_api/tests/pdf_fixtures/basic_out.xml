@@ -1,0 +1,343 @@
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-right="2.5cm" margin-left="2.5cm" margin-bottom="3cm" margin-top="3cm" page-height="297mm" page-width="210mm" master-name="A4">
+      <fo:region-body/>
+      <fo:region-before/>
+      <fo:region-after/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:bookmark-tree/>
+  <fo:page-sequence format="i" initial-page-number="1" master-reference="A4">
+    <fo:static-content flow-name="xsl-region-after">
+      <fo:block margin-top="1cm" text-align="center" font-size="9pt" font-family="PT Sans">
+        <fo:page-number/>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif"/>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence format="1" initial-page-number="1" master-reference="A4">
+    <fo:static-content flow-name="xsl-region-before">
+      <fo:block margin-top="-1.5cm" border-bottom-color="#D04242" border-bottom-style="solid" text-align-last="justify" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block end-indent="1pt" start-indent="1pt">
+          <fo:inline>
+            <fo:leader leader-pattern="space"/>
+          </fo:inline>
+        </fo:block>
+      </fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="xsl-region-after">
+      <fo:block padding-top="3pt" margin-top="1cm" border-top-color="#D04242" border-top-style="solid" text-align-last="justify" font-size="9pt" font-family="PT Serif">
+        <fo:block end-indent="2pt" start-indent="2pt">
+          <fo:inline>By <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://edit.laws.africa/widgets/pdf-attribution">Laws.Africa</fo:basic-link> and contributors. Licensed under <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://edit.laws.africa/widgets/pdf-cc-by">CC-BY</fo:basic-link>. Share widely and freely.<fo:leader leader-pattern="space"/><fo:page-number/></fo:inline>
+        </fo:block>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block>
+          <fo:block-container>
+            <fo:list-block margin-top="0.8em*2" start-indent="0">
+              <fo:list-item id="sec_1">
+                <fo:list-item-label>
+                  <fo:block font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="3em">
+                  <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">A section with a very long heading, so long in fact that it will wrap over a line if it has enough words in it</fo:block>
+                  <fo:block margin-top="0.8em">Section 1 content.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block-container>
+          <fo:block-container>
+            <fo:list-block margin-top="0.8em*2" start-indent="0">
+              <fo:list-item id="sec_2">
+                <fo:list-item-label>
+                  <fo:block font-size="9pt * 1.14&#10;  " font-weight="bold">2.</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="3em">
+                  <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold"> </fo:block>
+                  <fo:block-container>
+                    <fo:list-block start-indent="0">
+                      <fo:list-item id="sec_2__subsec_1">
+                        <fo:list-item-label>
+                          <fo:block margin-top="0.8em">(1)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="3em">
+                          <fo:block margin-top="0.8em" keep-with-next="always">Section 2 has no heading!</fo:block>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_1__para_a">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(a)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">And subsec one has a para (a)</fo:block>
+                                  <fo:block margin-top="0.8em">with a second line</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_1__para_b">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(b)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">As well as a para (b)</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block-container>
+                  <fo:block-container>
+                    <fo:list-block start-indent="0">
+                      <fo:list-item id="sec_2__subsec_2">
+                        <fo:list-item-label>
+                          <fo:block margin-top="0.8em">(2)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="3em">
+                          <fo:block margin-top="0.8em">But it does have two subsections.</fo:block>
+                          <fo:block margin-top="0.8em" keep-with-next="always">And the second subsection has:</fo:block>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_2__list_1__item_a">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(a)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">item a; and</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_2__list_1__item_b">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(b)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">item b.</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block-container>
+                  <fo:block-container>
+                    <fo:list-block start-indent="0">
+                      <fo:list-item id="sec_2__subsec_3">
+                        <fo:list-item-label>
+                          <fo:block margin-top="0.8em">(3)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="3em">
+                          <fo:block margin-top="0.8em">It actually has three subsections.</fo:block>
+                          <fo:block margin-top="0.8em" keep-with-next="always">And the third subsection has:</fo:block>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_3__list_1__item_a">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(a)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">item a; and</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_2__subsec_3__list_1__item_b">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(b)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em">item b,</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block margin-top="0.8em" keep-with-previous="always">with an exception.</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block-container>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block-container>
+          <fo:block-container>
+            <fo:list-block margin-top="0.8em*2" start-indent="0">
+              <fo:list-item id="sec_3">
+                <fo:list-item-label>
+                  <fo:block font-size="9pt * 1.14&#10;  " font-weight="bold">3.</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="3em">
+                  <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Intros and wraps</fo:block>
+                  <fo:block margin-top="0.8em" keep-with-next="always">Here is some intro text about section three.</fo:block>
+                  <fo:block-container>
+                    <fo:list-block start-indent="0">
+                      <fo:list-item id="sec_3__subsec_1">
+                        <fo:list-item-label>
+                          <fo:block margin-top="0.8em">(1)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="3em">
+                          <fo:block margin-top="0.8em">Subsec 1</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block-container>
+                  <fo:block-container>
+                    <fo:list-block start-indent="0">
+                      <fo:list-item id="sec_3__subsec_2">
+                        <fo:list-item-label>
+                          <fo:block margin-top="0.8em">(2)</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="3em">
+                          <fo:block margin-top="0.8em" keep-with-next="always">And subsec 2:</fo:block>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_3__subsec_2__para_a">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(a)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em" keep-with-next="always">And para a:</fo:block>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_a__subpara_i">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">i</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_a__subpara_ii">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">ii</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara ii,</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                  <fo:block margin-top="0.8em" keep-with-previous="always">with an exception; and</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_3__subsec_2__para_b">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(b)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em" keep-with-next="always">And para b:</fo:block>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_b__subpara_i">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">i</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                  <fo:block margin-top="0.8em">some randome text between the subparas!</fo:block>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_b__subpara_ii">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">ii</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara ii,</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                  <fo:block margin-top="0.8em" keep-with-previous="always">with an exception.</fo:block>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                          <fo:block-container>
+                            <fo:list-block start-indent="0">
+                              <fo:list-item id="sec_3__subsec_2__para_c">
+                                <fo:list-item-label>
+                                  <fo:block margin-top="0.8em">(c)</fo:block>
+                                </fo:list-item-label>
+                                <fo:list-item-body start-indent="3em">
+                                  <fo:block margin-top="0.8em" keep-with-next="always">Also a thrid para</fo:block>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_c__subpara_i">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">i</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                  <fo:block-container>
+                                    <fo:list-block start-indent="0">
+                                      <fo:list-item id="sec_3__subsec_2__para_c__subpara_ii">
+                                        <fo:list-item-label>
+                                          <fo:block margin-top="0.8em">ii</fo:block>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body start-indent="3em">
+                                          <fo:block margin-top="0.8em">and a subpara ii.</fo:block>
+                                        </fo:list-item-body>
+                                      </fo:list-item>
+                                    </fo:list-block>
+                                  </fo:block-container>
+                                </fo:list-item-body>
+                              </fo:list-item>
+                            </fo:list-block>
+                          </fo:block-container>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:block-container>
+                  <fo:block margin-top="0.8em" keep-with-previous="always">And some wrap up text for the section.</fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block-container>
+          <fo:block-container>
+            <fo:list-block margin-top="0.8em*2" start-indent="0">
+              <fo:list-item id="sec_4">
+                <fo:list-item-label>
+                  <fo:block font-size="9pt * 1.14&#10;  " font-weight="bold">4.</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="3em">
+                  <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Section without a body</fo:block>
+                  <fo:block/>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block-container>
+        </fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

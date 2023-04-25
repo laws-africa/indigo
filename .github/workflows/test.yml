@@ -41,9 +41,11 @@ jobs:
         pip install psycopg2==2.8.6
         pip install .[test]
         npm install -g jshint sass
+        wget -q -O fop.tgz 'https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.5-bin.tar.gz' && tar zxf fop.tgz && rm -f fop.tgz && sudo mv fop-2.5 /usr/share
     - name: Run tests
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
       run: |
+        PATH=/usr/share/fop-2.5/fop:$PATH
         coverage run manage.py test
         jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js

@@ -147,6 +147,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
 
     # list of countries that shouldn't be included in the coverpage
     dont_include_countries = []
+    base_xsl_fo_dir = os.path.join(os.path.dirname(__file__), 'static', 'xsl', 'fo')
 
     def render(self, document, element=None):
         # we don't support rendering partial PDFs
@@ -155,7 +156,6 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         log.info(f'Rendering PDF for document {document.pk} ({document.frbr_uri})')
         self.insert_coverpage(document)
         self.insert_frontmatter(document)
-        self.insert_proprietary_metadata(document)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             # copy over assets required by our templates, like logos and coats of arms
@@ -178,7 +178,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 f.write(xml.encode('utf-8'))
 
             outf = tempfile.NamedTemporaryFile('rb', dir=tmpdir, suffix='.pdf')
-            run_fop(outf.name, tmpdir, xml_file, self.find_xsl_fo(document))
+            xsl_fo = self.find_xsl_fo(document)
+            self.update_base_xsl_fo_dir(xsl_fo)
+            run_fop(outf.name, tmpdir, xml_file, xsl_fo)
             return outf.read()
 
     def insert_coverpage(self, document):
@@ -221,11 +223,6 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'toc': toc,
             'include_country': document.country not in self.dont_include_countries,
         }
-
-    def insert_proprietary_metadata(self, document):
-        # TODO: add the full path to main-fo.xsl to document.doc.meta.proprietary,
-        #  so that subclasses can import it without having to copy it.
-        pass
 
     def stash_assets(self, document, tmpdir):
         """ Stash assets that are either hard-coded into our templates, or provided by Django. These are stashed
@@ -428,6 +425,16 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         if not best:
             raise ValueError("Couldn't find FO-XSLT file to use for %s, tried: %s" % (document, candidates))
         return best
+
+    def update_base_xsl_fo_dir(self, xsl_fo):
+        """ In the XSL FO, replace __INDIGO_API_XSL_DIR__ with the full path to indigo_api/static/xsl/fo.
+            This will ensure that the base stylesheets are always available for import.
+        """
+        with open(xsl_fo, 'r+') as f:
+            out = re.sub('__INDIGO_API_XSL_DIR__', self.base_xsl_fo_dir, f.read())
+            f.truncate(0)
+            f.seek(0)
+            f.write(out)
 
 
 class EPUBExporter(HTMLExporter):

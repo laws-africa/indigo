@@ -1,9 +1,10 @@
 {% extends "main.html" %}
+{% load i18n %}
 
-{% block title%}Badges {{ block.super }}{% endblock %}
+{% block title%}{% trans "Badges" %} {{ block.super }}{% endblock %}
 
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">Badges</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">{% trans "Badges" %}</a></li>
 {% endblock %}
 
 {% block content %}
@@ -12,9 +13,9 @@
   <div class="row">
     <div class="col-md-8 m-auto">
       <div class="card">
-        <h4 class="card-header">Badges</h4>
+        <h4 class="card-header">{% trans "Badges" %}</h4>
         <div class="card-body">
-          <p>Badges indicate expertise and are earned by completing tasks.</p>
+          <p>{% trans "Badges indicate expertise and are earned by completing tasks." %}</p>
 
           <div class="row">
             {% for badge in badges %}

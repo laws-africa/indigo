@@ -1,10 +1,10 @@
 {% extends "main.html" %}
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 {% block title%}{{ badge.name }} {{ block.super }}{% endblock %}
 
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">Badges</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">{% trans "Badges" %}</a></li>
   <li class="breadcrumb-item">{{ badge.name }}</li>
 {% endblock %}
 
@@ -22,24 +22,24 @@
       </div>
 
       <div class="card mt-4">
-        <h4 class="card-header">Awarded to</h4>
+        <h4 class="card-header">{% trans "Awarded to" %}</h4>
         <div class="card-body">
           {% if awards %}
             <ul>
             {% for award in awards %}
               <li>
-                {% user_profile award.user %} – <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
+                {% user_profile award.user %} – <span class="text-muted">{% blocktrans with ts=award.awarded_at|timesince %}{{ ts }} ago{% endblocktrans %}</span>
               </li>
             {% endfor %}
             </ul>
           {% else %}
-            <p><em>No-one has been awarded this badge.</em></p>
+            <p><em>{% trans "No-one has been awarded this badge." %}</em></p>
           {% endif %}
         </div>
       </div>
 
       {% if badge.nature == 'permission' %}
-        <h4 class="mt-3">Permissions granted by this badge</h4>
+        <h4 class="mt-3">{% trans "Permissions granted by this badge" %}</h4>
 
         <ul>
           {% for perm in badge.get_permissions %}
@@ -53,7 +53,8 @@
         </ul>
 
         {% if request.user.is_staff %}
-          <p>Users awarded this badge are added to the <a href="{% url 'admin:auth_group_change' badge.group.pk %}">{{ badge.group_name }} group</a>.</p>
+          {% url 'admin:auth_group_change' badge.group.pk as url %}
+          <p>{% blocktrans trimmed with name=badge.group_name %}Users awarded this badge are added to the <a href="{{ url }}">{{ name }} group</a>.{% endblocktrans %}</p>
         {% endif %}
       {% endif %}
     </div>

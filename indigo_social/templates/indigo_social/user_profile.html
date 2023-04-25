@@ -1,12 +1,11 @@
 {% extends "indigo_social/user_layout.html" %}
-{% load activity_tags pinax_badges_tags %}
-{% load static %}
+{% load activity_tags pinax_badges_tags static i18n %}
 
 {% block user_profile_content %}
 
 <div class="card mt-3">
   {% badges_for_user user as badges %}
-  <h4 class="card-header">{{ badges.count }} Achievements</h4>
+  <h4 class="card-header">{{ badges.count }} {% trans "Achievements" %}</h4>
   <div class="card-body">
     <div class="d-flex flex-row flex-wrap mt-3 achievement-list">
       {% for badge in badges %}
@@ -14,7 +13,7 @@
       {% endfor %}
 
       {% if not badges %}
-      <p>No badges earned yet :(</p>
+      <p>{% trans "No badges earned yet" %} :(</p>
       {% endif %}
     </div>
 
@@ -24,14 +23,14 @@
       <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
         {% csrf_token %}
 
-        <p>Award a new badge to this user:</p>
+        <p>{% trans "Award a new badge to this user:" %}</p>
         <select name="{{ award_form.badge.name }}" class="form-control">
           {% for val, label in award_form.fields.badge.choices %}
           <option value="{{ val }}">{{ label }}</option>
           {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-primary mt-2" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
+        <button type="submit" class="btn btn-primary mt-2" data-confirm="Are you sure you want to award this badge to this user?">{% trans "Award badge" %}</button>
       </form>
 
       <hr>
@@ -46,19 +45,19 @@
           {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-danger mt-2" data-confirm="Are you sure you want to remove this badge from this user?">Remove badge</button>
+        <button type="submit" class="btn btn-danger mt-2" data-confirm="Are you sure you want to remove this badge from this user?">{% trans "Remove badge" %}</button>
       </form>
     {% endif %}
   </div>
 </div>
 
 <div class="card mt-3">
-  <h4 class="card-header">Recent activity</h4>
+  <h4 class="card-header">{% trans "Recent activity" %}</h4>
   <div class="card-body">
     {% include 'indigo_app/actions/_activity_list.html' with actions=activity_stream ignore_actor=True %}
 
     <div class="text-center">
-      <a href="{% url 'indigo_social:user_activity' username=user.username %}" class="btn btn-primary">More activity</a>
+      <a href="{% url 'indigo_social:user_activity' username=user.username %}" class="btn btn-primary">{% trans "More activity" %}</a>
     </div>
   </div>
 </div>

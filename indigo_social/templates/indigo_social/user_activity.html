@@ -1,9 +1,9 @@
 {% extends "indigo_social/user_layout.html" %}
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
 {% block user_profile_content %}
 <div class="card">
-  <h4 class="card-header">Activity</h4>
+  <h4 class="card-header">{% trans "Activity" %}</h4>
   <div class="card-body">
     {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list ignore_actor=True %}
   </div>

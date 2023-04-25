@@ -20,7 +20,7 @@
       {% blocktrans trimmed %}
       Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href="https://lxml.de/xpathxslt.html#regular-expressions-in-xpath" target="_blank" rel="noreferrer noopener">regular expressions</a>.
       Also see the <a href="https://devhints.io/xpath" target="_blank" rel="noreferrer noopener">XPath cheatsheet</a>.
-      {% endblock %}
+      {% endblocktrans %}
     </small>
     {% if form.xpath.errors %}
       <div class="text-danger">
@@ -64,18 +64,8 @@
 
   {% if matches %}
     <p>
-      {% blocktrans trimmed count counter=paginator.count %}
-        {% blocktrans trimmed count counter=n_documents %}
-          {{ paginator.count }} match in {{ n_documents }} document
-        {% plural %}
-          {{ paginator.count }} match in {{ n_documents }} documents
-        {% endblocktrans %}}
-      {% plural %}
-        {% blocktrans trimmed count counter=n_documents %}
-          {{ paginator.count }} matches in {{ n_documents }} document
-        {% plural %}
-          {{ paginator.count }} matches in {{ n_documents }} documents
-        {% endblocktrans %}
+      {% blocktrans trimmed with n_matches=paginator.count %}
+        {{ n_matches }} matches in {{ n_documents }} documents
       {% endblocktrans %}
     </p>
 

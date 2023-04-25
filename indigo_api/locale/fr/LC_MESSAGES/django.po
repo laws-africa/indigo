@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-30 16:06+0200\n"
+"POT-Creation-Date: 2023-04-25 17:06+0200\n"
 "PO-Revision-Date: 2022-08-31 16:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: French\n"
@@ -18,37 +18,37 @@ msgstr ""
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-File-ID: 22\n"
 
-#: models/documents.py:290
+#: models/documents.py:270
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
 msgstr "Ceci est la version de ce document de %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
 
-#: models/documents.py:292
+#: models/documents.py:272
 #, python-format
 msgid "This is the version of this document from %(start)s."
 msgstr "Ceci est la version de ce document de %(start)s."
 
-#: models/documents.py:295
+#: models/documents.py:275
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
 msgstr "Ceci est la version de ce document à %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
 
-#: models/documents.py:297
+#: models/documents.py:277
 #, python-format
 msgid "This is the version of this document at %(start)s."
 msgstr "Ceci est la version de ce document à %(start)s."
 
-#: models/documents.py:300
+#: models/documents.py:280
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
 msgstr "Il s'agit de la version de ce document telle qu'elle était du %(start)s au %(end)s."
 
-#: models/documents.py:303
+#: models/documents.py:283
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
 msgstr "Il s'agit de la version de ce document telle qu'elle était à %(start)s à %(end)s."
 
-#: models/documents.py:306
+#: models/documents.py:286
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
 msgstr "Ceci est la version de ce document tel qu'il était à %(start)s."
@@ -57,11 +57,11 @@ msgstr "Ceci est la version de ce document tel qu'il était à %(start)s."
 msgid "Note: The original publication document is not available and this content could not be verified."
 msgstr "Remarque : le document de publication original n'est pas disponible et ce contenu n'a pas pu être vérifié."
 
-#: models/tasks.py:231
+#: models/tasks.py:233
 msgid "Are you sure you want to submit this task for review?"
 msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour examen ?"
 
-#: models/tasks.py:233
+#: models/tasks.py:235
 #, python-format
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour révision au nom de %s?"
@@ -188,15 +188,15 @@ msgstr "pas encore commencé"
 msgid "Table of Contents"
 msgstr "Table des matières"
 
-#: views/documents.py:95
+#: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
 msgstr "SUPPRIMER les documents publiés, marquer comme brouillon d'abord."
 
-#: views/documents.py:204
+#: views/documents.py:207
 msgid "Cannot create a task for a reply annotation."
 msgstr "Impossible de créer une tâche pour une annotation de réponse."
 
-#: views/documents.py:340
+#: views/documents.py:357
 msgid "Error during import"
 msgstr "Erreur lors de l'importation"
 
@@ -220,4 +220,3 @@ msgstr "Erreur lors de l'importation"
 
 #~ msgid "Commences on %(date)s unless otherwise noted"
 #~ msgstr "Aanvang op %(date)s tensy anders vermeld"
-

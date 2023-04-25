@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load i18n %}
 
 {% block main-header %}
 <header class="main-header tabbed-header">
@@ -6,19 +7,19 @@
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
       <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">
-        My tasks
+        {% trans "My tasks" %}
         {% if view.tab == 'my_tasks' %}
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}
       </a>
       <a class="nav-item nav-link {% if view.tab == 'priority_tasks' %}active{% endif %}" href="{% url 'priority_tasks' %}">
-        Priority tasks
+        {% trans "Priority tasks" %}
         {% if view.tab == 'priority_tasks' %}
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}
       </a>
       <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
-        All available tasks
+        {% trans "All available tasks" %}
         {% if view.tab == 'available_tasks' %}
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}

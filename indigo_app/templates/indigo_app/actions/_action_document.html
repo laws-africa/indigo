@@ -1,11 +1,16 @@
+{% load i18n %}
+
 {% with action.action_object as document %}
   {% if document.deleted %}
-    a document on the work <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
+    {% trans 'a document on the work' %}
+    <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
   {% else %}
-    the document <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
+    {% trans 'the document' %}
+    <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
   {% endif %}
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
+    {% trans 'in' %}
+    <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
   {% endif %}
 {% endwith %}

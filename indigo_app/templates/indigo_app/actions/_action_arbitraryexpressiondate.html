@@ -1,8 +1,13 @@
+{% load i18n %}
+
 {% with action.action_object as arb_expression_date %}
-  an expression date {{ arb_expression_date.date|date:"Y-m-d" }}
-  on the work <a href="{% url 'work' frbr_uri=arb_expression_date.work.frbr_uri %}">{{ arb_expression_date.work.title }}</a>
+  {% trans 'an expression date' %}
+  {{ arb_expression_date.date|date:"Y-m-d" }}
+  {% trans 'on the work' %}
+  <a href="{% url 'work' frbr_uri=arb_expression_date.work.frbr_uri %}">{{ arb_expression_date.work.title }}</a>
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=arb_expression_date.work.place.place_code %}">{{ arb_expression_date.work.place }}</a>
+    {% trans 'in' %}
+    <a href="{% url 'place' place=arb_expression_date.work.place.place_code %}">{{ arb_expression_date.work.place }}</a>
   {% endif %}
 {% endwith %}

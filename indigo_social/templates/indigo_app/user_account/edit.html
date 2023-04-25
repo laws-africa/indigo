@@ -1,6 +1,7 @@
 {% extends "indigo_app/user_account/layout.html" %}
+{% load i18n %}
 
-{% block title%}Edit Profile {{ block.super }}{% endblock %}
+{% block title%}{% trans "Edit Profile" %} {{ block.super }}{% endblock %}
 {% block account-sidebar %}
   {% include 'indigo_app/user_account/_sidebar.html' with active='profile' %}
 {% endblock %}
@@ -13,33 +14,11 @@
     <div class="card-body">
       <div class="row">
         <div class="col-6">
-          <div class="form-group">
-            <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
-            <input type="text" class="form-control" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value }}" required>
-            {% if form.first_name.errors %}
-              <div class="text-danger">
-                {% for error in form.first_name.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
-            <input type="text" class="form-control" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value }}" required>
-            {% if form.last_name.errors %}
-              <div class="text-danger">
-                {% for error in form.last_name.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
+          {% include 'indigo_app/user_account/_profile_form.html' %}
 
           <div class="form-group">
             <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-            <input type="text" class="form-control" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value }}" required>
+            <input type="text" class="form-control" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value }}" required>
             {% if form.username.errors %}
               <div class="text-danger">
                 {% for error in form.username.errors %}
@@ -50,32 +29,17 @@
           </div>
 
           <div class="form-group">
-            <label>Email</label>
+            <label>{% trans "Email" %}</label>
             <div class="form-static">
               {{ request.user.email }}
-              — <a href="{% url 'account_email' %}">manage your email addresses</a>
+              — <a href="{% url 'account_email' %}">{% trans "manage your email addresses" %}</a>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
-            <select class="form-control" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" required>
-              {% for val, label in form.fields.country.choices %}
-              <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-            {% if form.country.errors %}
-              <div class="text-danger">
-                {% for error in form.country.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
             <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
-            <textarea class="form-control" name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" placeholder="Tell us a bit about yourself">{{ form.bio.value }}</textarea>
+            <textarea class="form-control" name="{{ form.bio.html_name }}" id="{{ form.bio.id_for_label }}"
+                      placeholder="{% trans "Tell us a bit about yourself" %}">{{ form.bio.value }}</textarea>
             {% if form.bio.errors %}
               <div class="text-danger">
                 {% for error in form.bio.errors %}
@@ -96,15 +60,16 @@
               </div>
               {% if user.userprofile.profile_photo %}
                 <div class="mt-3">
-                  <button type="submit" name="_delete_photo" class="btn btn-outline-danger" data-confirm="Are you sure you want to remove your profile photo?">Remove photo</button>
+                  <button type="submit" name="_delete_photo" class="btn btn-outline-danger"
+                          data-confirm="{% trans "Are you sure you want to remove your profile photo?" %}">Remove photo</button>
                 </div>
               {% endif %}
             </div>
 
             <div class="form-group">
-              <label>Upload a photo</label>
-              <input type="file" name="{{ form.new_profile_photo.name }}" id="{{ form.new_profile_photo.id_for_label }}" accept="image/*" onchange="this.form.submit();">
-              <p class="form-text">A square photo at least 200 pixels wide is best.</p>
+              <label>{% trans "Upload a photo" %}</label>
+              <input type="file" name="{{ form.new_profile_photo.html_name }}" id="{{ form.new_profile_photo.id_for_label }}" accept="image/*" onchange="this.form.submit();">
+              <p class="form-text">{% trans "A square photo at least 200 pixels wide is best." %}</p>
             </div>
             {% if form.new_profile_photo.errors %}
               <div class="text-danger">
@@ -120,13 +85,14 @@
 
       <hr>
 
-      <h5 class="card-title">Professional skills</h5>
+      <h5 class="card-title">{% trans "Professional skills" %}</h5>
 
       <div class="row">
         <div class="col-6">
           <div class="form-group">
             <label for="{{ form.organisations.id_for_label }}">{{ form.organisations.label }}</label>
-            <textarea class="form-control" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}" placeholder="What organisations do you work for or with?">{{ form.organisations.value }}</textarea>
+            <textarea class="form-control" name="{{ form.organisations.html_name }}" id="{{ form.organisations.id_for_label }}"
+                      placeholder="{% trans "What organisations do you work for or with?" %}">{{ form.organisations.value }}</textarea>
             {% if form.organisations.errors %}
               <div class="text-danger">
                 {% for error in form.organisations.errors %}
@@ -138,7 +104,7 @@
 
           <div class="form-group">
             <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-            <textarea class="form-control" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
+            <textarea class="form-control" name="{{ form.skills.html_name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
             {% if form.skills.errors %}
               <div class="text-danger">
                 {% for error in form.skills.errors %}
@@ -150,7 +116,7 @@
 
           <div class="form-group">
             <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
-            <textarea class="form-control" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
+            <textarea class="form-control" name="{{ form.qualifications.html_name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
             {% if form.qualifications.errors %}
               <div class="text-danger">
                 {% for error in form.qualifications.errors %}
@@ -162,7 +128,7 @@
 
           <div class="form-group">
             <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
-            <textarea class="form-control" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
+            <textarea class="form-control" name="{{ form.specialisations.html_name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
             {% if form.specialisations.errors %}
               <div class="text-danger">
                 {% for error in form.specialisations.errors %}
@@ -174,7 +140,7 @@
 
           <div class="form-group">
             <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
-            <input type="text" class="form-control" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value|default:'' }}">
+            <input type="text" class="form-control" name="{{ form.areas_of_law.html_name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value|default:'' }}">
             {% if form.areas_of_law.errors %}
               <div class="text-danger">
                 {% for error in form.areas_of_law.errors %}
@@ -188,7 +154,7 @@
 
       <hr>
 
-      <h5 class="card-title">Social media profiles</h5>
+      <h5 class="card-title">{% trans "Social media profiles" %}</h5>
 
       <div class="row">
         <div class="col-6">
@@ -198,7 +164,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text">@</span>
               </div>
-              <input class="form-control" name="{{ form.twitter_username.name }}" id="{{ form.twitter_username.id_for_label }}" value="{{ form.twitter_username.value|default:'' }}">
+              <input class="form-control" name="{{ form.twitter_username.html_name }}" id="{{ form.twitter_username.id_for_label }}" value="{{ form.twitter_username.value|default:'' }}">
             </div>
             {% if form.twitter_username.errors %}
               <div class="text-danger">
@@ -211,7 +177,7 @@
 
           <div class="form-group">
             <label for="{{ form.linkedin_profile.id_for_label }}">{{ form.linkedin_profile.label }}</label>
-            <input type="url" class="form-control" name="{{ form.linkedin_profile.name }}" id="{{ form.linkedin_profile.id_for_label }}" value="{{ form.linkedin_profile.value|default:'' }}">
+            <input type="url" class="form-control" name="{{ form.linkedin_profile.html_name }}" id="{{ form.linkedin_profile.id_for_label }}" value="{{ form.linkedin_profile.value|default:'' }}">
             {% if form.linkedin_profile.errors %}
               <div class="text-danger">
                 {% for error in form.linkedin_profile.errors %}
@@ -226,12 +192,11 @@
     </div>
 
     <div class="card-footer">
-      <button type="submit" class="btn btn-success">Save profile</button>
-      <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}" class="btn btn-primary float-right">View my profile</a>
+      <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+      <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}" class="btn btn-primary float-right">{% trans "View my profile" %}</a>
     </div>
   </div>
 
 </form>
 
-{% include 'indigo_app/user_account/_lang_chooser.html' %}
 {% endblock %}

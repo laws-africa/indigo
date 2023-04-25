@@ -1,4 +1,3 @@
-# coding=utf-8
 from datetime import timedelta
 
 from actstream.models import Action
@@ -17,6 +16,7 @@ from pinax.badges.registry import badges
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
+from indigo_app.views.users import set_language_cookie
 from .forms import UserProfileForm, AwardBadgeForm, UnawardBadgeForm
 from .models import UserProfile
 
@@ -124,10 +124,16 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
         initial['last_name'] = self.request.user.last_name
         initial['username'] = self.request.user.username
         initial['country'] = self.request.user.editor.country
+        initial['language'] = self.request.user.editor.language
         return initial
 
     def get_object(self, queryset=None):
         return UserProfile.objects.get(user=self.request.user)
+
+    def form_valid(self, form):
+        resp = super().form_valid(form)
+        set_language_cookie(resp, form.cleaned_data['language'])
+        return resp
 
     def get_success_url(self):
         return reverse('edit_account')

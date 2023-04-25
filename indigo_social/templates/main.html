@@ -1,5 +1,5 @@
 {% extends "main.html" %}
-{% load account %}
+{% load account i18n %}
 
 {% block navbar-user %}
   {% if request.user.is_authenticated %}
@@ -11,19 +11,19 @@
         </span>
       </a>
       <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'indigo_social:user_profile' username=request.user.username %}"><i class="fas fa-user fa-fw"></i> Profile</a>
-        <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fas fa-cog fa-fw"></i> Account</a>
+        <a class="dropdown-item" href="{% url 'indigo_social:user_profile' username=request.user.username %}"><i class="fas fa-user fa-fw"></i> {% trans "Profile" %}</a>
+        <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fas fa-cog fa-fw"></i> {% trans "Account" %}</a>
 
         {% if request.user.is_staff %}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
+        <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> {% trans "Site settings" %}</a>
         {% endif %}
 
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt fa-fw"></i> Log out</a>
+        <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt fa-fw"></i> {% trans "Log out" %}</a>
       </div>
     </li>
   {% else %}
-    <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
+    <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> {% trans "Log in" %}</a></li>
   {% endif %}
 {% endblock %}

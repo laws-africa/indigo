@@ -1,10 +1,14 @@
+{% load i18n %}
+
 {% with action.action_object as commencement %}
-  a commencement on the work <a href="{% url 'work' frbr_uri=commencement.commenced_work.frbr_uri %}">{{ commencement.commenced_work.title }}</a>
+  {% trans 'a commencement on the work' %}
+  <a href="{% url 'work' frbr_uri=commencement.commenced_work.frbr_uri %}">{{ commencement.commenced_work.title }}</a>
   {% if commencement.commencing_work %}
-    by the work <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+    {% trans 'by the work' %}
+    <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
   {% endif %}
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=commencement.commenced_work.place.place_code %}">{{ commencement.commenced_work.place }}</a>
+    {% trans 'in' %} <a href="{% url 'place' place=commencement.commenced_work.place.place_code %}">{{ commencement.commenced_work.place }}</a>
   {% endif %}
 {% endwith %}

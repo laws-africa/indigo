@@ -1,11 +1,14 @@
+{% load i18n %}
+
 {% with action.action_object as workflow %}
   {% if this_workflow %}
-    this project
+    {% trans 'this project' %}
   {% else %}
-    the project <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+    {% trans 'the project' %}
+    <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
   {% endif %}
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=workflow.place.place_code %}">{{ workflow.place }}</a>
+    {% trans 'in' %} <a href="{% url 'place' place=workflow.place.place_code %}">{{ workflow.place }}</a>
   {% endif %}
 {% endwith %}

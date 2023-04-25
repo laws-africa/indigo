@@ -1,8 +1,9 @@
-{% load humanize indigo_app %}
+{% load humanize indigo_app i18n %}
 {% with action.action_object.action_object_actions.content_type.model as model %}
 
 {% if ignore_actor %}
-  {{ action.verb|capfirst }}
+  {% trans action.verb as verb %}
+  {{ verb|capfirst }}
 {% else %}
   {% user_profile action.actor %} {{ action.verb }}
 {% endif %}

@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -8,6 +7,17 @@ from allauth.utils import get_request_param
 from indigo_app.forms import UserEditorForm
 from indigo_app.models import Editor
 from .base import AbstractAuthedIndigoView
+
+def set_language_cookie(response, lang_code):
+    response.set_cookie(
+        settings.LANGUAGE_COOKIE_NAME, lang_code,
+        max_age=settings.LANGUAGE_COOKIE_AGE,
+        path=settings.LANGUAGE_COOKIE_PATH,
+        domain=settings.LANGUAGE_COOKIE_DOMAIN,
+        secure=settings.LANGUAGE_COOKIE_SECURE,
+        httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+        samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+    )
 
 
 class EditAccountView(AbstractAuthedIndigoView, UpdateView):
@@ -33,6 +43,11 @@ class EditAccountView(AbstractAuthedIndigoView, UpdateView):
         initial['first_name'] = self.request.user.first_name
         initial['last_name'] = self.request.user.last_name
         return initial
+
+    def form_valid(self, form):
+        resp = super().form_valid(form)
+        set_language_cookie(resp, form.cleaned_data['language'])
+        return resp
 
 
 class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):

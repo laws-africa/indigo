@@ -1,11 +1,12 @@
 {% extends "place/tabbed_layout.html" %}
+{% load i18n %}
 
-{% block title %}Activity {{ block.super }}{% endblock %}
+{% block title %}{% trans "Activity" %} {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
   <div class="card">
-    <h4 class="card-header">Activity</h4>
+    <h4 class="card-header">{% trans "Activity" %}</h4>
     <div class="card-body">
       {% include 'indigo_app/actions/_activity_list.html' with actions=page_obj.object_list ignore_place=True %}
     </div>

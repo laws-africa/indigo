@@ -1,7 +1,7 @@
 {% extends "main.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Places {{ block.super }}{% endblock %}
+{% block title %}{% trans "Places" %} {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">

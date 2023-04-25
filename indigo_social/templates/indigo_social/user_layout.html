@@ -1,10 +1,10 @@
 {% extends "main.html" %}
-{% load activity_tags indigo_app pinax_badges_tags %}
+{% load activity_tags indigo_app pinax_badges_tags i18n %}
 
 {% block title%}{{ user.first_name }} {{ user.last_name }} {{ block.super }}{% endblock %}
 
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">{% trans "Contributors" %}</a></li>
 {% endblock %}
 
 {% block content %}
@@ -53,46 +53,46 @@
 
       <section class="my-3">
         {% if user.userprofile.organisations %}
-        <h5 class="mb-0">Organisations</h5>
+        <h5 class="mb-0">{% trans "Organisations" %}</h5>
         {{ user.userprofile.organisations | linebreaks }}
         {% endif %}
 
         {% if user.userprofile.skills %}
-        <h5 class="mb-0">Skills</h5>
+        <h5 class="mb-0">{% trans "Skills" %}</h5>
         {{ user.userprofile.skills | linebreaks }}
         {% endif %}
 
         {% if user.userprofile.qualifications %}
-        <h5 class="mb-0">Qualifications</h5>
+        <h5 class="mb-0">{% trans "Qualifications" %}</h5>
         {{ user.userprofile.qualifications | linebreaks }}
         {% endif %}
 
         {% if user.userprofile.specialisations %}
-        <h5 class="mb-0">Specialisations</h5>
+        <h5 class="mb-0">{% trans "Specialisations" %}</h5>
         {{ user.userprofile.specialisations | linebreaks }}
         {% endif %}
 
         {% if user.userprofile.areas_of_law %}
-        <h5 class="mb-0">Areas of law</h5>
+        <h5 class="mb-0">{% trans "Areas of law" %}</h5>
         {{ user.userprofile.areas_of_law|default:'' }}
         {% endif %}
       </section>
 
       {% if request.user == user %}
-        <a class="btn btn-outline-primary btn-block" href="{% url 'edit_account' %}">Edit profile</a>
+        <a class="btn btn-outline-primary btn-block" href="{% url 'edit_account' %}">{% trans "Edit profile" %}</a>
       {% endif %}
     </div>
 
     <div class="col-md-8 col-lg-9">
       <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-          <a class="nav-link {% if view.template_name == 'indigo_social/user_profile.html' %}active{% endif %}" href="{% url 'indigo_social:user_profile' username=user.username %}">Overview</a>
+          <a class="nav-link {% if view.template_name == 'indigo_social/user_profile.html' %}active{% endif %}" href="{% url 'indigo_social:user_profile' username=user.username %}">{% trans "Overview" %}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view.template_name == 'indigo_social/user_activity.html' %}active{% endif %}" href="{% url 'indigo_social:user_activity' username=user.username %}">Activity</a>
+          <a class="nav-link {% if view.template_name == 'indigo_social/user_activity.html' %}active{% endif %}" href="{% url 'indigo_social:user_activity' username=user.username %}">{% trans "Activity" %}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view.template_name == 'indigo_social/user_tasks.html' %}active{% endif %}" href="{% url 'indigo_social:user_tasks' username=user.username %}">Tasks</a>
+          <a class="nav-link {% if view.template_name == 'indigo_social/user_tasks.html' %}active{% endif %}" href="{% url 'indigo_social:user_tasks' username=user.username %}">{% trans "Tasks" %}</a>
         </li>        
       </ul>
 

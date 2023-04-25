@@ -1,7 +1,7 @@
 {% extends "indigo_app/standalone.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Permission Denied{% endblock %}
+{% block title %}{% trans "Permission Denied" %}{% endblock %}
 {% block standalone-content %}
 
 <div class="row">
@@ -9,11 +9,11 @@
 
     <div class="framed-indigo-box">
       <div class="text-center">
-        <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+        <img src="{% static 'images/logo.png' %}" class="logo" title="{{ INDIGO_ORGANISATION }}">
 
-        <h3>Permission Denied</h3>
+        <h3>{% trans "Permission Denied" %}</h3>
 
-        <p class="lead">You don't have the right permissions to do that.</p>
+        <p class="lead">{% trans "You don't have permission to do that." %}</p>
       </div>
     </div>
   </div>

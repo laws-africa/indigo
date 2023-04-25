@@ -1,5 +1,6 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -22,6 +23,7 @@ class Editor(models.Model):
     country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True)
     accepted_terms = models.BooleanField(default=False)
     permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text="Countries the user can work with.", blank=True)
+    language = models.CharField(max_length=10, blank=False, null=False, default="en-us", help_text="Preferred language")
 
     objects = EditorManager
 
@@ -65,7 +67,7 @@ def create_editor(sender, **kwargs):
     # create editor for user objects
     user = kwargs["instance"]
     if not hasattr(user, 'editor') and not kwargs.get('raw'):
-        editor = Editor(user=user)
+        editor = Editor(user=user, language=settings.LANGUAGE_CODE)
         # ensure there is a country
         editor.country = Country.objects.first()
         editor.save()

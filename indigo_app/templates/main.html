@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static account %}
+{% load static account i18n %}
 
 {% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
@@ -10,7 +10,8 @@
   {% include "indigo_app/_offline.html" %}
   {% if MAINTENANCE_MODE %}
     <div class="alert alert-warning mb-0" role="alert">
-      <i class="fas fa-exclamation-triangle fa-fw"></i> Mainentance mode. Only staff can use the site.
+      <i class="fas fa-exclamation-triangle fa-fw"></i>
+      {% trans "Mainentance mode. Only staff can use the site." %}
     </div>
   {% endif %}
 
@@ -19,7 +20,7 @@
       {% block navbar %}
         <nav class="navbar navbar-expand-md navbar-dark">
           {% block navbar-brand %}
-          <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+          <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="{{ INDIGO_ORGANISATION }}"></a>
           {% endblock %}
           {% block navbar-toggle %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
@@ -32,21 +33,21 @@
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             {% block navbar-left %}
               {% if request.user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'my_tasks' %}">Tasks</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">{% trans "Home" %}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'my_tasks' %}">{% trans "Tasks" %}</a></li>
               {% endif %}
               {% block navbar-help-menu %}
               <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{% trans "Help" %}</a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{% url 'help' %}" target="_blank"><i class="fas fa-question fa-fw"></i> Documentation</a>
-                  <a class="dropdown-item" href="mailto:info@laws.africa" target="_blank"><i class="fas fa-envelope fa-fw"></i> Feedback</a>
+                  <a class="dropdown-item" href="{% url 'help' %}" target="_blank"><i class="fas fa-question fa-fw"></i> {% trans "Documentation" %}</a>
+                  <a class="dropdown-item" href="mailto:info@laws.africa" target="_blank"><i class="fas fa-envelope fa-fw"></i> {% trans "Feedback" %}</a>
 
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="https://github.com/laws-africa/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> Indigo on GitHub</a>
+                  <a class="dropdown-item" href="https://github.com/laws-africa/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> {% trans "Indigo on GitHub" %}</a>
 
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a>
+                  <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">{% trans "Terms of Use &amp; Privacy Policy" %}</a>
                 </div>
               </li>
               {% endblock %}
@@ -64,19 +65,19 @@
                       </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                      <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fas fa-cog fa-fw"></i> Account</a>
+                      <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fas fa-cog fa-fw"></i> {% trans "Account" %}</a>
 
                       {% if request.user.is_staff %}
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
+                      <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> {% trans "Site settings" %}</a>
                       {% endif %}
 
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt fa-fw"></i> Log out</a>
+                      <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt fa-fw"></i> {% trans "Log out" %}</a>
                     </div>
                   </li>
                 {% else %}
-                  <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
+                  <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> {% trans "Log in" %}</a></li>
                 {% endif %}
               {% endblock %}
             </ul>
@@ -114,10 +115,10 @@
                 <li><a href="/">Home</a></li>
 
                 {% if request.user.is_authenticated %}
-                <li><a href="{% url 'edit_account' %}">Your account</a></li>
-                <li><a href="{% url 'account_logout' %}">Log out</a></li>
+                <li><a href="{% url 'edit_account' %}">{% trans "Your account" %}</a></li>
+                <li><a href="{% url 'account_logout' %}">{% trans "Log out" %}</a></li>
                 {% else %}
-                <li><a href="{% url 'account_login' %}">Log in</a></li>
+                <li><a href="{% url 'account_login' %}">{% trans "Log in" %}</a></li>
                 {% endif %}
               </ul>
               {% endblock %}
@@ -126,19 +127,19 @@
             <div class="col-md-4">
               {% block site-footer-col-2 %}
               <ul class="list-unstyled">
-                <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Documentation</a></li>
-                <li><a href="mailto:greg@laws.africa" target="_blank">Feedback</a></li>
-                <li><a href="https://github.com/laws-africa/indigo" target="_blank">Indigo on GitHub</a></li>
+                <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">{% trans "Documentation" %}</a></li>
+                <li><a href="mailto:greg@laws.africa" target="_blank">{% trans "Feedback" %}</a></li>
+                <li><a href="https://github.com/laws-africa/indigo" target="_blank">{% trans "Indigo on GitHub" %}</a></li>
               </ul>
               {% endblock %}
             </div>
 
             <div class="col-md-4">
               <ul class="list-unstyled">
-                <li><a href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a></li>
+                <li><a href="{% url 'terms_of_use' %}" target="_blank">{% trans "Terms of Use &amp; Privacy Policy" %}</a></li>
               </ul>
 
-              <img src="{% static 'images/logo.png' %}" title="Indigo" class="logo">
+              <img src="{% static 'images/logo.png' %}" title="{{ INDIGO_ORGANISATION }}" class="logo">
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
+{% load i18n %}
+
 {% with action.action_object as work %}
-  the work <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+  {% trans 'the work' %} <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
+    {% trans 'in' %} <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
   {% endif %}
 {% endwith %}

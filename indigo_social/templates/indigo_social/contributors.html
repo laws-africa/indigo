@@ -1,15 +1,15 @@
 {% extends "main.html" %}
-{% load indigo_app %}
+{% load indigo_app i18n %}
 
-{% block title%}Contributors {{ block.super }}{% endblock %}
+{% block title%}{% trans "Contributors" %} {{ block.super }}{% endblock %}
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">{% trans "Contributors" %}</a></li>
 {% endblock %}
 
 {% block content %}
 <div class="container">
 
-  <h1 class="mb-3 mt-3">Contributors</h1>
+  <h1 class="mb-3 mt-3">{% trans "Contributors" %}</h1>
 
   <div class="card-columns">
     {% for userprofile in object_list %}

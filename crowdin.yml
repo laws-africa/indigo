@@ -1,7 +1,15 @@
 files:
-  - source: /indigo/locale/af/LC_MESSAGES/django.po
+  - source: /indigo/locale/en/LC_MESSAGES/django.po
     translation: /indigo/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
-  - source: /indigo_api/locale/af/LC_MESSAGES/django.po
+
+  - source: /indigo_api/locale/en/LC_MESSAGES/django.po
     translation: /indigo_api/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
-  - source: /indigo_za/locale/af/LC_MESSAGES/django.po
+
+  - source: /indigo_app/locale/en/LC_MESSAGES/django.po
+    translation: /indigo_app/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
+
+  - source: /indigo_social/locale/en/LC_MESSAGES/django.po
+    translation: /indigo_social/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
+
+  - source: /indigo_za/locale/en/LC_MESSAGES/django.po
     translation: /indigo_za/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%

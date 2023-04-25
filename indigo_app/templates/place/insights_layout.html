@@ -1,11 +1,12 @@
 {% extends 'place/tabbed_layout.html' %}
+{% load i18n %}
 
 {% block content %}
   <div class="container mt-3">
     <nav class="nav nav-tabs">
       {% block tabs %}
-      <a class="nav item nav-link {% if view.insights_tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">Metrics</a>
-      <a class="nav item nav-link {% if view.insights_tab == 'explorer' %}active{% endif %}" href="{% url 'place_explorer' place=place.place_code %}">Explorer</a>
+      <a class="nav item nav-link {% if view.insights_tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">{% trans "Metrics" %}</a>
+      <a class="nav item nav-link {% if view.insights_tab == 'explorer' %}active{% endif %}" href="{% url 'place_explorer' place=place.place_code %}">{% trans "Explorer" %}</a>
       {% endblock %}
     </nav>
   </div>

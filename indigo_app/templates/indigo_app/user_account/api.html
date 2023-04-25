@@ -1,6 +1,7 @@
 {% extends "indigo_app/user_account/layout.html" %}
+{% load i18n %}
 
-{% block title%}API access {{ block.super }}{% endblock %}
+{% block title%}{% trans "API access" %} {{ block.super }}{% endblock %}
 {% block account-sidebar %}
   {% include 'indigo_app/user_account/_sidebar.html' with active='api' %}
 {% endblock %}
@@ -10,16 +11,26 @@
   {% csrf_token %}
 
   <div class="card">
-    <h5 class="card-header">API access</h5>
+    <h5 class="card-header">{% trans "API access" %}</h5>
     <div class="card-body">
-      <p>Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong></p>
+      <p>
+        {% blocktrans trimmed %}
+          Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong>
+        {% endblocktrans %}
+      </p>
 
       <input type="text" class="form-control" id="api_token" name="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
 
       <hr>
-      <p>Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong></p>
+      <p>
+        {% blocktrans trimmed %}
+          Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong>
+        {% endblocktrans %}
+      </p>
 
-      <button type="submit" class="btn btn-secondary" data-confirm="Are you sure? Your old token will stop working.">Generate new API token</button>
+      <button type="submit" class="btn btn-secondary" data-confirm="Are you sure? Your old token will stop working.">
+        {% trans "Generate new API token" %}
+      </button>
     </div>
   </div>
 </form>

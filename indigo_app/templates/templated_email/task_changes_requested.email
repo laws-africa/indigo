@@ -1,12 +1,16 @@
-{% block subject %}Task #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
+{% load i18n %}
+{% block subject %}{% trans "Task" %} #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
 
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
-  <p>Hello {{ recipient.first_name }},</p>
+  <p>{{ recipient.first_name }},</p>
 
-  <p>{{ action.actor.get_full_name }} requested changes on task
-     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a> {% if comment %}with this comment{% endif %}:
+  <p>
+    {% blocktrans trimmed with name=action.actor.get_full_name %}
+      {{ name }} requested changes on task
+    {% endblocktrans %}
+    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>
   </p>
 
   {% if comment %}

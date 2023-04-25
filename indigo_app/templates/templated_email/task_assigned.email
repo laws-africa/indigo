@@ -1,16 +1,16 @@
-{% block subject %}Task #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
+{% load i18n %}
+{% block subject %}{% trans "Task" %} #{{ task.pk }} – {{ task.title|safe }}{% endblock %}
 
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
-  <p>Hello {{ recipient.first_name }},</p>
+  <p>{{ recipient.first_name }},</p>
 
   <p>
-    {{ action.actor.get_full_name }}
     {% if task.state == 'pending_review' %}
-      asked you to review the task
+      {% blocktrans trimmed with name=action.actor.get_full_name %}{{ name }} asked you to review the task{% endblocktrans %}
     {% else %}
-      assigned you the task
+      {% blocktrans trimmed with name=action.actor.get_full_name %}{{ name }} assigned you the task{% endblocktrans %}
     {% endif %}
     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>:
   </p>

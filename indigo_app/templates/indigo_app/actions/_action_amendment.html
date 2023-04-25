@@ -1,8 +1,13 @@
+{% load i18n %}
+
 {% with action.action_object as amendment %}
-  an amendment on the work <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
-  by the work <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
+  {% trans "an amendment on the work" %}
+  <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
+  {% trans "by the work" %}
+  <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
 
   {% if not ignore_place %}
-    in <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
+    {% trans "in" %}
+    <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
   {% endif %}
 {% endwith %}

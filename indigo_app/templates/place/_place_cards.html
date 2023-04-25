@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div class="row">
   {% for place in places %}
     <div class="col-md-3">
@@ -9,34 +11,46 @@
             <div class="row text-muted">
               <div class="col mb-2">
                 <h5 class="mb-0">{{ place.n_works }}</h5>
-                Work{{ place.n_works|pluralize }}
+                {% blocktrans count counter=place.n_works %}
+                  Work
+                {% plural %}
+                  Works
+                {% endblocktrans %}
               </div>
               {% if place.n_open_tasks %}
               <div class="col mb-2">
                 <h5 class="mb-0">{{ place.n_open_tasks }}</h5>
-                Task{{ place.n_open_tasks|pluralize }}
+                {% blocktrans count counter=place.n_open_tasks %}
+                  Task
+                {% plural %}
+                  Tasks
+                {% endblocktrans %}
               </div>
               {% endif %}
               <div class="col mb-2">
                 <h5 class="mb-0">{%if place.p_breadth_complete %}{{ place.p_breadth_complete }}% {% else %} — {% endif %}</h5>
-                Complete
+                {% trans "Complete" %}
               </div>
               <div class="col mb-2">
                 <h5 class="mb-0">{% if place.settings.as_at_date %}{{ place.settings.as_at_date|date:"Y-m-d" }} {% else %} — {% endif %}</h5>
-                As at date
+                {% trans "As at date" %}
               </div>
             </div>
 
             <div class="row text-muted">
               <div class="col mb-2">
                 <h6 class="mb-0">{{ place.n_pages }}</h6>
-                Page{{ place.n_pages|pluralize }}
+                {% blocktrans count counter=place.n_pages %}
+                  Page
+                {% plural %}
+                  Pages
+                {% endblocktrans %}
               </div>
             </div>
 
           </div>
           <div class="card-footer pb-0 p-relative" style="height: 50px">
-            <canvas class="place-activity-chart" data-values="{{ place.activity_history }}" title="Recent activity"></canvas>
+            <canvas class="place-activity-chart" data-values="{{ place.activity_history }}" title="{% trans "Recent activity" %}"></canvas>
           </div>
         </div>
       </a>

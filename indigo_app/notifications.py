@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import override
 from django_comments.models import Comment
 from templated_email import send_templated_mail
 from background_task import background
@@ -23,14 +24,14 @@ class Notifier(object):
         comment = action.data.get('comment', None)
 
         if action.verb == 'assigned':
-            self.send_templated_email('task_assigned', [action.target], {
+            self.send_templated_email('task_assigned', action.target, {
                 'action': action,
                 'task': task,
                 'recipient': action.target,
             })
 
         elif action.verb == Task.VERBS['unsubmit'] and action.target:
-            self.send_templated_email('task_changes_requested', [action.target], {
+            self.send_templated_email('task_changes_requested', action.target, {
                 'action': action,
                 'task': task,
                 'recipient': action.target,
@@ -39,7 +40,7 @@ class Notifier(object):
 
         elif action.verb == Task.VERBS['close']:
             if task.submitted_by_user and task.submitted_by_user != action.actor:
-                self.send_templated_email('task_closed_submitter', [task.submitted_by_user], {
+                self.send_templated_email('task_closed_submitter', task.submitted_by_user, {
                     'action': action,
                     'task': task,
                     'recipient': task.submitted_by_user,
@@ -47,7 +48,7 @@ class Notifier(object):
                 })
 
         elif action.verb == Task.VERBS['submit'] and task.reviewed_by_user:
-            self.send_templated_email('task_resubmitted', [task.reviewed_by_user], {
+            self.send_templated_email('task_resubmitted', task.reviewed_by_user, {
                 'action': action,
                 'task': task,
                 'recipient': task.reviewed_by_user,
@@ -78,7 +79,7 @@ class Notifier(object):
             recipient_list.remove(comment.user)
 
             for user in recipient_list:
-                self.send_templated_email('task_new_comment', [user], {
+                self.send_templated_email('task_new_comment', user, {
                     'task': task,
                     'recipient': user,
                     'comment': comment,
@@ -116,7 +117,7 @@ class Notifier(object):
             later_replies = related_annotations [-2:]
 
         for user in recipient_list:
-            self.send_templated_email('annotation_new_reply', [user], {
+            self.send_templated_email('annotation_new_reply', user, {
                 'document': document,
                 'recipient': user,
                 'annotation': annotation,
@@ -128,24 +129,23 @@ class Notifier(object):
                 'task': related_task
             })
 
-    def send_templated_email(self, template_name, recipient_list, context, **kwargs):
+    def send_templated_email(self, template_name, recipient_user, context, **kwargs):
         real_context = {
             'SITE_URL': settings.INDIGO_URL,
             'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         }
         real_context.update(context)
 
-        log.info("Sending templated email {} to {}".format(template_name, recipient_list))
+        log.info("Sending templated email {} to {}".format(template_name, recipient_user))
 
-        recipient_list = [user.email for user in recipient_list]
-
-        return send_templated_mail(
-            template_name=template_name,
-            from_email=None,
-            recipient_list=recipient_list,
-            context=real_context,
-            fail_silently=settings.INDIGO.get('EMAIL_FAIL_SILENTLY'),
-            **kwargs)
+        with override(recipient_user.editor.language):
+            return send_templated_mail(
+                template_name=template_name,
+                from_email=None,
+                recipient_list=[recipient_user.email],
+                context=real_context,
+                fail_silently=settings.INDIGO.get('EMAIL_FAIL_SILENTLY'),
+                **kwargs)
 
     def notify_admins_user_signed_up(self, user):
         """ Function to send emails to admins to notify them when a new user
@@ -165,7 +165,7 @@ class Notifier(object):
         """ Send an email notification when a user acquires a new Badge.
         """
         user = badge_award.user
-        self.send_templated_email('badge_awarded', [user], {
+        self.send_templated_email('badge_awarded', user, {
                 'recipient': user,
                 'badge': badge_award,
             })

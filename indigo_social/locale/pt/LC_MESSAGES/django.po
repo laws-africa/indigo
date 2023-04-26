@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:12+0200\n"
-"PO-Revision-Date: 2023-04-26 15:37\n"
+"PO-Revision-Date: 2023-04-26 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -192,5 +192,5 @@ msgstr ""
 
 #: templates/main.html:27
 msgid "Log in"
-msgstr ""
+msgstr "Efetuar Login"
 

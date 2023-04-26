@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-04-26 15:37\n"
+"PO-Revision-Date: 2023-04-26 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -43,7 +43,7 @@ msgstr ""
 #: templates/indigo_api/work_batch_create.html:55
 #: templates/indigo_api/work_commencements.html:88
 msgid "Note:"
-msgstr ""
+msgstr "Nota:"
 
 #: templates/account/email.html:19
 msgid "We only send email notifications to your <strong>primary</strong> email address."
@@ -52,7 +52,7 @@ msgstr ""
 #: templates/account/email.html:33 templates/account/login.html:28
 #: templates/account/password_reset.html:18
 msgid "Email address"
-msgstr ""
+msgstr "Endereço de e-mail"
 
 #: templates/account/email.html:34
 #: templates/indigo_api/_task_filter_form.html:58
@@ -61,7 +61,7 @@ msgstr ""
 #: templates/indigo_api/work_batch_update.html:45
 #: templates/indigo_api/work_batch_update.html:123
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: templates/account/email.html:45
 msgid "verified"
@@ -123,23 +123,23 @@ msgstr ""
 
 #: templates/account/login.html:11
 msgid "Log In"
-msgstr ""
+msgstr "Efetuar Login"
 
 #: templates/account/login.html:40
 #: templates/indigo_app/user_account/_sidebar.html:8
 msgid "Password"
-msgstr ""
+msgstr "Senha"
 
 #: templates/account/login.html:42
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Esqueceu-se da sua senha?"
 
 #: templates/account/login.html:54
 #: templates/account/password_reset_from_key.html:55
 #: templates/account/password_reset_from_key_done.html:10
 #: templates/main.html:80 templates/main.html:121
 msgid "Log in"
-msgstr ""
+msgstr "Efetuar Login"
 
 #: templates/account/login.html:58
 msgid "Sign up"
@@ -158,16 +158,16 @@ msgstr ""
 #: templates/account/logout.html:4 templates/account/logout.html:7
 #: templates/account/logout.html:17
 msgid "Log Out"
-msgstr ""
+msgstr "Encerrar Sessão"
 
 #: templates/account/logout.html:9
 msgid "Are you sure you want to log out?"
-msgstr ""
+msgstr "Tem certeza de que deseja sair?"
 
 #: templates/account/password_change.html:4
 #: templates/account/password_change.html:55
 msgid "Change Password"
-msgstr ""
+msgstr "Mudar a Senha"
 
 #: templates/account/password_change.html:14
 msgid "Change Your Password"
@@ -175,7 +175,7 @@ msgstr ""
 
 #: templates/account/password_reset.html:7
 msgid "Reset Your Password"
-msgstr ""
+msgstr "Redefinir sua senha"
 
 #: templates/account/password_reset.html:12
 msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
@@ -184,34 +184,34 @@ msgstr ""
 #: templates/account/password_reset.html:29
 #: templates/account/password_reset_from_key.html:50
 msgid "Reset password"
-msgstr ""
+msgstr "Redefinir senha"
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Código ruim"
 
 #: templates/account/password_reset_from_key.html:7
 #: templates/account/password_reset_from_key_done.html:7
 msgid "Reset Password"
-msgstr ""
+msgstr "Redefinir a senha"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "O link de redefinição de senha era inválido, possivelmente porque já foi utilizado. Por favor, solicite uma <a href=\"%(passwd_reset_url)s\">nova redefinição de senha</a>."
 
 #: templates/account/password_reset_from_key.html:27
 msgid "New Password"
-msgstr ""
+msgstr "Nova Senha"
 
 #: templates/account/password_reset_from_key.html:39
 msgid "New Password (again)"
-msgstr ""
+msgstr "Nova Senha (novamente)"
 
 #: templates/account/password_reset_from_key.html:54
 #: templates/account/password_reset_from_key_done.html:8
 msgid "Your password has been reset."
-msgstr ""
+msgstr "Sua senha foi redefinida."
 
 #: templates/account/password_set.html:4 templates/account/password_set.html:43
 msgid "Set Password"
@@ -508,13 +508,13 @@ msgstr ""
 #: templates/indigo_api/work_batch_create.html:113
 #: templates/indigo_api/work_batch_create.html:237
 msgid "Year"
-msgstr ""
+msgstr "Ano"
 
 #: templates/indigo_api/_work_chooser_modal.html:53
 #: templates/indigo_api/document/_properties.html:15
 #: templates/indigo_api/work_form.html:57
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: templates/indigo_api/_work_chooser_modal.html:54
 #: templates/indigo_api/_work_filter_form.html:35
@@ -716,7 +716,7 @@ msgstr ""
 #: templates/indigo_api/work_form.html:493
 #: templates/indigo_api/work_form.html:509
 msgid "Delete"
-msgstr ""
+msgstr "Excluir"
 
 #: templates/indigo_api/_work_points_in_time.html:91
 msgid "Consolidation"
@@ -761,7 +761,7 @@ msgstr ""
 
 #: templates/indigo_api/_work_related_table.html:15
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: templates/indigo_api/_work_related_table.html:24
 #: templates/indigo_api/document/show.html:27
@@ -886,7 +886,7 @@ msgstr ""
 
 #: templates/indigo_api/document/_properties.html:19
 msgid "Language"
-msgstr ""
+msgstr "Idioma"
 
 #: templates/indigo_api/document/_properties.html:29
 msgid "Expression date"
@@ -935,7 +935,7 @@ msgstr ""
 #: templates/indigo_app/_paginator.html:5
 #: templates/indigo_app/_paginator.html:7
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 #: templates/indigo_api/document/_revisions.html:10
 #: templates/indigo_api/work_versions.html:34
@@ -943,7 +943,7 @@ msgstr ""
 #: templates/indigo_app/_paginator.html:27
 #: templates/indigo_app/_paginator.html:29
 msgid "Next"
-msgstr ""
+msgstr "Próximo"
 
 #: templates/indigo_api/document/_revisions.html:14
 msgid "Recent Changes"
@@ -1166,7 +1166,7 @@ msgstr ""
 #: templates/indigo_api/work_batch_create.html:120
 #: templates/indigo_api/work_batch_create.html:244
 msgid "Relationships"
-msgstr ""
+msgstr "Relações"
 
 #: templates/indigo_api/work_batch_create.html:121
 msgid "Notes"
@@ -1722,7 +1722,7 @@ msgstr ""
 
 #: templates/indigo_api/work_overview.html:94
 msgid "Not commenced"
-msgstr ""
+msgstr "Não iniciado"
 
 #: templates/indigo_api/work_overview.html:98
 msgid "Up to date as at"
@@ -1744,7 +1744,7 @@ msgstr ""
 
 #: templates/indigo_api/work_overview.html:130
 msgid "(unknown)"
-msgstr ""
+msgstr "(desconhecido)"
 
 #: templates/indigo_api/work_overview.html:137
 msgid "Repealed on"
@@ -1757,7 +1757,7 @@ msgstr ""
 #: templates/indigo_api/work_overview.html:152
 #: templates/indigo_api/work_popup.html:122 templates/place/works.html:76
 msgid "Primary work"
-msgstr ""
+msgstr "Trabalho principal"
 
 #: templates/indigo_api/work_overview.html:160
 msgid "Subsidary works"
@@ -1799,7 +1799,7 @@ msgstr[1] ""
 #: templates/indigo_api/work_popup.html:25
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Aprovado em %(date)s"
 
 #: templates/indigo_api/work_popup.html:36
 #, python-format
@@ -2224,7 +2224,7 @@ msgstr ""
 
 #: templates/main.html:36
 msgid "Home"
-msgstr ""
+msgstr "Página inicial"
 
 #: templates/main.html:41
 msgid "Help"

@@ -1,22 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2023-04-26 15:37\n"
+"Last-Translator: \n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: pt\n"
+"X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 141\n"
 
 #: templates/403.html:4 templates/403.html:14
 msgid "Permission Denied"
@@ -2264,24 +2263,20 @@ msgid "Your account"
 msgstr ""
 
 #: templates/place/_place_cards.html:14
-msgid ""
-"\n"
+msgid "\n"
 "                  Work\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Works\n"
 "                "
 msgstr[0] ""
 msgstr[1] ""
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                  Task\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Tasks\n"
 "                "
 msgstr[0] ""
@@ -2292,12 +2287,10 @@ msgid "As at date"
 msgstr ""
 
 #: templates/place/_place_cards.html:43
-msgid ""
-"\n"
+msgid "\n"
 "                  Page\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Pages\n"
 "                "
 msgstr[0] ""
@@ -2621,3 +2614,4 @@ msgstr ""
 #, python-format
 msgid "The %(INDIGO_ORGANISATION)s Team"
 msgstr ""
+

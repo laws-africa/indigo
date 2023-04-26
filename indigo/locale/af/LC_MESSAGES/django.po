@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-04-26 15:36\n"
+"PO-Revision-Date: 2023-04-26 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -23,11 +23,11 @@ msgstr "Wet"
 
 #: analysis/toc/base.py:14
 msgid "Article"
-msgstr ""
+msgstr "Artikel"
 
 #: analysis/toc/base.py:15
 msgid "By-law"
-msgstr ""
+msgstr "Verordening"
 
 #: analysis/toc/base.py:16
 msgid "Chapter"
@@ -51,7 +51,7 @@ msgstr "Afdeling"
 
 #: analysis/toc/base.py:21
 msgid "Preface"
-msgstr ""
+msgstr "Voorwoord"
 
 #: analysis/toc/base.py:22
 msgid "Preamble"

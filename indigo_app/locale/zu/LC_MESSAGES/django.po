@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-04-26 15:37\n"
+"PO-Revision-Date: 2023-04-26 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -43,7 +43,7 @@ msgstr ""
 #: templates/indigo_api/work_batch_create.html:55
 #: templates/indigo_api/work_commencements.html:88
 msgid "Note:"
-msgstr ""
+msgstr "Qaphela:"
 
 #: templates/account/email.html:19
 msgid "We only send email notifications to your <strong>primary</strong> email address."
@@ -61,7 +61,7 @@ msgstr ""
 #: templates/indigo_api/work_batch_update.html:45
 #: templates/indigo_api/work_batch_update.html:123
 msgid "Status"
-msgstr ""
+msgstr "Isimo"
 
 #: templates/account/email.html:45
 msgid "verified"
@@ -1722,7 +1722,7 @@ msgstr ""
 
 #: templates/indigo_api/work_overview.html:94
 msgid "Not commenced"
-msgstr ""
+msgstr "Ayikaqali"
 
 #: templates/indigo_api/work_overview.html:98
 msgid "Up to date as at"
@@ -1799,7 +1799,7 @@ msgstr[1] ""
 #: templates/indigo_api/work_popup.html:25
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Yasayindwa ngomhla zingu %(date)s"
 
 #: templates/indigo_api/work_popup.html:36
 #, python-format

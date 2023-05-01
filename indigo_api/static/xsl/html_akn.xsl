@@ -87,6 +87,10 @@
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
       <h2>
+        <xsl:if test="self::a:book">
+          <!-- TODO: add translations; use choose (see chapter) -->
+          <xsl:text>Book </xsl:text>
+        </xsl:if>
         <xsl:if test="self::a:chapter">
           <xsl:choose>
             <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
@@ -103,6 +107,14 @@
             <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
             <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
           </xsl:choose>
+        </xsl:if>
+        <xsl:if test="self::a:title">
+          <!-- TODO: add translations; use choose (see chapter) -->
+          <xsl:text>Title </xsl:text>
+        </xsl:if>
+        <xsl:if test="self::a:tome">
+          <!-- TODO: add translations; use choose (see chapter) -->
+          <xsl:text>Tome </xsl:text>
         </xsl:if>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading">

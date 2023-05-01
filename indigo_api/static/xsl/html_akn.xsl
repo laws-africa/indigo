@@ -207,8 +207,8 @@
     </section>
   </xsl:template>
 
-  <!-- subsections, subrules, paragraphs and subparagraphs follow the same pattern wrt headings and footnotes to headings -->
-  <xsl:template match="a:subsection | a:paragraph | a:subparagraph | a:subrule">
+  <!-- generic hierarchical elements are all styled the same -->
+  <xsl:template match="a:alinea | a:indent | a:level | a:list | a:paragraph  | a:point | a:proviso | a:sublist | a:subparagraph | a:subrule | a:subsection | a:transitional">
     <section>
       <xsl:call-template name="class"/>
       <!-- indented elements without numbers should not be indented -->

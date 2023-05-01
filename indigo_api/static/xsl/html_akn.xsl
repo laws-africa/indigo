@@ -55,32 +55,6 @@
     </xsl:attribute>
   </xsl:template>
 
-  <xsl:template match="a:article">
-    <section>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="a:num" />
-        <xsl:if test="./a:heading">
-          <br/>
-        </xsl:if>
-        <xsl:apply-templates select="a:heading" mode="inline" />
-      </h2>
-      <xsl:apply-templates select="a:subheading"/>
-
-      <!-- note comes after heading, so not in bold, etc. -->
-      <xsl:apply-templates select="a:heading//a:authorialNote | a:subheading//a:authorialNote" mode="content"/>
-
-      <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
-    </section>
-  </xsl:template>
-
   <!-- containers with headings on the next line -->
   <xsl:template name="container-1">
     <section>
@@ -141,6 +115,14 @@
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
       <h2>
+        <xsl:if test="self::a:article">
+          <xsl:choose>
+            <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
+            <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
         <xsl:if test="self::a:part">
           <xsl:choose>
             <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
@@ -173,7 +155,7 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="a:part">
+  <xsl:template match="a:article | a:part">
     <xsl:call-template name="container-2"/>
   </xsl:template>
 

@@ -109,7 +109,7 @@
     <xsl:call-template name="container-1"/>
   </xsl:template>
 
-  <!-- containers with headings after a dash -->
+  <!-- containers with headings after an optional dash -->
   <xsl:template name="container-2">
     <section>
       <xsl:call-template name="class"/>
@@ -146,7 +146,14 @@
         </xsl:if>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading">
-          <xsl:text> – </xsl:text>
+          <!-- final character of num (if there is one) -->
+          <xsl:variable name="terminus">
+            <xsl:value-of select="substring(a:num, string-length(a:num))"/>
+          </xsl:variable>
+          <xsl:if test="not($terminus='.' or $terminus=':')">
+            <xsl:text> –</xsl:text>
+          </xsl:if>
+          <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
@@ -171,7 +178,14 @@
       <h2>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading and ./a:num">
-          <xsl:text> – </xsl:text>
+          <!-- final character of num (if there is one) -->
+          <xsl:variable name="terminus">
+            <xsl:value-of select="substring(a:num, string-length(a:num))"/>
+          </xsl:variable>
+          <xsl:if test="not($terminus='.' or $terminus=':')">
+            <xsl:text> –</xsl:text>
+          </xsl:if>
+          <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>

@@ -152,7 +152,7 @@
   </xsl:template>
 
   <!-- generic hierarchical elements with headings -->
-  <xsl:template match="a:division | a:subdivision | a:subpart">
+  <xsl:template match="a:division | a:subchapter | a:subclause | a:subdivision | a:subpart | a:subtitle">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />

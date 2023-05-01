@@ -135,26 +135,29 @@
     <xsl:call-template name="container-1"/>
   </xsl:template>
 
-  <xsl:template match="a:part">
+  <!-- containers with headings after a dash -->
+  <xsl:template name="container-2">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
-        </xsl:choose>
+        <xsl:if test="self::a:part">
+          <xsl:choose>
+            <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
+            <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading">
           <xsl:text> – </xsl:text>
@@ -168,6 +171,10 @@
 
       <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
     </section>
+  </xsl:template>
+
+  <xsl:template match="a:part">
+    <xsl:call-template name="container-2"/>
   </xsl:template>
 
   <!-- generic hierarchical elements with headings -->

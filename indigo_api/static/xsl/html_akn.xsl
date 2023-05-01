@@ -261,12 +261,28 @@
     <xsl:apply-templates select=".//a:authorialNote" mode="content"/>
   </xsl:template>
 
+  <xsl:template name="subheading">
+    <xsl:call-template name="class"/>
+    <xsl:apply-templates select="@*"/>
+    <xsl:apply-templates/>
+  </xsl:template>
+
   <xsl:template match="a:subheading">
-    <h3>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <xsl:apply-templates />
-    </h3>
+    <xsl:choose>
+      <!-- container subheadings are h3 -->
+      <!-- TODO: simplify this? -->
+      <xsl:when test="parent::a:article | parent::a:book | parent::a:chapter | parent::a:clause | parent::a:division | parent::a:part | parent::a:subchapter | parent::a:subclause | parent::a:subdivision | parent::a:subpart | parent::a:subtitle | parent::a:title | parent::a:tome">
+        <h3>
+          <xsl:call-template name="subheading"/>
+        </h3>
+      </xsl:when>
+      <!-- all other subheadings are h4 -->
+      <xsl:otherwise>
+        <h4>
+          <xsl:call-template name="subheading"/>
+        </h4>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- block quotes -->

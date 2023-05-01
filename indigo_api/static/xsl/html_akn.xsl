@@ -109,6 +109,19 @@
     <xsl:call-template name="container-1"/>
   </xsl:template>
 
+  <xsl:template name="optional-dash">
+    <!-- the num of the element -->
+    <xsl:param name="num"/>
+    <!-- final character of num (if there is one) -->
+    <xsl:variable name="terminus">
+      <xsl:value-of select="substring($num, string-length($num))"/>
+    </xsl:variable>
+    <xsl:if test="not($terminus='.' or $terminus=':')">
+      <xsl:text> –</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+
   <!-- containers with headings after an optional dash -->
   <xsl:template name="container-2">
     <section>
@@ -146,14 +159,9 @@
         </xsl:if>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading">
-          <!-- final character of num (if there is one) -->
-          <xsl:variable name="terminus">
-            <xsl:value-of select="substring(a:num, string-length(a:num))"/>
-          </xsl:variable>
-          <xsl:if test="not($terminus='.' or $terminus=':')">
-            <xsl:text> –</xsl:text>
-          </xsl:if>
-          <xsl:text> </xsl:text>
+          <xsl:call-template name="optional-dash">
+            <xsl:with-param name="num" select="a:num"/>
+          </xsl:call-template>
         </xsl:if>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
@@ -178,14 +186,9 @@
       <h2>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading and ./a:num">
-          <!-- final character of num (if there is one) -->
-          <xsl:variable name="terminus">
-            <xsl:value-of select="substring(a:num, string-length(a:num))"/>
-          </xsl:variable>
-          <xsl:if test="not($terminus='.' or $terminus=':')">
-            <xsl:text> –</xsl:text>
-          </xsl:if>
-          <xsl:text> </xsl:text>
+          <xsl:call-template name="optional-dash">
+            <xsl:with-param name="num" select="a:num"/>
+          </xsl:call-template>
         </xsl:if>
         <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>

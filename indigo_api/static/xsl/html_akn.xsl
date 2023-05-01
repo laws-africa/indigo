@@ -123,6 +123,10 @@
             <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
           </xsl:choose>
         </xsl:if>
+        <xsl:if test="self::a:clause">
+          <!-- TODO: add translations; use choose (see article) -->
+          <xsl:text>Clause </xsl:text>
+        </xsl:if>
         <xsl:if test="self::a:part">
           <xsl:choose>
             <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
@@ -155,7 +159,7 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="a:article | a:part">
+  <xsl:template match="a:article | a:clause | a:part">
     <xsl:call-template name="container-2"/>
   </xsl:template>
 

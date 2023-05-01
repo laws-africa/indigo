@@ -119,7 +119,7 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="a:chapter">
+  <xsl:template match="a:book | a:chapter | a:title | a:tome">
     <xsl:call-template name="container-1"/>
   </xsl:template>
 

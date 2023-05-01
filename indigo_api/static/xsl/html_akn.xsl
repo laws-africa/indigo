@@ -81,26 +81,29 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="a:chapter">
+  <!-- containers with headings on the next line -->
+  <xsl:template name="container-1">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
-        </xsl:choose>
+        <xsl:if test="self::a:chapter">
+          <xsl:choose>
+            <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
+            <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
+            <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
         <xsl:value-of select="a:num" />
         <xsl:if test="./a:heading">
           <br/>
@@ -114,6 +117,10 @@
 
       <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
     </section>
+  </xsl:template>
+
+  <xsl:template match="a:chapter">
+    <xsl:call-template name="container-1"/>
   </xsl:template>
 
   <xsl:template match="a:part">

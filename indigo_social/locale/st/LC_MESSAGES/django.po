@@ -1,0 +1,196 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-25 17:12+0200\n"
+"PO-Revision-Date: 2023-05-02 15:21\n"
+"Last-Translator: \n"
+"Language-Team: Southern Sotho\n"
+"Language: st_ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: st\n"
+"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 143\n"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:32
+msgid "Email"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:35
+msgid "manage your email addresses"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:42
+msgid "Tell us a bit about yourself"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:64
+msgid "Are you sure you want to remove your profile photo?"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:70
+msgid "Upload a photo"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:72
+msgid "A square photo at least 200 pixels wide is best."
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:88
+msgid "Professional skills"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:95
+msgid "What organisations do you work for or with?"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:157
+msgid "Social media profiles"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:195
+msgid "Save"
+msgstr ""
+
+#: templates/indigo_app/user_account/edit.html:196
+msgid "View my profile"
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:7
+#: templates/indigo_social/badges.html:4 templates/indigo_social/badges.html:7
+#: templates/indigo_social/badges.html:16
+msgid "Badges"
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:25
+msgid "Awarded to"
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:31
+#, python-format
+msgid "%(ts)s ago"
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:36
+msgid "No-one has been awarded this badge."
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:42
+msgid "Permissions granted by this badge"
+msgstr ""
+
+#: templates/indigo_social/badge_detail.html:57
+#, python-format
+msgid "Users awarded this badge are added to the <a href=\"%(url)s\">%(name)s group</a>."
+msgstr ""
+
+#: templates/indigo_social/badges.html:18
+msgid "Badges indicate expertise and are earned by completing tasks."
+msgstr ""
+
+#: templates/indigo_social/contributors.html:4
+#: templates/indigo_social/contributors.html:6
+#: templates/indigo_social/contributors.html:12
+#: templates/indigo_social/user_layout.html:7
+msgid "Contributors"
+msgstr ""
+
+#: templates/indigo_social/user_activity.html:6
+#: templates/indigo_social/user_layout.html:92
+msgid "Activity"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:56
+msgid "Organisations"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:61
+msgid "Skills"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:66
+msgid "Qualifications"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:71
+msgid "Specialisations"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:76
+msgid "Areas of law"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:82
+msgid "Edit profile"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:89
+msgid "Overview"
+msgstr ""
+
+#: templates/indigo_social/user_layout.html:95
+msgid "Tasks"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:8
+msgid "Achievements"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:16
+msgid "No badges earned yet"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:26
+msgid "Award a new badge to this user:"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:33
+#: templates/indigo_social/user_profile.html:48
+msgid "Are you sure?"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:33
+msgid "Award badge"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:48
+msgid "Remove badge"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:55
+msgid "Recent activity"
+msgstr ""
+
+#: templates/indigo_social/user_profile.html:60
+msgid "More activity"
+msgstr ""
+
+#: templates/main.html:14
+msgid "Profile"
+msgstr ""
+
+#: templates/main.html:15
+msgid "Account"
+msgstr ""
+
+#: templates/main.html:19
+msgid "Site settings"
+msgstr ""
+
+#: templates/main.html:23
+msgid "Log out"
+msgstr ""
+
+#: templates/main.html:27
+msgid "Log in"
+msgstr ""
+

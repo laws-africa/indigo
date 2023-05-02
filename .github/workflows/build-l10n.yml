@@ -1,9 +1,13 @@
-name: Build
+name: Build l10n
 
 on:
   push:
     branches:
       - l10n_master
+
+concurrency:
+  group: ${{ github.action }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:

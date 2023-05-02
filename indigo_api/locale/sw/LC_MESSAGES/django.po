@@ -1,201 +1,201 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-02 13:04+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2023-04-25 17:06+0200\n"
+"PO-Revision-Date: 2023-05-02 15:21\n"
+"Last-Translator: \n"
+"Language-Team: Swahili\n"
+"Language: sw_KE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: sw\n"
+"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 139\n"
 
 #: models/documents.py:270
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii kutoka %(start)s na linajumuisha marekebisho yoyote yaliyochapishwa hadi %(end)s."
 
 #: models/documents.py:272
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii kutoka %(start)s."
 
 #: models/documents.py:275
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii katika %(start)s na linajumuisha marekebisho yoyote yaliyochapishwa hadi %(end)s."
 
 #: models/documents.py:277
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii katika %(start)s."
 
 #: models/documents.py:280
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii kama ilivyokuwa kutoka %(start)s hadi %(end)s."
 
 #: models/documents.py:283
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii kama ilivyokuwa %(start)s hadi %(end)s."
 
 #: models/documents.py:286
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Hili ni toleo la hati hii kama ilivyokuwa %(start)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "Kumbuka: Hati asili ya uchapishaji haipatikani na maudhui haya hayakuweza kuthibitishwa."
 
 #: models/tasks.py:233
 msgid "Are you sure you want to submit this task for review?"
-msgstr ""
+msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi?"
 
 #: models/tasks.py:235
 #, python-format
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
-msgstr ""
+msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi kwa niaba ya %s?"
 
 #: models/works.py:419
 #, python-format
 msgid "No such locality for this country: %s"
-msgstr ""
+msgstr "Hakuna eneo kama hilo kwa nchi hii: %s"
 
 #: models/works.py:429
 msgid "Invalid FRBR URI"
-msgstr ""
+msgstr "URI ya FRBR si sahihi"
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> hadi <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwenye <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Imebatilishwa na <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> kwenye <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Imebatilishwa na <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> kwenye <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr ""
+msgstr "Imechapishwa katika nambari %(name)s . %(number)s kwa %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:41
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Imechapishwa katika %(name)s kwa %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:51
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Imeidhinishwa tarehe %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:59
 msgid "Not commenced"
-msgstr ""
+msgstr "Haijaanza"
 
 #: templates/indigo_api/akn/coverpage_act.html:65
 #: templates/indigo_api/akn/coverpage_act.html:102
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Tarehe ya kuanza haijulikani"
 
 #: templates/indigo_api/akn/coverpage_act.html:67
 #: templates/indigo_api/akn/coverpage_act.html:104
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Ilianza tarehe %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:75
 #: templates/indigo_api/akn/coverpage_act.html:112
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "- ilianza na <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:77
 #: templates/indigo_api/akn/coverpage_act.html:114
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "- ilianza na <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:81
 #: templates/indigo_api/akn/coverpage_act.html:118
 #: templates/indigo_api/akn/coverpage_act.html:164
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "kwa <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:83
 #: templates/indigo_api/akn/coverpage_act.html:120
 #: templates/indigo_api/akn/coverpage_act.html:166
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "kwa <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:133
 msgid "There are multiple commencements:"
-msgstr ""
+msgstr "Kuna mengi ya kuanza:"
 
 #: templates/indigo_api/akn/coverpage_act.html:138
 msgid "Provisions"
-msgstr ""
+msgstr "Masharti"
 
 #: templates/indigo_api/akn/coverpage_act.html:139
 msgid "Status"
-msgstr ""
+msgstr "Hali"
 
 #: templates/indigo_api/akn/coverpage_act.html:150
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Vifungu visivyojulikana"
 
 #: templates/indigo_api/akn/coverpage_act.html:155
 #, python-format
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "ilianza tarehe %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:157
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "ilianza tarehe <i>(tarehe isiyojulikana)</i>"
 
 #: templates/indigo_api/akn/coverpage_act.html:172
 msgid "Note:"
-msgstr ""
+msgstr "Kumbuka:"
 
 #: templates/indigo_api/akn/coverpage_act.html:184
 msgid "not yet commenced"
-msgstr ""
+msgstr "bado haijaanza"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Jedwali la Yaliyomo"
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
-msgstr ""
+msgstr "FUTA hairuhusiwi kwa hati zilizochapishwa, weka alama kama rasimu kwanza."
 
 #: views/documents.py:207
 msgid "Cannot create a task for a reply annotation."
-msgstr ""
+msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 
 #: views/documents.py:357
 msgid "Error during import"
-msgstr ""
+msgstr "Hitilafu wakati wa kuingiza"
+

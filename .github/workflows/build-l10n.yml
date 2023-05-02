@@ -6,7 +6,7 @@ on:
       - l10n_master
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.action }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

@@ -72,15 +72,17 @@ PART A - Interpretation
 
       ITEM (a)
 
-        bring to the attention of all or part of the public—
+        ITEMS 
 
-        ITEM (i)
+          bring to the attention of all or part of the public—
 
-          the existence or identity of a supplier; or
+          ITEM (i)
 
-        ITEM (ii)
+            the existence or identity of a supplier; or
 
-          the existence, nature, availability, properties, advantages or uses of any goods or services that are available for supply, or the conditions on, or prices at, which any goods or services are available for supply;
+          ITEM (ii)
+
+            the existence, nature, availability, properties, advantages or uses of any goods or services that are available for supply, or the conditions on, or prices at, which any goods or services are available for supply;
 
       ITEM (b)
 
@@ -132,15 +134,17 @@ PART A - Interpretation
 
       ITEM (b)
 
-        the Commission in respect of a complaint that it has initiated, either directly or at the—
+        ITEMS 
 
-        ITEM (i)
+          the Commission in respect of a complaint that it has initiated, either directly or at the—
 
-          direction of the Minister in terms of section 86(b); or
+          ITEM (i)
 
-        ITEM (ii)
+            direction of the Minister in terms of section 86(b); or
 
-          request of a provincial consumer protection authority or other regulatory authority, as the case may be;
+          ITEM (ii)
+
+            request of a provincial consumer protection authority or other regulatory authority, as the case may be;
 
     ITEMS 
 
@@ -320,15 +324,17 @@ PART A - Interpretation
 
       ITEM (b)
 
-        authorised by another person to—
+        ITEMS 
 
-        ITEM (i)
+          authorised by another person to—
 
-          access any facility or use any goods; or
+          ITEM (i)
 
-        ITEM (ii)
+            access any facility or use any goods; or
 
-          supply any goods or services;
+          ITEM (ii)
+
+            supply any goods or services;
 
     ITEMS 
 
@@ -454,15 +460,17 @@ PART A - Interpretation
 
       ITEM (c)
 
-        any banking services, or related or similar financial services, or the undertaking, underwriting or assumption of any risk by one person on behalf of another, except to the extent that any such service—
+        ITEMS 
 
-        ITEM (i)
+          any banking services, or related or similar financial services, or the undertaking, underwriting or assumption of any risk by one person on behalf of another, except to the extent that any such service—
 
-          constitutes advice or intermediary services that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002); or
+          ITEM (i)
 
-        ITEM (ii)
+            constitutes advice or intermediary services that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002); or
 
-          is regulated in terms of the Long-term Insurance Act, 1998 (Act No. 52 of 1998), or the Short-term Insurance Act, 1998 (Act No. 53 of 1998);
+          ITEM (ii)
+
+            is regulated in terms of the Long-term Insurance Act, 1998 (Act No. 52 of 1998), or the Short-term Insurance Act, 1998 (Act No. 53 of 1998);
 
       ITEM (d)
 
@@ -470,27 +478,29 @@ PART A - Interpretation
 
       ITEM (e)
 
-        the provision of—
+        ITEMS 
 
-        ITEM (i)
+          the provision of—
 
-          any accommodation or sustenance;
+          ITEM (i)
 
-        ITEM (ii)
+            any accommodation or sustenance;
 
-          any entertainment or similar intangible product or access to any such entertainment or intangible product;
+          ITEM (ii)
 
-        ITEM (iii)
+            any entertainment or similar intangible product or access to any such entertainment or intangible product;
 
-          access to any electronic communication infrastructure;
+          ITEM (iii)
 
-        ITEM (iv)
+            access to any electronic communication infrastructure;
 
-          access, or of a right of access, to an event or to any premises, activity or facility; or
+          ITEM (iv)
 
-        ITEM (v)
+            access, or of a right of access, to an event or to any premises, activity or facility; or
 
-          access to or use of any premises or other property in terms of a rental;
+          ITEM (v)
+
+            access to or use of any premises or other property in terms of a rental;
 
       ITEM (f)
 
@@ -530,31 +540,33 @@ PART A - Interpretation
 
       ITEM (a)
 
-        any description, statement or other direct or indirect indication, other than a trade mark, as to—
+        ITEMS 
 
-        ITEM (i)
+          any description, statement or other direct or indirect indication, other than a trade mark, as to—
 
-          the number, quantity, measure, weight or gauge of any goods;
+          ITEM (i)
 
-        ITEM (ii)
+            the number, quantity, measure, weight or gauge of any goods;
 
-          the name of the producer or producer of any goods;
+          ITEM (ii)
 
-        ITEM (iii)
+            the name of the producer or producer of any goods;
 
-          the ingredients of which any goods consist, or material of which any goods are made;
+          ITEM (iii)
 
-        ITEM (iv)
+            the ingredients of which any goods consist, or material of which any goods are made;
 
-          the place or country of origin of any goods;
+          ITEM (iv)
 
-        ITEM (v)
+            the place or country of origin of any goods;
 
-          the mode of manufacturing or producing any goods; or
+          ITEM (v)
 
-        ITEM (vi)
+            the mode of manufacturing or producing any goods; or
 
-          any goods being the subject of any patent, privilege or copyright; or
+          ITEM (vi)
+
+            any goods being the subject of any patent, privilege or copyright; or
 
       ITEM (b)
 
@@ -578,19 +590,21 @@ PART A - Interpretation
 
       ITEM (a)
 
-        in respect of a person acting in the ordinary course of business—
+        ITEMS 
 
-        ITEM (i)
+          in respect of a person acting in the ordinary course of business—
 
-          an agreement between or among that person and one or more other persons for the supply or potential supply of any goods or services in exchange for consideration; or
+          ITEM (i)
 
-        ITEM (ii)
+            an agreement between or among that person and one or more other persons for the supply or potential supply of any goods or services in exchange for consideration; or
 
-          the supply by that person of any goods to or at the direction of a consumer for consideration; or
+          ITEM (ii)
 
-        ITEM (iii)
+            the supply by that person of any goods to or at the direction of a consumer for consideration; or
 
-          the performance by, or at the direction of, that person of any services for or at the direction of a consumer for consideration; or
+          ITEM (iii)
+
+            the performance by, or at the direction of, that person of any services for or at the direction of a consumer for consideration; or
 
       ITEM (b)
 

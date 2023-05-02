@@ -1,7 +1,6 @@
 import re
 
 from docpipe.pipeline import Stage, Pipeline
-
 from indigo.pipelines.base import chomp_left, is_centered
 
 
@@ -775,10 +774,10 @@ class ConvertParasToBlocklists(Stage):
     1. identify akn-block elements whose direct children must be adjusted
     2. adjust the children from paragraphs into blocklists
 
-    The akn-blocks that must be changed have:
+    The akn-blocks that must be changed:
 
-    1. paragraphs (akn-block[@name=PARAGRAPH]), and
-    2. either multiple consecutive plain-text P elements, or paragraphs with repeating numbers.
+    1. are paragraphs (akn-block[@name=PARAGRAPH]), and
+    2. have either multiple consecutive plain-text P elements, or paragraphs with repeating numbers.
     """
 
     def __call__(self, context):
@@ -813,39 +812,63 @@ class ConvertParasToBlocklists(Stage):
         # make an ITEMS block
         items = para.makeelement('akn-block', name="ITEMS")
 
-        # intro
+        # make the preceding P tag the intro for the ITEMS block
         prev = para.getprevious()
         if prev is not None and prev.tag == 'p':
             items.append(prev)
 
+        # add the new ITEMS block to the tree just before para
         para.addprevious(items)
 
-        # work out what should be a part of this ITEMS block
-        while para is not None and para.tag == 'akn-block' and para.attrib['name'] == 'PARAGRAPH':
+        # move children and siblings of para into the new ITEMS block until it looks like the block should finish,
+        # which is when we encounter the second non-block element (eg. two P tags)
+        while para is not None and para.tag == 'akn-block' and para.attrib['name'].endswith('PARAGRAPH'):
+            # stash this so that we move onto it next, because we're going to move para into ITEMS
             next_para = para.getnext()
+
+            # move this para into the ITEMS block
             items.append(para)
 
             # keep children of this paragraph until we find the second non-block content, at which point
-            # stop -- the remaining content should be "unindented" and made a sibling of the ITEMS block
-            found_non_block = False
+            # stop -- the remaining content should be "unindented" by moving it out of the ITEMS block and putting
+            # it afterwards, as a sibling
+            #
+            # For example, we move paragraph (c) and (d) in, but then stop at "Agent of a licensee:
+            #
+            #   PARAGRAPH (c)
+            #
+            #     a game of chance such as lotto, keno or Powerball in which persons choose or attempt to forecast, ...
+            #
+            #   PARAGRAPH (d)
+            #
+            #     the game known as soccer football pool in which persons choose or attempt to forecast, from ...
+            #
+            #     "Agent of a licensee" means an agent appointed or approved in accordance with the conditions of ...
 
-            for kid in para:
+            found_non_block = False
+            kids = list(para)
+            kid = kids[0] if kids else None
+            while kid is not None:
                 if kid.tag != 'akn-block':
                     if not found_non_block:
                         # first non-block element we've seen
                         found_non_block = True
                     else:
                         # this is the second non-block element, we've reached the end of this ITEMS block
-                        # everything from kid onwards must be moved to after the items block
+                        # everything from kid onwards must be moved to after the ITEMS block
                         for sibling in reversed(list(kid.itersiblings())):
                             items.addnext(sibling)
                         items.addnext(kid)
                         next_para = None
                         break
+                elif kid.attrib['name'].endswith('PARAGRAPH'):
+                    # recursively do the same for this (sub)paragraph
+                    kid = self.make_items(kid)
+                kid = kid.getnext()
             para = next_para
 
         # rewrite all nested blocks to ITEM
-        for b in items.xpath('.//akn-block'):
+        for b in items.xpath('.//akn-block[@name != "ITEMS"]'):
             b.attrib['name'] = 'ITEM'
 
         return items
@@ -873,7 +896,7 @@ hierarchicalize = Pipeline([
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.
-    # Do Body first, then Preamble, then Preface, because each will be the first akn-block once it's been recognised.
+    # Do Preamble first because it comes after the Preface (and will be an akn-block by the time it's been recognised).
     IdentifyBody(),
     IdentifyPreamble(),
     IdentifyPreface(),

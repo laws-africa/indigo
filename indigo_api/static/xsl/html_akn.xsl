@@ -55,8 +55,10 @@
     </xsl:attribute>
   </xsl:template>
 
-  <!-- containers with headings on the next line -->
-  <xsl:template name="container-1">
+  <!-- hierarchical elements with h2 headings:
+       - name, e.g. 'Chapter', and num on one line
+       - heading on the next -->
+  <xsl:template name="hier-heading-next-line">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
@@ -106,7 +108,7 @@
   </xsl:template>
 
   <xsl:template match="a:book | a:chapter | a:title | a:tome">
-    <xsl:call-template name="container-1"/>
+    <xsl:call-template name="hier-heading-next-line"/>
   </xsl:template>
 
   <xsl:template name="optional-dash">
@@ -122,8 +124,13 @@
     <xsl:text> </xsl:text>
   </xsl:template>
 
-  <!-- containers with headings after an optional dash -->
-  <xsl:template name="container-2">
+  <!-- hierarchical elements with h2 headings:
+       - name, e.g. 'Part'
+       - num
+       - optional dash, if num doesn't end in "." or ":"
+       - heading
+       on one line -->
+  <xsl:template name="hier-heading-same-line">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
@@ -175,11 +182,15 @@
   </xsl:template>
 
   <xsl:template match="a:article | a:clause | a:part">
-    <xsl:call-template name="container-2"/>
+    <xsl:call-template name="hier-heading-same-line"/>
   </xsl:template>
 
-  <!-- generic hierarchical elements with headings -->
-  <xsl:template match="a:division | a:subchapter | a:subclause | a:subdivision | a:subpart | a:subtitle">
+  <!-- other hierarchical elements with h2 headings:
+       - num
+       - optional dash, if num doesn't end in "." or ":"
+       - heading
+       on one line -->
+  <xsl:template name="hier-heading-same-line-no-name">
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
@@ -199,6 +210,10 @@
 
       <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
     </section>
+  </xsl:template>
+
+  <xsl:template match="a:division | a:subchapter | a:subclause | a:subdivision | a:subpart | a:subtitle">
+    <xsl:call-template name="hier-heading-same-line-no-name"/>
   </xsl:template>
 
   <!-- hierarchical and speech hierarchical (and container) elements with optional num, heading and subheading -->

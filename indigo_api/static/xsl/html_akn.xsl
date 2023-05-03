@@ -55,23 +55,27 @@
     </xsl:attribute>
   </xsl:template>
 
-  <xsl:template match="a:article">
+  <!-- 'hier-heading-' meta template; the different styles determine the content of the h2 -->
+  <xsl:template name="hier-heading">
+    <xsl:param name="hier-heading-style"/>
     <section>
       <xsl:call-template name="class"/>
       <xsl:apply-templates select="@*" />
+
       <h2>
         <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
+          <xsl:when test="$hier-heading-style='hier-heading-next-line'">
+            <xsl:call-template name="hier-heading-next-line"/>
+          </xsl:when>
+          <xsl:when test="$hier-heading-style='hier-heading-same-line'">
+            <xsl:call-template name="hier-heading-same-line"/>
+          </xsl:when>
+          <xsl:when test="$hier-heading-style='hier-heading-same-line-no-name'">
+            <xsl:call-template name="hier-heading-same-line-no-name"/>
+          </xsl:when>
         </xsl:choose>
-        <xsl:value-of select="a:num" />
-        <xsl:if test="./a:heading">
-          <br/>
-        </xsl:if>
-        <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
+
       <xsl:apply-templates select="a:subheading"/>
 
       <!-- note comes after heading, so not in bold, etc. -->
@@ -81,95 +85,136 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="a:chapter">
-    <section>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="a:num" />
-        <xsl:if test="./a:heading">
-          <br/>
-        </xsl:if>
-        <xsl:apply-templates select="a:heading" mode="inline" />
-      </h2>
-      <xsl:apply-templates select="a:subheading"/>
-
-      <!-- note comes after heading, so not in bold, etc. -->
-      <xsl:apply-templates select="a:heading//a:authorialNote | a:subheading//a:authorialNote" mode="content"/>
-
-      <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
-    </section>
+  <!-- hierarchical elements with h2 headings:
+       - name, e.g. 'Chapter', and num on one line
+       - heading on the next -->
+  <xsl:template name="hier-heading-next-line">
+    <xsl:if test="self::a:book">
+      <!-- TODO: add translations; use choose (see chapter) -->
+      <xsl:text>Book </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:chapter">
+      <xsl:choose>
+        <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:title">
+      <!-- TODO: add translations; use choose (see chapter) -->
+      <xsl:text>Title </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:tome">
+      <!-- TODO: add translations; use choose (see chapter) -->
+      <xsl:text>Tome </xsl:text>
+    </xsl:if>
+    <xsl:value-of select="a:num" />
+    <xsl:if test="./a:heading">
+      <br/>
+    </xsl:if>
+    <xsl:apply-templates select="a:heading" mode="inline" />
   </xsl:template>
 
-  <xsl:template match="a:part">
-    <section>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="a:num" />
-        <xsl:if test="./a:heading">
-          <xsl:text> – </xsl:text>
-        </xsl:if>
-        <xsl:apply-templates select="a:heading" mode="inline" />
-      </h2>
-      <xsl:apply-templates select="a:subheading"/>
-
-      <!-- note comes after heading, so not in bold, etc. -->
-      <xsl:apply-templates select="a:heading//a:authorialNote | a:subheading//a:authorialNote" mode="content"/>
-
-      <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
-    </section>
+  <xsl:template match="a:book | a:chapter | a:title | a:tome">
+    <xsl:call-template name="hier-heading">
+      <xsl:with-param name="hier-heading-style">hier-heading-next-line</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
-  <!-- generic hierarchical elements with headings -->
-  <xsl:template match="a:division | a:subdivision | a:subpart">
-    <section>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <h2>
-        <xsl:value-of select="a:num" />
-        <xsl:if test="./a:heading and ./a:num">
-          <xsl:text> – </xsl:text>
-        </xsl:if>
-        <xsl:apply-templates select="a:heading" mode="inline" />
-      </h2>
-      <xsl:apply-templates select="a:subheading"/>
+  <!-- helper template used in each 'hier-heading-same-line' template -->
+  <xsl:template name="optional-dash">
+    <!-- the num of the element -->
+    <xsl:param name="num"/>
+    <!-- final character of num (if there is one) -->
+    <xsl:variable name="terminus">
+      <xsl:value-of select="substring($num, string-length($num))"/>
+    </xsl:variable>
+    <xsl:if test="not($terminus='.' or $terminus=':')">
+      <xsl:text> –</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+  </xsl:template>
 
-      <!-- note comes after heading, so not in bold, etc. -->
-      <xsl:apply-templates select="a:heading//a:authorialNote | a:subheading//a:authorialNote" mode="content"/>
+  <!-- hierarchical elements with h2 headings:
+       - name, e.g. 'Part'
+       - num
+       - optional dash, if num doesn't end in "." or ":"
+       - heading
+       on one line -->
+  <xsl:template name="hier-heading-same-line">
+    <xsl:if test="self::a:article">
+      <xsl:choose>
+        <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:clause">
+      <!-- TODO: add translations; use choose (see article) -->
+      <xsl:text>Clause </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:part">
+      <xsl:choose>
+        <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:value-of select="a:num" />
+    <xsl:if test="./a:heading">
+      <xsl:call-template name="optional-dash">
+        <xsl:with-param name="num" select="a:num"/>
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:apply-templates select="a:heading" mode="inline" />
+  </xsl:template>
 
-      <xsl:apply-templates select="./*[not(self::a:num | self::a:heading | self::a:subheading)]" />
-    </section>
+  <xsl:template match="a:article | a:clause | a:part">
+    <xsl:call-template name="hier-heading">
+      <xsl:with-param name="hier-heading-style">hier-heading-same-line</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- other hierarchical elements with h2 headings:
+       - num
+       - optional dash, if num doesn't end in "." or ":"
+       - heading
+       on one line -->
+  <xsl:template name="hier-heading-same-line-no-name">
+    <xsl:value-of select="a:num" />
+    <xsl:if test="./a:heading and ./a:num">
+      <xsl:call-template name="optional-dash">
+        <xsl:with-param name="num" select="a:num"/>
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:apply-templates select="a:heading" mode="inline" />
+  </xsl:template>
+
+  <xsl:template match="a:division | a:subchapter | a:subclause | a:subdivision | a:subpart | a:subtitle">
+    <xsl:call-template name="hier-heading">
+      <xsl:with-param name="hier-heading-style">hier-heading-same-line-no-name</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- hierarchical and speech hierarchical (and container) elements with optional num, heading and subheading -->
@@ -207,8 +252,8 @@
     </section>
   </xsl:template>
 
-  <!-- subsections, subrules, paragraphs and subparagraphs follow the same pattern wrt headings and footnotes to headings -->
-  <xsl:template match="a:subsection | a:paragraph | a:subparagraph | a:subrule">
+  <!-- generic hierarchical elements are all styled the same -->
+  <xsl:template match="a:alinea | a:indent | a:level | a:list | a:paragraph  | a:point | a:proviso | a:sublist | a:subparagraph | a:subrule | a:subsection | a:transitional">
     <section>
       <xsl:call-template name="class"/>
       <!-- indented elements without numbers should not be indented -->
@@ -232,12 +277,28 @@
     <xsl:apply-templates select=".//a:authorialNote" mode="content"/>
   </xsl:template>
 
+  <xsl:template name="subheading">
+    <xsl:call-template name="class"/>
+    <xsl:apply-templates select="@*"/>
+    <xsl:apply-templates/>
+  </xsl:template>
+
   <xsl:template match="a:subheading">
-    <h3>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates select="@*" />
-      <xsl:apply-templates />
-    </h3>
+    <xsl:choose>
+      <!-- container subheadings are h3 -->
+      <!-- TODO: simplify this? -->
+      <xsl:when test="parent::a:article | parent::a:book | parent::a:chapter | parent::a:clause | parent::a:division | parent::a:part | parent::a:subchapter | parent::a:subclause | parent::a:subdivision | parent::a:subpart | parent::a:subtitle | parent::a:title | parent::a:tome">
+        <h3>
+          <xsl:call-template name="subheading"/>
+        </h3>
+      </xsl:when>
+      <!-- all other subheadings are h4 -->
+      <xsl:otherwise>
+        <h4>
+          <xsl:call-template name="subheading"/>
+        </h4>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- block quotes -->

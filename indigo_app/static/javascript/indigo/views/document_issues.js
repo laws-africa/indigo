@@ -11,6 +11,7 @@
 
       initialize: function(options) {
         this.document = options.document;
+        this.attachments = this.document.attachments();
         this.documentContent = options.documentContent;
         this.editorView = options.editorView;
         this.model = this.document.issues;
@@ -21,6 +22,7 @@
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
         this.listenTo(this.model, 'reset change add remove', this.render);
         this.listenTo(this.documentContent, 'change', this.runLinters);
+        this.listenTo(this.attachments, 'reset change add remove', this.runLinters);
       },
 
       getLinters: function(document) {

@@ -269,6 +269,7 @@ class DailyPlaceMetrics(models.Model):
 class DocumentEditActivity(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='edit_activities')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    mode = models.CharField(max_length=20, null=True, blank=True, choices=[('text', 'text'), ('table', 'table')])
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField()
     duration_secs = models.IntegerField()

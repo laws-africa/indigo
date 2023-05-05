@@ -927,12 +927,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 task_preview += ' (BLOCKED)'
         row.tasks.append(task_preview)
 
-    def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
-        if self.dry_run:
-            return self.preview_task(row, task_type)
-
-        task = Task()
-
+    def add_task_title_description(self, task, work, row, task_type, repealing_work, repealed_work, amended_work, amendment, subleg, main_work):
         if task_type == 'link-gazette':
             task.title = _('Link gazette')
             task.description = _('''This work's gazette (original publication document) couldn't be linked automatically.
@@ -1142,11 +1137,17 @@ Possible reasons:
                 'row_num': row.row_number,
             }
 
+    def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
+        if self.dry_run:
+            return self.preview_task(row, task_type)
+
+        task = Task()
         task.country = self.country
         task.locality = self.locality
         task.work = work
         task.code = task_type
         task.created_by_user = self.user
+        self.add_task_title_description(task, work, row, task_type, repealing_work, repealed_work, amended_work, amendment, subleg, main_work)
 
         # save the task before updating it
         task.save()

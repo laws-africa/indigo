@@ -24,13 +24,14 @@ class BaseBulkCreatorTest(testcases.TestCase):
         settings.INDIGO['EXTRA_DOCTYPES']['za'] = [('Document', 'doc'), ('Report', 'debateReport'), ('Statement', 'statement')]
         self.creator = creator
 
-    def get_works(self, dry_run, filename):
+    def get_works(self, dry_run, filename, form_data=None):
+        form_data = form_data or {}
         file = os.path.join(os.path.dirname(__file__), filename)
         with open(file) as csv_file:
             content = csv_file.read()
             reader = csv.reader(io.StringIO(content))
             table = list(reader)
-            return self.creator.create_works(table, dry_run, {})
+            return self.creator.create_works(table, dry_run, form_data)
 
     def test_basic_preview(self):
         works = self.get_works(True, 'basic.csv')
@@ -170,6 +171,38 @@ class BaseBulkCreatorTest(testcases.TestCase):
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Import content', task_titles)
+
+    def test_block_cancel_preview(self):
+        works = self.get_works(True, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_gazette_tasks': True})
+
+        row1 = works[0]
+        self.assertEqual(['link gazette (CANCELLED)', 'import content (BLOCKED)'], row1.tasks)
+
+    def test_block_cancel_live(self):
+        self.get_works(False, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_gazette_tasks': True})
+
+        work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
+        import_task1 = work1.tasks.get(title='Import content')
+        gazette_task1 = work1.tasks.get(title='Link gazette')
+        self.assertEqual('blocked', import_task1.state)
+        self.assertEqual('cancelled', gazette_task1.state)
+
+    def test_block_and_cancel_preview(self):
+        """ Both blocking and cancelling a task results in it being cancelled.
+        """
+        works = self.get_works(True, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_import_tasks': True})
+
+        row1 = works[0]
+        self.assertEqual(['link gazette', 'import content (CANCELLED)'], row1.tasks)
+
+    def test_block_and_cancel_live(self):
+        """ Both blocking and cancelling a task results in it being cancelled.
+        """
+        self.get_works(False, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_import_tasks': True})
+
+        work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
+        import_task1 = work1.tasks.get(title='Import content')
+        self.assertEqual('cancelled', import_task1.state)
 
     def test_errors(self):
         jhb = Locality.objects.get(pk=1)

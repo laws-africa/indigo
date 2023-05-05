@@ -913,10 +913,23 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 except Task.DoesNotExist:
                     self.create_task(row.work, row, task_type='link-taxonomy')
 
+    def preview_task(self, row, task_type):
+        task_preview = task_type.replace('-', ' ')
+        if task_type == 'import-content':
+            if self.cancel_import_tasks:
+                task_preview += ' (CANCELLED)'
+            elif self.block_import_tasks:
+                task_preview += ' (BLOCKED)'
+        if task_type == 'link-gazette':
+            if self.cancel_gazette_tasks:
+                task_preview += ' (CANCELLED)'
+            elif self.block_gazette_tasks:
+                task_preview += ' (BLOCKED)'
+        row.tasks.append(task_preview)
+
     def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
         if self.dry_run:
-            row.tasks.append(task_type.replace('-', ' '))
-            return
+            return self.preview_task(row, task_type)
 
         task = Task()
 

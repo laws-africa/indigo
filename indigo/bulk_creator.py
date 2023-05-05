@@ -1148,11 +1148,29 @@ Possible reasons:
         task.code = task_type
         task.created_by_user = self.user
 
-        # need to save before assigning workflow because of M2M relation
+        # save the task before updating it
         task.save()
+        self.update_task(task, task_type)
+
+        return task
+
+    def update_task(self, task, task_type):
+        """ Update the task based on what was chosen in the form. """
         if self.workflow:
             task.workflows.set([self.workflow])
             task.save()
+
+        if task_type == 'import-content':
+            if self.block_import_tasks:
+                task.block(self.user)
+            if self.cancel_import_tasks:
+                task.cancel(self.user)
+
+        if task_type == 'link-gazette':
+            if self.block_gazette_tasks:
+                task.block(self.user)
+            if self.cancel_gazette_tasks:
+                task.cancel(self.user)
 
         if 'pending-commencement' in task_type:
             # add the `pending commencement` label, if it exists
@@ -1160,8 +1178,6 @@ Possible reasons:
             if pending_commencement_label:
                 task.labels.add(pending_commencement_label)
                 task.save()
-
-        return task
 
     def find_work(self, given_string):
         """ The string we get from the spreadsheet could be e.g.

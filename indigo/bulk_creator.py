@@ -216,6 +216,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
     is_consolidation = False
     consolidation_date = None
 
+    workflow = None
+    block_import_tasks = False
+    cancel_import_tasks = False
+    block_gazette_tasks = False
+    cancel_gazette_tasks = False
+
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
@@ -366,6 +372,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def create_works(self, table, dry_run, form_data):
         self.workflow = form_data.get('workflow')
+        self.block_import_tasks = form_data.get('block_import_tasks')
+        self.cancel_import_tasks = form_data.get('cancel_import_tasks')
+        self.block_gazette_tasks = form_data.get('block_gazette_tasks')
+        self.cancel_gazette_tasks = form_data.get('cancel_gazette_tasks')
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 

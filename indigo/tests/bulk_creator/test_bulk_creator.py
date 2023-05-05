@@ -968,6 +968,96 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Link amendment (pending commencement)', task_titles)
 
+    def test_link_amendments_active_block(self):
+        # preview
+        works = self.get_works(True, 'amendments_active.csv', {'block_amendment_tasks': True})
+        amend1 = works[1]
+        self.assertEqual(
+            ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported) and BLOCKED"],
+            amend1.notes)
+
+        amend2 = works[2]
+        self.assertEqual([
+            'Stub',
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported) and BLOCKED",
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1x – Other Main (about to be imported) and BLOCKED"],
+            amend2.notes)
+
+        # live
+        works = self.get_works(False, 'amendments_active.csv', {'block_amendment_tasks': True})
+        main = works[0].work
+        other_main = works[4].work
+
+        apply_amendment_tasks_main = main.tasks.filter(title='Apply amendment')
+        for t in apply_amendment_tasks_main:
+            self.assertEqual('blocked', t.state)
+
+        apply_amendment_task_other = other_main.tasks.get(title='Apply amendment')
+        self.assertEqual('blocked', apply_amendment_task_other.state)
+
+    def test_link_amendments_passive_block(self):
+        # preview
+        works = self.get_works(True, 'amendments_passive.csv', {'block_amendment_tasks': True})
+        main = works[0]
+        dupe1 = works[1]
+        dupe2 = works[2]
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and BLOCKED"], main.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and BLOCKED"], dupe1.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and BLOCKED"], dupe2.notes)
+
+        # live
+        works = self.get_works(False, 'amendments_passive.csv', {'block_amendment_tasks': True})
+        main = works[0]
+
+        apply_amendment_tasks_main = main.work.tasks.filter(title='Apply amendment')
+        for t in apply_amendment_tasks_main:
+            self.assertEqual('blocked', t.state)
+
+    def test_link_amendments_active_cancel(self):
+        # preview
+        works = self.get_works(True, 'amendments_active.csv', {'block_amendment_tasks': True, 'cancel_amendment_tasks': True})
+        amend1 = works[1]
+        self.assertEqual(
+            ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported) and CANCELLED"],
+            amend1.notes)
+
+        amend2 = works[2]
+        self.assertEqual([
+            'Stub',
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported) and CANCELLED",
+            "An 'Apply amendment' task will be created on /akn/za/act/2020/1x – Other Main (about to be imported) and CANCELLED"],
+            amend2.notes)
+
+        # live
+        works = self.get_works(False, 'amendments_active.csv', {'block_amendment_tasks': True, 'cancel_amendment_tasks': True})
+        main = works[0].work
+        other_main = works[4].work
+
+        apply_amendment_tasks_main = main.tasks.filter(title='Apply amendment')
+        for t in apply_amendment_tasks_main:
+            self.assertEqual('cancelled', t.state)
+
+        apply_amendment_task_other = other_main.tasks.get(title='Apply amendment')
+        self.assertEqual('cancelled', apply_amendment_task_other.state)
+
+    def test_link_amendments_passive_cancel(self):
+        # preview
+        works = self.get_works(True, 'amendments_passive.csv', {'block_amendment_tasks': True, 'cancel_amendment_tasks': True})
+        main = works[0]
+        dupe1 = works[1]
+        dupe2 = works[2]
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and CANCELLED"], main.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and CANCELLED"], dupe1.notes)
+        self.assertEqual(['Principal work', 'Duplicate in batch', "An 'Apply amendment' task will be created on this work and CANCELLED"], dupe2.notes)
+
+        # live
+        works = self.get_works(False, 'amendments_passive.csv', {'block_amendment_tasks': True, 'cancel_amendment_tasks': True})
+        main = works[0]
+
+        apply_amendment_tasks_main = main.work.tasks.filter(title='Apply amendment')
+        for t in apply_amendment_tasks_main:
+            self.assertEqual('cancelled', t.state)
+
     def test_link_repeals_passive(self):
         # preview
         works = self.get_works(True, 'repeals_passive.csv')

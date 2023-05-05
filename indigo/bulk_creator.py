@@ -221,6 +221,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     cancel_import_tasks = False
     block_gazette_tasks = False
     cancel_gazette_tasks = False
+    block_amendment_tasks = False
+    cancel_amendment_tasks = False
 
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
@@ -376,6 +378,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         self.cancel_import_tasks = form_data.get('cancel_import_tasks')
         self.block_gazette_tasks = form_data.get('block_gazette_tasks')
         self.cancel_gazette_tasks = form_data.get('cancel_gazette_tasks')
+        self.block_amendment_tasks = form_data.get('block_amendment_tasks')
+        self.cancel_amendment_tasks = form_data.get('cancel_amendment_tasks')
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
@@ -829,10 +833,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amending_work:
             return self.create_task(row.work, row, task_type='link-amendment-passive')
 
-
         if self.dry_run:
             row.relationships.append(f'Amended by {amending_work}')
-            row.notes.append("An 'Apply amendment' task will be created on this work")
+            note = "An 'Apply amendment' task will be created on this work"
+            if self.cancel_amendment_tasks:
+                note += ' and CANCELLED'
+            elif self.block_amendment_tasks:
+                note += ' and BLOCKED'
+            row.notes.append(note)
         else:
             date = row.amended_on_date or amending_work.commencement_date
             if not date:
@@ -874,7 +882,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             row.relationships.append(f'Amends {amended_work} on {date}')
             if self.dry_run:
-                row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
+                note = f"An 'Apply amendment' task will be created on {amended_work}"
+                if self.cancel_amendment_tasks:
+                    note += ' and CANCELLED'
+                elif self.block_amendment_tasks:
+                    note += ' and BLOCKED'
+                row.notes.append(note)
             else:
                 amendment, new = Amendment.objects.get_or_create(
                     amended_work=amended_work,
@@ -1171,6 +1184,12 @@ Possible reasons:
             if self.block_gazette_tasks:
                 task.block(self.user)
             if self.cancel_gazette_tasks:
+                task.cancel(self.user)
+
+        if task_type == 'apply-amendment':
+            if self.block_amendment_tasks:
+                task.block(self.user)
+            if self.cancel_amendment_tasks:
                 task.cancel(self.user)
 
         if 'pending-commencement' in task_type:

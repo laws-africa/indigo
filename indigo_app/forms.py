@@ -216,6 +216,8 @@ class BatchCreateWorkForm(forms.Form):
     cancel_import_tasks = forms.BooleanField(initial=False, required=False)
     block_gazette_tasks = forms.BooleanField(initial=False, required=False)
     cancel_gazette_tasks = forms.BooleanField(initial=False, required=False)
+    block_amendment_tasks = forms.BooleanField(initial=False, required=False)
+    cancel_amendment_tasks = forms.BooleanField(initial=False, required=False)
     tasks = forms.MultipleChoiceField(
         choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
 

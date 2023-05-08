@@ -29,6 +29,7 @@
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
       this.editStartedAt = null;
+      this.editMode = null;
       this.editTimes = [];
 
       this.grammarName = this.parent.model.tradition().settings.grammar.name;
@@ -59,21 +60,25 @@
 
     },
 
-    editActivityStarted: function() {
+    editActivityStarted: function(mode) {
+      this.editMode = mode;
       this.editStartedAt = new Date().toISOString();
     },
 
     editActivityEnded: function() {
       if(!this.editStartedAt) return;
       this.editTimes.push({
+        mode: this.editMode,
         started_at: this.editStartedAt,
         ended_at: new Date().toISOString()
       });
       this.editStartedAt = null;
+      this.editMode = null;
     },
 
     editActivityCancelled: function() {
       this.editStartedAt = null;
+      this.editMode = null;
     },
 
     setupTextEditor: function() {
@@ -137,7 +142,7 @@
 
     editFragmentText: function(fragment) {
       var self = this;
-      this.editActivityStarted();
+      this.editActivityStarted('text');
 
       this.editing = true;
       this.fragment = fragment;
@@ -459,7 +464,7 @@
     },
 
     editTable: function(e) {
-      this.editActivityStarted();
+      this.editActivityStarted('table');
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
 

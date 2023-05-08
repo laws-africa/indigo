@@ -674,10 +674,10 @@ class DocumentDiffSerializer(serializers.Serializer):
 class DocumentEditActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentEditActivity
-        fields = ('id', 'started_at', 'ended_at')
+        fields = ('id', 'started_at', 'ended_at', 'mode')
         read_only_fields = ('duration_secs',)
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         validated_data['document'] = self.context['document']
-        return super(DocumentEditActivitySerializer, self).create(validated_data)
+        return super().create(validated_data)

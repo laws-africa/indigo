@@ -216,6 +216,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
     is_consolidation = False
     consolidation_date = None
 
+    workflow = None
+    block_import_tasks = False
+    cancel_import_tasks = False
+    block_gazette_tasks = False
+    cancel_gazette_tasks = False
+    block_amendment_tasks = False
+    cancel_amendment_tasks = False
+
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
@@ -366,6 +374,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def create_works(self, table, dry_run, form_data):
         self.workflow = form_data.get('workflow')
+        self.block_import_tasks = form_data.get('block_import_tasks')
+        self.cancel_import_tasks = form_data.get('cancel_import_tasks')
+        self.block_gazette_tasks = form_data.get('block_gazette_tasks')
+        self.cancel_gazette_tasks = form_data.get('cancel_gazette_tasks')
+        self.block_amendment_tasks = form_data.get('block_amendment_tasks')
+        self.cancel_amendment_tasks = form_data.get('cancel_amendment_tasks')
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
@@ -819,10 +833,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amending_work:
             return self.create_task(row.work, row, task_type='link-amendment-passive')
 
-
         if self.dry_run:
             row.relationships.append(f'Amended by {amending_work}')
-            row.notes.append("An 'Apply amendment' task will be created on this work")
+            note = "An 'Apply amendment' task will be created on this work"
+            if self.cancel_amendment_tasks:
+                note += ' and CANCELLED'
+            elif self.block_amendment_tasks:
+                note += ' and BLOCKED'
+            row.notes.append(note)
         else:
             date = row.amended_on_date or amending_work.commencement_date
             if not date:
@@ -864,7 +882,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             row.relationships.append(f'Amends {amended_work} on {date}')
             if self.dry_run:
-                row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
+                note = f"An 'Apply amendment' task will be created on {amended_work}"
+                if self.cancel_amendment_tasks:
+                    note += ' and CANCELLED'
+                elif self.block_amendment_tasks:
+                    note += ' and BLOCKED'
+                row.notes.append(note)
             else:
                 amendment, new = Amendment.objects.get_or_create(
                     amended_work=amended_work,
@@ -903,13 +926,21 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 except Task.DoesNotExist:
                     self.create_task(row.work, row, task_type='link-taxonomy')
 
-    def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
-        if self.dry_run:
-            row.tasks.append(task_type.replace('-', ' '))
-            return
+    def preview_task(self, row, task_type):
+        task_preview = task_type.replace('-', ' ')
+        if task_type == 'import-content':
+            if self.cancel_import_tasks:
+                task_preview += ' (CANCELLED)'
+            elif self.block_import_tasks:
+                task_preview += ' (BLOCKED)'
+        if task_type == 'link-gazette':
+            if self.cancel_gazette_tasks:
+                task_preview += ' (CANCELLED)'
+            elif self.block_gazette_tasks:
+                task_preview += ' (BLOCKED)'
+        row.tasks.append(task_preview)
 
-        task = Task()
-
+    def add_task_title_description(self, task, work, row, task_type, repealing_work, repealed_work, amended_work, amendment, subleg, main_work):
         if task_type == 'link-gazette':
             task.title = _('Link gazette')
             task.description = _('''This work's gazette (original publication document) couldn't be linked automatically.
@@ -1119,17 +1150,47 @@ Possible reasons:
                 'row_num': row.row_number,
             }
 
+    def create_task(self, work, row, task_type, repealing_work=None, repealed_work=None, amended_work=None, amendment=None, subleg=None, main_work=None):
+        if self.dry_run:
+            return self.preview_task(row, task_type)
+
+        task = Task()
         task.country = self.country
         task.locality = self.locality
         task.work = work
         task.code = task_type
         task.created_by_user = self.user
+        self.add_task_title_description(task, work, row, task_type, repealing_work, repealed_work, amended_work, amendment, subleg, main_work)
 
-        # need to save before assigning workflow because of M2M relation
+        # save the task before updating it
         task.save()
+        self.update_task(task, task_type)
+
+        return task
+
+    def update_task(self, task, task_type):
+        """ Update the task based on what was chosen in the form. """
         if self.workflow:
             task.workflows.set([self.workflow])
             task.save()
+
+        if task_type == 'import-content':
+            if self.block_import_tasks:
+                task.block(self.user)
+            if self.cancel_import_tasks:
+                task.cancel(self.user)
+
+        if task_type == 'link-gazette':
+            if self.block_gazette_tasks:
+                task.block(self.user)
+            if self.cancel_gazette_tasks:
+                task.cancel(self.user)
+
+        if task_type == 'apply-amendment':
+            if self.block_amendment_tasks:
+                task.block(self.user)
+            if self.cancel_amendment_tasks:
+                task.cancel(self.user)
 
         if 'pending-commencement' in task_type:
             # add the `pending commencement` label, if it exists
@@ -1137,8 +1198,6 @@ Possible reasons:
             if pending_commencement_label:
                 task.labels.add(pending_commencement_label)
                 task.save()
-
-        return task
 
     def find_work(self, given_string):
         """ The string we get from the spreadsheet could be e.g.

@@ -221,10 +221,17 @@ class IdentifyParts(Stage):
     # Part 1: heading
     # Part 1 - heading
     # Part 1—Heading
-    header_re = re.compile(r"^Part\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    # Part 1
+    # Heading
+    header_re = None
+    # the keyword will vary across subclasses
+    header_re_keyword = 'Part'
+    # the base (num, separator, heading) isn't expected to vary across subclasses
+    header_re_base = "\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?"
     block_name = "PART"
 
     def __call__(self, context):
+        self.set_header_re()
         for p in context.html.xpath('./p'):
             text = ''.join(p.itertext())
             if text:
@@ -251,6 +258,9 @@ class IdentifyParts(Stage):
                     p.addprevious(block)
                     # remove the node
                     p.getparent().remove(p)
+
+    def set_header_re(self):
+        self.header_re = re.compile(rf"^{self.header_re_keyword}{self.header_re_base}$", re.IGNORECASE)
 
     def clean_heading(self, heading):
         return heading.lstrip('-').rstrip('.')

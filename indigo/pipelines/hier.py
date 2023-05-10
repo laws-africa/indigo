@@ -904,6 +904,8 @@ hierarchicalize = Pipeline([
 
     IdentifySchedules(),
     IdentifyAnnexes(),
+    # TODO: transform sections in schedules into paragraphs (with or without headings),
+    #  and make all their descendants subparagraphs
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

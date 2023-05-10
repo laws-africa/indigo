@@ -279,7 +279,8 @@ class IdentifySubparts(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Sub-?part\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    # TODO: Subparts rarely have a keyword
+    header_re_keyword = 'Sub-?part'
     block_name = "SUBPART"
 
 
@@ -293,7 +294,7 @@ class IdentifyArticles(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Article\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    header_re_keyword = 'Article'
     block_name = "ARTICLE"
 
 
@@ -310,7 +311,7 @@ class IdentifyChapters(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Chapter\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    header_re_keyword = 'Chapter'
     block_name = "CHAPTER"
 
 

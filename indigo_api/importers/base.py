@@ -103,6 +103,10 @@ class Importer(LocaleBasedMatcher):
     title? One of: ``before-title``, ``after-title`` or ``guess``.
     """
 
+    doctype_pipeline_class = DoctypePipeline
+    """ Which doctype pipeline class should be used?
+    """
+
     cropbox = None
     """ Crop box to import within, as [left, top, width, height]
     """
@@ -129,7 +133,7 @@ class Importer(LocaleBasedMatcher):
             SplitPOnBr(),
             RemoveEmptyParagraphs(),
 
-            DoctypePipeline(),
+            self.doctype_pipeline_class(),
             RemoveInlines(),
 
             HtmlToBluebellText(),

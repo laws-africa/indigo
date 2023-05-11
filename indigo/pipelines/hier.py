@@ -30,7 +30,8 @@ class IdentifySections(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.xpath('.//text()'))
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.xpath('.//text()')).lstrip()
             if text:
                 m = self.title_re.match(text)
                 if m:
@@ -126,7 +127,8 @@ class IdentifySubsections(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.xpath('.//text()'))
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.xpath('.//text()')).lstrip()
             if text:
                 m = self.num_re.match(text)
                 if m:
@@ -233,7 +235,8 @@ class IdentifyParts(Stage):
     def __call__(self, context):
         self.set_header_re()
         for p in context.html.xpath('./p'):
-            text = ''.join(p.itertext())
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.itertext()).lstrip()
             if text:
                 m = self.header_re.match(text)
                 if m:
@@ -331,7 +334,8 @@ class IdentifySchedules(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.itertext())
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.itertext()).lstrip()
             if text:
                 m = self.header_re.match(text)
                 if m:
@@ -375,7 +379,7 @@ class IndentBlocks(Stage):
         <p>...
         <p>...
 
-    This pushes content between blocks into the preceeding block:
+    This pushes content between blocks into the preceding block:
 
         <p>...
         <p>...
@@ -494,9 +498,9 @@ class NestBlocks(Stage):
     never = ["PREFACE", "PREAMBLE"]
 
     # highest precedence
-    high = ["SCHEDULE", "APPENDIX"]
+    high = ["SCHEDULE", "APPENDIX", "ANNEX"]
 
-    # lowest precendence - these follow a fixed ordering. Everything else follows the order of appearance
+    # lowest precedence - these follow a fixed ordering. Everything else follows the order of appearance
     lows = ["SUBPART", "ARTICLE", "SECTION", "SUBSECTION", "PARAGRAPH", "SUBPARAGRAPH"]
 
     def __call__(self, context):

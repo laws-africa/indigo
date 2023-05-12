@@ -73,6 +73,9 @@ class ImporterBluebellTestCase(TestCase):
     def test_mu_convention(self):
         self.run_file_test("mu-convention")
 
+    def test_identify_parts(self):
+        self.run_file_test('identify-parts')
+
     def test_tables(self):
         self.run_file_test("tables")
 

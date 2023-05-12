@@ -364,6 +364,31 @@ BODY
 <p>(bb) item</p>
 """).strip())
 
+    def test_paragraphs_with_inline_whitespace_at_start(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (a)
+
+    chief electoral officer;
+
+  PARAGRAPH (b)
+
+    deputy chief electoral officer; and
+
+  PARAGRAPH (c)
+
+    electoral officer.
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>	(<em>a</em>)	chief electoral officer;</p>
+<p>	(<em>b</em>)	deputy chief electoral officer; and</p>
+<p>
+<em>	</em>(<em>c</em>)	electoral officer.</p>
+""").strip())
+
     def test_subparagraphs_2(self):
         self.assertMultiLineEqual(
             """

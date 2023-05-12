@@ -380,13 +380,27 @@ BODY
   PARAGRAPH (c)
 
     electoral officer.
+
+  PARAGRAPH (d)
+
+    whitespace before d too
+
+  PARAGRAPH (e)
+
+     underlined whitespace before e, overindented
+
+  PARAGRAPH (f)
+
+     underlined whitespace before f, overindented
 """.strip(),
 
             self.html_to_bluebell("""
 <p>	(<em>a</em>)	chief electoral officer;</p>
 <p>	(<em>b</em>)	deputy chief electoral officer; and</p>
-<p>
-<em>	</em>(<em>c</em>)	electoral officer.</p>
+<p><em>	</em>(<em>c</em>)	electoral officer.</p>
+<p>  <em>	(d)</em>	whitespace before d too</p>
+<p><u>	(e)</u>	underlined whitespace before e, overindented</p>
+<p><u> </u>(f) underlined whitespace before f, overindented</p>
 """).strip())
 
     def test_subparagraphs_2(self):

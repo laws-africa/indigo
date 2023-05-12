@@ -10,9 +10,7 @@ PREFACE
 
 BODY 
 
-PART I
-
-  PRELIMINARY
+PART I - PRELIMINARY
 
   Short title.
 

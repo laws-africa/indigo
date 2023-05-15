@@ -889,6 +889,46 @@ class ConvertParasToBlocklists(Stage):
         return items
 
 
+class IdentifyContainerHeadings(Stage):
+    """ Looks for <akn-block>s that start with a <p> and have further <akn-block> children.
+    If that first <p> looks like a heading, make it the parent block's heading rather than intro text.
+
+    Before:
+    <akn-block name="PART" num="III">
+      <p>ELECTIONS</p>
+      <akn-block name="SECTION" num="26" heading="Appointment of returning and other election officers">
+        …
+      </akn-block>
+    </akn-block>
+
+    After:
+    <akn-block name="PART" num="III" heading="ELECTIONS">
+      <akn-block name="SECTION" num="26" heading="Appointment of returning and other election officers">
+        …
+      </akn-block>
+    </akn-block>
+
+    Reads: context.html
+    Writes: context.html
+    """
+    containers = ['CHAPTER', 'PART']
+    max_heading_length = 60
+
+    def __call__(self, context):
+        # target elements are akn-blocks without headings that contain at least one p and one akn-block
+        for block in context.html.xpath('.//akn-block[not(@heading) and p and akn-block]'):
+            children = block.getchildren()
+            first = children[0]
+            rest = children[1:]
+            # the right shape: a container with a p as the first element and akn-blocks as the rest
+            if block.attrib['name'] in self.containers and first.tag == 'p' and all(c.tag == 'akn-block' for c in rest):
+                text = ''.join(first.itertext()).strip()
+                # the right content: the text doesn't look introductory, and isn't too long to be a heading
+                if text and text[-1] not in ['-', '—', ';', ':', '.'] and len(text) <= self.max_heading_length:
+                    block.attrib['heading'] = text
+                    block.remove(first)
+
+
 hierarchicalize = Pipeline([
     # these are unambiguous and can be identified up front
     IdentifyArticles(),
@@ -925,4 +965,7 @@ hierarchicalize = Pipeline([
 
     DedentWrapups(),
     ConvertParasToBlocklists(),
+
+    # identify container headings that were missed previously once the structure is set
+    IdentifyContainerHeadings(),
 ], name="Hierarchicalize")

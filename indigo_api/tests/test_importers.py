@@ -364,6 +364,46 @@ BODY
 <p>(bb) item</p>
 """).strip())
 
+    def test_paragraphs_with_inline_whitespace_at_start(self):
+        """ All but underlined whitespace will be handled."""
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  PARAGRAPH (a)
+
+    chief electoral officer;
+
+  PARAGRAPH (b)
+
+    deputy chief electoral officer; and
+
+  PARAGRAPH (c)
+
+    electoral officer.
+
+  PARAGRAPH (d)
+
+    whitespace before d too
+
+  PARAGRAPH (e)
+
+    bold whitespace before e
+
+  PARAGRAPH (f)
+
+    bold whitespace before f
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>	(<em>a</em>)	chief electoral officer;</p>
+<p>	(<em>b</em>)	deputy chief electoral officer; and</p>
+<p><em>	</em>(<em>c</em>)	electoral officer.</p>
+<p>  <em>	(d)</em>	whitespace before d too</p>
+<p><b>	(e)</b>	bold whitespace before e</p>
+<p><b> </b>(f) bold whitespace before f</p>
+""").strip())
+
     def test_subparagraphs_2(self):
         self.assertMultiLineEqual(
             """

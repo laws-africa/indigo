@@ -30,7 +30,8 @@ class IdentifySections(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.xpath('.//text()'))
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.xpath('.//text()')).lstrip()
             if text:
                 m = self.title_re.match(text)
                 if m:
@@ -126,7 +127,8 @@ class IdentifySubsections(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.xpath('.//text()'))
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.xpath('.//text()')).lstrip()
             if text:
                 m = self.num_re.match(text)
                 if m:
@@ -221,12 +223,20 @@ class IdentifyParts(Stage):
     # Part 1: heading
     # Part 1 - heading
     # Part 1—Heading
-    header_re = re.compile(r"^Part\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    # Part 1
+    # Heading
+    header_re = None
+    # the keyword will vary across subclasses
+    header_re_keyword = 'Part'
+    # the base (num, separator, heading) isn't expected to vary across subclasses
+    header_re_base = "\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?"
     block_name = "PART"
 
     def __call__(self, context):
+        self.set_header_re()
         for p in context.html.xpath('./p'):
-            text = ''.join(p.itertext())
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.itertext()).lstrip()
             if text:
                 m = self.header_re.match(text)
                 if m:
@@ -252,6 +262,9 @@ class IdentifyParts(Stage):
                     # remove the node
                     p.getparent().remove(p)
 
+    def set_header_re(self):
+        self.header_re = re.compile(rf"^{self.header_re_keyword}{self.header_re_base}$", re.IGNORECASE)
+
     def clean_heading(self, heading):
         return heading.lstrip('-').rstrip('.')
 
@@ -269,7 +282,8 @@ class IdentifySubparts(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Sub-?part\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    # TODO: Subparts rarely have a keyword
+    header_re_keyword = 'Sub-?part'
     block_name = "SUBPART"
 
 
@@ -283,7 +297,7 @@ class IdentifyArticles(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Article\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    header_re_keyword = 'Article'
     block_name = "ARTICLE"
 
 
@@ -300,7 +314,7 @@ class IdentifyChapters(IdentifyParts):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^Chapter\s+(?P<num>[a-z0-9]{1,5})(\s*[:–—-]\s*|\s+)?(?P<heading>.+)?$", re.IGNORECASE)
+    header_re_keyword = 'Chapter'
     block_name = "CHAPTER"
 
 
@@ -320,7 +334,8 @@ class IdentifySchedules(Stage):
 
     def __call__(self, context):
         for p in context.html.xpath('./p'):
-            text = ''.join(p.itertext())
+            # lstrip text in case there's inline whitespace at the start
+            text = ''.join(p.itertext()).lstrip()
             if text:
                 m = self.header_re.match(text)
                 if m:
@@ -364,7 +379,7 @@ class IndentBlocks(Stage):
         <p>...
         <p>...
 
-    This pushes content between blocks into the preceeding block:
+    This pushes content between blocks into the preceding block:
 
         <p>...
         <p>...
@@ -483,9 +498,9 @@ class NestBlocks(Stage):
     never = ["PREFACE", "PREAMBLE"]
 
     # highest precedence
-    high = ["SCHEDULE", "APPENDIX"]
+    high = ["SCHEDULE", "APPENDIX", "ANNEX"]
 
-    # lowest precendence - these follow a fixed ordering. Everything else follows the order of appearance
+    # lowest precedence - these follow a fixed ordering. Everything else follows the order of appearance
     lows = ["SUBPART", "ARTICLE", "SECTION", "SUBSECTION", "PARAGRAPH", "SUBPARAGRAPH"]
 
     def __call__(self, context):
@@ -893,6 +908,8 @@ hierarchicalize = Pipeline([
 
     IdentifySchedules(),
     IdentifyAnnexes(),
+    # TODO: transform sections in schedules into paragraphs (with or without headings),
+    #  and make all their descendants subparagraphs
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

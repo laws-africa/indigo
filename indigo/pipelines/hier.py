@@ -372,6 +372,34 @@ class IdentifyAttachments(IdentifySchedules):
     block_name = "ATTACHMENT"
 
 
+class IdentifyAttachmentSubheadings(Stage):
+    """ Identify subheadings in all attachments.
+        If we have:
+            <akn-block name="SCHEDULE">
+            <p>
+            <akn-block name="PART">
+            <p>
+        assume that the first <p> after the start of the Schedule is its subheading.
+        Do check first that the <p> isn't the only content in the given attachment.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
+
+    def __call__(self, context):
+        name_options = ' or '.join(f'@name="{x}"' for x in self.attachment_keywords)
+        for block in context.html.xpath(f'./akn-block[{name_options} and not(@subheading)]'):
+            first_el = block.getnext()
+            next_el = first_el.getnext()
+            if first_el is not None and first_el.tag == 'p' and not self.is_attachment_or_none(next_el):
+                block.attrib['subheading'] = ''.join(first_el.itertext())
+                first_el.getparent().remove(first_el)
+
+    def is_attachment_or_none(self, elem):
+        return elem is None or elem.tag == 'akn-block' and elem.attrib['name'] in self.attachment_keywords
+
+
 class IndentBlocks(Stage):
     """ Indents content between blocks.
 
@@ -958,6 +986,7 @@ hierarchicalize = Pipeline([
     IdentifyAnnexes(),
     IdentifyAppendixes(),
     IdentifyAttachments(),
+    IdentifyAttachmentSubheadings(),
     # TODO: transform sections in schedules into paragraphs (with or without headings),
     #  and make all their descendants subparagraphs
 

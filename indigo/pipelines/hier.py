@@ -358,7 +358,6 @@ class IdentifySchedules(Stage):
 
 class IdentifyAnnexes(IdentifySchedules):
     header_re_keyword = 'Annex(?:ure)?'
-    # header_re = re.compile(r"^((\w+\s+)?Annex(?:ure)?\b)(.*)?", re.IGNORECASE)
     block_name = "ANNEXURE"
 
 

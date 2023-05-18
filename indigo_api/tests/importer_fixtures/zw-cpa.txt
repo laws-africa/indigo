@@ -4640,10 +4640,8 @@ PART IX - miscellaneous Provisions
 
       Any order, notice, application, exemption, approval, permission or other thing which was lawfully made, granted, given, issued, done or commenced in terms of the repealed Act and which, immediately before the enactment of this Act, had or was capable of acquiring legal effect, shall continue to have, or be capable of acquiring, as the case may be, the same effect as if it had been made, granted, given, issued, done or commenced, as the case may be, under the appropriate provision, if any, of this Act.
 
-SCHEDULE  - FIRST SCHEDULE
-  SUBHEADING (Sections 5(3) and (4))
-
-  Provisions aPPlicable to commission
+SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
+  SUBHEADING Provisions aPPlicable to commission
 
   Paragraphs
 
@@ -5097,8 +5095,7 @@ SCHEDULE  - FIRST SCHEDULE
 
       A member who contravenes subparagraph (2) or (3) shall be guilty of an offence and liable to a fine not exceeding level 7 or to imprisonment for a period not exceeding six months or to both such fine and such imprisonment.
 
-SCHEDULE  - SECOND SCHEDULE
-  SUBHEADING (Section 5(5))
+SCHEDULE SECOND SCHEDULE (Section 5(5))
 
   SECTION 1. - ancillary Powers oF commission
 

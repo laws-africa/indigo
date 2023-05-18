@@ -329,10 +329,13 @@ class IdentifySchedules(Stage):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^((\w+\s+)?Schedule\b)(.*)?", re.IGNORECASE)
+    header_re = None
+    # the keyword will vary across subclasses
+    header_re_keyword = 'Schedule'
     block_name = "SCHEDULE"
 
     def __call__(self, context):
+        self.set_header_re()
         for p in context.html.xpath('./p'):
             # lstrip text in case there's inline whitespace at the start
             text = ''.join(p.itertext()).lstrip()
@@ -358,6 +361,9 @@ class IdentifySchedules(Stage):
                     p.addprevious(block)
                     # remove the node
                     p.getparent().remove(p)
+
+    def set_header_re(self):
+        self.header_re = re.compile(rf"^((\w+\s+)?{self.header_re_keyword}\b)(.*)?", re.IGNORECASE)
 
 
 class IdentifyAnnexes(IdentifySchedules):

@@ -533,7 +533,7 @@ class NestBlocks(Stage):
     never = ["PREFACE", "PREAMBLE"]
 
     # highest precedence
-    high = ["SCHEDULE", "APPENDIX", "ANNEX"]
+    high = ["ANNEXURE", "APPENDIX", "ATTACHMENT", "SCHEDULE"]
 
     # lowest precedence - these follow a fixed ordering. Everything else follows the order of appearance
     lows = ["SUBPART", "ARTICLE", "SECTION", "SUBSECTION", "PARAGRAPH", "SUBPARAGRAPH"]
@@ -580,6 +580,10 @@ class NestBlocks(Stage):
                     elif curr_name not in self.lows:
                         # two non-lows, which did we encounter first?
                         if next_name in self.encountered and self.encountered.index(next_name) > self.encountered.index(curr_name):
+                            curr.append(nxt)
+                            continue
+                        # nest e.g. Part (not in lows) inside attachments; highs should always be at the top level
+                        elif curr_name in self.high:
                             curr.append(nxt)
                             continue
 

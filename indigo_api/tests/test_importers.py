@@ -259,16 +259,16 @@ BODY
             """
 BODY 
 
-SCHEDULE  - FIRST SCHEDULE
+SCHEDULE FIRST SCHEDULE
   SUBHEADING (Sections 5(3) and (4))
 
   Body
 
-SCHEDULE  - 1 Heading
+SCHEDULE Schedule 1 Heading
 
   Body
 
-SCHEDULE 
+SCHEDULE Schedule
 
   Body
 """.strip(),

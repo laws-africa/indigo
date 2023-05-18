@@ -344,18 +344,8 @@ class IdentifySchedules(Stage):
                 if m:
                     attrib = {
                         "name": self.block_name,
+                        "heading": text,
                     }
-
-                    if m.group(2):
-                        # First Schedule
-                        attrib["heading"] = m.group(1)
-
-                    if m.group(3):
-                        # more text afterwards?
-                        if attrib.get("heading"):
-                            attrib["subheading"] = m.group(3).strip()
-                        else:
-                            attrib["heading"] = m.group(3).strip()
 
                     block = p.makeelement("akn-block", attrib=attrib)
                     p.addprevious(block)

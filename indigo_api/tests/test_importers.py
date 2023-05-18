@@ -1036,6 +1036,11 @@ permit; and
             '’’this thing’’ means “that” and ‟this\'\''),
             '"this thing" means "that" and "this"')
 
+    def test_normalise_single_quotes(self):
+        self.assertEqual(self.pipeline_text(
+            "’this thing’ means ‛that’ and ‟this''"),
+            """'this thing' means 'that' and "this\"""")
+
     def test_whitespace_subsections(self):
         self.assertEqual(self.pipeline_text("""
 (a) not changed

@@ -293,7 +293,7 @@ BODY
 
     Section body
 
-ANNEX  - FIRST ANNEX
+ANNEXURE FIRST ANNEX
   SUBHEADING (Sections 5(3) and (4))
 
   Body
@@ -302,11 +302,11 @@ ANNEX  - FIRST ANNEX
 
     Section body in annex
 
-ANNEX  - 1 Heading
+ANNEXURE Annexure 1 Heading
 
   Body
 
-ANNEX 
+ANNEXURE Annex
 
   Body
 """.strip(),

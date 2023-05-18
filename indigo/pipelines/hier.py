@@ -357,8 +357,19 @@ class IdentifySchedules(Stage):
 
 
 class IdentifyAnnexes(IdentifySchedules):
-    header_re = re.compile(r"^((\w+\s+)?Annex(?:ure)?\b)(.*)?", re.IGNORECASE)
-    block_name = "ANNEX"
+    header_re_keyword = 'Annex(?:ure)?'
+    # header_re = re.compile(r"^((\w+\s+)?Annex(?:ure)?\b)(.*)?", re.IGNORECASE)
+    block_name = "ANNEXURE"
+
+
+class IdentifyAppendixes(IdentifySchedules):
+    header_re_keyword = 'Appendix'
+    block_name = "APPENDIX"
+
+
+class IdentifyAttachments(IdentifySchedules):
+    header_re_keyword = 'Attachment'
+    block_name = "ATTACHMENT"
 
 
 class IndentBlocks(Stage):
@@ -942,8 +953,11 @@ hierarchicalize = Pipeline([
     IdentifySectionHeadings(),
     IdentifyNumberedParagraphsAgain(),
 
+    # identify attachments after all the other elements in the main body
     IdentifySchedules(),
     IdentifyAnnexes(),
+    IdentifyAppendixes(),
+    IdentifyAttachments(),
     # TODO: transform sections in schedules into paragraphs (with or without headings),
     #  and make all their descendants subparagraphs
 

@@ -259,29 +259,61 @@ BODY
             """
 BODY 
 
-SCHEDULE FIRST SCHEDULE
-  SUBHEADING (Sections 5(3) and (4))
+SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
+  SUBHEADING Provisions applicable to Commission
 
   Body
 
-SCHEDULE Schedule 1 Heading
+SCHEDULE Schedule 1
+  SUBHEADING Heading
 
   Body
+
+SCHEDULE Schedule 2
+
+  Body, no subheading
 
 SCHEDULE Schedule
 
-  Body
+  PART I - Heading
+
+    Body
+
+SCHEDULE Schedule
+  SUBHEADING Heading
+
+  PART I - Heading
+
+    Body
+
+SCHEDULE Schedule 3
+
+  Body, no subheading
 """.strip(),
 
             self.html_to_bluebell("""
 <p>FIRST SCHEDULE (Sections 5(3) and (4))</p>
+<p>Provisions <i>applicable</i> to Commission</p>
 <p>Body</p>
 
-<p>Schedule 1 Heading</p>
+<p>Schedule 1</p>
+<p>Heading</p>
+<p>Body</p>
+
+<p>Schedule 2</p>
+<p>Body, no subheading</p>
+
+<p>Schedule</p>
+<p>Part I: Heading</p>
 <p>Body</p>
 
 <p>Schedule</p>
+<p>Heading</p>
+<p>Part I: Heading</p>
 <p>Body</p>
+
+<p>Schedule 3</p>
+<p>Body, no subheading</p>
 """).strip())
 
     def test_annexes(self):

@@ -325,10 +325,8 @@ BODY
 
     Section body
 
-ANNEXURE FIRST ANNEX
-  SUBHEADING (Sections 5(3) and (4))
-
-  Body
+ANNEXURE FIRST ANNEX (Sections 5(3) and (4))
+  SUBHEADING Heading
 
   SECTION 1. - Heading in annex
 
@@ -348,7 +346,7 @@ ANNEXURE Annex
 <p>Section body</p>
 
 <p>FIRST ANNEX (Sections 5(3) and (4))</p>
-<p>Body</p>
+<p>Heading</p>
 
 <p>1. Heading in annex</p>
 <p>Section body in annex</p>
@@ -369,10 +367,8 @@ BODY
 
     Section body
 
-APPENDIX FIRST APPENDIX
-  SUBHEADING (Sections 5(3) and (4))
-
-  Body
+APPENDIX FIRST APPENDIX (Sections 5(3) and (4))
+  SUBHEADING Heading
 
   SECTION 1. - Heading in appendix
 
@@ -392,7 +388,7 @@ APPENDIX Appendix
 <p>Section body</p>
 
 <p>FIRST APPENDIX (Sections 5(3) and (4))</p>
-<p>Body</p>
+<p>Heading</p>
 
 <p>1. Heading in appendix</p>
 <p>Section body in appendix</p>
@@ -413,10 +409,8 @@ BODY
 
     Section body
 
-ATTACHMENT FIRST ATTACHMENT
-  SUBHEADING (Sections 5(3) and (4))
-
-  Body
+ATTACHMENT FIRST ATTACHMENT (Sections 5(3) and (4))
+  SUBHEADING Heading
 
   SECTION 1. - Heading in attachment
 
@@ -436,7 +430,7 @@ ATTACHMENT Attachment
 <p>Section body</p>
 
 <p>FIRST ATTACHMENT (Sections 5(3) and (4))</p>
-<p>Body</p>
+<p>Heading</p>
 
 <p>1. Heading in attachment</p>
 <p>Section body in attachment</p>

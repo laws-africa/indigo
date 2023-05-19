@@ -229,13 +229,21 @@
 
     <xsl:value-of select="@name" />
     <xsl:text> </xsl:text>
-    <xsl:if test="@num">
-      <xsl:value-of select="@num" />
-    </xsl:if>
-    <xsl:if test="@heading">
-      <xsl:text> - </xsl:text>
-      <xsl:value-of select="@heading" />
-    </xsl:if>
+    <xsl:choose>
+      <!-- special case attachments: no num, no dash before heading -->
+      <xsl:when test="@name='SCHEDULE' or @name='ANNEXURE' or @name='APPENDIX' or @name='ATTACHMENT'">
+        <xsl:value-of select="@heading" />
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:if test="@num">
+          <xsl:value-of select="@num" />
+        </xsl:if>
+        <xsl:if test="@heading">
+          <xsl:text> - </xsl:text>
+          <xsl:value-of select="@heading" />
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:if test="@subheading">
       <xsl:text>&#10;</xsl:text>
       <xsl:call-template name="indent">

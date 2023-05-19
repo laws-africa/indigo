@@ -329,10 +329,13 @@ class IdentifySchedules(Stage):
     Writes: context.html
     """
 
-    header_re = re.compile(r"^((\w+\s+)?Schedule\b)(.*)?", re.IGNORECASE)
+    header_re = None
+    # the keyword will vary across subclasses
+    header_re_keyword = 'Schedule'
     block_name = "SCHEDULE"
 
     def __call__(self, context):
+        self.set_header_re()
         for p in context.html.xpath('./p'):
             # lstrip text in case there's inline whitespace at the start
             text = ''.join(p.itertext()).lstrip()
@@ -341,28 +344,59 @@ class IdentifySchedules(Stage):
                 if m:
                     attrib = {
                         "name": self.block_name,
+                        "heading": text,
                     }
-
-                    if m.group(2):
-                        # First Schedule
-                        attrib["heading"] = m.group(1)
-
-                    if m.group(3):
-                        # more text afterwards?
-                        if attrib.get("heading"):
-                            attrib["subheading"] = m.group(3).strip()
-                        else:
-                            attrib["heading"] = m.group(3).strip()
 
                     block = p.makeelement("akn-block", attrib=attrib)
                     p.addprevious(block)
                     # remove the node
                     p.getparent().remove(p)
 
+    def set_header_re(self):
+        self.header_re = re.compile(rf"^((\w+\s+)?{self.header_re_keyword}\b)(.*)?", re.IGNORECASE)
+
 
 class IdentifyAnnexes(IdentifySchedules):
-    header_re = re.compile(r"^((\w+\s+)?Annex(?:ure)?\b)(.*)?", re.IGNORECASE)
-    block_name = "ANNEX"
+    header_re_keyword = 'Annex(?:ure)?'
+    block_name = "ANNEXURE"
+
+
+class IdentifyAppendixes(IdentifySchedules):
+    header_re_keyword = 'Appendix'
+    block_name = "APPENDIX"
+
+
+class IdentifyAttachments(IdentifySchedules):
+    header_re_keyword = 'Attachment'
+    block_name = "ATTACHMENT"
+
+
+class IdentifyAttachmentSubheadings(Stage):
+    """ Identify subheadings in all attachments.
+        If we have:
+            <akn-block name="SCHEDULE">
+            <p>
+            <akn-block name="PART">
+            <p>
+        assume that the first <p> after the start of the Schedule is its subheading.
+        Do check first that the <p> isn't the only content in the given attachment.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
+
+    def __call__(self, context):
+        name_options = ' or '.join(f'@name="{x}"' for x in self.attachment_keywords)
+        for block in context.html.xpath(f'./akn-block[{name_options} and not(@subheading)]'):
+            first_el = block.getnext()
+            next_el = first_el.getnext()
+            if first_el is not None and first_el.tag == 'p' and not self.is_attachment_or_none(next_el):
+                block.attrib['subheading'] = ''.join(first_el.itertext())
+                first_el.getparent().remove(first_el)
+
+    def is_attachment_or_none(self, elem):
+        return elem is None or elem.tag == 'akn-block' and elem.attrib['name'] in self.attachment_keywords
 
 
 class IndentBlocks(Stage):
@@ -498,7 +532,7 @@ class NestBlocks(Stage):
     never = ["PREFACE", "PREAMBLE"]
 
     # highest precedence
-    high = ["SCHEDULE", "APPENDIX", "ANNEX"]
+    high = ["ANNEXURE", "APPENDIX", "ATTACHMENT", "SCHEDULE"]
 
     # lowest precedence - these follow a fixed ordering. Everything else follows the order of appearance
     lows = ["SUBPART", "ARTICLE", "SECTION", "SUBSECTION", "PARAGRAPH", "SUBPARAGRAPH"]
@@ -545,6 +579,10 @@ class NestBlocks(Stage):
                     elif curr_name not in self.lows:
                         # two non-lows, which did we encounter first?
                         if next_name in self.encountered and self.encountered.index(next_name) > self.encountered.index(curr_name):
+                            curr.append(nxt)
+                            continue
+                        # nest e.g. Part (not in lows) inside attachments; highs should always be at the top level
+                        elif curr_name in self.high:
                             curr.append(nxt)
                             continue
 
@@ -946,8 +984,12 @@ hierarchicalize = Pipeline([
     IdentifySectionHeadings(),
     IdentifyNumberedParagraphsAgain(),
 
+    # identify attachments after all the other elements in the main body
     IdentifySchedules(),
     IdentifyAnnexes(),
+    IdentifyAppendixes(),
+    IdentifyAttachments(),
+    IdentifyAttachmentSubheadings(),
     # TODO: transform sections in schedules into paragraphs (with or without headings),
     #  and make all their descendants subparagraphs
 

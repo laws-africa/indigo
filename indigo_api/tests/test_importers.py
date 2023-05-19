@@ -259,29 +259,61 @@ BODY
             """
 BODY 
 
-SCHEDULE  - FIRST SCHEDULE
-  SUBHEADING (Sections 5(3) and (4))
+SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
+  SUBHEADING Provisions applicable to Commission
 
   Body
 
-SCHEDULE  - 1 Heading
+SCHEDULE Schedule 1
+  SUBHEADING Heading
 
   Body
 
-SCHEDULE 
+SCHEDULE Schedule 2
 
-  Body
+  Body, no subheading
+
+SCHEDULE Schedule
+
+  PART I - Heading
+
+    Body
+
+SCHEDULE Schedule
+  SUBHEADING Heading
+
+  PART I - Heading
+
+    Body
+
+SCHEDULE Schedule 3
+
+  Body, no subheading
 """.strip(),
 
             self.html_to_bluebell("""
 <p>FIRST SCHEDULE (Sections 5(3) and (4))</p>
+<p>Provisions <i>applicable</i> to Commission</p>
 <p>Body</p>
 
-<p>Schedule 1 Heading</p>
+<p>Schedule 1</p>
+<p>Heading</p>
+<p>Body</p>
+
+<p>Schedule 2</p>
+<p>Body, no subheading</p>
+
+<p>Schedule</p>
+<p>Part I: Heading</p>
 <p>Body</p>
 
 <p>Schedule</p>
+<p>Heading</p>
+<p>Part I: Heading</p>
 <p>Body</p>
+
+<p>Schedule 3</p>
+<p>Body, no subheading</p>
 """).strip())
 
     def test_annexes(self):
@@ -293,20 +325,18 @@ BODY
 
     Section body
 
-ANNEX  - FIRST ANNEX
-  SUBHEADING (Sections 5(3) and (4))
-
-  Body
+ANNEXURE FIRST ANNEX (Sections 5(3) and (4))
+  SUBHEADING Heading
 
   SECTION 1. - Heading in annex
 
     Section body in annex
 
-ANNEX  - 1 Heading
+ANNEXURE Annexure 1 Heading
 
   Body
 
-ANNEX 
+ANNEXURE Annex
 
   Body
 """.strip(),
@@ -316,7 +346,7 @@ ANNEX
 <p>Section body</p>
 
 <p>FIRST ANNEX (Sections 5(3) and (4))</p>
-<p>Body</p>
+<p>Heading</p>
 
 <p>1. Heading in annex</p>
 <p>Section body in annex</p>
@@ -325,6 +355,90 @@ ANNEX
 <p>Body</p>
 
 <p>Annex</p>
+<p>Body</p>
+""").strip())
+
+    def test_appendixes(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 1. - Heading
+
+    Section body
+
+APPENDIX FIRST APPENDIX (Sections 5(3) and (4))
+  SUBHEADING Heading
+
+  SECTION 1. - Heading in appendix
+
+    Section body in appendix
+
+APPENDIX Appendix 1 Heading
+
+  Body
+
+APPENDIX Appendix
+
+  Body
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>1. Heading</p>
+<p>Section body</p>
+
+<p>FIRST APPENDIX (Sections 5(3) and (4))</p>
+<p>Heading</p>
+
+<p>1. Heading in appendix</p>
+<p>Section body in appendix</p>
+
+<p>Appendix 1 Heading</p>
+<p>Body</p>
+
+<p>Appendix</p>
+<p>Body</p>
+""").strip())
+
+    def test_attachments(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 1. - Heading
+
+    Section body
+
+ATTACHMENT FIRST ATTACHMENT (Sections 5(3) and (4))
+  SUBHEADING Heading
+
+  SECTION 1. - Heading in attachment
+
+    Section body in attachment
+
+ATTACHMENT Attachment 1 Heading
+
+  Body
+
+ATTACHMENT Attachment
+
+  Body
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>1. Heading</p>
+<p>Section body</p>
+
+<p>FIRST ATTACHMENT (Sections 5(3) and (4))</p>
+<p>Heading</p>
+
+<p>1. Heading in attachment</p>
+<p>Section body in attachment</p>
+
+<p>Attachment 1 Heading</p>
+<p>Body</p>
+
+<p>Attachment</p>
 <p>Body</p>
 """).strip())
 

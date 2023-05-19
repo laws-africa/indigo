@@ -7222,9 +7222,8 @@ CHAPTER 7 - GENERAL PROVISIONS
 
     This Act is called the Consumer Protection Act, 2008, and comes into operation in accordance with item 2 of Schedule 2.
 
-SCHEDULE  - 1
-
-  (Section 121(1))
+SCHEDULE Schedule 1
+  SUBHEADING (Section 121(1))
 
   Amendment of laws
 
@@ -7460,9 +7459,8 @@ SCHEDULE  - 1
 
   SECTION 2. - Section 54 of the Lotteries Act, 1997 (Act No. 57 of 1997), is hereby repealed
 
-SCHEDULE  - 2
-
-  (Section 121(3))
+SCHEDULE Schedule 2
+  SUBHEADING (Section 121(3))
 
   Transitional provisions
 

@@ -780,6 +780,12 @@ class NestParagraphs(Stage):
         elif re.match(r"^\d+(\.\d+)+$", num):
             return NumberingFormat('i.i', num.count('.'))
 
+        elif re.match(r"^\d+\.?$", num):
+            return NumberingFormat.n
+
+        elif re.match(r"^\(\d+\)$", num):
+            return NumberingFormat.nn
+
         return NumberingFormat.unknown
 
 
@@ -799,12 +805,14 @@ class NumberingFormat:
 
 
 # TODO: it would be better to determine precedence based on the order in which these are encountered in the text
-NumberingFormat.a = NumberingFormat("a", 0)
-NumberingFormat.i = NumberingFormat("i", 1)
-NumberingFormat.A = NumberingFormat("A", 2)
-NumberingFormat.I = NumberingFormat("I", 3)
-NumberingFormat.aa = NumberingFormat("aa", 4)
-NumberingFormat.AA = NumberingFormat("AA", 5)
+NumberingFormat.n = NumberingFormat("1.", 0)
+NumberingFormat.nn = NumberingFormat("(1)", 1)
+NumberingFormat.a = NumberingFormat("a", 2)
+NumberingFormat.i = NumberingFormat("i", 3)
+NumberingFormat.A = NumberingFormat("A", 4)
+NumberingFormat.I = NumberingFormat("I", 5)
+NumberingFormat.aa = NumberingFormat("aa", 6)
+NumberingFormat.AA = NumberingFormat("AA", 7)
 NumberingFormat.unknown = NumberingFormat("unknown", 99)
 
 

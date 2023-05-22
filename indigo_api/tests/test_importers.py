@@ -92,15 +92,15 @@ BODY
 
     First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm
 
-  PARAGRAPH 1.1.1.
+    SUBPARAGRAPH 1.1.1.
 
-    Nested paragraph.
+      Nested paragraph.
 
-    Text text text.
+      Text text text.
 
-  PARAGRAPH 1.1.2
+    SUBPARAGRAPH 1.1.2
 
-    Also this one.
+      Also this one.
 
     1.1.3Not this one.
 

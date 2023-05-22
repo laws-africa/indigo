@@ -443,9 +443,9 @@ BODY
 ANNEXURE FIRST ANNEX (Sections 5(3) and (4))
   SUBHEADING Heading
 
-  SECTION 1. - Heading in annex
+  PARAGRAPH 1. - Heading in annex
 
-    Section body in annex
+    Paragraph body in annex
 
 ANNEXURE Annexure 1 Heading
 
@@ -464,7 +464,7 @@ ANNEXURE Annex
 <p>Heading</p>
 
 <p>1. Heading in annex</p>
-<p>Section body in annex</p>
+<p>Paragraph body in annex</p>
 
 <p>Annexure 1 Heading</p>
 <p>Body</p>
@@ -485,9 +485,9 @@ BODY
 APPENDIX FIRST APPENDIX (Sections 5(3) and (4))
   SUBHEADING Heading
 
-  SECTION 1. - Heading in appendix
+  PARAGRAPH 1. - Heading in appendix
 
-    Section body in appendix
+    Paragraph body in appendix
 
 APPENDIX Appendix 1 Heading
 
@@ -506,7 +506,7 @@ APPENDIX Appendix
 <p>Heading</p>
 
 <p>1. Heading in appendix</p>
-<p>Section body in appendix</p>
+<p>Paragraph body in appendix</p>
 
 <p>Appendix 1 Heading</p>
 <p>Body</p>
@@ -527,9 +527,9 @@ BODY
 ATTACHMENT FIRST ATTACHMENT (Sections 5(3) and (4))
   SUBHEADING Heading
 
-  SECTION 1. - Heading in attachment
+  PARAGRAPH 1. - Heading in attachment
 
-    Section body in attachment
+    Paragraph body in attachment
 
 ATTACHMENT Attachment 1 Heading
 
@@ -548,7 +548,7 @@ ATTACHMENT Attachment
 <p>Heading</p>
 
 <p>1. Heading in attachment</p>
-<p>Section body in attachment</p>
+<p>Paragraph body in attachment</p>
 
 <p>Attachment 1 Heading</p>
 <p>Body</p>

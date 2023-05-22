@@ -123,7 +123,6 @@ class NormaliseQuotes(Stage):
         - Don't use 'double singles'.
         - Use “, not ‟, for opening curly double quotes.
         - Use ‘, not ‛, for opening curly single quotes.
-        - If there's a mix of curly and straight quotes or apostrophes within a document, make them all straight.
 
     Reads: context.text
     Writes: context.text
@@ -141,14 +140,6 @@ class NormaliseQuotes(Stage):
         text = re.sub('‟', '“', text)
         # use ‘ (not ‛, which goes with ‚)
         text = re.sub('‛', '‘', text)
-
-        # do we have a mix of straight and curly? if any straight quotes are found, use straight quotes throughout
-        match = re.search('["\']', text)
-        if match:
-            # straight doubles
-            text = re.sub(r"[“”]", '"', text)
-            # straight singles
-            text = re.sub(r"[‘’]", "'", text)
 
         context.text = text
 

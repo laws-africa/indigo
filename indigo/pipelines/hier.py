@@ -189,20 +189,31 @@ class IdentifyNumberedParagraphsAgain(Stage):
     Reads: context.html
     Writes: context.html
     """
+    target_name = 'SECTION'
 
     def __call__(self, context):
-        for block in context.html.xpath('.//akn-block[@name="SECTION" and (@heading)]'):
-            next_block = block.getnext()
-            if next_block is None or next_block.tag == 'akn-block' and next_block.get('name', '') == 'SECTION':
-                # this section has no content; make it a paragraph instead
-                block.attrib['name'] = 'PARAGRAPH'
-                body_text = block.get('heading')
-                if block.get('stop_stripped', 'false') == 'true':
-                    body_text += '.'
-                p = block.makeelement('p')
-                p.text = body_text
-                block.append(p)
-                del block.attrib['heading']
+        for block in context.html.xpath(f'.//akn-block[@name="{self.target_name}" and (@heading)]'):
+            if self.has_no_content(block):
+                self.adjust_block(block)
+
+    def has_no_content(self, elem):
+        next_block = elem.getnext()
+        return next_block is None or next_block.tag == 'akn-block' and next_block.get('name', '') == self.target_name
+
+    def adjust_block(self, elem):
+        # this section has no content; make it a paragraph instead
+        elem.attrib['name'] = 'PARAGRAPH'
+        # and move its heading into a p
+        self.move_heading_into_p(elem)
+
+    def move_heading_into_p(self, elem):
+        body_text = elem.get('heading')
+        if elem.get('stop_stripped', 'false') == 'true':
+            body_text += '.'
+        p = elem.makeelement('p')
+        p.text = body_text
+        elem.append(p)
+        del elem.attrib['heading']
 
 
 class IdentifyParts(Stage):

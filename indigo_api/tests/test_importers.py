@@ -596,6 +596,46 @@ BODY
 <p>(bb) item</p>
 """).strip())
 
+    def test_numbered_paragraphs_with_subparagraphs(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+SCHEDULE Schedule
+
+  PARAGRAPH 1. - foo
+
+    SUBPARAGRAPH (a)
+
+      item
+
+    SUBPARAGRAPH (b)
+
+      item
+
+    SUBPARAGRAPH (c)
+
+      item
+
+      SUBPARAGRAPH (i)
+
+        item
+
+      SUBPARAGRAPH (ii)
+
+        item
+""".strip(),
+
+            self.html_to_bluebell("""
+<p>Schedule</p>
+<p>1. foo</p>
+<p>(a) item</p>
+<p>(b) item</p>
+<p>(c) item</p>
+<p>(i) item</p>
+<p>(ii) item</p>
+""").strip())
+
     def test_paragraphs_with_inline_whitespace_at_start(self):
         """ All but underlined whitespace will be handled."""
         self.assertMultiLineEqual(

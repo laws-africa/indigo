@@ -134,10 +134,12 @@ class NormaliseQuotes(Stage):
         text = re.sub('‘‘', '“', text)
         text = re.sub('’’', '”', text)
         text = re.sub("''", '"', text)
+        text = re.sub('‛‛', '‟', text)
 
-        # odd opening quote (matches „)
+        # odd opening quotes
+        # use “ (not ‟, which goes with „)
         text = re.sub('‟', '“', text)
-        # odd opening quote (matches ‚)
+        # use ‘ (not ‛, which goes with ‚)
         text = re.sub('‛', '‘', text)
 
         # do we have a mix of straight and curly? if any straight quotes are found, use straight quotes throughout

@@ -119,13 +119,29 @@ class CorrectSubsectionNumSpaces(Stage):
 
 
 class NormaliseQuotes(Stage):
-    """ Change weird quotes to double quotes.
+    """ Normalise quotes.
+        - Don't use 'double singles'.
+        - Use “, not ‟, for opening curly double quotes.
+        - Use ‘, not ‛, for opening curly single quotes.
 
     Reads: context.text
     Writes: context.text
     """
     def __call__(self, context):
-        context.text = re.sub(r"‘‘|’’|''|“|”|‟", '"', context.text)
+        text = context.text
+        # double singles
+        text = re.sub('‘‘', '“', text)
+        text = re.sub('’’', '”', text)
+        text = re.sub("''", '"', text)
+        text = re.sub('‛‛', '‟', text)
+
+        # odd opening quotes
+        # use “ (not ‟, which goes with „)
+        text = re.sub('‟', '“', text)
+        # use ‘ (not ‛, which goes with ‚)
+        text = re.sub('‛', '‘', text)
+
+        context.text = text
 
 
 class Unhyphenate(Stage):

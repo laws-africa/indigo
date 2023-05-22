@@ -32,17 +32,17 @@ PART I - Preliminary
 
       In this Act—
 
-      "accreditation" means the process of vetting and officially recognising a consumer protection advocacy group as a partner to the Commission in consumer related activities;
+      “accreditation” means the process of vetting and officially recognising a consumer protection advocacy group as a partner to the Commission in consumer related activities;
 
-      "accredited consumer protection advocacy group" means a consumer protection advocacy group accredited by the Commission in terms of section 7;
+      “accredited consumer protection advocacy group” means a consumer protection advocacy group accredited by the Commission in terms of section 7;
 
-      "Commission" means the Consumer Protection Commission established in terms of section 4;
+      “Commission” means the Consumer Protection Commission established in terms of section 4;
 
       Printed by the Government Printer, Harare
 
       ITEMS 
 
-        "business" means the continual marketing of any goods or services; "complainant" means—
+        “business” means the continual marketing of any goods or services; “complainant” means—
 
         ITEM (a)
 
@@ -54,7 +54,7 @@ PART I - Preliminary
 
       ITEMS 
 
-        "consumer" in respect of any particular goods or services, means—
+        “consumer” in respect of any particular goods or services, means—
 
         ITEM (a)
 
@@ -76,11 +76,11 @@ PART I - Preliminary
 
           any person who purchases or offers to purchase goods or services otherwise than for the purpose of resale but does not include a person who purchases goods or services for the purpose of using the goods or services in the production and manufacture of any other goods for sale or the provision of another service for remuneration;
 
-      "consumer agreement" means an agreement between a supplier or service provider on the one hand and a consumer on the other hand other than a franchise agreement;
+      “consumer agreement” means an agreement between a supplier or service provider on the one hand and a consumer on the other hand other than a franchise agreement;
 
       ITEMS 
 
-        "consumer contract" means a contract for the sale or supply of goods or services or both, in which the seller or supplier is dealing in the course of business and the purchaser or user is not, but does not include—
+        “consumer contract” means a contract for the sale or supply of goods or services or both, in which the seller or supplier is dealing in the course of business and the purchaser or user is not, but does not include—
 
         ITEM (a)
 
@@ -90,11 +90,11 @@ PART I - Preliminary
 
           a contract of employment;
 
-      "consumer dispute" means a dispute where the person or business against whom or which a complaint has been made denies or disputes the allegations contained in the complaint or, having accepted the allegations, refuses, declines or fails to compensate any loss or injury suffered by the complainant to the satisfaction of the complainant;
+      “consumer dispute” means a dispute where the person or business against whom or which a complaint has been made denies or disputes the allegations contained in the complaint or, having accepted the allegations, refuses, declines or fails to compensate any loss or injury suffered by the complainant to the satisfaction of the complainant;
 
       ITEMS 
 
-        "court" means—
+        “court” means—
 
         ITEM (a)
 
@@ -110,11 +110,11 @@ PART I - Preliminary
 
       with regard being had to the jurisdiction of the court in question;
 
-      "defect" means any fault, imperfection or shortcoming in the quality, quantity, potency, purity or standard of any goods or services;
+      “defect” means any fault, imperfection or shortcoming in the quality, quantity, potency, purity or standard of any goods or services;
 
       ITEMS 
 
-        "direct marketing" means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
+        “direct marketing” means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
 
         ITEM (a)
 
@@ -124,11 +124,11 @@ PART I - Preliminary
 
           requesting the person to make a donation of any kind for any reason;
 
-      "dispute" means dispute between the consumer on one hand and the supplier or service provider on the other;
+      “dispute” means dispute between the consumer on one hand and the supplier or service provider on the other;
 
       ITEMS 
 
-        "goods" include—
+        “goods” include—
 
         ITEM (a)
 
@@ -148,7 +148,7 @@ PART I - Preliminary
 
         ITEM (e)
 
-          gas, water and electricity; "hazard" means a characteristic that—
+          gas, water and electricity; “hazard” means a characteristic that—
 
         ITEM (a)
 
@@ -158,11 +158,11 @@ PART I - Preliminary
 
           presents a significant risk of personal injury to any person, or damage to property, when goods are utilised;
 
-      "importer" has the definition given to it in terms of the Customs and Excise Act [Chapter: 23:02];
+      “importer” has the definition given to it in terms of the Customs and Excise Act [Chapter: 23:02];
 
-      "inspector" means a person appointed in terms of section 70; "investigator" means a person appointed in terms of section 70;
+      “inspector” means a person appointed in terms of section 70; “investigator” means a person appointed in terms of section 70;
 
-      "intermediary" means a person who, in the ordinary course of business and for
+      “intermediary” means a person who, in the ordinary course of business and for
 
       ITEMS 
 
@@ -184,7 +184,7 @@ PART I - Preliminary
 
       ITEMS 
 
-        "juristic person" includes—
+        “juristic person” includes—
 
         ITEM (a)
 
@@ -198,13 +198,13 @@ PART I - Preliminary
 
           a trust registered in terms of the Deeds Registries Act [Chapter 20:05];
 
-      "market" when used as a verb, means to promote or supply any goods or services;
+      “market” when used as a verb, means to promote or supply any goods or services;
 
-      "Minister" means the Minister of Industry and Commerce or any other Minister that the President may from time to time assign the administration of this Act;
+      “Minister” means the Minister of Industry and Commerce or any other Minister that the President may from time to time assign the administration of this Act;
 
       ITEMS 
 
-        "price" when used in relation to—
+        “price” when used in relation to—
 
         ITEM (a)
 
@@ -216,7 +216,7 @@ PART I - Preliminary
 
       ITEMS 
 
-        "producer" with respect to any particular goods, means a person who—
+        “producer” with respect to any particular goods, means a person who—
 
         ITEM (a)
 
@@ -228,7 +228,7 @@ PART I - Preliminary
 
       ITEMS 
 
-        "promote" means to—
+        “promote” means to—
 
         ITEM (a)
 
@@ -242,19 +242,19 @@ PART I - Preliminary
 
           engage in any other conduct in the ordinary course of business that may reasonably be construed to be an inducement or attempted inducement to a person to engage in a transaction;
 
-      "regulatory authority" means regulatory authority established in terms of an Act of Parliament that has competent jurisdiction and expertise to deal with consumer issues in its sector;
+      “regulatory authority” means regulatory authority established in terms of an Act of Parliament that has competent jurisdiction and expertise to deal with consumer issues in its sector;
 
-      "retailer" with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
+      “retailer” with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
 
-      "services" includes the rights or benefits provided under an agreement for the performance of work, whether with or without the supply of goods;
+      “services” includes the rights or benefits provided under an agreement for the performance of work, whether with or without the supply of goods;
 
-      "service provider" means a person who promotes, supplies or offers to supply any service, and includes an agent of the service provider;
+      “service provider” means a person who promotes, supplies or offers to supply any service, and includes an agent of the service provider;
 
-      "supplier" means a person who is in the business of selling, leasing or trading in goods or services or is otherwise in the business of supplying goods or services, and includes an agent of the supplier;
+      “supplier” means a person who is in the business of selling, leasing or trading in goods or services or is otherwise in the business of supplying goods or services, and includes an agent of the supplier;
 
       ITEMS 
 
-        "transaction" means—
+        “transaction” means—
 
         ITEM (a)
 
@@ -1786,7 +1786,7 @@ PART III - Fundamental consumer rights
 
         In this section—
 
-        "price" includes a unit price.
+        “price” includes a unit price.
 
       SUBSECTION (2)
 
@@ -1958,7 +1958,7 @@ PART III - Fundamental consumer rights
 
         In this section—
 
-        "trade description" , in relation to any goods means any description, statement, indication, or suggestion, direct or indirect with reference to—
+        “trade description” , in relation to any goods means any description, statement, indication, or suggestion, direct or indirect with reference to—
 
         PARAGRAPH (a)
 
@@ -2416,7 +2416,7 @@ PART III - Fundamental consumer rights
 
         In this section—
 
-        "non-natural means" includes any performance other than the natural way of doing things.
+        “non-natural means” includes any performance other than the natural way of doing things.
 
       SUBSECTION (2)
 
@@ -2536,9 +2536,9 @@ PART III - Fundamental consumer rights
 
         In this section—
 
-        "auction" includes a sale in execution of or pursuant to a court order, to the extent that the order contemplates that the sale is to be conducted by an auction;
+        “auction” includes a sale in execution of or pursuant to a court order, to the extent that the order contemplates that the sale is to be conducted by an auction;
 
-        "relevant Minister" means any Minister who administers any auction legislation.
+        “relevant Minister” means any Minister who administers any auction legislation.
 
       SUBSECTION (2)
 
@@ -2660,7 +2660,7 @@ PART III - Fundamental consumer rights
 
       SUBSECTION (6)
 
-        Notwithstanding the generality of subsection (5)(a), a shortage of stock or capacity is not "due to circumstances beyond the supplier’s control" if the shortage results—
+        Notwithstanding the generality of subsection (5)(a), a shortage of stock or capacity is not “due to circumstances beyond the supplier’s control” if the shortage results—
 
         PARAGRAPH (a)
 
@@ -4626,7 +4626,7 @@ PART IX - miscellaneous Provisions
 
       In this section—
 
-      "repealed Act" means the Consumer Contracts Act [Chapter 8:03].
+      “repealed Act” means the Consumer Contracts Act [Chapter 8:03].
 
     SUBSECTION (2)
 
@@ -4699,7 +4699,7 @@ SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
 
     PARAGRAPH 1.
 
-      "member" means a member of the Commission.
+      “member” means a member of the Commission.
 
   SECTION 2. - Terms of office and conditions of service of members
 
@@ -5053,7 +5053,7 @@ SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
 
       In this section—
 
-      "relative" in relation to a member means the Member’s spouse, child, parent, brother or sister.
+      “relative” in relation to a member means the Member’s spouse, child, parent, brother or sister.
 
     SUBSECTION (2)
 

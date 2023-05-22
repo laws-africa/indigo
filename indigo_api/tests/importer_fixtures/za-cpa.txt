@@ -64,11 +64,11 @@ PART A - Interpretation
 
     In this Act—
 
-    "accredited consumer protection group" means a consumer protection group that has been accredited by the Commission in terms of section 78 for the purposes contemplated in that section or elsewhere in this Act;
+    “accredited consumer protection group” means a consumer protection group that has been accredited by the Commission in terms of section 78 for the purposes contemplated in that section or elsewhere in this Act;
 
     ITEMS 
 
-      "advertisement" means any direct or indirect visual or oral communication transmitted by any medium, or any representation or reference written, inscribed, recorded, encoded upon or embedded within any medium, by means of which a person seeks to—
+      “advertisement” means any direct or indirect visual or oral communication transmitted by any medium, or any representation or reference written, inscribed, recorded, encoded upon or embedded within any medium, by means of which a person seeks to—
 
       ITEM (a)
 
@@ -92,11 +92,11 @@ PART A - Interpretation
 
         promote any cause;
 
-    "agreement" means an arrangement or understanding between or among two or more parties that purports to establish a relationship in law between or among them;
+    “agreement” means an arrangement or understanding between or among two or more parties that purports to establish a relationship in law between or among them;
 
     ITEMS 
 
-      "alternative dispute resolution agent" means—
+      “alternative dispute resolution agent” means—
 
       ITEM (a)
 
@@ -110,23 +110,23 @@ PART A - Interpretation
 
         a person or entity providing conciliation, mediation or arbitration services to assist in the resolution of consumer disputes, other than an ombud with jurisdiction, or an accredited industry ombud;
 
-    "applicable provincial consumer legislation" means legislation concerning consumer protection that has been enacted by a province;
+    “applicable provincial consumer legislation” means legislation concerning consumer protection that has been enacted by a province;
 
-    "apply", when used in relation to a trade description, price, notice or any similar form of information, means to emboss, impress, engrave, etch, print or weave into, work into or onto, annex or affix to, or incorporate within;
+    “apply”, when used in relation to a trade description, price, notice or any similar form of information, means to emboss, impress, engrave, etch, print or weave into, work into or onto, annex or affix to, or incorporate within;
 
-    "business" means the continual marketing of any goods or services;
+    “business” means the continual marketing of any goods or services;
 
-    "business name" means a name under which a person carries on a business other than the person’s full name;
+    “business name” means a name under which a person carries on a business other than the person’s full name;
 
-    "Cabinet" means the body of the national executive described in section 91 of the Constitution;
+    “Cabinet” means the body of the national executive described in section 91 of the Constitution;
 
-    "clearly", in relation to the quality of any text, notice or visual representation to be produced, published or displayed to a consumer, means in a form that satisfies the requirements of section 22;
+    “clearly”, in relation to the quality of any text, notice or visual representation to be produced, published or displayed to a consumer, means in a form that satisfies the requirements of section 22;
 
-    "Commission" means the National Consumer Commission established by section 85;
+    “Commission” means the National Consumer Commission established by section 85;
 
     ITEMS 
 
-      "complainant" means—
+      “complainant” means—
 
       ITEM (a)
 
@@ -148,7 +148,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "consideration" means anything of value given and accepted in exchange for goods or services, including—
+      “consideration” means anything of value given and accepted in exchange for goods or services, including—
 
       ITEM (a)
 
@@ -168,11 +168,11 @@ PART A - Interpretation
 
     irrespective of its apparent or intrinsic value, or whether it is transferred directly or indirectly, or involves only the supplier and consumer or other parties in addition to the supplier and consumer;
 
-    "Constitution" means the Constitution of the Republic of South Africa, 1996;
+    “Constitution” means the Constitution of the Republic of South Africa, 1996;
 
     ITEMS 
 
-      "consumer", in respect of any particular goods or services, means—
+      “consumer”, in respect of any particular goods or services, means—
 
       ITEM (a)
 
@@ -190,15 +190,15 @@ PART A - Interpretation
 
         a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e);
 
-    "consumer agreement" means an agreement between a supplier and a consumer other than a franchise agreement;
+    “consumer agreement” means an agreement between a supplier and a consumer other than a franchise agreement;
 
-    "consumer court" means a body of that name, or a consumer tribunal, that has been established in terms of applicable provincial consumer legislation; "consumer protection group" means an entity promoting the interests or protection of consumers as contemplated in section 77;
+    “consumer court” means a body of that name, or a consumer tribunal, that has been established in terms of applicable provincial consumer legislation; “consumer protection group” means an entity promoting the interests or protection of consumers as contemplated in section 77;
 
-    "court" does not include a consumer court;
+    “court” does not include a consumer court;
 
     ITEMS 
 
-      "direct marketing" means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
+      “direct marketing” means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
 
       ITEM (a)
 
@@ -210,7 +210,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "display", when used—
+      “display”, when used—
 
       ITEM (a)
 
@@ -222,7 +222,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "distributor", in relation to any particular goods, means a person who, in the ordinary course of business—
+      “distributor”, in relation to any particular goods, means a person who, in the ordinary course of business—
 
       ITEM (a)
 
@@ -230,19 +230,19 @@ PART A - Interpretation
 
       ITEM (b)
 
-        in turn, supplies those goods to either another distributor or to a retailer; "electronic communication" means communication by means of electronic transmission, including by telephone, fax, sms, wireless computer access, email or any similar technology or device;
+        in turn, supplies those goods to either another distributor or to a retailer; “electronic communication” means communication by means of electronic transmission, including by telephone, fax, sms, wireless computer access, email or any similar technology or device;
 
-    "Electronic Communications and Transactions Act" means the Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002);
+    “Electronic Communications and Transactions Act” means the Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002);
 
-    "estimate" means a statement of the projected total price for any service to be provided by a supplier, including any goods or components to be supplied in connection with that service;
+    “estimate” means a statement of the projected total price for any service to be provided by a supplier, including any goods or components to be supplied in connection with that service;
 
-    "equality court" has the meaning set out in the Promotion of Equality and Prevention of Unfair Discrimination Act;
+    “equality court” has the meaning set out in the Promotion of Equality and Prevention of Unfair Discrimination Act;
 
-    "facility" means any premises, space or equipment set up to fulfil a particular function, or at, in, or on which a particular service is available;
+    “facility” means any premises, space or equipment set up to fulfil a particular function, or at, in, or on which a particular service is available;
 
     ITEMS 
 
-      "franchise agreement" means an agreement between two parties, being the franchisor and franchisee, respectively—
+      “franchise agreement” means an agreement between two parties, being the franchisor and franchisee, respectively—
 
       ITEM (a)
 
@@ -258,7 +258,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "goods" includes—
+      “goods” includes—
 
       ITEM (a)
 
@@ -280,11 +280,11 @@ PART A - Interpretation
 
         gas, water and electricity;
 
-    "importer", with respect to any particular goods, means a person who brings those goods, or causes them to be brought, from outside the Republic into the Republic, with the intention of making them available for supply in the ordinary course of business;
+    “importer”, with respect to any particular goods, means a person who brings those goods, or causes them to be brought, from outside the Republic into the Republic, with the intention of making them available for supply in the ordinary course of business;
 
     ITEMS 
 
-      "inspector" means a person appointed as such in terms of section 88; "intermediary" means a person who, in the ordinary course of business and for remuneration or gain, engages in the business of—
+      “inspector” means a person appointed as such in terms of section 88; “intermediary” means a person who, in the ordinary course of business and for remuneration or gain, engages in the business of—
 
       ITEM (a)
 
@@ -300,11 +300,11 @@ PART A - Interpretation
 
     but does not include a person whose activities as an intermediary are regulated in terms of any other national legislation;
 
-    "investigator" means a person appointed as such in terms of section 88;
+    “investigator” means a person appointed as such in terms of section 88;
 
     ITEMS 
 
-      "juristic person" includes—
+      “juristic person” includes—
 
       ITEM (a)
 
@@ -316,7 +316,7 @@ PART A - Interpretation
 
       ITEM (c)
 
-        a trust as defined in the Trust Property Act, 1988 (Act No. 57 of 1988); "licence", depending on the context, means the authority, regardless of its specific title or form, issued to a person and in terms of which that person is either—
+        a trust as defined in the Trust Property Act, 1988 (Act No. 57 of 1988); “licence”, depending on the context, means the authority, regardless of its specific title or form, issued to a person and in terms of which that person is either—
 
       ITEM (a)
 
@@ -338,7 +338,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "loyalty credit or award" means any—
+      “loyalty credit or award” means any—
 
       ITEM (a)
 
@@ -354,19 +354,19 @@ PART A - Interpretation
 
     in terms of a loyalty programme, irrespective of the name, nature, form or characterisation assigned by that loyalty programme to any such goods, service or other benefit, right or thing;
 
-    "loyalty programme" means any arrangement or scheme in the ordinary course of business, in terms of which a supplier of goods or services, association of such suppliers, or other person on behalf of or in association with any such suppliers, offers or grants to a consumer any loyalty credit or award in connection with a transaction or an agreement;
+    “loyalty programme” means any arrangement or scheme in the ordinary course of business, in terms of which a supplier of goods or services, association of such suppliers, or other person on behalf of or in association with any such suppliers, offers or grants to a consumer any loyalty credit or award in connection with a transaction or an agreement;
 
-    "mark", when used as a noun, means any visual representation, name, signature, word, letter, numeral, shape, configuration, pattern, ornamentation, colour or container for goods or other sign capable of being represented graphically, or any combination of those things, but does not include a trade mark;
+    “mark”, when used as a noun, means any visual representation, name, signature, word, letter, numeral, shape, configuration, pattern, ornamentation, colour or container for goods or other sign capable of being represented graphically, or any combination of those things, but does not include a trade mark;
 
-    "market", when used as a verb, means to promote or supply any goods or services;
+    “market”, when used as a verb, means to promote or supply any goods or services;
 
-    "MEC" means the Member of the Executive Council;
+    “MEC” means the Member of the Executive Council;
 
-    "Minister" means the member of the Cabinet responsible for consumer protection matters;
+    “Minister” means the member of the Cabinet responsible for consumer protection matters;
 
     ITEMS 
 
-      "National Credit Act" means the National Credit Act, 2005 (Act No. 34 of 2005); "ombud with jurisdiction", in respect of any particular dispute arising out of an agreement or transaction between a consumer and a supplier who is—
+      “National Credit Act” means the National Credit Act, 2005 (Act No. 34 of 2005); “ombud with jurisdiction”, in respect of any particular dispute arising out of an agreement or transaction between a consumer and a supplier who is—
 
       ITEM (a)
 
@@ -376,17 +376,17 @@ PART A - Interpretation
 
         a ‘financial institution’, as defined in the Financial Services Ombud Schemes Act, 2004 (Act No. 37 of 2004), means ‘the ombud’, as determined in accordance with section 13 or 14 of that Act;
 
-    "organ of state" means an organ of state as defined in section 239 of the Constitution;
+    “organ of state” means an organ of state as defined in section 239 of the Constitution;
 
-    "person" includes a juristic person;
+    “person” includes a juristic person;
 
-    "premises" includes land, or any building, structure, vehicle, ship, boat, vessel, aircraft or container;
+    “premises” includes land, or any building, structure, vehicle, ship, boat, vessel, aircraft or container;
 
-    "prescribed" means determined, stipulated, required, authorised, permitted or otherwise regulated by a regulation made, or notice given, by the Minister in terms of this Act;
+    “prescribed” means determined, stipulated, required, authorised, permitted or otherwise regulated by a regulation made, or notice given, by the Minister in terms of this Act;
 
     ITEMS 
 
-      "price", when used in relation to—
+      “price”, when used in relation to—
 
       ITEM (a)
 
@@ -398,7 +398,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "producer", with respect to any particular goods, means a person who—
+      “producer”, with respect to any particular goods, means a person who—
 
       ITEM (a)
 
@@ -408,11 +408,11 @@ PART A - Interpretation
 
         by applying a personal or business name, trade mark, trade description or other visual representation on or in relation to the goods, has created or established a reasonable expectation that the person is a person contemplated in paragraph (a);
 
-    "prohibited conduct" means an act or omission in contravention of this Act;
+    “prohibited conduct” means an act or omission in contravention of this Act;
 
     ITEMS 
 
-      "promote" means to—
+      “promote” means to—
 
       ITEM (a)
 
@@ -426,29 +426,29 @@ PART A - Interpretation
 
         engage in any other conduct in the ordinary course of business that may reasonably be construed to be an inducement or attempted inducement to a person to engage in a transaction;
 
-    "Promotion of Equality and Prevention of Unfair Discrimination Act" means the Promotion of Equality and Prevention of Unfair Discrimination Act, 2000 (Act No. 4 of 2000);
+    “Promotion of Equality and Prevention of Unfair Discrimination Act” means the Promotion of Equality and Prevention of Unfair Discrimination Act, 2000 (Act No. 4 of 2000);
 
-    "provincial consumer protection authority" means a body established within the provincial sphere of government, and designated by the responsible Member of the Executive Council of a province to have general authority to deal with consumer protection matters within that province;
+    “provincial consumer protection authority” means a body established within the provincial sphere of government, and designated by the responsible Member of the Executive Council of a province to have general authority to deal with consumer protection matters within that province;
 
-    "public regulation" means any national, provincial or local government legislation or subordinate legislation, or any licence, tariff, directive or similar authorisation issued by a regulatory authority or pursuant to any statutory authority;
+    “public regulation” means any national, provincial or local government legislation or subordinate legislation, or any licence, tariff, directive or similar authorisation issued by a regulatory authority or pursuant to any statutory authority;
 
-    "Registrar" means the Registrar of Companies appointed in terms of the Companies Act, 1973 (Act No. 61 of 1973), or the official performing similar functions in terms of any subsequent legislation;
+    “Registrar” means the Registrar of Companies appointed in terms of the Companies Act, 1973 (Act No. 61 of 1973), or the official performing similar functions in terms of any subsequent legislation;
 
-    "regulation" means a regulation made under this Act;
+    “regulation” means a regulation made under this Act;
 
-    "regulatory authority" means an organ of state or entity established in terms of national or provincial legislation responsible for regulating an industry, or sector of an industry;
+    “regulatory authority” means an organ of state or entity established in terms of national or provincial legislation responsible for regulating an industry, or sector of an industry;
 
-    "rental" means an agreement for consideration in the ordinary course of business, in terms of which temporary possession of any premises or other property is delivered, at the direction of, or to the consumer, or the right to use any premises or other property is granted, at the direction of, or to the consumer, but does not include a lease within the meaning of the National Credit Act;
+    “rental” means an agreement for consideration in the ordinary course of business, in terms of which temporary possession of any premises or other property is delivered, at the direction of, or to the consumer, or the right to use any premises or other property is granted, at the direction of, or to the consumer, but does not include a lease within the meaning of the National Credit Act;
 
-    "repealed law" means an Act mentioned in section 121(2), or a public regulation made in terms of such an Act;
+    “repealed law” means an Act mentioned in section 121(2), or a public regulation made in terms of such an Act;
 
-    "respondent" means a person or firm against whom a complaint or application has been initiated in terms of this Act;
+    “respondent” means a person or firm against whom a complaint or application has been initiated in terms of this Act;
 
-    "retailer", with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
+    “retailer”, with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
 
     ITEMS 
 
-      "service" includes, but is not limited to—
+      “service” includes, but is not limited to—
 
       ITEM (a)
 
@@ -510,17 +510,17 @@ PART A - Interpretation
 
         rights of a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e),
 
-    irrespective of whether the person promoting, offering or providing the services participates in, supervises or engages directly or indirectly in the service; "service provider" means a person who promotes, supplies or offers to supply any service;
+    irrespective of whether the person promoting, offering or providing the services participates in, supervises or engages directly or indirectly in the service; “service provider” means a person who promotes, supplies or offers to supply any service;
 
-    "sms" means a short message service provided through a telecommunication system;
+    “sms” means a short message service provided through a telecommunication system;
 
-    "special-order goods" means goods that a supplier expressly or implicitly was required or expected to procure, create or alter specifically to satisfy the consumer’s requirements;
+    “special-order goods” means goods that a supplier expressly or implicitly was required or expected to procure, create or alter specifically to satisfy the consumer’s requirements;
 
-    "supplier" means a person who markets any goods or services;
+    “supplier” means a person who markets any goods or services;
 
     ITEMS 
 
-      "supply", when used as a verb—
+      “supply”, when used as a verb—
 
       ITEM (a)
 
@@ -530,13 +530,13 @@ PART A - Interpretation
 
         in relation to services, means to sell the services, or to perform or cause them to be performed or provided, or to grant access to any premises, event, activity or facility in the ordinary course of business for consideration;
 
-    "supply chain", with respect to any particular goods or services, means the collectivity of all suppliers who directly or indirectly contribute in turn to the ultimate supply of those goods or services to a consumer, whether as a producer, importer, distributor or retailer of goods, or as a service provider;
+    “supply chain”, with respect to any particular goods or services, means the collectivity of all suppliers who directly or indirectly contribute in turn to the ultimate supply of those goods or services to a consumer, whether as a producer, importer, distributor or retailer of goods, or as a service provider;
 
-    "this Act" includes any Schedule to this Act, regulations made or notice issued by the Minister under this Act;
+    “this Act” includes any Schedule to this Act, regulations made or notice issued by the Minister under this Act;
 
     ITEMS 
 
-      "trade description" means—
+      “trade description” means—
 
       ITEM (a)
 
@@ -574,7 +574,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "trade mark" means—
+      “trade mark” means—
 
       ITEM (a)
 
@@ -586,7 +586,7 @@ PART A - Interpretation
 
     ITEMS 
 
-      "transaction" means—
+      “transaction” means—
 
       ITEM (a)
 
@@ -610,11 +610,11 @@ PART A - Interpretation
 
         an interaction contemplated in section 5(6), irrespective of whether it falls within paragraph (a);
 
-    "Tribunal" means the National Consumer Tribunal established by section 26 of the National Credit Act;
+    “Tribunal” means the National Consumer Tribunal established by section 26 of the National Credit Act;
 
     ITEMS 
 
-      "unconscionable", when used with reference to any conduct, means—
+      “unconscionable”, when used with reference to any conduct, means—
 
       ITEM (a)
 
@@ -624,11 +624,11 @@ PART A - Interpretation
 
         otherwise unethical or improper to a degree that would shock the conscience of a reasonable person;
 
-    "unit price" means a price for any goods or services expressed in relation to a well-known measure such as quantity, weight, volume, duration or other measurable unit by which the goods or services are allocated;
+    “unit price” means a price for any goods or services expressed in relation to a well-known measure such as quantity, weight, volume, duration or other measurable unit by which the goods or services are allocated;
 
-    "used goods", when used in respect of any goods being marketed, means goods that have been previously supplied to a consumer, but does not include goods that have been returned to the supplier in terms of any right of return contemplated in this Act; and
+    “used goods”, when used in respect of any goods being marketed, means goods that have been previously supplied to a consumer, but does not include goods that have been returned to the supplier in terms of any right of return contemplated in this Act; and
 
-    "visual representation" means any representation or illustration capable of being reproduced upon a surface, whether by printing or otherwise, but does not include a trade mark.
+    “visual representation” means any representation or illustration capable of being reproduced upon a surface, whether by printing or otherwise, but does not include a trade mark.
 
   SECTION 2. - Interpretation
 
@@ -690,7 +690,7 @@ PART A - Interpretation
 
     SUBSECTION (7)
 
-      Unless the context indicates otherwise, any use of the word "includes" or "including" in relation to a defined or generic word or expression, on the one hand, and one or more enumerated examples or specific items, on the other, is not to be construed as limiting the defined or generic expression to the examples or items so enumerated.
+      Unless the context indicates otherwise, any use of the word “includes” or “including” in relation to a defined or generic word or expression, on the one hand, and one or more enumerated examples or specific items, on the other, is not to be construed as limiting the defined or generic expression to the examples or items so enumerated.
 
     SUBSECTION (8)
 
@@ -2102,7 +2102,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
       SUBSECTION (2)
 
-        In this section, "price" includes a unit price.
+        In this section, “price” includes a unit price.
 
       SUBSECTION (3)
 
@@ -2250,7 +2250,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (c)
 
-          the information that is required to be included in any trade description, from among the categories of information contemplated in the definition of "trade description" in section 1.
+          the information that is required to be included in any trade description, from among the categories of information contemplated in the definition of “trade description” in section 1.
 
       SUBSECTION (5)
 
@@ -2618,7 +2618,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
       SUBSECTION (2)
 
-        In this section, "promotional offer" means an offer or promise, expressed in any manner, of any prize, reward, gift, free good or service, price reduction or concession, enhancement of quantity or quality of goods or services, irrespective of whether or not acceptance of the offer is conditional on the offeree entering into any other transaction.
+        In this section, “promotional offer” means an offer or promise, expressed in any manner, of any prize, reward, gift, free good or service, price reduction or concession, enhancement of quantity or quality of goods or services, irrespective of whether or not acceptance of the offer is conditional on the offeree entering into any other transaction.
 
       SUBSECTION (3)
 
@@ -2774,19 +2774,19 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          "participant" means a person who enters, competes in or is otherwise eligible to win a promotional competition;
+          “participant” means a person who enters, competes in or is otherwise eligible to win a promotional competition;
 
         PARAGRAPH (b)
 
-          "prize" includes a reward, gift, free good or service, price reduction or concession, enhancement of quantity or quality of goods or services, or other discounted or free thing;
+          “prize” includes a reward, gift, free good or service, price reduction or concession, enhancement of quantity or quality of goods or services, or other discounted or free thing;
 
         PARAGRAPH (c)
 
-          "promoter" means a person who directly or indirectly promotes, sponsors, organises or conducts a promotional competition, or for whose benefit such a competition is promoted, sponsored, organised or conducted; and
+          “promoter” means a person who directly or indirectly promotes, sponsors, organises or conducts a promotional competition, or for whose benefit such a competition is promoted, sponsored, organised or conducted; and
 
         PARAGRAPH (d)
 
-          "promotional competition" means any competition, game, scheme, arrangement, system, plan or device for distributing prizes by lot or chance if—
+          “promotional competition” means any competition, game, scheme, arrangement, system, plan or device for distributing prizes by lot or chance if—
 
           SUBPARAGRAPH (i)
 
@@ -3000,7 +3000,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          a monetary threshold for the purpose of excluding competitions with lowvalue prizes from the definition of "promotional competition";
+          a monetary threshold for the purpose of excluding competitions with lowvalue prizes from the definition of “promotional competition”;
 
         PARAGRAPH (b)
 
@@ -3452,7 +3452,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          "consideration" has the meaning set out in section 1, except that it does not include—
+          “consideration” has the meaning set out in section 1, except that it does not include—
 
           SUBPARAGRAPH (i)
 
@@ -3468,7 +3468,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (b)
 
-          "participant" means a person who is admitted to a scheme for consideration.
+          “participant” means a person who is admitted to a scheme for consideration.
 
       SUBSECTION (2)
 
@@ -3594,7 +3594,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
       SUBSECTION (1)
 
-        In this section, "auction" includes a sale in execution of or pursuant to a court order, to the extent that the order contemplates that the sale is to be conducted by an auction.
+        In this section, “auction” includes a sale in execution of or pursuant to a court order, to the extent that the order contemplates that the sale is to be conducted by an auction.
 
       SUBSECTION (2)
 
@@ -3740,7 +3740,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
       SUBSECTION (6)
 
-        Without limiting the generality of subsection (5)(a), a shortage of stock or capacity is not "due to circumstances beyond the supplier’s control" if the shortage results partially, completely, directly or indirectly from a failure on the part of the supplier to adequately and diligently carry out any ordinary or routine matter pertaining to the supplier’s business.
+        Without limiting the generality of subsection (5)(a), a shortage of stock or capacity is not “due to circumstances beyond the supplier’s control” if the shortage results partially, completely, directly or indirectly from a failure on the part of the supplier to adequately and diligently carry out any ordinary or routine matter pertaining to the supplier’s business.
 
   PART G - Right to fair, just and reasonable terms and conditions
 
@@ -4218,7 +4218,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          "defect" means—
+          “defect” means—
 
           SUBPARAGRAPH (i)
 
@@ -4230,11 +4230,11 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (b)
 
-          "failure" means the inability of the goods to perform in the intended manner or to the intended effect;
+          “failure” means the inability of the goods to perform in the intended manner or to the intended effect;
 
         PARAGRAPH (c)
 
-          "hazard" means a characteristic that—
+          “hazard” means a characteristic that—
 
           SUBPARAGRAPH (i)
 
@@ -4246,7 +4246,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (d)
 
-          "unsafe" means that, due to a characteristic, failure, defect or hazard, particular goods present an extreme risk of personal injury or property damage to the consumer or to other persons.
+          “unsafe” means that, due to a characteristic, failure, defect or hazard, particular goods present an extreme risk of personal injury or property damage to the consumer or to other persons.
 
     SECTION 54. - Consumer’s rights to demand quality service
 
@@ -4700,7 +4700,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
       SUBSECTION (3)
 
-        Without limiting the generality of subsection (2)(b)(i), a failure to supply the goods is not "due to circumstances beyond the supplier’s control" if the shortage results partially, completely, directly or indirectly from a failure on the part of the supplier to adequately and diligently carry out any ordinary or routine matter pertaining to the supplier’s business.
+        Without limiting the generality of subsection (2)(b)(i), a failure to supply the goods is not “due to circumstances beyond the supplier’s control” if the shortage results partially, completely, directly or indirectly from a failure on the part of the supplier to adequately and diligently carry out any ordinary or routine matter pertaining to the supplier’s business.
 
       SUBSECTION (4)
 
@@ -5630,7 +5630,7 @@ CHAPTER 4 - BUSINESS NAMES AND INDUSTRY CODES OF CONDUCT
 
         PARAGRAPH (a)
 
-          "industry code" means a code—
+          “industry code” means a code—
 
           SUBPARAGRAPH (i)
 
@@ -5642,7 +5642,7 @@ CHAPTER 4 - BUSINESS NAMES AND INDUSTRY CODES OF CONDUCT
 
         PARAGRAPH (b)
 
-          "proposal" or "proposed industry code" includes any existing scheme that has been voluntarily established within an industry to regulate the conduct of persons conducting business within that industry.
+          “proposal” or “proposed industry code” includes any existing scheme that has been voluntarily established within an industry to regulate the conduct of persons conducting business within that industry.
 
       SUBSECTION (2)
 
@@ -5716,7 +5716,7 @@ CHAPTER 4 - BUSINESS NAMES AND INDUSTRY CODES OF CONDUCT
 
           the Commission considers that the scheme is adequately situated and equipped to provide alternative dispute resolution services comparable to those generally provided in terms of any public regulation,
 
-        the Commission, when recommending that code to the Minister, may also recommend that the scheme be accredited as an "accredited industry ombud".
+        the Commission, when recommending that code to the Minister, may also recommend that the scheme be accredited as an “accredited industry ombud”.
 
       SUBSECTION (7)
 
@@ -7231,15 +7231,15 @@ SCHEDULE Schedule 1
 
   SECTION 1. - Amendment of section 27 of Act 34 of 2005
 
-    Section 27 of the National Credit Act, 2005 (in this Schedule referred to as the principal Act) is hereby amended by the insertion in the words preceding paragraph (a) of the following words before the word "may":
+    Section 27 of the National Credit Act, 2005 (in this Schedule referred to as the principal Act) is hereby amended by the insertion in the words preceding paragraph (a) of the following words before the word “may”:
 
-    "ortheConsumerProtectionAct,2008"
+    “ortheConsumerProtectionAct,2008”
 
   SECTION 2. - Amendment of section 31 of Act 34 of 2005
 
     Section 31 of the principal Act, is hereby amended by the substitution for subsection (1) of the following subsection:
 
-    "(1) The Chairperson is responsible to manage the caseload of the Tribunal intermsofthisActoranyotherlegislation, and must assign each application or other matter referred to the Tribunal in terms of this Act or any other legislation to—
+    “(1) The Chairperson is responsible to manage the caseload of the Tribunal intermsofthisActoranyotherlegislation, and must assign each application or other matter referred to the Tribunal in terms of this Act or any other legislation to—
 
     PARAGRAPH (a)
 
@@ -7247,13 +7247,13 @@ SCHEDULE Schedule 1
 
     PARAGRAPH (b)
 
-      a panel composed of any three members of the Tribunal, in any other case.".
+      a panel composed of any three members of the Tribunal, in any other case.”.
 
   SECTION 3. - Insertion of section 126A in Act 34 of 2005
 
     The following section is hereby inserted after section 126:
 
-    "Restrictions on certain practices relating to credit agreements
+    “Restrictions on certain practices relating to credit agreements
 
     
 
@@ -7291,15 +7291,15 @@ SCHEDULE Schedule 1
 
     SUBSECTION (6)
 
-      This section does not apply to a debt counsellor in respect of any action authorised in terms of this Act.".
+      This section does not apply to a debt counsellor in respect of any action authorised in terms of this Act.”.
 
   SECTION 4. - Insertion of section 141A in Act 34 of 2005
 
-    The following section is hereby inserted after section 141: "Extended application of this Part
+    The following section is hereby inserted after section 141: “Extended application of this Part
 
     PARAGRAPH 141A.
 
-      This Part applies to any matter before the Tribunal irrespective of whether the matter arises in terms of this Act or any other legislation.".
+      This Part applies to any matter before the Tribunal irrespective of whether the matter arises in terms of this Act or any other legislation.”.
 
   SECTION 5. - Amendment of section 142 of Act 34 of 2005
 
@@ -7309,19 +7309,19 @@ SCHEDULE Schedule 1
 
       by the substitution for paragraph (b) of subsection (3) of the following paragraph:
 
-      "(b) consent orders in terms of this Act or the Consumer Protection Act,2008;"; and
+      “(b) consent orders in terms of this Act or the Consumer Protection Act,2008;”; and
 
     PARAGRAPH (b)
 
       by the substitution for subsection (4) of the following subsection:
 
-    "(4) At the conclusion of a hearing, the Tribunal must make [any] an order permitted in the circumstances in terms of this Act, or theConsumer Protection Act, 2008, and must issue written reasons for its decisions."
+    “(4) At the conclusion of a hearing, the Tribunal must make [any] an order permitted in the circumstances in terms of this Act, or theConsumer Protection Act, 2008, and must issue written reasons for its decisions.”
 
   SECTION 6. - Amendment of section 143 of Act 34 of 2005
 
     Section 143 of the principal Act is hereby amended by the substitution for paragraph (a) of the following paragraph:
 
-    "(a) The National Credit Regulator, or the National Consumer Commission inthe case of a matter arising in terms of the Consumer Protection Act, 2008;".
+    “(a) The National Credit Regulator, or the National Consumer Commission inthe case of a matter arising in terms of the Consumer Protection Act, 2008;”.
 
   SECTION 7. - Amendment of section 147 of Act 34 of 2005
 
@@ -7331,19 +7331,19 @@ SCHEDULE Schedule 1
 
       by the insertion at the end of paragraph (a) of subsection (2) of the following words:
 
-      "or section 75(1)(b) of the Consumer ProtectionAct, 2008, as the casemay be"; and
+      “or section 75(1)(b) of the Consumer ProtectionAct, 2008, as the casemay be”; and
 
     PARAGRAPH (b)
 
       by the insertion at the end of paragraph (b) of subsection (2) of the following words:
 
-    "or section 75(1)(b) of the Consumer ProtectionAct, 2008, as the casemay be".
+    “or section 75(1)(b) of the Consumer ProtectionAct, 2008, as the casemay be”.
 
   SECTION 8. - Amendment of section 148 of Act 34 of 2005
 
     Section 148 of the principal Act is hereby amended by the insertion at the end of paragraph (b) of subsection (2) of the following words:
 
-    "orsection69(2)(b)or73oftheConsumerProtectionAct,2008,asthecasemay be".
+    “orsection69(2)(b)or73oftheConsumerProtectionAct,2008,asthecasemay be”.
 
   SECTION 9. - Amendment of section 150 of Act 34 of 2005
 
@@ -7351,21 +7351,21 @@ SCHEDULE Schedule 1
 
     PARAGRAPH (a)
 
-      by the insertion in the words preceding paragraph (a) of the following words before the word "including":
+      by the insertion in the words preceding paragraph (a) of the following words before the word “including”:
 
-      "ortheConsumerProtectionAct,2008,";
+      “ortheConsumerProtectionAct,2008,”;
 
     PARAGRAPH (b)
 
-      by the insertion in paragraph (d) of the following words immediately after the word "Act":
+      by the insertion in paragraph (d) of the following words immediately after the word “Act”:
 
-      "ortheConsumerProtectionAct,2008"; and
+      “ortheConsumerProtectionAct,2008”; and
 
     PARAGRAPH (c)
 
-      by the insertion in paragraph (i) of the following words immediately after the word "Act":
+      by the insertion in paragraph (i) of the following words immediately after the word “Act”:
 
-    "ortheConsumerProtectionAct,2008".
+    “ortheConsumerProtectionAct,2008”.
 
   SECTION 10. - Amendment of section 151 of Act 34 of 2005
 
@@ -7375,25 +7375,25 @@ SCHEDULE Schedule 1
 
       by the substitution for subsection (1) of the following subsection:
 
-      "(1) The Tribunal may impose an administrative fine [only in the circumstances expressly provided for] in respect of prohibited orrequired conduct in terms of this Act or the Consumer Protection Act,2008."
+      “(1) The Tribunal may impose an administrative fine [only in the circumstances expressly provided for] in respect of prohibited orrequired conduct in terms of this Act or the Consumer Protection Act,2008.”
 
     PARAGRAPH (b)
 
-      by the insertion in the words preceding subsection (2)(a) of the following words immediately after the word "Act":
+      by the insertion in the words preceding subsection (2)(a) of the following words immediately after the word “Act”:
 
-      ",ortheConsumerProtectionAct,2008,";
+      “,ortheConsumerProtectionAct,2008,”;
 
     PARAGRAPH (c)
 
-      by the insertion in subsection (3)(f) of the following words immediately after the word "Regulator":
+      by the insertion in subsection (3)(f) of the following words immediately after the word “Regulator”:
 
-      ",ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008,"; and
+      “,ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008,”; and
 
     PARAGRAPH (d)
 
-      by the insertion in subsection (3)(g) of the following words immediately after the word "Act":
+      by the insertion in subsection (3)(g) of the following words immediately after the word “Act”:
 
-    ", or theConsumer ProtectionAct, 2008,as the casemay be".
+    ”, or theConsumer ProtectionAct, 2008,as the casemay be”.
 
   SECTION 11. - Amendment of section 152 of Act 34 of 2005
 
@@ -7403,25 +7403,25 @@ SCHEDULE Schedule 1
 
       by the insertion at the end of paragraph (a) of subsection (1) of the following words:
 
-      ",ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008";
+      “,ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008”;
 
     PARAGRAPH (b)
 
       by the insertion at the end of paragraph (b) of subsection (1) of the following words:
 
-      ", or provincial consumer protection authority, in the case of a matterarising in terms of the Consumer Protection Act, 2008";
+      “, or provincial consumer protection authority, in the case of a matterarising in terms of the Consumer Protection Act, 2008”;
 
     PARAGRAPH (c)
 
       by the insertion at the end of paragraph (d) of subsection (1) of the following words:
 
-      ",or,inthecaseofamatterarisingintermsoftheConsumerProtectionAct,2008,analternativedisputeresolutionagentasdefinedinthatAct".
+      “,or,inthecaseofamatterarisingintermsoftheConsumerProtectionAct,2008,analternativedisputeresolutionagentasdefinedinthatAct”.
 
     PARAGRAPH (d)
 
-      by the insertion of the words immediately after "Regulator" in subsection (2) of the following words:
+      by the insertion of the words immediately after “Regulator” in subsection (2) of the following words:
 
-    ",ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008,".
+    “,ortheNationalConsumerCommission,inthecaseofamatterarisingin terms of the Consumer Protection Act, 2008,”.
 
   SECTION 1. - B: Electronic Communications and Transactions Act, 2002 Amendment of section 1 of Act 25 of 2002
 
@@ -7429,11 +7429,11 @@ SCHEDULE Schedule 1
 
     PARAGRAPH (a)
 
-      the deletion of the definition of "Consumer Affairs Committee"; and
+      the deletion of the definition of “Consumer Affairs Committee”; and
 
     PARAGRAPH (b)
 
-      the insertion before the definition of "consumer" of the following definition: "Commission"meanstheNationalConsumerCommissionasdefinedin section 1 of the Consumer Protection Act, 2008;
+      the insertion before the definition of “consumer” of the following definition: “Commission”meanstheNationalConsumerCommissionasdefinedin section 1 of the Consumer Protection Act, 2008;
 
   SECTION 1. - Amendment of section 49 of Act 25 of 2002
 
@@ -7441,19 +7441,19 @@ SCHEDULE Schedule 1
 
   SECTION 49. - Complaints to [Consumer Affairs Committee] Commission
 
-    A consumer may lodge a complaint with the [Consumer Affairs Committee] Commission in respect of any non-compliance with the provisions of this Chapter by a supplier."
+    A consumer may lodge a complaint with the [Consumer Affairs Committee] Commission in respect of any non-compliance with the provisions of this Chapter by a supplier.”
 
   SECTION 3. - Substitution of expression in Act 25 of 2002
 
-    The Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002) is hereby amended by the substitution for the expression "Consumer Affairs Committee", wherever it occurs in the Act, of the expression "Commission".
+    The Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002) is hereby amended by the substitution for the expression “Consumer Affairs Committee”, wherever it occurs in the Act, of the expression “Commission”.
 
     C: Lotteries Act, 1997
 
   SECTION 1. - Amendment of section 1 of Act 57 of 1997
 
-    Section 1 of the Lotteries Act, 1997 (Act No. 57 of 1997) is hereby amended by the substitution for the definition of "promotional competition" of the following definition: "promotionalcompetition" hasthemeaningsetoutinsection36ofthe
+    Section 1 of the Lotteries Act, 1997 (Act No. 57 of 1997) is hereby amended by the substitution for the definition of “promotional competition” of the following definition: “promotionalcompetition” hasthemeaningsetoutinsection36ofthe
 
-    ConsumerProtectionAct, 2008".
+    ConsumerProtectionAct, 2008”.
 
     Repeal of section 54 of Act 57 of 1997
 
@@ -7470,13 +7470,13 @@ SCHEDULE Schedule 2
 
       In this Schedule—
 
-      "early effective date" means the date on which the provisions mentioned in item 2(1) took effect;
+      “early effective date” means the date on which the provisions mentioned in item 2(1) took effect;
 
-      "general effective date" means the date on which the provisions mentioned in item 2(2) took effect;
+      “general effective date” means the date on which the provisions mentioned in item 2(2) took effect;
 
-      "pre-existing agreement" means an agreement that was made before the general effective date; and
+      “pre-existing agreement” means an agreement that was made before the general effective date; and
 
-      "pre-existing loyalty programme" means a loyalty programme that had any participating consumers immediately before the general effective date.
+      “pre-existing loyalty programme” means a loyalty programme that had any participating consumers immediately before the general effective date.
 
     SUBSECTION (2)
 

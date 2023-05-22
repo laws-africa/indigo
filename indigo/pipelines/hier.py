@@ -410,6 +410,28 @@ class IdentifyAttachmentSubheadings(Stage):
         return elem is None or elem.tag == 'akn-block' and elem.attrib['name'] in self.attachment_keywords
 
 
+class RenameSectionsInAttachments(Stage):
+    """ Looks for any akn-blocks named 'section' or 'subsection' that follow an akn-block with an attachment name,
+        and turns them into numbered paragraphs.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
+    section_keywords = ['SECTION', 'SUBSECTION']
+
+    def __call__(self, context):
+        in_attachment = False
+
+        for elem in context.html:
+            if in_attachment:
+                # we're past the first attachment; any sections from here should be paragraphs instead.
+                if elem.tag == 'akn-block' and elem.attrib.get('name') in self.section_keywords:
+                    elem.attrib['name'] = 'PARAGRAPH'
+            elif elem.tag == 'akn-block' and elem.attrib.get('name') in self.attachment_keywords:
+                in_attachment = True
+
+
 class IndentBlocks(Stage):
     """ Indents content between blocks.
 
@@ -1001,8 +1023,7 @@ hierarchicalize = Pipeline([
     IdentifyAppendixes(),
     IdentifyAttachments(),
     IdentifyAttachmentSubheadings(),
-    # TODO: transform sections in schedules into paragraphs (with or without headings),
-    #  and make all their descendants subparagraphs
+    RenameSectionsInAttachments(),
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

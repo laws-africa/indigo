@@ -216,6 +216,22 @@ class IdentifyNumberedParagraphsAgain(Stage):
         del elem.attrib['heading']
 
 
+class AdjustParagraphHeadings(IdentifyNumberedParagraphsAgain):
+    """ Looks for akn-blocks named 'paragraph' that have a heading and don't have any children,
+        and moves their heading text into a p.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    target_name = 'PARAGRAPH'
+
+    def has_no_content(self, elem):
+        return not bool(elem.getchildren())
+
+    def adjust_block(self, elem):
+        self.move_heading_into_p(elem)
+
+
 class IdentifyParts(Stage):
     """ Identifies and marks parts, which may cross two lines.
 
@@ -1036,6 +1052,7 @@ hierarchicalize = Pipeline([
     NestBlocks(),
     NestParagraphs(),
     NestedSubparagraphs(),
+    AdjustParagraphHeadings(),
 
     DedentWrapups(),
     ConvertParasToBlocklists(),

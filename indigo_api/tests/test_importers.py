@@ -254,6 +254,121 @@ BODY
 <p>6. because the next element is not its content, but another akn-block!</p>
 """).strip())
 
+    def test_paras_in_schedules_with_headings(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
+  SUBHEADING Provisions aPPlicable to commission
+
+  Paragraphs
+
+  PARAGRAPH 1.
+
+    Interpretation in Schedule.
+
+  PARAGRAPH 2. - Terms of office and conditions of service of members
+
+    Interpretation in Schedule
+
+  PARAGRAPH 1.
+
+    “member” means a member of the Commission.
+
+  PARAGRAPH 2. - Terms of office and conditions of service of members
+
+    SUBPARAGRAPH (1)
+
+      Subject to this Schedule, a member shall hold office for such period, not exceeding three years, as the Minister may fix on his or her appointment.
+
+    SUBPARAGRAPH (2)
+
+      A member shall continue in office after the expiry of his or her term until he or she has been re-appointed or his or her successor has been appointed.
+
+      Provided that a member shall not hold office in terms of this subparagraph for longer than six months.
+
+    SUBPARAGRAPH (3)
+
+      Subject to subparagraph (1) a member shall hold office on such terms and conditions as the Minister may fix in relation to members generally.
+
+    SUBPARAGRAPH (4)
+
+      A retiring member is eligible for re-appointment as a member: Provided that no member may be re-appointed for a third term in office.
+
+    SUBPARAGRAPH (5)
+
+      The terms and conditions of office of a member shall not, without the member’s consent, be altered to his or her detriment during his or her tenure of office.
+""".strip(),
+
+            self.html_to_bluebell("""
+<h1>FIRST SCHEDULE (Sections 5(3) and (4))</h1> <p>Provisions aPPlicable to commission</p>
+<p><br> </p>
+<p><i>Paragraphs</i></p>
+<p>1. Interpretation in Schedule.</p>
+<p>2. Terms of office and conditions of service of members.</p>
+<p><br> </p>
+<p><i>Interpretation</i> <i>in</i> <i>Schedule</i></p>
+<p>1. “member” means a member of the Commission.</p>
+<p><br> </p>
+<p><i>Terms</i> <i>of</i> <i>office</i> <i>and</i> <i>conditions</i> <i>of</i> <i>service</i> <i>of</i> <i>members</i></p>
+<p>2. (1) Subject to this Schedule, a member shall hold office for such period, not exceeding three years, as the Minister may fix on his or her appointment.</p>
+<p>(2) A member shall continue in office after the expiry of his or her term until he or she has been re-appointed or his or her successor has been appointed.</p>
+<p>Provided that a member shall not hold office in terms of this subparagraph for longer than six months.</p>
+<p>(3) Subject to subparagraph (1) a member shall hold office on such terms and conditions as the Minister may fix in relation to members generally.</p>
+<p>(4) A retiring member is eligible for re-appointment as a member: Provided that no member may be re-appointed for a third term in office.</p>
+<p>(5) The terms and conditions of office of a member shall not, without the member’s consent, be altered to his or her detriment during his or her tenure of office.</p>
+""").strip())
+
+    def test_paras_in_schedules_without_headings(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+SCHEDULE SECOND SCHEDULE (Section 5(5))
+  SUBHEADING Ancillary Powers of Commission
+
+  PARAGRAPH 1.
+
+    To acquire premises.
+
+  PARAGRAPH 2.
+
+    To buy, take in exchange, hire or otherwise acquire movable property.
+
+  PARAGRAPH 3.
+
+    To maintain, alter or improve property acquired by it.
+
+  PARAGRAPH 4.
+
+    To mortgage any assets, or part of any assets.
+
+  PARAGRAPH 5.
+
+    To open bank accounts in the name of the Commission.
+
+  PARAGRAPH 6.
+
+    To insure against losses, damages, risks and liabilities which it may incur.
+
+  PARAGRAPH 7.
+
+    In consultation with the Minister, to establish and administer such funds.
+""".strip(),
+
+            self.html_to_bluebell("""
+<h1>SECOND SCHEDULE (Section 5(5))</h1>
+<p>Ancillary Powers of Commission</p>
+<p>1. To acquire premises.</p>
+<p>2. To buy, take in exchange, hire or otherwise acquire movable property.</p>
+<p>3. To maintain, alter or improve property acquired by it.</p>
+<p>4. To mortgage any assets, or part of any assets.</p>
+<p>5. To open bank accounts in the name of the Commission.</p>
+<p>6. To insure against losses, damages, risks and liabilities which it may incur.</p>
+<p>7. In consultation with the Minister, to establish and administer such funds.</p>
+""").strip())
+
     def test_schedules(self):
         self.assertMultiLineEqual(
             """

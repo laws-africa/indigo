@@ -888,7 +888,9 @@ class ConvertParasToBlocklists(Stage):
 
     1. are paragraphs (akn-block[@name=PARAGRAPH]), and
     2. have either multiple consecutive plain-text P elements, or paragraphs with repeating numbers.
+    3. are not at the top level of an attachment.
     """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
 
     def __call__(self, context):
         for block in context.html.xpath('.//akn-block[akn-block[@name="PARAGRAPH"]]'):
@@ -896,6 +898,10 @@ class ConvertParasToBlocklists(Stage):
                 self.fix(block)
 
     def should_fix(self, block):
+        # ignore top-level paragraphs in attachments
+        if block.attrib.get('name') in self.attachment_keywords:
+            return False
+
         # look for three p elements in a row
         for p in block.xpath('./p[preceding-sibling::*[1][self::p] and following-sibling::*[1][self::p]]'):
             return True

@@ -189,20 +189,47 @@ class IdentifyNumberedParagraphsAgain(Stage):
     Reads: context.html
     Writes: context.html
     """
+    target_name = 'SECTION'
 
     def __call__(self, context):
-        for block in context.html.xpath('.//akn-block[@name="SECTION" and (@heading)]'):
-            next_block = block.getnext()
-            if next_block is None or next_block.tag == 'akn-block' and next_block.get('name', '') == 'SECTION':
-                # this section has no content; make it a paragraph instead
-                block.attrib['name'] = 'PARAGRAPH'
-                body_text = block.get('heading')
-                if block.get('stop_stripped', 'false') == 'true':
-                    body_text += '.'
-                p = block.makeelement('p')
-                p.text = body_text
-                block.append(p)
-                del block.attrib['heading']
+        for block in context.html.xpath(f'.//akn-block[@name="{self.target_name}" and (@heading)]'):
+            if self.has_no_content(block):
+                self.adjust_block(block)
+
+    def has_no_content(self, elem):
+        next_block = elem.getnext()
+        return next_block is None or next_block.tag == 'akn-block' and next_block.get('name', '') == self.target_name
+
+    def adjust_block(self, elem):
+        # this section has no content; make it a paragraph instead
+        elem.attrib['name'] = 'PARAGRAPH'
+        # and move its heading into a p
+        self.move_heading_into_p(elem)
+
+    def move_heading_into_p(self, elem):
+        body_text = elem.get('heading')
+        if elem.get('stop_stripped', 'false') == 'true':
+            body_text += '.'
+        p = elem.makeelement('p')
+        p.text = body_text
+        elem.append(p)
+        del elem.attrib['heading']
+
+
+class AdjustParagraphHeadings(IdentifyNumberedParagraphsAgain):
+    """ Looks for akn-blocks named 'paragraph' that have a heading and don't have any children,
+        and moves their heading text into a p.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    target_name = 'PARAGRAPH'
+
+    def has_no_content(self, elem):
+        return not bool(elem.getchildren())
+
+    def adjust_block(self, elem):
+        self.move_heading_into_p(elem)
 
 
 class IdentifyParts(Stage):
@@ -397,6 +424,28 @@ class IdentifyAttachmentSubheadings(Stage):
 
     def is_attachment_or_none(self, elem):
         return elem is None or elem.tag == 'akn-block' and elem.attrib['name'] in self.attachment_keywords
+
+
+class RenameSectionsInAttachments(Stage):
+    """ Looks for any akn-blocks named 'section' or 'subsection' that follow an akn-block with an attachment name,
+        and turns them into numbered paragraphs.
+
+    Reads: context.html
+    Writes: context.html
+    """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
+    section_keywords = ['SECTION', 'SUBSECTION']
+
+    def __call__(self, context):
+        in_attachment = False
+
+        for elem in context.html:
+            if in_attachment:
+                # we're past the first attachment; any sections from here should be paragraphs instead.
+                if elem.tag == 'akn-block' and elem.attrib.get('name') in self.section_keywords:
+                    elem.attrib['name'] = 'PARAGRAPH'
+            elif elem.tag == 'akn-block' and elem.attrib.get('name') in self.attachment_keywords:
+                in_attachment = True
 
 
 class IndentBlocks(Stage):
@@ -731,6 +780,12 @@ class NestParagraphs(Stage):
         elif re.match(r"^\d+(\.\d+)+$", num):
             return NumberingFormat('i.i', num.count('.'))
 
+        elif re.match(r"^\d+\.?$", num):
+            return NumberingFormat.n
+
+        elif re.match(r"^\(\d+\)$", num):
+            return NumberingFormat.nn
+
         return NumberingFormat.unknown
 
 
@@ -750,12 +805,14 @@ class NumberingFormat:
 
 
 # TODO: it would be better to determine precedence based on the order in which these are encountered in the text
-NumberingFormat.a = NumberingFormat("a", 0)
-NumberingFormat.i = NumberingFormat("i", 1)
-NumberingFormat.A = NumberingFormat("A", 2)
-NumberingFormat.I = NumberingFormat("I", 3)
-NumberingFormat.aa = NumberingFormat("aa", 4)
-NumberingFormat.AA = NumberingFormat("AA", 5)
+NumberingFormat.n = NumberingFormat("1.", 0)
+NumberingFormat.nn = NumberingFormat("(1)", 1)
+NumberingFormat.a = NumberingFormat("a", 2)
+NumberingFormat.i = NumberingFormat("i", 3)
+NumberingFormat.A = NumberingFormat("A", 4)
+NumberingFormat.I = NumberingFormat("I", 5)
+NumberingFormat.aa = NumberingFormat("aa", 6)
+NumberingFormat.AA = NumberingFormat("AA", 7)
 NumberingFormat.unknown = NumberingFormat("unknown", 99)
 
 
@@ -831,7 +888,9 @@ class ConvertParasToBlocklists(Stage):
 
     1. are paragraphs (akn-block[@name=PARAGRAPH]), and
     2. have either multiple consecutive plain-text P elements, or paragraphs with repeating numbers.
+    3. are not at the top level of an attachment.
     """
+    attachment_keywords = ['ANNEXURE', 'APPENDIX', 'ATTACHMENT', 'SCHEDULE']
 
     def __call__(self, context):
         for block in context.html.xpath('.//akn-block[akn-block[@name="PARAGRAPH"]]'):
@@ -839,6 +898,10 @@ class ConvertParasToBlocklists(Stage):
                 self.fix(block)
 
     def should_fix(self, block):
+        # ignore top-level paragraphs in attachments
+        if block.attrib.get('name') in self.attachment_keywords:
+            return False
+
         # look for three p elements in a row
         for p in block.xpath('./p[preceding-sibling::*[1][self::p] and following-sibling::*[1][self::p]]'):
             return True
@@ -990,8 +1053,7 @@ hierarchicalize = Pipeline([
     IdentifyAppendixes(),
     IdentifyAttachments(),
     IdentifyAttachmentSubheadings(),
-    # TODO: transform sections in schedules into paragraphs (with or without headings),
-    #  and make all their descendants subparagraphs
+    RenameSectionsInAttachments(),
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.
@@ -1004,6 +1066,7 @@ hierarchicalize = Pipeline([
     NestBlocks(),
     NestParagraphs(),
     NestedSubparagraphs(),
+    AdjustParagraphHeadings(),
 
     DedentWrapups(),
     ConvertParasToBlocklists(),

@@ -3,10 +3,10 @@ from io import StringIO
 
 from cobalt import FrbrUri
 from django.test import TestCase
-from docpipe.pipeline import PipelineContext
+from docpipe.pipeline import Pipeline, PipelineContext
 from lxml import etree
 
-from indigo.pipelines.base import WrapAnnotations
+from indigo.pipelines.base import ParseBluebellText, WrapAnnotations
 from indigo_api.importers.base import parse_page_nums, Importer, ImportContext
 from indigo_api.models import Document, Work, Language
 
@@ -903,6 +903,21 @@ BODY
     <p>[text in squares] [and some more]</p>
   </content>
 </akomaNtoso>''', new_xml_text)
+
+    def test_wrap_intro_wrapup_annotations(self):
+        # note: we have to ParseBluebellText, then WrapAnnotations,
+        # because simply using etree.fromstring(xml) doesn't reproduce what happens on import
+        context = PipelineContext(pipeline=Pipeline([ParseBluebellText(), WrapAnnotations()]))
+        context.frbr_uri = FrbrUri.parse('/akn/za/act/2020/1')
+        context.fragment = None
+        context.fragment_id_prefix = None
+
+        context.text = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/wrap-annotations.txt')).read()
+        context.pipeline(context)
+
+        actual = etree.tostring(context.xml, encoding='unicode', pretty_print=True)
+        expected = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/wrap-annotations.xml')).read()
+        self.assertMultiLineEqual(expected, actual)
 
 
 class ImporterDocxTestCase(TestCase):

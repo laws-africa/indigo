@@ -1,0 +1,167 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta>
+      <identification source="#Laws-Africa">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2020/1/!main"/>
+          <FRBRuri value="/akn/za/act/2020/1"/>
+          <FRBRalias value="Untitled" name="title"/>
+          <FRBRdate date="2020" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="1"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2020/1/eng/!main"/>
+          <FRBRuri value="/akn/za/act/2020/1/eng"/>
+          <FRBRdate date="2023-05-23" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2020/1/eng/!main"/>
+          <FRBRuri value="/akn/za/act/2020/1/eng"/>
+          <FRBRdate date="2023-05-23" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#Laws-Africa">
+        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+      </references>
+    </meta>
+    <preface>
+      <p eId="preface__p_1">COURTS ACT</p>
+      <p eId="preface__p_2">Cap 168 (Act 41 of 1945) - 7 March 1945</p>
+      <p eId="preface__p_3">
+        <remark status="editorial">[An annotation at the top of the Act.]</remark>
+      </p>
+    </preface>
+    <body>
+      <part eId="part_I">
+        <num>I</num>
+        <heading>PRELIMINARY</heading>
+        <section eId="part_I__sec_1">
+          <num>1.</num>
+          <heading>Short title</heading>
+          <content>
+            <p eId="part_I__sec_1__p_1">This Act may be cited as the Courts Act.</p>
+          </content>
+        </section>
+        <section eId="part_I__sec_2">
+          <num>2.</num>
+          <heading>Interpretation</heading>
+          <content>
+            <p eId="part_I__sec_2__p_1">In this Act —</p>
+            <p eId="part_I__sec_2__p_2">"District Magistrate" includes Senior District Magistrate;</p>
+            <p eId="part_I__sec_2__p_3">"prescribed amount", in relation to the Intermediate Court or a District Court, means such sum as the President may, by regulations, determine.</p>
+            <p eId="part_I__sec_2__p_4">
+              <remark status="editorial">[S. 2 amended by s. 23 (2) of Act 48 of 1991 w.e.f. 12 March 1992.]</remark>
+            </p>
+          </content>
+        </section>
+      </part>
+      <part eId="part_II">
+        <num>II</num>
+        <heading>THE SUPREME COURT</heading>
+        <subpart eId="part_II__subpart_I">
+          <num>I</num>
+          <heading>Constitution of Supreme Court</heading>
+          <section eId="part_II__subpart_I__sec_7">
+            <num>7.</num>
+            <heading>Powers, precedence and office of Judges</heading>
+            <subsection eId="part_II__subpart_I__sec_7__subsec_1">
+              <num>(1)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_7__subsec_1__p_1">Subject to the other provisions of this Act, all Judges of the Supreme Court shall have equal power, authority and jurisdiction.</p>
+              </content>
+            </subsection>
+            <subsection eId="part_II__subpart_I__sec_7__subsec_2">
+              <num>(2)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_7__subsec_2__p_1">The Puisne Judges shall take precedence after the Chief Justice and the Senior Puisne Judge, in such manner as the President, acting in accordance with the advice of the Judicial and Legal Service Commission, may determine.</p>
+              </content>
+            </subsection>
+            <subsection eId="part_II__subpart_I__sec_7__subsec_3">
+              <num>(3)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_7__subsec_3__p_1">Except with the approval of the President, no Judge shall, with or without remuneration, undertake any other work or hold any other office.</p>
+              </content>
+            </subsection>
+            <wrapUp>
+              <remark status="editorial">
+                <p eId="part_II__subpart_I__sec_7__wrapup__p_1">
+                  <remark status="editorial">[S. 7 amended by Act 48 of 1991.]</remark>
+                </p>
+              </remark>
+            </wrapUp>
+          </section>
+          <section eId="part_II__subpart_I__sec_8">
+            <num>8.</num>
+            <heading>Seal</heading>
+            <subsection eId="part_II__subpart_I__sec_8__subsec_1">
+              <num>(1)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_8__subsec_1__p_1">The Supreme Court shall have a seal bearing on it the Arms of Mauritius with the words "Supreme Court, Mauritius".</p>
+              </content>
+            </subsection>
+            <subsection eId="part_II__subpart_I__sec_8__subsec_2">
+              <num>(2)</num>
+              <paragraph eId="part_II__subpart_I__sec_8__subsec_2__para_a">
+                <num>(a)</num>
+                <content>
+                  <p eId="part_II__subpart_I__sec_8__subsec_2__para_a__p_1">The seal shall be kept by the Chief Justice.</p>
+                </content>
+              </paragraph>
+              <paragraph eId="part_II__subpart_I__sec_8__subsec_2__para_b">
+                <num>(b)</num>
+                <content>
+                  <p eId="part_II__subpart_I__sec_8__subsec_2__para_b__p_1">The Chief Justice may entrust the seal to such officers of the Court as he thinks fit.</p>
+                </content>
+              </paragraph>
+              <wrapUp>
+                <remark status="editorial">
+                  <p eId="part_II__subpart_I__sec_8__subsec_2__wrapup__p_1">
+                    <remark status="editorial">[S. 8 amended by Act 29 of 1992.]</remark>
+                  </p>
+                </remark>
+              </wrapUp>
+            </subsection>
+          </section>
+          <section eId="part_II__subpart_I__sec_10">
+            <num>10.</num>
+            <heading>Place of sittings</heading>
+            <content>
+              <p eId="part_II__subpart_I__sec_10__p_1">The sittings of the Supreme Court shall usually be held in such building as the President shall assign as a Court House for that purpose, but where the Supreme Court sits in any other building or place for the transaction of legal business, the proceedings shall be as valid in every respect as if they had been held in such Court House.</p>
+              <p eId="part_II__subpart_I__sec_10__p_2">
+                <remark status="editorial">[S. 10 amended by Act 48 of 1991.]</remark>
+              </p>
+            </content>
+          </section>
+          <section eId="part_II__subpart_I__sec_12">
+            <num>12.</num>
+            <heading>Right of audience</heading>
+            <intro>
+              <remark status="editorial">
+                <p eId="part_II__subpart_I__sec_12__intro__p_1">
+                  <remark status="editorial">[Heading substituted by Act 2 of 2015.]</remark>
+                </p>
+              </remark>
+            </intro>
+            <paragraph eId="part_II__subpart_I__sec_12__para_a">
+              <num>(a)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_12__para_a__p_1">any party to the proceedings, with leave of the Court;</p>
+              </content>
+            </paragraph>
+            <paragraph eId="part_II__subpart_I__sec_12__para_b">
+              <num>(b)</num>
+              <content>
+                <p eId="part_II__subpart_I__sec_12__para_b__p_1">a barrister, and, if the proceedings are before the Bankruptcy Division, an attorney retained by or on behalf of any party.</p>
+              </content>
+            </paragraph>
+          </section>
+        </subpart>
+      </part>
+    </body>
+  </act>
+</akomaNtoso>

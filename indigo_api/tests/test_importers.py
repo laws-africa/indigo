@@ -914,6 +914,9 @@ BODY
 
         context.text = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/wrap-annotations.txt')).read()
         context.pipeline(context)
+        # remove meta block(s)
+        for meta in context.xml.xpath('//a:meta', namespaces={'a': WrapAnnotations.ns}):
+            meta.getparent().remove(meta)
 
         actual = etree.tostring(context.xml, encoding='unicode', pretty_print=True)
         expected = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/wrap-annotations.xml')).read()

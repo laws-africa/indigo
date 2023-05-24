@@ -1,34 +1,5 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act name="act">
-    <meta>
-      <identification source="#Indigo-Platform">
-        <FRBRWork>
-          <FRBRthis value="/akn/za/act/2020/1/!main"/>
-          <FRBRuri value="/akn/za/act/2020/1"/>
-          <FRBRalias value="Untitled" name="title"/>
-          <FRBRdate date="2020" name="Generation"/>
-          <FRBRauthor href=""/>
-          <FRBRcountry value="za"/>
-          <FRBRnumber value="1"/>
-        </FRBRWork>
-        <FRBRExpression>
-          <FRBRthis value="/akn/za/act/2020/1/eng/!main"/>
-          <FRBRuri value="/akn/za/act/2020/1/eng"/>
-          <FRBRdate date="2023-05-23" name="Generation"/>
-          <FRBRauthor href=""/>
-          <FRBRlanguage language="eng"/>
-        </FRBRExpression>
-        <FRBRManifestation>
-          <FRBRthis value="/akn/za/act/2020/1/eng/!main"/>
-          <FRBRuri value="/akn/za/act/2020/1/eng"/>
-          <FRBRdate date="2023-05-23" name="Generation"/>
-          <FRBRauthor href=""/>
-        </FRBRManifestation>
-      </identification>
-      <references source="#Indigo-Platform">
-        <TLCOrganization eId="Indigo-Platform" href="http://localhost:8000" showAs="Indigo Platform"/>
-      </references>
-    </meta>
     <preface>
       <p eId="preface__p_1">COURTS ACT</p>
       <p eId="preface__p_2">Cap 168 (Act 41 of 1945) - 7 March 1945</p>

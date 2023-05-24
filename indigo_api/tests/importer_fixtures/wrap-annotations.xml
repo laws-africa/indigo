@@ -1,7 +1,7 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act name="act">
     <meta>
-      <identification source="#Laws-Africa">
+      <identification source="#Indigo-Platform">
         <FRBRWork>
           <FRBRthis value="/akn/za/act/2020/1/!main"/>
           <FRBRuri value="/akn/za/act/2020/1"/>
@@ -25,8 +25,8 @@
           <FRBRauthor href=""/>
         </FRBRManifestation>
       </identification>
-      <references source="#Laws-Africa">
-        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
+      <references source="#Indigo-Platform">
+        <TLCOrganization eId="Indigo-Platform" href="http://localhost:8000" showAs="Indigo Platform"/>
       </references>
     </meta>
     <preface>

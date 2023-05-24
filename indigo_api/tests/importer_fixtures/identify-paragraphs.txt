@@ -124,17 +124,21 @@ BODY
 
     The Municipal Manager may -
 
-    a) with the consent of a debtor, enter into an agreement with that person’s employer to deduct from the salary or wages of that debtor-
+    PARAGRAPH a)
 
-    i. any outstanding amounts due by the debtor to the Municipality; or
+      with the consent of a debtor, enter into an agreement with that person’s employer to deduct from the salary or wages of that debtor-
 
-    ii. regular monthly amounts as may be agreed; and
+      i. any outstanding amounts due by the debtor to the Municipality; or
 
-    b) provide special incentives for -
+      ii. regular monthly amounts as may be agreed; and
 
-    i. employers to enter into such agreements; and
+    PARAGRAPH b)
 
-    ii. debtors to consent to such agreements.
+      provide special incentives for -
+
+      i. employers to enter into such agreements; and
+
+      ii. debtors to consent to such agreements.
 
   SECTION 10. - POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE
 
@@ -142,19 +146,29 @@ BODY
 
       The Municipal Manager may restrict or disconnect the supply of any service to the premises of any user whenever such user of a service -
 
-      a) fails to make payment on the due date;
+      SUBPARAGRAPH a)
 
-      b) fails to comply with an arrangement; or
+        fails to make payment on the due date;
 
-      c) fails to comply with a condition of supply imposed by the Municipality;
+      SUBPARAGRAPH b)
 
-      d) tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.
+        fails to comply with an arrangement; or
+
+      SUBPARAGRAPH c)
+
+        fails to comply with a condition of supply imposed by the Municipality;
+
+      SUBPARAGRAPH d)
+
+        tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.
 
     PARAGRAPH 2.
 
       The Municipal Manager may reconnect and restore full levels of supply of any of the restricted or discontinued services only -
 
-    a) after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or
+      SUBPARAGRAPH a)
+
+        after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or
 
   SECTION 3. - b) after an arrangement with the debtor has been concluded
 
@@ -164,25 +178,41 @@ BODY
 
     Subject to section 9, the Municipal Manager, must with regards to rates, and may, with regards to other debt -
 
-    a) By legal action recover any debt from any person;
+    PARAGRAPH a)
 
-    b) Recover debt from any organ of state with due consideration of the provisions of Chapter 3 of the Constitution of the Republic of South Africa, 1996; and
+      By legal action recover any debt from any person;
 
-    c) May refer a debtor to third party debt collection agencies and have such debtor placed on the National Credit Rating list.
+    PARAGRAPH b)
+
+      Recover debt from any organ of state with due consideration of the provisions of Chapter 3 of the Constitution of the Republic of South Africa, 1996; and
+
+    PARAGRAPH c)
+
+      May refer a debtor to third party debt collection agencies and have such debtor placed on the National Credit Rating list.
 
   SECTION 12. - RECOVERY OF COSTS
 
     The Municipal Manager may recover the following costs, in instances where such costs are incurred by or on behalf of the Municipality -
 
-    a) Cost and administration fees where payments made to the Municipality by negotiable instruments are dishonoured by banks when presented for payment;
+    PARAGRAPH a)
 
-    b) Legal and administration costs, including attorney-and-client costs and tracing fees incurred in the recovery of debts;
+      Cost and administration fees where payments made to the Municipality by negotiable instruments are dishonoured by banks when presented for payment;
 
-    c) Restriction, disconnection and reconnection fees, where any service has been restricted or disconnected as a result of non-compliance with this By-law;
+    PARAGRAPH b)
 
-    d) Any losses the Municipality may suffer as a result of tampering with municipal equipment or meters; and
+      Legal and administration costs, including attorney-and-client costs and tracing fees incurred in the recovery of debts;
 
-    e) Any collection commission incurred.
+    PARAGRAPH c)
+
+      Restriction, disconnection and reconnection fees, where any service has been restricted or disconnected as a result of non-compliance with this By-law;
+
+    PARAGRAPH d)
+
+      Any losses the Municipality may suffer as a result of tampering with municipal equipment or meters; and
+
+    PARAGRAPH e)
+
+      Any collection commission incurred.
 
   SECTION 13. - ATTACHMENT
 
@@ -214,17 +244,21 @@ BODY
 
     The Municipal Manager may -
 
-    a) Consolidate any separate accounts of a debtor;
+    PARAGRAPH a)
 
-    b) Credit a payment by a debtor against my account of that debtor; and
+      Consolidate any separate accounts of a debtor;
 
-    ITEMS 
+    PARAGRAPH b)
 
-      c) Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
+      Credit a payment by a debtor against my account of that debtor; and
 
-      ITEM 2.
+    PARAGRAPH c)
 
-        Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
+      Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
+
+    PARAGRAPH 2.
+
+      Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
 
   SECTION 17. - INDIGENTS
 
@@ -238,15 +272,25 @@ BODY
 
     Any person who -
 
-    a) Obstructs or hinders any official of the Municipality in the execution of his or her duties under this By-law or the policy;
+    PARAGRAPH a)
 
-    b) Unlawfully uses or interferes with Municipal equipment or consumption of services supplied;
+      Obstructs or hinders any official of the Municipality in the execution of his or her duties under this By-law or the policy;
 
-    c) Tampers with any Municipal equipment or breaks any seal on a meter;
+    PARAGRAPH b)
 
-    d) Contravenes or fails to comply with the provisions of this By-Law or the policy; or
+      Unlawfully uses or interferes with Municipal equipment or consumption of services supplied;
 
-    e) Fails to comply with a notice served in terms of this By-law or the policy, is guilty of an offence and liable in conviction to a penalty.
+    PARAGRAPH c)
+
+      Tampers with any Municipal equipment or breaks any seal on a meter;
+
+    PARAGRAPH d)
+
+      Contravenes or fails to comply with the provisions of this By-Law or the policy; or
+
+    PARAGRAPH e)
+
+      Fails to comply with a notice served in terms of this By-law or the policy, is guilty of an offence and liable in conviction to a penalty.
 
   SECTION 20. - Debt Write-Off
 

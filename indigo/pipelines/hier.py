@@ -152,8 +152,8 @@ class IdentifyParagraphs(IdentifySubsections):
 
     # (1)
     num_re = re.compile(r"^("
-                        # (1)
-                        r"\([a-zA-Z]{1,4}\)"
+                        # (1), a)
+                        r"\(?[a-zA-Z]{1,4}\)"
                         # 1.1
                         # 1.1a.1
                         r"|(\d{1,3}[a-zA-Z]{0,2}(\.\d{1,3}[a-zA-Z]{0,2})*\.?)"

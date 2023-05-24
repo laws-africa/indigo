@@ -76,6 +76,9 @@ class ImporterBluebellTestCase(TestCase):
     def test_identify_part_headings(self):
         self.run_file_test('identify-part-headings')
 
+    def test_identify_paragraphs(self):
+        self.run_file_test('identify-paragraphs')
+
     def test_tables(self):
         self.run_file_test("tables")
 

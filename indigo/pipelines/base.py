@@ -95,7 +95,7 @@ class WrapAnnotations(Stage):
         maker = get_maker()
         for annotation_elem in context.xml.xpath(
                 './/a:*['
-                '(self::a:p or self::a:listIntroduction or self::a:listWrapUp or self::a:intro or self::a:wrapUp)'
+                '(self::a:p or self::a:listIntroduction or self::a:listWrapUp)'
                 ' and starts-with(., "[")]',
                 namespaces={'a': self.ns}):
             text = ''.join(annotation_elem.itertext())

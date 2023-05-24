@@ -152,8 +152,10 @@ class IdentifyParagraphs(IdentifySubsections):
 
     # (1)
     num_re = re.compile(r"^("
-                        # (1), a)
+                        # (i), a)
                         r"\(?[a-zA-Z]{1,4}\)"
+                        # i., A.
+                        r"|[a-zA-Z]{1,4}\."
                         # 1.1
                         # 1.1a.1
                         r"|(\d{1,3}[a-zA-Z]{0,2}(\.\d{1,3}[a-zA-Z]{0,2})*\.?)"
@@ -690,6 +692,10 @@ class NestParagraphs(Stage):
     def is_para(self, item):
         return item is not None and item.tag == "akn-block" and item.attrib.get("name") == "PARAGRAPH"
 
+    def clean_num(self, num):
+        num = num or ''
+        return num.lstrip('(').rstrip(').')
+
     def nest_items(self, item, our_number_format, prev=None):
         number_format = our_number_format
 
@@ -698,13 +704,13 @@ class NestParagraphs(Stage):
             if not self.is_para(item):
                 return
 
-            num = item.attrib["num"]
+            num = self.clean_num(item.attrib["num"])
             number_format = self.guess_number_format(item, number_format)
             if not number_format:
                 break
 
             # (aa) after (z) is same numbering type, pretend we've always been this format
-            if num == "(aa)" and item.getprevious() is not None and item.getprevious().attrib.get("num") == "(z)":
+            if num == "aa" and item.getprevious() is not None and self.clean_num(item.getprevious().attrib.get("num")) == "z":
                 our_number_format = number_format
 
             if number_format == our_number_format:
@@ -734,7 +740,7 @@ class NestParagraphs(Stage):
         prev = item.getprevious()
         nxt = item.getnext()
 
-        if num == "(i)":
+        if self.clean_num(num) == "i":
             # Special case to detect difference between:
             #
             # (h) foo
@@ -751,31 +757,33 @@ class NestParagraphs(Stage):
             #   - there was a previous item (h), and
             #     - there is not a next item, or
             #     - the next item is something other than (ii)
-            if prev is not None and prev.attrib.get("num", "").startswith("(h") and (nxt is None or nxt.attrib["num"] != "(ii)"):
+            if prev is not None and self.clean_num(prev.attrib.get("num", "")).startswith("h") and (nxt is None or self.clean_num(nxt.attrib.get("num")) != "ii"):
                 return NumberingFormat.a
             else:
                 return NumberingFormat.i
 
-        elif num in ["(u)", "(v)", "(x)"]:
+        elif self.clean_num(num) in ["u", "v", "x"]:
             return prev_format
 
-        elif re.match(r"^\([ivx]+", num):
+        elif re.match(r"^[ivx]+", self.clean_num(num)):
             return NumberingFormat.i
 
-        elif re.match(r"^\([IVX]+", num):
+        elif re.match(r"^[IVX]+", self.clean_num(num)):
             return NumberingFormat.I
 
-        elif re.match(r"^\([a-z]{2}", num):
+        elif re.match(r"^[a-z]{2}", self.clean_num(num)):
             return NumberingFormat.aa
 
-        elif re.match(r"^\([A-Z]{2}", num):
+        elif re.match(r"^[A-Z]{2}", self.clean_num(num)):
             return NumberingFormat.AA
 
-        elif re.match(r"^\([a-z]+", num):
+        elif re.match(r"^[a-z]+", self.clean_num(num)):
             return NumberingFormat.a
 
-        elif re.match(r"^\([A-Z]+", num):
+        elif re.match(r"^[A-Z]+", self.clean_num(num)):
             return NumberingFormat.A
+
+        # don't clean the following nums, as brackets / stops are significant
 
         elif re.match(r"^\d+(\.\d+)+$", num):
             return NumberingFormat('i.i', num.count('.'))

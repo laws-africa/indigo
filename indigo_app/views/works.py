@@ -905,6 +905,11 @@ class BatchAddWorkView(PlaceViewBase, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['bulk_creator'] = self.bulk_creator
+
+        # only show open tasks for each work
+        for row in context.get('works'):
+            row.open_tasks = Task.objects.filter(work=row.work, state__in=Task.OPEN_STATES)
+
         return context
 
     def form_valid(self, form):

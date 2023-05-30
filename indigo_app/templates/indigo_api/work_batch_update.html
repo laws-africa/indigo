@@ -123,7 +123,7 @@
               <th>{% trans 'Status' %}</th>
               <th>{% trans 'Title / Error message' %}</th>
               <th>{% trans 'FRBR URI' %}</th>
-              <th>{% trans 'Tasks' %}</th>
+              <th>{% trans 'Open tasks' %}</th>
             </tr>
           </thead>
           <tbody>
@@ -156,9 +156,9 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% if row.work.tasks.exists %}
+                  {% if row.open_tasks %}
                     <ul class="pl-0">
-                      {% for task in row.work.tasks.all %}
+                      {% for task in row.open_tasks %}
                         <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
                       {% endfor %}
                     </ul>

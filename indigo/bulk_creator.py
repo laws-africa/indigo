@@ -1297,9 +1297,10 @@ class BaseBulkUpdater(BaseBulkCreator):
                     self.provisionally_save(work, old_publication_date=old_publication_date, new_publication_date=new_publication_date, old_title=old_title, new_title=new_title)
 
                     # try to link publication document (if there isn't one)
-                    publication_document = PublicationDocument.objects.filter(work=work).first()
-                    if not publication_document and publication_details_changed:
-                        self.link_publication_document(work, row)
+                    if publication_details_changed:
+                        publication_document = PublicationDocument.objects.filter(work=work).first()
+                        if not publication_document:
+                            self.link_publication_document(work, row)
 
                     # create import task for principal works (if there isn't one)
                     if work.principal:

@@ -1329,8 +1329,7 @@ class BaseBulkUpdater(BaseBulkCreator):
             row.notes.append(f'commencement date (main): {old_val} → {val}')
 
             if not self.dry_run:
-                main_commencement = self.get_or_create_commencement(work, val)
-                main_commencement.save()
+                self.create_or_update_commencement(work, val)
 
                 # update work to 'commenced' or 'uncommenced' if needed
                 if val and not work.commenced:
@@ -1340,11 +1339,11 @@ class BaseBulkUpdater(BaseBulkCreator):
 
             return True
 
-    def get_or_create_commencement(self, work, new_date):
+    def create_or_update_commencement(self, work, new_date):
         """ Looks for an existing main commencement on the work.
             If it doesn't exist, create a new main commencement on it.
             If there are no other commencements, have it commence all provisions (the common case).
-            Set the new date and return it without saving.
+            Set the new date and save the commencement.
         """
         main_commencement = work.main_commencement
         if not main_commencement:
@@ -1357,7 +1356,7 @@ class BaseBulkUpdater(BaseBulkCreator):
         main_commencement.date = new_date
         main_commencement.updated_by_user = self.user
 
-        return main_commencement
+        main_commencement.save()
 
     def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
         return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data,

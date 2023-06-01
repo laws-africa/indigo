@@ -258,7 +258,8 @@ BODY
 """).strip())
 
     def test_sections_versus_paragraphs(self):
-        """ TODO: this should instead be:
+        self.assertMultiLineEqual(
+            """
 BODY 
 
   SECTION 16. - CONSOLIDATION OF A DEBTOR’S ACCOUNTS
@@ -278,34 +279,6 @@ BODY
       SUBPARAGRAPH c)
 
         Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
-
-    PARAGRAPH 2.
-
-      Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
-        """
-        self.assertMultiLineEqual(
-            """
-BODY 
-
-  PARAGRAPH 16.
-
-    CONSOLIDATION OF A DEBTOR’S ACCOUNTS
-
-  SECTION 1.
-
-    The Municipal Manager may -
-
-    PARAGRAPH a)
-
-      Consolidate any separate accounts of a debtor;
-
-    PARAGRAPH b)
-
-      Credit a payment by a debtor against my account of that debtor; and
-
-    PARAGRAPH c)
-
-      Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
 
     PARAGRAPH 2.
 

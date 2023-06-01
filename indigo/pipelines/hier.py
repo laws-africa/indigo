@@ -88,6 +88,10 @@ class IdentifySections(Stage):
         if text[-1] in ['-', '—', ';', ':']:
             return False
 
+        # don't identify a paragraph
+        if any(x in ['.', '(', ')', '[', ']'] for x in text[:5]):
+            return False
+
         bold = ''.join(elem.xpath('.//b//text()'))
         return len(text) <= self.max_heading_length or text in bold
 

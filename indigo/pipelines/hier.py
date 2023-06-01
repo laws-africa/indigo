@@ -186,11 +186,17 @@ class IdentifyNumberedParagraphs(IdentifyParagraphs):
 
 class IdentifyNumberedParagraphsAgain(Stage):
     """ Identifies numbered sections that should be paragraphs.
+        These are either sections with headings but no content,
+         or sections with content but no headings.
 
     These are of the form:
 
         <akn-block name="SECTION"><num>1</num><heading>paragraph text</heading></akn-block>
         <akn-block name="SECTION"><num>1a.</num><heading>paragraph text</heading></akn-block>
+
+    Or:
+        <akn-block name="SECTION"><num>1</num></akn-block>
+        <p>paragraph text</p>
 
     Reads: context.html
     Writes: context.html
@@ -198,6 +204,13 @@ class IdentifyNumberedParagraphsAgain(Stage):
     target_name = 'SECTION'
 
     def __call__(self, context):
+        # sections without headings
+        for block in context.html.xpath(f'.//akn-block[@name="{self.target_name}" and not(@heading)]'):
+            next_block = block.getnext()
+            if next_block is not None and next_block.tag == 'p':
+                block.attrib['name'] = 'PARAGRAPH'
+
+        # sections with headings but no content
         for block in context.html.xpath(f'.//akn-block[@name="{self.target_name}" and (@heading)]'):
             if self.has_no_content(block):
                 self.adjust_block(block)

@@ -24,6 +24,5 @@ Contents
    running/configuration
    guide/index
    guide/law-intro
-   api/public
    dev/index
    changelog

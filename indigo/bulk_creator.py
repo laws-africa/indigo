@@ -1271,6 +1271,9 @@ class BaseBulkUpdater(BaseBulkCreator):
             # TODO: update extra properties
             # TODO: update taxonomies?
             for column in self.update_columns:
+                if column == 'commencement_date':
+                    update = self.update_commencement_date_main(row, work)
+                    continue
                 val = getattr(row, column)
                 old_val = getattr(work, column)
                 if old_val != val:
@@ -1294,9 +1297,10 @@ class BaseBulkUpdater(BaseBulkCreator):
                     self.provisionally_save(work, old_publication_date=old_publication_date, new_publication_date=new_publication_date, old_title=old_title, new_title=new_title)
 
                     # try to link publication document (if there isn't one)
-                    publication_document = PublicationDocument.objects.filter(work=work).first()
-                    if not publication_document and publication_details_changed:
-                        self.link_publication_document(work, row)
+                    if publication_details_changed:
+                        publication_document = PublicationDocument.objects.filter(work=work).first()
+                        if not publication_document:
+                            self.link_publication_document(work, row)
 
                     # create import task for principal works (if there isn't one)
                     if work.principal:
@@ -1317,6 +1321,42 @@ class BaseBulkUpdater(BaseBulkCreator):
         except Work.DoesNotExist:
             row.errors = f'Work not found for FRBR URI: {frbr_uri}'
             return row
+
+    def update_commencement_date_main(self, row, work):
+        val = getattr(row, 'commencement_date')
+        old_val = work.commencement_date
+        if old_val != val:
+            row.notes.append(f'commencement date (main): {old_val} → {val}')
+
+            if not self.dry_run:
+                self.create_or_update_commencement(work, val)
+
+                # update work to 'commenced' or 'uncommenced' if needed
+                if val and not work.commenced:
+                    work.commenced = True
+                elif not val and work.commenced:
+                    work.commenced = False
+
+            return True
+
+    def create_or_update_commencement(self, work, new_date):
+        """ Looks for an existing main commencement on the work.
+            If it doesn't exist, create a new main commencement on it.
+            If there are no other commencements, have it commence all provisions (the common case).
+            Set the new date and save the commencement.
+        """
+        main_commencement = work.main_commencement
+        if not main_commencement:
+            main_commencement = Commencement(commenced_work=work, main=True, created_by_user=self.user)
+
+            other_commencements = work.commencements.all()
+            if not other_commencements:
+                main_commencement.all_provisions = True
+
+        main_commencement.date = new_date
+        main_commencement.updated_by_user = self.user
+
+        main_commencement.save()
 
     def get_row_validation_form(self, country, locality, subtypes, default_doctype, row_data):
         return self.row_validation_form_class(country, locality, subtypes, default_doctype, data=row_data,

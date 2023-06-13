@@ -756,8 +756,9 @@ class NestParagraphs(Stage):
 
         prev = item.getprevious()
         nxt = item.getnext()
+        clean_num = self.clean_num(num)
 
-        if self.clean_num(num) == "i":
+        if clean_num == "i":
             # Special case to detect difference between:
             #
             # (h) foo
@@ -779,25 +780,25 @@ class NestParagraphs(Stage):
             else:
                 return NumberingFormat.i
 
-        elif self.clean_num(num) in ["u", "v", "x"]:
+        elif clean_num in ["u", "v", "x"]:
             return prev_format
 
-        elif re.match(r"^[ivx]+", self.clean_num(num)):
+        elif re.match(r"^[ivx]+", clean_num):
             return NumberingFormat.i
 
-        elif re.match(r"^[IVX]+", self.clean_num(num)):
+        elif re.match(r"^[IVX]+", clean_num):
             return NumberingFormat.I
 
-        elif re.match(r"^[a-z]{2}", self.clean_num(num)):
+        elif re.match(r"^[a-z]{2}", clean_num):
             return NumberingFormat.aa
 
-        elif re.match(r"^[A-Z]{2}", self.clean_num(num)):
+        elif re.match(r"^[A-Z]{2}", clean_num):
             return NumberingFormat.AA
 
-        elif re.match(r"^[a-z]+", self.clean_num(num)):
+        elif re.match(r"^[a-z]+", clean_num):
             return NumberingFormat.a
 
-        elif re.match(r"^[A-Z]+", self.clean_num(num)):
+        elif re.match(r"^[A-Z]+", clean_num):
             return NumberingFormat.A
 
         # don't clean the following nums, as brackets / stops are significant

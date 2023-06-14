@@ -173,6 +173,16 @@ class WorksTest(testcases.TestCase):
         amendment = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment.save()
 
+        act_12_of_1900 = Work(frbr_uri='/akn/za/act/1900/12', country_id=1, created_by_user_id=1)
+        act_12_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_12_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_2_of_1900 = Work(frbr_uri='/akn/za/act/1900/2', country_id=1, created_by_user_id=1)
+        act_2_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
         act_1_of_1900 = Work.objects.get(pk=6)
         amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment.save()
@@ -183,18 +193,14 @@ class WorksTest(testcases.TestCase):
         amendment.save()
 
         timeline = WorkViewBase.get_work_timeline(view, work)
-        first_amendment = timeline[0]['amendments'][0]
-        second_amendment = timeline[0]['amendments'][1]
-        third_amendment = timeline[0]['amendments'][2]
-        fourth_amendment = timeline[0]['amendments'][3]
-        fifth_amendment = timeline[0]['amendments'][4]
+        amending_works_in_order = [x.amending_work for x in timeline[0]['amendments']]
 
-        # Act 1, then Act 30, then GN 1, of the same year; then Act 1, then Act 2, of the later year
-        self.assertEqual(act_1_of_1900, first_amendment.amending_work)
-        self.assertEqual(act_30_of_1900, second_amendment.amending_work)
-        self.assertEqual(gn_1_of_1900, third_amendment.amending_work)
-        self.assertEqual(act_1_of_1998, fourth_amendment.amending_work)
-        self.assertEqual(act_2_of_1998, fifth_amendment.amending_work)
+        self.assertEqual(
+            [act_1_of_1900, act_2_of_1900,
+             act_12_of_1900, act_30_of_1900,
+             gn_1_of_1900,
+             act_1_of_1998, act_2_of_1998],
+            amending_works_in_order)
 
     def test_no_publication_document(self):
         # this work has no publication document

@@ -654,7 +654,7 @@ class Amendment(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     class Meta:
-        ordering = ['date']
+        ordering = ['date', 'amending_work__date']
 
     def expressions(self):
         """ The amended work's documents (expressions) at this date.

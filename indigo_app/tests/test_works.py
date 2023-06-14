@@ -159,27 +159,42 @@ class WorksTest(testcases.TestCase):
         work = Work.objects.get(pk=1)
         work.assent_date = datetime.date(2014, 3, 20)
 
-        # first amendment at 2019-01-01: Act 2 of 1998
-        amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
+        act_2_of_1998 = Work.objects.get(pk=2)
+        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1998, date='2019-01-01', created_by_user_id=1)
         amendment.save()
-        # second amendment at 2019-01-01: Act 1 of 1900 (should be listed first)
-        amendment = Amendment(amended_work_id=1, amending_work_id=6, date='2019-01-01', created_by_user_id=1)
+
+        gn_1_of_1900 = Work(frbr_uri='/akn/za/act/gn/1900/1', country_id=1, created_by_user_id=1)
+        gn_1_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=gn_1_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment.save()
-        # third amendment at 2019-01-01: Act 1 of 1998 (should be listed before Act 2 of 1998)
-        third_amending_work = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
-        third_amending_work.save()
-        amendment = Amendment(amended_work_id=1, amending_work=third_amending_work, date='2019-01-01', created_by_user_id=1)
+
+        act_30_of_1900 = Work(frbr_uri='/akn/za/act/1900/30', country_id=1, created_by_user_id=1)
+        act_30_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_1_of_1900 = Work.objects.get(pk=6)
+        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_1_of_1998 = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
+        act_1_of_1998.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1998, date='2019-01-01', created_by_user_id=1)
         amendment.save()
 
         timeline = WorkViewBase.get_work_timeline(view, work)
         first_amendment = timeline[0]['amendments'][0]
         second_amendment = timeline[0]['amendments'][1]
         third_amendment = timeline[0]['amendments'][2]
+        fourth_amendment = timeline[0]['amendments'][3]
+        fifth_amendment = timeline[0]['amendments'][4]
 
-        # Act 1 of 1990 listed before Act 2 of 1998
-        self.assertEqual(6, first_amendment.amending_work.pk)
-        self.assertEqual(third_amending_work, second_amendment.amending_work)
-        self.assertEqual(2, third_amendment.amending_work.pk)
+        # Act 1, then Act 30, then GN 1, of the same year; then Act 1, then Act 2, of the later year
+        self.assertEqual(act_1_of_1900, first_amendment.amending_work)
+        self.assertEqual(act_30_of_1900, second_amendment.amending_work)
+        self.assertEqual(gn_1_of_1900, third_amendment.amending_work)
+        self.assertEqual(act_1_of_1998, fourth_amendment.amending_work)
+        self.assertEqual(act_2_of_1998, fifth_amendment.amending_work)
 
     def test_no_publication_document(self):
         # this work has no publication document

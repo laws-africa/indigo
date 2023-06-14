@@ -159,20 +159,27 @@ class WorksTest(testcases.TestCase):
         work = Work.objects.get(pk=1)
         work.assent_date = datetime.date(2014, 3, 20)
 
-        # first amendment at 2019-01-01: Act 2 of 1998, no publication or commencement date
+        # first amendment at 2019-01-01: Act 2 of 1998
         amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
         amendment.save()
-        # second amendment at 2019-01-01: Act 1 of 1900, no publication or commencement date (should be listed first)
+        # second amendment at 2019-01-01: Act 1 of 1900 (should be listed first)
         amendment = Amendment(amended_work_id=1, amending_work_id=6, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+        # third amendment at 2019-01-01: Act 1 of 1998 (should be listed before Act 2 of 1998)
+        third_amending_work = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
+        third_amending_work.save()
+        amendment = Amendment(amended_work_id=1, amending_work=third_amending_work, date='2019-01-01', created_by_user_id=1)
         amendment.save()
 
         timeline = WorkViewBase.get_work_timeline(view, work)
         first_amendment = timeline[0]['amendments'][0]
         second_amendment = timeline[0]['amendments'][1]
+        third_amendment = timeline[0]['amendments'][2]
 
         # Act 1 of 1990 listed before Act 2 of 1998
         self.assertEqual(6, first_amendment.amending_work.pk)
-        self.assertEqual(2, second_amendment.amending_work.pk)
+        self.assertEqual(third_amending_work, second_amendment.amending_work)
+        self.assertEqual(2, third_amendment.amending_work.pk)
 
     def test_no_publication_document(self):
         # this work has no publication document

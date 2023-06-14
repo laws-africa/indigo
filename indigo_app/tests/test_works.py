@@ -154,6 +154,26 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(timeline[-1]['date'], datetime.date(2014, 3, 20))
         self.assertEqual(timeline[-1]['assent_date'], True)
 
+    def test_get_work_timeline_multiple_amendments(self):
+        view = WorkViewBase()
+        work = Work.objects.get(pk=1)
+        work.assent_date = datetime.date(2014, 3, 20)
+
+        # first amendment at 2019-01-01: Act 2 of 1998, no publication or commencement date
+        amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+        # second amendment at 2019-01-01: Act 1 of 1900, no publication or commencement date (should be listed first)
+        amendment = Amendment(amended_work_id=1, amending_work_id=6, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        timeline = WorkViewBase.get_work_timeline(view, work)
+        first_amendment = timeline[0]['amendments'][0]
+        second_amendment = timeline[0]['amendments'][1]
+
+        # Act 1 of 1990 listed before Act 2 of 1998
+        self.assertEqual(6, first_amendment.amending_work.pk)
+        self.assertEqual(2, second_amendment.amending_work.pk)
+
     def test_no_publication_document(self):
         # this work has no publication document
         resp = self.client.get('/works/akn/za/act/2010/1/media/publication/')

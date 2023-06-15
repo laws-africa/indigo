@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
+from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
@@ -654,7 +655,7 @@ class Amendment(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     class Meta:
-        ordering = ['date', 'amending_work__date', '-amending_work__subtype', 'amending_work__number']
+        ordering = ['date']
 
     def expressions(self):
         """ The amended work's documents (expressions) at this date.
@@ -663,6 +664,19 @@ class Amendment(models.Model):
 
     def can_delete(self):
         return not self.expressions().exists()
+
+    @staticmethod
+    def order_further(amendments):
+        """ Not always needed and can be expensive.
+            Order amendments by their dates; then the date, subtype, and number of their amending works.
+            Use natural sorting for the `number` component, as it's a character field but commonly uses integers.
+
+            :param amendments: A queryset of Amendment objects.
+            :return: A list of Amendment objects, in the correct order.
+        """
+        amendments = natsorted(amendments, key=lambda x: x.amending_work.number)
+        amendments.sort(key=lambda x: (x.date, x.amending_work.date, x.amending_work.subtype or ''))
+        return amendments
 
 
 @receiver(signals.post_save, sender=Amendment)

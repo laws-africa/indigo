@@ -76,6 +76,9 @@ class ImporterBluebellTestCase(TestCase):
     def test_identify_part_headings(self):
         self.run_file_test('identify-part-headings')
 
+    def test_identify_paragraphs(self):
+        self.run_file_test('identify-paragraphs')
+
     def test_tables(self):
         self.run_file_test("tables")
 
@@ -252,6 +255,123 @@ BODY
 <p>4. (1) directly into subsection but with a heading</p>
 <p>5. looks like a section initially but should be a paragraph</p>
 <p>6. because the next element is not its content, but another akn-block!</p>
+""").strip())
+
+    def test_sections_versus_paragraphs(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 16. - CONSOLIDATION OF A DEBTOR’S ACCOUNTS
+
+    PARAGRAPH 1.
+
+      The Municipal Manager may -
+
+      SUBPARAGRAPH a)
+
+        Consolidate any separate accounts of a debtor;
+
+      SUBPARAGRAPH b)
+
+        Credit a payment by a debtor against my account of that debtor; and
+
+      SUBPARAGRAPH c)
+
+        Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
+
+    PARAGRAPH 2.
+
+      Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
+""".strip(),
+            self.html_to_bluebell("""
+<p>16. <b>CONSOLIDATION OF A DEBTOR’S ACCOUNTS</b></p>
+<p>1. The Municipal Manager may -</p>
+<p>a) Consolidate any separate accounts of a debtor;</p>
+<p>b) Credit a payment by a debtor against my account of that debtor; and</p>
+<p>c) Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.</p>
+<p>2. Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.</p>
+""").strip())
+
+    def test_sections_versus_paragraphs2(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 10. - POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE
+
+    PARAGRAPH 1.
+
+      The Municipal Manager may restrict or disconnect the supply of any service to the premises of any user whenever such user of a service -
+
+      SUBPARAGRAPH a)
+
+        fails to make payment on the due date;
+
+      SUBPARAGRAPH b)
+
+        fails to comply with an arrangement; or
+
+      SUBPARAGRAPH c)
+
+        fails to comply with a condition of supply imposed by the Municipality;
+
+      SUBPARAGRAPH d)
+
+        tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.
+
+    PARAGRAPH 2.
+
+      The Municipal Manager may reconnect and restore full levels of supply of any of the restricted or discontinued services only -
+
+      SUBPARAGRAPH a)
+
+        after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or
+
+      SUBPARAGRAPH b)
+
+        after an arrangement with the debtor has been concluded.
+
+    PARAGRAPH 3.
+
+      The Municipal Manager may restrict, disconnect or discontinue any service in respect of any arrear debt.
+""".strip(),
+            self.html_to_bluebell("""
+<p>10. <b>POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE</b></p>
+<p>1. The Municipal Manager may restrict or disconnect the supply of any service to the premises of any user whenever such user of a service -</p>
+<p>a) fails to make payment on the due date;</p>
+<p>b) fails to comply with an arrangement; or</p>
+<p>c) fails to comply with a condition of supply imposed by the Municipality;</p>
+<p>d) tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.</p>
+<p>2. The Municipal Manager may reconnect and restore full levels of supply of any of the restricted or discontinued services only -</p>
+<p>a) after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or</p>
+<p>b) after an arrangement with the debtor has been concluded.</p>
+<p>3. The Municipal Manager may restrict, disconnect or discontinue any service in respect of any arrear debt.</p>
+""").strip())
+
+    def test_sections_versus_paragraphs3(self):
+        self.assertMultiLineEqual(
+            """
+BODY 
+
+  SECTION 14. - Expiry and renewal of fixed-term agreements
+
+    SUBSECTION (1)
+
+      This section does not apply to transactions between juristic persons regardless of their annual turnover or asset value.
+
+  SECTION 15. - Pre-authorisation of repair or maintenance services
+
+    SUBSECTION (1)
+
+      This section applies only to a transaction or consumer agreement—
+""".strip(),
+            self.html_to_bluebell("""
+<h1 class="western" align="justify" style="margin-top: 0cm">Expiry and renewal of fixed-term agreements</h1> <p class="western" align="left" style="margin-left: 0cm; text-indent: 0cm; margin-top: 0.02cm"><br> </p>
+<p class="western" align="justify" style="margin-left: 1.89cm; margin-right: 0.24cm; text-indent: 0.35cm; line-height: 95%"><b>14. </b>(1) This section does not apply to transactions between juristic persons regardless of their annual turnover or asset value.</p>
+<p class="western" align="left" style="margin-left: 0cm; text-indent: 0cm; margin-top: 0.01cm"><br> </p>
+<h1 class="western">Pre-authorisation of repair or maintenance services</h1> <p class="western" align="left" style="margin-left: 0cm; text-indent: 0cm; margin-top: 0cm"><br> </p>
+<p class="western" align="justify" style="margin-left: 2.79cm; text-indent: -0.54cm; line-height: 0.4cm"><b>15. </b>(1) This section applies only to a transaction or consumer agreement—</p>
 """).strip())
 
     def test_paras_in_schedules_with_headings(self):

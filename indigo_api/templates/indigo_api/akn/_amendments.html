@@ -2,7 +2,7 @@
 
 {% if document.amendments or document.work.repealed_date %}
 <ol class="amendment-list">
-  {% for amendment in document.amendments %}
+  {% for amendment in document.amendments_in_order %}
   <li class="amendment">
     {% with amending_title=amendment.amending_work.title amending_numtitle=amendment.amending_work.numbered_title date=amendment.date|date:"j E Y" %}
       {% work_resolver_url amendment.amending_work as resolver_uri %}

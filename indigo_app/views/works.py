@@ -103,7 +103,10 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
             if event.get('commencement_date'):
                 event['commencements'] = work.commencements.filter(date=date).all()
             if event.get('amendment'):
-                event['amendments'] = work.amendments.filter(date=date).all()
+                event_amendments = work.amendments.filter(date=date)
+                if len(event_amendments) > 1:
+                    event_amendments = Amendment.order_further(event_amendments)
+                event['amendments'] = event_amendments
             if event.get('consolidation'):
                 event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
             event['expressions'] = work.expressions().filter(expression_date=date).all()

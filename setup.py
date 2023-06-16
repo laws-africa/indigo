@@ -75,6 +75,7 @@ setup(
         'jsonpatch>=1.23',
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
+        'natsort>=8.3',
         'requests>=2',
         'unicodecsv>=0.14.1',
         'whitenoise>=5.3.0',

@@ -45,3 +45,18 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 @register.simple_tag
 def has_uncommenced_provisions(document):
     return bool(document.work.all_uncommenced_provision_ids(document.expression_date))
+
+
+@register.simple_tag
+def publication_document_description(work, placeholder=False):
+    """ Based on the information available, return a string describing the publication document for a work.
+        If `placeholder` is True, return a minimum placeholder string.
+        Otherwise, only return a string at all if at least one piece of publication information is available.
+    """
+    # TODO: WIP
+    date = work.publication_date
+    name = work.publication_name
+    number = work.publication_number
+    if placeholder:
+        return 'placeholder'
+    return 'Published in …'

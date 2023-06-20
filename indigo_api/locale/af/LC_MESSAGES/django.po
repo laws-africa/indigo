@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:06+0200\n"
+"POT-Creation-Date: 2023-06-20 11:54+0200\n"
 "PO-Revision-Date: 2023-05-02 15:20\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
@@ -17,44 +17,61 @@ msgstr ""
 "X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 139\n"
 
-#: models/documents.py:270
+#: models/documents.py:274
 #, python-format
-msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
+msgid ""
+"This is the version of this document from %(start)s and includes any "
+"amendments published up to %(end)s."
+msgstr ""
+"Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s "
+"en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
 
-#: models/documents.py:272
+#: models/documents.py:276
 #, python-format
 msgid "This is the version of this document from %(start)s."
 msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
-#: models/documents.py:275
+#: models/documents.py:279
 #, python-format
-msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr "Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
+msgid ""
+"This is the version of this document at %(start)s and includes any "
+"amendments published up to %(end)s."
+msgstr ""
+"Hierdie weergawe van die relevante dokument vind toepassing vanaf %(start)s "
+"en is insluitend van enige verdere wysigings gepubliseer tot en met %(end)s."
 
-#: models/documents.py:277
+#: models/documents.py:281
 #, python-format
 msgid "This is the version of this document at %(start)s."
 msgstr "Die is die weergawe van hierdie dokument van %(start)s."
 
-#: models/documents.py:280
+#: models/documents.py:284
 #, python-format
-msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
+msgid ""
+"This is the version of this document as it was from %(start)s to %(end)s."
+msgstr ""
+"Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot "
+"%(end)s."
 
-#: models/documents.py:283
+#: models/documents.py:287
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr "Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot %(end)s."
+msgstr ""
+"Die is die weergawe van hierdie dokument soos dit was vanaf %(start)s tot "
+"%(end)s."
 
-#: models/documents.py:286
+#: models/documents.py:290
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
 msgstr "Die is die weergawe van hierdie dokument soos dit was teen %(start)s."
 
 #: models/places.py:191
-msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr "Let wel: Die oorspronklik gepubliseerde dokument is nie beskikbaar nie; die inhoud kon dus nie bevestig word nie."
+msgid ""
+"Note: The original publication document is not available and this content "
+"could not be verified."
+msgstr ""
+"Let wel: Die oorspronklik gepubliseerde dokument is nie beskikbaar nie; die "
+"inhoud kon dus nie bevestig word nie."
 
 #: models/tasks.py:233
 msgid "Are you sure you want to submit this task for review?"
@@ -65,127 +82,173 @@ msgstr ""
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 
-#: models/works.py:419
+#: models/works.py:420
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr ""
 
-#: models/works.py:429
+#: models/works.py:430
 msgid "Invalid FRBR URI"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span "
+"class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
+"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span "
+"class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</"
+"span>]"
+msgstr ""
+"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</"
+"span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr "Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s(%(numtitle)s)</a> op <span class=\"repeal-date\">%(date)s</span>"
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-"
+"date\">%(date)s</span>]"
+msgstr ""
+"Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s(%(numtitle)s)</a> op <span class=\"repeal-date\">%(date)s</"
+"span>"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr "[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr ""
+"[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"
 
-#: templates/indigo_api/akn/coverpage_act.html:39
-#, python-format
-msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr "Gepubliseer in %(name)s no. %(number)s op %(date)s"
-
-#: templates/indigo_api/akn/coverpage_act.html:41
-#, python-format
-msgid "Published in %(name)s on %(date)s"
-msgstr "Gepubliseer in %(name)s op %(date)s"
-
-#: templates/indigo_api/akn/coverpage_act.html:51
+#: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr "Ingestem op %(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:59
+#: templates/indigo_api/akn/coverpage_act.html:54
 msgid "Not commenced"
 msgstr "Nog nie in werking"
 
-#: templates/indigo_api/akn/coverpage_act.html:65
-#: templates/indigo_api/akn/coverpage_act.html:102
+#: templates/indigo_api/akn/coverpage_act.html:60
+#: templates/indigo_api/akn/coverpage_act.html:97
 msgid "Commencement date unknown"
 msgstr "Aanvangsdatum onbekend"
 
-#: templates/indigo_api/akn/coverpage_act.html:67
-#: templates/indigo_api/akn/coverpage_act.html:104
+#: templates/indigo_api/akn/coverpage_act.html:62
+#: templates/indigo_api/akn/coverpage_act.html:99
 #, python-format
 msgid "Commenced on %(date)s"
 msgstr "Inwerking getree op %(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:75
-#: templates/indigo_api/akn/coverpage_act.html:112
+#: templates/indigo_api/akn/coverpage_act.html:70
+#: templates/indigo_api/akn/coverpage_act.html:107
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr "Begin deur <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
-#: templates/indigo_api/akn/coverpage_act.html:77
-#: templates/indigo_api/akn/coverpage_act.html:114
+#: templates/indigo_api/akn/coverpage_act.html:72
+#: templates/indigo_api/akn/coverpage_act.html:109
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr "- begin deur <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
-#: templates/indigo_api/akn/coverpage_act.html:81
-#: templates/indigo_api/akn/coverpage_act.html:118
-#: templates/indigo_api/akn/coverpage_act.html:164
+#: templates/indigo_api/akn/coverpage_act.html:76
+#: templates/indigo_api/akn/coverpage_act.html:113
+#: templates/indigo_api/akn/coverpage_act.html:159
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr "deur <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
-#: templates/indigo_api/akn/coverpage_act.html:83
-#: templates/indigo_api/akn/coverpage_act.html:120
-#: templates/indigo_api/akn/coverpage_act.html:166
+#: templates/indigo_api/akn/coverpage_act.html:78
+#: templates/indigo_api/akn/coverpage_act.html:115
+#: templates/indigo_api/akn/coverpage_act.html:161
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr "deur <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
-#: templates/indigo_api/akn/coverpage_act.html:133
+#: templates/indigo_api/akn/coverpage_act.html:128
 msgid "There are multiple commencements:"
 msgstr "Daar is vele inwerkingtredings:"
 
-#: templates/indigo_api/akn/coverpage_act.html:138
+#: templates/indigo_api/akn/coverpage_act.html:133
 msgid "Provisions"
 msgstr "Bepalings"
 
-#: templates/indigo_api/akn/coverpage_act.html:139
+#: templates/indigo_api/akn/coverpage_act.html:134
 msgid "Status"
 msgstr "Status"
 
-#: templates/indigo_api/akn/coverpage_act.html:150
+#: templates/indigo_api/akn/coverpage_act.html:145
 msgid "Unknown provisions"
 msgstr "Onbekende bepalings"
 
-#: templates/indigo_api/akn/coverpage_act.html:155
+#: templates/indigo_api/akn/coverpage_act.html:150
 #, python-format
 msgid "commenced on %(date)s"
 msgstr "begin op%(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:157
+#: templates/indigo_api/akn/coverpage_act.html:152
 msgid "commenced on <i>(unknown date)</i>"
 msgstr "inwerking getree <i>(onbekende datum)</i>"
 
-#: templates/indigo_api/akn/coverpage_act.html:172
+#: templates/indigo_api/akn/coverpage_act.html:167
 msgid "Note:"
 msgstr "Nota:"
 
-#: templates/indigo_api/akn/coverpage_act.html:184
+#: templates/indigo_api/akn/coverpage_act.html:179
 msgid "not yet commenced"
 msgstr "nog nie in werking"
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr "Inhoudsopgawe"
+
+#: templatetags/indigo.py:67
+#, fuzzy, python-format
+#| msgid "Published in %(name)s on %(date)s"
+msgid "Published in %(name)s %(number)s on %(date)s"
+msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#: templatetags/indigo.py:73
+#, fuzzy, python-format
+#| msgid "Published in %(name)s on %(date)s"
+msgid "Published in %(name)s on %(date)s"
+msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#: templatetags/indigo.py:78
+#, fuzzy, python-format
+#| msgid "Published in %(name)s on %(date)s"
+msgid "Published on %(date)s"
+msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#: templatetags/indigo.py:83
+#, fuzzy, python-format
+#| msgid "Published in %(name)s on %(date)s"
+msgid "Published in %(name)s %(number)s"
+msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#: templatetags/indigo.py:89
+#, fuzzy, python-format
+#| msgid "Published in %(name)s on %(date)s"
+msgid "Published in %(name)s"
+msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#: templatetags/indigo.py:93
+msgid "Published"
+msgstr ""
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
@@ -195,7 +258,21 @@ msgstr ""
 msgid "Cannot create a task for a reply annotation."
 msgstr ""
 
-#: views/documents.py:357
+#: views/documents.py:358
 msgid "Error during import"
 msgstr ""
 
+#, fuzzy, python-format
+#~| msgid "Published in %(name)s no. %(number)s on %(date)s"
+#~ msgid "Published in %(name)s %(number)s on %(day)s %(month)s %(year)s"
+#~ msgstr "Gepubliseer in %(name)s no. %(number)s op %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Published in %(name)s on %(date)s"
+#~ msgid "Published in %(name)s on %(day)s %(month)s %(year)s"
+#~ msgstr "Gepubliseer in %(name)s op %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Published in %(name)s on %(date)s"
+#~ msgid "Published on %(day)s %(month)s %(year)s"
+#~ msgstr "Gepubliseer in %(name)s op %(date)s"

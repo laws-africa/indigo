@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:06+0200\n"
+"POT-Creation-Date: 2023-06-20 11:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,43 +18,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models/documents.py:270
+#: models/documents.py:274
 #, python-format
-msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgid ""
+"This is the version of this document from %(start)s and includes any "
+"amendments published up to %(end)s."
 msgstr ""
 
-#: models/documents.py:272
+#: models/documents.py:276
 #, python-format
 msgid "This is the version of this document from %(start)s."
 msgstr ""
 
-#: models/documents.py:275
+#: models/documents.py:279
 #, python-format
-msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgid ""
+"This is the version of this document at %(start)s and includes any "
+"amendments published up to %(end)s."
 msgstr ""
 
-#: models/documents.py:277
+#: models/documents.py:281
 #, python-format
 msgid "This is the version of this document at %(start)s."
 msgstr ""
 
-#: models/documents.py:280
+#: models/documents.py:284
 #, python-format
-msgid "This is the version of this document as it was from %(start)s to %(end)s."
+msgid ""
+"This is the version of this document as it was from %(start)s to %(end)s."
 msgstr ""
 
-#: models/documents.py:283
+#: models/documents.py:287
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
 msgstr ""
 
-#: models/documents.py:286
+#: models/documents.py:290
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
 msgstr ""
 
 #: models/places.py:191
-msgid "Note: The original publication document is not available and this content could not be verified."
+msgid ""
+"Note: The original publication document is not available and this content "
+"could not be verified."
 msgstr ""
 
 #: models/tasks.py:233
@@ -66,126 +73,156 @@ msgstr ""
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 
-#: models/works.py:419
+#: models/works.py:420
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr ""
 
-#: models/works.py:429
+#: models/works.py:430
 msgid "Invalid FRBR URI"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span "
+"class=\"amendment-date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
+"title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</"
+"span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-"
+"date\">%(date)s</span>]"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
+"title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:39
-#, python-format
-msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr ""
-
-#: templates/indigo_api/akn/coverpage_act.html:41
-#, python-format
-msgid "Published in %(name)s on %(date)s"
-msgstr ""
-
-#: templates/indigo_api/akn/coverpage_act.html:51
+#: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:59
+#: templates/indigo_api/akn/coverpage_act.html:54
 msgid "Not commenced"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:65
-#: templates/indigo_api/akn/coverpage_act.html:102
+#: templates/indigo_api/akn/coverpage_act.html:60
+#: templates/indigo_api/akn/coverpage_act.html:97
 msgid "Commencement date unknown"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:67
-#: templates/indigo_api/akn/coverpage_act.html:104
+#: templates/indigo_api/akn/coverpage_act.html:62
+#: templates/indigo_api/akn/coverpage_act.html:99
 #, python-format
 msgid "Commenced on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:75
-#: templates/indigo_api/akn/coverpage_act.html:112
+#: templates/indigo_api/akn/coverpage_act.html:70
+#: templates/indigo_api/akn/coverpage_act.html:107
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:77
-#: templates/indigo_api/akn/coverpage_act.html:114
+#: templates/indigo_api/akn/coverpage_act.html:72
+#: templates/indigo_api/akn/coverpage_act.html:109
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:81
-#: templates/indigo_api/akn/coverpage_act.html:118
-#: templates/indigo_api/akn/coverpage_act.html:164
+#: templates/indigo_api/akn/coverpage_act.html:76
+#: templates/indigo_api/akn/coverpage_act.html:113
+#: templates/indigo_api/akn/coverpage_act.html:159
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:83
-#: templates/indigo_api/akn/coverpage_act.html:120
-#: templates/indigo_api/akn/coverpage_act.html:166
+#: templates/indigo_api/akn/coverpage_act.html:78
+#: templates/indigo_api/akn/coverpage_act.html:115
+#: templates/indigo_api/akn/coverpage_act.html:161
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:133
+#: templates/indigo_api/akn/coverpage_act.html:128
 msgid "There are multiple commencements:"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:138
+#: templates/indigo_api/akn/coverpage_act.html:133
 msgid "Provisions"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:139
+#: templates/indigo_api/akn/coverpage_act.html:134
 msgid "Status"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:150
+#: templates/indigo_api/akn/coverpage_act.html:145
 msgid "Unknown provisions"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:155
+#: templates/indigo_api/akn/coverpage_act.html:150
 #, python-format
 msgid "commenced on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:157
+#: templates/indigo_api/akn/coverpage_act.html:152
 msgid "commenced on <i>(unknown date)</i>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:172
+#: templates/indigo_api/akn/coverpage_act.html:167
 msgid "Note:"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:184
+#: templates/indigo_api/akn/coverpage_act.html:179
 msgid "not yet commenced"
 msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
+msgstr ""
+
+#: templatetags/indigo.py:67
+#, python-format
+msgid "Published in %(name)s %(number)s on %(date)s"
+msgstr ""
+
+#: templatetags/indigo.py:73
+#, python-format
+msgid "Published in %(name)s on %(date)s"
+msgstr ""
+
+#: templatetags/indigo.py:78
+#, python-format
+msgid "Published on %(date)s"
+msgstr ""
+
+#: templatetags/indigo.py:83
+#, python-format
+msgid "Published in %(name)s %(number)s"
+msgstr ""
+
+#: templatetags/indigo.py:89
+#, python-format
+msgid "Published in %(name)s"
+msgstr ""
+
+#: templatetags/indigo.py:93
+msgid "Published"
 msgstr ""
 
 #: views/documents.py:98
@@ -196,6 +233,6 @@ msgstr ""
 msgid "Cannot create a task for a reply annotation."
 msgstr ""
 
-#: views/documents.py:357
+#: views/documents.py:358
 msgid "Error during import"
 msgstr ""

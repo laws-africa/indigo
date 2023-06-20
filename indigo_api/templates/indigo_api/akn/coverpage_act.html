@@ -32,15 +32,10 @@
   {% block notices %}
     <ul class="notice-list">
       {% block publication_document %}
-        {% if document.publication_name and document.publication_date %}
+        {% publication_document_description document.work as publication_document_description %}
+        {% if publication_document_description %}
           <li class="publication-info">
-            {% with date=document.publication_date|date:"j E Y" name=document.publication_name number=document.publication_number %}
-              {% if number %}
-                {% blocktrans %}Published in {{ name }} no. {{ number }} on {{ date }}{% endblocktrans %}
-              {% else %}
-                {% blocktrans %}Published in {{ name }} on {{ date }}{% endblocktrans %}
-              {% endif %}
-            {% endwith %}
+            {{ publication_document_description }}
           </li>
         {% endif %}
       {% endblock %}

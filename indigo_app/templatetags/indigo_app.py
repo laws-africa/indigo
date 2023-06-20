@@ -38,19 +38,6 @@ def user_profile_photo_thumbnail(user, height=32, width=32):
     return format_html('<img src="{}" height="{}" width="{}" class="user-profile-photo">'.format(user.userprofile.profile_photo_url, height, width))
 
 
-@register.simple_tag
-def publication_document_name(work):
-    parts = []
-    if work.publication_name:
-        parts.append(work.publication_name)
-        if work.publication_number:
-            parts.append('no {}'.format(work.publication_number))
-    else:
-        parts.append('publication document')
-
-    return ' '.join(parts)
-
-
 @register.filter
 def jsonify(value):
     return json.dumps(value, cls=TZAwareJSONEncoder)

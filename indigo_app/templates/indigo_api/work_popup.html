@@ -1,4 +1,4 @@
-{% load indigo_app i18n %}
+{% load indigo i18n %}
 
 <div class="popup-content lh-compact">
   <h6>
@@ -25,39 +25,14 @@
     <p class="mb-2">{% blocktrans with date=work.assent_date|date:"Y-m-d" %}Assented to on {{ date }}{% endblocktrans %}.</p>
   {% endif %}
 
-  {% if work.publication_date or work.publication_name or work.publication_document %}
+  {% publication_document_description work placeholder=work.publication_document as publication_document_description %}
+  {% if publication_document_description %}
     <p class="mb-2">
-      {% if work.publication_date %}
-        {% with pub_date=work.publication_date|date:"Y-m-d" %}
-          {% if work.publication_document or work.publication_name %}
-            {% if work.publication_document %}
-              {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
-              {% publication_document_name work as pubdoc %}
-              {% blocktrans trimmed %}
-                Published on {{ pub_date }} in <a href="{{ url }}" target="_blank" rel="noopener">{{ pubdoc }}</a>.
-              {% endblocktrans %}
-            {% else %}
-              Published on {{ pub_date }} in {{ pubdoc }}.
-            {% endif %}
-          {% else %}
-            {% blocktrans trimmed %}
-              Published on {{ pub_date }}.
-            {% endblocktrans %}
-          {% endif %}
-        {% endwith %}
-
+      {% if work.publication_document %}
+        {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
+        <a href="{{ url }}" target="_blank" rel="noopener">{{ publication_document_description }}</a>.
       {% else %}
-
-        {% if work.publication_document %}
-          {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
-          {% publication_document_name work as pubdoc %}
-          {% blocktrans trimmed %}
-            Published in <a href="{{ url }}" target="_blank" rel="noopener">{{ pubdoc }}</a>.
-          {% endblocktrans %}
-        {% else %}
-          Published in {{ pubdoc }}.
-        {% endif %}
-
+        {{ publication_document_description }}.
       {% endif %}
     </p>
   {% endif %}

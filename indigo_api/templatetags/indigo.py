@@ -2,6 +2,8 @@ from copy import deepcopy
 
 from django import template
 from django.conf import settings
+from django.utils.formats import date_format
+from django.utils.translation import ugettext as _
 
 from indigo.plugins import plugins
 
@@ -53,10 +55,39 @@ def publication_document_description(work, placeholder=False):
         If `placeholder` is True, return a minimum placeholder string.
         Otherwise, only return a string at all if at least one piece of publication information is available.
     """
-    # TODO: WIP
-    date = work.publication_date
     name = work.publication_name
     number = work.publication_number
-    if placeholder:
-        return 'placeholder'
-    return 'Published in …'
+    date = work.publication_date
+
+    if date:
+        date = date_format(date, 'j E Y')
+
+        if name and number:
+            # Published in Government Gazette 12345 on 1 January 2009
+            return _('Published in %(name)s %(number)s on %(date)s') % {
+                'name': name, 'number': number, 'date': date
+            }
+        elif name or number:
+            # Published in Government Gazette on 1 January 2009; or
+            # Published in 12345 on 1 January 2009
+            return _('Published in %(name)s on %(date)s') % {
+                'name': name or number, 'date': date
+            }
+        else:
+            # Published on 1 January 2009
+            return _('Published on %(date)s') % {
+                'date': date
+            }
+    elif name and number:
+        # Published in Government Gazette 12345
+        return _('Published in %(name)s %(number)s') % {
+            'name': name, 'number': number
+        }
+    elif name or number:
+        # Published in Government Gazette; or
+        # Published in 12345
+        return _('Published in %(name)s') % {
+            'name': name or number
+        }
+    elif placeholder:
+        return _('Published')

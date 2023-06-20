@@ -12,6 +12,7 @@ from django.db.models import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.formats import date_format
 from django.utils.translation import ugettext as _
 from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
@@ -261,10 +262,10 @@ class DocumentMixin(object):
         """
         latest = self.is_latest()
         consolidation = self.is_consolidation()
-        expression_date = self.expression_date.strftime('%-d %B %Y') if self.expression_date else None
+        expression_date = date_format(self.expression_date, 'j E Y') if self.expression_date else None
         end_date = self.valid_until()
         if end_date:
-            end_date = end_date.strftime('%-d %B %Y')
+            end_date = date_format(end_date, 'j E Y')
         # Scenario 1: Latest, non-arbitrary; with and without end date
         if latest and not consolidation and end_date:
             return _('This is the version of this document from %(start)s and includes any amendments published up to %(end)s.') % {'start': expression_date, 'end': end_date}

@@ -125,7 +125,7 @@ Authentication
 Indigo uses `django-allauth <http://django-allauth.readthedocs.io/en/latest/index.html>`_ for user authentication and social accounts, configuration
 is as per the django-allauth documentation.
 
-Social Accounts
+Social accounts
 ...............
 
 By default, Indigo doesn't have any social account authentication enabled. To enable a social provider, follow the documentation for django-allauth. Namely, you'll need to:

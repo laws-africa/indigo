@@ -1,6 +1,6 @@
 .. running:
 
-Installing and Running Indigo
+Installing and running Indigo
 =============================
 
 This guide is for developers who want to install and run their own instance
@@ -29,13 +29,13 @@ Using Heroku/Dokku means that we're using well-document and widely understood
 mechanisms for specifying dependencies and configuration across multiple
 languages. It takes care of all this for you and we highly recommend using them.
 
-Installing Indigo Locally
+Installing Indigo locally
 -------------------------
 
 1. Ensure you have Python 3.8+ installed
-2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python and Ruby described in it::
+2. Clone the `github.com/laws-africa/indigo <https://github.com/laws-africa/indigo>`_ repository. It has all Indigo's dependencies for Python described in it::
 
-    $ git clone https://github.com/laws-africa/example-indigo
+    $ git clone https://github.com/laws-africa/indigo
     $ cd indigo
 
 3. Setup and activate the virtual environment::
@@ -45,7 +45,7 @@ Installing Indigo Locally
 
 4. Install Python dependencies::
 
-    $ pip install -r requirements.txt
+    $ pip install -e '.'
 
 5. Install sass. The simplest is to install the node version (below), otherwise see the `sass installation docs <https://sass-lang.com/install>`_.::
 
@@ -74,12 +74,12 @@ Installing Indigo Locally
 
 11. Configure a language and a country:
 
-   * Visit http://localhost:8000/admin
-   * Under **Indigo API** click Languages, then click Add Language in the top right corner
-   * Choose a language from the dropdown list and click Save
-   * Under **Indigo API** click Countries, then click Add Country in the top right corner
-   * Choose a country and primary language from the dropdown lists
-   * Click Save
+   * Visit http://localhost:8000/admin.
+   * Under **Indigo API** click Languages, then click Add Language in the top right corner.
+   * Choose a language from the dropdown list and click Save.
+   * Under **Indigo API** click Countries, then click Add Country in the top right corner.
+   * Choose a country and primary language from the dropdown lists.
+   * Click Save.
 
 12. Now go back to http://localhost:8000/ and your country will be included in the list.
 
@@ -90,7 +90,7 @@ Indigo creates PDF files using `Apache FOP 2.4+ <https://xmlgraphics.apache.org/
 
 Indigo reads from PDF files using pdftotext, which is part of the `poppler-utils <https://poppler.freedesktop.org/>`_ package. Install it as appropriate for your platform.
 
-Django Customisation
+Django customisation
 ....................
 
 You can now easily change Django settings, add your own modules, change URLs, etc. You simply need to create your own settings file, import the settings from Indigo, and update ``manage.py`` to reference your new settings file. For example:
@@ -128,7 +128,7 @@ You can now easily change Django settings, add your own modules, change URLs, et
 
 4. Run your updated app with ``python manage.py runserver``
 
-Production Installation
+Production installation
 -----------------------
 
 Indigo requires some non-Python dependencies. This guide explains how to deploy
@@ -169,7 +169,10 @@ We describe using Dokku below, and assume that you have already have `Dokku inst
 
 Indigo uses the ``DATABASE_URL`` environment variable to determine which database to connect to. This is set automatically by the Dokku PostgreSQL plugin. If you are not using the plugin, you must set ``DATABASE_URL`` yourself, using the format ``postgres://USER:PASSWORD@HOST:PORT/DBNAME``.
 
-5. Deploying requires using ``git push`` to push to dokku. So you'll need to add ``dokku`` as a git remote on your local host. If you have cloned the ``example-indigo`` repo from above, you can do the following (substitute the fqdn or IP address of the dokku host, or use localhost if you are deploying to a local Dokku instance)::
+..
+  TODO: example-indigo no longer exists, so I've just nuked the second sentence below, but does the instruction still make sense?
+
+5. Deploying requires using ``git push`` to push to dokku. So you'll need to add ``dokku`` as a git remote on your local host.::
 
     $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
@@ -181,7 +184,7 @@ Indigo uses the ``DATABASE_URL`` environment variable to determine which databas
 
     $ git push dokku
 
-8. Create the an admin user by running this command **on the Dokku server**::
+8. Create an admin user by running this command **on the Dokku server**::
 
     $ dokku run indigo python manage.py createsuperuser
 
@@ -198,12 +201,15 @@ Indigo uses the ``DATABASE_URL`` environment variable to determine which databas
 
 12. Configure a country:
 
-   * Visit ``http://your-dokku-host.example.com/admin``
-   * Under **Indigo API** click Countries, then click Add Country in the top right corner
-   * Choose a country and primary language from the dropdown lists
-   * Click Save
+   * Visit ``http://your-dokku-host.example.com/admin``.
+   * Under **Indigo API** click Countries, then click Add Country in the top right corner.
+   * Choose a country and primary language from the dropdown lists.
+   * Click Save.
 
-Background Tasks
+.. note::
+  See the `example Dockerfile <https://github.com/laws-africa/indigo/tree/master/docs/running/exampleDockerfile>` for inspiration.
+
+Background tasks
 ----------------
 
 Indigo can optionally do some operations in the background. It requires a worker or

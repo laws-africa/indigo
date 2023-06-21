@@ -508,7 +508,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self.consolidation_date
 
     def should_add_consolidation(self, row):
-        if self.is_consolidation:
+        if self.is_consolidation and hasattr(row, 'principal'):
             # only add a consolidation PiT if the work is from before the consolidation date
             consolidation_date = self.get_consolidation_date(row)
             return row.status == 'success' and \

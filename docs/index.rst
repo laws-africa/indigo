@@ -1,4 +1,4 @@
-Indigo Platform
+Indigo platform
 ===============
 
 .. image:: logo.png

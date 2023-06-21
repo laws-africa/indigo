@@ -1,4 +1,4 @@
-Countries and Places
+Countries and places
 ====================
 
 Indigo allows you to manage multiple documents across multiple countries and localities.
@@ -8,7 +8,7 @@ however, and a locality can be anything.
 
 Indigo also supports multiple languages. A country always has a default language.
 
-Choosing a Country
+Choosing a country
 ------------------
 
 When you open Indigo in your browser, if there is only one country it will always take you to that country. If multiple
@@ -16,7 +16,7 @@ countries are configured, it will list the countries and you can choose which on
 
 .. image:: countries.png
 
-Choosing a Locality
+Choosing a locality
 -------------------
 
 To choose a locality, open the country that the locality is in and then choose the locality from the dropdown

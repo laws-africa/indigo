@@ -35,8 +35,8 @@ Indigo is mostly used to import existing documents in either PDF or Word format.
 To import a new document:
 
 1. Navigate to the work you wish to import a document for.
-2. Click **Manage points in time**
-3. At the appropriate date, click **Import document**
+2. Click **Manage points in time**.
+3. At the appropriate date, click **Import document**.
 4. Choose the file to upload, adjust the settings, and click **Go for it!**
 
 If there are no dates on the timeline, either configure a publication date for the work, or add a consolidation date.

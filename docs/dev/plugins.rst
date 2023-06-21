@@ -1,10 +1,13 @@
 Plugins
 =======
 
+..
+  TODO: update below if TocBuilder stops being a locale-based plugin.
+
 Indigo uses plugins to allow specific functionality to be customised
 for different countries, localities and languages. For example,
 extracting a Table of Contents and automatically linking references
-both use the plugin system. This means they can be adjusted to suite
+both use the plugin system. This means they can be adjusted to suit
 different languages and references styles.
 
 Locales
@@ -21,14 +24,16 @@ expression, and will match on any locality within South Africa (the last ``None`
 item).
 
 If there are multiple plugins with locales that match a document or work,
-Indigo will use the one that most specifically matches it (ie. has the fewest
-number of wildcards.)
+Indigo will use the one that most specifically matches it (i.e. has the fewest wildcards.)
 
-Plugin Registry
+Plugin registry
 ---------------
 
 Plugins register themselves with the plugin registry for a certain
 topic. The following plugin topics are understood by Indigo:
+
+..
+  TODO: update this list: add PDF exporter, bulk creator; potentially remove toc
 
 * ``importer`` plugins import text from documents and mark them up with Akoma Ntoso. Usually extend :class:`indigo_api.importers.base.Importer`.
 * ``publications`` plugins provide publication documents for works. Usually extend :class:`indigo.analysis.publications.base.BasePublicationFinder`.
@@ -48,7 +53,7 @@ Register a plugin using ``plugins.register(topic)`` and include a ``locale`` tha
         locale = ('za', 'afr', None)
         ...
 
-Fetching a Plugin
+Fetching a plugin
 -----------------
 
 You can fetch a plugin for a work or a document using :meth:`~indigo.plugins.LocaleBasedRegistry.for_work`,
@@ -61,7 +66,7 @@ on the plugin registry, giving it a plugin topic and a work, document or locale:
     if toc_builder:
         toc_builder.table_of_contents_for_document(document)
 
-Custom Tasks
+Custom tasks
 ------------
 
 You can also create custom tasks using the plugin system. Custom tasks can provide
@@ -90,7 +95,7 @@ When Indigo sees a task with a task ``code`` attribute, it will lookup the
 custom task from the registry, create an instance, and call ``setup(task)``
 with the ``task`` instance.
 
-Loading Plugins and Custom Tasks
+Loading plugins and custom tasks
 --------------------------------
 
 It's common to place your plugins in ``plugins.py`` and custom tasks in ``custom_tasks.py`` in your project directory. Then load those files in your Django ``apps.py`` when Django calls your app's ``ready()`` method::
@@ -106,8 +111,11 @@ It's common to place your plugins in ``plugins.py`` and custom tasks in ``custom
             import my_app.plugins
             import my_app.custom_tasks
 
-Plugin API Reference
+Plugin API reference
 --------------------
+
+..
+  TODO: update
 
 .. autoclass:: indigo_api.importers.base.Importer
     :members:

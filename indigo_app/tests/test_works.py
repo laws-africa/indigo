@@ -154,6 +154,54 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(timeline[-1]['date'], datetime.date(2014, 3, 20))
         self.assertEqual(timeline[-1]['assent_date'], True)
 
+    def test_get_work_timeline_multiple_amendments(self):
+        view = WorkViewBase()
+        work = Work.objects.get(pk=1)
+        work.assent_date = datetime.date(2014, 3, 20)
+
+        act_2_of_1998 = Work.objects.get(pk=2)
+        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1998, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        gn_1_of_1900 = Work(frbr_uri='/akn/za/act/gn/1900/1', country_id=1, created_by_user_id=1)
+        gn_1_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=gn_1_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_30_of_1900 = Work(frbr_uri='/akn/za/act/1900/30', country_id=1, created_by_user_id=1)
+        act_30_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_12_of_1900 = Work(frbr_uri='/akn/za/act/1900/12', country_id=1, created_by_user_id=1)
+        act_12_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_12_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_2_of_1900 = Work(frbr_uri='/akn/za/act/1900/2', country_id=1, created_by_user_id=1)
+        act_2_of_1900.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_1_of_1900 = Work.objects.get(pk=6)
+        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        act_1_of_1998 = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
+        act_1_of_1998.save()
+        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1998, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        timeline = WorkViewBase.get_work_timeline(view, work)
+        amending_works_in_order = [x.amending_work for x in timeline[0]['amendments']]
+
+        self.assertEqual(
+            [act_1_of_1900, act_2_of_1900,
+             act_12_of_1900, act_30_of_1900,
+             gn_1_of_1900,
+             act_1_of_1998, act_2_of_1998],
+            amending_works_in_order)
+
     def test_no_publication_document(self):
         # this work has no publication document
         resp = self.client.get('/works/akn/za/act/2010/1/media/publication/')

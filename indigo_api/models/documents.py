@@ -372,6 +372,13 @@ class Document(DocumentMixin, models.Model):
         else:
             return []
 
+    def amendments_in_order(self):
+        if self.expression_date:
+            from indigo_api.models import Amendment
+            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date))
+        else:
+            return []
+
     def amendment_events(self):
         return [
             AmendmentEvent(a.date, a.amending_work.title, a.amending_work.frbr_uri)

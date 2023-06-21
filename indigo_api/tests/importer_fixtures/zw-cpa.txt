@@ -1,24 +1,26 @@
-PREFACE 
-
-  Cap. 14:44
-
-  No. 5/2019
-
-  Consumer ProteCtion
-
-  
-
-  ZIMBABWE
-
-  
-
-  ACT
-
-  To protect the consumer of goods and services by ensuring a fair, efficient, sustainable and transparent market place for consumers and business; to provide for the establishment of the Consumer Protection Commission and its functions; to provide for the regulation of Consumer Advocacy Organisations; to provide for alternative dispute resolution; to repeal the Consumer Contracts Act [Chapter 8:03]; and to provide for matters connected therewith or incidental thereto.
-
-  ENACTED by the Parliament and the President of Zimbabwe.
-
 BODY 
+
+  PARAGRAPH Cap.
+
+    14:44
+
+  PARAGRAPH No.
+
+    5/2019
+
+    Consumer ProteCtion
+
+    
+
+    ZIMBABWE
+
+    
+
+    ACT
+
+    To protect the consumer of goods and services by ensuring a fair, efficient, sustainable and transparent market place for consumers and business; to provide for the establishment of the Consumer Protection Commission and its functions; to provide for the regulation of Consumer Advocacy Organisations; to provide for alternative dispute resolution; to repeal the Consumer Contracts Act [Chapter 8:03]; and to provide for matters connected therewith or incidental thereto.
+
+    ENACTED by the Parliament and the President of Zimbabwe.
 
 PART I - Preliminary
 
@@ -1546,9 +1548,13 @@ PART III - Fundamental consumer rights
 
             the consumer may cancel that agreement—
 
-            A. upon the expiry of its fixed term, without penalty or charge, but subject to subsection (3)(a); or
+            SUBPARAGRAPH A.
 
-            B. at any other time, by giving the supplier twenty business days’ notice in writing or other recorded manner and form, subject to subsection(3)(a) and (b);
+              upon the expiry of its fixed term, without penalty or charge, but subject to subsection (3)(a); or
+
+            SUBPARAGRAPH B.
+
+              at any other time, by giving the supplier twenty business days’ notice in writing or other recorded manner and form, subject to subsection(3)(a) and (b);
 
             or
 
@@ -2910,9 +2916,13 @@ PART III - Fundamental consumer rights
 
             in the case of a provision or notice that is void in terms of any provision of this Act—
 
-            A. severing any part of the relevant agreement, provision or notice, or altering it to the extent required to render it lawful, if it is reasonable to do so having regard to the transaction, agreement, provision or notice as a whole; or
+            SUBPARAGRAPH A.
 
-            B. declaring the entire agreement, provision or notice void as from the date that it purportedly took effect;
+              severing any part of the relevant agreement, provision or notice, or altering it to the extent required to render it lawful, if it is reasonable to do so having regard to the transaction, agreement, provision or notice as a whole; or
+
+            SUBPARAGRAPH B.
+
+              declaring the entire agreement, provision or notice void as from the date that it purportedly took effect;
 
             or
 
@@ -5069,9 +5079,13 @@ SCHEDULE FIRST SCHEDULE (Sections 5(3) and (4))
 
           knows or has reason to believe that a relative of his or hers—
 
-          A. has acquired or holds direct or indirect interest in any matter that is under consideration by the Commission; or
+          SUBPARAGRAPH A.
 
-          B. owns any property or has a right in property or a direct or indirect pecuniary interest in a company or association of persons which results in the member’s private interest coming or appearing to come into conflict with his functions as member;
+            has acquired or holds direct or indirect interest in any matter that is under consideration by the Commission; or
+
+          SUBPARAGRAPH B.
+
+            owns any property or has a right in property or a direct or indirect pecuniary interest in a company or association of persons which results in the member’s private interest coming or appearing to come into conflict with his functions as member;
 
           or
 
@@ -5151,11 +5165,15 @@ SCHEDULE SECOND SCHEDULE (Section 5(5))
 
       members of the Commission for the purpose of purchasing vehicles or other equipment to be used by the members of staff in carrying out their duties; or
 
-      No. 5/2019
+      SUBPARAGRAPH No.
 
-      Consumer ProteCtion
+        5/2019
 
-      Cap. 14:44
+        Consumer ProteCtion
+
+      SUBPARAGRAPH Cap.
+
+        14:44
 
     SUBPARAGRAPH (b)
 

@@ -103,7 +103,10 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
             if event.get('commencement_date'):
                 event['commencements'] = work.commencements.filter(date=date).all()
             if event.get('amendment'):
-                event['amendments'] = work.amendments.filter(date=date).all()
+                event_amendments = work.amendments.filter(date=date)
+                if len(event_amendments) > 1:
+                    event_amendments = Amendment.order_further(event_amendments)
+                event['amendments'] = event_amendments
             if event.get('consolidation'):
                 event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
             event['expressions'] = work.expressions().filter(expression_date=date).all()
@@ -905,6 +908,12 @@ class BatchAddWorkView(PlaceViewBase, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['bulk_creator'] = self.bulk_creator
+
+        # only show open tasks for each work
+        rows = context.get('works') or []
+        for row in rows:
+            row.open_tasks = Task.objects.filter(work=row.work, state__in=Task.OPEN_STATES) if hasattr(row, 'work') else None
+
         return context
 
     def form_valid(self, form):

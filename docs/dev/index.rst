@@ -1,9 +1,9 @@
 Customising Indigo
 ==================
 
-This documentation explains how to make customise and build upon Indigo.
+This documentation explains how to customise and build upon Indigo.
 
-In particular, Indigo is setup to be customisable for different countries,
+In particular, Indigo is set up to be customisable for different countries,
 localities, languages and legal traditions.
 
 .. note::

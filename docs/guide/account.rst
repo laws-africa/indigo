@@ -1,8 +1,8 @@
-Managing Your Account
+Managing your account
 =====================
 
 
-Logging In
+Logging in
 ----------
 
 You need to log into your Indigo account to import and edit documents. You may be able to
@@ -39,7 +39,7 @@ Changing your name or email address
 
 You can change your profile details after you've logged in.
 
-1. Click your button with your name or email in the top-right corner.
+1. Click the button with your name or email in the top-right corner.
 2. Click the **Profile** menu item.
 3. Update your details.
 4. Click **Save changes**.
@@ -49,7 +49,7 @@ Changing your password
 
 You can change your password after you've logged in.
 
-1. Click your button with your name or email in the top-right corner.
+1. Click the button with your name or email in the top-right corner.
 2. Click the **Profile** menu item.
 3. Click **Change your password**.
 4. Enter your new password twice to confirm it.

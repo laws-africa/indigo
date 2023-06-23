@@ -118,8 +118,6 @@ Options that must be set in your ``settings.py``:
 
   A list of ``(label, code)`` pairs of Akoma Ntoso document types that can be
   created, such as ``('Act', 'act')``. See http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
-  
-  Note that currently the Slaw parser only recognizes the 'act' doctype.
 
 Authentication
 --------------
@@ -127,13 +125,13 @@ Authentication
 Indigo uses `django-allauth <http://django-allauth.readthedocs.io/en/latest/index.html>`_ for user authentication and social accounts, configuration
 is as per the django-allauth documentation.
 
-Social Accounts
+Social accounts
 ...............
 
 By default, Indigo doesn't have any social account authentication enabled. To enable a social provider, follow the documentation for django-allauth. Namely, you'll need to:
 
-1. Include the account provider in `INSTALLED_APPS` in your ``settings.py`` file::
+1. Include the account provider in ``INSTALLED_APPS`` in your ``settings.py`` file::
 
-   INSTALLED_APPS = INSTALLED_APPS + ('allauth.socialaccount.providers.google',)
+     INSTALLED_APPS = INSTALLED_APPS + ('allauth.socialaccount.providers.google',)
 
 2. Get the appropriate client and secret keys from the provider, and create a social app in the admin interface.

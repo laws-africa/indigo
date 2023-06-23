@@ -42,7 +42,6 @@ setup(
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',
-        'cobalt>=6.1',
         'bluebell-akn>=2.2.0',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',

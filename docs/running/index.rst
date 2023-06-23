@@ -207,7 +207,7 @@ Indigo uses the ``DATABASE_URL`` environment variable to determine which databas
    * Click Save.
 
 .. note::
-  See the `example Dockerfile <https://github.com/laws-africa/indigo/tree/master/docs/running/exampleDockerfile>` for inspiration.
+  See the `example docker-compose.yml <https://github.com/laws-africa/indigo/tree/master/docker-compose.yml>` for inspiration.
 
 Background tasks
 ----------------

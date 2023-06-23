@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+    environment:
+      - "DATABASE_URL=postgres://indigo:indigo@db:5432/indigo"
+
+  db:
+    image: postgres:13
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: indigo
+      POSTGRES_PASSWORD: indigo

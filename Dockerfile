@@ -1,5 +1,12 @@
 FROM ubuntu:20.04
 
+# NOTE: This is an example Dockerfile for getting Indigo running in a simple way.
+#       In production, you will probably want to use this as a template and make
+#       your own changes.
+#
+#       For example, you probably want to use gunicorn to host the Django app,
+#       rather than the built-in Django server.
+
 # Install some necessary dependencies.
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y wget git \
@@ -27,16 +34,13 @@ RUN wget -q -O dart-sass.tgz 'https://github.com/sass/dart-sass/releases/downloa
 WORKDIR /app
 
 # These are production-only dependencies
-# cython must be installed separately from scikit-learn
-RUN pip install cython
-RUN pip install psycopg2==2.8.6 gunicorn==20.1.0 scikit-learn==0.21.3
-
-# Install python requirements
-COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install psycopg2==2.8.6
 
 # Copy the code
 COPY . /app
+
+# Install python requirements
+RUN pip install -e .
 
 # Compile static assets.
 #

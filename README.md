@@ -64,6 +64,8 @@ python manage.py test
 
 Read the [documentation for details on deploying Indigo](http://indigo.readthedocs.org/en/latest/running/index.html).
 
+An example `Dockerfile` and `docker-compose.yml` are provided as a starting point for running Indigo.
+
 ## Releasing a New Version
 
 1. Run the tests!

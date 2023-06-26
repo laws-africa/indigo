@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-05-02 15:20\n"
+"PO-Revision-Date: 2023-06-26 08:09\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -39,7 +39,7 @@ msgstr "Aviso do Governo"
 
 #: analysis/toc/base.py:18
 msgid "Paragraph"
-msgstr ""
+msgstr "Parágrafo"
 
 #: analysis/toc/base.py:19
 msgid "Part"
@@ -59,7 +59,7 @@ msgstr "Preâmbulo"
 
 #: analysis/toc/base.py:23
 msgid "Subpart"
-msgstr ""
+msgstr "Subparte"
 
 #: analysis/work_detail/base.py:30
 #, python-format
@@ -219,7 +219,7 @@ msgstr "Aplicar as alterações feitas por %(amending_title)s (%(numbered_title)
 
 #: bulk_creator.py:1014
 msgid "Link repealed by"
-msgstr ""
+msgstr "Link revogado por"
 
 #: bulk_creator.py:1015
 #, python-format
@@ -245,7 +245,11 @@ msgid "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of t
 "– a typo in the spreadsheet\n"
 "– the repealed work doesn't exist on the system.\n\n"
 "Please link the repeal manually."
-msgstr ""
+msgstr "Parece que este trabalho revoga \"%(repeals)s\" (consulte a linha %(row_num)s da planilha), mas não pode ser vinculado automaticamente.\n\n"
+"Possíveis motivos:\n"
+"– erro de digitação na planilha\n"
+"– a obra revogada não existe no sistema.\n\n"
+"Por favor, vincule a revogação manualmente."
 
 #: bulk_creator.py:1040
 msgid "Check / update repeal"

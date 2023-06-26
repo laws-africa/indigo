@@ -40,7 +40,41 @@ Bluebell migration
 
 This version of Indigo includes a management command for migrating your existing documents into an improved version of Akoma Ntoso XML. This prepares your documents for use with Bluebell and ensures better consistency and validation with the Akoma Ntoso XML standard.
 
-The ``python manage.py bb_migrate`` command will validate the migration of your documents and give you a chance to check and resolve any issues before migration takes place. The command can be run for each place (country) in your database separately, if necessary, using the ``--place`` option.
+**Note:** This migration is specifically to update an existing database where Slaw was used to parse text into XML. It is not a generic XML updater, and if you're new to using Indigo (or new to using it for editing the content of documents) from version 18 onwards, you won't need to run this migration.
+
+Run ``python manage.py bb_migrate``, with the following arguments, to update your database:
+
+* This will update all the documents on the work with the FRBR URI ``/akn/za/act/1998/51`` -- South African (national) Act 51 of 1998 -- if any are found:
+  ::
+    python manage.py bb_migrate --work /akn/za/act/1998/51
+
+
+* This will update all the documents on all works in the place ``za-ec`` -- the Eastern Cape province in South Africa -- if any are found:
+  ::
+    python manage.py bb_migrate --place za-ec
+
+* This will update all the documents on all works in all places:
+  ::
+    python manage.py bb_migrate
+
+* Adding ``--no-checks`` will skip the following checks which run alongside the migration (but won't prevent an update if they fail):
+
+  * Stability: Checks that the document post migration will produce the same XML again when re-parsed with Bluebell.
+  * Identity: Checks that the content, stripped of structure, is identical before and after the migration.
+  * Validity: Checks that the document post migration has XML that validates against the Akoma Ntoso specification.
+* Adding ``--no-versions`` will skip migrating the historical versions of documents created each time they're saved in the document editor. This means that if a particular document were to be rolled back after the migration has been run across the database, it would need a manual update to bring it in line with the rest of the database.
+* Adding ``--print-eid-mappings`` will print a (potentially enormous) mapping of old to new eIds on every document migrated -- e.g:
+  ::
+    {"1234": {"sec_2__hcontainer_1__list_1__item_a": "sec_2__para_a", etc (more eIds for document 1234)}, etc (more documents)}
+  This would print to stdout, while all the other log messages will print to stderr, so you could run something like:
+  ::
+    python manage.py bb_migrate --print-eid-mappings > bluebell-migration.log 2> bluebell-migration-err.log
+  to run the migration across your entire database, printing the output to your terminal (and saving it to ``bluebell-migration-err.log``), and saving the eId mappings in ``bluebell-migration.log``.
+* Add ``--skip-list``, followed by a semicolon-separated list of FRBR URIs to exclude from the migration, e.g:
+  ::
+    python manage.py bb_migrate --place za --skip-list /akn/za/act/2011/28;/akn/za/act/2012/43
+  This will include all documents on all works in South Africa, with the exception of any documents on Acts 28 of 2011 and 43 of 2012.
+* **Note:** None of the above options will save the changes to your database. Do a dry run first, and if you're happy with the outputs, add ``--commit`` to keep the changes. All documents that are updated successfully, regardless of the outcome of the above-mentioned checks, will be saved when you include ``--commit``.
 
 The command will output guidance to help you debug and resolve migration issues, if any.
 

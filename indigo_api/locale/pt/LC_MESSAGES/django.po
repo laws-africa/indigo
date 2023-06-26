@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-20 11:54+0200\n"
-"PO-Revision-Date: 2023-06-20 14:49\n"
+"PO-Revision-Date: 2023-06-26 08:09\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -180,7 +180,7 @@ msgstr "Índice"
 #: templatetags/indigo.py:67
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr ""
+msgstr "Publicado em %(name)s %(number)s em %(date)s"
 
 #: templatetags/indigo.py:73
 #, python-format
@@ -190,21 +190,21 @@ msgstr "Publicado em %(name)s no %(date)s"
 #: templatetags/indigo.py:78
 #, python-format
 msgid "Published on %(date)s"
-msgstr ""
+msgstr "Publicado em %(date)s"
 
 #: templatetags/indigo.py:83
 #, python-format
 msgid "Published in %(name)s %(number)s"
-msgstr ""
+msgstr "Publicado em %(name)s %(number)s"
 
 #: templatetags/indigo.py:89
 #, python-format
 msgid "Published in %(name)s"
-msgstr ""
+msgstr "Publicado em %(name)s"
 
 #: templatetags/indigo.py:93
 msgid "Published"
-msgstr ""
+msgstr "Publicados"
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."

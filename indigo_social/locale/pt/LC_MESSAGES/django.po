@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:12+0200\n"
-"PO-Revision-Date: 2023-05-02 15:21\n"
+"PO-Revision-Date: 2023-06-26 08:09\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -19,176 +19,176 @@ msgstr ""
 
 #: templates/indigo_app/user_account/edit.html:4
 msgid "Edit Profile"
-msgstr ""
+msgstr "Editar Perfil"
 
 #: templates/indigo_app/user_account/edit.html:32
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: templates/indigo_app/user_account/edit.html:35
 msgid "manage your email addresses"
-msgstr ""
+msgstr "gerencie seus endereços de e-mail"
 
 #: templates/indigo_app/user_account/edit.html:42
 msgid "Tell us a bit about yourself"
-msgstr ""
+msgstr "conte-nos um pouco sobre você"
 
 #: templates/indigo_app/user_account/edit.html:64
 msgid "Are you sure you want to remove your profile photo?"
-msgstr ""
+msgstr "Tem certeza de que deseja remover sua foto de perfil?"
 
 #: templates/indigo_app/user_account/edit.html:70
 msgid "Upload a photo"
-msgstr ""
+msgstr "Carregar uma foto"
 
 #: templates/indigo_app/user_account/edit.html:72
 msgid "A square photo at least 200 pixels wide is best."
-msgstr ""
+msgstr "Uma foto quadrada com pelo menos 200 pixels de largura é a melhor."
 
 #: templates/indigo_app/user_account/edit.html:88
 msgid "Professional skills"
-msgstr ""
+msgstr "Habilidades profissionais"
 
 #: templates/indigo_app/user_account/edit.html:95
 msgid "What organisations do you work for or with?"
-msgstr ""
+msgstr "Para quais organizações você trabalha ou com as quais?"
 
 #: templates/indigo_app/user_account/edit.html:157
 msgid "Social media profiles"
-msgstr ""
+msgstr "perfis de mídia social"
 
 #: templates/indigo_app/user_account/edit.html:195
 msgid "Save"
-msgstr ""
+msgstr "Salvar"
 
 #: templates/indigo_app/user_account/edit.html:196
 msgid "View my profile"
-msgstr ""
+msgstr "Veja meu perfil"
 
 #: templates/indigo_social/badge_detail.html:7
 #: templates/indigo_social/badges.html:4 templates/indigo_social/badges.html:7
 #: templates/indigo_social/badges.html:16
 msgid "Badges"
-msgstr ""
+msgstr "Distintivos"
 
 #: templates/indigo_social/badge_detail.html:25
 msgid "Awarded to"
-msgstr ""
+msgstr "Concedido a"
 
 #: templates/indigo_social/badge_detail.html:31
 #, python-format
 msgid "%(ts)s ago"
-msgstr ""
+msgstr "%(ts)s atrás"
 
 #: templates/indigo_social/badge_detail.html:36
 msgid "No-one has been awarded this badge."
-msgstr ""
+msgstr "Ninguém recebeu este distintivo."
 
 #: templates/indigo_social/badge_detail.html:42
 msgid "Permissions granted by this badge"
-msgstr ""
+msgstr "Permissões concedidas por este selo"
 
 #: templates/indigo_social/badge_detail.html:57
 #, python-format
 msgid "Users awarded this badge are added to the <a href=\"%(url)s\">%(name)s group</a>."
-msgstr ""
+msgstr "Os usuários premiados com este selo são adicionados ao grupo <a href=\"%(url)s\">%(name)s</a>."
 
 #: templates/indigo_social/badges.html:18
 msgid "Badges indicate expertise and are earned by completing tasks."
-msgstr ""
+msgstr "As insígnias indicam experiência e são obtidas ao concluir tarefas."
 
 #: templates/indigo_social/contributors.html:4
 #: templates/indigo_social/contributors.html:6
 #: templates/indigo_social/contributors.html:12
 #: templates/indigo_social/user_layout.html:7
 msgid "Contributors"
-msgstr ""
+msgstr "Contribuintes"
 
 #: templates/indigo_social/user_activity.html:6
 #: templates/indigo_social/user_layout.html:92
 msgid "Activity"
-msgstr ""
+msgstr "Atividade"
 
 #: templates/indigo_social/user_layout.html:56
 msgid "Organisations"
-msgstr ""
+msgstr "Organizações"
 
 #: templates/indigo_social/user_layout.html:61
 msgid "Skills"
-msgstr ""
+msgstr "Habilidades"
 
 #: templates/indigo_social/user_layout.html:66
 msgid "Qualifications"
-msgstr ""
+msgstr "Qualificações"
 
 #: templates/indigo_social/user_layout.html:71
 msgid "Specialisations"
-msgstr ""
+msgstr "Especializações"
 
 #: templates/indigo_social/user_layout.html:76
 msgid "Areas of law"
-msgstr ""
+msgstr "Áreas do direito"
 
 #: templates/indigo_social/user_layout.html:82
 msgid "Edit profile"
-msgstr ""
+msgstr "Editar Perfil"
 
 #: templates/indigo_social/user_layout.html:89
 msgid "Overview"
-msgstr ""
+msgstr "Visão geral"
 
 #: templates/indigo_social/user_layout.html:95
 msgid "Tasks"
-msgstr ""
+msgstr "Tarefas"
 
 #: templates/indigo_social/user_profile.html:8
 msgid "Achievements"
-msgstr ""
+msgstr "Conquistas"
 
 #: templates/indigo_social/user_profile.html:16
 msgid "No badges earned yet"
-msgstr ""
+msgstr "Nenhum distintivo ganho ainda"
 
 #: templates/indigo_social/user_profile.html:26
 msgid "Award a new badge to this user:"
-msgstr ""
+msgstr "Conceda um novo selo a este usuário:"
 
 #: templates/indigo_social/user_profile.html:33
 #: templates/indigo_social/user_profile.html:48
 msgid "Are you sure?"
-msgstr ""
+msgstr "Tem certeza?"
 
 #: templates/indigo_social/user_profile.html:33
 msgid "Award badge"
-msgstr ""
+msgstr "Distintivo de prêmio"
 
 #: templates/indigo_social/user_profile.html:48
 msgid "Remove badge"
-msgstr ""
+msgstr "Remover distintivo"
 
 #: templates/indigo_social/user_profile.html:55
 msgid "Recent activity"
-msgstr ""
+msgstr "Atividade recente"
 
 #: templates/indigo_social/user_profile.html:60
 msgid "More activity"
-msgstr ""
+msgstr "Mais atividade"
 
 #: templates/main.html:14
 msgid "Profile"
-msgstr ""
+msgstr "Perfil"
 
 #: templates/main.html:15
 msgid "Account"
-msgstr ""
+msgstr "Conta"
 
 #: templates/main.html:19
 msgid "Site settings"
-msgstr ""
+msgstr "Configurações do site"
 
 #: templates/main.html:23
 msgid "Log out"
-msgstr ""
+msgstr "Sair"
 
 #: templates/main.html:27
 msgid "Log in"

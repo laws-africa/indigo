@@ -17,10 +17,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--work', type=str,
-                            help='Work FRBR URI to migrate'
+                            help='Work FRBR URI to migrate. No work and no place means all works will be migrated, per place.'
                             )
         parser.add_argument('--place', type=str,
-                            help='Place code to migrate'
+                            help='Place code to migrate. No work and no place means all works will be migrated, per place.'
                             )
         parser.add_argument('--commit', action='store_true', default=False,
                             help='Commit changes to the database.'
@@ -31,6 +31,9 @@ class Command(BaseCommand):
         parser.add_argument('--no-versions', action='store_true', default=False,
                             help='Don\'t migrate document versions.'
                             )
+        parser.add_argument('--print-eid-mappings', action='store_true', default=False,
+                            help='Print the mappings of old to new eIds at the end (can be lengthy).'
+                            )
         parser.add_argument('--skip-list', type=str,
                             help='List of Work FRBR URIs that should NOT be migrated, semicolon-separated, e.g. '
                                  '/akn/za/act/1962/58;/akn/za-cpt/act/by-law/2020/beekeeping'
@@ -40,15 +43,25 @@ class Command(BaseCommand):
         self.commit = options['commit']
         self.check = not(options['no_checks'])
         self.migrate_versions = not options['no_versions']
+        self.print_eid_mappings = options['print_eid_mappings']
         self.eidMappings = {}
         skip_list = options.get('skip_list') or ''
         self.skip_list = skip_list.split(';')
         self.manually_update = []
+        self.non_fatal_issues = {}
 
     def finish_up(self):
-        self.stderr.write(f'Manually update these (skipped during migration): {self.manually_update}')
+        self.stderr.write('All done!')
+        if self.manually_update:
+            self.stderr.write(f'These documents were skipped and will need to be manually updated: \n{self.manually_update}')
+        if self.non_fatal_issues:
+            self.stderr.write('These documents may have been updated, but check the URLs below for issues:')
+            for pk, url in self.non_fatal_issues.items():
+                self.stderr.write(f'    {pk}: {url}')
         # write eid mappings to stdout (everything else goes to stderr)
-        self.stdout.write(json.dumps(self.eidMappings))
+        if self.print_eid_mappings:
+            self.stderr.write('The eId mappings will now print to stdout:')
+            self.stdout.write(json.dumps(self.eidMappings))
 
     def handle(self, *args, **options):
         self.setup(options)
@@ -65,12 +78,25 @@ class Command(BaseCommand):
 
             elif options['place']:
                 country, locality = Country.get_country_locality(options['place'])
-                qs = Work.objects.filter(country=country, locality=locality).order_by('-pk')
-                self.stderr.write(self.style.NOTICE(f'Migrating {qs.count()} works for {options["place"]}'))
-                for work in qs.iterator(10):
-                    self.migrate_work(work)
+                self.migrate_place(country, locality)
+
+            else:
+                # no work or place given
+                for country in Country.objects.all():
+                    # go through each locality in each country
+                    for locality in country.localities.all():
+                        self.migrate_place(country, locality)
+                    # and then the country itself
+                    self.migrate_place(country, None)
 
         self.finish_up()
+
+    def migrate_place(self, country, locality):
+        place = locality or country
+        qs = Work.objects.filter(country=country, locality=locality).order_by('-pk')
+        self.stderr.write(self.style.NOTICE(f'Migrating {qs.count()} works for {place.place_code}'))
+        for work in qs.iterator(10):
+            self.migrate_work(work)
 
     def migrate_work(self, work):
         # this includes deleted documents
@@ -122,14 +148,24 @@ class Command(BaseCommand):
 
         # stability check
         if self.check:
+            stable = True
+            identical = True
             if self.migration.stability_diff(doc):
                 self.stderr.write(self.style.WARNING(f'  Migrated document is not stable: {doc} -- check {url} for details'))
+                stable = False
+                self.non_fatal_issues[doc.id] = url
 
             if self.migration.content_fingerprint_diff(old_xml, doc.document_xml):
                 self.stderr.write(self.style.WARNING(f'  Migrated document has different content to the original: {doc} -- check {url} for details'))
+                identical = False
+                self.non_fatal_issues[doc.id] = url
 
             if not is_valid:
+                self.non_fatal_issues[doc.id] = url
                 self.stderr.write(self.style.WARNING(f'  Migrated document does not validate: {errors}; {doc} -- check {url} for details'))
+
+            if stable and identical and is_valid:
+                self.stderr.write(self.style.SUCCESS(f'  Migrated document is all good: {doc} -- see {url} for details'))
 
         if self.commit:
             doc.save(update_fields=['document_xml'])

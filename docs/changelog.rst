@@ -53,6 +53,12 @@ Run ``python manage.py bb_migrate``, with the following arguments, to update you
   ::
     python manage.py bb_migrate --place za-ec
 
+* This will update all the documents on all works in each locality in South Africa, as well as works at the national level:
+  ::
+    python manage.py bb_migrate --country-with-localities za
+
+  (To update only documents on works at the national level, use e.g. ``place za``, which will exclude localities in South Africa.)
+
 * This will update all the documents on all works in all places:
   ::
     python manage.py bb_migrate

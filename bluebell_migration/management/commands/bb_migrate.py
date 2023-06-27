@@ -17,10 +17,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--work', type=str,
-                            help='Work FRBR URI to migrate. No work and no place means all works will be migrated, per place.'
+                            help='Work FRBR URI to migrate. If no work, place, or country is specified, all works will be migrated, per place.'
                             )
         parser.add_argument('--place', type=str,
-                            help='Place code to migrate. No work and no place means all works will be migrated, per place.'
+                            help='Place code to migrate. If no work, place, or country is specified, all works will be migrated, per place.'
+                            )
+        parser.add_argument('--country-with-localities', type=str,
+                            help='Country code to migrate -- All localities within the country will be migrated as well. If no work, place, or country is specified, all works will be migrated, per place.'
                             )
         parser.add_argument('--commit', action='store_true', default=False,
                             help='Commit changes to the database.'
@@ -80,16 +83,21 @@ class Command(BaseCommand):
                 country, locality = Country.get_country_locality(options['place'])
                 self.migrate_place(country, locality)
 
+            elif options['country_with_localities']:
+                country = Country.for_code(options['country_with_localities'])
+                self.migrate_country_with_localities(country)
+
             else:
-                # no work or place given
+                # no work or place / country given; do everything
                 for country in Country.objects.all():
-                    # go through each locality in each country
-                    for locality in country.localities.all():
-                        self.migrate_place(country, locality)
-                    # and then the country itself
-                    self.migrate_place(country, None)
+                    self.migrate_country_with_localities(country)
 
         self.finish_up()
+
+    def migrate_country_with_localities(self, country):
+        self.migrate_place(country, None)
+        for locality in country.localities.all():
+            self.migrate_place(country, locality)
 
     def migrate_place(self, country, locality):
         place = locality or country

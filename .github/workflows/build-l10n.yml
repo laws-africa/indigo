@@ -36,3 +36,4 @@ jobs:
         with:
           add: '*/locale/*/LC_MESSAGES/*.mo'
           message: 'Update compiled translations'
+

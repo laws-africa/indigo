@@ -146,7 +146,7 @@
       // https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects
 
       this.model.add({
-        filename: file.name,
+        filename: file.name.replaceAll(' ', '_'),
         size: file.size,
         mime_type: file.type,
         file: file,

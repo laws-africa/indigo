@@ -4,6 +4,7 @@ from lxml import etree
 
 from django.test import TestCase
 
+from cobalt.hierarchical import Act
 from indigo_api.exporters import PDFExporter
 from indigo_api.pdf import run_fop
 from indigo_api.models import Document, Work, Language
@@ -51,5 +52,30 @@ class PDFExporterTestCase(TestCase):
 
         self.assertMultiLineEqual(expected, pretty_xml_out)
 
+    def adjust_xml(self, name, adjustment, update=False):
+        input_path = os.path.join(os.path.dirname(__file__), 'pdf_fixtures', f'{name}_in.xml')
+        output_path = os.path.join(os.path.dirname(__file__), 'pdf_fixtures', f'{name}_out.xml')
+
+        with open(input_path, 'r') as f:
+            xml_in = f.read()
+
+        # do the adjustment
+        doc = Act(xml=xml_in)
+        adjustment(doc)
+
+        xml_out = etree.tostring(doc.root, encoding='unicode', pretty_print=True)
+        if update:
+            # update the fixture to match the actual
+            with open(output_path, 'w') as f:
+                f.write(xml_out)
+
+        with open(output_path, 'r') as f:
+            expected = f.read()
+
+        self.assertMultiLineEqual(expected, xml_out)
+
     def test_basic(self):
         self.run_and_compare('basic')
+
+    def test_adjust_refs(self):
+        self.adjust_xml('links', self.exporter.adjust_refs)

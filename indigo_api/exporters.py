@@ -293,11 +293,8 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             if href.startswith('/'):
                 ref.attrib['href'] = self.resolver_url + href
             # remove links that will break FOP
-            elif href.startswith('https://') and href == 'https://':
-                log.info(f'Removing empty "https://" link from the text {text}')
-                del ref.attrib['href']
-            elif href.startswith('mailto:') and href == 'mailto:':
-                log.info(f'Removing empty "mailto:" link from the text {text}')
+            elif href == 'https://' or href == 'mailto:':
+                log.info(f'Removing empty "https://" or "mailto:" link from the text {text}')
                 del ref.attrib['href']
 
     def make_eids_unique(self, doc):

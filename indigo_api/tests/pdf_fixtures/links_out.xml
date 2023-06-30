@@ -1,49 +1,20 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act name="act">
-    <meta>
-      <identification source="#Laws-Africa">
-        <FRBRWork>
-          <FRBRthis value="/akn/za/act/2023/724/!main"/>
-          <FRBRuri value="/akn/za/act/2023/724"/>
-          <FRBRalias value="A Whole New Work, 2023" name="title"/>
-          <FRBRdate date="2023" name="Generation"/>
-          <FRBRauthor href=""/>
-          <FRBRcountry value="za"/>
-          <FRBRnumber value="724"/>
-        </FRBRWork>
-        <FRBRExpression>
-          <FRBRthis value="/akn/za/act/2023/724/eng@2023-04-20/!main"/>
-          <FRBRuri value="/akn/za/act/2023/724/eng@2023-04-20"/>
-          <FRBRdate date="2023-04-20" name="Generation"/>
-          <FRBRauthor href=""/>
-          <FRBRlanguage language="eng"/>
-        </FRBRExpression>
-        <FRBRManifestation>
-          <FRBRthis value="/akn/za/act/2023/724/eng@2023-04-20/!main"/>
-          <FRBRuri value="/akn/za/act/2023/724/eng@2023-04-20"/>
-          <FRBRdate date="2023-04-20" name="Generation"/>
-          <FRBRauthor href=""/>
-        </FRBRManifestation>
-      </identification>
-      <publication showAs="" name="" date="2023-03-31" number=""/>
-      <references source="#Laws-Africa">
-        <TLCOrganization eId="Laws-Africa" href="http://localhost:8000" showAs="Laws.Africa"/>
-      </references>
-    </meta>
+    <meta/>
     <body>
       <section eId="sec_1">
         <num>1.</num>
         <heading>Heading</heading>
         <content>
-          <p eId="sec_1__p_1">bad <ref eId="sec_1__p_1__ref_1">mailto: <b>add</b>ress</ref></p>
-          <p eId="sec_2__p_1">bad <ref href="mailto:@" eId="sec_2__p_1__ref_1">mailto:@ address</ref></p>
-          <p eId="sec_3__p_1">bad <ref href="mailto:.com" eId="sec_3__p_1__ref_1">mailto:.com address</ref></p>
-          <p eId="sec_4__p_1">good <ref href="mailto:edith@laws.africa" eId="sec_4__p_1__ref_1">mailto:edith@laws.africa address</ref></p>
-          <p eId="sec_5__p_1">bad <ref href="mailto:.@" eId="sec_5__p_1__ref_1">mailto:.@ address</ref></p>
-          <p eId="sec_6__p_1">bad <ref href="mailto:@c.x" eId="sec_6__p_1__ref_1">mailto:@c.x address</ref></p>
-          <p eId="sec_7__p_1">bad <ref href="mailto:@.com" eId="sec_7__p_1__ref_1">mailto:@.com address</ref></p>
-          <p eId="sec_8__p_1">bad <ref eId="sec_8__p_1__ref_1">https:// address</ref></p>
-          <p eId="sec_9__p_1">good? <ref href="https://x" eId="sec_9__p_1__ref_1">https://x address</ref></p>
+          <p>bad <ref>mailto: <b>add</b>ress</ref></p>
+          <p>bad <ref href="mailto:@">mailto:@ address</ref></p>
+          <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
+          <p>good <ref href="mailto:edith@laws.africa">mailto:edith@laws.africa address</ref></p>
+          <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
+          <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
+          <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
+          <p>bad <ref>https:// address</ref></p>
+          <p>good? <ref href="https://x">https://x address</ref></p>
         </content>
       </section>
     </body>

@@ -1,0 +1,22 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <p>bad <ref href="mailto:">mailto: <b>add</b>ress</ref></p>
+          <p>bad <ref href="mailto:@">mailto:@ address</ref></p>
+          <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
+          <p>good <ref href="mailto:info@example.com">mailto:info@example.com address</ref></p>
+          <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
+          <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
+          <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
+          <p>bad <ref href="https://">https:// address</ref></p>
+          <p>good? <ref href="https://x">https://x address</ref></p>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

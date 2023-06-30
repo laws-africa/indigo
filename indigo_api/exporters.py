@@ -287,8 +287,15 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Prefix absolute hrefs into fully-qualified URLs.
         """
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
-            if ref.attrib['href'].startswith('/'):
-                ref.attrib['href'] = self.resolver_url + ref.attrib['href']
+            href = ref.attrib['href']
+            text = ''.join(ref.xpath('.//text()'))
+            # add resolver before /akn/etc links
+            if href.startswith('/'):
+                ref.attrib['href'] = self.resolver_url + href
+            # remove links that will break FOP
+            elif href == 'https://' or href == 'mailto:':
+                log.info(f'Removing empty "https://" or "mailto:" link from the text {text}')
+                del ref.attrib['href']
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.

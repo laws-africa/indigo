@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-05-02 15:20\n"
+"PO-Revision-Date: 2023-07-03 12:23\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -69,7 +69,7 @@ msgstr "Chapitre %(cap)s"
 #: analysis/work_detail/base.py:51
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr "%(type)s %(number)s sur %(year)s"
+msgstr "Types, nombres d'année"
 
 #: bulk_creator.py:281
 #, python-format
@@ -78,7 +78,7 @@ msgstr "Erreur de communication avec Google Sheets : %s"
 
 #: bulk_creator.py:288
 msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
-msgstr "Votre feuille n'a pas été importée avec succès ; veuillez vérifier que vous avez le partage de liens activé. (Quiconque avec le lien)."
+msgstr "Votre feuille n'a pas été importée avec succès ; veuillez vérifier que vous avez le partage de liens activé. (Quiconque avec le lien)."
 
 #: bulk_creator.py:321
 #, python-format
@@ -88,7 +88,7 @@ msgstr "Impossible d'accéder à la feuille de calcul. L'URL est-elle correcte e
 #: bulk_creator.py:327
 #, python-format
 msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
-msgstr "Il ne semble pas y avoir de données dans la feuille %(name)s de %(id)s"
+msgstr "Il ne semble pas y avoir de données dans la feuille de noms et d'identifiant."
 
 #: bulk_creator.py:914
 msgid "Link gazette"

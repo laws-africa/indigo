@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-07-03 12:23\n"
+"PO-Revision-Date: 2023-07-04 08:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -119,11 +119,11 @@ msgid "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s
 "– a typo in the spreadsheet\n"
 "– the commencing work doesn't exist on the system.\n\n"
 "Please link the commencement date and commencing work manually."
-msgstr "On dirait que cette œuvre a été commencée par \"%(commenced_by)s\" sur %(date)s (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement. Ce travail a donc été enregistré comme \"Non commencé\".\n\n"
-"Raisons possibles :\n"
+msgstr "On dirait que cette œuvre a été commencée par \"%(commencée par) sur %(date)s (voir la ligne %(numero de ligne)s de la feuille de calcul), mais il ne peut pas être lié automatiquement. Ce travail a donc été enregistré comme \"Non commencé\".\n\n"
+"Raisons possibles:\n"
 "– une faute de frappe dans la feuille de calcul\n"
 "– le début du travail n'existe pas sur le système.\n\n"
-"Veuillez lier la date de début et le début des travaux manuellement."
+"Veuillez lier la date de début et le début des travaux manuellement. "
 
 #: bulk_creator.py:933
 msgid "(unknown)"
@@ -137,7 +137,7 @@ msgstr "La date \"commence le\" manque"
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
 "If it should be linked, please do so manually."
-msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(row_num)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
+msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(numero de ligne)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
 "Si elle doit être liée, veuillez le faire manuellement."
 
 #: bulk_creator.py:947
@@ -169,7 +169,7 @@ msgid "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s 
 "– more than one amended work was listed (it only works if there's one)\n"
 "– the amended work doesn't exist on the system.\n\n"
 "Please link the amendment manually."
-msgstr "On dirait que cette œuvre modifie \"%(amended_work)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr "On dirait que cette œuvre modifie \"%(travaux modifiés)s\" (voir la ligne %(numero de ligne)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
 "– plus d'une œuvre modifiées ont été répertoriées (elle ne fonctionne que s'il y en a une)\n"
@@ -203,7 +203,7 @@ msgstr "Amendement du lien (en attente de commencement)"
 #, python-format
 msgid "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n\n"
 "Please link the amendment manually (and apply it) when this work comes into force."
-msgstr "On dirait que cette œuvre modifie %(amended_title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'amendement).\n\n"
+msgstr "On dirait que cette œuvre modifie %(titre modifié)s (%(titres numérotés)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'amendement).\n\n"
 "Veuillez lier la modification manuellement (et l'appliquer) lorsque ce œuvre entrera en vigueur."
 
 #: bulk_creator.py:1004
@@ -214,7 +214,7 @@ msgstr "Appliquer la modification"
 #, python-format
 msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr "Appliquer les modifications apportées par %(amending_title)s (%(numbered_title)s) le %(date)s.\n\n"
+msgstr "Appliquer les modifications apportées par %(modification des titres)s (%(titres numéroté)s) le %(date)s.\n\n"
 "L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: bulk_creator.py:1014

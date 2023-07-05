@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-20 11:54+0200\n"
-"PO-Revision-Date: 2023-07-05 11:51\n"
+"PO-Revision-Date: 2023-07-05 14:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -118,27 +118,27 @@ msgstr "Commencé le %(date)s"
 #: templates/indigo_api/akn/coverpage_act.html:107
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr "– a commencé par <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "– a commencé par <a href=\"%(uri du résolveur)s\">%(Titre numéroté)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:72
 #: templates/indigo_api/akn/coverpage_act.html:109
 #, python-format
 msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr "– a commencé par <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "– a commencé par <a href=\"%(uri du resolveur)s\">%(titre)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:76
 #: templates/indigo_api/akn/coverpage_act.html:113
 #: templates/indigo_api/akn/coverpage_act.html:159
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr "par <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "par <a href=\"%(uri du resolveur)s\">%(Titre numéroté)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:78
 #: templates/indigo_api/akn/coverpage_act.html:115
 #: templates/indigo_api/akn/coverpage_act.html:161
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr "par <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "par <a href=\"%(uri du resolveur)s\">%(titre)s</a>"
 
 #: templates/indigo_api/akn/coverpage_act.html:128
 msgid "There are multiple commencements:"
@@ -180,12 +180,12 @@ msgstr "Table des matières"
 #: templatetags/indigo.py:67
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr "Publié en %(name)s %(number)s sur %(date)s"
+msgstr "Publié en %(nom)s %(numero)s sur %(date)s"
 
 #: templatetags/indigo.py:73
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr "Publié dans %(name)s le %(date)s"
+msgstr "Publié dans %(nom)s le %(date)s"
 
 #: templatetags/indigo.py:78
 #, python-format

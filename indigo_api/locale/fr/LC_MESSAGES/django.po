@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-20 11:54+0200\n"
-"PO-Revision-Date: 2023-06-20 14:49\n"
+"PO-Revision-Date: 2023-07-05 11:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -20,37 +20,37 @@ msgstr ""
 #: models/documents.py:274
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr "Ceci est la version de ce document de %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
+msgstr "Ceci est la version de ce document de %(début)s et inclut tous les amendements publiés jusqu'à %(fin)s."
 
 #: models/documents.py:276
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr "Ceci est la version de ce document de %(start)s."
+msgstr "Ceci est la version de ce document de %(début)s."
 
 #: models/documents.py:279
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr "Ceci est la version de ce document à %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
+msgstr "Ceci est la version de ce document à %(début)s et inclut tous les amendements publiés jusqu'à %(fin)s."
 
 #: models/documents.py:281
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr "Ceci est la version de ce document à %(start)s."
+msgstr "Ceci est la version de ce document à %(début)s."
 
 #: models/documents.py:284
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr "Il s'agit de la version de ce document telle qu'elle était du %(start)s au %(end)s."
+msgstr "Il s'agit de la version de ce document telle qu'elle était du %(début)s au %(fin)s."
 
 #: models/documents.py:287
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr "Il s'agit de la version de ce document telle qu'elle était à %(start)s à %(end)s."
+msgstr "Il s'agit de la version de ce document telle qu'elle était à %(début)s à %(fin)s."
 
 #: models/documents.py:290
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr "Ceci est la version de ce document tel qu'il était à %(start)s."
+msgstr "Ceci est la version de ce document tel qu'il était à %(début)s."
 
 #: models/places.py:191
 msgid "Note: The original publication document is not available and this content could not be verified."
@@ -97,7 +97,7 @@ msgstr "[Abandonné par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%
 #: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr "Acceptée le %(date)s"
+msgstr "Acceptée %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:54
 msgid "Not commenced"

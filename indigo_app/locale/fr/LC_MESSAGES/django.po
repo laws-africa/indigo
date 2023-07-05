@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-07-05 16:23\n"
+"PO-Revision-Date: 2023-07-05 17:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -593,7 +593,7 @@ msgstr "Mis à jour le moins récemment"
 
 #: templates/indigo_api/_work_filter_form.html:33
 msgid "Title (A-Z)"
-msgstr "Titre (AZ)"
+msgstr "titre (AZ)"
 
 #: templates/indigo_api/_work_filter_form.html:34
 msgid "Title (Z-A)"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-25 17:06+0200\n"
-"PO-Revision-Date: 2023-07-05 15:22\n"
+"PO-Revision-Date: 2023-07-05 16:23\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1357,7 +1357,7 @@ msgstr "Commence toutes les dispositions"
 #: templates/indigo_api/work_commencements.html:93
 #, python-format
 msgid "Commences %(provisions)s of %(total_provisions_count)s provisions:"
-msgstr "Commence %(provisions)s des %(total_provisions_count)s dispositions :"
+msgstr "Commencement %(dispositions)s des %(nombre_total_disposition)s dispositions :"
 
 #: templates/indigo_api/work_commencements.html:117
 msgid "Example: See section 1 ..."
@@ -1576,7 +1576,7 @@ msgstr "Date d'approbation par l'autorité responsable."
 #: templates/indigo_api/work_form.html:360
 #, python-format
 msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date."
-msgstr "Date jusqu'à laquelle ce travail a été vérifié pour la dernière fois pour les mises à jour. Ne le définissez que s'il doit être différent de la date de %(name)s."
+msgstr "Date jusqu'à laquelle ce travail a été vérifié pour la dernière fois pour les mises à jour. Ne le définissez que s'il doit être différent de la date de %(nom)s."
 
 #: templates/indigo_api/work_form.html:377
 #: templates/indigo_api/work_overview.html:177
@@ -1586,7 +1586,7 @@ msgstr "Note de consolidation"
 #: templates/indigo_api/work_form.html:384
 #, python-format
 msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
-msgstr "Note de consolidation qui s'applique uniquement à ce travail. Remplace une note de consolidation en %(name)s si elle est définie."
+msgstr "Note de consolidation qui s'applique uniquement à ce travail. Remplace une note de consolidation en %(nom)s si elle est définie."
 
 #: templates/indigo_api/work_form.html:401
 #: templates/indigo_api/work_overview.html:191
@@ -1616,7 +1616,7 @@ msgstr "Pays et localité (avancé)"
 #: templates/indigo_api/work_form.html:485
 #, python-format
 msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
-msgstr "Ce travail ne peut pas être supprimé tant que <a href=\"%(amendments_url)s\">documents liés</a> et <a href=\"%(related_url)s\">travaux liés</a> existent."
+msgstr "Ce travail ne peut pas être supprimé tant que <la refeerence=\"%(url_de_modification)s\">documents liés</a> et <la reference=\"%(url_connexe)s\">travaux liés</a> existent."
 
 #: templates/indigo_api/work_form.html:492
 msgid "Are you sure you want to delete this work?"
@@ -1704,7 +1704,7 @@ msgstr "Promulgation"
 #: templates/indigo_api/work_overview.html:56
 #, python-format
 msgid "Published in %(name)s"
-msgstr "Publié dans %(name)s"
+msgstr "Publié dans %(nom)s"
 
 #: templates/indigo_api/work_overview.html:57
 msgid "no."
@@ -1718,7 +1718,7 @@ msgstr "sur"
 #: templates/indigo_api/work_overview.html:85
 #, python-format
 msgid "This work has <a href=\"%(work_rul)s\">multiple commencements</a>."
-msgstr "Ce travail a <a href=\"%(work_rul)s\">commencements multiples</a>."
+msgstr "Ce travail a <la reference=\"%(url_de_travail)s\">commencements multiples</a>."
 
 #: templates/indigo_api/work_overview.html:94
 msgid "Not commenced"
@@ -2106,7 +2106,7 @@ msgstr "Vous n'avez aucune tâche assignée pour le moment."
 #: templates/indigo_app/tasks/_user_tasks.html:23
 #, python-format
 msgid "%(username)s doesn't have any assigned tasks right now."
-msgstr "%(username)s n'a aucune tâche assignée pour le moment."
+msgstr "%(nom d'utilisateur)s n'a aucune tâche assignée pour le moment."
 
 #: templates/indigo_app/tasks/_user_tasks.html:37
 msgid "Tasks waiting for approval"
@@ -2119,7 +2119,7 @@ msgstr "Vous n'avez aucune tâche en attente d'approbation."
 #: templates/indigo_app/tasks/_user_tasks.html:48
 #, python-format
 msgid "%(username)s has no tasks waiting for approval."
-msgstr "%(username)s n'a aucune tâche en attente d'approbation."
+msgstr "%(nom d'utilisateur)s n'a aucune tâche en attente d'approbation."
 
 #: templates/indigo_app/tasks/_user_tasks.html:63
 msgid "Your recently approved tasks"
@@ -2136,7 +2136,7 @@ msgstr "Vous n'avez aucune tâche approuvée."
 #: templates/indigo_app/tasks/_user_tasks.html:77
 #, python-format
 msgid "%(username)s has no tasks that have been approved."
-msgstr "%(username)s n'a aucune tâche approuvée."
+msgstr "%(nom d'utilisateur)s n'a aucune tâche approuvée."
 
 #: templates/indigo_app/tasks/available_tasks.html:4
 #: templates/indigo_app/tasks/available_tasks.html:52
@@ -2196,7 +2196,7 @@ msgstr "Pour continuer, veuillez accepter les conditions d'utilisation"
 #: templates/indigo_app/user_account/accept_terms.html:16
 #, python-format
 msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
-msgstr "J'ai lu et j'accepte les <a href=\"%(url)s\" target=\"_blank\">Conditions d'utilisation</a>."
+msgstr "J'ai lu et j'accepte les <la reference\"%(url)s\" la cible=\"_vide\">Conditions d'utilisation</a>."
 
 #: templates/indigo_app/user_account/accept_terms.html:30
 msgid "Continue"
@@ -2492,7 +2492,7 @@ msgstr "URL de la documentation du guide de style pour %(place_name)s."
 
 #: templates/place/settings.html:59
 msgid "The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work."
-msgstr "Le texte à afficher sur la page de garde d'un document lorsqu'aucune gazette (ou document de publication) n'est associée à l'œuvre."
+msgstr "Le texte à afficher sur la page de garde d'un document lorsque aucune gazette (ou document de publication) n'est associée à l'œuvre."
 
 #: templates/place/settings.html:72
 msgid "The text to display on a document's coverpage when it's part of a consolidation."

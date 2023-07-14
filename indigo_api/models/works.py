@@ -7,11 +7,13 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
+from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
 
@@ -88,6 +90,28 @@ class VocabularyTopic(models.Model):
             return VocabularyTopic.objects\
                 .filter(vocabulary__slug=vocab, level_1=level_1, level_2=level_2)\
                 .first()
+
+
+class TaxonomyTopic(MP_Node):
+    name = models.CharField(max_length=512, null=False, blank=False)
+    slug = models.SlugField(null=False, unique=True, blank=False)
+    node_order_by = ['name']
+
+    class Meta:
+        verbose_name = _("taxonomy topic")
+        verbose_name_plural = _("taxonomy topics")
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def range_space(self):
+        return range(self.depth)
+
+    def save(self, *args, **kwargs):
+        parent = self.get_parent()
+        self.slug = (f"{parent.slug}-" if parent else "") + slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 class WorkMixin(object):
@@ -394,6 +418,8 @@ class Work(WorkMixin, models.Model):
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+
+    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works')
 
     as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')

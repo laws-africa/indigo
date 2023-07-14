@@ -89,6 +89,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
     taxonomies = serializers.SerializerMethodField()
+    taxonomy_topics = serializers.SerializerMethodField()
     as_at_date = serializers.DateField(source='work.as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
     commencements = CommencementSerializer(many=True, source='work.commencements')
@@ -111,7 +112,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'work_amendments', 'points_in_time', 'parent_work', 'custom_properties',
-            'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'principal', 'type_name',
+            'numbered_title', 'taxonomies', 'taxonomy_topics', 'as_at_date', 'stub', 'principal', 'type_name',
 
             'links',
         )
@@ -145,6 +146,10 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomies(doc.work)
+
+    def get_taxonomy_topics(self, doc):
+        from indigo_api.serializers import WorkSerializer
+        return WorkSerializer().get_taxonomy_topics(doc.work)
 
     def get_parent_work(self, doc):
         if doc.work.parent_work:

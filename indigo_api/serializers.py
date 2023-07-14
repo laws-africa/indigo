@@ -583,6 +583,7 @@ class WorkSerializer(serializers.ModelSerializer):
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
     taxonomies = serializers.SerializerMethodField()
+    taxonomy_topics = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
 
@@ -605,7 +606,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'frbr_uri',
 
             # taxonomies
-            'taxonomies',
+            'taxonomies', 'taxonomy_topics',
         )
         read_only_fields = fields
 
@@ -625,6 +626,20 @@ class WorkSerializer(serializers.ModelSerializer):
                 "topics": VocabularyTopicSerializer(many=True).to_representation(list(group)),
             })
 
+        return taxonomies
+
+    def get_taxonomy_topics(self, instance):
+        taxonomies = []
+        for t in instance.taxonomy_topics.all():
+            taxonomies.append({
+                "name": t.name,
+                "slug": t.slug
+            })
+            for ancestor in t.get_ancestors():
+                taxonomies.append({
+                    "name": ancestor.name,
+                    "slug": ancestor.slug
+                })
         return taxonomies
 
 

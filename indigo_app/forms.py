@@ -17,7 +17,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic
 
 
 class WorkForm(forms.ModelForm):
@@ -27,7 +27,7 @@ class WorkForm(forms.ModelForm):
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
-            'stub', 'principal', 'taxonomies', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
+            'stub', 'principal', 'taxonomies', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
         )
 
@@ -40,6 +40,9 @@ class WorkForm(forms.ModelForm):
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'),
+        required=False)
+    taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
         required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)

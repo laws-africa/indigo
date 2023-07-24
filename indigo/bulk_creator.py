@@ -61,12 +61,12 @@ class RowValidationFormBase(forms.Form):
     publication_date = forms.DateField(error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # other relevant dates
     assent_date = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
-    commencement_date = forms.DateField(required=False,
-                                        error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
+    commencement_date = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     # other info
     stub = forms.BooleanField(required=False)
     principal = forms.BooleanField(required=False)
     taxonomy = forms.CharField(required=False)
+    as_at_date_override = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
     disclaimer = forms.CharField(required=False)
     # passive relationships
     primary_work = forms.CharField(required=False)
@@ -109,7 +109,7 @@ class RowValidationFormBase(forms.Form):
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
-        return re.sub('[\u2028 ]+', ' ', title)
+        return re.sub('[\u000A\u000C\u000D\u0085\u2028\u2029]+', ' ', title)
 
     def clean_doctype(self):
         doctype = self.cleaned_data.get('doctype')
@@ -239,7 +239,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     """
 
     basic_work_attributes = ['title', 'publication_name', 'publication_number', 'assent_date', 'publication_date',
-                             'commenced', 'stub', 'principal', 'disclaimer']
+                             'commenced', 'stub', 'principal', 'as_at_date_override', 'disclaimer']
 
     log = logging.getLogger(__name__)
 
@@ -573,6 +573,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 row.notes.append('Stub')
             if row.principal:
                 row.notes.append('Principal work')
+            if row.as_at_date_override:
+                row.notes.append(f'As-at date override: {row.as_at_date_override}')
             if row.disclaimer:
                 row.notes.append(f'Disclaimer: {row.disclaimer}')
 

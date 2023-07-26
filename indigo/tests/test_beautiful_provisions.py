@@ -104,7 +104,7 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual(description, 'section 2–3')
 
     def run_nested(self, provision_ids, nested_toc=None):
-        nested_toc = nested_toc if nested_toc else self.chapters
+        nested_toc = nested_toc or self.chapters
         return self.beautifier.make_beautiful(nested_toc, provision_ids)
 
     def test_nested_full_containers(self):
@@ -203,6 +203,57 @@ class BeautifulProvisionsTestCase(TestCase):
         self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
         self.beautifier.commenced = False
         self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
+
+    def test_section_then_chapters(self):
+        """ Test where a section precedes the first chapter.
+            For example:
+            - section 1 ✔
+            - Chapter 1: sections 2 and 3
+            - Chapter 2: sections 4 and 5
+            - Chapter 3: sections 6 ✔, 7 ✔, and 8
+            should give:
+            'section 1; Chapter 3, section 6–7'
+        """
+        sections = self.make_toc_elements('sec_', 'section', range(1, 9), basic_unit=True, with_brackets=False)
+        chapters = self.make_toc_elements('chp_', 'chapter', range(1, 4), with_brackets=False)
+        chapters[0].children = sections[1:3]
+        chapters[1].children = sections[3:5]
+        chapters[2].children = sections[5:]
+        toc = [sections[0]] + chapters
+
+        provisions = ['sec_1', 'sec_2', 'sec_4', 'sec_7']
+        self.assertEqual('section 1; Chapter 1, section 2; Chapter 2, section 4; Chapter 3, section 7', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_2', 'sec_4', 'sec_7']
+        self.assertEqual('Chapter 1, section 2; Chapter 2, section 4; Chapter 3, section 7', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'sec_2']
+        self.assertEqual('section 1; Chapter 1, section 2', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'sec_2', 'sec_3']
+        self.assertEqual('section 1; Chapter 1, section 2–3', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'chp_1', 'sec_2', 'sec_3']
+        self.assertEqual('section 1; Chapter 1 (section 2–3)', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'sec_7']
+        self.assertEqual('section 1; Chapter 3, section 7', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'sec_6', 'sec_7', 'sec_8']
+        self.assertEqual('section 1; Chapter 3, section 6–8', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'chp_3', 'sec_6', 'sec_7', 'sec_8']
+        self.assertEqual('section 1; Chapter 3 (section 6–8)', self.run_nested(provisions, nested_toc=toc))
+
+        # insert section 3A between Chapters 1 and 2
+        section_3a = self.make_toc_elements('sec_', 'section', ['3A'], basic_unit=True, with_brackets=False)[0]
+        toc.insert(2, section_3a)
+
+        provisions = ['sec_1', 'sec_3A']
+        self.assertEqual('section 1; section 3A', self.run_nested(provisions, nested_toc=toc))
+
+        provisions = ['sec_1', 'sec_2', 'sec_3A', 'sec_4', 'chp_3']
+        self.assertEqual('section 1; Chapter 1, section 2; section 3A; Chapter 2, section 4; Chapter 3 (in part)', self.run_nested(provisions, nested_toc=toc))
 
     def test_nested_mix(self):
         provision_ids = [

@@ -218,7 +218,7 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         read_only_fields = fields
 
     def get_frbr_uri_code(self, instance):
-        return '%s-%s' % (instance.country.code, instance.code)
+        return f'{instance.country.code}-{instance.code}'
 
     def get_links(self, instance):
         return [

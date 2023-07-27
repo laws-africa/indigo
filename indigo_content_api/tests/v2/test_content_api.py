@@ -505,7 +505,7 @@ class ContentAPIV2TestMixin:
         tmp_file.write(
             b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82')
         tmp_file.seek(0)
-        response = self.client.post('/api/documents/%s/attachments' % doc_id,
+        response = self.client.post(f'/api/documents/{doc_id}/attachments',
                                     {'file': tmp_file, 'filename': 'test.png'}, format='multipart')
         self.assertEqual(response.status_code, 201)
 

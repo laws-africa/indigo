@@ -61,8 +61,8 @@ class Command(BaseCommand):
             ref.url = entry['url']
 
             if ref.id is None:
-                self.stdout.write(self.style.SUCCESS('Create reference: %s' % ref))
+                self.stdout.write(self.style.SUCCESS(f'Create reference: {ref}'))
             else:
-                self.stdout.write(self.style.SUCCESS('Update reference: %s' % ref))
+                self.stdout.write(self.style.SUCCESS(f'Update reference: {ref}'))
 
             ref.save()

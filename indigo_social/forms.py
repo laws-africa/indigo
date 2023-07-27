@@ -74,7 +74,7 @@ class UserProfileForm(forms.ModelForm):
 
 
 def badge_choices():
-    return sorted([(b.slug, '%s – %s' % (b.name, b.description)) for b in badges.registry.values() if b.can_award_manually])
+    return sorted([(b.slug, f'{b.name} – {b.description}') for b in badges.registry.values() if b.can_award_manually])
 
 
 def process_profile_photo(profile_photo):

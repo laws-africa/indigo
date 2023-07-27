@@ -36,7 +36,7 @@ class WorkflowsTest(WebTest):
 
         workflow = Workflow.objects.get(pk=response.context['workflow'].id)
 
-        form = self.app.get('/places/za/projects/%s/edit' % workflow.id).forms['workflow-form']
+        form = self.app.get(f'/places/za/projects/{workflow.id}/edit').forms['workflow-form']
         form['title'] = "updated title"
         form['description'] = "updated description"
         response = form.submit().follow()
@@ -58,7 +58,7 @@ class WorkflowsTest(WebTest):
         workflow = Workflow.objects.get(pk=response.context['workflow'].id)
         task = Task.objects.create(title="Task title", country=workflow.country, created_by_user=self.user)
 
-        response = self.app.post('/places/za/projects/%s/tasks' % workflow.id, {
+        response = self.app.post(f'/places/za/projects/{workflow.id}/tasks', {
             'tasks': [task.id],
             'csrfmiddlewaretoken': response.context['csrf_token'],
         }).follow()
@@ -73,13 +73,13 @@ class WorkflowsTest(WebTest):
 
         workflow = Workflow.objects.get(pk=response.context['workflow'].id)
 
-        response = self.app.post('/places/za/projects/%s/close' % workflow.id, {'csrfmiddlewaretoken': response.context['csrf_token']}).follow()
+        response = self.app.post(f'/places/za/projects/{workflow.id}/close', {'csrfmiddlewaretoken': response.context['csrf_token']}).follow()
         self.assertEqual(response.status_code, 200)
 
         workflow.refresh_from_db()
         self.assertTrue(workflow.closed)
 
-        response = self.app.post('/places/za/projects/%s/reopen' % workflow.id, {'csrfmiddlewaretoken': response.context['csrf_token']}).follow()
+        response = self.app.post(f'/places/za/projects/{workflow.id}/reopen', {'csrfmiddlewaretoken': response.context['csrf_token']}).follow()
         self.assertEqual(response.status_code, 200)
 
         workflow.refresh_from_db()

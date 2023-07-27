@@ -254,7 +254,7 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, 'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            messages.success(request, f'Deleted {self.work.title} · {self.work.frbr_uri}')
             return redirect(self.get_success_url())
         else:
             messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
@@ -832,9 +832,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment("Restored version %s" % version.id)
+            reversion.set_comment(f"Restored version {version.id}")
             version.revert()
-        messages.success(request, 'Restored version %s' % version.id)
+        messages.success(request, f'Restored version {version.id}')
 
         # signals
         work_changed.send(sender=self.work.__class__, work=self.work, request=request)
@@ -998,7 +998,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         except ValueError as e:
             if document.pk:
                 document.delete()
-            log.error("Error during import: %s" % str(e), exc_info=e)
+            log.error(f"Error during import: {str(e)}", exc_info=e)
             return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user

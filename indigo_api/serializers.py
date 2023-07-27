@@ -29,7 +29,7 @@ def user_display_name(user):
     if user.first_name:
         name = user.first_name
         if user.last_name:
-            name += ' %s' % user.last_name
+            name = f'{name} {user.last_name}'
     else:
         name = user.username
 

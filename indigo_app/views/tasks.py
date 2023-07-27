@@ -359,16 +359,16 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
 
         if self.unassign:
             task.assign_to(None, user)
-            messages.success(request, "Task '%s' has been unassigned" % task.title)
+            messages.success(request, f"Task '{task.title}' has been unassigned")
         else:
             assignee = User.objects.get(id=self.request.POST.get('assigned_to'))
             if not task.can_assign_to(assignee):
                 raise PermissionDenied
             task.assign_to(assignee, user)
             if user == assignee:
-                messages.success(request, "You have picked up the task '%s'" % task.title)
+                messages.success(request, f"You have picked up the task '{task.title}'")
             else:
-                messages.success(request, "Task '%s' has been assigned" % task.title)
+                messages.success(request, f"Task '{task.title}' has been assigned")
 
         task.updated_by_user = user
         task.save()

@@ -43,9 +43,12 @@ Installing Indigo locally
     $ python3 -m venv env
     $ source env/bin/activate
 
-4. Install Python dependencies::
+4. Install Python dependencies. It is
+   `recommended <https://www.psycopg.org/docs/install.html#psycopg-vs-psycopg-binary>`_ to install ``psycopg2-binary`` in
+   local development only, and to use ``psycopg2`` in production::
 
     $ pip install -e '.'
+    $ pip install psycopg2-binary
 
 5. Install sass. The simplest is to install the node version (below), otherwise see the `sass installation docs <https://sass-lang.com/install>`_.::
 

@@ -578,6 +578,10 @@ class CommencementsBeautifier(LocaleBasedMatcher):
     def process_provision(self, p):
         # start processing?
         if p.commenced == self.commenced or (p.children and not p.all_descendants_same):
+            # end the existing run before processing p if e.g. a section precedes a Chapter
+            if p.container and self.previous_in_run:
+                self.end_current()
+
             # e.g. a fully un/commenced Chapter or Part: Chapter 1 (sections 1–5)
             if p.full_container:
                 self.add_to_current(p, all_basic_units=True)
@@ -621,6 +625,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         # e.g. section 1–3, section 5–8
         elif self.previous_in_run and p.basic_unit:
             self.stash_current()
+
+        # e.g. section 1; Chapter 5, section 39
+        # -- section 1 (without a Chapter) is in the current run, and Chapter 5 should start a new one
+        elif self.previous_in_run:
+            self.end_current()
 
     def make_beautiful(self, provisions, assess_against):
         self.current_run = []

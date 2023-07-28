@@ -6,6 +6,8 @@ venv
 attachments/
 indigo_app/static/lime/develop
 staticfiles/
+indigo_app/static/stylesheets/app.css
+indigo_app/static/stylesheets/app.css.map
 docs/_build
 node_modules/
 .coverage

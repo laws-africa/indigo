@@ -1,10 +1,11 @@
 from itertools import groupby
+from django.urls import reverse
 
 from rest_framework import serializers
 
 from cobalt import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Amendment
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyTopic, TaxonomyVocabulary, Amendment
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
@@ -270,3 +271,15 @@ class TaxonomySerializer(serializers.ModelSerializer):
         fields = ['vocabulary', 'title', 'topics']
 
 
+
+class TaxonomyTopicSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TaxonomyTopic
+        fields = ['name', 'slug', 'children']
+
+
+    def get_children(self, instance):
+        children = instance.get_children()
+        return TaxonomyTopicSerializer(children, many=True).data

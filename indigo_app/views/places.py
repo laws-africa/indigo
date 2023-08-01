@@ -18,7 +18,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document
+from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
@@ -422,7 +422,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context['works']
-
+        context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
         self.decorate_works(list(works))
 
         # total works

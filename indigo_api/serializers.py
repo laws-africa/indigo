@@ -629,18 +629,7 @@ class WorkSerializer(serializers.ModelSerializer):
         return taxonomies
 
     def get_taxonomy_topics(self, instance):
-        taxonomies = []
-        for t in instance.taxonomy_topics.all():
-            taxonomies.append({
-                "name": t.name,
-                "slug": t.slug
-            })
-            for ancestor in t.get_ancestors():
-                taxonomies.append({
-                    "name": ancestor.name,
-                    "slug": ancestor.slug
-                })
-        return taxonomies
+        return [t.slug for t in instance.taxonomy_topics.all()]
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):

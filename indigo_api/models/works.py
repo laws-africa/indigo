@@ -14,6 +14,8 @@ import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
+from django.urls import reverse
+from django.http import QueryDict
 
 from indigo.plugins import plugins
 
@@ -94,7 +96,7 @@ class VocabularyTopic(models.Model):
 
 class TaxonomyTopic(MP_Node):
     name = models.CharField(max_length=512, null=False, blank=False)
-    slug = models.SlugField(null=False, unique=True, blank=False)
+    slug = models.SlugField(max_length=512, null=False, unique=True, blank=False)
     node_order_by = ['name']
 
     class Meta:
@@ -106,12 +108,42 @@ class TaxonomyTopic(MP_Node):
 
     @property
     def range_space(self):
+        # helper for adding space indents in templates
         return range(self.depth)
+
+    @classmethod
+    def get_topic(cls, value):
+        return cls.objects.filter(slug=value).first()
 
     def save(self, *args, **kwargs):
         parent = self.get_parent()
         self.slug = (f"{parent.slug}-" if parent else "") + slugify(self.name)
         super().save(*args, **kwargs)
+
+    @classmethod
+    def get_toc_tree(cls, query_dict):
+        # capture all preserve all filter parameters and add taxonomy_topic
+        new_query = query_dict.copy()
+        new_query.pop('taxonomy_topic', None)
+
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            new_query.update({'taxonomy_topic': item['data']['slug']})
+            item["href"] = f"?{new_query.urlencode()}"
+            new_query.pop('taxonomy_topic', None)
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        tree = cls.dump_bulk()
+        for x in tree:
+            fix_up(x)
+
+        tree = [{
+            "title": "All topics",
+            "href": f"?{new_query.urlencode()}",
+            "children": tree
+        }]
+        return tree
 
 
 class WorkMixin(object):
@@ -419,7 +451,7 @@ class Work(WorkMixin, models.Model):
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
 
-    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works')
+    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True)
 
     as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')

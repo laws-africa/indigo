@@ -232,7 +232,7 @@ class ColumnSelectWidget(SelectMultiple):
         'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
         'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
         'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
-        'primary_work', 'subleg', 'taxonomy'
+        'primary_work', 'subleg', 'taxonomy', 'taxonomy_topic'
     ]
 
     def create_option(self, *args, **kwargs):
@@ -303,6 +303,7 @@ class TaskFilterForm(forms.Form):
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
     type = forms.MultipleChoiceField(choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects)
+    taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -337,6 +338,11 @@ class TaskFilterForm(forms.Form):
         if self.cleaned_data.get('submitted_by'):
             queryset = queryset.filter(state__in=['pending_review', 'closed'])\
                 .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+
+        if self.cleaned_data.get('taxonomy_topic'):
+            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
+            topics = [topic] + [t for t in topic.get_descendants()]
+            queryset = queryset.filter(work__taxonomy_topics__in=topics)
 
         return queryset
 
@@ -379,6 +385,8 @@ class WorkFilterForm(forms.Form):
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
                         'primary_subsidiary', 'taxonomies', 'completeness', 'status']
+
+    taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -510,6 +518,12 @@ class WorkFilterForm(forms.Form):
                 start_date = self.cleaned_data['commencement_date_start']
                 end_date = self.cleaned_data['commencement_date_end']
                 queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+
+        if self.cleaned_data.get('taxonomy_topic'):
+            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
+            if topic:
+                topics = [topic] + [t for t in topic.get_descendants()]
+                queryset = queryset.filter(taxonomy_topics__in=topics)
 
         return queryset
 

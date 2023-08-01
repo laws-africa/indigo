@@ -36,6 +36,9 @@ class SpreadsheetRow:
         for k, v in data.items():
             setattr(self, k, v)
 
+    def __getitem__(cls, key):
+        return cls.__dict__[key]
+
 
 class LowerChoiceField(forms.ChoiceField):
     def to_python(self, value):
@@ -419,8 +422,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     self.link_taxonomy(row)
 
                 if row.taxonomy_topic:
-                    self.link_taxonomy_topic(row)
-
+                    self.link_taxonomy(row, model=TaxonomyTopic, attr='taxonomy_topics', attr_single='taxonomy_topic')
 
                 if row.amended_by:
                     self.link_amendment_passive(row)
@@ -911,55 +913,29 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                      task_type='apply-amendment',
                                      amendment=amendment)
 
-    def link_taxonomy(self, row):
-        topics = [x.strip() for x in row.taxonomy.split(';') if x.strip()]
+    def link_taxonomy(self, row, model=VocabularyTopic, attr='taxonomies', attr_single='taxonomy'):
+        topics = [x.strip() for x in getattr(row,  attr_single).split(';') if x.strip()]
         unlinked_topics = []
         for t in topics:
-            topic = VocabularyTopic.get_topic(t)
+            topic = model.get_topic(t)
             if topic:
-                row.taxonomies.append(topic)
+                row[attr].append(topic)
                 if not self.dry_run:
-                    row.work.taxonomies.add(topic)
+                    getattr(row.work, attr).add(topic)
                     row.work.save_with_revision(self.user)
 
             else:
                 unlinked_topics.append(t)
         if unlinked_topics:
             if self.dry_run:
-                row.notes.append(f'Taxonomy not found: {"; ".join(unlinked_topics)}')
+
+                row.notes.append(f'{" ".join(attr_single.split("_")).capitalize()} not found: {"; ".join(unlinked_topics)}')
             else:
                 row.unlinked_topics = "; ".join(unlinked_topics)
                 try:
                     existing_task = Task.objects.get(work=row.work, code='link-taxonomy', description__contains=row.unlinked_topics)
                 except Task.DoesNotExist:
                     self.create_task(row.work, row, task_type='link-taxonomy')
-
-    def link_taxonomy_topic(self, row):
-        topics = [x.strip() for x in row.taxonomy_topic.split(',') if x.strip()]
-        unlinked_topics = []
-
-        for t in topics:
-            topic = TaxonomyTopic.objects.filter(slug=t).first()
-            if topic:
-                row.taxonomy_topics.append(topic)
-                if not self.dry_run:
-                    row.work.taxonomy_topics.add(topic)
-                    row.work.save_with_revision(self.user)
-            else:
-                unlinked_topics.append(t)
-        if unlinked_topics:
-            if self.dry_run:
-                row.notes.append(f'Taxonomy topic not found: {"; ".join(unlinked_topics)}')
-            else:
-                row.unlinked_topics = "; ".join(unlinked_topics)
-                try:
-                    existing_task = Task.objects.get(work=row.work, code='link-taxonomy-topic', description__contains=row.unlinked_topics)
-                except Task.DoesNotExist:
-                    self.create_task(row.work, row, task_type='link-taxonomy-topic')
-
-
-
-
 
     def preview_task(self, row, task_type):
         task_preview = task_type.replace('-', ' ')

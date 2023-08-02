@@ -5,38 +5,52 @@
 
 {% block content %}
 
-<div class="container mt-3">
-  <div class="card">
-    <div class="card-header p-sticky-0">
-      <div>
-        <div class="d-flex">
-          <div class="flex-grow-1">
-            {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True %}
-          </div>
+<div class="container-fluid mt-3">
+  <div class="row">
 
-          <div class="pl-3 border-left">
-            <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">{% trans 'New task' %}</a>
-          </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div data-vue-component="TaxonomyTOC"></div>
+          {{ taxonomy_toc|json_script:"taxonomy_toc" }}
         </div>
       </div>
-
-      {% include 'indigo_api/_task_bulk_update_form.html' %}
     </div>
 
-    {% if tasks %}
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header p-sticky-0">
+          <div>
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True %}
+              </div>
 
-      {% if form.format.value == 'list' %}
-        {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
-      {% else %}
-        {% include 'indigo_api/_task_cards.html' with task_groups=task_groups selectable=True %}
-      {% endif %}
+              <div class="pl-3 border-left">
+                <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">{% trans 'New task' %}</a>
+              </div>
+            </div>
+          </div>
 
-    {% else %}
-      <div class="card-body">
-        <p class="text-center"><em>{% trans 'No tasks found.' %}</em></p>
+          {% include 'indigo_api/_task_bulk_update_form.html' %}
+        </div>
+
+        {% if tasks %}
+
+          {% if form.format.value == 'list' %}
+            {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
+          {% else %}
+            {% include 'indigo_api/_task_cards.html' with task_groups=task_groups selectable=True %}
+          {% endif %}
+
+        {% else %}
+          <div class="card-body">
+            <p class="text-center"><em>{% trans 'No tasks found.' %}</em></p>
+          </div>
+        {% endif %}
+
       </div>
-    {% endif %}
-
+    </div>
   </div>
 </div>
 {% endblock %}

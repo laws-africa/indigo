@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'treebeard',
 
     # required by the Indigo API
     'countries_plus',

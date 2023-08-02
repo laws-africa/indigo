@@ -211,6 +211,9 @@
       </div>      
     </div>
 
+    <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
+    {{ form.taxonomy_topic.as_hidden }}
+
     <!-- Reset filters -->
     <div class="text-right mt-3">
       <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear filters' %}</a>

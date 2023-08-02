@@ -583,6 +583,7 @@ class WorkSerializer(serializers.ModelSerializer):
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
     taxonomies = serializers.SerializerMethodField()
+    taxonomy_topics = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
 
@@ -605,7 +606,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'frbr_uri',
 
             # taxonomies
-            'taxonomies',
+            'taxonomies', 'taxonomy_topics',
         )
         read_only_fields = fields
 
@@ -626,6 +627,9 @@ class WorkSerializer(serializers.ModelSerializer):
             })
 
         return taxonomies
+
+    def get_taxonomy_topics(self, instance):
+        return [t.slug for t in instance.taxonomy_topics.all()]
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):

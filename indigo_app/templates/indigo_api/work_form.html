@@ -160,6 +160,16 @@
               </select>
             {% endif %}
           </div>
+
+          <div class="form-group col-md-6">
+            <label for="taxonomy_topics">{% trans 'Taxonomy topics' %}</label>
+            <select id="taxonomy_topics" name="work-taxonomy_topics" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">
+              {% for topic in form.fields.taxonomy_topics.queryset %}
+                <option {% if topic.pk in form.taxonomy_topics.value %}selected{% endif %} value="{{ topic.pk }}">{% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
         </div>
 
         <div class="form-row">

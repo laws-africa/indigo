@@ -146,6 +146,7 @@
                   {% endfor %}
                   <th>{% trans 'FRBR URI' %}</th>
                   <th>{% trans 'Taxonomy' %}</th>
+                  <th>{% trans 'Taxonomy topics' %}</th>
                   <th>{% trans 'Tasks' %}</th>
                   <th>{% trans 'Relationships' %}</th>
                   <th>{% trans 'Notes' %}</th>
@@ -205,6 +206,15 @@
                         <ul class="pl-0">
                           {% for taxonomy in row.taxonomies %}
                             <li>{{ taxonomy }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if row.taxonomy_topics %}
+                        <ul class="pl-0">
+                          {% for topic in row.taxonomy_topics %}
+                            <li>{{ topic }}</li>
                           {% endfor %}
                         </ul>
                       {% endif %}

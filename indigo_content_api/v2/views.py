@@ -10,13 +10,13 @@ from rest_framework.versioning import NamespaceVersioning
 
 from cobalt import FrbrUri
 
-from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, Locality
+from indigo_api.models import Attachment, Country, Document, TaxonomyTopic, TaxonomyVocabulary, Locality
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
 
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomySerializer,\
+from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomyTopicSerializer, TaxonomySerializer,\
     PublishedDocUrlMixin
 
 
@@ -120,6 +120,11 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
 class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
     serializer_class = TaxonomySerializer
+
+
+class TaxonomyTopicView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = TaxonomyTopic.get_root_nodes()
+    serializer_class = TaxonomyTopicSerializer
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

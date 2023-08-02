@@ -1,10 +1,27 @@
 from django import forms
 from django.contrib import admin
 from ckeditor.widgets import CKEditorWidget
+from treebeard.admin import TreeAdmin
+from treebeard.forms import MoveNodeForm, movenodeform_factory
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyVocabulary, VocabularyTopic
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyVocabulary, VocabularyTopic, TaxonomyTopic
 
 admin.site.register(Subtype)
+
+
+class TaxonomyForm(MoveNodeForm):
+    def save(self, commit=True):
+        super().save(commit=commit)
+        # save all children so that the slugs take into account the potentially updated parent
+        for node in self.instance.get_descendants():
+            node.save()
+        return self.instance
+
+
+@admin.register(TaxonomyTopic)
+class TaxonomyTopicAdmin(TreeAdmin):
+    form = movenodeform_factory(TaxonomyTopic, TaxonomyForm)
+    readonly_fields = ('slug',)
 
 
 @admin.register(Work)

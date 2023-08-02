@@ -22,7 +22,7 @@ from allauth.account.utils import user_display
 from actstream import action
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -89,6 +89,8 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
+
+        context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)

@@ -27,7 +27,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _enr
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DocumentTOCView\": () => (/* reexport safe */ _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]),\n/* harmony export */   \"LinterPopup\": () => (/* reexport safe */ _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__[\"default\"])\n/* harmony export */ });\n/* harmony import */ var _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DocumentTOCView.vue */ \"./indigo_app/js/components/DocumentTOCView.vue\");\n/* harmony import */ var _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LinterPopup.vue */ \"./indigo_app/js/components/LinterPopup.vue\");\n\n\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DocumentTOCView\": () => (/* reexport safe */ _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]),\n/* harmony export */   \"LinterPopup\": () => (/* reexport safe */ _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__[\"default\"]),\n/* harmony export */   \"TaxonomyTOC\": () => (/* reexport safe */ _TaxonomyTOC_vue__WEBPACK_IMPORTED_MODULE_2__[\"default\"])\n/* harmony export */ });\n/* harmony import */ var _DocumentTOCView_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DocumentTOCView.vue */ \"./indigo_app/js/components/DocumentTOCView.vue\");\n/* harmony import */ var _LinterPopup_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LinterPopup.vue */ \"./indigo_app/js/components/LinterPopup.vue\");\n/* harmony import */ var _TaxonomyTOC_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TaxonomyTOC.vue */ \"./indigo_app/js/components/TaxonomyTOC.vue\");\n\n\n\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/index.js?");
 
 /***/ }),
 
@@ -272,6 +272,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&":
+/*!*********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);\n// Imports\n\nvar ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, \"\\n.active {\\n  background-color: #2d7ad4;\\n  color: white;\\n}\\n\", \"\"]);\n// Exports\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options");
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/runtime/api.js":
 /*!*****************************************************!*\
   !*** ./node_modules/css-loader/dist/runtime/api.js ***!
@@ -338,6 +349,28 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./indigo_app/js/components/TaxonomyTOC.vue":
+/*!**************************************************!*\
+  !*** ./indigo_app/js/components/TaxonomyTOC.vue ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TaxonomyTOC.vue?vue&type=template&id=f274e9d2& */ \"./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2&\");\n/* harmony import */ var _TaxonomyTOC_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TaxonomyTOC.vue?vue&type=script&lang=js& */ \"./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js&\");\n/* harmony import */ var _TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& */ \"./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&\");\n/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ \"./node_modules/vue-loader/lib/runtime/componentNormalizer.js\");\n\n\n\n;\n\n\n/* normalize component */\n\nvar component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(\n  _TaxonomyTOC_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  _TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__.render,\n  _TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,\n  false,\n  null,\n  null,\n  null\n  \n)\n\n/* hot reload */\nif (false) { var api; }\ncomponent.options.__file = \"indigo_app/js/components/TaxonomyTOC.vue\"\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?");
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({\n  name: 'TaxonomyTOC',\n  data () {\n    return {\n      taxonomy_toc: JSON.parse(document.querySelector('#taxonomy_toc').textContent),\n    };\n  },\n  mounted () {\n    const params = new URLSearchParams(window.location.search);\n    const toc = document.getElementsByTagName('la-table-of-contents-controller');\n    toc[0].addEventListener('itemRendered', (e) => {\n      const tocItem = e.target;\n      if (!tocItem) return;\n      const anchor = tocItem.querySelector('.content__action__title');\n      const href = new URLSearchParams(anchor.getAttribute('href'));\n      if (params.get('taxonomy_topic') === href.get('taxonomy_topic')) {\n        anchor.classList.add('active');\n      }\n    });\n  }\n});\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?./node_modules/vue-loader/lib/index.js??vue-loader-options");
+
+/***/ }),
+
 /***/ "./indigo_app/js/components/DocumentTOCView.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************!*\
   !*** ./indigo_app/js/components/DocumentTOCView.vue?vue&type=script&lang=js& ***!
@@ -382,6 +415,28 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TaxonomyTOC.vue?vue&type=script&lang=js& */ \"./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=script&lang=js&\");\n /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__[\"default\"]); \n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2&":
+/*!*********************************************************************************!*\
+  !*** ./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2& ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"render\": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__.render),\n/* harmony export */   \"staticRenderFns\": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)\n/* harmony export */ });\n/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_template_id_f274e9d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TaxonomyTOC.vue?vue&type=template&id=f274e9d2& */ \"./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2&\");\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?");
+
+/***/ }),
+
 /***/ "./indigo_app/js/components/DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css&":
 /*!***************************************************************************************************!*\
   !*** ./indigo_app/js/components/DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css& ***!
@@ -390,6 +445,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentTOCView_vue_vue_type_style_index_0_id_3c32905c_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-style-loader/index.js!../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css& */ \"./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css&\");\n/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentTOCView_vue_vue_type_style_index_0_id_3c32905c_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentTOCView_vue_vue_type_style_index_0_id_3c32905c_lang_css___WEBPACK_IMPORTED_MODULE_0__);\n/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};\n/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentTOCView_vue_vue_type_style_index_0_id_3c32905c_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== \"default\") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentTOCView_vue_vue_type_style_index_0_id_3c32905c_lang_css___WEBPACK_IMPORTED_MODULE_0__[__WEBPACK_IMPORT_KEY__]\n/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/DocumentTOCView.vue?");
+
+/***/ }),
+
+/***/ "./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&":
+/*!***********************************************************************************************!*\
+  !*** ./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-style-loader/index.js!../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& */ \"./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&\");\n/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_0__);\n/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};\n/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== \"default\") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyTOC_vue_vue_type_style_index_0_id_f274e9d2_lang_css___WEBPACK_IMPORTED_MODULE_0__[__WEBPACK_IMPORT_KEY__]\n/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?");
 
 /***/ }),
 
@@ -415,6 +481,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=template&id=f274e9d2& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"render\": () => (/* binding */ render),\n/* harmony export */   \"staticRenderFns\": () => (/* binding */ staticRenderFns)\n/* harmony export */ });\nvar render = function () {\n  var _vm = this\n  var _h = _vm.$createElement\n  var _c = _vm._self._c || _h\n  return _c(\"la-table-of-contents-controller\", {\n    class: _vm.active,\n    attrs: {\n      \"collapse-all-btn-classes\": \"btn btn-sm btn-secondary\",\n      \"expand-all-btn-classes\": \"btn btn-sm btn-secondary\",\n      \"title-filter-clear-btn-classes\": \"btn btn-sm btn-secondary\",\n      \"title-filter-input-classes\": \"form-field\",\n      \"title-filter-placeholder\": \"Filter by topic\",\n    },\n    domProps: { items: _vm.taxonomy_toc },\n  })\n}\nvar staticRenderFns = []\nrender._withStripped = true\n\n\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options");
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
 /*!********************************************************************!*\
   !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
@@ -433,6 +510,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css& */ \"./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/DocumentTOCView.vue?vue&type=style&index=0&id=3c32905c&lang=css&\");\nif(content.__esModule) content = content.default;\nif(typeof content === 'string') content = [[module.id, content, '']];\nif(content.locals) module.exports = content.locals;\n// add the styles to the DOM\nvar add = (__webpack_require__(/*! !../../../node_modules/vue-style-loader/lib/addStylesClient.js */ \"./node_modules/vue-style-loader/lib/addStylesClient.js\")[\"default\"])\nvar update = add(\"29f91424\", content, false, {});\n// Hot Module Replacement\nif(false) {}\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/DocumentTOCView.vue?./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options");
+
+/***/ }),
+
+/***/ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css& */ \"./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./indigo_app/js/components/TaxonomyTOC.vue?vue&type=style&index=0&id=f274e9d2&lang=css&\");\nif(content.__esModule) content = content.default;\nif(typeof content === 'string') content = [[module.id, content, '']];\nif(content.locals) module.exports = content.locals;\n// add the styles to the DOM\nvar add = (__webpack_require__(/*! !../../../node_modules/vue-style-loader/lib/addStylesClient.js */ \"./node_modules/vue-style-loader/lib/addStylesClient.js\")[\"default\"])\nvar update = add(\"7e043c12\", content, false, {});\n// Hot Module Replacement\nif(false) {}\n\n//# sourceURL=webpack://indigo/./indigo_app/js/components/TaxonomyTOC.vue?./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js??vue-loader-options");
 
 /***/ }),
 

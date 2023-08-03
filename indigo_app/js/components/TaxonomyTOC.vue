@@ -6,7 +6,7 @@
         title-filter-clear-btn-classes="btn btn-sm btn-secondary"
         title-filter-input-classes="form-field"
         title-filter-placeholder="Filter by topic"
-        :class="active"
+        class="taxonomy-sidebar"
     ></la-table-of-contents-controller>
 </template>
 
@@ -33,10 +33,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.active {
-  background-color: #2d7ad4;
-  color: white;
-}
-</style>

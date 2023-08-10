@@ -694,13 +694,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
             return self.create_task(row.work, row, task_type='link-commencement-active')
 
         row.relationships.append(f'Commences {commenced_work} on {date}')
-        for row in self.works:
-            if 'Uncommenced' in row.notes and \
-                    ((hasattr(row, 'work') and
-                      (row.work == commenced_work or
-                       isinstance(commenced_work, str) and row.work.frbr_uri == commenced_work.split()[0])) or
-                     hasattr(row, 'frbr_uri') and isinstance(commenced_work, str) and row.frbr_uri == commenced_work.split()[0]):
-                row.notes.remove('Uncommenced')
+        # remove the 'Uncommenced' note on the commenced work if it's in this batch
+        for work_row in self.works:
+            if 'Uncommenced' in work_row.notes and \
+                    ((hasattr(work_row, 'work') and
+                      (work_row.work == commenced_work or
+                       isinstance(commenced_work, str) and work_row.work.frbr_uri == commenced_work.split()[0])) or
+                     hasattr(work_row, 'frbr_uri') and isinstance(commenced_work, str) and work_row.frbr_uri == commenced_work.split()[0]):
+                work_row.notes.remove('Uncommenced')
 
         if not self.dry_run:
             if not commenced_work.commenced:
@@ -875,9 +876,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                  amendment=amendment)
 
     def link_amendment_active(self, row):
-        # if the work `amends` something, try linking it
-        # (this will only work if there's only one amendment listed)
-        # make a task if this fails
+        # if the work `amends` something, try linking it (or them)
+        # make a task if any fail
         amended_works = [x.strip() for x in row.amends.split('\n') if x.strip()]
         for a in amended_works:
             amended_work = self.find_work(a)

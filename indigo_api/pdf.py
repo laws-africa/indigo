@@ -61,7 +61,11 @@ def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False)
     try:
         result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True, cwd=cwd,
                                 encoding='utf-8', errors='backslashreplace')
-        log.info(f"Output from fop: {result.stdout}")
+        log.debug(f"Output from fop: {result.stdout}")
     except subprocess.CalledProcessError as e:
         log.error(f"Error calling fop. Output: \n{e.output}", exc_info=e)
-        raise
+        # try to get a decent exception message from the FOP output
+        # find the first line that starts with SEVERE: and take the next line
+        match = re.search(r'^SEVERE: .*\n(.*)$', e.output, re.MULTILINE)
+        message = match.group(1) if match else "Error calling fop"
+        raise Exception(message) from e

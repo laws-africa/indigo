@@ -177,11 +177,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
 
-            outf = tempfile.NamedTemporaryFile('rb', dir=tmpdir, suffix='.pdf')
             xsl_fo = self.find_xsl_fo(document)
             self.update_base_xsl_fo_dir(xsl_fo)
-            run_fop(outf.name, tmpdir, xml_file, xsl_fo)
-            return outf.read()
+            outf_name = os.path.join(tmpdir, "out.pdf")
+            run_fop(outf_name, tmpdir, xml_file, xsl_fo)
+            return open(outf_name, 'rb').read()
 
     def insert_coverpage(self, document):
         """ Generates the coverpage and inserts it before the body in the XML.

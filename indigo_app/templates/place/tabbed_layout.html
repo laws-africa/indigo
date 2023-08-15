@@ -58,7 +58,7 @@
           </a>
         {% endif %}
         {% if user_can_change_place_settings %}
-          <a class="nav-item nav-link {% if view.tab == 'place_settings' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">
+          <a class="nav-item nav-link {% if view.tab == 'place_settings' or view.tab == 'place_users' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">
             <i class="fas fa-fw fa-cog"></i> {% trans "Settings" %}
           </a>
         {% endif %}

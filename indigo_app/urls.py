@@ -26,6 +26,7 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/metrics$', places.PlaceMetricsView.as_view(), name='place_metrics'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/explorer$', places.PlaceExplorerView.as_view(), name='place_explorer'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/settings', places.PlaceSettingsView.as_view(), name='place_settings'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/users', places.PlaceUsersView.as_view(), name='place_users'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/index.xlsx', places.PlaceWorksIndexView.as_view(), name='works_index'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/localities', places.PlaceLocalitiesView.as_view(), name='place_localities'),
 

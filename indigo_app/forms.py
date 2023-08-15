@@ -656,6 +656,12 @@ class PlaceSettingsForm(forms.ModelForm):
         return re.sub('/[\w#=]*$', '/', url)
 
 
+class PlaceUsersForm(forms.Form):
+    # make choices a lambda so that it's evaluated at runtime, not import time
+    choices = lambda: [(u.id, (u.get_full_name() or u.username)) for u in User.objects.filter(badges_earned__slug='editor')]
+    users = forms.MultipleChoiceField(choices=choices, label="Users with edit permissions", required=False, widget=forms.CheckboxSelectMultiple)
+
+
 class ExplorerForm(forms.Form):
     xpath = forms.CharField(required=True)
     parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)

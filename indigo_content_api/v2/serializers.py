@@ -1,5 +1,4 @@
 from itertools import groupby
-from django.urls import reverse
 
 from rest_framework import serializers
 
@@ -78,6 +77,15 @@ class AmendmentSerializer(serializers.ModelSerializer):
         fields = (
             'date', 'amending_title', 'amending_uri'
         )
+        read_only_fields = fields
+
+
+class PublishedDocumentCommencementsSerializer(DocumentSerializer, PublishedDocUrlMixin):
+    commencements = CommencementSerializer(many=True, source='work.commencements')
+
+    class Meta:
+        model = Document
+        fields = ('commencements',)
         read_only_fields = fields
 
 
@@ -269,7 +277,6 @@ class TaxonomySerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxonomyVocabulary
         fields = ['vocabulary', 'title', 'topics']
-
 
 
 class TaxonomyTopicSerializer(serializers.ModelSerializer):

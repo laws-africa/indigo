@@ -1,7 +1,6 @@
 import re
 
 from django.http import Http404
-from django.shortcuts import redirect
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
@@ -15,10 +14,8 @@ from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, 
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
-
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomyTopicSerializer, TaxonomySerializer,\
-    PublishedDocUrlMixin
-
+from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
+    TaxonomyTopicSerializer, TaxonomySerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -143,7 +140,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     * ``/akn/za/``: list all published documents for South Africa.
     * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/akn/za/act/1994.pdf``: all the acts from 1994 as a PDF
     * ``/akn/za/act/1994.epub``: all the acts from 1994 as an ePUB
 
     """
@@ -287,6 +283,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
+
+
+class PublishedDocumentCommencementsView(PublishedDocumentDetailView):
+    serializer_class = PublishedDocumentCommencementsSerializer
+    renderer_classes = (renderers.JSONRenderer,)
 
 
 class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, PublishedDocUrlMixin):

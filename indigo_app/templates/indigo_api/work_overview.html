@@ -54,13 +54,13 @@
                     <dd>
                       <div>
                         {% blocktrans with name=work.publication_name|default:"(unknown)" %}Published in {{ name }}{% endblocktrans %}
-                        {% if work.publication_number %} {% trans 'no.' %} {{ work.publication_number }}{% endif %}
+                        {% if work.publication_number %} {{ work.publication_number }}{% endif %}
                         {% if work.publication_date %} {% trans 'on' %} {{ work.publication_date|date:"Y-m-d" }}{% endif %}
                       </div>
                       {% if work.publication_document %}
-                      <div>
-                        <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-                      </div>
+                        <div>
+                          <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+                        </div>
                       {% endif %}
                     </dd>
 
@@ -81,13 +81,13 @@
                         {% endif %}
                         {% if work.commencements.count > 1 %}
                           <div>
-                            {% url 'work_commencements' frbr_uri=work.frbr_uri as work_url %}
+                            {% url 'work_commencements' frbr_uri=work.frbr_uri as commencements_url %}
                             {% blocktrans trimmed %}
-                              This work has <a href="{{ work_rul }}">multiple commencements</a>.
+                              This work has <a href="{{ commencements_url }}">multiple commencements</a>.
                             {% endblocktrans %}
                           </dd>
                         {% endif %}
-                        {% if work.commencement_note %}
+                        {% if work.commencements.count == 1 and work.commencement_note %}
                           <div>{{ work.commencement_note }}</div>
                         {% endif %}
                       {% else %}
@@ -157,7 +157,7 @@
 
                     {% with work.child_works.all as kids %}
                       {% if kids|length > 0 %}
-                        <dt>{% trans 'Subsidary works' %}</dt>
+                        <dt>{% trans 'Subsidiary works' %}</dt>
                         <dd>
                           {% if kids|length > 3 %}
                             <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>

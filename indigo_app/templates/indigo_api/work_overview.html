@@ -1,5 +1,5 @@
 {% extends "indigo_api/work_layout.html" %}
-{% load indigo_app humanize i18n %}
+{% load indigo indigo_app humanize i18n %}
 
 {% block work-content %}
 
@@ -65,35 +65,28 @@
                     </dd>
 
                     <dt>{% trans 'Commencement' %}</dt>
-                    <dd>
-                      {% if work.commenced %}
-                        {% if work.main_commencement and not work.main_commencement.all_provisions %}
-                          {% trans 'Commenced in part' %}
+                    {% work_commencement_description work friendly_date=False as work_commencement_description %}
+                    {% with commencement_code=work_commencement_description.0 commencement_description=work_commencement_description.1 %}
+                      <dd>
+                        {% if commencement_code == 2 %}
+                          <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>{{ commencement_description }}</a>
                         {% else %}
-                          {% trans 'Commenced' %}
-                        {% endif %}
+                          {{ commencement_description }}
 
-                        {% trans 'on' %} {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
+                          {% with commencing_work_description=work_commencement_description.2 %}
+                            {% if commencing_work_description %}
+                              {% with commencing_work=commencing_work_description.0 commencing_title=commencing_work_description.1 commencement_note=commencing_work_description.2 %}
+                                <a href="{% url 'work' frbr_uri=commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencing_work.frbr_uri %}">{{ commencing_title }}</a>
+                                {% if commencement_note %}
+                                  <p>{{ commencement_note }}</p>
+                                {% endif %}
+                              {% endwith %}
+                            {% endif %}
+                          {% endwith %}
 
-                        {% if work.commencing_work %}
-                          {% trans 'by' %}
-                          <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                         {% endif %}
-                        {% if work.commencements.count > 1 %}
-                          <div>
-                            {% url 'work_commencements' frbr_uri=work.frbr_uri as commencements_url %}
-                            {% blocktrans trimmed %}
-                              This work has <a href="{{ commencements_url }}">multiple commencements</a>.
-                            {% endblocktrans %}
-                          </dd>
-                        {% endif %}
-                        {% if work.commencements.count == 1 and work.commencement_note %}
-                          <div>{{ work.commencement_note }}</div>
-                        {% endif %}
-                      {% else %}
-                        {% trans 'Not commenced' %}
-                      {% endif %}
-                    </dd>
+                      </dd>
+                    {% endwith %}
 
                     <dt>{% trans 'Up to date as at' %}</dt>
                     <dd>

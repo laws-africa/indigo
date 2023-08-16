@@ -91,3 +91,75 @@ def publication_document_description(work, placeholder=False):
         }
     elif placeholder:
         return _('Published')
+
+
+@register.simple_tag
+def work_commencement_description(work, friendly_date=True):
+    """ Describes the commencement status of a work.
+        Returns a tuple containing: (code, descriptive string, [optional commencing work tuple])
+        Commencing work tuple contains:
+            (commencing work object, title (which is either the numbered or short title), note with 'Note: ' prepended)
+
+        Code: 0 = Uncommenced
+              1 = Single commencement (full / partial; with/out date; with/out commencing work)
+              2 = Multiple commencements
+
+        Only code 1 works get a full description.
+    """
+    n_commencements = work.commencements.all().count()
+
+    if n_commencements > 1:
+        return 2, _('There are multiple commencements')
+
+    if n_commencements == 0:
+        return 0, _('Not commenced')
+
+    else:
+        # one commencement; may be in full or not, with/out a date, with/out a commencing work
+        # (it may also be main or not, but we'll ignore that distinction when there's only one)
+        # get and use the one commencement on the work -- don't assume that it's a main commencement --
+        #   so don't use work.commencing_work or any of that, as those all rely on the main commencement
+        commencement = work.commencements.first()
+
+        # in full or not
+        fully_commenced = commencement.all_provisions
+
+        # with/out a commencing work
+        commencing_work_description = None
+        if commencement.commencing_work:
+            # generate the tuple describing the commencing work
+            commencing_title = commencement.commencing_work.numbered_title() or commencement.commencing_work.title
+            commencement_note = commencement.note
+            if commencement_note:
+                commencement_note = _('Note: %(commencement_note)s') % {'commencement_note': commencement_note}
+            commencing_work_description = (commencement.commencing_work, commencing_title, commencement_note)
+
+        # with/out a date
+        commencement_date = commencement.date
+
+        if commencement_date:
+            # format the date (in most cases)
+            if friendly_date:
+                commencement_date = date_format(commencement_date, 'j E Y')
+
+            # with a date and a commencing work
+            if commencing_work_description:
+                if fully_commenced:
+                    return 1, _('Commenced in full on %(date)s by') % {'date': commencement_date}, commencing_work_description
+                return 1, _('Commenced in part on %(date)s by') % {'date': commencement_date}, commencing_work_description
+
+            # with a date, without a commencing work
+            if fully_commenced:
+                return 1, _('Commenced in full on %(date)s') % {'date': commencement_date}
+            return 1, _('Commenced in part on %(date)s') % {'date': commencement_date}
+
+        # without a date, with a commencing work
+        if commencing_work_description:
+            if fully_commenced:
+                return 1, _('Commenced in full by'), commencing_work_description
+            return 1, _('Commenced in part by'), commencing_work_description
+
+        # without a date or a commencing work
+        if fully_commenced:
+            return 1, _('Commenced in full')
+        return 1, _('Commenced in part')

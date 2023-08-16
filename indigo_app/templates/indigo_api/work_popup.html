@@ -30,52 +30,27 @@
     <p class="mb-2">
       {% if work.publication_document %}
         {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
-        <a href="{{ url }}" target="_blank" rel="noopener">{{ publication_document_description }}</a>.
+        <a href="{{ url }}" target="_blank" rel="noopener">{{ publication_document_description }}.</a>
       {% else %}
         {{ publication_document_description }}.
       {% endif %}
     </p>
   {% endif %}
 
-  {% if work.commenced %}
-    <p class="mb-2">
-      {% with date=work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>"%}
-        {% if work.main_commencement and not work.main_commencement.all_provisions %}
-          {% if work.commencing_work %}
-            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
-            {% blocktrans trimmed with title=work.commencing_work.title %}
-              Commenced in part on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
-            {% endblocktrans %}
-          {% else %}
-            {% blocktrans trimmed %}
-              Commenced in part on {{ date }}.
-            {% endblocktrans %}
-          {% endif %}
-
+  {% work_commencement_description work friendly_date=False as work_commencement_description %}
+  <p class="mb-2">
+    {% if work_commencement_description.0 == 2 %}
+      <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>{{ work_commencement_description.1 }}.</a>
+    {% else %}
+      {% with commencing_work_description=work_commencement_description.2 %}
+        {% if commencing_work_description %}
+          {{ work_commencement_description.1 }} <a href="{% url 'work' frbr_uri=commencing_work_description.0.frbr_uri %}" target="_blank">{{ commencing_work_description.1 }}</a>.
         {% else %}
-
-          {% if work.commencing_work %}
-            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
-            {% blocktrans trimmed with title=work.commencing_work.title %}
-              Commenced on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
-            {% endblocktrans %}
-          {% else %}
-            {% blocktrans trimmed %}
-              Commenced on {{ date }}.
-            {% endblocktrans %}
-          {% endif %}
-
+          {{ work_commencement_description.1 }}.
         {% endif %}
       {% endwith %}
-
-      {% if work.commencements.count > 1 %}
-        {% url 'work_commencements' frbr_uri=work.frbr_uri as url %}
-        {% blocktrans trimmed %}
-          This work has <a href="{{ url }}">multiple commencements</a>.
-        {% endblocktrans %}
-      {% endif %}
-    </p>
-  {% endif %}
+    {% endif %}
+  </p>
 
   {% if work.repealed_date %}
     <p class="mb-2">

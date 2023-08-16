@@ -67,6 +67,9 @@
               <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
             {% endif %}
           </h6>
+          {% if commencement.commencing_work %}
+            <div class="text-muted mb-3">{{ commencement.commencing_work.frbr_uri }}</div>
+          {% endif %}
           {% if commencement.note %}
             <h6>
               {% trans 'Note:' %} {{ commencement.note }}

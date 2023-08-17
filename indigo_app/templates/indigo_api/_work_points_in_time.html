@@ -56,7 +56,7 @@
         {% endif %}
 
         {% for commencement in event.commencements %}
-          <h6>
+          <h6 class="mb-0">
             {% if commencement.all_provisions %}
               {% trans 'Commenced' %}
             {% else %}
@@ -71,7 +71,7 @@
             <div class="text-muted mb-3">{{ commencement.commencing_work.frbr_uri }}</div>
           {% endif %}
           {% if commencement.note %}
-            <h6>
+            <h6 class="mt-3">
               {% trans 'Note:' %} {{ commencement.note }}
             </h6>
           {% endif %}

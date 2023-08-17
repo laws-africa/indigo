@@ -65,28 +65,26 @@
                     </dd>
 
                     <dt>{% trans 'Commencement' %}</dt>
-                    {% work_commencement_description work friendly_date=False as work_commencement_description %}
-                    {% with commencement_code=work_commencement_description.0 commencement_description=work_commencement_description.1 %}
-                      <dd>
-                        {% if commencement_code == 2 %}
-                          <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>{{ commencement_description }}</a>
+                    <dd>
+                      {% with work.commencement_description_internal as commencement_description %}
+                        {% if commencement_description.type == 'multiple' %}
+                          <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>
+                            {{ commencement_description.description }}
+                          </a>
                         {% else %}
-                          {{ commencement_description }}
-
-                          {% with commencing_work_description=work_commencement_description.2 %}
-                            {% if commencing_work_description %}
-                              {% with commencing_work=commencing_work_description.0 commencing_title=commencing_work_description.1 commencement_note=commencing_work_description.2 %}
-                                <a href="{% url 'work' frbr_uri=commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencing_work.frbr_uri %}">{{ commencing_title }}</a>
-                                {% if commencement_note %}
-                                  <p>{{ commencement_note }}</p>
-                                {% endif %}
-                              {% endwith %}
-                            {% endif %}
-                          {% endwith %}
-
+                          {{ commencement_description.description }}
+                          {% if commencement_description.commencing_work_description %}
+                            <a href="{% url 'work' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri %}"
+                               data-popup-url="{% url 'work_popup' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri %}">
+                              {{ commencement_description.commencing_work_description.commencing_title }}
+                            </a>
+                          {% endif %}
+                          {% if commencement_description.note %}
+                            <p>{{ commencement_description.note }}</p>
+                          {% endif %}
                         {% endif %}
-                      </dd>
-                    {% endwith %}
+                      {% endwith %}
+                    </dd>
 
                     <dt>{% trans 'Up to date as at' %}</dt>
                     <dd>

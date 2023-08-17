@@ -37,19 +37,21 @@
     </p>
   {% endif %}
 
-  {% work_commencement_description work friendly_date=False as work_commencement_description %}
   <p class="mb-2">
-    {% if work_commencement_description.0 == 2 %}
-      <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>{{ work_commencement_description.1 }}.</a>
-    {% else %}
-      {% with commencing_work_description=work_commencement_description.2 %}
-        {% if commencing_work_description %}
-          {{ work_commencement_description.1 }} <a href="{% url 'work' frbr_uri=commencing_work_description.0.frbr_uri %}" target="_blank">{{ commencing_work_description.1 }}</a>.
+    {% with work.commencement_description_internal as commencement_description %}
+      {% if commencement_description.type == 'multiple' %}
+        {% url 'work_commencements' frbr_uri=work.frbr_uri as commencements_url %}
+        <a href="{{ commencements_url }}">{{ commencement_description.description }}.</a>
+      {% else %}
+        {% if commencement_description.commencing_work_description %}
+          {{ commencement_description.description }}
+          {% url 'work' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri as commencing_url %}
+          <a href="{{ commencing_url }}" target="_blank">{{ commencement_description.commencing_work_description.commencing_title }}</a>.
         {% else %}
-          {{ work_commencement_description.1 }}.
+          {{ commencement_description.description }}.
         {% endif %}
-      {% endwith %}
-    {% endif %}
+      {% endif %}
+    {% endwith %}
   </p>
 
   {% if work.repealed_date %}

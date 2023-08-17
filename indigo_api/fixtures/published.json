@@ -216,6 +216,24 @@
     }
   },
   {
+    "pk": 104,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2023-01-01",
+      "document_xml": "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/akn/za/act/2023/01/!main\"/>\n          <FRBRuri value=\"/akn/za/act/2023/01\"/>\n          <FRBRalias value=\"Another work with multiple commencements\"/>\n          <FRBRdate date=\"2023\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/akn/za/act/2023/1/eng@2023-01-01/!main\"/>\n          <FRBRuri value=\"/akn/za/act/2023/1/eng@2023-01-01\"/>\n          <FRBRdate date=\"2023-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/akn/za/act/2023/1/eng@2023-01-01/!main\"/>\n          <FRBRuri value=\"/akn/za/act/2023/1/eng@2023-01-01\"/>\n          <FRBRdate date=\"2023-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2016-01-01\"/>\n      <references source=\"#this\">\n        <TLCOrganization eId=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization eId=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole eId=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        </references>\n    </meta>\n    <body>\n      <section eId=\"sec_1\">\n      </section>\n      <section eId=\"sec_2\">\n      </section>\n      <section eId=\"sec_3\">\n      </section>\n      <section eId=\"sec_4\">\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "frbr_uri": "/akn/za/act/2023/1",
+      "language_id": 1,
+      "title": "Another work with multiple commencements",
+      "deleted": false,
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "work_id": 14
+    }
+  },
+  {
     "pk": 1,
     "model": "indigo_api.amendment",
     "fields": {

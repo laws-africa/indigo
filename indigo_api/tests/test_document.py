@@ -142,10 +142,12 @@ class DocumentTestCase(TestCase):
         self.assertEqual({
             'type': 'single',
             'description': 'Commenced in full on 2016-07-15',
+            'note': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'single',
             'description': 'Commenced in full on 15 July 2016',
+            'note': None,
         }, d.work.commencement_description_external())
 
         d = Document.objects.get(id=104)
@@ -157,18 +159,13 @@ class DocumentTestCase(TestCase):
             'type': 'multiple',
             'description': 'There are multiple commencements',
         }, d.work.commencement_description_external())
-        # TODO: this isn't right, it should be fully commenced at 1 March 2023
         self.assertEqual({
-            'type': 'uncommenced',
-            'description': 'Not commenced',
+            'type': 'single',
+            'description': 'Commenced in full on 1 March 2023 by',
+            'note': 'Note: See section 4(2)',
+            'commencing_work_description': {'commencing_work': Work.objects.get(pk=15),
+                                            'commencing_title': 'GN 1 of 2023'},
         }, d.commencement_description_at_expression_date())
-        # self.assertEqual({
-        #     'type': 'single',
-        #     'description': 'Commenced in full on 1 March 2023 by',
-        #     'commencing_work_description': {
-        #         # TODO: get all_commenceable_provisions to do the right thing and fill this in
-        #     },
-        # }, d.commencement_description_at_expression_date())
 
         d = Document.objects.get(id=7)
         self.assertEqual({

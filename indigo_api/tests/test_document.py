@@ -164,7 +164,7 @@ class DocumentTestCase(TestCase):
             'description': 'Commenced in full on 1 March 2023 by',
             'note': 'Note: See section 4(2)',
             'commencing_work_description': {'commencing_work': Work.objects.get(pk=15),
-                                            'commencing_title': 'GN 1 of 2023'},
+                                            'commencing_title': 'Government Notice 1 of 2023'},
         }, d.commencement_description_at_expression_date())
 
         d = Document.objects.get(id=7)

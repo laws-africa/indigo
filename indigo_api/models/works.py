@@ -399,7 +399,7 @@ class WorkMixin(object):
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
-    def commencement_description(self, friendly_date=True, commencements=None):
+    def commencement_description(self, friendly_date=True, scoped_date=None, commencements=None):
         """ Returns a dict describing the commencement status of a work, of the form:
                 {'type': 'uncommenced' / 'single' / 'multiple'
                  'description': e.g. 'Commenced in full on {date} [by]'
@@ -411,7 +411,7 @@ class WorkMixin(object):
             By default, commencement dates are formatted as e.g. '1 January 2023'.
                 Passing in friendly_date=False leaves them as e.g. 2023-01-01.
         """
-        n_commencements = len(commencements) if commencements is not None else self.commencements.all().count()
+        n_commencements = len(commencements) if scoped_date else self.commencements.all().count()
         if n_commencements > 1:
             return {'type': 'multiple',
                     'description': _('There are multiple commencements')}
@@ -422,6 +422,9 @@ class WorkMixin(object):
         # single commencement -- dig into the detail
         commencement = commencements[0] if commencements else self.commencements.first()
         fully_commenced = commencement.all_provisions
+        if scoped_date:
+            # if there are no uncommenced provisions at the given date, it is fully commenced
+            fully_commenced = not bool(self.all_uncommenced_provision_ids(scoped_date))
 
         description_dict = {
             'type': 'single',

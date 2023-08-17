@@ -55,6 +55,11 @@
             {% with document.commencement_description_at_expression_date as scoped_commencement_description %}
               <li class="commencement-date">
                 {{ scoped_commencement_description.description }}
+                {% if scoped_commencement_description.commencing_work_description %}
+                  <a href="{% work_resolver_url scoped_commencement_description.commencing_work_description.commencing_work %}">
+                    {{ scoped_commencement_description.commencing_work_description.commencing_title }}
+                  </a>
+                {% endif %}
               </li>
               {% if scoped_commencement_description.note %}
                 <li class="commencement-note">{{ scoped_commencement_description.note }}</li>

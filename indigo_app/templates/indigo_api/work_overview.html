@@ -52,11 +52,12 @@
                   <dl class="mb-0">
                     <dt>{% trans 'Promulgation' %}</dt>
                     <dd>
-                      <div>
-                        {% blocktrans with name=work.publication_name|default:"(unknown)" %}Published in {{ name }}{% endblocktrans %}
-                        {% if work.publication_number %} {{ work.publication_number }}{% endif %}
-                        {% if work.publication_date %} {% trans 'on' %} {{ work.publication_date|date:"Y-m-d" }}{% endif %}
-                      </div>
+                      {% publication_document_description work internal=True as publication_document_description %}
+                      {% if publication_document_description %}
+                        {{ publication_document_description }}
+                      {% else %}
+                        <i>{% trans '(unknown)' %}</i>
+                      {% endif %}
                       {% if work.publication_document %}
                         <div>
                           <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>

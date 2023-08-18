@@ -25,7 +25,7 @@
     <p class="mb-2">{% blocktrans with date=work.assent_date|date:"Y-m-d" %}Assented to on {{ date }}{% endblocktrans %}.</p>
   {% endif %}
 
-  {% publication_document_description work placeholder=work.publication_document as publication_document_description %}
+  {% publication_document_description work placeholder=work.publication_document internal=True as publication_document_description %}
   {% if publication_document_description %}
     <p class="mb-2">
       {% if work.publication_document %}

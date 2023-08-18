@@ -59,4 +59,10 @@
     background-color: #2d7ad4;
     color: white;
   }
+
+  la-table-of-contents {
+    display: block;
+    max-height: 75vh;
+    overflow-y: auto;
+  }
 }

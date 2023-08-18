@@ -141,8 +141,9 @@ class TaxonomyTopic(MP_Node):
         tree = [{
             "title": "All topics",
             "href": f"?{new_query.urlencode()}",
-            "children": tree
-        }]
+            "data": {"slug": None},
+            "children": [],
+        }] + tree
         return tree
 
 

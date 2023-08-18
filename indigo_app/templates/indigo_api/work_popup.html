@@ -43,10 +43,10 @@
         {% url 'work_commencements' frbr_uri=work.frbr_uri as commencements_url %}
         <a href="{{ commencements_url }}">{{ commencement_description.description }}.</a>
       {% else %}
-        {% if commencement_description.commencing_work_description %}
+        {% if commencement_description.commenced_by %}
           {{ commencement_description.description }}
-          {% url 'work' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri as commencing_url %}
-          <a href="{{ commencing_url }}" target="_blank">{{ commencement_description.commencing_work_description.commencing_title }}</a>.
+          {% url 'work' frbr_uri=commencement_description.commenced_by.work.frbr_uri as commencing_url %}
+          <a href="{{ commencing_url }}" target="_blank">{{ commencement_description.commenced_by.title }}</a>.
         {% else %}
           {{ commencement_description.description }}.
         {% endif %}

@@ -74,10 +74,10 @@
                           </a>
                         {% else %}
                           {{ commencement_description.description }}
-                          {% if commencement_description.commencing_work_description %}
-                            <a href="{% url 'work' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri %}"
-                               data-popup-url="{% url 'work_popup' frbr_uri=commencement_description.commencing_work_description.commencing_work.frbr_uri %}">
-                              {{ commencement_description.commencing_work_description.commencing_title }}
+                          {% if commencement_description.commenced_by %}
+                            <a href="{% url 'work' frbr_uri=commencement_description.commenced_by.work.frbr_uri %}"
+                               data-popup-url="{% url 'work_popup' frbr_uri=commencement_description.commenced_by.work.frbr_uri %}">
+                              {{ commencement_description.commenced_by.title }}
                             </a>
                           {% endif %}
                           {% if commencement_description.note %}

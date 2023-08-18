@@ -142,65 +142,116 @@ class DocumentTestCase(TestCase):
         self.assertEqual({
             'type': 'single',
             'description': 'Commenced in full on 2016-07-15',
+            'in_full': True,
+            'date': date(2016, 7, 15),
             'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'single',
             'description': 'Commenced in full on 15 July 2016',
+            'in_full': True,
+            'date': date(2016, 7, 15),
             'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_external())
 
         d = Document.objects.get(id=104)
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_external())
         self.assertEqual({
             'type': 'single',
             'description': 'Commenced in full on 1 March 2023 by',
+            'in_full': True,
+            'date': date(2023, 3, 1),
             'note': 'Note: See section 4(2)',
-            'commencing_work_description': {'commencing_work': Work.objects.get(pk=15),
-                                            'commencing_title': 'Government Notice 1 of 2023'},
-        }, d.commencement_description_at_expression_date())
+            'commenced_by': {'work': Work.objects.get(pk=15),
+                             'title': 'Government Notice 1 of 2023'},
+        }, d.work.commencement_description(scoped_date=d.expression_date,
+                                           commencements=d.commencements_relevant_at_expression_date()))
 
         d = Document.objects.get(id=7)
         self.assertEqual({
             'type': 'uncommenced',
             'description': 'Not commenced',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'uncommenced',
             'description': 'Not commenced',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_external())
 
         d = Document.objects.get(id=21)
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_external())
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
-        }, d.commencement_description_at_expression_date())
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
+        }, d.work.commencement_description(scoped_date=d.expression_date,
+                                           commencements=d.commencements_relevant_at_expression_date()))
 
         d = Document.objects.get(id=22)
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_internal())
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
         }, d.work.commencement_description_external())
         self.assertEqual({
             'type': 'multiple',
             'description': 'There are multiple commencements',
-        }, d.commencement_description_at_expression_date())
+            'in_full': None,
+            'date': None,
+            'note': None,
+            'commenced_by': None,
+        }, d.work.commencement_description(scoped_date=d.expression_date,
+                                           commencements=d.commencements_relevant_at_expression_date()))

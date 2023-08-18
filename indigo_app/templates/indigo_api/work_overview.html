@@ -105,18 +105,21 @@
                       {% endif %}
                     </dd>
 
-                    {% regroup work.taxonomies.all by vocabulary as topic_groups %}
-                    {% if topic_groups %}
-                      {% for topic in topic_groups %}
-                        <dt>{{ topic.grouper }}</dt>
+                    {% with work.taxonomy_topics.all as topics %}
+                      {% if topics %}
+                        <dt>{% trans 'Taxonomies' %}</dt>
                         <dd>
-                          {% for taxonomy in topic.list %}
-                            {{ taxonomy }} <br>
+                          {% for topic in topics %}
+                            <div>
+                              {% for item in topic.get_ancestors %}
+                                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &gt;
+                              {% endfor %}
+                              <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+                            </div>
                           {% endfor %}
                         </dd>
-                      {% endfor %}
-                    {% endif %}
-
+                      {% endif %}
+                    {% endwith %}
                   </dl>
                 </div>
 

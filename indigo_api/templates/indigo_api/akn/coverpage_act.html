@@ -49,39 +49,21 @@
       {% endblock %}
 
       {% block commencement %}
-        {% with document.work.commencement_description_external as commencement_description %}
-          {% if commencement_description.type == 'multiple' %}
-            {# scope to document's date, future commencements might not be applicable #}
-            {% with document.commencement_description_at_expression_date as scoped_commencement_description %}
-              <li class="commencement-date">
-                {{ scoped_commencement_description.description }}
-                {% if scoped_commencement_description.commencing_work_description %}
-                  <a href="{% work_resolver_url scoped_commencement_description.commencing_work_description.commencing_work %}">
-                    {{ scoped_commencement_description.commencing_work_description.commencing_title }}
-                  </a>
-                {% endif %}
-              </li>
-              {% if scoped_commencement_description.note %}
-                <li class="commencement-note">{{ scoped_commencement_description.note }}</li>
-              {% endif %}
-              {% if scoped_commencement_description.type == 'multiple' %}
-                {% include 'indigo_api/akn/_commencements_table.html' %}
-              {% endif %}
-            {% endwith %}
-          {% else %}
-            <li class="commencement-date">
-              {{ commencement_description.description }}
-              {% if commencement_description.commencing_work_description %}
-                <a href="{% work_resolver_url commencement_description.commencing_work_description.commencing_work %}">
-                  {{ commencement_description.commencing_work_description.commencing_title }}
-                </a>
-              {% endif %}
-            </li>
-            {% if commencement_description.note %}
-              <li class="commencement-note">{{ commencement_description.note }}</li>
-            {% endif %}
+        {% document_commencement_description document as commencement_description %}
+        <li class="commencement-date">
+          {{ commencement_description.description }}
+          {% if commencement_description.commenced_by %}
+            <a href="{% work_resolver_url commencement_description.commenced_by.work %}">
+              {{ commencement_description.commenced_by.title }}
+            </a>
           {% endif %}
-        {% endwith %}
+        </li>
+        {% if commencement_description.note %}
+          <li class="commencement-note">{{ commencement_description.note }}</li>
+        {% endif %}
+        {% if commencement_description.type == 'multiple' %}
+          {% include 'indigo_api/akn/_commencements_table.html' %}
+        {% endif %}
       {% endblock %}
 
       {% block as_at_date %}

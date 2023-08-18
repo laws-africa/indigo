@@ -184,10 +184,6 @@ class DocumentMixin(object):
         return [c for c in commencements
                 if any(p for p in c.provisions if p in commenceable_provision_ids) or not c.provisions]
 
-    def commencement_description_at_expression_date(self):
-        return self.work.commencement_description(scoped_date=self.expression_date,
-                                                  commencements=self.commencements_relevant_at_expression_date())
-
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter
         exporter = HTMLExporter()

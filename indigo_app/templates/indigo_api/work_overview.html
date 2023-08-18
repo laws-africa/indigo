@@ -112,7 +112,7 @@
                           {% for topic in topics %}
                             <div>
                               {% for item in topic.get_ancestors %}
-                                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &gt;
+                                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
                               {% endfor %}
                               <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
                             </div>

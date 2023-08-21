@@ -6,6 +6,7 @@ from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
+from django.utils.formats import date_format
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -14,8 +15,6 @@ import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
-from django.urls import reverse
-from django.http import QueryDict
 
 from indigo.plugins import plugins
 
@@ -400,6 +399,97 @@ class WorkMixin(object):
 
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
+
+    def commencement_description(self, friendly_date=True, scoped_date=None, commencements=None):
+        """ Returns a dict describing the commencement status of a work, of the form:
+                {'type': 'uncommenced' / 'single' / 'multiple'
+                 'description': e.g. 'Commenced in full on {date} [by]'
+                 'in_full': True / False / None
+                 'date': {unformatted date}
+                 'commenced_by': {'work': {commencing work object},
+                                  'title': {numbered or short title of commencing work}} -- OR None
+                 'note': e.g. 'See section 1'}
+
+            If specific commencements are passed in, evaluate those rather than all commencements on the work.
+            By default, commencement dates are formatted as e.g. '1 January 2023'.
+                Passing in friendly_date=False leaves them as e.g. 2023-01-01.
+        """
+        description = {
+            'type': None,
+            'description': None,
+            'in_full': None,
+            'date': None,
+            'commenced_by': None,
+            'note': None
+        }
+        n_commencements = len(commencements) if commencements is not None else self.commencements.all().count()
+
+        if n_commencements > 1:
+            description['type'] = 'multiple'
+            description['description'] = _('There are multiple commencements')
+
+        elif n_commencements == 0:
+            description['type'] = 'uncommenced'
+            description['description'] = _('Not commenced')
+
+        else:
+            # single commencement -- dig into the detail
+            commencement = commencements[0] if commencements else self.commencements.first()
+            fully_commenced = commencement.all_provisions
+            if scoped_date:
+                # if there are no uncommenced provisions at the given date, it is fully commenced
+                fully_commenced = not bool(self.all_uncommenced_provision_ids(scoped_date))
+
+            description['type'] = 'single'
+            description['in_full'] = fully_commenced
+
+            if commencement.commencing_work:
+                description['commenced_by'] = {
+                    'work': commencement.commencing_work,
+                    'title': commencement.commencing_work.numbered_title() or commencement.commencing_work.title}
+
+            if commencement.note:
+                description['note'] = _('Note: %(commencement_note)s') % {'commencement_note': commencement.note}
+
+            commencement_date = commencement.date
+            if commencement_date:
+                description['date'] = commencement_date
+                if friendly_date:
+                    commencement_date = date_format(commencement_date, 'j E Y')
+
+                # with a date and a commencing work
+                if description['commenced_by']:
+                    if fully_commenced:
+                        description['description'] = _('Commenced in full on %(date)s by') % {'date': commencement_date}
+                    else:
+                        description['description'] = _('Commenced in part on %(date)s by') % {'date': commencement_date}
+
+                # with a date, without a commencing work
+                elif fully_commenced:
+                    description['description'] = _('Commenced in full on %(date)s') % {'date': commencement_date}
+                else:
+                    description['description'] = _('Commenced in part on %(date)s') % {'date': commencement_date}
+
+            # without a date, with a commencing work
+            elif description['commenced_by']:
+                if fully_commenced:
+                    description['description'] = _('Commenced in full by')
+                else:
+                    description['description'] = _('Commenced in part by')
+
+            # without a date or a commencing work
+            elif fully_commenced:
+                description['description'] = _('Commenced in full')
+            else:
+                description['description'] = _('Commenced in part')
+
+        return description
+
+    def commencement_description_internal(self):
+        return self.commencement_description(friendly_date=False)
+
+    def commencement_description_external(self):
+        return self.commencement_description()
 
 
 class Work(WorkMixin, models.Model):

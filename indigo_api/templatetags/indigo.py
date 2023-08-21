@@ -50,7 +50,7 @@ def has_uncommenced_provisions(document):
 
 
 @register.simple_tag
-def publication_document_description(work, placeholder=False):
+def publication_document_description(work, placeholder=False, internal=False):
     """ Based on the information available, return a string describing the publication document for a work.
         If `placeholder` is True, return a minimum placeholder string.
         Otherwise, only return a string at all if at least one piece of publication information is available.
@@ -60,7 +60,8 @@ def publication_document_description(work, placeholder=False):
     date = work.publication_date
 
     if date:
-        date = date_format(date, 'j E Y')
+        if not internal:
+            date = date_format(date, 'j E Y')
 
         if name and number:
             # Published in Government Gazette 12345 on 1 January 2009
@@ -91,3 +92,16 @@ def publication_document_description(work, placeholder=False):
         }
     elif placeholder:
         return _('Published')
+
+
+@register.simple_tag
+def document_commencement_description(document):
+    commencement_description = document.work.commencement_description_external()
+
+    if commencement_description['type'] == 'multiple':
+        # scope to document's date -- future commencements might not be applicable
+        return document.work.commencement_description(
+            scoped_date=document.expression_date,
+            commencements=document.commencements_relevant_at_expression_date())
+
+    return commencement_description

@@ -23,7 +23,19 @@
         this.$dropdown = this.$('.source-attachment-list');
         this.$toggle = this.$('.source-attachment-toggle');
         this.iframe = document.getElementById('source-attachment-iframe');
-        this.mime_types = {'application/pdf': true, 'text/html': true};
+        this.docx_mimetypes = {
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': true,
+          'application/msword': true,
+          'application/vnd.oasis.opendocument.text': true,
+          'application/rtf' : true,
+          'text/rtf': true,
+        };
+        this.pdf_mimetypes = {
+          'application/pdf': true,
+          'text/html': true,
+        };
+        // combine docx and pdf mimetypes
+        this.mime_types = Object.assign({}, this.pdf_mimetypes, this.docx_mimetypes);
         this.chosen = null;
 
         // work publication document
@@ -61,11 +73,16 @@
         choices = this.attachments.filter(function(att) {
           return self.mime_types[att.get('mime_type')];
         }).map(function(att) {
+          let default_choice;
+          if (Object.keys(self.docx_mimetypes).includes(att.get('mime_type'))) {
+            default_choice = true;
+          }
           return {
             'title': att.get('filename'),
-            'url': att.get('view_url'),
             'id': att.get('id'),
             'group': 'Attachments',
+            'url': att.get('view_url'),
+            default_choice,
           };
         });
         if (this.pubdoc) choices.unshift(this.pubdoc);
@@ -108,7 +125,8 @@
         var show = !$(e.target).hasClass('active');
 
         if (show) {
-          this.choose(this.chosen || this.choices[0]);
+          const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
+          this.choose(this.chosen || default_choice);
         } else {
           this.$view.addClass('d-none');
           this.$('.source-attachment-toggle').removeClass('active');

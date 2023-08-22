@@ -11,6 +11,16 @@ from ..serializers import AttachmentSerializer
 from ..authz import ModelPermissions, RelatedDocumentPermissions
 from .documents import DocumentResourceView
 from .misc import DEFAULT_PERMS
+from docpipe.soffice import soffice_convert
+import os
+
+DOC_MIMETYPES = [
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+    "application/rtf",
+    "text/rtf",
+]
 
 
 def view_attachment(attachment):
@@ -28,6 +38,16 @@ def view_attachment_by_filename(doc_id, filename):
     document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
     attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
     return view_attachment(attachment)
+
+
+def view_attachment_as_pdf(attachment):
+    suffix = os.path.splitext(attachment.filename)[1].lstrip('.')
+    pdf = soffice_convert(attachment.file, suffix, 'pdf')[0]
+    file_bytes = pdf.read()
+    response = HttpResponse(file_bytes, content_type="application/pdf")
+    response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
+    response['Content-Length'] = str(len(file_bytes))
+    return response
 
 
 def download_attachment(attachment):
@@ -49,6 +69,8 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def view(self, request, *args, **kwargs):
         attachment = self.get_object()
+        if attachment.mime_type in DOC_MIMETYPES:
+            return view_attachment_as_pdf(attachment)
         return view_attachment(attachment)
 
     def filter_queryset(self, queryset):

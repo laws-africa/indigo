@@ -422,7 +422,7 @@ class WorkMixin(object):
             'commenced_by': None,
             'note': None
         }
-        n_commencements = len(commencements) if commencements is not None else self.commencements.all().count()
+        n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
 
         if n_commencements > 1:
             description['type'] = 'multiple'

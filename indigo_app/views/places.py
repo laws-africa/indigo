@@ -15,7 +15,7 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
-from django.views.generic import ListView, TemplateView, UpdateView
+from django.views.generic import ListView, TemplateView, UpdateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
@@ -24,9 +24,10 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, ExplorerForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
+from indigo_social.badges import badges
 
 log = logging.getLogger(__name__)
 
@@ -763,6 +764,31 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
+
+
+class PlaceUsersView(PlaceViewBase, FormView):
+    template_name = 'place/users.html'
+    tab = 'place_users'
+    form_class = PlaceUsersForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["users"] = [u.id for u in User.objects.filter(badges_earned__slug=f"country-{self.country.code.lower()}")]
+        return initial
+
+    def form_valid(self, form):
+        users = User.objects.all()
+        country_badge = badges.registry.get(f"country-{self.country.code.lower()}")
+        for user in users:
+            if str(user.id) in form.cleaned_data['users']:
+                country_badge.possibly_award(user=user)
+            else:
+                country_badge.unaward(user=user)
+        messages.success(self.request, "Users updated.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('place_users', kwargs={'place': self.kwargs['place']})
 
 
 class PlaceWorksIndexView(PlaceViewBase, TemplateView):

@@ -777,7 +777,7 @@ class PlaceUsersView(PlaceViewBase, FormView):
         return initial
 
     def form_valid(self, form):
-        users = User.objects.all().exclude(is_superuser=True)
+        users = User.objects.all()
         country_badge = badges.registry.get(f"country-{self.country.code.lower()}")
         for user in users:
             if str(user.id) in form.cleaned_data['users']:

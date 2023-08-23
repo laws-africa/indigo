@@ -146,6 +146,40 @@ class TaxonomyTopic(MP_Node):
         return tree
 
 
+class TimelineEvent:
+    date = None
+    details = None
+
+    def __init__(self, **kwargs):
+        self.details = []
+
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+class RelationshipDescription:
+    type = None
+    description = None
+    by_frbr_uri = None
+    by_title = None
+    note = None
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+class CommencementDescription(RelationshipDescription):
+    subtype = None
+    by_work = None
+    in_full = None
+    date = None
+
+    def __init__(self, **kwargs):
+        self.type = 'commencement'
+        super().__init__(**kwargs)
+
+
 class WorkMixin(object):
     """ Support methods that define behaviour for a work, independent of the database model.
 
@@ -400,88 +434,75 @@ class WorkMixin(object):
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
-    def commencement_description(self, friendly_date=True, scoped_date=None, commencements=None):
-        """ Returns a dict describing the commencement status of a work, of the form:
-                {'type': 'uncommenced' / 'single' / 'multiple'
-                 'description': e.g. 'Commenced in full on {date} [by]'
-                 'in_full': True / False / None
-                 'date': {unformatted date}
-                 'commenced_by': {'work': {commencing work object},
-                                  'title': {numbered or short title of commencing work}} -- OR None
-                 'note': e.g. 'See section 1'}
+    def describe_single_commencement(self, commencement, with_date=True, friendly_date=True, scoped_date=None):
+        description = CommencementDescription(subtype='single')
 
+        in_full = commencement.all_provisions
+        if scoped_date:
+            # if there are no uncommenced provisions at the given date, it is fully commenced
+            in_full = not bool(self.all_uncommenced_provision_ids(scoped_date))
+        description.in_full = in_full
+
+        if commencement.note:
+            description.note = _('Note: %(note)s') % {'note': commencement.note}
+
+        if commencement.commencing_work:
+            description.by_frbr_uri = commencement.commencing_work.frbr_uri
+            description.by_title = commencement.commencing_work.numbered_title() or commencement.commencing_work.title
+            description.by_work = commencement.commencing_work
+
+        commencement_date = commencement.date
+        if commencement_date:
+            description.date = commencement_date
+            if friendly_date:
+                commencement_date = date_format(commencement_date, 'j E Y')
+
+        if with_date and commencement_date:
+            # with a date and a commencing work
+            if commencement.commencing_work:
+                if in_full:
+                    description.description = _('Commenced in full on %(date)s by') % {'date': commencement_date}
+                else:
+                    description.description = _('Commenced in part on %(date)s by') % {'date': commencement_date}
+
+            # with a date, without a commencing work
+            elif in_full:
+                description.description = _('Commenced in full on %(date)s') % {'date': commencement_date}
+            else:
+                description.description = _('Commenced in part on %(date)s') % {'date': commencement_date}
+
+        # without a date, with a commencing work
+        elif commencement.commencing_work:
+            description.description = _('Commenced in full by') if in_full else _('Commenced in part by')
+
+        # without a date or a commencing work
+        else:
+            description.description = _('Commenced in full') if in_full else _('Commenced in part')
+
+        return description
+
+    def commencement_description(self, friendly_date=True, scoped_date=None, commencements=None):
+        """ Returns a WorkCommencementDescription object describing the commencement status of a work.
             If specific commencements are passed in, evaluate those rather than all commencements on the work.
+            Similarly, passing in a scoped_date will evaluate commencements (with regard to uncommenced provisions)
+             only up to that date.
             By default, commencement dates are formatted as e.g. '1 January 2023'.
                 Passing in friendly_date=False leaves them as e.g. 2023-01-01.
         """
-        description = {
-            'type': None,
-            'description': None,
-            'in_full': None,
-            'date': None,
-            'commenced_by': None,
-            'note': None
-        }
+        description = CommencementDescription()
         n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
 
         if n_commencements > 1:
-            description['type'] = 'multiple'
-            description['description'] = _('There are multiple commencements')
+            description.subtype = 'multiple'
+            description.description = _('There are multiple commencements')
 
         elif n_commencements == 0:
-            description['type'] = 'uncommenced'
-            description['description'] = _('Not commenced')
+            description.subtype = 'uncommenced'
+            description.description = _('Not commenced')
 
         else:
-            # single commencement -- dig into the detail
             commencement = commencements[0] if commencements else self.commencements.first()
-            fully_commenced = commencement.all_provisions
-            if scoped_date:
-                # if there are no uncommenced provisions at the given date, it is fully commenced
-                fully_commenced = not bool(self.all_uncommenced_provision_ids(scoped_date))
-
-            description['type'] = 'single'
-            description['in_full'] = fully_commenced
-
-            if commencement.commencing_work:
-                description['commenced_by'] = {
-                    'work': commencement.commencing_work,
-                    'title': commencement.commencing_work.numbered_title() or commencement.commencing_work.title}
-
-            if commencement.note:
-                description['note'] = _('Note: %(commencement_note)s') % {'commencement_note': commencement.note}
-
-            commencement_date = commencement.date
-            if commencement_date:
-                description['date'] = commencement_date
-                if friendly_date:
-                    commencement_date = date_format(commencement_date, 'j E Y')
-
-                # with a date and a commencing work
-                if description['commenced_by']:
-                    if fully_commenced:
-                        description['description'] = _('Commenced in full on %(date)s by') % {'date': commencement_date}
-                    else:
-                        description['description'] = _('Commenced in part on %(date)s by') % {'date': commencement_date}
-
-                # with a date, without a commencing work
-                elif fully_commenced:
-                    description['description'] = _('Commenced in full on %(date)s') % {'date': commencement_date}
-                else:
-                    description['description'] = _('Commenced in part on %(date)s') % {'date': commencement_date}
-
-            # without a date, with a commencing work
-            elif description['commenced_by']:
-                if fully_commenced:
-                    description['description'] = _('Commenced in full by')
-                else:
-                    description['description'] = _('Commenced in part by')
-
-            # without a date or a commencing work
-            elif fully_commenced:
-                description['description'] = _('Commenced in full')
-            else:
-                description['description'] = _('Commenced in part')
+            description = self.describe_single_commencement(commencement, with_date=True, friendly_date=friendly_date, scoped_date=scoped_date)
 
         return description
 
@@ -490,6 +511,80 @@ class WorkMixin(object):
 
     def commencement_description_external(self):
         return self.commencement_description()
+
+    def get_timeline(self):
+        """ Returns a list of TimelineEvent objects, each describing a date on the timeline of the work.
+        """
+        events = []
+
+        all_amendments = self.amendments.all()
+        all_commencements = self.commencements.all()
+        all_consolidations = self.arbitrary_expression_dates.all()
+
+        amendment_dates = [c.date for c in all_amendments]
+        commencement_dates = [c.date for c in all_commencements]
+        consolidation_dates = [c.date for c in all_consolidations]
+
+        all_dates = set([self.assent_date, self.publication_date, self.repealed_date]
+                        + amendment_dates + commencement_dates + consolidation_dates)
+
+        for date in all_dates:
+            event = TimelineEvent(date=date)
+            # more than one event can happen at the same date: list repeal first, assent last (reverse lifecycle order),
+            # but list multiple amendments in the correct order (year, type, number of amending work)
+
+            # repeal
+            if date == self.repealed_date:
+                description = RelationshipDescription(
+                    type='repeal', description=_('Repealed by'), by_frbr_uri=self.repealed_by.frbr_uri,
+                    by_title=self.repealed_by.numbered_title() or self.repealed_by.title)
+                event.details.append(description)
+
+            # consolidation
+            if date in consolidation_dates:
+                event.details.append(RelationshipDescription(type='consolidation', description=_('Consolidation')))
+
+            commencements = [c for c in all_commencements if c.date == date]
+            amendments = [a for a in all_amendments if a.date == date]
+            if len(amendments) > 1:
+                amendments = Amendment.order_further(amendments)
+
+            # amendment
+            for amendment in amendments:
+                description = RelationshipDescription(
+                    type='amendment', description=_('Amended by'), by_frbr_uri=amendment.amending_work.frbr_uri,
+                    by_title=amendment.amending_work.numbered_title() or amendment.amending_work.title)
+
+                # look for a commencement by the amending work at this date, include its note
+                commencements_by_amending_work = [c for c in commencements if c.commencing_work == amendment.amending_work]
+                # there can only ever be one commencement by the same work on the same date,
+                # so the list will have a len of 0 or 1
+                for c in commencements_by_amending_work:
+                    if c.note:
+                        description.note = _('Commencement note: %(note)s') % {'note': c.note}
+                    # don't process the commencement
+                    commencements.pop(commencements.index(c))
+
+                event.details.append(description)
+
+            # commencement
+            for commencement in commencements:
+                description = self.describe_single_commencement(commencement, with_date=False, scoped_date=date)
+                event.details.append(description)
+
+            # publication
+            if date == self.publication_date:
+                event.details.append(RelationshipDescription(type='publication', description=_('Published')))
+            # assent
+            if date == self.assent_date:
+                event.details.append(RelationshipDescription(type='assent', description=_('Assented to')))
+
+            events.append(event)
+
+        # reverse chronological order
+        events.sort(key=lambda x: x.date, reverse=True)
+
+        return events
 
 
 class Work(WorkMixin, models.Model):

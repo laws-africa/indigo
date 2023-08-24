@@ -5,11 +5,36 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+  <xsl:template name="heading-keyword">
+    <!-- TODO: translations -->
+    <xsl:if test="self::akn:article">
+      <xsl:text>Article </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:book">
+      <xsl:text>Book </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:clause">
+      <xsl:text>Clause </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:chapter">
+      <xsl:text>Chapter </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:part">
+      <xsl:text>Part </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:title">
+      <xsl:text>Title </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::akn:tome">
+      <xsl:text>Tome </xsl:text>
+    </xsl:if>
+  </xsl:template>
+
   <!-- containers
    - heading centered
    - content
    -->
-  <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subchapter|akn:subclause|akn:subdivision|akn:subpart|akn:subtitle|akn:title|akn:tome">
+  <xsl:template name="hier-container">
     <fo:block-container>
       <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0" font-weight="bold">
         <!-- optionally include startQuote character -->
@@ -21,27 +46,7 @@
           </xsl:call-template>
         </xsl:if>
         <!-- keyword before certain containers -->
-        <xsl:if test="self::akn:article">
-          <xsl:text>Article </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:book">
-          <xsl:text>Book </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:clause">
-          <xsl:text>Clause </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:chapter">
-          <xsl:text>Chapter </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:part">
-          <xsl:text>Part </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:title">
-          <xsl:text>Title </xsl:text>
-        </xsl:if>
-        <xsl:if test="self::akn:tome">
-          <xsl:text>Tome </xsl:text>
-        </xsl:if>
+        <xsl:call-template name="heading-keyword"/>
         <!-- num is always rendered (if there is one) -->
         <xsl:apply-templates select="akn:num"/>
         <xsl:if test="akn:heading">
@@ -84,6 +89,11 @@
         <xsl:apply-templates select="./*[not(self::akn:num|self::akn:heading|self::akn:subheading)]"/>
       </fo:block>
     </fo:block-container>
+  </xsl:template>
+
+  <!-- base: use the 'hier container' template for these elements -->
+  <xsl:template match="akn:article|akn:book|akn:clause|akn:chapter|akn:division|akn:part|akn:subchapter|akn:subclause|akn:subdivision|akn:subpart|akn:subtitle|akn:title|akn:tome">
+    <xsl:call-template name="hier-container"/>
   </xsl:template>
 
   <!-- schedules

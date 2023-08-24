@@ -524,30 +524,27 @@ class WorkMixin(object):
         amendment_dates = [c.date for c in all_amendments]
         commencement_dates = [c.date for c in all_commencements]
         consolidation_dates = [c.date for c in all_consolidations]
-
-        all_dates = set([self.assent_date, self.publication_date, self.repealed_date]
-                        + amendment_dates + commencement_dates + consolidation_dates)
+        other_dates = [self.assent_date, self.publication_date, self.repealed_date]
+        # don't include None
+        all_dates = [e for e in amendment_dates + commencement_dates + consolidation_dates + other_dates if e]
+        all_dates = set(all_dates)
 
         for date in all_dates:
             event = TimelineEvent(date=date)
-            # more than one event can happen at the same date: list repeal first, assent last (reverse lifecycle order),
-            # but list multiple amendments in the correct order (year, type, number of amending work)
-
-            # repeal
-            if date == self.repealed_date:
-                description = RelationshipDescription(
-                    type='repeal', description=_('Repealed by'), by_frbr_uri=self.repealed_by.frbr_uri,
-                    by_title=self.repealed_by.numbered_title() or self.repealed_by.title)
-                event.details.append(description)
-
-            # consolidation
-            if date in consolidation_dates:
-                event.details.append(RelationshipDescription(type='consolidation', description=_('Consolidation')))
-
             commencements = [c for c in all_commencements if c.date == date]
             amendments = [a for a in all_amendments if a.date == date]
             if len(amendments) > 1:
                 amendments = Amendment.order_further(amendments)
+
+            # even though the timeline is given in reverse chronological order,
+            # each date on the timeline is described in regular order: assent first, repeal last
+
+            # assent
+            if date == self.assent_date:
+                event.details.append(RelationshipDescription(type='assent', description=_('Assented to')))
+            # publication
+            if date == self.publication_date:
+                event.details.append(RelationshipDescription(type='publication', description=_('Published')))
 
             # amendment
             for amendment in amendments:
@@ -569,15 +566,15 @@ class WorkMixin(object):
 
             # commencement
             for commencement in commencements:
-                description = self.describe_single_commencement(commencement, with_date=False, scoped_date=date)
-                event.details.append(description)
-
-            # publication
-            if date == self.publication_date:
-                event.details.append(RelationshipDescription(type='publication', description=_('Published')))
-            # assent
-            if date == self.assent_date:
-                event.details.append(RelationshipDescription(type='assent', description=_('Assented to')))
+                event.details.append(self.describe_single_commencement(commencement, with_date=False, scoped_date=date))
+            # consolidation
+            if date in consolidation_dates:
+                event.details.append(RelationshipDescription(type='consolidation', description=_('Consolidation')))
+            # repeal
+            if date == self.repealed_date:
+                event.details.append(RelationshipDescription(
+                    type='repeal', description=_('Repealed by'), by_frbr_uri=self.repealed_by.frbr_uri,
+                    by_title=self.repealed_by.numbered_title() or self.repealed_by.title))
 
             events.append(event)
 

@@ -1,14 +1,14 @@
-<h6 {% if detail.by_frbr_uri %}class="mb-0"{% endif %}>
-  {{ detail.description }}
-  {% if detail.by_frbr_uri and detail.by_title %}
-    <a href="{% url 'work' frbr_uri=detail.by_frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=detail.by_frbr_uri %}">
-      {{ detail.by_title }}
+<h6 {% if event.by_frbr_uri %}class="mb-0"{% endif %}>
+  {{ event.description }}
+  {% if event.by_frbr_uri and event.by_title %}
+    <a href="{% url 'work' frbr_uri=event.by_frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=event.by_frbr_uri %}">
+      {{ event.by_title }}
     </a>
   {% endif %}
 </h6>
-{% if detail.by_frbr_uri %}
-  <div class="text-muted">{{ detail.by_frbr_uri }}</div>
+{% if event.by_frbr_uri %}
+  <div class="text-muted">{{ event.by_frbr_uri }}</div>
 {% endif %}
-{% if detail.note %}
-  <p class="ml-2 mt-1">{{ detail.note }}</p>
+{% if event.note %}
+  <p class="ml-2 mt-1">{{ event.note }}</p>
 {% endif %}

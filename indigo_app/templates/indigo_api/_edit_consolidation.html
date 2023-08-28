@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% with consolidation=detail.edit %}
+{% with consolidation=event.edit %}
   <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=consolidation.id %}" method="POST" id="arbitrary-expression-date-{{ consolidation.id }}">
     {% csrf_token %}
 

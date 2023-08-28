@@ -146,19 +146,37 @@ class TaxonomyTopic(MP_Node):
         return tree
 
 
-class TimelineEvent:
+class TimelineEntry:
     date = None
-    details = None
     initial = None
+    events = None
 
     def __init__(self, **kwargs):
-        self.details = []
+        self.initial = False
+        self.events = []
 
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+    def as_dict(self):
+        entry = {
+            'date': self.date,
+            'events': [],
+        }
 
-class RelationshipDescription:
+        for event in self.events:
+            entry['events'].append({
+                'type': event.type,
+                'description': event.description,
+                'by_frbr_uri': event.by_frbr_uri,
+                'by_title': event.by_title,
+                'note': event.note,
+            })
+
+        return entry
+
+
+class TimelineEvent:
     type = None
     description = None
     by_frbr_uri = None
@@ -171,7 +189,7 @@ class RelationshipDescription:
             setattr(self, k, v)
 
 
-class CommencementDescription(RelationshipDescription):
+class TimelineCommencementEvent(TimelineEvent):
     subtype = None
     by_work = None
     in_full = None
@@ -437,7 +455,9 @@ class WorkMixin(object):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
     def describe_single_commencement(self, commencement, with_date=True, friendly_date=True, scoped_date=None):
-        description = CommencementDescription(subtype='single', related_id=commencement.id)
+        description = TimelineCommencementEvent(subtype='single')
+        if hasattr(commencement, 'id'):
+            description.related_id = commencement.id
 
         in_full = commencement.all_provisions
         if scoped_date:
@@ -484,29 +504,24 @@ class WorkMixin(object):
         return description
 
     def commencement_description(self, friendly_date=True, scoped_date=None, commencements=None):
-        """ Returns a WorkCommencementDescription object describing the commencement status of a work.
+        """ Returns a TimelineCommencementEvent object describing the commencement status of a work.
             If specific commencements are passed in, evaluate those rather than all commencements on the work.
             Similarly, passing in a scoped_date will evaluate commencements (with regard to uncommenced provisions)
              only up to that date.
             By default, commencement dates are formatted as e.g. '1 January 2023'.
                 Passing in friendly_date=False leaves them as e.g. 2023-01-01.
         """
-        description = CommencementDescription()
         n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
 
         if n_commencements > 1:
-            description.subtype = 'multiple'
-            description.description = _('There are multiple commencements')
+            return TimelineCommencementEvent(subtype='multiple', description=_('There are multiple commencements'))
 
         elif n_commencements == 0:
-            description.subtype = 'uncommenced'
-            description.description = _('Not commenced')
+            return TimelineCommencementEvent(subtype='uncommenced', description=_('Not commenced'))
 
-        else:
-            commencement = commencements[0] if commencements else self.commencements.first()
-            description = self.describe_single_commencement(commencement, with_date=True, friendly_date=friendly_date, scoped_date=scoped_date)
-
-        return description
+        # single commencement
+        commencement = commencements[0] if commencements else self.commencements.first()
+        return self.describe_single_commencement(commencement, with_date=True, friendly_date=friendly_date, scoped_date=scoped_date)
 
     def commencement_description_internal(self):
         return self.commencement_description(friendly_date=False)
@@ -517,7 +532,7 @@ class WorkMixin(object):
     def get_timeline(self):
         """ Returns a list of TimelineEvent objects, each describing a date on the timeline of the work.
         """
-        events = []
+        entries = []
 
         all_amendments = self.amendments.all()
         all_commencements = self.commencements.all()
@@ -537,7 +552,7 @@ class WorkMixin(object):
             initial = min(d for d in commencement_dates + consolidation_dates if d)
 
         for date in all_dates:
-            event = TimelineEvent(date=date, initial=date == initial)
+            entry = TimelineEntry(date=date, initial=date == initial)
             amendments = [a for a in all_amendments if a.date == date]
             if len(amendments) > 1:
                 amendments = Amendment.order_further(amendments)
@@ -549,14 +564,14 @@ class WorkMixin(object):
 
             # assent
             if date == self.assent_date:
-                event.details.append(RelationshipDescription(type='assent', description=_('Assented to')))
+                entry.events.append(TimelineEvent(type='assent', description=_('Assented to')))
             # publication
             if date == self.publication_date:
-                event.details.append(RelationshipDescription(type='publication', description=_('Published')))
+                entry.events.append(TimelineEvent(type='publication', description=_('Published')))
 
             # amendment
             for amendment in amendments:
-                description = RelationshipDescription(
+                description = TimelineEvent(
                     type='amendment', description=_('Amended by'), related_id=amendment.id,
                     by_frbr_uri=amendment.amending_work.frbr_uri,
                     by_title=amendment.amending_work.numbered_title() or amendment.amending_work.title)
@@ -571,27 +586,27 @@ class WorkMixin(object):
                     # don't process the commencement
                     commencements.pop(commencements.index(c))
 
-                event.details.append(description)
+                entry.events.append(description)
 
             # commencement
             for commencement in commencements:
-                event.details.append(self.describe_single_commencement(commencement, with_date=False, scoped_date=date))
+                entry.events.append(self.describe_single_commencement(commencement, with_date=False, scoped_date=date))
             # consolidation
             for consolidation in consolidations:
-                event.details.append(RelationshipDescription(
+                entry.events.append(TimelineEvent(
                     type='consolidation', description=_('Consolidation'), related_id=consolidation.id))
             # repeal
             if date == self.repealed_date:
-                event.details.append(RelationshipDescription(
+                entry.events.append(TimelineEvent(
                     type='repeal', description=_('Repealed by'), by_frbr_uri=self.repealed_by.frbr_uri,
                     by_title=self.repealed_by.numbered_title() or self.repealed_by.title))
 
-            events.append(event)
+            entries.append(entry)
 
         # reverse chronological order
-        events.sort(key=lambda x: x.date, reverse=True)
+        entries.sort(key=lambda x: x.date, reverse=True)
 
-        return events
+        return entries
 
 
 class Work(WorkMixin, models.Model):

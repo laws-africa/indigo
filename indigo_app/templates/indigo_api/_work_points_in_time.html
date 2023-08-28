@@ -30,36 +30,36 @@
     </li>
   {% endif %}
 
-  {% for event in work_timeline %}
+  {% for entry in work_timeline %}
     <li class="timeline-item card">
-      <h6 class="timeline-date">{{ event.date|date:"Y-m-d" }}</h6>
+      <h6 class="timeline-date">{{ entry.date|date:"Y-m-d" }}</h6>
       <div class="card-body">
-        {% for detail in event.details %}
-          {% if editable and detail.edit and detail.type == 'amendment' %}
+        {% for event in entry.events %}
+          {% if editable and event.edit and event.type == 'amendment' %}
             {% include 'indigo_api/_edit_amendment.html' %}
-          {% elif editable and detail.edit and detail.type == 'consolidation' %}
+          {% elif editable and event.edit and event.type == 'consolidation' %}
             {% include 'indigo_api/_edit_consolidation.html' %}
           {% else %}
             {% include 'indigo_api/_single_description.html' %}
           {% endif %}
         {% endfor %}
         <div class="documents mt-3">
-          {% for document in event.expressions %}
+          {% for document in entry.expressions %}
             <div><i class="fas fa-circle fa-fw {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
           {% endfor %}
         </div>
       </div>
 
-      {% if editable and event.create_import_document %}
+      {% if editable and entry.create_import_document %}
         <div class="card-footer">
           <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
             {% csrf_token %}
-            <input type="hidden" name="expression_date" value="{{ event.date|date:'Y-m-d' }}">
+            <input type="hidden" name="expression_date" value="{{ entry.date|date:'Y-m-d' }}">
             <div class="btn-group">
               <div class="dropdown mr-3">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fas fa-pencil-alt"></i>
-                  {% if event.initial %}
+                  {% if entry.initial %}
                     {% trans 'Create' %}
                   {% else %}
                     {% trans 'Create amended version' %}
@@ -71,7 +71,7 @@
                   {% endfor %}
                 </div>
               </div>
-              <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}">
+              <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ entry.date|date:'Y-m-d' }}">
                 <i class="fas fa-file-upload"></i> {% trans 'Import document' %}
               </a>
             </div>

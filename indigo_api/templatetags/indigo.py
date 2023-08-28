@@ -98,7 +98,7 @@ def publication_document_description(work, placeholder=False, internal=False):
 def document_commencement_description(document):
     commencement_description = document.work.commencement_description_external()
 
-    if commencement_description['type'] == 'multiple':
+    if commencement_description.subtype == 'multiple':
         # scope to document's date -- future commencements might not be applicable
         return document.work.commencement_description(
             scoped_date=document.expression_date,

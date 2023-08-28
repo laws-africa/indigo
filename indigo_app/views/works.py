@@ -73,8 +73,8 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     def get_work_timeline(self, work):
         timeline = work.get_timeline()
         # add expressions
-        for event in timeline:
-            event.expressions = work.expressions().filter(expression_date=event.date).all()
+        for entry in timeline:
+            entry.expressions = work.expressions().filter(expression_date=entry.date).all()
         return timeline
 
     @property
@@ -449,17 +449,17 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     def get_work_timeline(self, work):
         # super method adds expressions to base work timeline
         timeline = super().get_work_timeline(work)
-        for event in timeline:
+        for entry in timeline:
             # for creating and importing documents
-            event.create_import_document = event.initial or any(
-                detail.type in ['amendment', 'consolidation'] for detail in event.details)
+            entry.create_import_document = entry.initial or any(
+                e.type in ['amendment', 'consolidation'] for e in entry.events)
 
-            for detail in event.details:
+            for event in entry.events:
                 # for amending / deleting amendments, consolidations
-                if detail.type == 'amendment' and detail.related_id:
-                    detail.edit = Amendment.objects.get(pk=detail.related_id)
-                elif detail.type == 'consolidation' and detail.related_id:
-                    detail.edit = ArbitraryExpressionDate.objects.get(pk=detail.related_id)
+                if event.type == 'amendment' and event.related_id:
+                    event.edit = Amendment.objects.get(pk=event.related_id)
+                elif event.type == 'consolidation' and event.related_id:
+                    event.edit = ArbitraryExpressionDate.objects.get(pk=event.related_id)
 
         return timeline
 

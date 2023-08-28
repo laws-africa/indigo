@@ -71,47 +71,11 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         return context
 
     def get_work_timeline(self, work):
-        # get initial, amendment, consolidation dates
-        dates = work.possible_expression_dates()
-        # add assent, publication, repeal, commencement dates
-        other_dates = [
-            ('assent_date', work.assent_date),
-            ('publication_date', work.publication_date),
-            ('repealed_date', work.repealed_date)
-        ]
-        for c in work.commencements.all():
-            other_dates.append(('commencement_date', c.date))
-
-        for name, date in other_dates:
-            if date:
-                if date not in [entry['date'] for entry in dates]:
-                    dates.append({
-                        'date': date,
-                        name: True,
-                    })
-                else:
-                    # add to existing events (e.g. if publication and commencement dates are the same)
-                    for entry in dates:
-                        if entry['date'] == date:
-                            entry[name] = True
-
-        dates.sort(key=lambda x: x['date'], reverse=True)
-
-        # add expressions and commencement and amendment objects
-        for event in dates:
-            date = event['date']
-            if event.get('commencement_date'):
-                event['commencements'] = work.commencements.filter(date=date).all()
-            if event.get('amendment'):
-                event_amendments = work.amendments.filter(date=date)
-                if len(event_amendments) > 1:
-                    event_amendments = Amendment.order_further(event_amendments)
-                event['amendments'] = event_amendments
-            if event.get('consolidation'):
-                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
-            event['expressions'] = work.expressions().filter(expression_date=date).all()
-
-        return dates
+        timeline = work.get_timeline()
+        # add expressions
+        for event in timeline:
+            event.expressions = work.expressions().filter(expression_date=event.date).all()
+        return timeline
 
     @property
     def work(self):
@@ -481,6 +445,23 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['consolidation_date'] = self.work.as_at_date() or datetime.date.today()
         return context
+
+    def get_work_timeline(self, work):
+        # super method adds expressions to base work timeline
+        timeline = super().get_work_timeline(work)
+        for event in timeline:
+            # for creating and importing documents
+            event.create_import_document = event.initial or any(
+                detail.type in ['amendment', 'consolidation'] for detail in event.details)
+
+            for detail in event.details:
+                # for amending / deleting amendments, consolidations
+                if detail.type == 'amendment' and detail.related_id:
+                    detail.edit = Amendment.objects.get(pk=detail.related_id)
+                elif detail.type == 'consolidation' and detail.related_id:
+                    detail.edit = ArbitraryExpressionDate.objects.get(pk=detail.related_id)
+
+        return timeline
 
 
 class WorkAmendmentDetailView(WorkDependentView, UpdateView):

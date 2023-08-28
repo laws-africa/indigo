@@ -149,6 +149,7 @@ class TaxonomyTopic(MP_Node):
 class TimelineEvent:
     date = None
     details = None
+    initial = None
 
     def __init__(self, **kwargs):
         self.details = []
@@ -163,6 +164,7 @@ class RelationshipDescription:
     by_frbr_uri = None
     by_title = None
     note = None
+    related_id = None
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -435,7 +437,7 @@ class WorkMixin(object):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
     def describe_single_commencement(self, commencement, with_date=True, friendly_date=True, scoped_date=None):
-        description = CommencementDescription(subtype='single')
+        description = CommencementDescription(subtype='single', related_id=commencement.id)
 
         in_full = commencement.all_provisions
         if scoped_date:
@@ -529,12 +531,18 @@ class WorkMixin(object):
         all_dates = [e for e in amendment_dates + commencement_dates + consolidation_dates + other_dates if e]
         all_dates = set(all_dates)
 
+        # the initial date is the publication date, or the earliest of the consolidation and commencement dates, or None
+        initial = self.publication_date
+        if not initial and any(commencement_dates + consolidation_dates):
+            initial = min(d for d in commencement_dates + consolidation_dates if d)
+
         for date in all_dates:
-            event = TimelineEvent(date=date)
-            commencements = [c for c in all_commencements if c.date == date]
+            event = TimelineEvent(date=date, initial=date == initial)
             amendments = [a for a in all_amendments if a.date == date]
             if len(amendments) > 1:
                 amendments = Amendment.order_further(amendments)
+            commencements = [c for c in all_commencements if c.date == date]
+            consolidations = [c for c in all_consolidations if c.date == date]
 
             # even though the timeline is given in reverse chronological order,
             # each date on the timeline is described in regular order: assent first, repeal last
@@ -549,7 +557,8 @@ class WorkMixin(object):
             # amendment
             for amendment in amendments:
                 description = RelationshipDescription(
-                    type='amendment', description=_('Amended by'), by_frbr_uri=amendment.amending_work.frbr_uri,
+                    type='amendment', description=_('Amended by'), related_id=amendment.id,
+                    by_frbr_uri=amendment.amending_work.frbr_uri,
                     by_title=amendment.amending_work.numbered_title() or amendment.amending_work.title)
 
                 # look for a commencement by the amending work at this date, include its note
@@ -568,8 +577,9 @@ class WorkMixin(object):
             for commencement in commencements:
                 event.details.append(self.describe_single_commencement(commencement, with_date=False, scoped_date=date))
             # consolidation
-            if date in consolidation_dates:
-                event.details.append(RelationshipDescription(type='consolidation', description=_('Consolidation')))
+            for consolidation in consolidations:
+                event.details.append(RelationshipDescription(
+                    type='consolidation', description=_('Consolidation'), related_id=consolidation.id))
             # repeal
             if date == self.repealed_date:
                 event.details.append(RelationshipDescription(

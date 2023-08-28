@@ -1,0 +1,29 @@
+{% load i18n %}
+
+{% with consolidation=detail.edit %}
+  <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=consolidation.id %}" method="POST" id="arbitrary-expression-date-{{ consolidation.id }}">
+    {% csrf_token %}
+
+    {% if editable and perms.indigo_api.change_arbitraryexpressiondate %}
+      <div class="dropdown float-right">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+          {% trans 'Options' %} <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu">
+          <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="dropdown-item" data-toggle="collapse">{% trans 'Change date' %}</a>
+          {% if consolidation.can_delete %}
+            <button class="dropdown-item" type="submit" name="delete" data-confirm="{% trans 'Really delete this consolidation?' %}">{% trans 'Delete' %}</button>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% include 'indigo_api/_single_description.html' %}
+
+    <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ consolidation.id }}">
+      <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ consolidation.date|date:"Y-m-d" }}" autocomplete="off">
+      <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
+      <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="btn btn-link" data-toggle="collapse">{% trans 'Cancel' %}</a>
+    </div>
+  </form>
+{% endwith %}

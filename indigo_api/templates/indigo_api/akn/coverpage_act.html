@@ -52,16 +52,16 @@
         {% document_commencement_description document as commencement_description %}
         <li class="commencement-date">
           {{ commencement_description.description }}
-          {% if commencement_description.commenced_by %}
-            <a href="{% work_resolver_url commencement_description.commenced_by.work %}">
-              {{ commencement_description.commenced_by.title }}
+          {% if commencement_description.by_work %}
+            <a href="{% work_resolver_url commencement_description.by_work %}">
+              {{ commencement_description.by_title }}
             </a>
           {% endif %}
         </li>
         {% if commencement_description.note %}
           <li class="commencement-note">{{ commencement_description.note }}</li>
         {% endif %}
-        {% if commencement_description.type == 'multiple' %}
+        {% if commencement_description.subtype == 'multiple' %}
           {% include 'indigo_api/akn/_commencements_table.html' %}
         {% endif %}
       {% endblock %}

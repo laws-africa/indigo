@@ -15,7 +15,8 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
 from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
-    TaxonomyTopicSerializer, TaxonomySerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer
+    TaxonomyTopicSerializer, TaxonomySerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
+    PublishedDocumentTimelineSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -288,6 +289,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 class PublishedDocumentCommencementsView(PublishedDocumentDetailView):
     serializer_class = PublishedDocumentCommencementsSerializer
     renderer_classes = (renderers.JSONRenderer,)
+
+
+class PublishedDocumentTimelineView(PublishedDocumentCommencementsView):
+    serializer_class = PublishedDocumentTimelineSerializer
 
 
 class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, PublishedDocUrlMixin):

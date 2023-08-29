@@ -80,13 +80,26 @@ class AmendmentSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class PublishedDocumentCommencementsSerializer(DocumentSerializer, PublishedDocUrlMixin):
+class PublishedDocumentCommencementsSerializer(serializers.Serializer, PublishedDocUrlMixin):
     commencements = CommencementSerializer(many=True, source='work.commencements')
 
     class Meta:
-        model = Document
         fields = ('commencements',)
         read_only_fields = fields
+
+
+class PublishedDocumentTimelineSerializer(serializers.Serializer, PublishedDocUrlMixin):
+    timeline = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ('timeline',)
+        read_only_fields = fields
+
+    def get_timeline(self, doc):
+        timeline = doc.work.get_timeline()
+        if all(isinstance(e, dict) for e in timeline):
+            return timeline
+        return [entry.as_dict() for entry in timeline]
 
 
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):

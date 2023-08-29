@@ -431,6 +431,10 @@ class WorkMixin(object):
         from indigo_api.models.timeline import get_timeline
         return get_timeline(self)
 
+    def get_timeline_as_dicts(self):
+        timeline = self.get_timeline()
+        return [entry.as_dict() for entry in timeline]
+
 
 class Work(WorkMixin, models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and

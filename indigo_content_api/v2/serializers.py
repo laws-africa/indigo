@@ -96,10 +96,7 @@ class PublishedDocumentTimelineSerializer(serializers.Serializer, PublishedDocUr
         read_only_fields = fields
 
     def get_timeline(self, doc):
-        timeline = doc.work.get_timeline()
-        if all(isinstance(e, dict) for e in timeline):
-            return timeline
-        return [entry.as_dict() for entry in timeline]
+        return doc.work.get_timeline_as_dicts()
 
 
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):

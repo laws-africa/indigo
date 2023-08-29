@@ -454,13 +454,6 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
             entry.create_import_document = entry.initial or any(
                 e.type in ['amendment', 'consolidation'] for e in entry.events)
 
-            for event in entry.events:
-                # for amending / deleting amendments, consolidations
-                if event.type == 'amendment' and event.related_id:
-                    event.edit = Amendment.objects.get(pk=event.related_id)
-                elif event.type == 'consolidation' and event.related_id:
-                    event.edit = ArbitraryExpressionDate.objects.get(pk=event.related_id)
-
         return timeline
 
 

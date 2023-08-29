@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% with amendment=event.edit %}
+{% with amendment=event.related %}
   <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST" id="amendment-{{ amendment.id|default:'initial' }}">
     {% csrf_token %}
 

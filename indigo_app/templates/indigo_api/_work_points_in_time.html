@@ -35,9 +35,9 @@
       <h6 class="timeline-date">{{ entry.date|date:"Y-m-d" }}</h6>
       <div class="card-body">
         {% for event in entry.events %}
-          {% if editable and event.edit and event.type == 'amendment' %}
+          {% if editable and event.related and event.type == 'amendment' %}
             {% include 'indigo_api/_edit_amendment.html' %}
-          {% elif editable and event.edit and event.type == 'consolidation' %}
+          {% elif editable and event.related and event.type == 'consolidation' %}
             {% include 'indigo_api/_edit_consolidation.html' %}
           {% else %}
             {% include 'indigo_api/_single_description.html' %}

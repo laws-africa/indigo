@@ -23,6 +23,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement, Workflow
 from indigo_api.serializers import WorkSerializer
+from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -71,10 +72,11 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         return context
 
     def get_work_timeline(self, work):
-        timeline = work.get_timeline()
+        timeline = get_timeline(work)
+        work_expressions = list(work.expressions().all())
         # add expressions
         for entry in timeline:
-            entry.expressions = work.expressions().filter(expression_date=entry.date).all()
+            entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
         return timeline
 
     @property

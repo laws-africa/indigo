@@ -36,11 +36,11 @@
       <div class="card-body">
         {% for event in entry.events %}
           {% if editable and event.related and event.type == 'amendment' %}
-            {% include 'indigo_api/_edit_amendment.html' %}
+            {% include 'indigo_api/timeline/_edit_amendment.html' %}
           {% elif editable and event.related and event.type == 'consolidation' %}
-            {% include 'indigo_api/_edit_consolidation.html' %}
+            {% include 'indigo_api/timeline/_edit_consolidation.html' %}
           {% else %}
-            {% include 'indigo_api/_single_description.html' %}
+            {% include 'indigo_api/timeline/_timeline_entry_event.html' %}
           {% endif %}
         {% endfor %}
         <div class="documents mt-3">

@@ -6,7 +6,6 @@ from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.utils.formats import date_format
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -17,6 +16,7 @@ from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
+from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
 
 
 class WorkQuerySet(models.QuerySet):
@@ -408,7 +408,6 @@ class WorkMixin(object):
             By default, commencement dates are formatted as e.g. '1 January 2023'.
                 Passing in friendly_date=False leaves them as e.g. 2023-01-01.
         """
-        from indigo_api.models.timeline import TimelineCommencementEvent, describe_single_commencement
         n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
 
         if n_commencements > 1:
@@ -427,13 +426,8 @@ class WorkMixin(object):
     def commencement_description_external(self):
         return self.commencement_description()
 
-    def get_timeline(self):
-        from indigo_api.models.timeline import get_timeline
-        return get_timeline(self)
-
-    def get_timeline_as_dicts(self):
-        timeline = self.get_timeline()
-        return [entry.as_dict() for entry in timeline]
+    def get_serialized_timeline(self):
+        return get_serialized_timeline(self)
 
 
 class Work(WorkMixin, models.Model):

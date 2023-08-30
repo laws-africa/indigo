@@ -145,9 +145,9 @@ class DocumentTestCase(TestCase):
         self.assertEqual('single', description.subtype)
         self.assertEqual('Commenced on 2016-07-15', description.description)
         self.assertEqual(date(2016, 7, 15), description.date)
-        self.assertEqual(None, description.note)
-        self.assertEqual(None, description.by_frbr_uri)
-        self.assertEqual(None, description.by_title)
+        self.assertEqual('', description.note)
+        self.assertEqual('', description.by_frbr_uri)
+        self.assertEqual('', description.by_title)
         self.assertEqual(None, description.by_work)
         # format date for external use
         description = d.work.commencement_description_external()
@@ -166,9 +166,9 @@ class DocumentTestCase(TestCase):
         self.assertEqual('multiple', description.subtype)
         self.assertEqual('There are multiple commencements', description.description)
         self.assertEqual(None, description.date)
-        self.assertEqual(None, description.note)
-        self.assertEqual(None, description.by_frbr_uri)
-        self.assertEqual(None, description.by_title)
+        self.assertEqual('', description.note)
+        self.assertEqual('', description.by_frbr_uri)
+        self.assertEqual('', description.by_title)
         self.assertEqual(None, description.by_work)
 
         # but not all commencements apply to earlier points in time

@@ -1,20 +1,38 @@
+from dataclasses import dataclass, field
+
 from django.utils.formats import date_format
 from django.utils.translation import gettext as _
 
 
+@dataclass
+class TimelineEvent:
+    type: str = ''
+    description: str = ''
+    by_frbr_uri: str = ''
+    by_title: str = ''
+    note: str = ''
+    related: object = None
+
+
+@dataclass
+class TimelineCommencementEvent(TimelineEvent):
+    type: str = 'commencement'
+    subtype: str = ''
+    by_work: object = None
+    date: object = None
+
+
+@dataclass
 class TimelineEntry:
-    date = None
-    initial = None
-    events = None
+    date: object = None
+    initial: bool = False
+    events: list[TimelineEvent] = field(default_factory=list)
 
-    def __init__(self, **kwargs):
-        self.initial = False
-        self.events = []
-
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def as_dict(self):
+    def serialized(self):
+        """ This differs from what we get from asdict:
+            - date is stringified
+            - we don't include all fields
+        """
         entry = {
             'date': f'{self.date}',
             'events': [],
@@ -30,30 +48,6 @@ class TimelineEntry:
             })
 
         return entry
-
-
-class TimelineEvent:
-    type = None
-    description = None
-    by_frbr_uri = None
-    by_title = None
-    note = None
-    related = None
-
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-
-class TimelineCommencementEvent(TimelineEvent):
-    subtype = None
-    by_work = None
-    in_full = None
-    date = None
-
-    def __init__(self, **kwargs):
-        self.type = 'commencement'
-        super().__init__(**kwargs)
 
 
 def describe_single_commencement(commencement, with_date=True, friendly_date=True):
@@ -96,6 +90,7 @@ def describe_single_commencement(commencement, with_date=True, friendly_date=Tru
 def get_timeline(work):
     """ Returns a list of TimelineEvent objects, each describing a date on the timeline of a work.
     """
+    from indigo_api.models import Amendment
     entries = []
 
     all_amendments = work.amendments.all()
@@ -119,7 +114,6 @@ def get_timeline(work):
         entry = TimelineEntry(date=date, initial=date == initial)
         amendments = [a for a in all_amendments if a.date == date]
         if len(amendments) > 1:
-            from indigo_api.models import Amendment
             amendments = Amendment.order_further(amendments)
         commencements = [c for c in all_commencements if c.date == date]
         consolidations = [c for c in all_consolidations if c.date == date]
@@ -172,3 +166,7 @@ def get_timeline(work):
     entries.sort(key=lambda x: x.date, reverse=True)
 
     return entries
+
+
+def get_serialized_timeline(work):
+    return [entry.serialized() for entry in get_timeline(work)]

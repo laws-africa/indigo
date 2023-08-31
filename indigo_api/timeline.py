@@ -26,7 +26,7 @@ class TimelineCommencementEvent(TimelineEvent):
 class TimelineEntry:
     date: object = None
     initial: bool = False
-    events: list[TimelineEvent] = field(default_factory=list)
+    events: list = field(default_factory=list)
 
     def serialized(self):
         """ This differs from what we get from asdict:

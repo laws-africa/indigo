@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 @dataclass
 class TimelineEvent:
-    type: str = ''
+    event_type: str = ''
     description: str = ''
     by_frbr_uri: str = ''
     by_title: str = ''
@@ -16,7 +16,7 @@ class TimelineEvent:
 
 @dataclass
 class TimelineCommencementEvent(TimelineEvent):
-    type: str = 'commencement'
+    event_type: str = 'commencement'
     subtype: str = ''
     by_work: object = None
     date: object = None
@@ -40,7 +40,7 @@ class TimelineEntry:
 
         for event in self.events:
             entry['events'].append({
-                'type': event.type,
+                'event_type': event.event_type,
                 'description': event.description,
                 'by_frbr_uri': event.by_frbr_uri,
                 'by_title': event.by_title,
@@ -123,15 +123,15 @@ def get_timeline(work):
 
         # assent
         if date == work.assent_date:
-            entry.events.append(TimelineEvent(type='assent', description=_('Assented to')))
+            entry.events.append(TimelineEvent(event_type='assent', description=_('Assented to')))
         # publication
         if date == work.publication_date:
-            entry.events.append(TimelineEvent(type='publication', description=_('Published')))
+            entry.events.append(TimelineEvent(event_type='publication', description=_('Published')))
 
         # amendment
         for amendment in amendments:
             description = TimelineEvent(
-                type='amendment', description=_('Amended by'), related=amendment,
+                event_type='amendment', description=_('Amended by'), related=amendment,
                 by_frbr_uri=amendment.amending_work.frbr_uri,
                 by_title=amendment.amending_work.title)
 
@@ -153,11 +153,11 @@ def get_timeline(work):
         # consolidation
         for consolidation in consolidations:
             entry.events.append(TimelineEvent(
-                type='consolidation', description=_('Consolidation'), related=consolidation))
+                event_type='consolidation', description=_('Consolidation'), related=consolidation))
         # repeal
         if date == work.repealed_date:
             entry.events.append(TimelineEvent(
-                type='repeal', description=_('Repealed by'), by_frbr_uri=work.repealed_by.frbr_uri,
+                event_type='repeal', description=_('Repealed by'), by_frbr_uri=work.repealed_by.frbr_uri,
                 by_title=work.repealed_by.title))
 
         entries.append(entry)

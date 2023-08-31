@@ -454,7 +454,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         for entry in timeline:
             # for creating and importing documents
             entry.create_import_document = entry.initial or any(
-                e.type in ['amendment', 'consolidation'] for e in entry.events)
+                e.event_type in ['amendment', 'consolidation'] for e in entry.events)
 
         return timeline
 

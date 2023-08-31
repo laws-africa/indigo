@@ -138,7 +138,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(False, timeline[0].initial)
         self.assertEqual(1, len(timeline[0].events))
         event = timeline[0].events[0]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1998/2', event.by_frbr_uri)
         self.assertEqual('Test Act', event.by_title)
@@ -150,7 +150,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(False, timeline[1].initial)
         self.assertEqual(1, len(timeline[1].events))
         event = timeline[1].events[0]
-        self.assertEqual('consolidation', event.type)
+        self.assertEqual('consolidation', event.event_type)
         self.assertEqual('Consolidation', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
@@ -162,7 +162,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(False, timeline[2].initial)
         self.assertEqual(1, len(timeline[2].events))
         event = timeline[2].events[0]
-        self.assertEqual('commencement', event.type)
+        self.assertEqual('commencement', event.event_type)
         self.assertEqual('Commenced', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
@@ -174,7 +174,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(True, timeline[3].initial)
         self.assertEqual(1, len(timeline[3].events))
         event = timeline[3].events[0]
-        self.assertEqual('publication', event.type)
+        self.assertEqual('publication', event.event_type)
         self.assertEqual('Published', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
@@ -186,7 +186,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(False, timeline[4].initial)
         self.assertEqual(1, len(timeline[4].events))
         event = timeline[4].events[0]
-        self.assertEqual('assent', event.type)
+        self.assertEqual('assent', event.event_type)
         self.assertEqual('Assented to', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
@@ -237,7 +237,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(7, len(timeline[0].events))
 
         event = timeline[0].events[0]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1900/1', event.by_frbr_uri)
         self.assertEqual('Test suite document fixture act', event.by_title)
@@ -245,7 +245,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[1]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1900/2', event.by_frbr_uri)
         self.assertEqual('(untitled)', event.by_title)
@@ -253,7 +253,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[2]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1900/12', event.by_frbr_uri)
         self.assertEqual('(untitled)', event.by_title)
@@ -261,7 +261,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[3]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1900/30', event.by_frbr_uri)
         self.assertEqual('(untitled)', event.by_title)
@@ -269,7 +269,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[4]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/gn/1900/1', event.by_frbr_uri)
         self.assertEqual('(untitled)', event.by_title)
@@ -277,7 +277,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[5]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1998/1', event.by_frbr_uri)
         self.assertEqual('(untitled)', event.by_title)
@@ -285,7 +285,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
 
         event = timeline[0].events[6]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual('/akn/za/act/1998/2', event.by_frbr_uri)
         self.assertEqual('Test Act', event.by_title)
@@ -304,7 +304,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(1, len(timeline[0].events))
 
         event = timeline[0].events[0]
-        self.assertEqual('amendment', event.type)
+        self.assertEqual('amendment', event.event_type)
         self.assertEqual('Amended by', event.description)
         self.assertEqual(Amendment.objects.get(pk=7), event.related)
         self.assertEqual('A work that both amends and commences another work on the same date', event.by_title)
@@ -325,7 +325,7 @@ class WorksTest(testcases.TestCase):
 
         # amendment
         event_1 = timeline[0].events[0]
-        self.assertEqual('amendment', event_1.type)
+        self.assertEqual('amendment', event_1.event_type)
         self.assertEqual('Amended by', event_1.description)
         self.assertEqual(Amendment.objects.get(pk=8), event_1.related)
         self.assertEqual('A work that both amends and commences another work on the same date', event_1.by_title)
@@ -335,7 +335,7 @@ class WorksTest(testcases.TestCase):
 
         # commencement
         event_2 = timeline[0].events[1]
-        self.assertEqual('commencement', event_2.type)
+        self.assertEqual('commencement', event_2.event_type)
         self.assertEqual('Commenced by', event_2.description)
         self.assertEqual(Commencement.objects.get(pk=12), event_2.related)
         self.assertEqual('Commencement notice', event_2.by_title)

@@ -141,7 +141,7 @@ class DocumentTestCase(TestCase):
         # fairly straightforward work with a single commencement
         d = Document(work=self.work)
         description = d.work.commencement_description_internal()
-        self.assertEqual('commencement', description.event_type)
+        self.assertEqual('commencement', description.type)
         self.assertEqual('single', description.subtype)
         self.assertEqual('Commenced on 2016-07-15', description.description)
         self.assertEqual(date(2016, 7, 15), description.date)
@@ -162,7 +162,7 @@ class DocumentTestCase(TestCase):
         # multiple commencements
         d = Document.objects.get(id=104)
         description = d.work.commencement_description()
-        self.assertEqual('commencement', description.event_type)
+        self.assertEqual('commencement', description.type)
         self.assertEqual('multiple', description.subtype)
         self.assertEqual('There are multiple commencements', description.description)
         self.assertEqual(None, description.date)
@@ -173,7 +173,7 @@ class DocumentTestCase(TestCase):
 
         # but not all commencements apply to earlier points in time
         description = d.work.commencement_description(commencements=d.commencements_relevant_at_expression_date())
-        self.assertEqual('commencement', description.event_type)
+        self.assertEqual('commencement', description.type)
         self.assertEqual('single', description.subtype)
         self.assertEqual('Commenced on 1 March 2023 by', description.description)
         self.assertEqual(date(2023, 3, 1), description.date)

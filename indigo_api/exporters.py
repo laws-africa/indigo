@@ -196,10 +196,10 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Convert an HTML string into an XML string.
         """
         xslt = etree.XSLT(etree.parse(find_static('xsl/html_to_xml.xsl')))
-        # apply xslt and convert result into bytes
-        xml = etree.tostring(xslt(lxml.html.fromstring(html_string.encode('utf-8'))), encoding='utf-8')
-        # parse bytes into xml
-        return etree.fromstring(xml)
+        # apply xslt
+        xml = str(xslt(lxml.html.fromstring(html_string.encode('utf-8'))))
+        # turn string into bytes and parse into xml
+        return etree.fromstring(xml.encode('utf-8'))
 
     def insert_frontmatter(self, document):
         """ Generates the frontmatter and inserts it before the body (and coverpage if present) in the XML.

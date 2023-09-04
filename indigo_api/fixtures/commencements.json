@@ -151,5 +151,39 @@
         "created_by_user": 1,
         "updated_by_user": 1
     }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 11,
+    "fields": {
+        "commenced_work": 17,
+        "commencing_work": 18,
+        "date": "2023-11-01",
+        "main": false,
+        "all_provisions": false,
+        "provisions": ["sec_3A"],
+        "note": "See section 12 of Act 11 of 2023",
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 12,
+    "fields": {
+        "commenced_work": 19,
+        "commencing_work": 20,
+        "date": "2023-11-01",
+        "main": false,
+        "all_provisions": false,
+        "provisions": [],
+        "note": "See section 1",
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
 }
 ]

@@ -30,6 +30,8 @@ urlpatterns = [
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentTOCView.as_view({'get': 'get'}), name='published-document-toc'),
     # eg. /akn/za/act/1991/108/commencements.json; /akn/za/act/1991/108/eng@1991-06-28/commencements.json
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)/commencements\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentCommencementsView.as_view({'get': 'get'}), name='published-document-commencements'),
+    # eg. /akn/za/act/1991/108/timeline.json; /akn/za/act/1991/108/eng@1991-06-28/timeline.json
+    re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)/timeline\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentTimelineView.as_view({'get': 'get'}), name='published-document-timeline'),
     # eg. /akn/za/act/2007/98
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)$', views.PublishedDocumentDetailView.as_view({'get': 'get'}), name='published-document-detail'),
 ]

@@ -283,5 +283,74 @@
       "number": "2",
       "publication_date": "2023-08-01"
     }
+  },
+  {
+    "pk": 17,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "A work that has an amendment and a commencement by the same work on the same date",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2023/10",
+      "doctype": "act",
+      "date": "2023",
+      "number": "10",
+      "publication_date": "2023-10-01"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "A work that both amends and commences another work on the same date",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2023/11",
+      "doctype": "act",
+      "date": "2023",
+      "number": "11",
+      "publication_date": "2023-11-01"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "A work that has and amendment and a commencement on the same date, but by different works",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2023/21",
+      "doctype": "act",
+      "date": "2023",
+      "number": "21",
+      "publication_date": "2023-10-01"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Commencement notice",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/gn/2023/21",
+      "doctype": "act",
+      "subtype": "gn",
+      "date": "2023",
+      "number": "21",
+      "publication_date": "2023-11-01"
+    }
   }
 ]

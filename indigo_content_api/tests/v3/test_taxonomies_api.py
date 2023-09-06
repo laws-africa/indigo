@@ -26,4 +26,4 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
                     },
                 ],
             },
-        ], json.dumps(response.data['results']))
+        ], json.loads(json.dumps(response.data['results'])))

@@ -21,7 +21,7 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
                 "children": [
                     {
                         "name": "Money and Business",
-                        "slug": "lawsafrica-subjects-money-and-business",
+                        "slug": "lawsafrica-subject-areas-money-and-business",
                         "children": [],
                     },
                 ],

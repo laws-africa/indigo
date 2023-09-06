@@ -41,9 +41,8 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         # 'taxonomies' is not included in v3
         self.assertNotIn('taxonomies', response.data.keys())
 
-        self.assertEqual([
-            'third-party-taxonomy-fun-stuff',
-            'lawsafrica-subjects-money-and-business-banking'],
+        self.assertEqual(
+            ['lawsafrica-subject-areas-money-and-business'],
             response.data['taxonomy_topics'])
 
     def test_timeline(self):
@@ -58,4 +57,4 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV3Test(ContentAPIV3TestMixin, APITestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon',
-                'attachments', 'commencements']
+                'attachments', 'commencements', 'taxonomy_topics']

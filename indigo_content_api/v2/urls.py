@@ -9,7 +9,7 @@ router.register(r'taxonomies', views.TaxonomyView, basename='taxonomy')
 router.register(r'taxonomy_topics', views.TaxonomyTopicView, basename='taxonomy_topic')
 
 
-urlpatterns = [
+urlpatterns_base = [
     path(r'', include(router.urls)),
 
     # --- public content API ---
@@ -32,6 +32,9 @@ urlpatterns = [
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)/commencements\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentCommencementsView.as_view({'get': 'get'}), name='published-document-commencements'),
     # eg. /akn/za/act/1991/108/timeline.json; /akn/za/act/1991/108/eng@1991-06-28/timeline.json
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)/timeline\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentTimelineView.as_view({'get': 'get'}), name='published-document-timeline'),
+]
+
+urlpatterns = urlpatterns_base + [
     # eg. /akn/za/act/2007/98
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)$', views.PublishedDocumentDetailView.as_view({'get': 'get'}), name='published-document-detail'),
 ]

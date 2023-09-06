@@ -23,6 +23,7 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         # detailed commencements are given separately in v3
         self.assertNotIn('commencements', response.data.keys())
         response = self.client.get(self.api_path + '/akn/za/act/2010/1/commencements.json')
+        self.assertEqual(response.status_code, 200)
         self.assertEqual([dict(x) for x in response.data['commencements']], [{
             'commencing_title': None,
             'commencing_frbr_uri': None,

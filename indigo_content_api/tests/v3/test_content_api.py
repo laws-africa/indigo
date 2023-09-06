@@ -49,12 +49,28 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/timeline.json')
         self.assertEqual(200, response.status_code)
         self.assertEqual('application/json', response.accepted_media_type)
-        # TODO: fill this in
-        self.assertEqual({}, response.data['timeline'])
+        self.assertEqual([
+            {'date': '2016-07-15',
+             'events': [
+                {'type': 'commencement',
+                 'description': 'Commenced',
+                 'by_frbr_uri': '',
+                 'by_title': '',
+                 'note': ''},
+             ]},
+            {'date': '2014-04-02',
+             'events': [
+                {'type': 'publication',
+                 'description': 'Published',
+                 'by_frbr_uri': '',
+                 'by_title': '',
+                 'note': ''},
+             ]}
+        ], response.data['timeline'])
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV3Test(ContentAPIV3TestMixin, APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon',
-                'attachments', 'commencements', 'taxonomy_topics']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'colophon',
+                'attachments', 'commencements']

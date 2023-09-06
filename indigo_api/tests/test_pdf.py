@@ -11,7 +11,7 @@ from indigo_api.models import Document, Work, Language
 
 
 class PDFExporterTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work']
     maxDiff = None
     # show diffs, no matter how big
     _diffThreshold = 999999999

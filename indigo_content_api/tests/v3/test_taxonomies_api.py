@@ -1,5 +1,3 @@
-import json
-
 from indigo_content_api.tests.v2.test_taxonomies_api import TaxonomiesAPIV2Test
 
 
@@ -26,4 +24,4 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
                     },
                 ],
             },
-        ], json.dumps(response.data['results']))
+        ], response.data['results'].json())

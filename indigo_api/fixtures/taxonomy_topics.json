@@ -1,0 +1,24 @@
+[
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 1,
+    "fields": {
+      "path": "0001",
+      "depth": 1,
+      "numchild": 1,
+      "name": "Laws.Africa Subject Areas",
+      "slug": "lawsafrica-subject-areas"
+    }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 2,
+    "fields": {
+      "path": "00010002",
+      "depth": 2,
+      "numchild": 0,
+      "name": "Money and Business",
+      "slug": "lawsafrica-subject-areas-money-and-business"
+    }
+  }
+]

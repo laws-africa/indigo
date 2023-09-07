@@ -7,7 +7,8 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
 
     def test_taxonomies(self):
         response = self.client.get(self.api_path + '/taxonomies.json')
-        self.assertEqual(200, response.status_code)
+        # /taxonomies isn't in v3
+        self.assertEqual(404, response.status_code)
 
         response = self.client.get(self.api_path + '/taxonomy_topics.json')
         self.assertEqual(200, response.status_code)

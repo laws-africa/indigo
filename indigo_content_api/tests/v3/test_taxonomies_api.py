@@ -1,5 +1,3 @@
-import json
-
 from indigo_content_api.tests.v2.test_taxonomies_api import TaxonomiesAPIV2Test
 
 
@@ -14,6 +12,7 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
         response = self.client.get(self.api_path + '/taxonomy_topics.json')
         self.assertEqual(200, response.status_code)
 
+        taxonomy_topics = response.json()['results']
         self.assertEqual([
             {
                 "name": "Laws.Africa Subject Areas",
@@ -26,4 +25,4 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
                     },
                 ],
             },
-        ], json.loads(json.dumps(response.data['results'])))
+        ], taxonomy_topics)

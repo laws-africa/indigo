@@ -4,15 +4,12 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter(trailing_slash=False)
-# TODO: these aren't versioned
 router.register(r'countries', views.CountryViewSet, basename='country')
 router.register(r'taxonomies', views.TaxonomyView, basename='taxonomy')
 router.register(r'taxonomy_topics', views.TaxonomyTopicView, basename='taxonomy_topic')
 
 
 urlpatterns_base = [
-    path(r'', include(router.urls)),
-
     # --- public content API ---
     # viewing a specific document identified by FRBR URI fragment,
     # starting with the two-letter country code
@@ -36,6 +33,7 @@ urlpatterns_base = [
 ]
 
 urlpatterns = urlpatterns_base + [
+    path(r'', include(router.urls)),
     # eg. /akn/za/act/2007/98
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)$', views.PublishedDocumentDetailView.as_view({'get': 'get'}), name='published-document-detail'),
 ]

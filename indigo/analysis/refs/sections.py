@@ -4,8 +4,6 @@ from typing import List, Union
 
 from lxml import etree
 from lxml.etree import Element
-
-from cobalt import StructuredDocument
 from docpipe.matchers import TextPatternMatcher
 from docpipe.xmlutils import wrap_text
 from schemas import AkomaNtoso30
@@ -49,7 +47,7 @@ class InternalRefsResolver:
             root = self.find_numbered_hier_element(root, [prefix['name'].lower()], prefix['num'])
             if root is None:
                 return refs
-            initial_ref = ProvisionRef(prefix['num'], prefix.start('num'), prefix.end('num'), root.get('eId'))
+            initial_ref = ProvisionRef(prefix.group(0), prefix.start(), prefix.end(), root.get('eId'))
             group.append(initial_ref)
 
         # Split a sequence of provision numbers into an array.
@@ -67,7 +65,7 @@ class InternalRefsResolver:
         elems = self.ref_nums_to_elements(nums, root)
         for match, elem in zip(matches, elems):
             if elem is None:
-                # we match as far as we could
+                # we matched as far as we could
                 break
             if elem.get('eId'):
                 group.append(ProvisionRef(match.group(0), match.start(0), match.end(0), elem.get('eId')))
@@ -94,11 +92,13 @@ class InternalRefsResolver:
         if names is None.
         """
         names = names or AkomaNtoso30.hier_elements
+        ns = {'a': root.nsmap[None]}
 
         # TODO: the .// isn't quite right, because we want to do a breadth-first search of hier children
         xpath = '|'.join(f'.//a:{x}' for x in names)
-        for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
-            if elem.num and elem.num.text.rstrip(".") == num:
+        for elem in root.xpath(xpath, namespaces=ns):
+            num_elem = elem.find('a:num', ns)
+            if num_elem is not None and num_elem.text.rstrip(".") == num:
                 return elem
 
 
@@ -168,10 +168,19 @@ class NewInternalRefsFinder(TextPatternMatcher):
 
         # TODO: extract the "runs"
         # TODO: process each run
-        groups = self.resolver.resolve_references(match.group(0), node.getroot())
-        first_marker = None
-
         # TODO: determine the target document
+        root = node.getroottree().getroot()
+        # TODO: handle remote references
+        is_local = True
+        if is_local:
+            href = '#'
+        else:
+            target_work_frbr_uri = ''
+            href = target_work_frbr_uri + "/~"
+        groups = self.resolver.resolve_references(match.group(0), root)
+        first_marker = None
+        # match is relative to the start of the text in node, but the groups are relative to the start of the match
+        offset = match.start()
 
         # markup from right to left so that match offsets don't change
         for group in reversed(groups):
@@ -180,9 +189,8 @@ class NewInternalRefsFinder(TextPatternMatcher):
             if group[-1].eId:
                 marker = etree.Element(self.marker_tag)
                 marker.text = ''.join(ref.text for ref in group)
-                # TODO: make full FRBR URI
-                marker.set('href', group[-1].eId)
-                wrap_text(node, in_tail, lambda t: marker, group[0].start_pos, group[-1].end_pos)
+                marker.set('href', href + group[-1].eId)
+                wrap_text(node, in_tail, lambda t: marker, offset + group[0].start_pos, offset + group[-1].end_pos)
                 if first_marker is None:
                     first_marker = marker
 

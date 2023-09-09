@@ -4,8 +4,11 @@ from typing import List, Union
 
 from lxml import etree
 from lxml.etree import Element
+
+from cobalt import FrbrUri
 from docpipe.matchers import TextPatternMatcher
 from docpipe.xmlutils import wrap_text
+from indigo_api.models import Document
 from schemas import AkomaNtoso30
 
 
@@ -151,7 +154,7 @@ class NewInternalRefsFinder(TextPatternMatcher):
             )
           )*
         )
-        (\s+of\s+(this)?|\s+thereof)?
+        (?P<tail>(\s*,)?\s+(of(\s+this)?\s+|thereof))?
         ''',
         re.X | re.IGNORECASE)
 
@@ -159,28 +162,29 @@ class NewInternalRefsFinder(TextPatternMatcher):
     # TODO: individual parts of a big pattern
 
     resolver = InternalRefsResolver()
+    target_root_cache = None
+    document_queryset = Document.objects.undeleted()
 
     def handle_node_match(self, node, match, in_tail):
-        # TODO:
+        # TODO: implement this for HTML and text documents
         # markup all the refs in this single match, which could be multiple ones
         # we want to process from right to left, so that offsets don't change
         # finally, we must return the rightmost node, so that the matcher keeps looking at that node's tail text
 
+        # work out if the target document is this one, or another one
+        target_frbr_uri, target_root = self.get_target(node, match, in_tail)
+        if target_root is None:
+            # no target, so we can't do anything
+            return None
+
         # TODO: extract the "runs"
         # TODO: process each run
-        # TODO: determine the target document
-        root = node.getroottree().getroot()
-        # TODO: handle remote references
-        is_local = True
-        if is_local:
-            href = '#'
-        else:
-            target_work_frbr_uri = ''
-            href = target_work_frbr_uri + "/~"
-        groups = self.resolver.resolve_references(match.group(0), root)
+        groups = self.resolver.resolve_references(match.group(0), target_root)
+
         first_marker = None
         # match is relative to the start of the text in node, but the groups are relative to the start of the match
         offset = match.start()
+        href = '#' if not target_frbr_uri else f'{target_frbr_uri}/~'
 
         # markup from right to left so that match offsets don't change
         for group in reversed(groups):
@@ -196,3 +200,71 @@ class NewInternalRefsFinder(TextPatternMatcher):
 
         # return the rightmost element
         return first_marker
+
+    def get_target(self, node: Element, match: re.Match, in_tail: bool) -> (Union[str, None], Union[Element, None]):
+        """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
+        root XML element of the document to use to resolve the references.
+
+        Remote targets look something like:
+
+        - section 26(a) and (c) of Act 5 of 2009, ...
+        - considering Act 5 of 2009 and section 26(a) thereof, ...
+        """
+        # TODO: implement this for HTML and text documents
+        # get the trailing text at the end of the match
+        tail = match['tail']
+        if not tail or 'this' in tail:
+            # refs are to the local document
+            return None, node.getroottree().getroot()
+
+        if 'thereof' in tail:
+            # look backwards
+            if in_tail:
+                # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
+                prev = node
+            else:
+                # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
+                prev = node.getprevious()
+            while prev is not None:
+                if prev.tag == self.marker_tag and prev.get('href'):
+                    frbr_uri = prev.get('href')
+                    return frbr_uri, self.get_target_root(frbr_uri)
+                prev = prev.getprevious()
+            return None, None
+
+        # it's 'of', look forwards
+        if in_tail:
+            # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+            nxt = node.getnext()
+        else:
+            # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+            nxt = next(node.iterchildren(), None)
+        while nxt is not None:
+            if nxt.tag == self.marker_tag and nxt.get('href'):
+                frbr_uri = nxt.get('href')
+                return frbr_uri, self.get_target_root(frbr_uri)
+            nxt = nxt.getnext()
+
+        return None, None
+
+    def get_target_root(self, frbr_uri: str) -> Union[Element, None]:
+        """Return the root element of the document for the given frbr_uri."""
+        # check the cache
+        if self.target_root_cache is None:
+            self.target_root_cache = {}
+        elif frbr_uri in self.target_root_cache:
+            return self.target_root_cache[frbr_uri]
+
+        try:
+            uri = FrbrUri.parse(frbr_uri)
+        except ValueError:
+            return None
+
+        # we normalise the FRBR URI to the work level
+        doc = self.find_document_root(uri)
+        if doc:
+            self.target_root_cache[frbr_uri] = root = doc.doc.root
+            return root
+
+    def find_document_root(self, frbr_uri: FrbrUri) -> Union[Element, None]:
+        return self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()

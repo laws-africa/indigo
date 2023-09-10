@@ -1,0 +1,46 @@
+grammar Refs
+  root        <- reference
+                 (WS+ ("and" / "or") WS+ reference)*
+                 of?
+                 %root
+
+  # section 32
+  # section (a)
+  # section 32(a)(c)
+  # section 32.1a.2
+  reference   <- `section`
+                 WS+ main_ref
+                 WS* sub_refs
+                 %reference
+
+  sub_refs    <- sub_ref
+                 (
+                   (
+                     range /
+                     (WS+ ("and" / "or") WS+) /
+                     (WS+ / ",")*
+                   )
+                   sub_ref
+                 )*
+                 %sub_refs
+
+  # section 32
+  # section 32A
+  # section 32.1a.2
+  main_ref    <- digit alpha_num_dot* %main_ref
+
+  range       <- WS+ "to" WS+ %range
+
+  # (a)
+  # (a1)
+  # (a-bis)
+  # (iv)
+  sub_ref     <- "(" alpha_num_dot ")" %sub_ref
+
+  # of the Act
+  # thereof
+  of          <- WS+ ("of" / "thereof") WS+
+
+  digit       <- [0-9]
+  alpha_num_dot <- [a-zA-Z0-9.-]
+  WS          <- " " / "\t"

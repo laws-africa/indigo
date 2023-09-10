@@ -1,10 +1,15 @@
+import unittest.util
+
 from django.test import TestCase
 from lxml import etree
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 
-from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher
+from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse, MainProvisionRef
 from indigo_api.tests.fixtures import document_fixture
+
+
+unittest.util._MAX_LENGTH = 999999999
 
 
 class ProvisionRefsResolverTestCase(TestCase):
@@ -338,3 +343,27 @@ class ProvisionRefsMatechTestCase(TestCase):
             expected.to_xml(encoding='unicode'),
             etree.tostring(actual, encoding='unicode')
         )
+
+
+class RefsGrammarTest(TestCase):
+    maxDiff = None
+
+    def test_simple(self):
+        tree = parse("Section 1.2(a)(b) to (d), (e) and (f) and section 32(a)")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1.2", 8, 11, None),
+                [
+                    ProvisionRef("(a)", 11, 14, None),
+                    ProvisionRef("(b)", 14, 17, None),
+                    ProvisionRef("(d)", 21, 24, None, True),
+                    ProvisionRef("(e)", 26, 29, None),
+                    ProvisionRef("(f)", 34, 37, None)
+                ]
+            ), MainProvisionRef(
+                "section",
+                ProvisionRef("32", 50, 52, None),
+                [ProvisionRef("(a)", 52, 55, None)]
+            )
+        ], tree)

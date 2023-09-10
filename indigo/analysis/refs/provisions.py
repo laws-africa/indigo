@@ -20,7 +20,17 @@ class ProvisionRef:
     start_pos: int
     end_pos: int
     # eId of the matched element
-    eId: str
+    eId: Union[str, None] = None
+    # does this provision end a range? if so, the previous provision is the start
+    range_end: bool = False
+
+
+@dataclass
+class MainProvisionRef:
+    # text of the matched reference
+    name: str
+    ref: ProvisionRef
+    subrefs: List[ProvisionRef] = None
 
 
 class ProvisionRefsResolver:
@@ -292,3 +302,42 @@ class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
 class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
+
+
+def parse(text):
+    from .refs import parse
+
+    class Actions:
+        def root(self, input, start, end, elements):
+            refs = [elements[0]]
+            if len(elements) > 1:
+                refs.extend(e.elements[3] for e in elements[1].elements)
+            return refs
+
+        def reference(self, input, start, end, elements):
+            # the reference has an anchor element
+            return MainProvisionRef(
+                elements[0].text,
+                elements[2],
+                elements[4],
+            )
+
+        def main_ref(self, input, start, end, elements):
+            return ProvisionRef(input[start:end], start, end, None)
+
+        def sub_refs(self, input, start, end, elements):
+            refs = [elements[0]]
+            # the other subrefs could have "and", "to", etc.
+            for item in elements[1]:
+                if item.elements and item.elements[0] == "range":
+                    item.sub_ref.range_end = True
+                refs.append(item.sub_ref)
+            return refs
+
+        def range(self, input, start, end, elements):
+            return "range"
+
+        def sub_ref(self, input, start, end, elements):
+            return ProvisionRef(input[start:end], start, end, None)
+
+    return parse(text, Actions())

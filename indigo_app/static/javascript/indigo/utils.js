@@ -33,12 +33,8 @@ $(function() {
    * Links should have a 'data-popup-url' attribute.
    */
   var _popupCache = {},
-      whiteList = _.clone($.fn.popover.Constructor.Default.whiteList),
       // this is the currently active popup target element
       popupTarget;
-
-  // allow div tags to contain style tags
-  whiteList.div = ['style'];
 
   function popup(element, html) {
     // don't show the popup if our concept of the current target is out of date
@@ -47,7 +43,8 @@ $(function() {
     $(element).popover({
       content: html,
       html: true,
-      whiteList: whiteList,
+      sanitize: false,
+      placement: 'top',
     }).popover('show');
   }
 

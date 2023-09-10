@@ -23,7 +23,8 @@ class ProvisionRef:
     eId: str
 
 
-class InternalRefsResolver:
+class ProvisionRefsResolver:
+    """Resolvers references such as Section 32(a) to eIds in an Akoma Ntoso document."""
     # TODO: expand beyond section
     prefix_re = re.compile(r'^((?P<name>section)s?)\s+(?P<num>\d+[A-Z0-9]*)', re.IGNORECASE)
 
@@ -105,7 +106,7 @@ class InternalRefsResolver:
                 return elem
 
 
-class NewInternalRefsFinder(TextPatternMatcher):
+class ProvisionRefsMatcher(TextPatternMatcher):
     """ Finds internal references to sections in documents, of the form:
 
         # singletons
@@ -161,7 +162,7 @@ class NewInternalRefsFinder(TextPatternMatcher):
     # TODO: bigger pattern
     # TODO: individual parts of a big pattern
 
-    resolver = InternalRefsResolver()
+    resolver = ProvisionRefsResolver()
     target_root_cache = None
     document_queryset = None
 
@@ -275,7 +276,7 @@ class NewInternalRefsFinder(TextPatternMatcher):
         return self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()
 
 
-class BaseInternalRefsFinder(LocaleBasedMatcher, NewInternalRefsFinder):
+class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
     def find_references_in_document(self, document):
         """ Find references in +document+, which is an Indigo Document object.
         """
@@ -288,6 +289,6 @@ class BaseInternalRefsFinder(LocaleBasedMatcher, NewInternalRefsFinder):
 
 
 @plugins.register('internal-refs')
-class SectionRefsFinderENG(BaseInternalRefsFinder):
+class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)

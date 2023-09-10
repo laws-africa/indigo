@@ -3,15 +3,15 @@ from lxml import etree
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 
-from indigo.analysis.refs.sections import InternalRefsResolver, ProvisionRef, NewInternalRefsFinder
+from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher
 from indigo_api.tests.fixtures import document_fixture
 
 
-class InternalRefsResolverTestCase(TestCase):
+class ProvisionRefsResolverTestCase(TestCase):
     maxDiff = None
 
     def setUp(self):
-        self.resolver = InternalRefsResolver()
+        self.resolver = ProvisionRefsResolver()
         self.doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_1">
               <num>1.</num>
@@ -84,11 +84,11 @@ class InternalRefsResolverTestCase(TestCase):
         ])
 
 
-class NewInternalRefsFinderTestCase(TestCase):
+class ProvisionRefsMatechTestCase(TestCase):
     maxDiff = None
 
     def setUp(self):
-        self.finder = NewInternalRefsFinder()
+        self.finder = ProvisionRefsMatcher()
         self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/eng@2009-01-01")
 
     def test_local_sections(self):

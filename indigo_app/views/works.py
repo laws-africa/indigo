@@ -18,6 +18,7 @@ from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
 
+from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
@@ -78,6 +79,18 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
         return timeline
+
+    def get_object(self, queryset=None):
+        # the frbr_uri may include a portion, so we strip that here and update the kwargs
+        try:
+            frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+        except ValueError:
+            raise Http404()
+
+        self.kwargs['frbr_uri'] = frbr_uri.work_uri(False)
+        self.frbr_uri = frbr_uri
+
+        return super().get_object(queryset)
 
     @property
     def work(self):
@@ -985,4 +998,25 @@ class ImportDocumentView(WorkViewBase, FormView):
 
 class WorkPopupView(WorkViewBase, DetailView):
     template_name = 'indigo_api/work_popup.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # is there a portion?
+        if self.frbr_uri.portion:
+            # get a document to use
+            context["document"] = doc = (Document.objects
+                .undeleted()
+                .latest_expression()
+                .filter(
+                    work=self.work,
+                    language=self.work.country.primary_language)
+                .first()
+            )
+            if doc:
+                portion = doc.doc.get_portion_element(self.frbr_uri.portion)
+                if portion:
+                    context["portion_html"] = doc.element_to_html(portion)
+
+        return context
 

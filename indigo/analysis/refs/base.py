@@ -228,7 +228,7 @@ class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):
         return '#' + target.get('eId')
 
 
-@plugins.register('internal-refs')
+#@plugins.register('internal-refs')
 class SectionRefsFinderENG(BaseInternalRefsFinder):
     """ Finds internal references to sections in documents, of the form:
 

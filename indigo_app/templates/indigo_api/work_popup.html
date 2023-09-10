@@ -73,4 +73,10 @@
       <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
     </p>
   {% endif %}
+
+  {% if portion_html %}
+    <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}">
+      {{ portion_html|safe }}
+    </la-akoma-ntoso>
+  {% endif %}
 </div>

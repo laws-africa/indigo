@@ -8,7 +8,7 @@ from lxml.etree import Element
 from cobalt import FrbrUri
 from docpipe.matchers import TextPatternMatcher
 from docpipe.xmlutils import wrap_text
-from indigo_api.models import Document
+from indigo.plugins import LocaleBasedMatcher, plugins
 from schemas import AkomaNtoso30
 
 
@@ -163,7 +163,12 @@ class NewInternalRefsFinder(TextPatternMatcher):
 
     resolver = InternalRefsResolver()
     target_root_cache = None
-    document_queryset = Document.objects.undeleted()
+    document_queryset = None
+
+    def setup(self, *args, **kwargs):
+        from indigo_api.models import Document
+        super().setup(*args, **kwargs)
+        self.document_queryset = Document.objects.undeleted()
 
     def handle_node_match(self, node, match, in_tail):
         # TODO: implement this for HTML and text documents
@@ -268,3 +273,21 @@ class NewInternalRefsFinder(TextPatternMatcher):
 
     def find_document_root(self, frbr_uri: FrbrUri) -> Union[Element, None]:
         return self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()
+
+
+class BaseInternalRefsFinder(LocaleBasedMatcher, NewInternalRefsFinder):
+    def find_references_in_document(self, document):
+        """ Find references in +document+, which is an Indigo Document object.
+        """
+        # we need to use etree, not objectify, so we can't use document.doc.root,
+        # we have to re-parse it
+        root = etree.fromstring(document.content)
+        self.setup(root)
+        self.markup_xml_matches(document.frbr_uri, root)
+        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+
+
+@plugins.register('internal-refs')
+class SectionRefsFinderENG(BaseInternalRefsFinder):
+    # country, language, locality
+    locale = (None, 'eng', None)

@@ -101,15 +101,15 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         for event in dates:
             date = event['date']
             if event.get('commencement_date'):
-                event['commencements'] = work.commencements.filter(date=date).all()
+                event['commencements'] = work.commencements.filter(date=date)
             if event.get('amendment'):
                 event_amendments = work.amendments.filter(date=date)
                 if len(event_amendments) > 1:
                     event_amendments = Amendment.order_further(event_amendments)
                 event['amendments'] = event_amendments
             if event.get('consolidation'):
-                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
-            event['expressions'] = work.expressions().filter(expression_date=date).all()
+                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date)
+            event['expressions'] = work.expressions().filter(expression_date=date)
 
         return dates
 
@@ -694,7 +694,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['family'] = family
 
         # amended works
-        amended = Amendment.objects.filter(amending_work=self.work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
+        amended = Amendment.objects.filter(amending_work=self.work).prefetch_related('amended_work').order_by('amended_work__frbr_uri')
         amended = [{
             'rel': 'amends',
             'work': a.amended_work,
@@ -703,7 +703,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['amended'] = amended
 
         # amending works
-        amended_by = Amendment.objects.filter(amended_work=self.work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
+        amended_by = Amendment.objects.filter(amended_work=self.work).prefetch_related('amending_work').order_by('amending_work__frbr_uri')
         amended_by = [{
             'rel': 'amended by',
             'work': a.amending_work,

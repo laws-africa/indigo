@@ -47,7 +47,7 @@ setup(
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.10.0',
-        'django-allauth>=0.48.0',
+        'django-allauth>=0.56.0',
         'django-background-tasks>=1.2.5',
         'django-compressor>=3.1',
         'django-cors-headers>=3.11.0',

@@ -1223,7 +1223,7 @@ Possible reasons:
             # but it could be in the current batch
             for row in self.works:
                 if hasattr(row, 'work') and (substring == row.work.frbr_uri or given_string == row.work.title):
-                    work = _(f'{given_string} (about to be imported)')
+                    work = _('%s (about to be imported)') % given_string
                     break
         return work
 

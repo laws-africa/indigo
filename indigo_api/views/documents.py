@@ -263,8 +263,8 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_document.document_xml = differ.preprocess_xml_str(new_document.document_xml)
         new_html = new_document.to_html()
 
-        old_tree = lxml.html.fromstring(old_html) if old_html else None
-        new_tree = lxml.html.fromstring(new_html)
+        old_tree = lxml.html.fromstring(old_html.encode('utf-8')) if old_html else None
+        new_tree = lxml.html.fromstring(new_html.encode('utf-8'))
 
         diff = differ.diff_html(old_tree, new_tree)
         n_changes = differ.count_differences(diff)
@@ -497,8 +497,8 @@ class DocumentDiffView(DocumentResourceView, APIView):
             local_html = local_doc.to_html()
             remote_html = remote_doc.to_html()
 
-        local_tree = lxml.html.fromstring(local_html or "<div></div>")
-        remote_tree = lxml.html.fromstring(remote_html) if remote_html else None
+        local_tree = lxml.html.fromstring((local_html or "<div></div>").encode('utf-8'))
+        remote_tree = lxml.html.fromstring(remote_html.encode('utf-8')) if remote_html else None
 
         diff = differ.diff_html(remote_tree, local_tree)
         n_changes = differ.count_differences(diff)

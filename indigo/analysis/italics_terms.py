@@ -16,12 +16,12 @@ class BaseItalicsFinder(LocaleBasedMatcher, TextPatternMarker):
         """
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         self.setup_candidate_xpath(italics_terms)
         self.setup_pattern_re(italics_terms)
         self.setup(root)
         self.markup_patterns(root)
-        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        document.content = etree.tostring(root, encoding='unicode')
 
     def setup_candidate_xpath(self, terms):
         xpath_contains = ' or '.join([f'contains(., "{term}")' for term in [partial for t in terms for partial in t.split('"')]])

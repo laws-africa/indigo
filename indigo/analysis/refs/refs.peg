@@ -1,46 +1,48 @@
 grammar Refs
-  root        <- reference
-                 (WS+ ("and" / "or") WS+ reference)*
-                 of?
-                 %root
+  root        <- reference (and_or reference)* of? %root
 
-  # section 32
-  # section (a)
-  # section 32(a)(c)
-  # section 32.1a.2
-  reference   <- unit
-                 WS+ main_ref
-                 WS* sub_refs?
-                 %reference
+                 # section 32
+                 # section (a)
+                 # section 32(a)(c)
+                 # section 32.1a.2
+  reference   <- unit WS+ main_ref WS* sub_refs? %reference
 
-  sub_refs    <- sub_ref
-                 (
-                   (
-                     range /
-                     (WS+ ("and" / "or") WS+) /
-                     (WS+ / ",")*
-                   )
-                   sub_ref
-                 )*
-                 %sub_refs
-
-  # section 32
-  # section 32A
-  # section 32.1a.2
+                 # section 32
+                 # section 32A
+                 # section 32.1a.2
   main_ref    <- digit alpha_num_dot* %main_ref
 
-  range       <- WS+ "to" WS+ %range
+                 # (a)(ii) to (iv)
+                 # (a), (b) and (f)(ii)
+                 # (a)(ii), (b)(iii) and (v), and (d)
+  sub_refs    <- sub_ref ((range / and_or) sub_ref)* %sub_refs
 
-  # (a)
-  # (a1)
-  # (a-bis)
-  # (iv)
-  sub_ref     <- "(" alpha_num_dot ")" %sub_ref
+                 # (a)
+                 # (a) (ii)
+  sub_ref     <- num (WS* num)* %sub_ref
 
-  # of the Act
-  # thereof
+                 # (a)
+                 # (a1)
+                 # (a-bis)
+                 # (iv)
+  num         <- "(" alpha_num_dot ")" %num
+
+  range       <- WS+ to WS+ %range
+  and_or      <- (WS+ _and WS+) %and_or
+                 / (WS+ _or WS+) %and_or
+                 / (WS* comma WS*) %and_or
+                 # of the Act
+                 # thereof
   of          <- WS+ ("of" / "thereof") WS+ %of
 
+  # --------
+  # terminals
+  # --------
+
+  _and        <- `and`
+  _or         <- `or`
+  comma       <- [,;]
+  to          <- `to`
   # section, paragraph, etc.
   # TODO: include other languages
   unit        <- `section`

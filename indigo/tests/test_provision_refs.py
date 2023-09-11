@@ -358,22 +358,21 @@ class ProvisionRefsMatechTestCase(TestCase):
 class RefsGrammarTest(TestCase):
     maxDiff = None
 
-    def test_simple(self):
+    def test_mixed(self):
         result = parse_refs("Section 1.2(a)(b) to (d), (e) and (f) and section 32(a)")
         self.assertEqual([
             MainProvisionRef(
                 "Section",
-                ProvisionRef("1.2", 8, 11, None),
+                ProvisionRef("1.2", 8, 11, nums=["1.2"]),
                 [
-                    ProvisionRef("(a)", 11, 14, None),
-                    ProvisionRef("(b)", 14, 17, None),
-                    ProvisionRef("(d)", 21, 24, None, True),
-                    ProvisionRef("(e)", 26, 29, None),
-                    ProvisionRef("(f)", 34, 37, None)
+                    ProvisionRef("(a)(b)", 11, 17, nums=["(a)", "(b)"]),
+                    ProvisionRef("(d)", 21, 24, nums=["(d)"], separator="range"),
+                    ProvisionRef("(e)", 26, 29, nums=["(e)"], separator="and_or"),
+                    ProvisionRef("(f)", 34, 37, nums=["(f)"], separator="and_or"),
                 ]
             ), MainProvisionRef(
                 "section",
-                ProvisionRef("32", 50, 52, None),
-                [ProvisionRef("(a)", 52, 55, None)]
+                ProvisionRef("32", 50, 52, nums=["32"]),
+                [ProvisionRef("(a)", 52, 55, nums=["(a)"])]
             )
         ], result['references'])

@@ -21,8 +21,10 @@ class ProvisionRef:
     end_pos: int
     # eId of the matched element
     eId: Union[str, None] = None
-    # does this provision end a range? if so, the previous provision is the start
-    range_end: bool = False
+    # "and", "or", "comma", "to"
+    separator: str = None
+    nums: List[str] = None
+
 
 
 @dataclass
@@ -163,15 +165,15 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # finally, we must return the rightmost node, so that the matcher keeps looking at that node's tail text
 
         # parse the text into a list of refs using our grammar
-        refs, target = self.parse_refs(match.group(0))
+        main_refs, target = self.parse_refs(match.group(0))
 
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target(node, match, in_tail, refs)
+        target_frbr_uri, target_root = self.get_target(node, match, in_tail, main_refs)
         if target_root is None:
             # no target, so we can't do anything
             return None
 
-        for ref in refs:
+        for ref in main_refs:
             self.resolver.resolve_references(ref, target_root)
 
         first_marker = None
@@ -180,16 +182,19 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         href = '#' if not target_frbr_uri else f'{target_frbr_uri}/~'
 
         # markup from right to left so that match offsets don't change
-        for group in reversed(groups):
-            # for a group that covers something like 2(a)(i), we mark up the entire string and use the eId of the
-            # final element
-            if group[-1].eId:
-                marker = etree.Element(self.marker_tag)
-                marker.text = ''.join(ref.text for ref in group)
-                marker.set('href', href + group[-1].eId)
-                wrap_text(node, in_tail, lambda t: marker, offset + group[0].start_pos, offset + group[-1].end_pos)
-                if first_marker is None:
-                    first_marker = marker
+        for main_ref in reversed(main_refs):
+            refs = [main_ref.ref] + main_ref.subrefs
+            for ref in reversed(refs):
+                # TODO: these are different: section 32(a)(b) and (c), (d) to (f)
+                # for a group that covers something like 2(a)(i), we mark up the entire string and use the eId of the
+                # final element
+                if [-1].eId:
+                    marker = etree.Element(self.marker_tag)
+                    marker.text = ''.join(ref.text for ref in group)
+                    marker.set('href', href + group[-1].eId)
+                    wrap_text(node, in_tail, lambda t: marker, offset + group[0].start_pos, offset + group[-1].end_pos)
+                    if first_marker is None:
+                        first_marker = marker
 
         # return the rightmost element
         return first_marker
@@ -292,7 +297,7 @@ def parse_refs(text):
     class Actions:
         def root(self, input, start, end, elements):
             refs = [elements[0]]
-            refs.extend(e.elements[3] for e in elements[1].elements)
+            refs.extend(e.elements[1] for e in elements[1].elements)
             target = elements[2].elements[0] if elements[2].elements else None
             return {'references': refs, 'target': target}
 
@@ -301,28 +306,36 @@ def parse_refs(text):
             return MainProvisionRef(
                 elements[0].text,
                 elements[2],
-                elements[4] if isinstance(elements[4], list) else [],
+                elements[4],
             )
 
         def main_ref(self, input, start, end, elements):
-            return ProvisionRef(input[start:end], start, end, None)
+            return ProvisionRef(input[start:end], start, end, nums=[input[start:end]])
 
         def sub_refs(self, input, start, end, elements):
             refs = [elements[0]]
-            # the other subrefs could have "and", "to", etc.
+            # the other subrefs are joined with "and", "to" etc.
             for item in elements[1]:
-                if item.elements and item.elements[0] == "range":
-                    item.sub_ref.range_end = True
-                refs.append(item.sub_ref)
+                ref = item.elements[1]
+                ref.separator = item.elements[0]
+                refs.append(ref)
             return refs
+
+        def sub_ref(self, input, start, end, elements):
+            nums = [elements[0]] + [e.elements[1] for e in elements[1].elements]
+            return ProvisionRef(input[start:end], start, end, nums=nums)
+
+        def num(self, input, start, end, elements):
+            return input[start:end]
 
         def range(self, input, start, end, elements):
             return "range"
 
-        def sub_ref(self, input, start, end, elements):
-            return ProvisionRef(input[start:end], start, end, None)
+        def and_or(self, input, start, end, elements):
+            return "and_or"
 
         def of(self, input, start, end, elements):
             return "of"
+
 
     return parse(text, Actions())

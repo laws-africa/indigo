@@ -5,7 +5,7 @@ from lxml import etree
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 
-from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse, MainProvisionRef
+from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_refs, MainProvisionRef
 from indigo_api.tests.fixtures import document_fixture
 
 
@@ -51,42 +51,52 @@ class ProvisionRefsResolverTestCase(TestCase):
         """)).root
 
     def test_initial(self):
-        refs = self.resolver.resolve_references("Section 1", self.doc)
-        self.assertEqual(refs[0], [ProvisionRef("Section 1", 0, 9, "sec_1")])
+        refs = self.resolver.resolve_references_str("Section 1", self.doc)
+        self.assertEqual([
+            MainProvisionRef("Section", ProvisionRef("1", 8, 9, "sec_1"), [])
+        ], refs)
 
     def test_initial_no_match(self):
-        self.assertEqual([], self.resolver.resolve_references("Section 3(a)", self.doc))
+        self.assertEqual([
+            MainProvisionRef("Section", ProvisionRef("3", 8, 9), [
+                ProvisionRef("(a)", 9, 12)
+            ])
+        ], self.resolver.resolve_references_str("Section 3(a)", self.doc))
 
     def test_ambiguous(self):
-        refs = self.resolver.resolve_references("(a)", self.doc)
+        refs = self.resolver.resolve_references_str("(a)", self.doc)
         self.assertEqual(refs[0], [ProvisionRef("(a)", 0, 3, "sec_1__subsec_a")])
 
-        refs = self.resolver.resolve_references("(a)(2)", self.doc)
+        refs = self.resolver.resolve_references_str("(a)(2)", self.doc)
         self.assertEqual(refs[0], [
             ProvisionRef("(a)", 0, 3, "sec_1__subsec_a"),
             ProvisionRef("(2)", 3, 6, "sec_1__subsec_a__para_2")
         ])
 
     def test_nested(self):
-        refs = self.resolver.resolve_references("section 1(a)", self.doc)
-        self.assertEqual(refs[0], [
-            ProvisionRef("section 1", 0, 9, "sec_1"),
-            ProvisionRef("(a)", 9, 12, "sec_1__subsec_a")
-        ])
+        refs = self.resolver.resolve_references_str("section 1(a)", self.doc)
+        self.assertEqual([
+            MainProvisionRef("section", ProvisionRef("1", 8, 9, "sec_1"), [
+                ProvisionRef("(a)", 9, 12, "sec_1__subsec_a")
+            ])
+        ], refs)
 
-        refs = self.resolver.resolve_references("section 2(a)(2)", self.doc)
-        self.assertEqual(refs[0], [
-            ProvisionRef("section 2", 0, 9, "sec_2"),
-            ProvisionRef("(a)", 9, 12, "sec_2__subsec_a"),
-            ProvisionRef("(2)", 12, 15, "sec_2__subsec_a__para_2")
-        ])
+        refs = self.resolver.resolve_references_str("section 2(a)(2)", self.doc)
+        self.assertEqual([
+            MainProvisionRef("section", ProvisionRef("2", 8, 9, "sec_2"), [
+                ProvisionRef("(a)", 9, 12, "sec_2__subsec_a"),
+                ProvisionRef("(2)", 12, 15, "sec_2__subsec_a__para_2")
+            ])
+        ], refs)
 
     def test_nested_truncated(self):
-        refs = self.resolver.resolve_references("section 2(a)(8)", self.doc)
-        self.assertEqual(refs[0], [
-            ProvisionRef("section 2", 0, 9, "sec_2"),
-            ProvisionRef("(a)", 9, 12, "sec_2__subsec_a"),
-        ])
+        refs = self.resolver.resolve_references_str("section 2(a)(8)", self.doc)
+        self.assertEqual([
+            MainProvisionRef("section", ProvisionRef("2", 8, 9, "sec_2"), [
+                ProvisionRef("(a)", 9, 12, "sec_2__subsec_a"),
+                ProvisionRef("(8)", 12, 15),
+            ])
+        ], refs)
 
 
 class ProvisionRefsMatechTestCase(TestCase):
@@ -349,7 +359,7 @@ class RefsGrammarTest(TestCase):
     maxDiff = None
 
     def test_simple(self):
-        tree = parse("Section 1.2(a)(b) to (d), (e) and (f) and section 32(a)")
+        result = parse_refs("Section 1.2(a)(b) to (d), (e) and (f) and section 32(a)")
         self.assertEqual([
             MainProvisionRef(
                 "Section",
@@ -366,4 +376,4 @@ class RefsGrammarTest(TestCase):
                 ProvisionRef("32", 50, 52, None),
                 [ProvisionRef("(a)", 52, 55, None)]
             )
-        ], tree)
+        ], result['references'])

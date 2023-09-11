@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Union, Tuple
 
 from lxml import etree
 from lxml.etree import Element
@@ -35,59 +35,34 @@ class MainProvisionRef:
 
 class ProvisionRefsResolver:
     """Resolvers references such as Section 32(a) to eIds in an Akoma Ntoso document."""
-    # TODO: expand beyond section
-    prefix_re = re.compile(r'^((?P<name>section)s?)\s+(?P<num>\d+[A-Z0-9]*)', re.IGNORECASE)
+    def resolve_references_str(self, text: str, root: Element):
+        """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
+        # look up the main element and use it as the root for the subrefs
+        refs = parse_refs(text)["references"]
+        for ref in refs:
+            self.resolve_references(ref, root)
+        return refs
 
-    def resolve_references(self, text: str, root: Element) -> List[List[ProvisionRef]]:
-        """Resolve the references in text, in the context of the provided root element. Returns a list of
-        ProvisionRef lists. Each sublist describes a run of numbers that reference a single element.
+    def resolve_references(self, main_ref: MainProvisionRef, root: Element):
+        """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
+        # look up the main element and use it as the root for the subrefs
+        # TODO: handle different languages
+        root = self.find_numbered_hier_element(root, [main_ref.name.lower()], main_ref.ref.text)
+        if root is None:
+            return
+        main_ref.ref.eId = root.get('eId')
 
-        For example, "section 1(1)(a) and (b)" would return two lists, one for "section 1(1)(a)" and one for "(b)".
+        # TODO: handle ranges
+        # TODO: handle "backtracking", eg section 32(1)(a),(c) and (2)(a)
 
-        It is expected that the text is for a single type of related references, such as:
-
-        - section 26
-        - sections 22 and 32
-        - sections 19(a) to (c), 22, and 23(b)(1)
-        """
-        refs = []
-        initial_ref = []
-        group = []
-
-        # check for initial prefix
-        prefix = self.prefix_re.match(text)
-        if prefix:
-            # look it up and use it as the new root
-            root = self.find_numbered_hier_element(root, [prefix['name'].lower()], prefix['num'])
-            if root is None:
-                return refs
-            initial_ref = ProvisionRef(prefix.group(0), prefix.start(), prefix.end(), root.get('eId'))
-            group.append(initial_ref)
-
-        # Split a sequence of provision numbers into an array.
-        # eg. "(a)(i)" becomes ["(a)", "(i)"]
-        # TODO: handle "and" and "to"
-        # TODO: handle multiple
-        matches = list(re.finditer(r"\([0-9a-z]{1,3}\)", text))
-        if not matches:
-            # only the prefix, if any
-            if group:
-                refs.append(group)
-            return refs
-
-        nums = [m.group(0) for m in matches]
+        nums = [r.text for r in main_ref.subrefs]
         elems = self.ref_nums_to_elements(nums, root)
-        for match, elem in zip(matches, elems):
+        for ref, elem in zip(main_ref.subrefs, elems):
             if elem is None:
                 # we matched as far as we could
                 break
             if elem.get('eId'):
-                group.append(ProvisionRef(match.group(0), match.start(0), match.end(0), elem.get('eId')))
-
-        if group:
-            refs.append(group)
-
-        return refs
+                ref.eId = elem.get('eId')
 
     def ref_nums_to_elements(self, nums: List[str], elem: Element) -> List[Union[Element, None]]:
         """ Return the XML elements correspond with the numbers in nums, such as "(b)(i)".
@@ -187,15 +162,17 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # we want to process from right to left, so that offsets don't change
         # finally, we must return the rightmost node, so that the matcher keeps looking at that node's tail text
 
+        # parse the text into a list of refs using our grammar
+        refs, target = self.parse_refs(match.group(0))
+
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target(node, match, in_tail)
+        target_frbr_uri, target_root = self.get_target(node, match, in_tail, refs)
         if target_root is None:
             # no target, so we can't do anything
             return None
 
-        # TODO: extract the "runs"
-        # TODO: process each run
-        groups = self.resolver.resolve_references(match.group(0), target_root)
+        for ref in refs:
+            self.resolver.resolve_references(ref, target_root)
 
         first_marker = None
         # match is relative to the start of the text in node, but the groups are relative to the start of the match
@@ -217,7 +194,11 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # return the rightmost element
         return first_marker
 
-    def get_target(self, node: Element, match: re.Match, in_tail: bool) -> (Union[str, None], Union[Element, None]):
+    def parse_refs(self, text) -> Tuple[List[MainProvisionRef], any]:
+        result = parse_refs(text)
+        return result["references"], result.get("target")
+
+    def get_target(self, node: Element, match: re.Match, in_tail: bool, refs) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
         root XML element of the document to use to resolve the references.
 
@@ -226,6 +207,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         - section 26(a) and (c) of Act 5 of 2009, ...
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
+        # TODO: sort out the target
         # TODO: implement this for HTML and text documents
         # get the trailing text at the end of the match
         tail = match['tail']
@@ -304,22 +286,22 @@ class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
     locale = (None, 'eng', None)
 
 
-def parse(text):
+def parse_refs(text):
     from .refs import parse
 
     class Actions:
         def root(self, input, start, end, elements):
             refs = [elements[0]]
-            if len(elements) > 1:
-                refs.extend(e.elements[3] for e in elements[1].elements)
-            return refs
+            refs.extend(e.elements[3] for e in elements[1].elements)
+            target = elements[2].elements[0] if elements[2].elements else None
+            return {'references': refs, 'target': target}
 
         def reference(self, input, start, end, elements):
             # the reference has an anchor element
             return MainProvisionRef(
                 elements[0].text,
                 elements[2],
-                elements[4],
+                elements[4] if isinstance(elements[4], list) else [],
             )
 
         def main_ref(self, input, start, end, elements):
@@ -339,5 +321,8 @@ def parse(text):
 
         def sub_ref(self, input, start, end, elements):
             return ProvisionRef(input[start:end], start, end, None)
+
+        def of(self, input, start, end, elements):
+            return "of"
 
     return parse(text, Actions())

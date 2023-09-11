@@ -8,9 +8,9 @@ grammar Refs
   # section (a)
   # section 32(a)(c)
   # section 32.1a.2
-  reference   <- `section`
+  reference   <- unit
                  WS+ main_ref
-                 WS* sub_refs
+                 WS* sub_refs?
                  %reference
 
   sub_refs    <- sub_ref
@@ -39,7 +39,11 @@ grammar Refs
 
   # of the Act
   # thereof
-  of          <- WS+ ("of" / "thereof") WS+
+  of          <- WS+ ("of" / "thereof") WS+ %of
+
+  # section, paragraph, etc.
+  # TODO: include other languages
+  unit        <- `section`
 
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]

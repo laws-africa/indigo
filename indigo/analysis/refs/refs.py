@@ -31,8 +31,8 @@ class TreeNode2(TreeNode):
 class TreeNode3(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode3, self).__init__(text, offset, elements)
+        self.unit = elements[0]
         self.main_ref = elements[2]
-        self.sub_refs = elements[4]
 
 
 class TreeNode4(TreeNode):
@@ -210,19 +210,7 @@ class Grammar(object):
             return cached[0]
         index1, elements0 = self._offset, []
         address1 = FAILURE
-        chunk0, max0 = None, self._offset + 7
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'section'.lower():
-            address1 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-            self._offset = self._offset + 7
-        else:
-            address1 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('Refs::reference', '`section`'))
+        address1 = self._read_unit()
         if address1 is not FAILURE:
             elements0.append(address1)
             address2 = FAILURE
@@ -260,7 +248,11 @@ class Grammar(object):
                     if address5 is not FAILURE:
                         elements0.append(address5)
                         address7 = FAILURE
+                        index4 = self._offset
                         address7 = self._read_sub_refs()
+                        if address7 is FAILURE:
+                            address7 = TreeNode(self._input[index4:index4], index4, [])
+                            self._offset = index4
                         if address7 is not FAILURE:
                             elements0.append(address7)
                         else:
@@ -725,9 +717,31 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode(self._input[index1:self._offset], index1, elements0)
+            address0 = self._actions.of(self._input, index1, self._offset, elements0)
             self._offset = self._offset
         self._cache['of'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_unit(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'section'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::unit', '`section`'))
+        self._cache['unit'][index0] = (address0, self._offset)
         return address0
 
     def _read_digit(self):

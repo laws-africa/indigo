@@ -19,12 +19,12 @@ class ProvisionRef:
     # start and end positions of the matched reference
     start_pos: int
     end_pos: int
+    # "and_or", "range"
+    separator: str = None
+    children: List['ProvisionRef'] = None
+    element: Union[Element, None] = None
     # eId of the matched element
     eId: Union[str, None] = None
-    # "and", "or", "comma", "to"
-    separator: str = None
-    nums: List[str] = None
-
 
 
 @dataclass
@@ -32,14 +32,13 @@ class MainProvisionRef:
     # text of the matched reference
     name: str
     ref: ProvisionRef
-    subrefs: List[ProvisionRef] = None
 
 
 class ProvisionRefsResolver:
-    """Resolvers references such as Section 32(a) to eIds in an Akoma Ntoso document."""
+    """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
+
     def resolve_references_str(self, text: str, root: Element):
-        """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
-        # look up the main element and use it as the root for the subrefs
+        """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
         refs = parse_refs(text)["references"]
         for ref in refs:
             self.resolve_references(ref, root)
@@ -47,36 +46,50 @@ class ProvisionRefsResolver:
 
     def resolve_references(self, main_ref: MainProvisionRef, root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
-        # look up the main element and use it as the root for the subrefs
+        # when resolving a reference like "Section 32(1)(a) and (b)", everything is relative to the first reference,
+        # which is "Section 32(1)(a)". So we need to resolve that to completion first. Then, "(b)" and everything
+        # after that is resolved relative to the first reference.
+
+        # resolve the main ref
+        ref = main_ref.ref
         # TODO: handle different languages
-        root = self.find_numbered_hier_element(root, [main_ref.name.lower()], main_ref.ref.text)
-        if root is None:
-            return
-        main_ref.ref.eId = root.get('eId')
+        ref.element = self.find_numbered_hier_element(root, [main_ref.name.lower()], ref.text)
 
-        # TODO: handle ranges
-        # TODO: handle "backtracking", eg section 32(1)(a),(c) and (2)(a)
+        if ref.element is not None:
+            ref.eId = ref.element.get('eId')
 
-        nums = [r.text for r in main_ref.subrefs]
-        elems = self.ref_nums_to_elements(nums, root)
-        for ref, elem in zip(main_ref.subrefs, elems):
-            if elem is None:
-                # we matched as far as we could
-                break
-            if elem.get('eId'):
-                ref.eId = elem.get('eId')
+            # resolve the rest of first ref
+            if ref.children:
+                self.resolve_ref(ref.children[0], [ref.element])
 
-    def ref_nums_to_elements(self, nums: List[str], elem: Element) -> List[Union[Element, None]]:
-        """ Return the XML elements correspond with the numbers in nums, such as "(b)(i)".
-        If an item cannot be found, it and sebsequent components will be None.
-        """
-        path = [None] * len(nums)
-        for i, num in enumerate(nums):
-            elem = self.find_numbered_hier_element(elem, None, num)
-            if elem is None:
-                break
-            path[i] = elem
-        return path
+                # now do the rest relative to this first ref
+
+                # First, we need the elements of all children in the first ref, to use as candidate root elements
+                # when resolving the rest of the refs. This means, in the example above, that "(b)" is resolved
+                # against "32(1)", then "32", until successful.
+                r = ref
+                roots = [r.element]
+                while r and r.children:
+                    roots.append(r.children[0])
+                    r = r.children[0]
+                if len(roots) > 1:
+                    # discard the last element, because we want to resolve "(b)" against "32(1)" not "32(1)(a)"
+                    roots = roots[:-1]
+
+                for kid in ref.children[1:]:
+                    self.resolve_ref(kid, roots)
+
+    def resolve_ref(self, ref, roots, names=None):
+        while ref.element is None and roots:
+            ref.element = self.find_numbered_hier_element(roots[-1], names, ref.text)
+            if ref.element is None:
+                # no match, try again with a higher root
+                roots.pop(-1)
+
+        if ref.element is not None:
+            ref.eId = ref.element.get('eId')
+            for kid in ref.children or []:
+                self.resolve_ref(kid, [ref.element])
 
     def find_numbered_hier_element(self, root: Element, names: Union[List[str], None], num: str) -> Element:
         """Find an heir element with the given number. Looks for elements with the given names, or any hier element
@@ -160,10 +173,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
     def handle_node_match(self, node, match, in_tail):
         # TODO: implement this for HTML and text documents
-        # markup all the refs in this single match, which could be multiple ones
-        # we want to process from right to left, so that offsets don't change
-        # finally, we must return the rightmost node, so that the matcher keeps looking at that node's tail text
-
         # parse the text into a list of refs using our grammar
         main_refs, target = self.parse_refs(match.group(0))
 
@@ -173,31 +182,54 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             # no target, so we can't do anything
             return None
 
+        # resolve references into eIds
         for ref in main_refs:
             self.resolver.resolve_references(ref, target_root)
 
-        first_marker = None
         # match is relative to the start of the text in node, but the groups are relative to the start of the match
         offset = match.start()
         href = '#' if not target_frbr_uri else f'{target_frbr_uri}/~'
 
         # markup from right to left so that match offsets don't change
+        markers = []
         for main_ref in reversed(main_refs):
-            refs = [main_ref.ref] + main_ref.subrefs
-            for ref in reversed(refs):
-                # TODO: these are different: section 32(a)(b) and (c), (d) to (f)
-                # for a group that covers something like 2(a)(i), we mark up the entire string and use the eId of the
-                # final element
-                if [-1].eId:
-                    marker = etree.Element(self.marker_tag)
-                    marker.text = ''.join(ref.text for ref in group)
-                    marker.set('href', href + group[-1].eId)
-                    wrap_text(node, in_tail, lambda t: marker, offset + group[0].start_pos, offset + group[-1].end_pos)
-                    if first_marker is None:
-                        first_marker = marker
+            if main_ref.ref.children:
+                # there are children, eg "Section 32(a)(i), (b)" so mark them up right to left
+                for i, ref in enumerate(reversed(main_ref.ref.children)):
+                    # the leftmost child is marked up from the start of the main ref
+                    start = ref.start_pos if i < len(main_ref.ref.children) - 1 else main_ref.ref.start_pos
+                    marker = self.markup_ref(ref, href, start, offset, node, in_tail)
+                    if marker is not None:
+                        markers.append(marker)
+            else:
+                # no children, eg. "Section 32", so just markup the main ref
+                marker = self.markup_ref(main_ref.ref, href, main_ref.ref.start_pos, offset, node, in_tail)
+                if marker is not None:
+                    markers.append(marker)
 
-        # return the rightmost element
-        return first_marker
+        # return rightmost marker
+        return next((m for m in markers if m is not None), None)
+
+    def markup_ref(self, ref, href, start, offset, node, in_tail):
+        eId = ref.eId
+        last = ref
+        if ref.children:
+            # get the eId of the last descendant that has one
+            curr = ref.children[0]
+            while curr and curr.eId:
+                eId = curr.eId
+                last = curr
+                curr = curr.children[0] if curr.children else None
+
+        # markup text[start:ref.end_pos] with ref.eId
+        if eId:
+            start = offset + start
+            end = offset + last.end_pos
+            marker = etree.Element(self.marker_tag)
+            marker.text = node.tail[start:end] if in_tail else node.text[start:end]
+            marker.set('href', href + eId)
+            wrap_text(node, in_tail, lambda t: marker, start, end)
+            return marker
 
     def parse_refs(self, text) -> Tuple[List[MainProvisionRef], any]:
         result = parse_refs(text)
@@ -303,30 +335,36 @@ def parse_refs(text):
 
         def reference(self, input, start, end, elements):
             # the reference has an anchor element
+            ref = elements[2]
+            if isinstance(elements[4], list):
+                ref.children = elements[4]
             return MainProvisionRef(
                 elements[0].text,
-                elements[2],
-                elements[4],
+                ref,
             )
 
         def main_ref(self, input, start, end, elements):
-            return ProvisionRef(input[start:end], start, end, nums=[input[start:end]])
+            return ProvisionRef(input[start:end], start, end)
 
         def sub_refs(self, input, start, end, elements):
             refs = [elements[0]]
-            # the other subrefs are joined with "and", "to" etc.
-            for item in elements[1]:
-                ref = item.elements[1]
-                ref.separator = item.elements[0]
+            for sep, ref in elements[1].elements:
+                # the first sub ref is joined with "and", "to" etc.
+                ref.separator = sep
                 refs.append(ref)
             return refs
 
         def sub_ref(self, input, start, end, elements):
-            nums = [elements[0]] + [e.elements[1] for e in elements[1].elements]
-            return ProvisionRef(input[start:end], start, end, nums=nums)
+            first = elements[0]
+            # add the rest as children
+            curr = first
+            for item in elements[1].elements:
+                curr.children = [item.num]
+                curr = item.num
+            return first
 
         def num(self, input, start, end, elements):
-            return input[start:end]
+            return ProvisionRef(input[start:end], start, end)
 
         def range(self, input, start, end, elements):
             return "range"

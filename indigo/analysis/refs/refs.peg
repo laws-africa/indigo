@@ -25,12 +25,19 @@ grammar Refs
                  # (a1)
                  # (a-bis)
                  # (iv)
-  num         <- "(" alpha_num_dot ")" %num
+  num         <- "(" alpha_num_dot+ ")" %num
 
-  range       <- WS+ to WS+ %range
-  and_or      <- (WS+ _and WS+) %and_or
-                 / (WS+ _or WS+) %and_or
+                 # (a) to (b)
+                 # (a), to (b)
+  range       <- (WS* comma)? WS+ to WS+ %range
+
+                 # (a) and (b)
+                 # (a), or (b)
+                 # (a), (b)
+  and_or      <- ((WS* comma)? WS+ _and WS+) %and_or
+                 / ((WS* comma)? WS+ _or WS+) %and_or
                  / (WS* comma WS*) %and_or
+
                  # of the Act
                  # thereof
   of          <- WS+ ("of" / "thereof") WS+ %of

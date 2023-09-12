@@ -61,7 +61,7 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
             {'date': '2014-04-02',
              'events': [
                 {'type': 'publication',
-                 'description': 'Published',
+                 'description': 'Published in Government Gazette 12345',
                  'by_frbr_uri': '',
                  'by_title': '',
                  'note': ''},

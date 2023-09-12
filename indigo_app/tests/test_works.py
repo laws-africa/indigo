@@ -175,7 +175,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(1, len(timeline[3].events))
         event = timeline[3].events[0]
         self.assertEqual('publication', event.type)
-        self.assertEqual('Published', event.description)
+        self.assertEqual('Published in Government Gazette 12345', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
         self.assertEqual('', event.note)

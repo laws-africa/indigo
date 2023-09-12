@@ -87,6 +87,59 @@ def describe_single_commencement(commencement, with_date=True, friendly_date=Tru
     return description
 
 
+def describe_publication_event(work, with_date=True, friendly_date=True, placeholder=False):
+    """ Based on the information available, return a TimelineEvent describing the publication document for a work.
+        If `placeholder` is True, return a minimum placeholder string as the TimelineEvent's `description`.
+        Otherwise, only return a TimelineEvent at all if at least one piece of publication information is available.
+    """
+    event = TimelineEvent(type='publication')
+
+    name = work.publication_name
+    number = work.publication_number
+    publication_date = work.publication_date
+
+    if with_date and publication_date:
+        if friendly_date:
+            publication_date = date_format(publication_date, 'j E Y')
+
+        if name and number:
+            # Published in Government Gazette 12345 on 1 January 2009
+            event.description = _('Published in %(name)s %(number)s on %(date)s') % {
+                'name': name, 'number': number, 'date': publication_date
+            }
+        elif name or number:
+            # Published in Government Gazette on 1 January 2009; or
+            # Published in 12345 on 1 January 2009
+            event.description = _('Published in %(name)s on %(date)s') % {
+                'name': name or number, 'date': publication_date
+            }
+        else:
+            # Published on 1 January 2009
+            event.description = _('Published on %(date)s') % {
+                'date': publication_date
+            }
+
+    elif name and number:
+        # Published in Government Gazette 12345
+        event.description = _('Published in %(name)s %(number)s') % {
+            'name': name, 'number': number
+        }
+
+    elif name or number:
+        # Published in Government Gazette; or
+        # Published in 12345
+        event.description = _('Published in %(name)s') % {
+            'name': name or number
+        }
+
+    elif placeholder:
+        event.description = _('Published')
+
+    # don't return anything if there's no description
+    if event.description:
+        return event
+
+
 def get_timeline(work):
     """ Returns a list of TimelineEvent objects, each describing a date on the timeline of a work.
     """
@@ -126,7 +179,7 @@ def get_timeline(work):
             entry.events.append(TimelineEvent(type='assent', description=_('Assented to')))
         # publication
         if date == work.publication_date:
-            entry.events.append(TimelineEvent(type='publication', description=_('Published')))
+            entry.events.append(describe_publication_event(work, with_date=False, placeholder=True))
 
         # amendment
         for amendment in amendments:

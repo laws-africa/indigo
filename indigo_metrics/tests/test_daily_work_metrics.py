@@ -7,7 +7,7 @@ from indigo_metrics.models import WorkMetrics, DailyWorkMetrics
 
 
 class DailyWorkMetricsTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'drafts', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'drafts', 'published']
 
     def test_metrics(self):
         for work in Work.objects.all():

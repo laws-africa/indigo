@@ -7,7 +7,7 @@ from indigo_api.models import Work, Document
 
 
 class CommencementsTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'published', 'drafts', 'commencements']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'drafts', 'commencements']
 
     def setUp(self):
         self.work = Work.objects.get(id=11)

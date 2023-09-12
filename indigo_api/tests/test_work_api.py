@@ -10,7 +10,7 @@ from indigo_api.models import Work
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class WorkAPITest(APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'drafts', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'drafts', 'published']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')

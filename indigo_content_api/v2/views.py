@@ -156,7 +156,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format
         # doesn't match a renderer
-        return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
+        return super().perform_content_negotiation(request, force=True)
 
     def get(self, request, **kwargs):
         if self.frbr_uri:

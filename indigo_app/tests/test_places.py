@@ -5,7 +5,7 @@ from django_webtest import WebTest
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class PlacesTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -47,7 +47,7 @@ class PlacesTest(testcases.TestCase):
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class PlacesWebTest(WebTest):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'tasks']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

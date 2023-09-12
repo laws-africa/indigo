@@ -394,7 +394,7 @@ class TOCBuilderBaseTestCase(TestCase):
 
 
 class TOCBuilderAPITestCase(APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work']
 
     def setUp(self):
         self.toc = TOCBuilderBase()

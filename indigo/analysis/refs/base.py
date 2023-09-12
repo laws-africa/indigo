@@ -17,12 +17,12 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         """
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         self.document = document
         self.frbr_uri = document.doc.frbr_uri
         self.setup(root)
         self.markup_patterns(root)
-        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        document.content = etree.tostring(root, encoding='unicode')
 
     def is_valid(self, node, match):
         if self.make_href(match) != self.frbr_uri.work_uri():
@@ -199,10 +199,10 @@ class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):
         """
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         self.setup(root)
         self.markup_patterns(root)
-        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        document.content = etree.tostring(root, encoding='unicode')
 
     def is_valid(self, node, match):
         return self.find_target(node, match) is not None

@@ -14,14 +14,19 @@ from schemas import AkomaNtoso30
 
 @dataclass
 class ProvisionRef:
+    """A single provision reference.
+
+    For "Section 32(a)(i) and (b)", this represents "(a)(i)".
+    """
     # text of the matched reference
     text: str
     # start and end positions of the matched reference
     start_pos: int
     end_pos: int
     # "and_or", "range"
-    separator: str = None
-    children: List['ProvisionRef'] = None
+    separator: Union[str, None] = None
+    # the next ref in the chain, eg "(i)" for "(a)(i)"
+    child: 'ProvisionRef' = None
     element: Union[Element, None] = None
     # eId of the matched element
     eId: Union[str, None] = None
@@ -29,9 +34,19 @@ class ProvisionRef:
 
 @dataclass
 class MainProvisionRef:
-    # text of the matched reference
+    """The root of a series of references.
+
+    For "Section 32(a) and (b)", this represents "Section 32(a)".
+    - name: Section
+    - ref: ProvisionRef("32", ..., ProvisionRef("(a)", ...))
+    - sub_refs: ProvisionRef("(b)", ...)
+    """
+    # eg "section" or "part"
     name: str
+    # the primary ref
     ref: ProvisionRef
+    # secondary refs that are resolved relative to the primary
+    sub_refs: List[ProvisionRef] = None
 
 
 class ProvisionRefsResolver:
@@ -57,26 +72,24 @@ class ProvisionRefsResolver:
 
         if ref.element is not None:
             ref.eId = ref.element.get('eId')
+            # resolve the children of the main ref
+            if ref.child:
+                self.resolve_ref(ref.child, [ref.element])
 
-            # resolve the rest of first ref
-            if ref.children:
-                self.resolve_ref(ref.children[0], [ref.element])
-
-                # now do the rest relative to this first ref
-
+            if main_ref.sub_refs:
                 # First, we need the elements of all children in the first ref, to use as candidate root elements
                 # when resolving the rest of the refs. This means, in the example above, that "(b)" is resolved
                 # against "32(1)", then "32", until successful.
                 r = ref
-                roots = [r.element]
-                while r and r.children:
-                    roots.append(r.children[0])
-                    r = r.children[0]
+                roots = []
+                while r and r.element is not None:
+                    roots.append(r.element)
+                    r = r.child
                 if len(roots) > 1:
                     # discard the last element, because we want to resolve "(b)" against "32(1)" not "32(1)(a)"
                     roots = roots[:-1]
 
-                for kid in ref.children[1:]:
+                for kid in main_ref.sub_refs:
                     self.resolve_ref(kid, roots)
 
     def resolve_ref(self, ref, roots, names=None):
@@ -88,8 +101,8 @@ class ProvisionRefsResolver:
 
         if ref.element is not None:
             ref.eId = ref.element.get('eId')
-            for kid in ref.children or []:
-                self.resolve_ref(kid, [ref.element])
+            if ref.child:
+                self.resolve_ref(ref.child, [ref.element])
 
     def find_numbered_hier_element(self, root: Element, names: Union[List[str], None], num: str) -> Element:
         """Find an heir element with the given number. Looks for elements with the given names, or any hier element
@@ -124,10 +137,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         sections 18, 61 and 62(1).
         in terms of section 2 or 7
         A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.
-
-        TODO: match subsections
-        TODO: match paragraphs
-        TODO: match ranges of sections
     """
     xml_marker_tag = "ref"
     xml_ancestor_xpath = '|'.join(f'//ns:{x}'
@@ -136,9 +145,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_re = re.compile(r'\bsections?\s+\d', re.IGNORECASE)
-
-    # TODO: bigger pattern
-    # TODO: individual parts of a big pattern
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None
@@ -171,35 +177,32 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # markup from right to left so that match offsets don't change
         markers = []
         for main_ref in reversed(main_refs):
-            marker = None
-            if main_ref.ref.children:
-                # there are children, eg "Section 32(a)(i), (b)" so mark them up right to left
-                for i, ref in enumerate(reversed(main_ref.ref.children)):
-                    # the leftmost child is marked up from the start of the main ref
-                    start = ref.start_pos if i < len(main_ref.ref.children) - 1 else main_ref.ref.start_pos
-                    marker = self.markup_ref(ref, href, start, offset, node, in_tail)
+            # if there are sub_refs, eg "Section 32(a)(i), (b)" mark them up right to left
+            if main_ref.sub_refs:
+                for ref in reversed(main_ref.sub_refs):
+                    marker = self.markup_ref(ref, href, ref.start_pos, offset, node, in_tail)
                     if marker is not None:
                         markers.append(marker)
 
-            if marker is None:
-                # no children, or none with eIds, eg. "Section 32", so just markup the main ref
-                marker = self.markup_ref(main_ref.ref, href, main_ref.ref.start_pos, offset, node, in_tail)
-                if marker is not None:
-                    markers.append(marker)
+            # mark up the main ref last
+            ref = main_ref.ref
+            marker = self.markup_ref(ref, href, ref.start_pos, offset, node, in_tail)
+            if marker is not None:
+                markers.append(marker)
 
         # return rightmost marker
         return next((m for m in markers if m is not None), None)
 
-    def markup_ref(self, ref, href, start, offset, node, in_tail):
+    def markup_ref(self, ref: ProvisionRef, href: str, start: int, offset: int, node: Element, in_tail: bool):
         eId = ref.eId
         last = ref
-        if ref.children:
+        if ref.child:
             # get the eId of the last descendant that has one
-            curr = ref.children[0]
+            curr = ref.child
             while curr and curr.eId:
                 eId = curr.eId
                 last = curr
-                curr = curr.children[0] if curr.children else None
+                curr = curr.child
 
         # markup text[start:ref.end_pos] with ref.eId
         if eId:
@@ -211,7 +214,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             wrap_text(node, in_tail, lambda t: marker, start, end)
             return marker
 
-    def parse_refs(self, text) -> Tuple[List[MainProvisionRef], any]:
+    def parse_refs(self, text: str) -> Tuple[List[MainProvisionRef], any]:
         result = parse_refs(text)
         return result["references"], result.get("target")
 
@@ -225,7 +228,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
         # TODO: implement this for HTML and text documents
-        # TODO: 'this'
         if not target or target == "this":
             # refs are to the local document
             return None, node.getroottree().getroot()
@@ -312,14 +314,12 @@ def parse_refs(text):
             return {'references': refs, 'target': target}
 
         def reference(self, input, start, end, elements):
-            # the reference has an anchor element
             ref = elements[2]
-            if isinstance(elements[4], list):
-                ref.children = elements[4]
-            return MainProvisionRef(
-                elements[0].text,
-                ref,
-            )
+            sub_refs = elements[4] if isinstance(elements[4], list) else None
+            if sub_refs:
+                ref.child = sub_refs[0]
+                sub_refs = sub_refs[1:]
+            return MainProvisionRef(elements[0].text, ref, sub_refs or None)
 
         def main_ref(self, input, start, end, elements):
             return ProvisionRef(input[start:end], start, end)
@@ -337,7 +337,7 @@ def parse_refs(text):
             # add the rest as children
             curr = first
             for item in elements[1].elements:
-                curr.children = [item.num]
+                curr.child = item.num
                 curr = item.num
             return first
 

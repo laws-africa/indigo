@@ -63,7 +63,7 @@ class ProvisionRefsResolverTestCase(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "Section",
-                ProvisionRef("3", 8, 9, children=[ProvisionRef("(a)", 9, 12)])
+                ProvisionRef("3", 8, 9, None, ProvisionRef("(a)", 9, 12))
             )
         ], self.resolver.resolve_references_str("Section 3(a)", self.doc))
 
@@ -72,36 +72,37 @@ class ProvisionRefsResolverTestCase(TestCase):
             MainProvisionRef(
                 "Section",
                 ProvisionRef(
-                    "1", 8, 9,
+                    "1", 8, 9, None,
+                    ProvisionRef(
+                        "(a)", 9, 12,
+                        element=self.doc.xpath('.//*[@eId="sec_1__subsec_a"]')[0],
+                        eId="sec_1__subsec_a"
+                    ),
                     element=self.doc.xpath('.//*[@eId="sec_1"]')[0],
                     eId="sec_1",
-                    children=[
-                        ProvisionRef(
-                            "(a)", 9, 12,
-                            element=self.doc.xpath('.//*[@eId="sec_1__subsec_a"]')[0],
-                            eId="sec_1__subsec_a"),
-                    ]))
+                )
+            )
         ], self.resolver.resolve_references_str("Section 1(a)", self.doc))
 
         self.assertEqual([
             MainProvisionRef(
                 "Section",
                 ProvisionRef(
-                    "2", 8, 9,
+                    "2", 8, 9, None,
+                    ProvisionRef(
+                        "(a)", 9, 12, None,
+                        ProvisionRef(
+                            "(2)", 12, 15,
+                            element=self.doc.xpath('.//*[@eId="sec_2__subsec_a__para_2"]')[0],
+                            eId="sec_2__subsec_a__para_2"
+                        ),
+                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
+                        eId="sec_2__subsec_a",
+                    ),
                     element=self.doc.xpath('.//*[@eId="sec_2"]')[0],
                     eId="sec_2",
-                    children=[
-                        ProvisionRef(
-                            "(a)", 9, 12,
-                            element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
-                            eId="sec_2__subsec_a",
-                            children=[
-                                ProvisionRef(
-                                    "(2)", 12, 15,
-                                    element=self.doc.xpath('.//*[@eId="sec_2__subsec_a__para_2"]')[0],
-                                    eId="sec_2__subsec_a__para_2"),
-                            ])
-                    ]))
+                )
+            )
         ], self.resolver.resolve_references_str("Section 2(a)(2)", self.doc))
 
     def test_nested_truncated(self):
@@ -109,17 +110,17 @@ class ProvisionRefsResolverTestCase(TestCase):
             MainProvisionRef(
                 "Section",
                 ProvisionRef(
-                    "2", 8, 9,
+                    "2", 8, 9, None,
+                    ProvisionRef(
+                        "(a)", 9, 12, None,
+                        ProvisionRef("(8)", 12, 15),
+                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
+                        eId="sec_2__subsec_a",
+                    ),
                     element=self.doc.xpath('.//*[@eId="sec_2"]')[0],
                     eId="sec_2",
-                    children=[
-                        ProvisionRef(
-                            "(a)", 9, 12,
-                            element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
-                            eId="sec_2__subsec_a",
-                            children=[ProvisionRef("(8)", 12, 15)]
-                        )
-                    ]))
+                )
+            )
         ], self.resolver.resolve_references_str("Section 2(a)(8)", self.doc))
 
 
@@ -396,27 +397,29 @@ class RefsGrammarTest(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "Section",
-                ProvisionRef("1.2", 8, 11, children=[
-                    ProvisionRef("(1)", 11, 14, children=[
+                ProvisionRef("1.2", 8, 11, None,
+                    ProvisionRef("(1)", 11, 14, None,
                         ProvisionRef("(a)", 14, 17)
-                    ]),
+                    ),
+                ),
+                [
                     ProvisionRef("(c)", 18, 21, "and_or"),
                     ProvisionRef("(e)", 25, 28, "range"),
-                    ProvisionRef("(f)", 30, 33, "and_or", [
+                    ProvisionRef("(f)", 30, 33, "and_or",
                         ProvisionRef("(ii)", 33, 37),
-                    ]),
+                    ),
                     ProvisionRef("(2)", 42, 45, "and_or"),
-                    ProvisionRef("(3)", 51, 54, "and_or", [
+                    ProvisionRef("(3)", 51, 54, "and_or",
                         ProvisionRef("(g)", 54, 57),
-                    ]),
+                    ),
                     ProvisionRef("(h)", 58, 61, "and_or"),
                 ]
-            )),
+            ),
             MainProvisionRef(
                 "section",
-                ProvisionRef("32", 74, 76, children=[
+                ProvisionRef("32", 74, 76, None,
                     ProvisionRef("(a)", 76, 79),
-                ]),
+                ),
             )
         ], result['references'])
         self.assertIsNone(result["target"])
@@ -424,18 +427,18 @@ class RefsGrammarTest(TestCase):
     def test_multiple_mains(self):
         result = parse_refs("Section 2(1), section 3(b) and section 32(a)")
         self.assertEqual([
-            MainProvisionRef('Section', ProvisionRef('2', 8, 9, children=[ProvisionRef('(1)', 9, 12)])),
-            MainProvisionRef('section', ProvisionRef('3', 22, 23, children=[ProvisionRef('(b)', 23, 26)])),
-            MainProvisionRef('section', ProvisionRef('32', 39, 41, children=[ProvisionRef('(a)', 41, 44)]))
+            MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
+            MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
+            MainProvisionRef('section', ProvisionRef('32', 39, 41, None, ProvisionRef('(a)', 41, 44)))
         ], result['references'])
         self.assertIsNone(result["target"])
 
     def test_multiple_mains_target(self):
         result = parse_refs("Section 2(1), section 3(b) and section 32(a) of another Act")
         self.assertEqual([
-            MainProvisionRef('Section', ProvisionRef('2', 8, 9, children=[ProvisionRef('(1)', 9, 12)])),
-            MainProvisionRef('section', ProvisionRef('3', 22, 23, children=[ProvisionRef('(b)', 23, 26)])),
-            MainProvisionRef('section', ProvisionRef('32', 39, 41, children=[ProvisionRef('(a)', 41, 44)]))
+            MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
+            MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
+            MainProvisionRef('section', ProvisionRef('32', 39, 41, None, ProvisionRef('(a)', 41, 44)))
         ], result['references'])
         self.assertEqual("of", result["target"])
 

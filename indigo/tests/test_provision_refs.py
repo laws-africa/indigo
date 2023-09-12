@@ -253,12 +253,12 @@ class ProvisionRefsMatechTestCase(TestCase):
               <num>7.</num>
               <heading>Active ref heading</heading>
               <content>
-                <p>As given in <ref href="/akn/za/act/2009/1/~sec_26">section 26</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
-                <p>As <b>given</b> in <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">section 26(a)</ref>, of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
-                <p>As given in <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_1">section 26(a)(1)</ref>(iii), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">section 26(a)(2)</ref>(iii)(bb) thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">section 26(b)</ref>(b)(iii)(dd)(A), thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail <ref href="/akn/za/act/2009/1/~sec_31">section 31</ref>, thereof.</p>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
+                <p>As <b>given</b> in section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">26(a)</ref>, of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_1">26(a)(1)</ref>(iii), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, thereof.</p>
               </content>
             </section>
         """))
@@ -326,11 +326,11 @@ class ProvisionRefsMatechTestCase(TestCase):
               <num>7.</num>
               <heading>Active ref heading</heading>
               <content>
-                <p>As given in <ref href="/akn/za/act/2009/1/~sec_26">section 26</ref> and <ref href="/akn/za/act/2009/1/~sec_26__sec_a">section 26(a)</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
-                <p>As <b>given</b> in <ref href="/akn/za/act/2009/1/~sec_26">section 26(a)</ref> and <ref href="/akn/za/act/2009/1/~sec_26">section 31</ref>(c), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <ref href="/akn/za/act/2009/1/~sec_26__sec_a">section 26(a)(2)</ref>(iii)(bb), also <ref href="/akn/za/act/2009/1/~sec_31">section 31</ref> thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> <ref href="/akn/za/act/2009/1/~sec_26">section 26(b)</ref>(b)(iii)(dd)(A) and also <ref href="/akn/za/act/2009/1/~sec_31">section 31</ref>(a), thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <ref href="/akn/za/act/2009/1/~sec_26__sec_b">section 26(b)</ref>(b)(iii)(dd)(A) and <b>also</b> <ref href="/akn/za/act/2009/1/~sec_31">section 31</ref>(a), thereof.</p>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_a">26(a)</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
+                <p>As <b>given</b> in section <ref href="/akn/za/act/2009/1/~sec_26">26(a)</ref> and <ref href="/akn/za/act/2009/1/~sec_26">31</ref>(c), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_a">26(a)(2)</ref>(iii)(bb), also section <ref href="/akn/za/act/2009/1/~sec_31">31</ref> thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> section <ref href="/akn/za/act/2009/1/~sec_26">26(b)</ref>(b)(iii)(dd)(A) and also section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a), thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_b">26(b)</ref>(b)(iii)(dd)(A) and <b>also</b> section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a), thereof.</p>
               </content>
             </section>
         """))

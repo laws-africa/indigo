@@ -75,7 +75,7 @@ class ParseBluebellText(Stage):
             # TODO: use a partial document from Cobalt?
             ns = AKN_NAMESPACES[DEFAULT_VERSION]
             xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
-            xml = etree.fromstring(xml)
+            xml = etree.fromstring(xml.encode('utf-8'))
 
         context.xml = xml
 

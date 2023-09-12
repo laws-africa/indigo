@@ -314,9 +314,9 @@ class ProvisionRefsMatechTestCase(TestCase):
               <content>
                 <p>As given in section 26 and section 26(a) of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
                 <p>As <b>given</b> in section 26(a) and section 31(c), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(a)(2)(iii)(bb), also section 31 thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> section 26(b)(b)(iii)(dd)(A) and also section 31(a), thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(b)(b)(iii)(dd)(A) and <b>also</b> section 31(a), thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(a)(2)(iii)(bb), and section 31 thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> section 26(b)(b)(iii)(dd)(A) and section 31(a), thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(b)(b)(iii)(dd)(A) and section 31(a) thereof.</p>
               </content>
             </section>
         """))
@@ -326,11 +326,11 @@ class ProvisionRefsMatechTestCase(TestCase):
               <num>7.</num>
               <heading>Active ref heading</heading>
               <content>
-                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_a">26(a)</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
-                <p>As <b>given</b> in section <ref href="/akn/za/act/2009/1/~sec_26">26(a)</ref> and <ref href="/akn/za/act/2009/1/~sec_26">31</ref>(c), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_a">26(a)(2)</ref>(iii)(bb), also section <ref href="/akn/za/act/2009/1/~sec_31">31</ref> thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> section <ref href="/akn/za/act/2009/1/~sec_26">26(b)</ref>(b)(iii)(dd)(A) and also section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a), thereof.</p>
-                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__sec_b">26(b)</ref>(b)(iii)(dd)(A) and <b>also</b> section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a), thereof.</p>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">26(a)</ref> of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>.</p>
+                <p>As <b>given</b> in section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">26(a)</ref> and section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(c), of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> blah.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb), and section <ref href="/akn/za/act/2009/1/~sec_31">31</ref> thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> <b>and</b> section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A) and section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a), thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A) and section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a) thereof.</p>
               </content>
             </section>
         """))
@@ -419,3 +419,41 @@ class RefsGrammarTest(TestCase):
                 ]),
             )
         ], result['references'])
+        self.assertIsNone(result["target"])
+
+    def test_multiple_mains(self):
+        result = parse_refs("Section 2(1), section 3(b) and section 32(a)")
+        self.assertEqual([
+            MainProvisionRef('Section', ProvisionRef('2', 8, 9, children=[ProvisionRef('(1)', 9, 12)])),
+            MainProvisionRef('section', ProvisionRef('3', 22, 23, children=[ProvisionRef('(b)', 23, 26)])),
+            MainProvisionRef('section', ProvisionRef('32', 39, 41, children=[ProvisionRef('(a)', 41, 44)]))
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
+    def test_multiple_mains_target(self):
+        result = parse_refs("Section 2(1), section 3(b) and section 32(a) of another Act")
+        self.assertEqual([
+            MainProvisionRef('Section', ProvisionRef('2', 8, 9, children=[ProvisionRef('(1)', 9, 12)])),
+            MainProvisionRef('section', ProvisionRef('3', 22, 23, children=[ProvisionRef('(b)', 23, 26)])),
+            MainProvisionRef('section', ProvisionRef('32', 39, 41, children=[ProvisionRef('(a)', 41, 44)]))
+        ], result['references'])
+        self.assertEqual("of", result["target"])
+
+    def test_target(self):
+        result = parse_refs("Section 2 of this Act")
+        self.assertEqual("this", result["target"])
+
+        result = parse_refs("Section 2, of this Act")
+        self.assertEqual("this", result["target"])
+
+        result = parse_refs("Section 2 thereof")
+        self.assertEqual("thereof", result["target"])
+
+        result = parse_refs("Section 2, thereof and some")
+        self.assertEqual("thereof", result["target"])
+
+        result = parse_refs("Section 2 of the Act")
+        self.assertEqual("of", result["target"])
+
+        result = parse_refs("Section 2, of the Act with junk")
+        self.assertEqual("of", result["target"])

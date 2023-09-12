@@ -1,5 +1,5 @@
 grammar Refs
-  root        <- reference (and_or reference)* of? %root
+  root        <- reference (and_or reference)* target? .* %root
 
                  # section 32
                  # section (a)
@@ -34,13 +34,20 @@ grammar Refs
                  # (a) and (b)
                  # (a), or (b)
                  # (a), (b)
-  and_or      <- ((WS* comma)? WS+ _and WS+) %and_or
-                 / ((WS* comma)? WS+ _or WS+) %and_or
+  and_or      <- ((WS* comma)? WS* _and WS+) %and_or
+                 / ((WS* comma)? WS* _or WS+) %and_or
                  / (WS* comma WS*) %and_or
 
+  target      <- of_this / of / thereof
+
                  # of the Act
+  of_this     <- comma? WS* "of this" WS+ %of_this
+
+                 # of the Act
+  of          <- comma? WS* "of" WS+ %of
+
                  # thereof
-  of          <- WS+ ("of" / "thereof") WS+ %of
+  thereof     <- comma? WS* "thereof" %thereof
 
   # --------
   # terminals

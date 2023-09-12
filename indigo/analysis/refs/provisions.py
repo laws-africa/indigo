@@ -132,32 +132,10 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     xml_marker_tag = "ref"
     xml_ancestor_xpath = '|'.join(f'//ns:{x}'
                                   for x in ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'judgmentBody', 'conclusions'])
-    xml_candidate_xpath = ".//text()[not(ancestor::ns:ref)]"
+    xml_candidate_xpath = ".//text()[not(ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num)]"
 
-    pattern_re = re.compile(
-        r'''\b
-        (
-          (?P<ref>
-            (?<!-)sections?\s+
-            (?P<num>\d+[A-Z0-9]*)    # first section number, including subsections
-          )
-          (
-            (\s*(,|and|or))*         # list separators
-            (\s*\([A-Z0-9]+\))+      # bracketed subsections of first number
-          )*
-          (\s*                       # optional list of sections
-            (\s*(,|and|or))*         # list separators
-            (
-              \s*\d+[A-Z0-9]*(
-                (\s*(,|and|or))*     # list separators
-                (\s*\([A-Z0-9]+\))+
-              )*
-            )
-          )*
-        )
-        (?P<tail>(\s*,)?\s+(of(\s+this)?\s+|thereof))?
-        ''',
-        re.X | re.IGNORECASE)
+    # this just finds the start of a potential match, the grammar looks for the rest
+    pattern_re = re.compile(r'\bsections?\s+\d', re.IGNORECASE)
 
     # TODO: bigger pattern
     # TODO: individual parts of a big pattern
@@ -174,10 +152,10 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     def handle_node_match(self, node, match, in_tail):
         # TODO: implement this for HTML and text documents
         # parse the text into a list of refs using our grammar
-        main_refs, target = self.parse_refs(match.group(0))
+        main_refs, target = self.parse_refs(match.string[match.start():])
 
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target(node, match, in_tail, main_refs)
+        target_frbr_uri, target_root = self.get_target(node, match, in_tail, target)
         if target_root is None:
             # no target, so we can't do anything
             return None
@@ -193,6 +171,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # markup from right to left so that match offsets don't change
         markers = []
         for main_ref in reversed(main_refs):
+            marker = None
             if main_ref.ref.children:
                 # there are children, eg "Section 32(a)(i), (b)" so mark them up right to left
                 for i, ref in enumerate(reversed(main_ref.ref.children)):
@@ -201,8 +180,9 @@ class ProvisionRefsMatcher(TextPatternMatcher):
                     marker = self.markup_ref(ref, href, start, offset, node, in_tail)
                     if marker is not None:
                         markers.append(marker)
-            else:
-                # no children, eg. "Section 32", so just markup the main ref
+
+            if marker is None:
+                # no children, or none with eIds, eg. "Section 32", so just markup the main ref
                 marker = self.markup_ref(main_ref.ref, href, main_ref.ref.start_pos, offset, node, in_tail)
                 if marker is not None:
                     markers.append(marker)
@@ -235,7 +215,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         result = parse_refs(text)
         return result["references"], result.get("target")
 
-    def get_target(self, node: Element, match: re.Match, in_tail: bool, refs) -> (Union[str, None], Union[Element, None]):
+    def get_target(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
         root XML element of the document to use to resolve the references.
 
@@ -244,15 +224,13 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         - section 26(a) and (c) of Act 5 of 2009, ...
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
-        # TODO: sort out the target
         # TODO: implement this for HTML and text documents
-        # get the trailing text at the end of the match
-        tail = match['tail']
-        if not tail or 'this' in tail:
+        # TODO: 'this'
+        if not target or target == "this":
             # refs are to the local document
             return None, node.getroottree().getroot()
 
-        if 'thereof' in tail:
+        if target == "thereof":
             # look backwards
             if in_tail:
                 # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
@@ -330,7 +308,7 @@ def parse_refs(text):
         def root(self, input, start, end, elements):
             refs = [elements[0]]
             refs.extend(e.elements[1] for e in elements[1].elements)
-            target = elements[2].elements[0] if elements[2].elements else None
+            target = elements[2] if not hasattr(elements[2], 'elements') else None
             return {'references': refs, 'target': target}
 
         def reference(self, input, start, end, elements):
@@ -372,8 +350,14 @@ def parse_refs(text):
         def and_or(self, input, start, end, elements):
             return "and_or"
 
+        def of_this(self, input, start, end, elements):
+            return "this"
+
         def of(self, input, start, end, elements):
             return "of"
+
+        def thereof(self, input, start, end, elements):
+            return "thereof"
 
 
     return parse(text, Actions())

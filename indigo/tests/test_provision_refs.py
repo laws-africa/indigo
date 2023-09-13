@@ -290,6 +290,68 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_local_ambiugous_levels(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section 26(a)(1) and (2), blah.</p>
+                <p>As given in section 26(a)(1) and (b), blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section <ref href="#sec_26__subsec_a__para_1">26(a)(1)</ref> and <ref href="#sec_26__subsec_a__para_2">(2)</ref>, blah.</p>
+                <p>As given in section <ref href="#sec_26__subsec_a__para_1">26(a)(1)</ref> and <ref href="#sec_26__subsec_b">(b)</ref>, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_local_sections_af(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">

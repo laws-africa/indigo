@@ -340,6 +340,12 @@ class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
     locale = (None, 'eng', None)
 
 
+@plugins.register('internal-refs')
+class ProvisionRefsFinderAFR(BaseProvisionRefsFinder):
+    # country, language, locality
+    locale = (None, 'afr', None)
+
+
 def parse_provision_refs(text):
     class Actions:
         def root(self, input, start, end, elements):

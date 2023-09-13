@@ -345,21 +345,35 @@ class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
 def parse_provision_refs(text):
     class Actions:
         def root(self, input, start, end, elements):
-            refs = [elements[0]]
-            refs.extend(e.elements[1] for e in elements[1].elements)
+            refs = elements[0]
+            for main_refs in elements[1].elements:
+                refs.extend(main_refs.references)
             target = elements[2] if not hasattr(elements[2], 'elements') else None
             return {'references': refs, 'target': target}
 
-        def reference(self, input, start, end, elements):
-            ref = elements[2]
-            sub_refs = elements[4] if isinstance(elements[4], list) else None
+        def references(self, input, start, end, elements):
+            refs = [elements[2]]
+            refs.extend(e.elements[1] for e in elements[3].elements)
+            for r in refs:
+                r.name = elements[0].text
+            return refs
+
+        def main_ref(self, input, start, end, elements):
+            ref = elements[0]
+            sub_refs = elements[2] if isinstance(elements[2], list) else None
             if sub_refs:
                 ref.child = sub_refs[0]
                 sub_refs = sub_refs[1:]
-            return MainProvisionRef(elements[0].text, ref, sub_refs or None)
+            return MainProvisionRef("", ref, sub_refs or None)
 
-        def main_ref(self, input, start, end, elements):
-            return ProvisionRef(input[start:end], start, end)
+        def main_num(self, input, start, end, elements):
+            text = input[start:end]
+            # strip right trailing dots
+            if text.endswith("."):
+                stripped = text[:-1]
+                end = end - (len(text) - len(stripped))
+                text = stripped
+            return ProvisionRef(text, start, end)
 
         def sub_refs(self, input, start, end, elements):
             refs = [elements[0]]

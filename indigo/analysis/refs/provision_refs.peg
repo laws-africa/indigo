@@ -1,18 +1,26 @@
 grammar ProvisionRefs
-  root        <- reference (and_or reference)* target? .* %root
+  # This grammar matches runs of references, such as:
+  #   Section 32(a), (b) and (f)(ii), 33 and chapter 4 of the Act
+  #
+  # The main reference is the "section 32" or "chapter 4", and form the root used by
+  # the subsequent references.
+
+  root        <- references (and_or references)* target? .* %root
 
                  # section 32
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  reference   <- unit WS+ main_ref WS* sub_refs? %reference
+  references  <- unit WS+ main_ref (and_or main_ref)* %references
 
   unit        <- unit_en / unit_af
+
+  main_ref    <- main_num WS* sub_refs? %main_ref
 
                  # section 32
                  # section 32A
                  # section 32.1a.2
-  main_ref    <- digit alpha_num_dot* %main_ref
+  main_num    <- digit alpha_num_dot* %main_num
 
                  # (a)(ii) to (iv)
                  # (a), (b) and (f)(ii)
@@ -56,23 +64,23 @@ grammar ProvisionRefs
   # --------
 
                  # english
-  unit_en     <- `article` / `articles` /
-                 `chapter` / `chapters` /
-                 `item` / `items` /
-                 `paragraph` / `paragraphs` /
-                 `point` / `points` /
-                 `section` / `sections` /
-                 `subparagraph` / `subparagraphs` /
-                 `subsection` / `subsections`
+  unit_en     <- `articles` / `article` /
+                 `chapters` / `chapter` /
+                 `items` / `item` /
+                 `paragraphs` / `paragraph` /
+                 `points` / `point` /
+                 `sections` / `section` /
+                 `subparagraphs` / `subparagraph` /
+                 `subsections` / `subsection`
 
                  # afrikaans
-  unit_af     <- `afdeling` / `afdelings` /
-                 `artikel` / `artikels`
-                 `hoofstuk` / `hoofstukke` /
-                 `paragraaf` / `paragrawe` /
-                 `punt` / `punte` /
-                 `subafdeling` / `subafdelings` /
-                 `subparagraaf` / `subparagrawe`
+  unit_af     <- `afdelings` / `afdeling` /
+                 `artikels` / `artikel`
+                 `hoofstukke` / `hoofstuk` /
+                 `paragrawe` / `paragraaf` /
+                 `punte` / `punt` /
+                 `subafdelings` / `subafdeling` /
+                 `subparagrawe` / `subparagraaf`
 
   _and        <- and_en / and_af
   and_en      <- `and`

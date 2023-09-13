@@ -238,6 +238,17 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As given in section <ref href="#sec_26B">26B</ref>, blah.</p>
                 <p>As given in section <ref href="#sec_26">26</ref> and section <ref href="#sec_31">31</ref>, blah.</p>
                 <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref> and <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref>, <ref href="#sec_26B">26B</ref>, 30 and <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in section <ref href="#sec_26">26</ref> or <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref> or <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref>, 30(1) and <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref>, 30 (1) and <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in sections <ref href="#sec_26__subsec_b">26(b)</ref>, 30(1) or <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As given in section <ref href="#sec_26__subsec_b">26 (b)</ref>, 30 (1) or <ref href="#sec_31">31</ref>, blah.</p>
+                <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, 30 and <ref href="#sec_31">31</ref>.</p>
+                <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -643,16 +654,16 @@ class ProvisionRefsMatcherTestCase(TestCase):
             <num>7.</num>
             <heading>Active ref heading</heading>
             <content>
-              <p>As given in <ref href="#sec_26">section 26</ref>(1), blah.</p>
-              <p>As given in <ref href="#sec_26">section 26</ref> (1), blah.</p>
-              <p>As given in <ref href="#sec_26">section 26</ref>(1), (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">section 26</ref> (1), (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">sections 26</ref>(1), (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">sections 26</ref> (1), (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">section 26</ref> (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">section 26</ref>(2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">sections 26</ref> (2) and (3), blah.</p>
-              <p>As given in <ref href="#sec_26">sections 26</ref>(2) and (3), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref>(1), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref> (1), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref>(1), (2) and (3), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref> (1), (2) and (3), blah.</p>
+              <p>As given in sections <ref href="#sec_26">26</ref>(1), (2) and (3), blah.</p>
+              <p>As given in sections <ref href="#sec_26">26</ref> (1), (2) and (3), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref> (2) and (3), blah.</p>
+              <p>As given in section <ref href="#sec_26">26</ref>(2) and (3), blah.</p>
+              <p>As given in sections <ref href="#sec_26">26</ref> (2) and (3), blah.</p>
+              <p>As given in sections <ref href="#sec_26">26</ref>(2) and (3), blah.</p>
               <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1), (2) and (3), <ref href="#sec_6">6</ref>(3) and <ref href="#sec_10">10</ref>(1) and (2) is guilty of an offence.</p>
               <p>Subject to sections <ref href="#sec_1">1</ref>(4) and (5) and <ref href="#sec_4">4</ref>(6), no person is guilty of an offence.</p>
               <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1) and (2), <ref href="#sec_6">6</ref>(3), <ref href="#sec_10">10</ref>(1) and (2), <ref href="#sec_11">11</ref>(1), <ref href="#sec_12">12</ref>(1), <ref href="#sec_19">19</ref>(1), <ref href="#sec_19">19</ref>(3), <ref href="#sec_20">20</ref>(1), <ref href="#sec_20">20</ref>(2), <ref href="#sec_21">21</ref>(1), <ref href="#sec_22">22</ref>(1), <ref href="#sec_24">24</ref>(1), <ref href="#sec_25">25</ref>(3), (4) , (5) and (6) , <ref href="#sec_26">26</ref>(1), (2), (3) and (5), <ref href="#sec_28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
@@ -707,7 +718,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
         )
 
 
-class RefsGrammarTest(TestCase):
+class ProvisionRefsGrammarTest(TestCase):
     maxDiff = None
 
     def test_single(self):
@@ -716,6 +727,44 @@ class RefsGrammarTest(TestCase):
             MainProvisionRef(
                 "Section",
                 ProvisionRef("1", 8, 9)
+            )
+        ], result['references'])
+
+    def test_multiple_main_numbers(self):
+        result = parse_provision_refs("Section 1, 32 and 33")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1", 8, 9)
+            ),
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("32", 11, 13)
+            ),
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("33", 18, 20)
+            )
+        ], result['references'])
+
+    def test_multiple_main(self):
+        result = parse_provision_refs("Section 1 and section 2, section 3 and chapter 4")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1", 8, 9)
+            ),
+            MainProvisionRef(
+                "section",
+                ProvisionRef("2", 22, 23)
+            ),
+            MainProvisionRef(
+                "section",
+                ProvisionRef("3", 33, 34)
+            ),
+            MainProvisionRef(
+                "chapter",
+                ProvisionRef("4", 47, 48)
             )
         ], result['references'])
 
@@ -751,7 +800,7 @@ class RefsGrammarTest(TestCase):
         self.assertIsNone(result["target"])
 
     def test_mixed_af(self):
-        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdeling 32(a)")
+        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdelings 32(a)")
         self.assertEqual([
             MainProvisionRef(
                 "Afdeling",
@@ -771,9 +820,9 @@ class RefsGrammarTest(TestCase):
                 ]
             ),
             MainProvisionRef(
-                "afdeling",
-                ProvisionRef("32", 74, 76, None,
-                    ProvisionRef("(a)", 76, 79),
+                "afdelings",
+                ProvisionRef("32", 75, 77, None,
+                    ProvisionRef("(a)", 77, 80),
                 ),
             )
         ], result['references'])
@@ -788,12 +837,26 @@ class RefsGrammarTest(TestCase):
         ], result['references'])
         self.assertIsNone(result["target"])
 
-    def test_multiple_mains_target(self):
-        result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a) of another Act")
+        result = parse_provision_refs("Sections 26 and 31")
         self.assertEqual([
-            MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
-            MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
-            MainProvisionRef('section', ProvisionRef('32', 39, 41, None, ProvisionRef('(a)', 41, 44)))
+            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
+            MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
+        result = parse_provision_refs("Sections 26 and 31.")
+        self.assertEqual([
+            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
+            MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
+    def test_multiple_mains_target(self):
+        result = parse_provision_refs("Sections 2(1), section 3(b) and section 32(a) of another Act")
+        self.assertEqual([
+            MainProvisionRef('Sections', ProvisionRef('2', 9, 10, None, ProvisionRef('(1)', 10, 13))),
+            MainProvisionRef('section', ProvisionRef('3', 23, 24, None, ProvisionRef('(b)', 24, 27))),
+            MainProvisionRef('section', ProvisionRef('32', 40, 42, None, ProvisionRef('(a)', 42, 45)))
         ], result['references'])
         self.assertEqual("of", result["target"])
 

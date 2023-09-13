@@ -192,7 +192,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         self.document_queryset = Document.objects.undeleted()
 
     def handle_node_match(self, node, match, in_tail):
-        # TODO: implement this for HTML and text documents
         # parse the text into a list of refs using our grammar
         try:
             main_refs, target = self.parse_refs(match.string[match.start():])
@@ -266,7 +265,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         - section 26(a) and (c) of Act 5 of 2009, ...
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
-        # TODO: implement this for HTML and text documents
         if not target or target == "this":
             # refs are to the local document
             return None, node.getroottree().getroot()

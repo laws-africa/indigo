@@ -10,6 +10,7 @@ from docpipe.matchers import TextPatternMatcher
 from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
+from indigo.analysis.refs.provision_refs import parse, ParseError
 
 
 @dataclass
@@ -89,7 +90,7 @@ class ProvisionRefsResolver:
 
     def resolve_references_str(self, text: str, root: Element):
         """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
-        refs = parse_refs(text)["references"]
+        refs = parse_provision_refs(text)["references"]
         for ref in refs:
             self.resolve_references(ref, root)
         return refs
@@ -193,7 +194,10 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     def handle_node_match(self, node, match, in_tail):
         # TODO: implement this for HTML and text documents
         # parse the text into a list of refs using our grammar
-        main_refs, target = self.parse_refs(match.string[match.start():])
+        try:
+            main_refs, target = self.parse_refs(match.string[match.start():])
+        except ParseError:
+            return None
 
         # work out if the target document is this one, or another one
         target_frbr_uri, target_root = self.get_target(node, match, in_tail, target)
@@ -250,7 +254,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             return marker
 
     def parse_refs(self, text: str) -> Tuple[List[MainProvisionRef], any]:
-        result = parse_refs(text)
+        result = parse_provision_refs(text)
         return result["references"], result.get("target")
 
     def get_target(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
@@ -338,9 +342,7 @@ class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
     locale = (None, 'eng', None)
 
 
-def parse_refs(text):
-    from .refs import parse
-
+def parse_provision_refs(text):
     class Actions:
         def root(self, input, start, end, elements):
             refs = [elements[0]]
@@ -393,6 +395,5 @@ def parse_refs(text):
 
         def thereof(self, input, start, end, elements):
             return "thereof"
-
 
     return parse(text, Actions())

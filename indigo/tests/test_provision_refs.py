@@ -5,7 +5,7 @@ from lxml import etree
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 
-from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_refs, MainProvisionRef
+from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_provision_refs, MainProvisionRef
 from indigo_api.tests.fixtures import document_fixture
 
 
@@ -124,7 +124,7 @@ class ProvisionRefsResolverTestCase(TestCase):
         ], self.resolver.resolve_references_str("Section 2(a)(8)", self.doc))
 
 
-class ProvisionRefsMatechTestCase(TestCase):
+class ProvisionRefsMatcherTestCase(TestCase):
     maxDiff = None
 
     def setUp(self):
@@ -180,6 +180,17 @@ class ProvisionRefsMatechTestCase(TestCase):
                 <p>As given in section 26B, blah.</p>
                 <p>As given in section 26 and section 31, blah.</p>
                 <p>As <i>given</i> in (we're now in a tail) section 26, blah.</p>
+                <p>As given in sections 26 and 31, blah.</p>
+                <p>As given in sections 26, 26B, 30 and 31, blah.</p>
+                <p>As given in section 26 or 31, blah.</p>
+                <p>As given in sections 26 or 31, blah.</p>
+                <p>As given in sections 26, 30(1) and 31, blah.</p>
+                <p>As given in sections 26, 30 (1) and 31, blah.</p>
+                <p>As given in sections 26(b), 30(1) or 31, blah.</p>
+                <p>As given in section 26 (b), 30 (1) or 31, blah.</p>
+                <p>As <i>given</i> in (we're now in a tail) section 26, 30 and 31.</p>
+                <p>under sections 26,30 or 31 of this Act, blah.</p>
+                <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -482,12 +493,225 @@ class ProvisionRefsMatechTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_section_invalid(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+          <section eId="sec_7">
+            <num>7.</num>
+            <heading>Active ref heading</heading>
+            <content>
+              <p>As given in section 25, which isn't in this document, blah.</p>
+              <p>In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>
+              <p>As given in section 26(1)(a) of Proclamation 9 of 1926, blah.</p>
+              <p>As per Proclamation 9 of 1926, as given in section 26 thereof, blah.</p>
+              <p>As per Proclamation 9 of 1926, as given in section 26 of that Proclamation, blah.</p>
+              <p>As per Act 9 of 2005, as given in section 26 of that Act, blah.</p>
+              <p>As given in section 26(1)(b)(iii)(dd)(A) of Act 5 of 2002, blah.</p>
+              <p>As given in section 26 of Act 5 of 2012, blah.</p>
+              <p>As given in section 26 of the Nursing Act, blah.</p>
+              <p>As given in section 26(b) of the Nursing Act, blah.</p>
+              <p>As given in section 26(b)(iii) of the Nursing Act, blah.</p>
+              <p>As given in section 26 (b) (iii) of the Nursing Act, blah.</p>
+              <p>As given in section 26(b)(iii)(bb) of the Nursing Act, blah.</p>
+              <p>As given in section 26(b)(iii)(aa)(A) of the Nursing Act, blah.</p>
+              <p>As given in section 26, 27 or 28(b) of the Nursing Act, blah.</p>
+              <p>As given in section 26 or 27 of the Nursing Act, blah.</p>
+              <p>As given in section 26(b)(iii)(1) of the Nursing Act, blah.</p>
+              <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah.</p>
+              <p>As <i>given</i> in (we're now in a tail) section 26 of the Nursing Act, blah.</p>
+              <p>As <i>given</i> in (we're now in a tail) sections 26, 27 and 28 of the Nursing Act, blah.</p>
+              <p>As given in section 26 of Cap. C38, blah.</p>
+              <p>As given in section 26 of the Criminal Code, blah.</p>
+              <p>As given in sub-section 1, blah.</p>
+            </content>
+          </section>
+          <section eId="sec_26">
+            <num>26.</num>
+            <heading>Important heading</heading>
+            <content>
+              <p>An important provision.</p>
+            </content>
+          </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            doc.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_section_edge(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+          <section eId="sec_1">
+            <num>1.</num>
+          </section>
+          <section eId="sec_2">
+            <num>2.</num>
+          </section>
+          <section eId="sec_3">
+            <num>3.</num>
+          </section>
+          <section eId="sec_4">
+            <num>4.</num>
+          </section>
+          <section eId="sec_5">
+            <num>5.</num>
+          </section>
+          <section eId="sec_6">
+            <num>6.</num>
+          </section>
+          <section eId="sec_7">
+            <num>7.</num>
+            <heading>Active ref heading</heading>
+            <content>
+              <p>As given in section 26(1), blah.</p>
+              <p>As given in section 26 (1), blah.</p>
+              <p>As given in section 26(1), (2) and (3), blah.</p>
+              <p>As given in section 26 (1), (2) and (3), blah.</p>
+              <p>As given in sections 26(1), (2) and (3), blah.</p>
+              <p>As given in sections 26 (1), (2) and (3), blah.</p>
+              <p>As given in section 26 (2) and (3), blah.</p>
+              <p>As given in section 26(2) and (3), blah.</p>
+              <p>As given in sections 26 (2) and (3), blah.</p>
+              <p>As given in sections 26(2) and (3), blah.</p>
+              <p>A person who contravenes sections 4(1), (2) and (3), 6(3) and 10(1) and (2) is guilty of an offence.</p>
+              <p>Subject to sections 1(4) and (5) and 4(6), no person is guilty of an offence.</p>
+              <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
+            </content>
+          </section>
+          <section eId="sec_10">
+            <num>10.</num>
+          </section>
+          <section eId="sec_11">
+            <num>11.</num>
+          </section>
+          <section eId="sec_12">
+            <num>12.</num>
+          </section>
+          <section eId="sec_19">
+            <num>19.</num>
+          </section>
+          <section eId="sec_20">
+            <num>20.</num>
+          </section>
+          <section eId="sec_21">
+            <num>21.</num>
+          </section>
+          <section eId="sec_22">
+            <num>22.</num>
+          </section>
+          <section eId="sec_24">
+            <num>24.</num>
+          </section>
+          <section eId="sec_25">
+            <num>25.</num>
+          </section>
+          <section eId="sec_26">
+            <num>26.</num>
+          </section>
+          <section eId="sec_28">
+            <num>28.</num>
+          </section>
+          <section eId="sec_30">
+            <num>30.</num>
+          </section>
+          <section eId="sec_31">
+            <num>31.</num>
+          </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+          <section eId="sec_1">
+            <num>1.</num>
+          </section>
+          <section eId="sec_2">
+            <num>2.</num>
+          </section>
+          <section eId="sec_3">
+            <num>3.</num>
+          </section>
+          <section eId="sec_4">
+            <num>4.</num>
+          </section>
+          <section eId="sec_5">
+            <num>5.</num>
+          </section>
+          <section eId="sec_6">
+            <num>6.</num>
+          </section>
+          <section eId="sec_7">
+            <num>7.</num>
+            <heading>Active ref heading</heading>
+            <content>
+              <p>As given in <ref href="#sec_26">section 26</ref>(1), blah.</p>
+              <p>As given in <ref href="#sec_26">section 26</ref> (1), blah.</p>
+              <p>As given in <ref href="#sec_26">section 26</ref>(1), (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">section 26</ref> (1), (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">sections 26</ref>(1), (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">sections 26</ref> (1), (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">section 26</ref> (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">section 26</ref>(2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">sections 26</ref> (2) and (3), blah.</p>
+              <p>As given in <ref href="#sec_26">sections 26</ref>(2) and (3), blah.</p>
+              <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1), (2) and (3), <ref href="#sec_6">6</ref>(3) and <ref href="#sec_10">10</ref>(1) and (2) is guilty of an offence.</p>
+              <p>Subject to sections <ref href="#sec_1">1</ref>(4) and (5) and <ref href="#sec_4">4</ref>(6), no person is guilty of an offence.</p>
+              <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1) and (2), <ref href="#sec_6">6</ref>(3), <ref href="#sec_10">10</ref>(1) and (2), <ref href="#sec_11">11</ref>(1), <ref href="#sec_12">12</ref>(1), <ref href="#sec_19">19</ref>(1), <ref href="#sec_19">19</ref>(3), <ref href="#sec_20">20</ref>(1), <ref href="#sec_20">20</ref>(2), <ref href="#sec_21">21</ref>(1), <ref href="#sec_22">22</ref>(1), <ref href="#sec_24">24</ref>(1), <ref href="#sec_25">25</ref>(3), (4) , (5) and (6) , <ref href="#sec_26">26</ref>(1), (2), (3) and (5), <ref href="#sec_28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+            </content>
+          </section>
+          <section eId="sec_10">
+            <num>10.</num>
+          </section>
+          <section eId="sec_11">
+            <num>11.</num>
+          </section>
+          <section eId="sec_12">
+            <num>12.</num>
+          </section>
+          <section eId="sec_19">
+            <num>19.</num>
+          </section>
+          <section eId="sec_20">
+            <num>20.</num>
+          </section>
+          <section eId="sec_21">
+            <num>21.</num>
+          </section>
+          <section eId="sec_22">
+            <num>22.</num>
+          </section>
+          <section eId="sec_24">
+            <num>24.</num>
+          </section>
+          <section eId="sec_25">
+            <num>25.</num>
+          </section>
+          <section eId="sec_26">
+            <num>26.</num>
+          </section>
+          <section eId="sec_28">
+            <num>28.</num>
+          </section>
+          <section eId="sec_30">
+            <num>30.</num>
+          </section>
+          <section eId="sec_31">
+            <num>31.</num>
+          </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
 
 class RefsGrammarTest(TestCase):
     maxDiff = None
 
     def test_single(self):
-        result = parse_refs("Section 1")
+        result = parse_provision_refs("Section 1")
         self.assertEqual([
             MainProvisionRef(
                 "Section",
@@ -496,7 +720,7 @@ class RefsGrammarTest(TestCase):
         ], result['references'])
 
     def test_mixed(self):
-        result = parse_refs("Section 1.2(1)(a),(c) to (e), (f)(ii) and (2), and (3)(g),(h) and section 32(a)")
+        result = parse_provision_refs("Section 1.2(1)(a),(c) to (e), (f)(ii) and (2), and (3)(g),(h) and section 32(a)")
         self.assertEqual([
             MainProvisionRef(
                 "Section",
@@ -527,7 +751,7 @@ class RefsGrammarTest(TestCase):
         self.assertIsNone(result["target"])
 
     def test_mixed_af(self):
-        result = parse_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdeling 32(a)")
+        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdeling 32(a)")
         self.assertEqual([
             MainProvisionRef(
                 "Afdeling",
@@ -556,7 +780,7 @@ class RefsGrammarTest(TestCase):
         self.assertIsNone(result["target"])
 
     def test_multiple_mains(self):
-        result = parse_refs("Section 2(1), section 3(b) and section 32(a)")
+        result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a)")
         self.assertEqual([
             MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
             MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
@@ -565,7 +789,7 @@ class RefsGrammarTest(TestCase):
         self.assertIsNone(result["target"])
 
     def test_multiple_mains_target(self):
-        result = parse_refs("Section 2(1), section 3(b) and section 32(a) of another Act")
+        result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a) of another Act")
         self.assertEqual([
             MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
             MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
@@ -574,30 +798,30 @@ class RefsGrammarTest(TestCase):
         self.assertEqual("of", result["target"])
 
     def test_target(self):
-        result = parse_refs("Section 2 of this Act")
+        result = parse_provision_refs("Section 2 of this Act")
         self.assertEqual("this", result["target"])
 
-        result = parse_refs("Section 2, of this Act")
+        result = parse_provision_refs("Section 2, of this Act")
         self.assertEqual("this", result["target"])
 
-        result = parse_refs("Section 2 thereof")
+        result = parse_provision_refs("Section 2 thereof")
         self.assertEqual("thereof", result["target"])
 
-        result = parse_refs("Section 2, thereof and some")
+        result = parse_provision_refs("Section 2, thereof and some")
         self.assertEqual("thereof", result["target"])
 
-        result = parse_refs("Section 2 of the Act")
+        result = parse_provision_refs("Section 2 of the Act")
         self.assertEqual("of", result["target"])
 
-        result = parse_refs("Section 2, of the Act with junk")
+        result = parse_provision_refs("Section 2, of the Act with junk")
         self.assertEqual("of", result["target"])
 
     def test_target_af(self):
-        result = parse_refs("Afdeling 2 van hierdie Wet")
+        result = parse_provision_refs("Afdeling 2 van hierdie Wet")
         self.assertEqual("this", result["target"])
 
-        result = parse_refs("Afdeling 2 daarvan")
+        result = parse_provision_refs("Afdeling 2 daarvan")
         self.assertEqual("thereof", result["target"])
 
-        result = parse_refs("Afdeling 2 van die Wet met kak")
+        result = parse_provision_refs("Afdeling 2 van die Wet met kak")
         self.assertEqual("of", result["target"])

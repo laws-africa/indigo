@@ -1,4 +1,4 @@
-grammar Refs
+grammar ProvisionRefs
   root        <- reference (and_or reference)* target? .* %root
 
                  # section 32

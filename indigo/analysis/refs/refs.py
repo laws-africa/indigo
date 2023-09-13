@@ -289,6 +289,22 @@ class Grammar(object):
         self._cache['reference'][index0] = (address0, self._offset)
         return address0
 
+    def _read_unit(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        address0 = self._read_unit_en()
+        if address0 is FAILURE:
+            self._offset = index1
+            address0 = self._read_unit_af()
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['unit'][index0] = (address0, self._offset)
+        return address0
+
     def _read_main_ref(self):
         address0, index0 = FAILURE, self._offset
         cached = self._cache['main_ref'].get(index0)
@@ -929,23 +945,17 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                chunk0, max0 = None, self._offset + 7
-                if max0 <= self._input_size:
-                    chunk0 = self._input[self._offset:max0]
-                if chunk0 == 'of this':
-                    address4 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-                    self._offset = self._offset + 7
-                else:
-                    address4 = FAILURE
-                    if self._offset > self._failure:
-                        self._failure = self._offset
-                        self._expected = []
-                    if self._offset == self._failure:
-                        self._expected.append(('Refs::of_this', '"of this"'))
+                index4 = self._offset
+                address4 = self._read_of_this_en()
+                if address4 is FAILURE:
+                    self._offset = index4
+                    address4 = self._read_of_this_af()
+                    if address4 is FAILURE:
+                        self._offset = index4
                 if address4 is not FAILURE:
                     elements0.append(address4)
                     address5 = FAILURE
-                    index4, elements2, address6 = self._offset, [], None
+                    index5, elements2, address6 = self._offset, [], None
                     while True:
                         address6 = self._read_WS()
                         if address6 is not FAILURE:
@@ -953,7 +963,7 @@ class Grammar(object):
                         else:
                             break
                     if len(elements2) >= 1:
-                        address5 = TreeNode(self._input[index4:self._offset], index4, elements2)
+                        address5 = TreeNode(self._input[index5:self._offset], index5, elements2)
                         self._offset = self._offset
                     else:
                         address5 = FAILURE
@@ -1010,23 +1020,17 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                chunk0, max0 = None, self._offset + 2
-                if max0 <= self._input_size:
-                    chunk0 = self._input[self._offset:max0]
-                if chunk0 == 'of':
-                    address4 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
-                    self._offset = self._offset + 2
-                else:
-                    address4 = FAILURE
-                    if self._offset > self._failure:
-                        self._failure = self._offset
-                        self._expected = []
-                    if self._offset == self._failure:
-                        self._expected.append(('Refs::of', '"of"'))
+                index4 = self._offset
+                address4 = self._read_of_en()
+                if address4 is FAILURE:
+                    self._offset = index4
+                    address4 = self._read_of_af()
+                    if address4 is FAILURE:
+                        self._offset = index4
                 if address4 is not FAILURE:
                     elements0.append(address4)
                     address5 = FAILURE
-                    index4, elements2, address6 = self._offset, [], None
+                    index5, elements2, address6 = self._offset, [], None
                     while True:
                         address6 = self._read_WS()
                         if address6 is not FAILURE:
@@ -1034,7 +1038,7 @@ class Grammar(object):
                         else:
                             break
                     if len(elements2) >= 1:
-                        address5 = TreeNode(self._input[index4:self._offset], index4, elements2)
+                        address5 = TreeNode(self._input[index5:self._offset], index5, elements2)
                         self._offset = self._offset
                     else:
                         address5 = FAILURE
@@ -1091,19 +1095,13 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                chunk0, max0 = None, self._offset + 7
-                if max0 <= self._input_size:
-                    chunk0 = self._input[self._offset:max0]
-                if chunk0 == 'thereof':
-                    address4 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-                    self._offset = self._offset + 7
-                else:
-                    address4 = FAILURE
-                    if self._offset > self._failure:
-                        self._failure = self._offset
-                        self._expected = []
-                    if self._offset == self._failure:
-                        self._expected.append(('Refs::thereof', '"thereof"'))
+                index4 = self._offset
+                address4 = self._read_thereof_en()
+                if address4 is FAILURE:
+                    self._offset = index4
+                    address4 = self._read_thereof_af()
+                    if address4 is FAILURE:
+                        self._offset = index4
                 if address4 is not FAILURE:
                     elements0.append(address4)
                 else:
@@ -1123,9 +1121,511 @@ class Grammar(object):
         self._cache['thereof'][index0] = (address0, self._offset)
         return address0
 
+    def _read_unit_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'article'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::unit_en', '`article`'))
+        if address0 is FAILURE:
+            self._offset = index1
+            chunk1, max1 = None, self._offset + 8
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == 'articles'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+                self._offset = self._offset + 8
+            else:
+                address0 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('Refs::unit_en', '`articles`'))
+            if address0 is FAILURE:
+                self._offset = index1
+                chunk2, max2 = None, self._offset + 7
+                if max2 <= self._input_size:
+                    chunk2 = self._input[self._offset:max2]
+                if chunk2 is not None and chunk2.lower() == 'chapter'.lower():
+                    address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+                    self._offset = self._offset + 7
+                else:
+                    address0 = FAILURE
+                    if self._offset > self._failure:
+                        self._failure = self._offset
+                        self._expected = []
+                    if self._offset == self._failure:
+                        self._expected.append(('Refs::unit_en', '`chapter`'))
+                if address0 is FAILURE:
+                    self._offset = index1
+                    chunk3, max3 = None, self._offset + 8
+                    if max3 <= self._input_size:
+                        chunk3 = self._input[self._offset:max3]
+                    if chunk3 is not None and chunk3.lower() == 'chapters'.lower():
+                        address0 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+                        self._offset = self._offset + 8
+                    else:
+                        address0 = FAILURE
+                        if self._offset > self._failure:
+                            self._failure = self._offset
+                            self._expected = []
+                        if self._offset == self._failure:
+                            self._expected.append(('Refs::unit_en', '`chapters`'))
+                    if address0 is FAILURE:
+                        self._offset = index1
+                        chunk4, max4 = None, self._offset + 4
+                        if max4 <= self._input_size:
+                            chunk4 = self._input[self._offset:max4]
+                        if chunk4 is not None and chunk4.lower() == 'item'.lower():
+                            address0 = TreeNode(self._input[self._offset:self._offset + 4], self._offset, [])
+                            self._offset = self._offset + 4
+                        else:
+                            address0 = FAILURE
+                            if self._offset > self._failure:
+                                self._failure = self._offset
+                                self._expected = []
+                            if self._offset == self._failure:
+                                self._expected.append(('Refs::unit_en', '`item`'))
+                        if address0 is FAILURE:
+                            self._offset = index1
+                            chunk5, max5 = None, self._offset + 5
+                            if max5 <= self._input_size:
+                                chunk5 = self._input[self._offset:max5]
+                            if chunk5 is not None and chunk5.lower() == 'items'.lower():
+                                address0 = TreeNode(self._input[self._offset:self._offset + 5], self._offset, [])
+                                self._offset = self._offset + 5
+                            else:
+                                address0 = FAILURE
+                                if self._offset > self._failure:
+                                    self._failure = self._offset
+                                    self._expected = []
+                                if self._offset == self._failure:
+                                    self._expected.append(('Refs::unit_en', '`items`'))
+                            if address0 is FAILURE:
+                                self._offset = index1
+                                chunk6, max6 = None, self._offset + 9
+                                if max6 <= self._input_size:
+                                    chunk6 = self._input[self._offset:max6]
+                                if chunk6 is not None and chunk6.lower() == 'paragraph'.lower():
+                                    address0 = TreeNode(self._input[self._offset:self._offset + 9], self._offset, [])
+                                    self._offset = self._offset + 9
+                                else:
+                                    address0 = FAILURE
+                                    if self._offset > self._failure:
+                                        self._failure = self._offset
+                                        self._expected = []
+                                    if self._offset == self._failure:
+                                        self._expected.append(('Refs::unit_en', '`paragraph`'))
+                                if address0 is FAILURE:
+                                    self._offset = index1
+                                    chunk7, max7 = None, self._offset + 10
+                                    if max7 <= self._input_size:
+                                        chunk7 = self._input[self._offset:max7]
+                                    if chunk7 is not None and chunk7.lower() == 'paragraphs'.lower():
+                                        address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                                        self._offset = self._offset + 10
+                                    else:
+                                        address0 = FAILURE
+                                        if self._offset > self._failure:
+                                            self._failure = self._offset
+                                            self._expected = []
+                                        if self._offset == self._failure:
+                                            self._expected.append(('Refs::unit_en', '`paragraphs`'))
+                                    if address0 is FAILURE:
+                                        self._offset = index1
+                                        chunk8, max8 = None, self._offset + 5
+                                        if max8 <= self._input_size:
+                                            chunk8 = self._input[self._offset:max8]
+                                        if chunk8 is not None and chunk8.lower() == 'point'.lower():
+                                            address0 = TreeNode(self._input[self._offset:self._offset + 5], self._offset, [])
+                                            self._offset = self._offset + 5
+                                        else:
+                                            address0 = FAILURE
+                                            if self._offset > self._failure:
+                                                self._failure = self._offset
+                                                self._expected = []
+                                            if self._offset == self._failure:
+                                                self._expected.append(('Refs::unit_en', '`point`'))
+                                        if address0 is FAILURE:
+                                            self._offset = index1
+                                            chunk9, max9 = None, self._offset + 6
+                                            if max9 <= self._input_size:
+                                                chunk9 = self._input[self._offset:max9]
+                                            if chunk9 is not None and chunk9.lower() == 'points'.lower():
+                                                address0 = TreeNode(self._input[self._offset:self._offset + 6], self._offset, [])
+                                                self._offset = self._offset + 6
+                                            else:
+                                                address0 = FAILURE
+                                                if self._offset > self._failure:
+                                                    self._failure = self._offset
+                                                    self._expected = []
+                                                if self._offset == self._failure:
+                                                    self._expected.append(('Refs::unit_en', '`points`'))
+                                            if address0 is FAILURE:
+                                                self._offset = index1
+                                                chunk10, max10 = None, self._offset + 7
+                                                if max10 <= self._input_size:
+                                                    chunk10 = self._input[self._offset:max10]
+                                                if chunk10 is not None and chunk10.lower() == 'section'.lower():
+                                                    address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+                                                    self._offset = self._offset + 7
+                                                else:
+                                                    address0 = FAILURE
+                                                    if self._offset > self._failure:
+                                                        self._failure = self._offset
+                                                        self._expected = []
+                                                    if self._offset == self._failure:
+                                                        self._expected.append(('Refs::unit_en', '`section`'))
+                                                if address0 is FAILURE:
+                                                    self._offset = index1
+                                                    chunk11, max11 = None, self._offset + 8
+                                                    if max11 <= self._input_size:
+                                                        chunk11 = self._input[self._offset:max11]
+                                                    if chunk11 is not None and chunk11.lower() == 'sections'.lower():
+                                                        address0 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+                                                        self._offset = self._offset + 8
+                                                    else:
+                                                        address0 = FAILURE
+                                                        if self._offset > self._failure:
+                                                            self._failure = self._offset
+                                                            self._expected = []
+                                                        if self._offset == self._failure:
+                                                            self._expected.append(('Refs::unit_en', '`sections`'))
+                                                    if address0 is FAILURE:
+                                                        self._offset = index1
+                                                        chunk12, max12 = None, self._offset + 12
+                                                        if max12 <= self._input_size:
+                                                            chunk12 = self._input[self._offset:max12]
+                                                        if chunk12 is not None and chunk12.lower() == 'subparagraph'.lower():
+                                                            address0 = TreeNode(self._input[self._offset:self._offset + 12], self._offset, [])
+                                                            self._offset = self._offset + 12
+                                                        else:
+                                                            address0 = FAILURE
+                                                            if self._offset > self._failure:
+                                                                self._failure = self._offset
+                                                                self._expected = []
+                                                            if self._offset == self._failure:
+                                                                self._expected.append(('Refs::unit_en', '`subparagraph`'))
+                                                        if address0 is FAILURE:
+                                                            self._offset = index1
+                                                            chunk13, max13 = None, self._offset + 13
+                                                            if max13 <= self._input_size:
+                                                                chunk13 = self._input[self._offset:max13]
+                                                            if chunk13 is not None and chunk13.lower() == 'subparagraphs'.lower():
+                                                                address0 = TreeNode(self._input[self._offset:self._offset + 13], self._offset, [])
+                                                                self._offset = self._offset + 13
+                                                            else:
+                                                                address0 = FAILURE
+                                                                if self._offset > self._failure:
+                                                                    self._failure = self._offset
+                                                                    self._expected = []
+                                                                if self._offset == self._failure:
+                                                                    self._expected.append(('Refs::unit_en', '`subparagraphs`'))
+                                                            if address0 is FAILURE:
+                                                                self._offset = index1
+                                                                chunk14, max14 = None, self._offset + 10
+                                                                if max14 <= self._input_size:
+                                                                    chunk14 = self._input[self._offset:max14]
+                                                                if chunk14 is not None and chunk14.lower() == 'subsection'.lower():
+                                                                    address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                                                                    self._offset = self._offset + 10
+                                                                else:
+                                                                    address0 = FAILURE
+                                                                    if self._offset > self._failure:
+                                                                        self._failure = self._offset
+                                                                        self._expected = []
+                                                                    if self._offset == self._failure:
+                                                                        self._expected.append(('Refs::unit_en', '`subsection`'))
+                                                                if address0 is FAILURE:
+                                                                    self._offset = index1
+                                                                    chunk15, max15 = None, self._offset + 11
+                                                                    if max15 <= self._input_size:
+                                                                        chunk15 = self._input[self._offset:max15]
+                                                                    if chunk15 is not None and chunk15.lower() == 'subsections'.lower():
+                                                                        address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+                                                                        self._offset = self._offset + 11
+                                                                    else:
+                                                                        address0 = FAILURE
+                                                                        if self._offset > self._failure:
+                                                                            self._failure = self._offset
+                                                                            self._expected = []
+                                                                        if self._offset == self._failure:
+                                                                            self._expected.append(('Refs::unit_en', '`subsections`'))
+                                                                    if address0 is FAILURE:
+                                                                        self._offset = index1
+        self._cache['unit_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_unit_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        chunk0, max0 = None, self._offset + 8
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'afdeling'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+            self._offset = self._offset + 8
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::unit_af', '`afdeling`'))
+        if address0 is FAILURE:
+            self._offset = index1
+            chunk1, max1 = None, self._offset + 9
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == 'afdelings'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 9], self._offset, [])
+                self._offset = self._offset + 9
+            else:
+                address0 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('Refs::unit_af', '`afdelings`'))
+            if address0 is FAILURE:
+                self._offset = index1
+                chunk2, max2 = None, self._offset + 7
+                if max2 <= self._input_size:
+                    chunk2 = self._input[self._offset:max2]
+                if chunk2 is not None and chunk2.lower() == 'artikel'.lower():
+                    address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+                    self._offset = self._offset + 7
+                else:
+                    address0 = FAILURE
+                    if self._offset > self._failure:
+                        self._failure = self._offset
+                        self._expected = []
+                    if self._offset == self._failure:
+                        self._expected.append(('Refs::unit_af', '`artikel`'))
+                if address0 is FAILURE:
+                    self._offset = index1
+                    index2, elements0 = self._offset, []
+                    address1 = FAILURE
+                    chunk3, max3 = None, self._offset + 8
+                    if max3 <= self._input_size:
+                        chunk3 = self._input[self._offset:max3]
+                    if chunk3 is not None and chunk3.lower() == 'artikels'.lower():
+                        address1 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+                        self._offset = self._offset + 8
+                    else:
+                        address1 = FAILURE
+                        if self._offset > self._failure:
+                            self._failure = self._offset
+                            self._expected = []
+                        if self._offset == self._failure:
+                            self._expected.append(('Refs::unit_af', '`artikels`'))
+                    if address1 is not FAILURE:
+                        elements0.append(address1)
+                        address2 = FAILURE
+                        chunk4, max4 = None, self._offset + 8
+                        if max4 <= self._input_size:
+                            chunk4 = self._input[self._offset:max4]
+                        if chunk4 is not None and chunk4.lower() == 'hoofstuk'.lower():
+                            address2 = TreeNode(self._input[self._offset:self._offset + 8], self._offset, [])
+                            self._offset = self._offset + 8
+                        else:
+                            address2 = FAILURE
+                            if self._offset > self._failure:
+                                self._failure = self._offset
+                                self._expected = []
+                            if self._offset == self._failure:
+                                self._expected.append(('Refs::unit_af', '`hoofstuk`'))
+                        if address2 is not FAILURE:
+                            elements0.append(address2)
+                        else:
+                            elements0 = None
+                            self._offset = index2
+                    else:
+                        elements0 = None
+                        self._offset = index2
+                    if elements0 is None:
+                        address0 = FAILURE
+                    else:
+                        address0 = TreeNode(self._input[index2:self._offset], index2, elements0)
+                        self._offset = self._offset
+                    if address0 is FAILURE:
+                        self._offset = index1
+                        chunk5, max5 = None, self._offset + 10
+                        if max5 <= self._input_size:
+                            chunk5 = self._input[self._offset:max5]
+                        if chunk5 is not None and chunk5.lower() == 'hoofstukke'.lower():
+                            address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                            self._offset = self._offset + 10
+                        else:
+                            address0 = FAILURE
+                            if self._offset > self._failure:
+                                self._failure = self._offset
+                                self._expected = []
+                            if self._offset == self._failure:
+                                self._expected.append(('Refs::unit_af', '`hoofstukke`'))
+                        if address0 is FAILURE:
+                            self._offset = index1
+                            chunk6, max6 = None, self._offset + 9
+                            if max6 <= self._input_size:
+                                chunk6 = self._input[self._offset:max6]
+                            if chunk6 is not None and chunk6.lower() == 'paragraaf'.lower():
+                                address0 = TreeNode(self._input[self._offset:self._offset + 9], self._offset, [])
+                                self._offset = self._offset + 9
+                            else:
+                                address0 = FAILURE
+                                if self._offset > self._failure:
+                                    self._failure = self._offset
+                                    self._expected = []
+                                if self._offset == self._failure:
+                                    self._expected.append(('Refs::unit_af', '`paragraaf`'))
+                            if address0 is FAILURE:
+                                self._offset = index1
+                                chunk7, max7 = None, self._offset + 9
+                                if max7 <= self._input_size:
+                                    chunk7 = self._input[self._offset:max7]
+                                if chunk7 is not None and chunk7.lower() == 'paragrawe'.lower():
+                                    address0 = TreeNode(self._input[self._offset:self._offset + 9], self._offset, [])
+                                    self._offset = self._offset + 9
+                                else:
+                                    address0 = FAILURE
+                                    if self._offset > self._failure:
+                                        self._failure = self._offset
+                                        self._expected = []
+                                    if self._offset == self._failure:
+                                        self._expected.append(('Refs::unit_af', '`paragrawe`'))
+                                if address0 is FAILURE:
+                                    self._offset = index1
+                                    chunk8, max8 = None, self._offset + 4
+                                    if max8 <= self._input_size:
+                                        chunk8 = self._input[self._offset:max8]
+                                    if chunk8 is not None and chunk8.lower() == 'punt'.lower():
+                                        address0 = TreeNode(self._input[self._offset:self._offset + 4], self._offset, [])
+                                        self._offset = self._offset + 4
+                                    else:
+                                        address0 = FAILURE
+                                        if self._offset > self._failure:
+                                            self._failure = self._offset
+                                            self._expected = []
+                                        if self._offset == self._failure:
+                                            self._expected.append(('Refs::unit_af', '`punt`'))
+                                    if address0 is FAILURE:
+                                        self._offset = index1
+                                        chunk9, max9 = None, self._offset + 5
+                                        if max9 <= self._input_size:
+                                            chunk9 = self._input[self._offset:max9]
+                                        if chunk9 is not None and chunk9.lower() == 'punte'.lower():
+                                            address0 = TreeNode(self._input[self._offset:self._offset + 5], self._offset, [])
+                                            self._offset = self._offset + 5
+                                        else:
+                                            address0 = FAILURE
+                                            if self._offset > self._failure:
+                                                self._failure = self._offset
+                                                self._expected = []
+                                            if self._offset == self._failure:
+                                                self._expected.append(('Refs::unit_af', '`punte`'))
+                                        if address0 is FAILURE:
+                                            self._offset = index1
+                                            chunk10, max10 = None, self._offset + 11
+                                            if max10 <= self._input_size:
+                                                chunk10 = self._input[self._offset:max10]
+                                            if chunk10 is not None and chunk10.lower() == 'subafdeling'.lower():
+                                                address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+                                                self._offset = self._offset + 11
+                                            else:
+                                                address0 = FAILURE
+                                                if self._offset > self._failure:
+                                                    self._failure = self._offset
+                                                    self._expected = []
+                                                if self._offset == self._failure:
+                                                    self._expected.append(('Refs::unit_af', '`subafdeling`'))
+                                            if address0 is FAILURE:
+                                                self._offset = index1
+                                                chunk11, max11 = None, self._offset + 12
+                                                if max11 <= self._input_size:
+                                                    chunk11 = self._input[self._offset:max11]
+                                                if chunk11 is not None and chunk11.lower() == 'subafdelings'.lower():
+                                                    address0 = TreeNode(self._input[self._offset:self._offset + 12], self._offset, [])
+                                                    self._offset = self._offset + 12
+                                                else:
+                                                    address0 = FAILURE
+                                                    if self._offset > self._failure:
+                                                        self._failure = self._offset
+                                                        self._expected = []
+                                                    if self._offset == self._failure:
+                                                        self._expected.append(('Refs::unit_af', '`subafdelings`'))
+                                                if address0 is FAILURE:
+                                                    self._offset = index1
+                                                    chunk12, max12 = None, self._offset + 12
+                                                    if max12 <= self._input_size:
+                                                        chunk12 = self._input[self._offset:max12]
+                                                    if chunk12 is not None and chunk12.lower() == 'subparagraaf'.lower():
+                                                        address0 = TreeNode(self._input[self._offset:self._offset + 12], self._offset, [])
+                                                        self._offset = self._offset + 12
+                                                    else:
+                                                        address0 = FAILURE
+                                                        if self._offset > self._failure:
+                                                            self._failure = self._offset
+                                                            self._expected = []
+                                                        if self._offset == self._failure:
+                                                            self._expected.append(('Refs::unit_af', '`subparagraaf`'))
+                                                    if address0 is FAILURE:
+                                                        self._offset = index1
+                                                        chunk13, max13 = None, self._offset + 12
+                                                        if max13 <= self._input_size:
+                                                            chunk13 = self._input[self._offset:max13]
+                                                        if chunk13 is not None and chunk13.lower() == 'subparagrawe'.lower():
+                                                            address0 = TreeNode(self._input[self._offset:self._offset + 12], self._offset, [])
+                                                            self._offset = self._offset + 12
+                                                        else:
+                                                            address0 = FAILURE
+                                                            if self._offset > self._failure:
+                                                                self._failure = self._offset
+                                                                self._expected = []
+                                                            if self._offset == self._failure:
+                                                                self._expected.append(('Refs::unit_af', '`subparagrawe`'))
+                                                        if address0 is FAILURE:
+                                                            self._offset = index1
+        self._cache['unit_af'][index0] = (address0, self._offset)
+        return address0
+
     def _read__and(self):
         address0, index0 = FAILURE, self._offset
         cached = self._cache['_and'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        address0 = self._read_and_en()
+        if address0 is FAILURE:
+            self._offset = index1
+            address0 = self._read_and_af()
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['_and'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_and_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['and_en'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -1141,13 +1641,51 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('Refs::_and', '`and`'))
-        self._cache['_and'][index0] = (address0, self._offset)
+                self._expected.append(('Refs::and_en', '`and`'))
+        self._cache['and_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_and_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['and_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'en'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::and_af', '`en`'))
+        self._cache['and_af'][index0] = (address0, self._offset)
         return address0
 
     def _read__or(self):
         address0, index0 = FAILURE, self._offset
         cached = self._cache['_or'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        address0 = self._read_or_en()
+        if address0 is FAILURE:
+            self._offset = index1
+            address0 = self._read_or_af()
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['_or'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_or_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['or_en'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -1163,8 +1701,222 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('Refs::_or', '`or`'))
-        self._cache['_or'][index0] = (address0, self._offset)
+                self._expected.append(('Refs::or_en', '`or`'))
+        self._cache['or_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_or_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['or_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::or_af', '`of`'))
+        self._cache['or_af'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_to(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        address0 = self._read_to_af()
+        if address0 is FAILURE:
+            self._offset = index1
+            address0 = self._read_to_en()
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['to'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_to_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'to'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::to_en', '`to`'))
+        self._cache['to_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_to_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 3
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'tot'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
+            self._offset = self._offset + 3
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::to_af', '`tot`'))
+        self._cache['to_af'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::of_en', '`of`'))
+        self._cache['of_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 3
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'van'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
+            self._offset = self._offset + 3
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::of_af', '`van`'))
+        self._cache['of_af'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_this_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_this_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of this'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::of_this_en', '`of this`'))
+        self._cache['of_this_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_this_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_this_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 11
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'van hierdie'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+            self._offset = self._offset + 11
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::of_this_af', '`van hierdie`'))
+        self._cache['of_this_af'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_thereof_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['thereof_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'thereof'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::thereof_en', '`thereof`'))
+        self._cache['thereof_en'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_thereof_af(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['thereof_af'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'daarvan'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('Refs::thereof_af', '`daarvan`'))
+        self._cache['thereof_af'][index0] = (address0, self._offset)
         return address0
 
     def _read_comma(self):
@@ -1187,50 +1939,6 @@ class Grammar(object):
             if self._offset == self._failure:
                 self._expected.append(('Refs::comma', '[,;]'))
         self._cache['comma'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_to(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['to'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 2
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'to'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
-            self._offset = self._offset + 2
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('Refs::to', '`to`'))
-        self._cache['to'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_unit(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['unit'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 7
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'section'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-            self._offset = self._offset + 7
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('Refs::unit', '`section`'))
-        self._cache['unit'][index0] = (address0, self._offset)
         return address0
 
     def _read_digit(self):

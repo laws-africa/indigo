@@ -52,6 +52,41 @@ class MainProvisionRef:
 class ProvisionRefsResolver:
     """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
 
+    element_names = {
+        # en
+        "article": "article",
+        "articles": "article",
+        "chapter": "chapter",
+        "chapters": "chapter",
+        "item": "item",
+        "items": "item",
+        "paragraph": "paragraph",
+        "paragraphs": "paragraph",
+        "point": "point",
+        "points": "point",
+        "section": "section",
+        "sections": "section",
+        "subparagraph": "subparagraph",
+        "subparagraphs": "subparagraph",
+        "subsection": "subsection",
+        "subsections": "subsection",
+        # af
+        "artikel": "article",
+        "artikels": "article",
+        "hoofstuk": "chapter",
+        "hoofstukke": "chapter",
+        "paragraaf": "paragraph",
+        "paragrawe": "paragraph",
+        "punt": "point",
+        "punte": "point",
+        "afdeling": "section",
+        "afdelings": "section",
+        "subparagraaf": "subparagraph",
+        "subparagrawe": "subparagraph",
+        "subafdeling": "subsection",
+        "subafdelings": "subsection"
+    }
+
     def resolve_references_str(self, text: str, root: Element):
         """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
         refs = parse_refs(text)["references"]
@@ -67,8 +102,7 @@ class ProvisionRefsResolver:
 
         # resolve the main ref
         ref = main_ref.ref
-        # TODO: handle different languages
-        ref.element = self.find_numbered_hier_element(root, [main_ref.name.lower()], ref.text)
+        ref.element = self.find_numbered_hier_element(root, [self.element_names[main_ref.name.lower()]], ref.text)
 
         if ref.element is not None:
             ref.eId = ref.element.get('eId')
@@ -144,7 +178,8 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     xml_candidate_xpath = ".//text()[not(ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num)]"
 
     # this just finds the start of a potential match, the grammar looks for the rest
-    pattern_re = re.compile(r'\bsections?\s+\d', re.IGNORECASE)
+    pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())
+    pattern_re = re.compile(fr'\b({pattern_names})\s+\d', re.IGNORECASE)
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None

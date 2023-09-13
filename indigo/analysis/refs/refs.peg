@@ -7,6 +7,8 @@ grammar Refs
                  # section 32.1a.2
   reference   <- unit WS+ main_ref WS* sub_refs? %reference
 
+  unit        <- unit_en / unit_af
+
                  # section 32
                  # section 32A
                  # section 32.1a.2
@@ -41,26 +43,60 @@ grammar Refs
   target      <- of_this / of / thereof
 
                  # of the Act
-  of_this     <- comma? WS* "of this" WS+ %of_this
+  of_this     <- comma? WS* (of_this_en / of_this_af) WS+ %of_this
 
                  # of the Act
-  of          <- comma? WS* "of" WS+ %of
+  of          <- comma? WS* (of_en / of_af) WS+ %of
 
                  # thereof
-  thereof     <- comma? WS* "thereof" %thereof
+  thereof     <- comma? WS* (thereof_en / thereof_af) %thereof
 
   # --------
   # terminals
   # --------
 
-  _and        <- `and`
-  _or         <- `or`
-  comma       <- [,;]
-  to          <- `to`
-  # section, paragraph, etc.
-  # TODO: include other languages
-  unit        <- `section`
+                 # english
+  unit_en     <- `article` / `articles` /
+                 `chapter` / `chapters` /
+                 `item` / `items` /
+                 `paragraph` / `paragraphs` /
+                 `point` / `points` /
+                 `section` / `sections` /
+                 `subparagraph` / `subparagraphs` /
+                 `subsection` / `subsections`
 
+                 # afrikaans
+  unit_af     <- `afdeling` / `afdelings` /
+                 `artikel` / `artikels`
+                 `hoofstuk` / `hoofstukke` /
+                 `paragraaf` / `paragrawe` /
+                 `punt` / `punte` /
+                 `subafdeling` / `subafdelings` /
+                 `subparagraaf` / `subparagrawe`
+
+  _and        <- and_en / and_af
+  and_en      <- `and`
+  and_af      <- `en`
+
+  _or         <- or_en / or_af
+  or_en       <- `or`
+  or_af       <- `of`
+
+                 # note that "tot" must come before "to" because the latter is a substring of the former
+  to          <- to_af / to_en
+  to_en       <- `to`
+  to_af       <- `tot`
+
+  of_en       <- `of`
+  of_af       <- `van`
+
+  of_this_en  <- `of this`
+  of_this_af  <- `van hierdie`
+
+  thereof_en  <- `thereof`
+  thereof_af  <- `daarvan`
+
+  comma       <- [,;]
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]
   WS          <- " " / "\t"

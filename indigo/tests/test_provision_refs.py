@@ -130,12 +130,47 @@ class ProvisionRefsMatechTestCase(TestCase):
     def setUp(self):
         self.finder = ProvisionRefsMatcher()
         self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/eng@2009-01-01")
+        self.target_doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26B.</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+            <section eId="sec_31">
+              <num>31.</num>
+              <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+        """))
+
+        # inject the remote target document fixture
+        self.finder.target_root_cache = {"/akn/za/act/2009/1": self.target_doc.root}
 
     def test_local_sections(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
-              <heading>Active ref heading</heading>
+              <heading>Section 7</heading>
               <content>
                 <p>As given in section 26, blah.</p>
                 <p>As given in section 26(a), blah.</p>
@@ -182,7 +217,7 @@ class ProvisionRefsMatechTestCase(TestCase):
         expected = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
-              <heading>Active ref heading</heading>
+              <heading>Section 7</heading>
               <content>
                 <p>As given in section <ref href="#sec_26">26</ref>, blah.</p>
                 <p>As given in section <ref href="#sec_26__subsec_a">26(a)</ref>, blah.</p>
@@ -192,6 +227,108 @@ class ProvisionRefsMatechTestCase(TestCase):
                 <p>As given in section <ref href="#sec_26B">26B</ref>, blah.</p>
                 <p>As given in section <ref href="#sec_26">26</ref> and section <ref href="#sec_31">31</ref>, blah.</p>
                 <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26B.</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+            <section eId="sec_31">
+              <num>31.</num>
+              <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_local_sections_af(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>Soos gegee in afdeling 26, blah.</p>
+                <p>Soos gegee in afdeling 26(a), blah.</p>
+                <p>Soos gegee in afdeling 26(a)(1)(iii), blah.</p>
+                <p>Soos gegee in afdeling 26(a)(2)(iii)(bb), blah.</p>
+                <p>Soos gegee in afdeling 26(b)(b)(iii)(dd)(A), blah.</p>
+                <p>Soos gegee in afdeling 26B, blah.</p>
+                <p>Soos gegee in afdeling 26 en afdeling 31, blah.</p>
+                <p>Soos <i>gegee</i> in (ons is nou in 'n stert) afdeling 26, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26B.</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+            <section eId="sec_31">
+              <num>31.</num>
+              <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>Soos gegee in afdeling <ref href="#sec_26">26</ref>, blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26__subsec_a">26(a)</ref>, blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26__subsec_a__para_1">26(a)(1)</ref>(iii), blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb), blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26B">26B</ref>, blah.</p>
+                <p>Soos gegee in afdeling <ref href="#sec_26">26</ref> en afdeling <ref href="#sec_31">31</ref>, blah.</p>
+                <p>Soos <i>gegee</i> in (ons is nou in 'n stert) afdeling <ref href="#sec_26">26</ref>, blah.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -264,41 +401,43 @@ class ProvisionRefsMatechTestCase(TestCase):
             </section>
         """))
 
-        target_doc = AkomaNtosoDocument(document_fixture(xml="""
-            <section eId="sec_26">
-              <num>26.</num>
-              <heading>Important heading</heading>
-              <subsection eId="sec_26__subsec_a">
-                <num>(a)</num>
-                <paragraph eId="sec_26__subsec_a__para_1">
-                  <num>(1)</num>
-                </paragraph>
-                <paragraph eId="sec_26__subsec_a__para_2">
-                  <num>(2)</num>
-                </paragraph>
-              </subsection>
-              <subsection eId="sec_26__subsec_b">
-                <num>(b)</num>
-              </subsection>
-            </section>
-            <section eId="sec_26B">
-              <num>26B.</num>
-              <heading>Another important heading</heading>
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_remote_sections_af(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
               <content>
-                <p>Another important provision.</p>
-              </content>
-            </section>
-            <section eId="sec_31">
-              <num>31.</num>
-              <heading>More important</heading>
-              <content>
-                <p>Hi!</p>
+                <p>Soos gegee in afdeling 26 van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref>.</p>
+                <p>Soos <b>gegee</b> in afdeling 26(a), van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> blah.</p>
+                <p>Soos gegee in afdeling 26(a)(1)(iii), van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> blah.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(a)(2)(iii)(bb) daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(b)(b)(iii)(dd)(A), daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling 31, daarvan.</p>
               </content>
             </section>
         """))
 
-        # inject the remote target document fixture
-        self.finder.target_root_cache = {"/akn/za/act/2009/1": target_doc.root}
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>Soos gegee in afdeling <ref href="/akn/za/act/2009/1/~sec_26">26</ref> van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref>.</p>
+                <p>Soos <b>gegee</b> in afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">26(a)</ref>, van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> blah.</p>
+                <p>Soos gegee in afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_1">26(a)(1)</ref>(iii), van <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> blah.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, daarvan.</p>
+              </content>
+            </section>
+        """))
 
         actual = etree.fromstring(doc.to_xml())
         self.finder.markup_xml_matches(self.frbr_uri, actual)
@@ -336,42 +475,6 @@ class ProvisionRefsMatechTestCase(TestCase):
             </section>
         """))
 
-        target_doc = AkomaNtosoDocument(document_fixture(xml="""
-            <section eId="sec_26">
-              <num>26.</num>
-              <heading>Important heading</heading>
-              <subsection eId="sec_26__subsec_a">
-                <num>(a)</num>
-                <paragraph eId="sec_26__subsec_a__para_1">
-                  <num>(1)</num>
-                </paragraph>
-                <paragraph eId="sec_26__subsec_a__para_2">
-                  <num>(2)</num>
-                </paragraph>
-              </subsection>
-              <subsection eId="sec_26__subsec_b">
-                <num>(b)</num>
-              </subsection>
-            </section>
-            <section eId="sec_26B">
-              <num>26B.</num>
-              <heading>Another important heading</heading>
-              <content>
-                <p>Another important provision.</p>
-              </content>
-            </section>
-            <section eId="sec_31">
-              <num>31.</num>
-              <heading>More important</heading>
-              <content>
-                <p>Hi!</p>
-              </content>
-            </section>
-        """))
-
-        # inject the remote target document fixture
-        self.finder.target_root_cache = {"/akn/za/act/2009/1": target_doc.root}
-
         actual = etree.fromstring(doc.to_xml())
         self.finder.markup_xml_matches(self.frbr_uri, actual)
         self.assertEqual(
@@ -401,8 +504,7 @@ class RefsGrammarTest(TestCase):
                     ProvisionRef("(1)", 11, 14, None,
                         ProvisionRef("(a)", 14, 17)
                     ),
-                ),
-                [
+                ), [
                     ProvisionRef("(c)", 18, 21, "and_or"),
                     ProvisionRef("(e)", 25, 28, "range"),
                     ProvisionRef("(f)", 30, 33, "and_or",
@@ -417,6 +519,35 @@ class RefsGrammarTest(TestCase):
             ),
             MainProvisionRef(
                 "section",
+                ProvisionRef("32", 74, 76, None,
+                    ProvisionRef("(a)", 76, 79),
+                ),
+            )
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
+    def test_mixed_af(self):
+        result = parse_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdeling 32(a)")
+        self.assertEqual([
+            MainProvisionRef(
+                "Afdeling",
+                ProvisionRef("1.2", 9, 12, None,
+                    ProvisionRef("(1)", 12, 15, None,
+                        ProvisionRef("(a)", 15, 18)
+                    ),
+                ), [
+                    ProvisionRef("(c)", 19, 22, "and_or"),
+                    ProvisionRef("(e)", 27, 30, "range"),
+                    ProvisionRef("(f)", 32, 35, "and_or",
+                        ProvisionRef("(ii)", 35, 39)),
+                    ProvisionRef("(2)", 43, 46, "and_or"),
+                    ProvisionRef("(3)", 51, 54, "and_or",
+                        ProvisionRef("(g)", 54, 57)),
+                    ProvisionRef("(h)", 58, 61, "and_or"),
+                ]
+            ),
+            MainProvisionRef(
+                "afdeling",
                 ProvisionRef("32", 74, 76, None,
                     ProvisionRef("(a)", 76, 79),
                 ),
@@ -459,4 +590,14 @@ class RefsGrammarTest(TestCase):
         self.assertEqual("of", result["target"])
 
         result = parse_refs("Section 2, of the Act with junk")
+        self.assertEqual("of", result["target"])
+
+    def test_target_af(self):
+        result = parse_refs("Afdeling 2 van hierdie Wet")
+        self.assertEqual("this", result["target"])
+
+        result = parse_refs("Afdeling 2 daarvan")
+        self.assertEqual("thereof", result["target"])
+
+        result = parse_refs("Afdeling 2 van die Wet met kak")
         self.assertEqual("of", result["target"])

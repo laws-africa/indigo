@@ -9,7 +9,7 @@ from cobalt import FrbrUri
 from docpipe.matchers import TextPatternMatcher
 from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
-from schemas import AkomaNtoso30
+from cobalt.schemas import AkomaNtoso30
 
 
 @dataclass

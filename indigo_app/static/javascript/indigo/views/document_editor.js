@@ -572,6 +572,7 @@
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
       'click .btn.show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
+      'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },
 
     initialize: function(options) {
@@ -745,5 +746,28 @@
     saveModel: function() {
       return this.documentContent.save();
     },
+
+    refPopup: function (e) {
+      const element = e.target;
+      const href = element.getAttribute('href');
+      if (!href.startsWith('#')) return;
+      const eId = href.substring(1);
+
+      const target = this.documentContent.xpath(
+        `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+
+      if (target) {
+        // render
+        const html = document.createElement('la-akoma-ntoso');
+        html.appendChild(this.sourceEditor.htmlRenderer.renderXmlElement(this.model, target));
+
+        $(element).popover({
+          content: html.outerHTML,
+          html: true,
+          sanitize: false,
+          placement: 'top',
+        }).popover('show');
+      }
+    }
   });
 })(window);

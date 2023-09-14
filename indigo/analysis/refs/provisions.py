@@ -176,7 +176,9 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     xml_marker_tag = "ref"
     xml_ancestor_xpath = '|'.join(f'//ns:{x}'
                                   for x in ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'judgmentBody', 'conclusions'])
-    xml_candidate_xpath = ".//text()[not(ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num)]"
+    xml_candidate_xpath = (".//text()[not("
+                           "ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num "
+                           "ancestor::ns:embeddedStructure or ancestor::ns:quotedStructure)]")
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())

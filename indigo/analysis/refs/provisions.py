@@ -357,14 +357,14 @@ def parse_provision_refs(text):
 
         def references(self, input, start, end, elements):
             refs = [elements[2]]
-            refs.extend(e.elements[1] for e in elements[3].elements)
+            refs.extend(e.main_ref for e in elements[3].elements)
             for r in refs:
                 r.name = elements[0].text
             return refs
 
         def main_ref(self, input, start, end, elements):
             ref = elements[0]
-            sub_refs = elements[2] if isinstance(elements[2], list) else None
+            sub_refs = elements[1].sub_refs if elements[1].elements else None
             if sub_refs:
                 ref.child = sub_refs[0]
                 sub_refs = sub_refs[1:]

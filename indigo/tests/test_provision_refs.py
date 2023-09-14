@@ -913,6 +913,23 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result['references'])
         self.assertIsNone(result["target"])
 
+    def test_multiple_mains_range(self):
+        result = parse_provision_refs("Sections 26 to 31")
+        self.assertEqual([
+            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
+            MainProvisionRef('Sections', ProvisionRef('31', 15, 17)),
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
+        result = parse_provision_refs("Sections 26, 27 and 28 to 31")
+        self.assertEqual([
+            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
+            MainProvisionRef('Sections', ProvisionRef('27', 13, 15)),
+            MainProvisionRef('Sections', ProvisionRef('28', 20, 22)),
+            MainProvisionRef('Sections', ProvisionRef('31', 26, 28)),
+        ], result['references'])
+        self.assertIsNone(result["target"])
+
     def test_multiple_mains_target(self):
         result = parse_provision_refs("Sections 2(1), section 3(b) and section 32(a) of another Act")
         self.assertEqual([

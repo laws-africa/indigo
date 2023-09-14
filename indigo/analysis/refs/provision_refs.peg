@@ -5,17 +5,17 @@ grammar ProvisionRefs
   # The main reference is the "section 32" or "chapter 4", and form the root used by
   # the subsequent references.
 
-  root        <- references (and_or references)* target? .* %root
+  root        <- references (to_and_or references)* target? .* %root
 
                  # section 32
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  references  <- unit WS+ main_ref (and_or main_ref)* %references
+  references  <- unit WS+ main_ref (to_and_or main_ref)* %references
 
   unit        <- unit_en / unit_af
 
-  main_ref    <- main_num WS* sub_refs? %main_ref
+  main_ref    <- main_num (WS* sub_refs)? %main_ref
 
                  # section 32
                  # section 32A
@@ -25,7 +25,7 @@ grammar ProvisionRefs
                  # (a)(ii) to (iv)
                  # (a), (b) and (f)(ii)
                  # (a)(ii), (b)(iii) and (v), and (d)
-  sub_refs    <- sub_ref ((range / and_or) sub_ref)* %sub_refs
+  sub_refs    <- sub_ref (to_and_or sub_ref)* %sub_refs
 
                  # (a)
                  # (a) (ii)
@@ -36,6 +36,8 @@ grammar ProvisionRefs
                  # (a-bis)
                  # (iv)
   num         <- "(" alpha_num_dot+ ")" %num
+
+  to_and_or   <- range / and_or
 
                  # (a) to (b)
                  # (a), to (b)

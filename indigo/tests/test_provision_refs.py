@@ -20,32 +20,32 @@ class ProvisionRefsResolverTestCase(TestCase):
         self.doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_1">
               <num>1.</num>
-              <subsection eId="sec_1__subsec_a">
-                <num>(a)</num>
-                <paragraph eId="sec_1__subsec_a__para_1">
-                  <num>(1)</num>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+                <paragraph eId="sec_1__subsec_1__para_a">
+                  <num>(a)</num>
                 </paragraph>
-                <paragraph eId="sec_1__subsec_a__para_2">
-                  <num>(2)</num>
+                <paragraph eId="sec_1__subsec_1__para_b">
+                  <num>(b)</num>
                 </paragraph>
               </subsection>
-              <subsection eId="sec_1__subsec_b">
-                <num>(b)</num>
+              <subsection eId="sec_1__subsec_2">
+                <num>(2)</num>
               </subsection>
             </section>
             <section eId="sec_2">
               <num>2.</num>
-              <subsection eId="sec_2__subsec_a">
-                <num>(a)</num>
-                <paragraph eId="sec_2__subsec_a__para_1">
-                  <num>(1)</num>
+              <subsection eId="sec_2__subsec_1">
+                <num>(1)</num>
+                <paragraph eId="sec_2__subsec_1__para_a">
+                  <num>(a)</num>
                 </paragraph>
-                <paragraph eId="sec_2__subsec_a__para_2">
-                  <num>(2)</num>
+                <paragraph eId="sec_2__subsec_1__para_b">
+                  <num>(b)</num>
                 </paragraph>
               </subsection>
-              <subsection eId="sec_2__subsec_b">
-                <num>(b)</num>
+              <subsection eId="sec_2__subsec_2">
+                <num>(2)</num>
               </subsection>
             </section>
         """)).root
@@ -63,9 +63,9 @@ class ProvisionRefsResolverTestCase(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "Section",
-                ProvisionRef("3", 8, 9, None, ProvisionRef("(a)", 9, 12))
+                ProvisionRef("3", 8, 9, None, ProvisionRef("(1)", 9, 12))
             )
-        ], self.resolver.resolve_references_str("Section 3(a)", self.doc))
+        ], self.resolver.resolve_references_str("Section 3(1)", self.doc))
 
     def test_nested(self):
         self.assertEqual([
@@ -74,15 +74,15 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef(
                     "1", 8, 9, None,
                     ProvisionRef(
-                        "(a)", 9, 12,
-                        element=self.doc.xpath('.//*[@eId="sec_1__subsec_a"]')[0],
-                        eId="sec_1__subsec_a"
+                        "(1)", 9, 12,
+                        element=self.doc.xpath('.//*[@eId="sec_1__subsec_1"]')[0],
+                        eId="sec_1__subsec_1"
                     ),
                     element=self.doc.xpath('.//*[@eId="sec_1"]')[0],
                     eId="sec_1",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 1(a)", self.doc))
+        ], self.resolver.resolve_references_str("Section 1(1)", self.doc))
 
         self.assertEqual([
             MainProvisionRef(
@@ -90,20 +90,20 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef(
                     "2", 8, 9, None,
                     ProvisionRef(
-                        "(a)", 9, 12, None,
+                        "(1)", 9, 12, None,
                         ProvisionRef(
-                            "(2)", 12, 15,
-                            element=self.doc.xpath('.//*[@eId="sec_2__subsec_a__para_2"]')[0],
-                            eId="sec_2__subsec_a__para_2"
+                            "(a)", 12, 15,
+                            element=self.doc.xpath('.//*[@eId="sec_2__subsec_1__para_a"]')[0],
+                            eId="sec_2__subsec_1__para_a"
                         ),
-                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
-                        eId="sec_2__subsec_a",
+                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_1"]')[0],
+                        eId="sec_2__subsec_1",
                     ),
                     element=self.doc.xpath('.//*[@eId="sec_2"]')[0],
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(a)(2)", self.doc))
+        ], self.resolver.resolve_references_str("Section 2(1)(a)", self.doc))
 
     def test_nested_truncated(self):
         self.assertEqual([
@@ -112,16 +112,37 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef(
                     "2", 8, 9, None,
                     ProvisionRef(
-                        "(a)", 9, 12, None,
-                        ProvisionRef("(8)", 12, 15),
-                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_a"]')[0],
-                        eId="sec_2__subsec_a",
+                        "(1)", 9, 12, None,
+                        ProvisionRef("(d)", 12, 15),
+                        element=self.doc.xpath('.//*[@eId="sec_2__subsec_1"]')[0],
+                        eId="sec_2__subsec_1",
                     ),
                     element=self.doc.xpath('.//*[@eId="sec_2"]')[0],
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(a)(8)", self.doc))
+        ], self.resolver.resolve_references_str("Section 2(1)(d)", self.doc))
+
+    def test_local(self):
+        root = self.doc.xpath('.//*[@eId="sec_2"]')[0]
+        self.assertEqual([
+            MainProvisionRef(
+                "paragraph",
+                ProvisionRef(
+                    "(a)", 10, 13,
+                    element=self.doc.xpath('.//*[@eId="sec_2__subsec_1__para_a"]')[0],
+                    eId="sec_2__subsec_1__para_a",
+                ),
+            ),
+            MainProvisionRef(
+                "subsection",
+                ProvisionRef(
+                    "(1)", 26, 29,
+                    element=self.doc.xpath('.//*[@eId="sec_2__subsec_1"]')[0],
+                    eId="sec_2__subsec_1",
+                ),
+            ),
+        ], self.resolver.resolve_references_str("paragraph (a), subsection (1)", root))
 
 
 class ProvisionRefsMatcherTestCase(TestCase):
@@ -454,6 +475,105 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_local_relative(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_1">
+              <num>1.</num>
+              <heading>Section 1</heading>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+              </subsection>
+              <subsection eId="sec_1__subsec_2">
+                <num>(2)</num>
+              </subsection>
+              <subsection eId="sec_1__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_1__subsec_3__para_a">
+                  <num>(a)</num>
+                </paragraph>
+                <paragraph eId="sec_1__subsec_3__para_b">
+                  <num>(b)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_1__subsec_4">
+                <num>(4)</num>
+                <content>
+                  <p>referred to in subsection (1), (2) or (3)(b), to the extent that...</p>
+                </content>
+              </subsection>
+            </section>
+            <section eId="sec_2">
+              <num>2.</num>
+              <subsection eId="sec_2__subsec_1">
+                <num>(1)</num>
+              </subsection>
+              <subsection eId="sec_2__subsec_2">
+                <num>(2)</num>
+              </subsection>
+              <subsection eId="sec_2__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_2__subsec_3__para_a">
+                  <num>(a)</num>
+                </paragraph>
+                <paragraph eId="sec_2__subsec_3__para_b">
+                  <num>(b)</num>
+                </paragraph>
+              </subsection>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_1">
+              <num>1.</num>
+              <heading>Section 1</heading>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+              </subsection>
+              <subsection eId="sec_1__subsec_2">
+                <num>(2)</num>
+              </subsection>
+              <subsection eId="sec_1__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_1__subsec_3__para_a">
+                  <num>(a)</num>
+                </paragraph>
+                <paragraph eId="sec_1__subsec_3__para_b">
+                  <num>(b)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_1__subsec_4">
+                <num>(4)</num>
+                <content>
+                  <p>referred to in subsection <ref href="#sec_1__subsec_1">(1)</ref>, <ref href="#sec_1__subsec_2">(2)</ref> or <ref href="#sec_1__subsec_3__para_b">(3)(b)</ref>, to the extent that...</p>
+                </content>
+              </subsection>
+            </section>
+            <section eId="sec_2">
+              <num>2.</num>
+              <subsection eId="sec_2__subsec_1">
+                <num>(1)</num>
+              </subsection>
+              <subsection eId="sec_2__subsec_2">
+                <num>(2)</num>
+              </subsection>
+              <subsection eId="sec_2__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_2__subsec_3__para_a">
+                  <num>(a)</num>
+                </paragraph>
+                <paragraph eId="sec_2__subsec_3__para_b">
+                  <num>(b)</num>
+                </paragraph>
+              </subsection>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
     def test_remote_sections(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
@@ -792,6 +912,14 @@ class ProvisionRefsGrammarTest(TestCase):
             )
         ], result['references'])
 
+        result = parse_provision_refs("paragraph (a)")
+        self.assertEqual([
+            MainProvisionRef(
+                "paragraph",
+                ProvisionRef("(a)", 10, 13)
+            )
+        ], result['references'])
+
     def test_multiple_main_numbers(self):
         result = parse_provision_refs("Section 1, 32 and 33")
         self.assertEqual([
@@ -806,6 +934,18 @@ class ProvisionRefsGrammarTest(TestCase):
             MainProvisionRef(
                 "Section",
                 ProvisionRef("33", 18, 20)
+            )
+        ], result['references'])
+
+        result = parse_provision_refs("paragraph (a) and subparagraph (c)")
+        self.assertEqual([
+            MainProvisionRef(
+                "paragraph",
+                ProvisionRef("(a)", 10, 13)
+            ),
+            MainProvisionRef(
+                "subparagraph",
+                ProvisionRef("(c)", 31, 34)
             )
         ], result['references'])
 

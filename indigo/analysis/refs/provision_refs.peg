@@ -15,7 +15,7 @@ grammar ProvisionRefs
 
   unit        <- unit_en / unit_af
 
-  main_ref    <- main_num (WS* sub_refs)? %main_ref
+  main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 
                  # section 32
                  # section 32A

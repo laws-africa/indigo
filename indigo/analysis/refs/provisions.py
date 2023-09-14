@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass
 from typing import List, Union, Tuple
+import logging
 
 from lxml import etree
 from lxml.etree import Element
@@ -11,6 +12,8 @@ from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
 from indigo.analysis.refs.provision_refs import parse, ParseError
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -95,7 +98,7 @@ class ProvisionRefsResolver:
             self.resolve_references(ref, root)
         return refs
 
-    def resolve_references(self, main_ref: MainProvisionRef, root: Element):
+    def resolve_references(self, main_ref: MainProvisionRef, local_root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
         # when resolving a reference like "Section 32(1)(a) and (b)", everything is relative to the first reference,
         # which is "Section 32(1)(a)". So we need to resolve that to completion first. Then, "(b)" and everything
@@ -103,7 +106,8 @@ class ProvisionRefsResolver:
 
         # resolve the main ref
         ref = main_ref.ref
-        ref.element = self.find_numbered_hier_element(root, [self.element_names[main_ref.name.lower()]], ref.text)
+        names = [self.element_names[main_ref.name.lower()]]
+        ref.element = self.find_numbered_hier_element(local_root, names, ref.text, True)
 
         if ref.element is not None:
             ref.eId = ref.element.get('eId')
@@ -139,19 +143,23 @@ class ProvisionRefsResolver:
             if ref.child:
                 self.resolve_ref(ref.child, [ref.element])
 
-    def find_numbered_hier_element(self, root: Element, names: Union[List[str], None], num: str) -> Element:
+    def find_numbered_hier_element(self, root: Element, names: Union[List[str], None], num: str, above_root: bool = False) -> Element:
         """Find an heir element with the given number. Looks for elements with the given names, or any hier element
-        if names is None.
+        if names is None. If above_root is True, then we'll look above the root element if nothing inside matches.
         """
         names = names or AkomaNtoso30.hier_elements
         ns = {'a': root.nsmap[None]}
 
-        # TODO: the .// isn't quite right, because we want to do a breadth-first search of hier children
-        xpath = '|'.join(f'.//a:{x}' for x in names)
-        for elem in root.xpath(xpath, namespaces=ns):
-            num_elem = elem.find('a:num', ns)
-            if num_elem is not None and num_elem.text.rstrip(".") == num:
-                return elem
+        # we start at the start_node, and walk upwards, expanding until we find something or reach the top
+        while root is not None:
+            # TODO: the .// isn't quite right, because we want to do a breadth-first search of hier children
+            xpath = '|'.join(f'.//a:{x}[not(ancestor::a:quotedStructure or ancestor::a:embeddedStructure)]' for x in names)
+            for elem in root.xpath(xpath, namespaces=ns):
+                num_elem = elem.find('a:num', ns)
+                if num_elem is not None and num_elem.text.rstrip(".") == num:
+                    return elem
+            # keep looking upwards?
+            root = root.getparent() if above_root else None
 
 
 class ProvisionRefsMatcher(TextPatternMatcher):
@@ -182,7 +190,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())
-    pattern_re = re.compile(fr'\b({pattern_names})\s+\d', re.IGNORECASE)
+    pattern_re = re.compile(fr'\b({pattern_names})\s+(\d|\([a-z0-9])', re.IGNORECASE)
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None
@@ -195,9 +203,11 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
     def handle_node_match(self, node, match, in_tail):
         # parse the text into a list of refs using our grammar
+        s = match.string[match.start():]
         try:
-            main_refs, target = self.parse_refs(match.string[match.start():])
-        except ParseError:
+            main_refs, target = self.parse_refs(s)
+        except ParseError as e:
+            log.info(f"Failed to parse refs for: {s}", exc_info=e)
             return None
 
         # work out if the target document is this one, or another one
@@ -260,7 +270,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
     def get_target(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
-        root XML element of the document to use to resolve the references.
+        appropriate root XML element of the document to use to resolve the references.
 
         Remote targets look something like:
 
@@ -268,8 +278,8 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
         if not target or target == "this":
-            # refs are to the local document
-            return None, node.getroottree().getroot()
+            # refs are to the local node, and we may look above that if necessary
+            return None, node
 
         if target == "thereof":
             # look backwards

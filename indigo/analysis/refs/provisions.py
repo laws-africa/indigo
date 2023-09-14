@@ -178,7 +178,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
                                   for x in ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'judgmentBody', 'conclusions'])
     xml_candidate_xpath = (".//text()[not("
                            "ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num "
-                           "ancestor::ns:embeddedStructure or ancestor::ns:quotedStructure)]")
+                           "or ancestor::ns:embeddedStructure or ancestor::ns:quotedStructure)]")
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())

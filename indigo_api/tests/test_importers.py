@@ -1199,7 +1199,7 @@ BODY
 
 
 class ImporterDocxTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'drafts']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'drafts']
 
     def setUp(self):
         self.importer = Importer()

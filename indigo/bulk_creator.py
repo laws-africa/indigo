@@ -17,7 +17,7 @@ from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
-    VocabularyTopic, TaskLabel, ArbitraryExpressionDate
+    VocabularyTopic, TaxonomyTopic, TaskLabel, ArbitraryExpressionDate
 from indigo_api.signals import work_changed
 
 
@@ -31,9 +31,13 @@ class SpreadsheetRow:
         self.relationships = []
         self.tasks = []
         self.taxonomies = []
+        self.taxonomy_topics = []
         self.status = None
         for k, v in data.items():
             setattr(self, k, v)
+
+    def __getitem__(cls, key):
+        return cls.__dict__[key]
 
 
 class LowerChoiceField(forms.ChoiceField):
@@ -67,6 +71,7 @@ class RowValidationFormBase(forms.Form):
     principal = forms.BooleanField(required=False)
     taxonomy = forms.CharField(required=False)
     as_at_date_override = forms.DateField(required=False, error_messages={'invalid': __('Date format should be yyyy-mm-dd.')})
+    taxonomy_topic = forms.CharField(required=False)
     disclaimer = forms.CharField(required=False)
     # passive relationships
     primary_work = forms.CharField(required=False)
@@ -416,6 +421,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if row.taxonomy:
                     self.link_taxonomy(row)
 
+                if row.taxonomy_topic:
+                    self.link_taxonomy(row, model=TaxonomyTopic, attr='taxonomy_topics', attr_single='taxonomy_topic')
+
                 if row.amended_by:
                     self.link_amendment_passive(row)
 
@@ -686,13 +694,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
             return self.create_task(row.work, row, task_type='link-commencement-active')
 
         row.relationships.append(f'Commences {commenced_work} on {date}')
-        for row in self.works:
-            if 'Uncommenced' in row.notes and \
-                    ((hasattr(row, 'work') and
-                      (row.work == commenced_work or
-                       isinstance(commenced_work, str) and row.work.frbr_uri == commenced_work.split()[0])) or
-                     hasattr(row, 'frbr_uri') and isinstance(commenced_work, str) and row.frbr_uri == commenced_work.split()[0]):
-                row.notes.remove('Uncommenced')
+        # remove the 'Uncommenced' note on the commenced work if it's in this batch
+        for work_row in self.works:
+            if 'Uncommenced' in work_row.notes and \
+                    ((hasattr(work_row, 'work') and
+                      (work_row.work == commenced_work or
+                       isinstance(commenced_work, str) and work_row.work.frbr_uri == commenced_work.split()[0])) or
+                     hasattr(work_row, 'frbr_uri') and isinstance(commenced_work, str) and work_row.frbr_uri == commenced_work.split()[0]):
+                work_row.notes.remove('Uncommenced')
 
         if not self.dry_run:
             if not commenced_work.commenced:
@@ -867,9 +876,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                  amendment=amendment)
 
     def link_amendment_active(self, row):
-        # if the work `amends` something, try linking it
-        # (this will only work if there's only one amendment listed)
-        # make a task if this fails
+        # if the work `amends` something, try linking it (or them)
+        # make a task if any fail
         amended_works = [x.strip() for x in row.amends.split('\n') if x.strip()]
         for a in amended_works:
             amended_work = self.find_work(a)
@@ -905,22 +913,23 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                      task_type='apply-amendment',
                                      amendment=amendment)
 
-    def link_taxonomy(self, row):
-        topics = [x.strip() for x in row.taxonomy.split(';') if x.strip()]
+    def link_taxonomy(self, row, model=VocabularyTopic, attr='taxonomies', attr_single='taxonomy'):
+        topics = [x.strip() for x in getattr(row,  attr_single).split(';') if x.strip()]
         unlinked_topics = []
         for t in topics:
-            topic = VocabularyTopic.get_topic(t)
+            topic = model.get_topic(t)
             if topic:
-                row.taxonomies.append(topic)
+                row[attr].append(topic)
                 if not self.dry_run:
-                    row.work.taxonomies.add(topic)
+                    getattr(row.work, attr).add(topic)
                     row.work.save_with_revision(self.user)
 
             else:
                 unlinked_topics.append(t)
         if unlinked_topics:
             if self.dry_run:
-                row.notes.append(f'Taxonomy not found: {"; ".join(unlinked_topics)}')
+
+                row.notes.append(f'{" ".join(attr_single.split("_")).capitalize()} not found: {"; ".join(unlinked_topics)}')
             else:
                 row.unlinked_topics = "; ".join(unlinked_topics)
                 try:

@@ -91,7 +91,7 @@ class AKNHTMLDiffer:
     def preprocess_xml_str(self, xml_str):
         """ Run pre-processing on XML before doing HTML diffs.
         """
-        root = etree.fromstring(xml_str)
+        root = etree.fromstring(xml_str.encode('utf-8'))
         root = self.preprocess_xml_tree(root)
         return etree.tostring(root, encoding='utf-8')
 

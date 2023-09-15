@@ -6,6 +6,7 @@ from django.utils.formats import date_format
 from django.utils.translation import ugettext as _
 
 from indigo.plugins import plugins
+from indigo_api.timeline import describe_publication_event
 
 register = template.Library()
 
@@ -50,44 +51,18 @@ def has_uncommenced_provisions(document):
 
 
 @register.simple_tag
-def publication_document_description(work, placeholder=False):
-    """ Based on the information available, return a string describing the publication document for a work.
-        If `placeholder` is True, return a minimum placeholder string.
-        Otherwise, only return a string at all if at least one piece of publication information is available.
-    """
-    name = work.publication_name
-    number = work.publication_number
-    date = work.publication_date
+def publication_document_description(work, placeholder=False, internal=False):
+    event = describe_publication_event(work, with_date=True, friendly_date=not internal, placeholder=placeholder)
+    if event:
+        return event.description
 
-    if date:
-        date = date_format(date, 'j E Y')
 
-        if name and number:
-            # Published in Government Gazette 12345 on 1 January 2009
-            return _('Published in %(name)s %(number)s on %(date)s') % {
-                'name': name, 'number': number, 'date': date
-            }
-        elif name or number:
-            # Published in Government Gazette on 1 January 2009; or
-            # Published in 12345 on 1 January 2009
-            return _('Published in %(name)s on %(date)s') % {
-                'name': name or number, 'date': date
-            }
-        else:
-            # Published on 1 January 2009
-            return _('Published on %(date)s') % {
-                'date': date
-            }
-    elif name and number:
-        # Published in Government Gazette 12345
-        return _('Published in %(name)s %(number)s') % {
-            'name': name, 'number': number
-        }
-    elif name or number:
-        # Published in Government Gazette; or
-        # Published in 12345
-        return _('Published in %(name)s') % {
-            'name': name or number
-        }
-    elif placeholder:
-        return _('Published')
+@register.simple_tag
+def document_commencement_description(document):
+    commencement_description = document.work.commencement_description_external()
+
+    if commencement_description.subtype == 'multiple':
+        # scope to document's date -- future commencements might not be applicable
+        return document.work.commencement_description(commencements=document.commencements_relevant_at_expression_date())
+
+    return commencement_description

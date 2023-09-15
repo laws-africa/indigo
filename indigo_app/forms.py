@@ -17,7 +17,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic
 
 
 class WorkForm(forms.ModelForm):
@@ -27,7 +27,7 @@ class WorkForm(forms.ModelForm):
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
-            'stub', 'principal', 'taxonomies', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
+            'stub', 'principal', 'taxonomies', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
         )
 
@@ -40,6 +40,9 @@ class WorkForm(forms.ModelForm):
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'),
+        required=False)
+    taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
         required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
@@ -229,7 +232,7 @@ class ColumnSelectWidget(SelectMultiple):
         'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
         'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
         'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
-        'primary_work', 'subleg', 'taxonomy'
+        'primary_work', 'subleg', 'taxonomy', 'taxonomy_topic'
     ]
 
     def create_option(self, *args, **kwargs):
@@ -300,6 +303,7 @@ class TaskFilterForm(forms.Form):
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
     type = forms.MultipleChoiceField(choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects)
+    taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -334,6 +338,11 @@ class TaskFilterForm(forms.Form):
         if self.cleaned_data.get('submitted_by'):
             queryset = queryset.filter(state__in=['pending_review', 'closed'])\
                 .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+
+        if self.cleaned_data.get('taxonomy_topic'):
+            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
+            topics = [topic] + [t for t in topic.get_descendants()]
+            queryset = queryset.filter(work__taxonomy_topics__in=topics)
 
         return queryset
 
@@ -376,6 +385,8 @@ class WorkFilterForm(forms.Form):
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
                         'primary_subsidiary', 'taxonomies', 'completeness', 'status']
+
+    taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -508,6 +519,12 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['commencement_date_end']
                 queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
 
+        if self.cleaned_data.get('taxonomy_topic'):
+            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
+            if topic:
+                topics = [topic] + [t for t in topic.get_descendants()]
+                queryset = queryset.filter(taxonomy_topics__in=topics)
+
         return queryset
 
     def filter_document_queryset(self, queryset):
@@ -637,6 +654,12 @@ class PlaceSettingsForm(forms.ModelForm):
     def clean_spreadsheet_url(self):
         url = self.cleaned_data.get('spreadsheet_url')
         return re.sub('/[\w#=]*$', '/', url)
+
+
+class PlaceUsersForm(forms.Form):
+    # make choices a lambda so that it's evaluated at runtime, not import time
+    choices = lambda: [(u.id, (u.get_full_name() or u.username)) for u in User.objects.filter(badges_earned__slug='editor')]
+    users = forms.MultipleChoiceField(choices=choices, label="Users with edit permissions", required=False, widget=forms.CheckboxSelectMultiple)
 
 
 class ExplorerForm(forms.Form):

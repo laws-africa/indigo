@@ -1,11 +1,10 @@
-{% extends "place/tabbed_layout.html" %}
+{% extends "place/settings_layout.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Settings" %} {{ block.super }}{% endblock %}
 
-{% block content %}
-<div class="container mt-3 mb-5">
-  <form method="POST" action="">
+{% block settings-content %}
+    <form method="POST" action="">
     {% csrf_token %}
 
     <div class="card">
@@ -86,9 +85,9 @@
               <label class="mb-0" for="{{ form.is_consolidation.id_for_label }}">{{ form.is_consolidation.label }}</label>
               <p class="form-text text-muted">
                 {% blocktrans trimmed %}
-                Is a consolidation being worked on in this place?<br>
-                If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br>
-                For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import.
+                  Is a consolidation being worked on in this place?<br>
+                  If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br>
+                  For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import.
                 {% endblocktrans %}
               </p>
             </div>
@@ -127,9 +126,8 @@
       </div>
     </div>
   </form>
-  <div>
-    <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw mr-1"></i> {% blocktrans trimmed %}Download full legislation index for {{ place }}{% endblocktrans %}</a>
-  </div>
 
-</div>
+    <div>
+      <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw mr-1"></i> {% blocktrans trimmed %}Download full legislation index for {{ place }}{% endblocktrans %}</a>
+    </div>
 {% endblock %}

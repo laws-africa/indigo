@@ -110,8 +110,6 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'text/html')
         self.assertNotIn('<akomaNtoso', response.content.decode('utf-8'))
         self.assertIn('<span', response.content.decode('utf-8'))
-        # html should not have self-closing tags
-        self.assertNotIn('/>', response.content.decode('utf-8'))
 
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng.html')
         self.assertEqual(response.status_code, 200)
@@ -133,12 +131,12 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 6)
+        self.assertEqual(len(response.data['results']), 7)
 
         response = self.client.get(self.api_path + '/akn/za/act/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 6)
+        self.assertEqual(len(response.data['results']), 7)
 
         response = self.client.get(self.api_path + '/akn/za/act/2014')
         self.assertEqual(response.status_code, 200)
@@ -326,11 +324,9 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/!main~sec_1.html')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'text/html')
-        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
-<span class="akn-content">
-          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img class="akn-img" data-src="media/test-image.png" src="media/test-image.png"></span>
-        </span></section>
-''')
+        self.assertEqual(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3><span class="akn-content">
+          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img class="akn-img" data-src="media/test-image.png" src="media/test-image.png"/></span>
+        </span></section>''')
 
     def test_at_expression_date(self):
         response = self.client.get(self.api_path + '/akn/za/act/2010/1/eng@2011-01-01.json')
@@ -700,5 +696,5 @@ class ContentAPIV2TestMixin:
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV2Test(ContentAPIV2TestMixin, APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon', 'attachments',
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'colophon', 'attachments',
                 'commencements']

@@ -21,7 +21,7 @@ SassProcessor.processor_enabled = True
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'colophon', 'drafts', 'published', 'attachments']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'colophon', 'drafts', 'published', 'attachments']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')

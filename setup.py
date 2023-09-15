@@ -42,12 +42,12 @@ setup(
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',
-        'bluebell-akn>=2.2.0',
+        'bluebell-akn>=2.3.0',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.10.0',
-        'django-allauth>=0.48.0',
+        'django-allauth>=0.56.0',
         'django-background-tasks>=1.2.5',
         'django-compressor>=3.1',
         'django-cors-headers>=3.11.0',
@@ -64,6 +64,7 @@ setup(
         'django-sass-processor-dart-sass>=0.0.1',
         'django-storages>=1.12.3',
         'django-templated-email>=2.3.0',
+        'django-treebeard>=4.5.1',
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]

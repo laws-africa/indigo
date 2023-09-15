@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 
 from django.test import testcases, override_settings
@@ -9,15 +7,13 @@ from webtest import Upload
 
 import reversion
 
-from indigo.bulk_creator import BaseBulkCreator
-from indigo.plugins import plugins
 from indigo_app.views.works import WorkViewBase
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country, Document
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'publications']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'publications', 'commencements']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -125,7 +121,6 @@ class WorksTest(testcases.TestCase):
         self.assertNotIn('tester', doc.content)
 
     def test_get_work_timeline(self):
-        view = WorkViewBase()
         work = Work.objects.get(pk=1)
         work.assent_date = datetime.date(2014, 3, 20)
         amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
@@ -134,73 +129,218 @@ class WorksTest(testcases.TestCase):
         consolidation = ArbitraryExpressionDate(work=work, date='2018-01-01', created_by_user_id=1)
         consolidation.save()
 
-        timeline = WorkViewBase.get_work_timeline(view, work)
+        view = WorkViewBase()
+        timeline = view.get_work_timeline(work)
+        self.assertEqual(5, len(timeline))
+
         # most recent event first
-        self.assertEqual(timeline[0]['date'], datetime.date(2019, 1, 1))
-        self.assertEqual(timeline[0]['amendments'][0].date, datetime.date(2019, 1, 1))
-        self.assertEqual(timeline[0]['initial'], False)
+        self.assertEqual(datetime.date(2019, 1, 1), timeline[0].date)
+        self.assertEqual(False, timeline[0].initial)
+        self.assertEqual(1, len(timeline[0].events))
+        event = timeline[0].events[0]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1998/2', event.by_frbr_uri)
+        self.assertEqual('Test Act', event.by_title)
+        self.assertEqual('', event.note)
+        self.assertEqual(amendment, event.related)
 
         # consolidation
-        self.assertEqual(timeline[1]['date'], datetime.date(2018, 1, 1))
-        self.assertEqual(timeline[1]['consolidations'][0].date, datetime.date(2018, 1, 1))
-        self.assertEqual(timeline[1]['initial'], False)
+        self.assertEqual(datetime.date(2018, 1, 1), timeline[1].date)
+        self.assertEqual(False, timeline[1].initial)
+        self.assertEqual(1, len(timeline[1].events))
+        event = timeline[1].events[0]
+        self.assertEqual('consolidation', event.type)
+        self.assertEqual('Consolidation', event.description)
+        self.assertEqual('', event.by_frbr_uri)
+        self.assertEqual('', event.by_title)
+        self.assertEqual('', event.note)
+        self.assertEqual(consolidation, event.related)
+
+        # commencement date on fixture
+        self.assertEqual(datetime.date(2016, 7, 15), timeline[2].date)
+        self.assertEqual(False, timeline[2].initial)
+        self.assertEqual(1, len(timeline[2].events))
+        event = timeline[2].events[0]
+        self.assertEqual('commencement', event.type)
+        self.assertEqual('Commenced', event.description)
+        self.assertEqual('', event.by_frbr_uri)
+        self.assertEqual('', event.by_title)
+        self.assertEqual('', event.note)
+        self.assertEqual(Commencement.objects.get(pk=1), event.related)
 
         # publication date on fixture
-        self.assertEqual(timeline[2]['date'], datetime.date(2014, 4, 2))
-        self.assertEqual(timeline[2]['publication_date'], True)
-        self.assertEqual(timeline[2]['initial'], True)
+        self.assertEqual(datetime.date(2014, 4, 2), timeline[3].date)
+        self.assertEqual(True, timeline[3].initial)
+        self.assertEqual(1, len(timeline[3].events))
+        event = timeline[3].events[0]
+        self.assertEqual('publication', event.type)
+        self.assertEqual('Published in Government Gazette 12345', event.description)
+        self.assertEqual('', event.by_frbr_uri)
+        self.assertEqual('', event.by_title)
+        self.assertEqual('', event.note)
+        self.assertEqual(None, event.related)
 
         # assent date (oldest)
-        self.assertEqual(timeline[-1]['date'], datetime.date(2014, 3, 20))
-        self.assertEqual(timeline[-1]['assent_date'], True)
+        self.assertEqual(datetime.date(2014, 3, 20), timeline[4].date)
+        self.assertEqual(False, timeline[4].initial)
+        self.assertEqual(1, len(timeline[4].events))
+        event = timeline[4].events[0]
+        self.assertEqual('assent', event.type)
+        self.assertEqual('Assented to', event.description)
+        self.assertEqual('', event.by_frbr_uri)
+        self.assertEqual('', event.by_title)
+        self.assertEqual('', event.note)
+        self.assertEqual(None, event.related)
 
     def test_get_work_timeline_multiple_amendments(self):
-        view = WorkViewBase()
         work = Work.objects.get(pk=1)
         work.assent_date = datetime.date(2014, 3, 20)
 
         act_2_of_1998 = Work.objects.get(pk=2)
-        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1998, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_1 = Amendment(amended_work_id=1, amending_work=act_2_of_1998, date='2019-01-01', created_by_user_id=1)
+        amendment_1.save()
 
         gn_1_of_1900 = Work(frbr_uri='/akn/za/act/gn/1900/1', country_id=1, created_by_user_id=1)
         gn_1_of_1900.save()
-        amendment = Amendment(amended_work_id=1, amending_work=gn_1_of_1900, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_2 = Amendment(amended_work_id=1, amending_work=gn_1_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment_2.save()
 
         act_30_of_1900 = Work(frbr_uri='/akn/za/act/1900/30', country_id=1, created_by_user_id=1)
         act_30_of_1900.save()
-        amendment = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_3 = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment_3.save()
 
         act_12_of_1900 = Work(frbr_uri='/akn/za/act/1900/12', country_id=1, created_by_user_id=1)
         act_12_of_1900.save()
-        amendment = Amendment(amended_work_id=1, amending_work=act_12_of_1900, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_4 = Amendment(amended_work_id=1, amending_work=act_12_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment_4.save()
 
         act_2_of_1900 = Work(frbr_uri='/akn/za/act/1900/2', country_id=1, created_by_user_id=1)
         act_2_of_1900.save()
-        amendment = Amendment(amended_work_id=1, amending_work=act_2_of_1900, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_5 = Amendment(amended_work_id=1, amending_work=act_2_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment_5.save()
 
         act_1_of_1900 = Work.objects.get(pk=6)
-        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_6 = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
+        amendment_6.save()
 
         act_1_of_1998 = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
         act_1_of_1998.save()
-        amendment = Amendment(amended_work_id=1, amending_work=act_1_of_1998, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
+        amendment_7 = Amendment(amended_work_id=1, amending_work=act_1_of_1998, date='2019-01-01', created_by_user_id=1)
+        amendment_7.save()
 
-        timeline = WorkViewBase.get_work_timeline(view, work)
-        amending_works_in_order = [x.amending_work for x in timeline[0]['amendments']]
+        view = WorkViewBase()
+        timeline = view.get_work_timeline(work)
+        # self.assertEqual(3, len(timeline))
+        self.assertEqual(4, len(timeline))
+        self.assertEqual(7, len(timeline[0].events))
 
-        self.assertEqual(
-            [act_1_of_1900, act_2_of_1900,
-             act_12_of_1900, act_30_of_1900,
-             gn_1_of_1900,
-             act_1_of_1998, act_2_of_1998],
-            amending_works_in_order)
+        event = timeline[0].events[0]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1900/1', event.by_frbr_uri)
+        self.assertEqual('Test suite document fixture act', event.by_title)
+        self.assertEqual(amendment_6, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[1]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1900/2', event.by_frbr_uri)
+        self.assertEqual('(untitled)', event.by_title)
+        self.assertEqual(amendment_5, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[2]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1900/12', event.by_frbr_uri)
+        self.assertEqual('(untitled)', event.by_title)
+        self.assertEqual(amendment_4, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[3]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1900/30', event.by_frbr_uri)
+        self.assertEqual('(untitled)', event.by_title)
+        self.assertEqual(amendment_3, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[4]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/gn/1900/1', event.by_frbr_uri)
+        self.assertEqual('(untitled)', event.by_title)
+        self.assertEqual(amendment_2, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[5]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1998/1', event.by_frbr_uri)
+        self.assertEqual('(untitled)', event.by_title)
+        self.assertEqual(amendment_7, event.related)
+        self.assertEqual('', event.note)
+
+        event = timeline[0].events[6]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual('/akn/za/act/1998/2', event.by_frbr_uri)
+        self.assertEqual('Test Act', event.by_title)
+        self.assertEqual(amendment_1, event.related)
+        self.assertEqual('', event.note)
+
+    def test_get_work_timeline_squash_commencement_and_amendment_by_same_work(self):
+        view = WorkViewBase()
+        work = Work.objects.get(pk=17)
+        timeline = view.get_work_timeline(work)
+
+        # publication at 2023-10-01; amendment at 2023-11-01
+        self.assertEqual(2, len(timeline))
+        self.assertEqual(datetime.date(2023, 11, 1), timeline[0].date)
+        # just the one event
+        self.assertEqual(1, len(timeline[0].events))
+
+        event = timeline[0].events[0]
+        self.assertEqual('amendment', event.type)
+        self.assertEqual('Amended by', event.description)
+        self.assertEqual(Amendment.objects.get(pk=7), event.related)
+        self.assertEqual('A work that both amends and commences another work on the same date', event.by_title)
+        self.assertEqual('/akn/za/act/2023/11', event.by_frbr_uri)
+        # but we do have the note from the commencement
+        self.assertEqual('Commencement note: See section 12 of Act 11 of 2023', event.note)
+
+    def test_get_work_timeline_dont_squash_commencement_and_amendment_by_different_works(self):
+        view = WorkViewBase()
+        work = Work.objects.get(pk=19)
+        timeline = view.get_work_timeline(work)
+
+        # publication at 2023-10-01; amendment and commencement at 2023-11-01
+        self.assertEqual(2, len(timeline))
+        self.assertEqual(datetime.date(2023, 11, 1), timeline[0].date)
+        # two events
+        self.assertEqual(2, len(timeline[0].events))
+
+        # amendment
+        event_1 = timeline[0].events[0]
+        self.assertEqual('amendment', event_1.type)
+        self.assertEqual('Amended by', event_1.description)
+        self.assertEqual(Amendment.objects.get(pk=8), event_1.related)
+        self.assertEqual('A work that both amends and commences another work on the same date', event_1.by_title)
+        self.assertEqual('/akn/za/act/2023/11', event_1.by_frbr_uri)
+        # no note on the amendment when the commencement is separate
+        self.assertEqual('', event_1.note)
+
+        # commencement
+        event_2 = timeline[0].events[1]
+        self.assertEqual('commencement', event_2.type)
+        self.assertEqual('Commenced by', event_2.description)
+        self.assertEqual(Commencement.objects.get(pk=12), event_2.related)
+        self.assertEqual('Commencement notice', event_2.by_title)
+        self.assertEqual('/akn/za/act/gn/2023/21', event_2.by_frbr_uri)
+        self.assertEqual('Note: See section 1', event_2.note)
 
     def test_no_publication_document(self):
         # this work has no publication document
@@ -215,7 +355,7 @@ class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.
     """
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'commencements']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

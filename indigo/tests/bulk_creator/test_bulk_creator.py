@@ -12,7 +12,7 @@ from indigo_app.models import User
 
 
 class BaseBulkCreatorTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'subtype']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'subtype']
 
     def setUp(self):
         self.maxDiff = None

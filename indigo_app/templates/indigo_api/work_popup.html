@@ -8,7 +8,7 @@
     {% endif %}
     {% if work.repealed_date %}
       <span class="badge badge-info">{% trans 'repealed' %}</span>
-    {% endif %} 
+    {% endif %}
     {% if not work.commenced %}
       <span class="badge badge-info">{% trans 'not commenced' %}</span>
     {% elif not work.commencement_date %}
@@ -25,57 +25,32 @@
     <p class="mb-2">{% blocktrans with date=work.assent_date|date:"Y-m-d" %}Assented to on {{ date }}{% endblocktrans %}.</p>
   {% endif %}
 
-  {% publication_document_description work placeholder=work.publication_document as publication_document_description %}
+  {% publication_document_description work placeholder=work.publication_document internal=True as publication_document_description %}
   {% if publication_document_description %}
     <p class="mb-2">
       {% if work.publication_document %}
         {% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename as url %}
-        <a href="{{ url }}" target="_blank" rel="noopener">{{ publication_document_description }}</a>.
+        <a href="{{ url }}" target="_blank" rel="noopener">{{ publication_document_description }}.</a>
       {% else %}
         {{ publication_document_description }}.
       {% endif %}
     </p>
   {% endif %}
 
-  {% if work.commenced %}
-    <p class="mb-2">
-      {% with date=work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>"%}
-        {% if work.main_commencement and not work.main_commencement.all_provisions %}
-          {% if work.commencing_work %}
-            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
-            {% blocktrans trimmed with title=work.commencing_work.title %}
-              Commenced in part on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
-            {% endblocktrans %}
-          {% else %}
-            {% blocktrans trimmed %}
-              Commenced in part on {{ date }}.
-            {% endblocktrans %}
-          {% endif %}
-
-        {% else %}
-
-          {% if work.commencing_work %}
-            {% url 'work' frbr_uri=work.commencing_work.frbr_uri as url %}
-            {% blocktrans trimmed with title=work.commencing_work.title %}
-              Commenced on {{ date }} by <a href="{{ url }}">{{ title }}</a>.
-            {% endblocktrans %}
-          {% else %}
-            {% blocktrans trimmed %}
-              Commenced on {{ date }}.
-            {% endblocktrans %}
-          {% endif %}
-
-        {% endif %}
-      {% endwith %}
-
-      {% if work.commencements.count > 1 %}
-        {% url 'work_commencements' frbr_uri=work.frbr_uri as url %}
-        {% blocktrans trimmed %}
-          This work has <a href="{{ url }}">multiple commencements</a>.
-        {% endblocktrans %}
+  <p class="mb-2">
+    {% with work.commencement_description_internal as commencement_description %}
+      {% if commencement_description.subtype == 'multiple' %}
+        {% url 'work_commencements' frbr_uri=work.frbr_uri as commencements_url %}
+        <a href="{{ commencements_url }}">{{ commencement_description.description }}.</a>
+      {% elif commencement_description.by_work %}
+        {{ commencement_description.description }}
+        {% url 'work' frbr_uri=commencement_description.by_frbr_uri as commencing_url %}
+        <a href="{{ commencing_url }}" target="_blank">{{ commencement_description.by_title }}</a>.
+      {% else %}
+        {{ commencement_description.description }}.
       {% endif %}
-    </p>
-  {% endif %}
+    {% endwith %}
+  </p>
 
   {% if work.repealed_date %}
     <p class="mb-2">

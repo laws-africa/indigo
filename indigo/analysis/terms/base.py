@@ -38,9 +38,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
         """
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         self.find_terms(root)
-        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        document.content = etree.tostring(root, encoding='unicode')
 
     def find_terms(self, doc):
         self.setup(doc)

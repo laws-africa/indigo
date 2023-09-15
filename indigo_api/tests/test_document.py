@@ -7,7 +7,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class DocumentTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'drafts', 'commencements']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)
@@ -136,3 +136,48 @@ class DocumentTestCase(TestCase):
         self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.work.consolidation_note())
         d = Document.objects.get(id=4)
         self.assertEqual('A special consolidation note just for this work', d.work.consolidation_note())
+
+    def test_commencement_description(self):
+        # fairly straightforward work with a single commencement
+        d = Document(work=self.work)
+        description = d.work.commencement_description_internal()
+        self.assertEqual('commencement', description.type)
+        self.assertEqual('single', description.subtype)
+        self.assertEqual('Commenced on 2016-07-15', description.description)
+        self.assertEqual(date(2016, 7, 15), description.date)
+        self.assertEqual('', description.note)
+        self.assertEqual('', description.by_frbr_uri)
+        self.assertEqual('', description.by_title)
+        self.assertEqual(None, description.by_work)
+        # format date for external use
+        description = d.work.commencement_description_external()
+        self.assertEqual('Commenced on 15 July 2016', description.description)
+
+        # uncommenced work
+        d = Document.objects.get(id=7)
+        description = d.work.commencement_description()
+        self.assertEqual('uncommenced', description.subtype)
+        self.assertEqual('Not commenced', description.description)
+
+        # multiple commencements
+        d = Document.objects.get(id=104)
+        description = d.work.commencement_description()
+        self.assertEqual('commencement', description.type)
+        self.assertEqual('multiple', description.subtype)
+        self.assertEqual('There are multiple commencements', description.description)
+        self.assertEqual(None, description.date)
+        self.assertEqual('', description.note)
+        self.assertEqual('', description.by_frbr_uri)
+        self.assertEqual('', description.by_title)
+        self.assertEqual(None, description.by_work)
+
+        # but not all commencements apply to earlier points in time
+        description = d.work.commencement_description(commencements=d.commencements_relevant_at_expression_date())
+        self.assertEqual('commencement', description.type)
+        self.assertEqual('single', description.subtype)
+        self.assertEqual('Commenced on 1 March 2023 by', description.description)
+        self.assertEqual(date(2023, 3, 1), description.date)
+        self.assertEqual('Note: See section 4(2)', description.note)
+        self.assertEqual('/akn/za/act/gn/2023/1', description.by_frbr_uri)
+        self.assertEqual('Commencing work', description.by_title)
+        self.assertEqual(Work.objects.get(pk=15), description.by_work)

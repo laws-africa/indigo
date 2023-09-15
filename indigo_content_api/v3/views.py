@@ -1,0 +1,6 @@
+from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2
+from .serializers import PublishedDocumentSerializerV3
+
+
+class PublishedDocumentDetailViewV3(PublishedDocumentDetailViewV2):
+    serializer_class = PublishedDocumentSerializerV3

@@ -1,7 +1,6 @@
 import re
 
 from django.http import Http404
-from django.shortcuts import redirect
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
@@ -10,15 +9,14 @@ from rest_framework.versioning import NamespaceVersioning
 
 from cobalt import FrbrUri
 
-from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, Locality
+from indigo_api.models import Attachment, Country, Document, TaxonomyTopic, TaxonomyVocabulary, Locality
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
-
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomySerializer,\
-    PublishedDocUrlMixin
-
+from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
+    TaxonomyTopicSerializer, TaxonomySerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
+    PublishedDocumentTimelineSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -122,6 +120,11 @@ class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSe
     serializer_class = TaxonomySerializer
 
 
+class TaxonomyTopicView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = TaxonomyTopic.get_root_nodes()
+    serializer_class = TaxonomyTopicSerializer
+
+
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,
                                   mixins.RetrieveModelMixin,
@@ -138,7 +141,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     * ``/akn/za/``: list all published documents for South Africa.
     * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/akn/za/act/1994.pdf``: all the acts from 1994 as a PDF
     * ``/akn/za/act/1994.epub``: all the acts from 1994 as an ePUB
 
     """
@@ -154,7 +156,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format
         # doesn't match a renderer
-        return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
+        return super().perform_content_negotiation(request, force=True)
 
     def get(self, request, **kwargs):
         if self.frbr_uri:
@@ -282,6 +284,15 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
+
+
+class PublishedDocumentCommencementsView(PublishedDocumentDetailView):
+    serializer_class = PublishedDocumentCommencementsSerializer
+    renderer_classes = (renderers.JSONRenderer,)
+
+
+class PublishedDocumentTimelineView(PublishedDocumentCommencementsView):
+    serializer_class = PublishedDocumentTimelineSerializer
 
 
 class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, PublishedDocUrlMixin):

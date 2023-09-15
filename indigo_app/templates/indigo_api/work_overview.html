@@ -1,5 +1,5 @@
 {% extends "indigo_api/work_layout.html" %}
-{% load indigo_app humanize i18n %}
+{% load indigo indigo_app humanize i18n %}
 
 {% block work-content %}
 
@@ -52,47 +52,39 @@
                   <dl class="mb-0">
                     <dt>{% trans 'Promulgation' %}</dt>
                     <dd>
-                      <div>
-                        {% blocktrans with name=work.publication_name|default:"(unknown)" %}Published in {{ name }}{% endblocktrans %}
-                        {% if work.publication_number %} {% trans 'no.' %} {{ work.publication_number }}{% endif %}
-                        {% if work.publication_date %} {% trans 'on' %} {{ work.publication_date|date:"Y-m-d" }}{% endif %}
-                      </div>
+                      {% publication_document_description work internal=True as publication_document_description %}
+                      {% if publication_document_description %}
+                        {{ publication_document_description }}
+                      {% else %}
+                        <i>{% trans '(unknown)' %}</i>
+                      {% endif %}
                       {% if work.publication_document %}
-                      <div>
-                        <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-                      </div>
+                        <div>
+                          <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+                        </div>
                       {% endif %}
                     </dd>
 
                     <dt>{% trans 'Commencement' %}</dt>
                     <dd>
-                      {% if work.commenced %}
-                        {% if work.main_commencement and not work.main_commencement.all_provisions %}
-                          {% trans 'Commenced in part' %}
+                      {% with work.commencement_description_internal as commencement_description %}
+                        {% if commencement_description.subtype == 'multiple' %}
+                          <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>
+                            {{ commencement_description.description }}
+                          </a>
                         {% else %}
-                          {% trans 'Commenced' %}
+                          {{ commencement_description.description }}
+                          {% if commencement_description.by_work %}
+                            <a href="{% url 'work' frbr_uri=commencement_description.by_frbr_uri %}"
+                               data-popup-url="{% url 'work_popup' frbr_uri=commencement_description.by_frbr_uri %}">
+                              {{ commencement_description.by_title }}
+                            </a>
+                          {% endif %}
+                          {% if commencement_description.note %}
+                            <p>{{ commencement_description.note }}</p>
+                          {% endif %}
                         {% endif %}
-
-                        {% trans 'on' %} {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
-
-                        {% if work.commencing_work %}
-                          {% trans 'by' %}
-                          <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-                        {% endif %}
-                        {% if work.commencements.count > 1 %}
-                          <div>
-                            {% url 'work_commencements' frbr_uri=work.frbr_uri as work_url %}
-                            {% blocktrans trimmed %}
-                              This work has <a href="{{ work_rul }}">multiple commencements</a>.
-                            {% endblocktrans %}
-                          </dd>
-                        {% endif %}
-                        {% if work.commencement_note %}
-                          <div>{{ work.commencement_note }}</div>
-                        {% endif %}
-                      {% else %}
-                        {% trans 'Not commenced' %}
-                      {% endif %}
+                      {% endwith %}
                     </dd>
 
                     <dt>{% trans 'Up to date as at' %}</dt>
@@ -105,18 +97,21 @@
                       {% endif %}
                     </dd>
 
-                    {% regroup work.taxonomies.all by vocabulary as topic_groups %}
-                    {% if topic_groups %}
-                      {% for topic in topic_groups %}
-                        <dt>{{ topic.grouper }}</dt>
+                    {% with work.taxonomy_topics.all as topics %}
+                      {% if topics %}
+                        <dt>{% trans 'Taxonomies' %}</dt>
                         <dd>
-                          {% for taxonomy in topic.list %}
-                            {{ taxonomy }} <br>
+                          {% for topic in topics %}
+                            <div>
+                              {% for item in topic.get_ancestors %}
+                                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
+                              {% endfor %}
+                              <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+                            </div>
                           {% endfor %}
                         </dd>
-                      {% endfor %}
-                    {% endif %}
-
+                      {% endif %}
+                    {% endwith %}
                   </dl>
                 </div>
 
@@ -157,7 +152,7 @@
 
                     {% with work.child_works.all as kids %}
                       {% if kids|length > 0 %}
-                        <dt>{% trans 'Subsidary works' %}</dt>
+                        <dt>{% trans 'Subsidiary works' %}</dt>
                         <dd>
                           {% if kids|length > 3 %}
                             <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
@@ -256,7 +251,7 @@
     </p>
   {% endif %}
 
-  {% include 'indigo_api/_work_points_in_time.html' with work=work editable=False %}
+  {% include 'indigo_api/timeline/_work_points_in_time.html' with work=work editable=False %}
   {% endblock %}
 
   {% block active_tasks %}

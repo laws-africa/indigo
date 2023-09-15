@@ -23,6 +23,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement, Workflow
 from indigo_api.serializers import WorkSerializer
+from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -71,47 +72,12 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         return context
 
     def get_work_timeline(self, work):
-        # get initial, amendment, consolidation dates
-        dates = work.possible_expression_dates()
-        # add assent, publication, repeal, commencement dates
-        other_dates = [
-            ('assent_date', work.assent_date),
-            ('publication_date', work.publication_date),
-            ('repealed_date', work.repealed_date)
-        ]
-        for c in work.commencements.all():
-            other_dates.append(('commencement_date', c.date))
-
-        for name, date in other_dates:
-            if date:
-                if date not in [entry['date'] for entry in dates]:
-                    dates.append({
-                        'date': date,
-                        name: True,
-                    })
-                else:
-                    # add to existing events (e.g. if publication and commencement dates are the same)
-                    for entry in dates:
-                        if entry['date'] == date:
-                            entry[name] = True
-
-        dates.sort(key=lambda x: x['date'], reverse=True)
-
-        # add expressions and commencement and amendment objects
-        for event in dates:
-            date = event['date']
-            if event.get('commencement_date'):
-                event['commencements'] = work.commencements.filter(date=date).all()
-            if event.get('amendment'):
-                event_amendments = work.amendments.filter(date=date)
-                if len(event_amendments) > 1:
-                    event_amendments = Amendment.order_further(event_amendments)
-                event['amendments'] = event_amendments
-            if event.get('consolidation'):
-                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
-            event['expressions'] = work.expressions().filter(expression_date=date).all()
-
-        return dates
+        timeline = get_timeline(work)
+        work_expressions = list(work.expressions().all())
+        # add expressions
+        for entry in timeline:
+            entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
+        return timeline
 
     @property
     def work(self):
@@ -481,6 +447,16 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['consolidation_date'] = self.work.as_at_date() or datetime.date.today()
         return context
+
+    def get_work_timeline(self, work):
+        # super method adds expressions to base work timeline
+        timeline = super().get_work_timeline(work)
+        for entry in timeline:
+            # for creating and importing documents
+            entry.create_import_document = entry.initial or any(
+                e.type in ['amendment', 'consolidation'] for e in entry.events)
+
+        return timeline
 
 
 class WorkAmendmentDetailView(WorkDependentView, UpdateView):

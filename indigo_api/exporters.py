@@ -177,33 +177,36 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
 
-            outf = tempfile.NamedTemporaryFile('rb', dir=tmpdir, suffix='.pdf')
             xsl_fo = self.find_xsl_fo(document)
             self.update_base_xsl_fo_dir(xsl_fo)
-            run_fop(outf.name, tmpdir, xml_file, xsl_fo)
-            return outf.read()
+            outf_name = os.path.join(tmpdir, "out.pdf")
+            run_fop(outf_name, tmpdir, xml_file, xsl_fo)
+            return open(outf_name, 'rb').read()
 
     def insert_coverpage(self, document):
         """ Generates the coverpage and inserts it before the body in the XML.
             The document's document_xml isn't updated.
         """
         coverpage = self.render_coverpage(document)
-        coverpage_xml = etree.fromstring(self.html_to_xml(coverpage))
+        coverpage_xml = self.html_to_xml(coverpage)
         # insert the coverpage before the main content (preface / preamble / body)
         document.doc.meta.addnext(coverpage_xml)
 
     def html_to_xml(self, html_string):
-        """ Convert an HTML string into a valid XML string.
+        """ Convert an HTML string into an XML string.
         """
         xslt = etree.XSLT(etree.parse(find_static('xsl/html_to_xml.xsl')))
-        return str(xslt(lxml.html.fromstring(html_string)))
+        # apply xslt
+        xml = str(xslt(lxml.html.fromstring(html_string.encode('utf-8'))))
+        # turn string into bytes and parse into xml
+        return etree.fromstring(xml.encode('utf-8'))
 
     def insert_frontmatter(self, document):
         """ Generates the frontmatter and inserts it before the body (and coverpage if present) in the XML.
             The document's document_xml isn't updated.
         """
         frontmatter = render_to_string(self.frontmatter_template(document), self.get_frontmatter_context(document))
-        frontmatter_xml = etree.fromstring(frontmatter)
+        frontmatter_xml = etree.fromstring(frontmatter.encode('utf-8'))
         # insert the frontmatter before the coverpage, or the main content (preface / preamble / body)
         document.doc.meta.addnext(frontmatter_xml)
 
@@ -697,11 +700,11 @@ class XSLTRenderer(object):
         """ Render an XML Tree or Element object into an HTML string.
         """
         params = {k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()}
-        return str(self.xslt(node, **params))
+        return ET.tostring(self.xslt(node, **params), encoding='unicode')
 
     def render_xml(self, xml):
         """ Render an XML string into an HTML string.
         """
-        if not isinstance(xml, str):
-            xml = xml.decode('utf-8')
+        if isinstance(xml, str):
+            xml = xml.encode('utf-8')
         return self.render(ET.fromstring(xml))

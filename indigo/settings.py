@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'treebeard',
 
     # required by the Indigo API
     'countries_plus',
@@ -108,6 +109,7 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 )
 
 ROOT_URLCONF = 'indigo.urls'
@@ -343,7 +345,6 @@ SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
 INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
 INDIGO_USER_PROFILE_URL = 'indigo_social:user_profile'
-INDIGO_CONTENT_API_VERSIONED = True
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
 INDIGO_SOCIAL = {

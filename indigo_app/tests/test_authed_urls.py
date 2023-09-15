@@ -31,7 +31,7 @@ accounts/password/change/\Z
 accounts/logout/\Z
 accounts/login/\Z
 accounts/signup/\Z
-
+accounts/reauthenticate/\Z
 resolver/(?P<path>.+)$
 resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
@@ -54,8 +54,7 @@ api/publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$
             self.non_authed_urls = [re.sub(r'\\Z$', '$', x) for x in self.non_authed_urls]
 
     def test_urls_have_auth(self):
-        """ This test checks that all URLs, except those explicitly whitelisted, inherit from the
-        AbstractAuthedIndigoView class, which requires authentication.
+        """ This test checks that all URLs, except those explicitly whitelisted, inherit from the AbstractAuthedIndigoView class, which requires authentication.
         """
         entries = [[k, v[1]] for k, v in get_resolver().reverse_dict.items()]
 

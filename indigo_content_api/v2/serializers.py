@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from cobalt import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Amendment
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyTopic, TaxonomyVocabulary, Amendment
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
@@ -80,6 +80,25 @@ class AmendmentSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class PublishedDocumentCommencementsSerializer(serializers.Serializer, PublishedDocUrlMixin):
+    commencements = CommencementSerializer(many=True, source='work.commencements')
+
+    class Meta:
+        fields = ('commencements',)
+        read_only_fields = fields
+
+
+class PublishedDocumentTimelineSerializer(serializers.Serializer, PublishedDocUrlMixin):
+    timeline = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ('timeline',)
+        read_only_fields = fields
+
+    def get_timeline(self, doc):
+        return doc.work.get_serialized_timeline()
+
+
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Serializer for published documents.
 
@@ -89,6 +108,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
     taxonomies = serializers.SerializerMethodField()
+    taxonomy_topics = serializers.SerializerMethodField()
     as_at_date = serializers.DateField(source='work.as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
     commencements = CommencementSerializer(many=True, source='work.commencements')
@@ -111,7 +131,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'work_amendments', 'points_in_time', 'parent_work', 'custom_properties',
-            'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'principal', 'type_name',
+            'numbered_title', 'taxonomies', 'taxonomy_topics', 'as_at_date', 'stub', 'principal', 'type_name',
 
             'links',
         )
@@ -145,6 +165,10 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomies(doc.work)
+
+    def get_taxonomy_topics(self, doc):
+        from indigo_api.serializers import WorkSerializer
+        return WorkSerializer().get_taxonomy_topics(doc.work)
 
     def get_parent_work(self, doc):
         if doc.work.parent_work:
@@ -265,3 +289,14 @@ class TaxonomySerializer(serializers.ModelSerializer):
         fields = ['vocabulary', 'title', 'topics']
 
 
+class TaxonomyTopicSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TaxonomyTopic
+        fields = ['name', 'slug', 'children']
+
+
+    def get_children(self, instance):
+        children = instance.get_children()
+        return TaxonomyTopicSerializer(children, many=True).data

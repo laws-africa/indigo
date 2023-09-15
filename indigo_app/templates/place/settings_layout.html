@@ -1,0 +1,24 @@
+{% extends "place/tabbed_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Settings" %} {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="list-group">
+        <a href="{% url 'place_settings' place=place.place_code %}" class="list-group-item list-group-item-action {% if view.tab == 'place_settings' %}active{% endif %}">
+          {% trans "Settings" %}
+        </a>
+        <a href="{% url 'place_users' place=place.place_code %}" class="list-group-item list-group-item-action {% if view.tab == 'place_users' %}active{% endif %}">
+          {% trans "Permissions" %}
+        </a>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      {% block settings-content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

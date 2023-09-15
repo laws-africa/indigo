@@ -7,13 +7,16 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
+from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
+from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
 
 
 class WorkQuerySet(models.QuerySet):
@@ -88,6 +91,59 @@ class VocabularyTopic(models.Model):
             return VocabularyTopic.objects\
                 .filter(vocabulary__slug=vocab, level_1=level_1, level_2=level_2)\
                 .first()
+
+
+class TaxonomyTopic(MP_Node):
+    name = models.CharField(max_length=512, null=False, blank=False)
+    slug = models.SlugField(max_length=512, null=False, unique=True, blank=False)
+    node_order_by = ['name']
+
+    class Meta:
+        verbose_name = _("taxonomy topic")
+        verbose_name_plural = _("taxonomy topics")
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def range_space(self):
+        # helper for adding space indents in templates
+        return range(self.depth)
+
+    @classmethod
+    def get_topic(cls, value):
+        return cls.objects.filter(slug=value).first()
+
+    def save(self, *args, **kwargs):
+        parent = self.get_parent()
+        self.slug = (f"{parent.slug}-" if parent else "") + slugify(self.name)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_toc_tree(cls, query_dict):
+        # capture all preserve all filter parameters and add taxonomy_topic
+        new_query = query_dict.copy()
+        new_query.pop('taxonomy_topic', None)
+
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            new_query.update({'taxonomy_topic': item['data']['slug']})
+            item["href"] = f"?{new_query.urlencode()}"
+            new_query.pop('taxonomy_topic', None)
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        tree = cls.dump_bulk()
+        for x in tree:
+            fix_up(x)
+
+        tree = [{
+            "title": "All topics",
+            "href": f"?{new_query.urlencode()}",
+            "data": {"slug": None},
+            "children": [],
+        }] + tree
+        return tree
 
 
 class WorkMixin(object):
@@ -344,6 +400,35 @@ class WorkMixin(object):
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
+    def commencement_description(self, friendly_date=True, commencements=None):
+        """ Returns a TimelineCommencementEvent object describing the commencement status of a work.
+            If specific commencements are passed in, evaluate those rather than all commencements on the work.
+            Similarly, passing in a scoped_date will evaluate commencements (with regard to uncommenced provisions)
+             only up to that date.
+            By default, commencement dates are formatted as e.g. '1 January 2023'.
+                Passing in friendly_date=False leaves them as e.g. 2023-01-01.
+        """
+        n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
+
+        if n_commencements > 1:
+            return TimelineCommencementEvent(subtype='multiple', description=_('There are multiple commencements'))
+
+        elif n_commencements == 0:
+            return TimelineCommencementEvent(subtype='uncommenced', description=_('Not commenced'))
+
+        # single commencement
+        commencement = commencements[0] if commencements else self.commencements.first()
+        return describe_single_commencement(commencement, with_date=True, friendly_date=friendly_date)
+
+    def commencement_description_internal(self):
+        return self.commencement_description(friendly_date=False)
+
+    def commencement_description_external(self):
+        return self.commencement_description()
+
+    def get_serialized_timeline(self):
+        return get_serialized_timeline(self)
+
 
 class Work(WorkMixin, models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
@@ -394,6 +479,8 @@ class Work(WorkMixin, models.Model):
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+
+    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True)
 
     as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')

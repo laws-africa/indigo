@@ -7,7 +7,7 @@ from indigo_api.models import Task, Workflow
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorkflowsTest(WebTest):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'tasks']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
 
     def setUp(self):
         self.user = User.objects.get(username='email@example.com')

@@ -54,7 +54,7 @@ setup(
         'django-countries-plus<=2.0.0',
         'django-jsonfield>=1.4.1',
         'django-jsonfield-compat>=0.4.4',
-        'django-filter==2.4.0',
+        'django-filter==23.3',
         'django-fsm>=2.6.0',
         'django-languages-plus>=1.1.1',
         'django-pipeline>=1.6.11',

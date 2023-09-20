@@ -79,6 +79,8 @@ class ProvisionRefsResolver:
         # af
         "artikel": "article",
         "artikels": "article",
+        "deel": "part",
+        "dele": "part",
         "hoofstuk": "chapter",
         "hoofstukke": "chapter",
         "paragraaf": "paragraph",

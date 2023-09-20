@@ -766,7 +766,17 @@
           html: true,
           sanitize: false,
           placement: 'top',
+          delay: { "show": 0, "hide": 300 },
         }).popover('show');
+
+        // hack to hide popover when the user moves off of the link
+        element.addEventListener('mouseleave', () => {
+          setTimeout(() => {
+            if (!document.querySelector('.popover:hover')) {
+              $(element).popover('hide');
+            }
+          }, 300);
+        });
       }
     }
   });

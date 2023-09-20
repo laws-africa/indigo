@@ -66,6 +66,8 @@ class ProvisionRefsResolver:
         "items": "item",
         "paragraph": "paragraph",
         "paragraphs": "paragraph",
+        "part": "part",
+        "parts": "part",
         "point": "point",
         "points": "point",
         "section": "section",

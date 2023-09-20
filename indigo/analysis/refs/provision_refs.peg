@@ -70,6 +70,7 @@ grammar ProvisionRefs
                  `chapters` / `chapter` /
                  `items` / `item` /
                  `paragraphs` / `paragraph` /
+                 `parts` / `part` /
                  `points` / `point` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /

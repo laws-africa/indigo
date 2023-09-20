@@ -79,6 +79,7 @@ grammar ProvisionRefs
                  # afrikaans
   unit_af     <- `afdelings` / `afdeling` /
                  `artikels` / `artikel`
+                 `dele` / `deel`
                  `hoofstukke` / `hoofstuk` /
                  `paragrawe` / `paragraaf` /
                  `punte` / `punt` /

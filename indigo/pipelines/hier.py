@@ -1056,7 +1056,7 @@ class IdentifyContainerHeadings(Stage):
                     block.remove(first)
 
 
-hierarchicalize = Pipeline([
+hierarchicalize_stages = [
     # these are unambiguous and can be identified up front
     IdentifyArticles(),
     IdentifyParts(),
@@ -1099,4 +1099,6 @@ hierarchicalize = Pipeline([
 
     # identify container headings that were missed previously once the structure is set
     IdentifyContainerHeadings(),
-], name="Hierarchicalize")
+]
+
+hierarchicalize = Pipeline(hierarchicalize_stages, name="Hierarchicalize")

@@ -77,8 +77,8 @@ class ProvisionRefsResolver:
         "subsection": "subsection",
         "subsections": "subsection",
         # af
-        "artikel": "article",
-        "artikels": "article",
+        "artikel": ["article", "section"],
+        "artikels": ["article", "section"],
         "deel": "part",
         "dele": "part",
         "hoofstuk": "chapter",
@@ -110,7 +110,9 @@ class ProvisionRefsResolver:
 
         # resolve the main ref
         ref = main_ref.ref
-        names = [self.element_names[main_ref.name.lower()]]
+        names = self.element_names[main_ref.name.lower()]
+        if not isinstance(names, list):
+            names = [names]
         ref.element = self.find_numbered_hier_element(local_root, names, ref.text, True)
 
         if ref.element is not None:

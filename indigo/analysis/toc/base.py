@@ -65,10 +65,6 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
     The Table of Contents can also be used to lookup the XML element corresponding
     to an item in the Table of Contents identified by its component and id.
-
-    Some components can be uniquely identified by their type and number, such as
-    ``Section 2``. Others require context, such as ``Part 2 of Chapter 1``. The
-    latter are controlled by ``toc_non_unique_elements``.
     """
 
     locale = (None, None, None)
@@ -311,9 +307,13 @@ class TOCBuilderBase(LocaleBasedMatcher):
         Only the top-level toc elements are assessed.
         """
         def process(item):
-            if item.component == 'main':
-                if item.type not in self.non_commenceable_toplevel_elements and item.num:
+            if item.component == 'main' and item.type not in self.non_commenceable_toplevel_elements:
+                if item.num:
                     items.append(item)
+                # if e.g. an unnumbered subpart contains a numbered section, include that section at the top level
+                else:
+                    for c in item.children:
+                        process(c)
 
         items = []
         for entry in toc:

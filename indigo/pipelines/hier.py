@@ -597,7 +597,7 @@ class NestBlocks(Stage):
     """
 
     # never indent inside these
-    never = ["PREFACE", "PREAMBLE"]
+    never = ["PREFACE", "PREAMBLE", "BODY"]
 
     # highest precedence
     high = ["ANNEXURE", "APPENDIX", "ATTACHMENT", "SCHEDULE"]
@@ -632,6 +632,9 @@ class NestBlocks(Stage):
                 # for discovery-based precedence, record the first time we encounter a name
                 if curr_name not in self.lows and curr_name not in self.encountered:
                     self.encountered.append(curr_name)
+                # also record the next name, e.g. for the first time we encounter a Part in a Chapter (or vice versa)
+                if next_name not in self.lows and next_name not in self.encountered:
+                    self.encountered.append(next_name)
 
                 if curr_name != next_name:
                     if next_name in self.lows:

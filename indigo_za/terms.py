@@ -20,7 +20,14 @@ class TermsFinderENG(BaseTermsFinder):
     locale = (None, 'eng', None)
 
     heading_re = re.compile(r'.*(definition|interpretation)', re.IGNORECASE)
-    term_re = re.compile(r'''^\s*"(.+?)"|'(.+?)'|‘(.+?)’|“(.+?)”|«(.+?)»''')
+    quote_pairs = [('"', '"'), ("'", "'"), ('“', '”'), ('‘', '’'), ('«', '»')]
+    # subclasses can define specific other patterns to be joined on | during compiling of term_re
+    others = []
+
+    def setup(self, doc):
+        in_quotes = [fr'^\s*{x}(.+?){y}' for x, y in self.quote_pairs]
+        self.term_re = re.compile('|'.join(in_quotes + self.others))
+        super().setup(doc)
 
 
 @plugins.register('terms')

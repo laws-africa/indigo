@@ -19,8 +19,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>In this By-law, unless the context indicates otherwise-</p>
-      <p>"Act" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p>In this 'By-law', unless the context indicates otherwise-</p>
+      <p> "Act" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
       <blockList eId="sec_1__hcontainer_1__list_3">
         <listIntroduction>"authorised officer" includes-</listIntroduction>
         <item eId="sec_1__hcontainer_1__list_3__item_a">
@@ -45,8 +45,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>In this By-law, unless the context indicates otherwise-</p>
-      <p refersTo="#term-Act">"<def refersTo="#term-Act">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      <p>In this 'By-law', unless the context indicates otherwise-</p>
+      <p refersTo="#term-Act"> "<def refersTo="#term-Act">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
       <blockList eId="sec_1__hcontainer_1__list_3" refersTo="#term-authorised_officer">
         <listIntroduction>"<def refersTo="#term-authorised_officer">authorised officer</def>" includes-</listIntroduction>
         <item eId="sec_1__hcontainer_1__list_3__item_a">

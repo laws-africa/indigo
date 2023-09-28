@@ -16,1069 +16,1069 @@ PREAMBLE
 
 BODY 
 
-  PARAGRAPH (a)
+PARAGRAPH (a)
 
-    fulfil the rights of historically disadvantaged persons and to promote their full participation as consumers;
+  fulfil the rights of historically disadvantaged persons and to promote their full participation as consumers;
 
-  PARAGRAPH (b)
+PARAGRAPH (b)
 
-    protect the interests of all consumers, ensure accessible, transparent and efficient redress for consumers who are subjected to abuse or exploitation in the marketplace; and
+  protect the interests of all consumers, ensure accessible, transparent and efficient redress for consumers who are subjected to abuse or exploitation in the marketplace; and
 
-  PARAGRAPH (c)
+PARAGRAPH (c)
 
-    to give effect to internationally recognised customer rights;
+  to give effect to internationally recognised customer rights;
 
-    That recent and emerging technological changes, trading methods, patterns and agreements have brought, and will continue to bring, new benefits, opportunities
+  That recent and emerging technological changes, trading methods, patterns and agreements have brought, and will continue to bring, new benefits, opportunities
 
-    and challenges to the market for consumer goods and services within South Africa; and
+  and challenges to the market for consumer goods and services within South Africa; and
 
-    That it is desirable to promote an economic environment that supports and strengthens a culture of consumer rights and responsibilities, business innovation and enhanced performance.
+  That it is desirable to promote an economic environment that supports and strengthens a culture of consumer rights and responsibilities, business innovation and enhanced performance.
 
-    For the reasons set out above, and to give effect to the international law obligations of the Republic, a law is to be enacted in order to—
+  For the reasons set out above, and to give effect to the international law obligations of the Republic, a law is to be enacted in order to—
 
-    ● promote and protect the economic interests of consumers;
+  ● promote and protect the economic interests of consumers;
 
-    ● improve access to, and the quality of, information that is necessary so that consumers are able to make informed choices according to their individual wishes and needs;
+  ● improve access to, and the quality of, information that is necessary so that consumers are able to make informed choices according to their individual wishes and needs;
 
-    ● protect consumers from hazards to their well-being and safety;
+  ● protect consumers from hazards to their well-being and safety;
 
-    ● develop effective means of redress for consumers;
+  ● develop effective means of redress for consumers;
 
-    ● promote and provide for consumer education, including education concerning the social and economic effects of consumer choices;
+  ● promote and provide for consumer education, including education concerning the social and economic effects of consumer choices;
 
-    ● facilitate the freedom of consumers to associate and form groups to advocate and promote their common interests; and
+  ● facilitate the freedom of consumers to associate and form groups to advocate and promote their common interests; and
 
-    ● promote consumer participation in decision-making processes concerning the marketplace and the interests of consumers.
+  ● promote consumer participation in decision-making processes concerning the marketplace and the interests of consumers.
 
-    B
+  B
 
-    E IT THEREFORE ENACTED by the Parliament of the Republic of South Africa, as follows:—
+  E IT THEREFORE ENACTED by the Parliament of the Republic of South Africa, as follows:—
 
 CHAPTER 1 - INTERPRETATION, PURPOSE AND APPLICATION
 
-PART A - Interpretation
+  PART A - Interpretation
 
-  SECTION 1. - Definitions
+    SECTION 1. - Definitions
 
-    In this Act—
+      In this Act—
 
-    “accredited consumer protection group” means a consumer protection group that has been accredited by the Commission in terms of section 78 for the purposes contemplated in that section or elsewhere in this Act;
+      “accredited consumer protection group” means a consumer protection group that has been accredited by the Commission in terms of section 78 for the purposes contemplated in that section or elsewhere in this Act;
 
-    ITEMS 
+      ITEMS 
 
-      “advertisement” means any direct or indirect visual or oral communication transmitted by any medium, or any representation or reference written, inscribed, recorded, encoded upon or embedded within any medium, by means of which a person seeks to—
+        “advertisement” means any direct or indirect visual or oral communication transmitted by any medium, or any representation or reference written, inscribed, recorded, encoded upon or embedded within any medium, by means of which a person seeks to—
 
-      ITEM (a)
+        ITEM (a)
 
-        ITEMS 
+          ITEMS 
 
-          bring to the attention of all or part of the public—
+            bring to the attention of all or part of the public—
 
-          ITEM (i)
+            ITEM (i)
 
-            the existence or identity of a supplier; or
+              the existence or identity of a supplier; or
 
-          ITEM (ii)
+            ITEM (ii)
 
-            the existence, nature, availability, properties, advantages or uses of any goods or services that are available for supply, or the conditions on, or prices at, which any goods or services are available for supply;
+              the existence, nature, availability, properties, advantages or uses of any goods or services that are available for supply, or the conditions on, or prices at, which any goods or services are available for supply;
 
-      ITEM (b)
+        ITEM (b)
 
-        promote the supply of any goods or services; or
+          promote the supply of any goods or services; or
 
-      ITEM (c)
+        ITEM (c)
 
-        promote any cause;
+          promote any cause;
 
-    “agreement” means an arrangement or understanding between or among two or more parties that purports to establish a relationship in law between or among them;
+      “agreement” means an arrangement or understanding between or among two or more parties that purports to establish a relationship in law between or among them;
 
-    ITEMS 
+      ITEMS 
 
-      “alternative dispute resolution agent” means—
+        “alternative dispute resolution agent” means—
 
-      ITEM (a)
+        ITEM (a)
 
-        an ombud with jurisdiction;
+          an ombud with jurisdiction;
 
-      ITEM (b)
+        ITEM (b)
 
-        an industry ombud accredited in terms of section 82(6); or
+          an industry ombud accredited in terms of section 82(6); or
 
-      ITEM (c)
+        ITEM (c)
 
-        a person or entity providing conciliation, mediation or arbitration services to assist in the resolution of consumer disputes, other than an ombud with jurisdiction, or an accredited industry ombud;
+          a person or entity providing conciliation, mediation or arbitration services to assist in the resolution of consumer disputes, other than an ombud with jurisdiction, or an accredited industry ombud;
 
-    “applicable provincial consumer legislation” means legislation concerning consumer protection that has been enacted by a province;
+      “applicable provincial consumer legislation” means legislation concerning consumer protection that has been enacted by a province;
 
-    “apply”, when used in relation to a trade description, price, notice or any similar form of information, means to emboss, impress, engrave, etch, print or weave into, work into or onto, annex or affix to, or incorporate within;
+      “apply”, when used in relation to a trade description, price, notice or any similar form of information, means to emboss, impress, engrave, etch, print or weave into, work into or onto, annex or affix to, or incorporate within;
 
-    “business” means the continual marketing of any goods or services;
+      “business” means the continual marketing of any goods or services;
 
-    “business name” means a name under which a person carries on a business other than the person’s full name;
+      “business name” means a name under which a person carries on a business other than the person’s full name;
 
-    “Cabinet” means the body of the national executive described in section 91 of the Constitution;
+      “Cabinet” means the body of the national executive described in section 91 of the Constitution;
 
-    “clearly”, in relation to the quality of any text, notice or visual representation to be produced, published or displayed to a consumer, means in a form that satisfies the requirements of section 22;
+      “clearly”, in relation to the quality of any text, notice or visual representation to be produced, published or displayed to a consumer, means in a form that satisfies the requirements of section 22;
 
-    “Commission” means the National Consumer Commission established by section 85;
+      “Commission” means the National Consumer Commission established by section 85;
 
-    ITEMS 
+      ITEMS 
 
-      “complainant” means—
+        “complainant” means—
 
-      ITEM (a)
+        ITEM (a)
 
-        a person who has filed a complaint with the Commission in terms of section 71; or
+          a person who has filed a complaint with the Commission in terms of section 71; or
 
-      ITEM (b)
+        ITEM (b)
 
-        ITEMS 
+          ITEMS 
 
-          the Commission in respect of a complaint that it has initiated, either directly or at the—
+            the Commission in respect of a complaint that it has initiated, either directly or at the—
 
-          ITEM (i)
+            ITEM (i)
 
-            direction of the Minister in terms of section 86(b); or
+              direction of the Minister in terms of section 86(b); or
 
-          ITEM (ii)
+            ITEM (ii)
 
-            request of a provincial consumer protection authority or other regulatory authority, as the case may be;
+              request of a provincial consumer protection authority or other regulatory authority, as the case may be;
 
-    ITEMS 
+      ITEMS 
 
-      “consideration” means anything of value given and accepted in exchange for goods or services, including—
+        “consideration” means anything of value given and accepted in exchange for goods or services, including—
 
-      ITEM (a)
+        ITEM (a)
 
-        money, property, a cheque or other negotiable instrument, a token, a ticket, electronic credit, credit, debit or electronic chip or similar object;
+          money, property, a cheque or other negotiable instrument, a token, a ticket, electronic credit, credit, debit or electronic chip or similar object;
 
-      ITEM (b)
+        ITEM (b)
 
-        labour, barter or other goods or services;
+          labour, barter or other goods or services;
 
-      ITEM (c)
+        ITEM (c)
 
-        loyalty credit or award, coupon or other right to assert a claim; or
+          loyalty credit or award, coupon or other right to assert a claim; or
 
-      ITEM (d)
+        ITEM (d)
 
-        any other thing, undertaking, promise, agreement or assurance,
+          any other thing, undertaking, promise, agreement or assurance,
 
-    irrespective of its apparent or intrinsic value, or whether it is transferred directly or indirectly, or involves only the supplier and consumer or other parties in addition to the supplier and consumer;
+      irrespective of its apparent or intrinsic value, or whether it is transferred directly or indirectly, or involves only the supplier and consumer or other parties in addition to the supplier and consumer;
 
-    “Constitution” means the Constitution of the Republic of South Africa, 1996;
+      “Constitution” means the Constitution of the Republic of South Africa, 1996;
 
-    ITEMS 
+      ITEMS 
 
-      “consumer”, in respect of any particular goods or services, means—
+        “consumer”, in respect of any particular goods or services, means—
 
-      ITEM (a)
+        ITEM (a)
 
-        a person to whom those particular goods or services are marketed in the ordinary course of the supplier’s business;
+          a person to whom those particular goods or services are marketed in the ordinary course of the supplier’s business;
 
-      ITEM (b)
+        ITEM (b)
 
-        a person who has entered into a transaction with a supplier in the ordinary course of the supplier’s business, unless the transaction is exempt from the application of this Act by section 5(2) or in terms of section 5(3);
+          a person who has entered into a transaction with a supplier in the ordinary course of the supplier’s business, unless the transaction is exempt from the application of this Act by section 5(2) or in terms of section 5(3);
 
-      ITEM (c)
+        ITEM (c)
 
-        if the context so requires or permits, a user of those particular goods or a recipient or beneficiary of those particular services, irrespective of whether that user, recipient or beneficiary was a party to a transaction concerning the supply of those particular goods or services; and
+          if the context so requires or permits, a user of those particular goods or a recipient or beneficiary of those particular services, irrespective of whether that user, recipient or beneficiary was a party to a transaction concerning the supply of those particular goods or services; and
 
-      ITEM (d)
+        ITEM (d)
 
-        a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e);
+          a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e);
 
-    “consumer agreement” means an agreement between a supplier and a consumer other than a franchise agreement;
+      “consumer agreement” means an agreement between a supplier and a consumer other than a franchise agreement;
 
-    “consumer court” means a body of that name, or a consumer tribunal, that has been established in terms of applicable provincial consumer legislation; “consumer protection group” means an entity promoting the interests or protection of consumers as contemplated in section 77;
+      “consumer court” means a body of that name, or a consumer tribunal, that has been established in terms of applicable provincial consumer legislation; “consumer protection group” means an entity promoting the interests or protection of consumers as contemplated in section 77;
 
-    “court” does not include a consumer court;
+      “court” does not include a consumer court;
 
-    ITEMS 
+      ITEMS 
 
-      “direct marketing” means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
+        “direct marketing” means to approach a person, either in person or by mail or electronic communication, for the direct or indirect purpose of—
 
-      ITEM (a)
+        ITEM (a)
 
-        promoting or offering to supply, in the ordinary course of business, any goods or services to the person; or
+          promoting or offering to supply, in the ordinary course of business, any goods or services to the person; or
 
-      ITEM (b)
+        ITEM (b)
 
-        requesting the person to make a donation of any kind for any reason;
+          requesting the person to make a donation of any kind for any reason;
 
-    ITEMS 
+      ITEMS 
 
-      “display”, when used—
+        “display”, when used—
 
-      ITEM (a)
+        ITEM (a)
 
-        in relation to any goods, means placing, exhibiting or exposing those goods before the public in the ordinary course of business in a manner consistent with an open invitation to members of the public to inspect, and select, those or similar goods for supply to a consumer; or
+          in relation to any goods, means placing, exhibiting or exposing those goods before the public in the ordinary course of business in a manner consistent with an open invitation to members of the public to inspect, and select, those or similar goods for supply to a consumer; or
 
-      ITEM (b)
+        ITEM (b)
 
-        in relation to a price, mark, notice or other visual representation, means to place or publish anything in a manner that reasonably creates an association between that price, mark, notice or other visual representation and any particular goods or services;
+          in relation to a price, mark, notice or other visual representation, means to place or publish anything in a manner that reasonably creates an association between that price, mark, notice or other visual representation and any particular goods or services;
 
-    ITEMS 
+      ITEMS 
 
-      “distributor”, in relation to any particular goods, means a person who, in the ordinary course of business—
+        “distributor”, in relation to any particular goods, means a person who, in the ordinary course of business—
 
-      ITEM (a)
+        ITEM (a)
 
-        is supplied with those goods by a producer, importer or other distributor; and
+          is supplied with those goods by a producer, importer or other distributor; and
 
-      ITEM (b)
+        ITEM (b)
 
-        in turn, supplies those goods to either another distributor or to a retailer; “electronic communication” means communication by means of electronic transmission, including by telephone, fax, sms, wireless computer access, email or any similar technology or device;
+          in turn, supplies those goods to either another distributor or to a retailer; “electronic communication” means communication by means of electronic transmission, including by telephone, fax, sms, wireless computer access, email or any similar technology or device;
 
-    “Electronic Communications and Transactions Act” means the Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002);
+      “Electronic Communications and Transactions Act” means the Electronic Communications and Transactions Act, 2002 (Act No. 25 of 2002);
 
-    “estimate” means a statement of the projected total price for any service to be provided by a supplier, including any goods or components to be supplied in connection with that service;
+      “estimate” means a statement of the projected total price for any service to be provided by a supplier, including any goods or components to be supplied in connection with that service;
 
-    “equality court” has the meaning set out in the Promotion of Equality and Prevention of Unfair Discrimination Act;
+      “equality court” has the meaning set out in the Promotion of Equality and Prevention of Unfair Discrimination Act;
 
-    “facility” means any premises, space or equipment set up to fulfil a particular function, or at, in, or on which a particular service is available;
+      “facility” means any premises, space or equipment set up to fulfil a particular function, or at, in, or on which a particular service is available;
 
-    ITEMS 
+      ITEMS 
 
-      “franchise agreement” means an agreement between two parties, being the franchisor and franchisee, respectively—
+        “franchise agreement” means an agreement between two parties, being the franchisor and franchisee, respectively—
 
-      ITEM (a)
+        ITEM (a)
 
-        in which, for consideration paid, or to be paid, by the franchisee to the franchisor, the franchisor grants the franchisee the right to carry on business within all or a specific part of the Republic under a system or marketing plan substantially determined or controlled by the franchisor or an associate of the franchisor;
+          in which, for consideration paid, or to be paid, by the franchisee to the franchisor, the franchisor grants the franchisee the right to carry on business within all or a specific part of the Republic under a system or marketing plan substantially determined or controlled by the franchisor or an associate of the franchisor;
 
-      ITEM (b)
+        ITEM (b)
 
-        under which the operation of the business of the franchisee will be substantially or materially associated with advertising schemes or programmes or one or more trade marks, commercial symbols or logos or any similar marketing, branding, labelling or devices, or any combination of such schemes, programmes or devices, that are conducted, owned, used or licensed by the franchisor or an associate of the franchisor; and
+          under which the operation of the business of the franchisee will be substantially or materially associated with advertising schemes or programmes or one or more trade marks, commercial symbols or logos or any similar marketing, branding, labelling or devices, or any combination of such schemes, programmes or devices, that are conducted, owned, used or licensed by the franchisor or an associate of the franchisor; and
 
-      ITEM (c)
+        ITEM (c)
 
-        that governs the business relationship between the franchisor and the franchisee, including the relationship between them with respect to the goods or services to be supplied to the franchisee by or at the direction of the franchisor or an associate of the franchisor;
+          that governs the business relationship between the franchisor and the franchisee, including the relationship between them with respect to the goods or services to be supplied to the franchisee by or at the direction of the franchisor or an associate of the franchisor;
 
-    ITEMS 
+      ITEMS 
 
-      “goods” includes—
+        “goods” includes—
 
-      ITEM (a)
+        ITEM (a)
 
-        anything marketed for human consumption;
+          anything marketed for human consumption;
 
-      ITEM (b)
+        ITEM (b)
 
-        any tangible object not otherwise contemplated in paragraph (a), including any medium on which anything is or may be written or encoded;
+          any tangible object not otherwise contemplated in paragraph (a), including any medium on which anything is or may be written or encoded;
 
-      ITEM (c)
+        ITEM (c)
 
-        any literature, music, photograph, motion picture, game, information, data, software, code or other intangible product written or encoded on any medium, or a licence to use any such intangible product;
+          any literature, music, photograph, motion picture, game, information, data, software, code or other intangible product written or encoded on any medium, or a licence to use any such intangible product;
 
-      ITEM (d)
+        ITEM (d)
 
-        a legal interest in land or any other immovable property, other than an interest that falls within the definition of ‘service’ in this section; and
+          a legal interest in land or any other immovable property, other than an interest that falls within the definition of ‘service’ in this section; and
 
-      ITEM (e)
+        ITEM (e)
 
-        gas, water and electricity;
+          gas, water and electricity;
 
-    “importer”, with respect to any particular goods, means a person who brings those goods, or causes them to be brought, from outside the Republic into the Republic, with the intention of making them available for supply in the ordinary course of business;
+      “importer”, with respect to any particular goods, means a person who brings those goods, or causes them to be brought, from outside the Republic into the Republic, with the intention of making them available for supply in the ordinary course of business;
 
-    ITEMS 
+      ITEMS 
 
-      “inspector” means a person appointed as such in terms of section 88; “intermediary” means a person who, in the ordinary course of business and for remuneration or gain, engages in the business of—
+        “inspector” means a person appointed as such in terms of section 88; “intermediary” means a person who, in the ordinary course of business and for remuneration or gain, engages in the business of—
 
-      ITEM (a)
+        ITEM (a)
 
-        representing another person with respect to the actual or potential supply of any goods or services;
+          representing another person with respect to the actual or potential supply of any goods or services;
 
-      ITEM (b)
+        ITEM (b)
 
-        accepting possession of any goods or other property from a person for the purpose of offering the property for sale; or
+          accepting possession of any goods or other property from a person for the purpose of offering the property for sale; or
 
-      ITEM (c)
+        ITEM (c)
 
-        offering to sell to a consumer, soliciting offers for or selling to a consumer any goods or property that belongs to a third person, or service to be supplied by a third person,
+          offering to sell to a consumer, soliciting offers for or selling to a consumer any goods or property that belongs to a third person, or service to be supplied by a third person,
 
-    but does not include a person whose activities as an intermediary are regulated in terms of any other national legislation;
+      but does not include a person whose activities as an intermediary are regulated in terms of any other national legislation;
 
-    “investigator” means a person appointed as such in terms of section 88;
+      “investigator” means a person appointed as such in terms of section 88;
 
-    ITEMS 
+      ITEMS 
 
-      “juristic person” includes—
+        “juristic person” includes—
 
-      ITEM (a)
+        ITEM (a)
 
-        a body corporate;
+          a body corporate;
 
-      ITEM (b)
+        ITEM (b)
 
-        a partnership or association; or
+          a partnership or association; or
 
-      ITEM (c)
+        ITEM (c)
 
-        a trust as defined in the Trust Property Act, 1988 (Act No. 57 of 1988); “licence”, depending on the context, means the authority, regardless of its specific title or form, issued to a person and in terms of which that person is either—
+          a trust as defined in the Trust Property Act, 1988 (Act No. 57 of 1988); “licence”, depending on the context, means the authority, regardless of its specific title or form, issued to a person and in terms of which that person is either—
 
-      ITEM (a)
+        ITEM (a)
 
-        authorised in terms of a public regulation to conduct business; or
+          authorised in terms of a public regulation to conduct business; or
 
-      ITEM (b)
+        ITEM (b)
 
-        ITEMS 
+          ITEMS 
 
-          authorised by another person to—
+            authorised by another person to—
 
-          ITEM (i)
+            ITEM (i)
 
-            access any facility or use any goods; or
+              access any facility or use any goods; or
 
-          ITEM (ii)
+            ITEM (ii)
 
-            supply any goods or services;
+              supply any goods or services;
 
-    ITEMS 
+      ITEMS 
 
-      “loyalty credit or award” means any—
+        “loyalty credit or award” means any—
 
-      ITEM (a)
+        ITEM (a)
 
-        benefit accruing to a consumer;
+          benefit accruing to a consumer;
 
-      ITEM (b)
+        ITEM (b)
 
-        right to any goods, service or other benefit granted to a consumer; or
+          right to any goods, service or other benefit granted to a consumer; or
 
-      ITEM (c)
+        ITEM (c)
 
-        point, credit, token, device or other tangible or intangible thing which, when accumulated in sufficient quantities, entitles the holder to seek, request or assert a claim for any goods, service or other benefit, allocated to a consumer,
+          point, credit, token, device or other tangible or intangible thing which, when accumulated in sufficient quantities, entitles the holder to seek, request or assert a claim for any goods, service or other benefit, allocated to a consumer,
 
-    in terms of a loyalty programme, irrespective of the name, nature, form or characterisation assigned by that loyalty programme to any such goods, service or other benefit, right or thing;
+      in terms of a loyalty programme, irrespective of the name, nature, form or characterisation assigned by that loyalty programme to any such goods, service or other benefit, right or thing;
 
-    “loyalty programme” means any arrangement or scheme in the ordinary course of business, in terms of which a supplier of goods or services, association of such suppliers, or other person on behalf of or in association with any such suppliers, offers or grants to a consumer any loyalty credit or award in connection with a transaction or an agreement;
+      “loyalty programme” means any arrangement or scheme in the ordinary course of business, in terms of which a supplier of goods or services, association of such suppliers, or other person on behalf of or in association with any such suppliers, offers or grants to a consumer any loyalty credit or award in connection with a transaction or an agreement;
 
-    “mark”, when used as a noun, means any visual representation, name, signature, word, letter, numeral, shape, configuration, pattern, ornamentation, colour or container for goods or other sign capable of being represented graphically, or any combination of those things, but does not include a trade mark;
+      “mark”, when used as a noun, means any visual representation, name, signature, word, letter, numeral, shape, configuration, pattern, ornamentation, colour or container for goods or other sign capable of being represented graphically, or any combination of those things, but does not include a trade mark;
 
-    “market”, when used as a verb, means to promote or supply any goods or services;
+      “market”, when used as a verb, means to promote or supply any goods or services;
 
-    “MEC” means the Member of the Executive Council;
+      “MEC” means the Member of the Executive Council;
 
-    “Minister” means the member of the Cabinet responsible for consumer protection matters;
+      “Minister” means the member of the Cabinet responsible for consumer protection matters;
 
-    ITEMS 
+      ITEMS 
 
-      “National Credit Act” means the National Credit Act, 2005 (Act No. 34 of 2005); “ombud with jurisdiction”, in respect of any particular dispute arising out of an agreement or transaction between a consumer and a supplier who is—
+        “National Credit Act” means the National Credit Act, 2005 (Act No. 34 of 2005); “ombud with jurisdiction”, in respect of any particular dispute arising out of an agreement or transaction between a consumer and a supplier who is—
 
-      ITEM (a)
+        ITEM (a)
 
-        subject to the jurisdiction of an ‘ombud’, or a ‘statutory ombud’, in terms of any national legislation, means that ombud, or statutory ombud; or
+          subject to the jurisdiction of an ‘ombud’, or a ‘statutory ombud’, in terms of any national legislation, means that ombud, or statutory ombud; or
 
-      ITEM (b)
+        ITEM (b)
 
-        a ‘financial institution’, as defined in the Financial Services Ombud Schemes Act, 2004 (Act No. 37 of 2004), means ‘the ombud’, as determined in accordance with section 13 or 14 of that Act;
+          a ‘financial institution’, as defined in the Financial Services Ombud Schemes Act, 2004 (Act No. 37 of 2004), means ‘the ombud’, as determined in accordance with section 13 or 14 of that Act;
 
-    “organ of state” means an organ of state as defined in section 239 of the Constitution;
+      “organ of state” means an organ of state as defined in section 239 of the Constitution;
 
-    “person” includes a juristic person;
+      “person” includes a juristic person;
 
-    “premises” includes land, or any building, structure, vehicle, ship, boat, vessel, aircraft or container;
+      “premises” includes land, or any building, structure, vehicle, ship, boat, vessel, aircraft or container;
 
-    “prescribed” means determined, stipulated, required, authorised, permitted or otherwise regulated by a regulation made, or notice given, by the Minister in terms of this Act;
+      “prescribed” means determined, stipulated, required, authorised, permitted or otherwise regulated by a regulation made, or notice given, by the Minister in terms of this Act;
 
-    ITEMS 
+      ITEMS 
 
-      “price”, when used in relation to—
+        “price”, when used in relation to—
 
-      ITEM (a)
+        ITEM (a)
 
-        a representation required to be displayed by section 23, includes any mark, notice or visual representation that may reasonably be inferred to indicate or express an association between any goods or services and the value of the consideration for which the supplier is willing to sell or supply those goods or services; or
+          a representation required to be displayed by section 23, includes any mark, notice or visual representation that may reasonably be inferred to indicate or express an association between any goods or services and the value of the consideration for which the supplier is willing to sell or supply those goods or services; or
 
-      ITEM (b)
+        ITEM (b)
 
-        the consideration for any transaction, means the total amount paid or payable by the consumer to the supplier in terms of that transaction or agreement, including any amount that the supplier is required to impose, charge or collect in terms of any public regulation;
+          the consideration for any transaction, means the total amount paid or payable by the consumer to the supplier in terms of that transaction or agreement, including any amount that the supplier is required to impose, charge or collect in terms of any public regulation;
 
-    ITEMS 
+      ITEMS 
 
-      “producer”, with respect to any particular goods, means a person who—
+        “producer”, with respect to any particular goods, means a person who—
 
-      ITEM (a)
+        ITEM (a)
 
-        grows, nurtures, harvests, mines, generates, refines, creates, manufactures or otherwise produces the goods within the Republic, or causes any of those things to be done, with the intention of making them available for supply in the ordinary course of business; or
+          grows, nurtures, harvests, mines, generates, refines, creates, manufactures or otherwise produces the goods within the Republic, or causes any of those things to be done, with the intention of making them available for supply in the ordinary course of business; or
 
-      ITEM (b)
+        ITEM (b)
 
-        by applying a personal or business name, trade mark, trade description or other visual representation on or in relation to the goods, has created or established a reasonable expectation that the person is a person contemplated in paragraph (a);
+          by applying a personal or business name, trade mark, trade description or other visual representation on or in relation to the goods, has created or established a reasonable expectation that the person is a person contemplated in paragraph (a);
 
-    “prohibited conduct” means an act or omission in contravention of this Act;
+      “prohibited conduct” means an act or omission in contravention of this Act;
 
-    ITEMS 
+      ITEMS 
 
-      “promote” means to—
+        “promote” means to—
 
-      ITEM (a)
+        ITEM (a)
 
-        advertise, display or offer to supply any goods or services in the ordinary course of business, to all or part of the public for consideration;
+          advertise, display or offer to supply any goods or services in the ordinary course of business, to all or part of the public for consideration;
 
-      ITEM (b)
+        ITEM (b)
 
-        make any representation in the ordinary course of business that could reasonably be inferred as expressing a willingness to supply any goods or services for consideration; or
+          make any representation in the ordinary course of business that could reasonably be inferred as expressing a willingness to supply any goods or services for consideration; or
 
-      ITEM (c)
+        ITEM (c)
 
-        engage in any other conduct in the ordinary course of business that may reasonably be construed to be an inducement or attempted inducement to a person to engage in a transaction;
+          engage in any other conduct in the ordinary course of business that may reasonably be construed to be an inducement or attempted inducement to a person to engage in a transaction;
 
-    “Promotion of Equality and Prevention of Unfair Discrimination Act” means the Promotion of Equality and Prevention of Unfair Discrimination Act, 2000 (Act No. 4 of 2000);
+      “Promotion of Equality and Prevention of Unfair Discrimination Act” means the Promotion of Equality and Prevention of Unfair Discrimination Act, 2000 (Act No. 4 of 2000);
 
-    “provincial consumer protection authority” means a body established within the provincial sphere of government, and designated by the responsible Member of the Executive Council of a province to have general authority to deal with consumer protection matters within that province;
+      “provincial consumer protection authority” means a body established within the provincial sphere of government, and designated by the responsible Member of the Executive Council of a province to have general authority to deal with consumer protection matters within that province;
 
-    “public regulation” means any national, provincial or local government legislation or subordinate legislation, or any licence, tariff, directive or similar authorisation issued by a regulatory authority or pursuant to any statutory authority;
+      “public regulation” means any national, provincial or local government legislation or subordinate legislation, or any licence, tariff, directive or similar authorisation issued by a regulatory authority or pursuant to any statutory authority;
 
-    “Registrar” means the Registrar of Companies appointed in terms of the Companies Act, 1973 (Act No. 61 of 1973), or the official performing similar functions in terms of any subsequent legislation;
+      “Registrar” means the Registrar of Companies appointed in terms of the Companies Act, 1973 (Act No. 61 of 1973), or the official performing similar functions in terms of any subsequent legislation;
 
-    “regulation” means a regulation made under this Act;
+      “regulation” means a regulation made under this Act;
 
-    “regulatory authority” means an organ of state or entity established in terms of national or provincial legislation responsible for regulating an industry, or sector of an industry;
+      “regulatory authority” means an organ of state or entity established in terms of national or provincial legislation responsible for regulating an industry, or sector of an industry;
 
-    “rental” means an agreement for consideration in the ordinary course of business, in terms of which temporary possession of any premises or other property is delivered, at the direction of, or to the consumer, or the right to use any premises or other property is granted, at the direction of, or to the consumer, but does not include a lease within the meaning of the National Credit Act;
+      “rental” means an agreement for consideration in the ordinary course of business, in terms of which temporary possession of any premises or other property is delivered, at the direction of, or to the consumer, or the right to use any premises or other property is granted, at the direction of, or to the consumer, but does not include a lease within the meaning of the National Credit Act;
 
-    “repealed law” means an Act mentioned in section 121(2), or a public regulation made in terms of such an Act;
+      “repealed law” means an Act mentioned in section 121(2), or a public regulation made in terms of such an Act;
 
-    “respondent” means a person or firm against whom a complaint or application has been initiated in terms of this Act;
+      “respondent” means a person or firm against whom a complaint or application has been initiated in terms of this Act;
 
-    “retailer”, with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
+      “retailer”, with respect to any particular goods, means a person who, in the ordinary course of business, supplies those goods to a consumer;
 
-    ITEMS 
+      ITEMS 
 
-      “service” includes, but is not limited to—
+        “service” includes, but is not limited to—
 
-      ITEM (a)
+        ITEM (a)
 
-        any work or undertaking performed by one person for the direct or indirect benefit of another;
+          any work or undertaking performed by one person for the direct or indirect benefit of another;
 
-      ITEM (b)
+        ITEM (b)
 
-        the provision of any education, information, advice or consultation, except advice that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002);
+          the provision of any education, information, advice or consultation, except advice that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002);
 
-      ITEM (c)
+        ITEM (c)
 
-        ITEMS 
+          ITEMS 
 
-          any banking services, or related or similar financial services, or the undertaking, underwriting or assumption of any risk by one person on behalf of another, except to the extent that any such service—
+            any banking services, or related or similar financial services, or the undertaking, underwriting or assumption of any risk by one person on behalf of another, except to the extent that any such service—
 
-          ITEM (i)
+            ITEM (i)
 
-            constitutes advice or intermediary services that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002); or
+              constitutes advice or intermediary services that is subject to regulation in terms of the Financial Advisory and Intermediary Services Act, 2002 (Act No. 37 of 2002); or
 
-          ITEM (ii)
+            ITEM (ii)
 
-            is regulated in terms of the Long-term Insurance Act, 1998 (Act No. 52 of 1998), or the Short-term Insurance Act, 1998 (Act No. 53 of 1998);
+              is regulated in terms of the Long-term Insurance Act, 1998 (Act No. 52 of 1998), or the Short-term Insurance Act, 1998 (Act No. 53 of 1998);
 
-      ITEM (d)
+        ITEM (d)
 
-        the transportation of an individual or any goods;
+          the transportation of an individual or any goods;
 
-      ITEM (e)
+        ITEM (e)
 
-        ITEMS 
+          ITEMS 
 
-          the provision of—
+            the provision of—
 
-          ITEM (i)
+            ITEM (i)
 
-            any accommodation or sustenance;
+              any accommodation or sustenance;
 
-          ITEM (ii)
+            ITEM (ii)
 
-            any entertainment or similar intangible product or access to any such entertainment or intangible product;
+              any entertainment or similar intangible product or access to any such entertainment or intangible product;
 
-          ITEM (iii)
+            ITEM (iii)
 
-            access to any electronic communication infrastructure;
+              access to any electronic communication infrastructure;
 
-          ITEM (iv)
+            ITEM (iv)
 
-            access, or of a right of access, to an event or to any premises, activity or facility; or
+              access, or of a right of access, to an event or to any premises, activity or facility; or
 
-          ITEM (v)
+            ITEM (v)
 
-            access to or use of any premises or other property in terms of a rental;
+              access to or use of any premises or other property in terms of a rental;
 
-      ITEM (f)
+        ITEM (f)
 
-        a right of occupancy of, or power or privilege over or in connection with, any land or other immovable property, other than in terms of a rental; and
+          a right of occupancy of, or power or privilege over or in connection with, any land or other immovable property, other than in terms of a rental; and
 
-      ITEM (g)
+        ITEM (g)
 
-        rights of a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e),
+          rights of a franchisee in terms of a franchise agreement, to the extent applicable in terms of section 5(6)(b) to (e),
 
-    irrespective of whether the person promoting, offering or providing the services participates in, supervises or engages directly or indirectly in the service; “service provider” means a person who promotes, supplies or offers to supply any service;
+      irrespective of whether the person promoting, offering or providing the services participates in, supervises or engages directly or indirectly in the service; “service provider” means a person who promotes, supplies or offers to supply any service;
 
-    “sms” means a short message service provided through a telecommunication system;
+      “sms” means a short message service provided through a telecommunication system;
 
-    “special-order goods” means goods that a supplier expressly or implicitly was required or expected to procure, create or alter specifically to satisfy the consumer’s requirements;
+      “special-order goods” means goods that a supplier expressly or implicitly was required or expected to procure, create or alter specifically to satisfy the consumer’s requirements;
 
-    “supplier” means a person who markets any goods or services;
+      “supplier” means a person who markets any goods or services;
 
-    ITEMS 
+      ITEMS 
 
-      “supply”, when used as a verb—
+        “supply”, when used as a verb—
 
-      ITEM (a)
+        ITEM (a)
 
-        in relation to goods, includes sell, rent, exchange and hire in the ordinary course of business for consideration; or
+          in relation to goods, includes sell, rent, exchange and hire in the ordinary course of business for consideration; or
 
-      ITEM (b)
+        ITEM (b)
 
-        in relation to services, means to sell the services, or to perform or cause them to be performed or provided, or to grant access to any premises, event, activity or facility in the ordinary course of business for consideration;
+          in relation to services, means to sell the services, or to perform or cause them to be performed or provided, or to grant access to any premises, event, activity or facility in the ordinary course of business for consideration;
 
-    “supply chain”, with respect to any particular goods or services, means the collectivity of all suppliers who directly or indirectly contribute in turn to the ultimate supply of those goods or services to a consumer, whether as a producer, importer, distributor or retailer of goods, or as a service provider;
+      “supply chain”, with respect to any particular goods or services, means the collectivity of all suppliers who directly or indirectly contribute in turn to the ultimate supply of those goods or services to a consumer, whether as a producer, importer, distributor or retailer of goods, or as a service provider;
 
-    “this Act” includes any Schedule to this Act, regulations made or notice issued by the Minister under this Act;
+      “this Act” includes any Schedule to this Act, regulations made or notice issued by the Minister under this Act;
 
-    ITEMS 
+      ITEMS 
 
-      “trade description” means—
+        “trade description” means—
 
-      ITEM (a)
+        ITEM (a)
 
-        ITEMS 
+          ITEMS 
 
-          any description, statement or other direct or indirect indication, other than a trade mark, as to—
+            any description, statement or other direct or indirect indication, other than a trade mark, as to—
 
-          ITEM (i)
+            ITEM (i)
 
-            the number, quantity, measure, weight or gauge of any goods;
+              the number, quantity, measure, weight or gauge of any goods;
 
-          ITEM (ii)
+            ITEM (ii)
 
-            the name of the producer or producer of any goods;
+              the name of the producer or producer of any goods;
 
-          ITEM (iii)
+            ITEM (iii)
 
-            the ingredients of which any goods consist, or material of which any goods are made;
+              the ingredients of which any goods consist, or material of which any goods are made;
 
-          ITEM (iv)
+            ITEM (iv)
 
-            the place or country of origin of any goods;
+              the place or country of origin of any goods;
 
-          ITEM (v)
+            ITEM (v)
 
-            the mode of manufacturing or producing any goods; or
+              the mode of manufacturing or producing any goods; or
 
-          ITEM (vi)
+            ITEM (vi)
 
-            any goods being the subject of any patent, privilege or copyright; or
+              any goods being the subject of any patent, privilege or copyright; or
 
-      ITEM (b)
+        ITEM (b)
 
-        any figure, work or mark, other than a trade mark, that, according to the custom of the trade, is commonly understood to be an indication of any matter contemplated in paragraph (a);
+          any figure, work or mark, other than a trade mark, that, according to the custom of the trade, is commonly understood to be an indication of any matter contemplated in paragraph (a);
 
-    ITEMS 
+      ITEMS 
 
-      “trade mark” means—
+        “trade mark” means—
 
-      ITEM (a)
+        ITEM (a)
 
-        a trade mark as defined in section 2(1) of the Trade Marks Act, 1993 (Act No. 194 of 1993); or
+          a trade mark as defined in section 2(1) of the Trade Marks Act, 1993 (Act No. 194 of 1993); or
 
-      ITEM (b)
+        ITEM (b)
 
-        a well-known trade mark as contemplated in section 35 of the Trade Marks Act, 1993;
+          a well-known trade mark as contemplated in section 35 of the Trade Marks Act, 1993;
 
-    ITEMS 
+      ITEMS 
 
-      “transaction” means—
+        “transaction” means—
 
-      ITEM (a)
+        ITEM (a)
 
-        ITEMS 
+          ITEMS 
 
-          in respect of a person acting in the ordinary course of business—
+            in respect of a person acting in the ordinary course of business—
 
-          ITEM (i)
+            ITEM (i)
 
-            an agreement between or among that person and one or more other persons for the supply or potential supply of any goods or services in exchange for consideration; or
+              an agreement between or among that person and one or more other persons for the supply or potential supply of any goods or services in exchange for consideration; or
 
-          ITEM (ii)
+            ITEM (ii)
 
-            the supply by that person of any goods to or at the direction of a consumer for consideration; or
+              the supply by that person of any goods to or at the direction of a consumer for consideration; or
 
-          ITEM (iii)
+            ITEM (iii)
 
-            the performance by, or at the direction of, that person of any services for or at the direction of a consumer for consideration; or
+              the performance by, or at the direction of, that person of any services for or at the direction of a consumer for consideration; or
 
-      ITEM (b)
+        ITEM (b)
 
-        an interaction contemplated in section 5(6), irrespective of whether it falls within paragraph (a);
+          an interaction contemplated in section 5(6), irrespective of whether it falls within paragraph (a);
 
-    “Tribunal” means the National Consumer Tribunal established by section 26 of the National Credit Act;
+      “Tribunal” means the National Consumer Tribunal established by section 26 of the National Credit Act;
 
-    ITEMS 
+      ITEMS 
 
-      “unconscionable”, when used with reference to any conduct, means—
+        “unconscionable”, when used with reference to any conduct, means—
 
-      ITEM (a)
+        ITEM (a)
 
-        having a character contemplated in section 40; or
+          having a character contemplated in section 40; or
 
-      ITEM (b)
+        ITEM (b)
 
-        otherwise unethical or improper to a degree that would shock the conscience of a reasonable person;
+          otherwise unethical or improper to a degree that would shock the conscience of a reasonable person;
 
-    “unit price” means a price for any goods or services expressed in relation to a well-known measure such as quantity, weight, volume, duration or other measurable unit by which the goods or services are allocated;
+      “unit price” means a price for any goods or services expressed in relation to a well-known measure such as quantity, weight, volume, duration or other measurable unit by which the goods or services are allocated;
 
-    “used goods”, when used in respect of any goods being marketed, means goods that have been previously supplied to a consumer, but does not include goods that have been returned to the supplier in terms of any right of return contemplated in this Act; and
+      “used goods”, when used in respect of any goods being marketed, means goods that have been previously supplied to a consumer, but does not include goods that have been returned to the supplier in terms of any right of return contemplated in this Act; and
 
-    “visual representation” means any representation or illustration capable of being reproduced upon a surface, whether by printing or otherwise, but does not include a trade mark.
+      “visual representation” means any representation or illustration capable of being reproduced upon a surface, whether by printing or otherwise, but does not include a trade mark.
 
-  SECTION 2. - Interpretation
+    SECTION 2. - Interpretation
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      This Act must be interpreted in a manner that gives effect to the purposes set out in section 3.
+        This Act must be interpreted in a manner that gives effect to the purposes set out in section 3.
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      When interpreting or applying this Act, a person, court or Tribunal or the Commission may consider—
+        When interpreting or applying this Act, a person, court or Tribunal or the Commission may consider—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        appropriate foreign and international law;
+          appropriate foreign and international law;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        appropriate international conventions, declarations or protocols relating to consumer protection; and
+          appropriate international conventions, declarations or protocols relating to consumer protection; and
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        any decision of a consumer court, ombud or arbitrator in terms of this Act, to the extent that such a decision has not been set aside, reversed or overruled by the High Court, the Supreme Court of Appeal or the Constitutional Court.
+          any decision of a consumer court, ombud or arbitrator in terms of this Act, to the extent that such a decision has not been set aside, reversed or overruled by the High Court, the Supreme Court of Appeal or the Constitutional Court.
 
-    SUBSECTION (3)
+      SUBSECTION (3)
 
-      If a provision of this Act requires a document to be signed or initialled by a party to a transaction, that signing or initialling may be effected in any manner recognised by law, including by use of—
+        If a provision of this Act requires a document to be signed or initialled by a party to a transaction, that signing or initialling may be effected in any manner recognised by law, including by use of—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        an advanced electronic signature, as defined in the Electronic Communications and Transactions Act; or
+          an advanced electronic signature, as defined in the Electronic Communications and Transactions Act; or
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        an electronic signature, as defined in the Electronic Communications and Transactions Act.
+          an electronic signature, as defined in the Electronic Communications and Transactions Act.
 
-    SUBSECTION (4)
+      SUBSECTION (4)
 
-      The supplier must take reasonable measures to prevent the use of a consumer’s electronic signature for any purpose other than the signing or initialling of the particular document that the consumer intended to sign or initial.
+        The supplier must take reasonable measures to prevent the use of a consumer’s electronic signature for any purpose other than the signing or initialling of the particular document that the consumer intended to sign or initial.
 
-    SUBSECTION (5)
+      SUBSECTION (5)
 
-      Despite the periods of time set out in section 6, each successive threshold determined by the Minister in terms of that section continues in effect until a subsequent threshold in terms of that section takes effect.
+        Despite the periods of time set out in section 6, each successive threshold determined by the Minister in terms of that section continues in effect until a subsequent threshold in terms of that section takes effect.
 
-    SUBSECTION (6)
+      SUBSECTION (6)
 
-      When a particular number of business days is provided for between the happening of one event and another, the number of days must be calculated by—
+        When a particular number of business days is provided for between the happening of one event and another, the number of days must be calculated by—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        excluding the day on which the first such event occurs;
+          excluding the day on which the first such event occurs;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        including the day on or by which the second event is to occur; and
+          including the day on or by which the second event is to occur; and
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        excluding any public holiday, Saturday or Sunday that falls on or between the days contemplated in paragraphs (a) and (b), respectively.
+          excluding any public holiday, Saturday or Sunday that falls on or between the days contemplated in paragraphs (a) and (b), respectively.
 
-    SUBSECTION (7)
+      SUBSECTION (7)
 
-      Unless the context indicates otherwise, any use of the word “includes” or “including” in relation to a defined or generic word or expression, on the one hand, and one or more enumerated examples or specific items, on the other, is not to be construed as limiting the defined or generic expression to the examples or items so enumerated.
+        Unless the context indicates otherwise, any use of the word “includes” or “including” in relation to a defined or generic word or expression, on the one hand, and one or more enumerated examples or specific items, on the other, is not to be construed as limiting the defined or generic expression to the examples or items so enumerated.
 
-    SUBSECTION (8)
+      SUBSECTION (8)
 
-      If there is an inconsistency between any provision of Chapter 5 of this Act and a provision of the Public Finance Management Act, 1999 (Act No. 1 of 1999), or the Public Service Act, 1994 (Proclamation No. 103 of 1994), the provisions of the Public Finance Management Act, 1999, or of the Public Service Act, 1994, as the case may be, prevail.
+        If there is an inconsistency between any provision of Chapter 5 of this Act and a provision of the Public Finance Management Act, 1999 (Act No. 1 of 1999), or the Public Service Act, 1994 (Proclamation No. 103 of 1994), the provisions of the Public Finance Management Act, 1999, or of the Public Service Act, 1994, as the case may be, prevail.
 
-    SUBSECTION (9)
+      SUBSECTION (9)
 
-      If there is an inconsistency between any provision of this Act and a provision of any Act not contemplated in subsection (8)—
+        If there is an inconsistency between any provision of this Act and a provision of any Act not contemplated in subsection (8)—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        the provisions of both Acts apply concurrently, to the extent that it is possible to apply and comply with one of the inconsistent provisions without contravening the second; and
+          the provisions of both Acts apply concurrently, to the extent that it is possible to apply and comply with one of the inconsistent provisions without contravening the second; and
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        to the extent that paragraph (a) cannot apply, the provision that extends the greater protection to a consumer prevails over the alternative provision,
+          to the extent that paragraph (a) cannot apply, the provision that extends the greater protection to a consumer prevails over the alternative provision,
 
-      provided that in the case of hazardous chemical products only the provisions of this Act relating to consumer redress will apply.
+        provided that in the case of hazardous chemical products only the provisions of this Act relating to consumer redress will apply.
 
-    SUBSECTION (10)
+      SUBSECTION (10)
 
-      No provision of this Act must be interpreted so as to preclude a consumer from exercising any rights afforded in terms of the common law.
+        No provision of this Act must be interpreted so as to preclude a consumer from exercising any rights afforded in terms of the common law.
 
-PART B - Purpose, policy and application of Act
+  PART B - Purpose, policy and application of Act
 
-  SECTION 3. - Purpose and policy of Act
+    SECTION 3. - Purpose and policy of Act
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      The purposes of this Act are to promote and advance the social and economic welfare of consumers in South Africa by—
+        The purposes of this Act are to promote and advance the social and economic welfare of consumers in South Africa by—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        establishing a legal framework for the achievement and maintenance of a consumer market that is fair, accessible, efficient, sustainable and responsible for the benefit of consumers generally;
+          establishing a legal framework for the achievement and maintenance of a consumer market that is fair, accessible, efficient, sustainable and responsible for the benefit of consumers generally;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        reducing and ameliorating any disadvantages experienced in accessing any supply of goods or services by consumers—
+          reducing and ameliorating any disadvantages experienced in accessing any supply of goods or services by consumers—
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          who are low-income persons or persons comprising low-income communities;
+            who are low-income persons or persons comprising low-income communities;
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          who live in remote, isolated or low-density population areas or communities;
+            who live in remote, isolated or low-density population areas or communities;
 
-        SUBPARAGRAPH (iii)
+          SUBPARAGRAPH (iii)
 
-          who are minors, seniors or other similarly vulnerable consumers; or
+            who are minors, seniors or other similarly vulnerable consumers; or
 
-        SUBPARAGRAPH (iv)
+          SUBPARAGRAPH (iv)
 
-          whose ability to read and comprehend any advertisement, agreement, mark, instruction, label, warning, notice or other visual representation is limited by reason of low literacy, vision impairment or limited fluency in the language in which the representation is produced, published or presented;
+            whose ability to read and comprehend any advertisement, agreement, mark, instruction, label, warning, notice or other visual representation is limited by reason of low literacy, vision impairment or limited fluency in the language in which the representation is produced, published or presented;
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        promoting fair business practices;
+          promoting fair business practices;
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        protecting consumers from—
+          protecting consumers from—
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          unconscionable, unfair, unreasonable, unjust or otherwise improper trade practices; and
+            unconscionable, unfair, unreasonable, unjust or otherwise improper trade practices; and
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          deceptive, misleading, unfair or fraudulent conduct;
+            deceptive, misleading, unfair or fraudulent conduct;
 
-      PARAGRAPH (e)
+        PARAGRAPH (e)
 
-        improving consumer awareness and information and encouraging responsible and informed consumer choice and behaviour;
+          improving consumer awareness and information and encouraging responsible and informed consumer choice and behaviour;
 
-      PARAGRAPH (f)
+        PARAGRAPH (f)
 
-        promoting consumer confidence, empowerment, and the development of a culture of consumer responsibility, through individual and group education, vigilance, advocacy and activism;
+          promoting consumer confidence, empowerment, and the development of a culture of consumer responsibility, through individual and group education, vigilance, advocacy and activism;
 
-      PARAGRAPH (g)
+        PARAGRAPH (g)
 
-        providing for a consistent, accessible and efficient system of consensual resolution of disputes arising from consumer transactions; and
+          providing for a consistent, accessible and efficient system of consensual resolution of disputes arising from consumer transactions; and
 
-      PARAGRAPH (h)
+        PARAGRAPH (h)
 
-        providing for an accessible, consistent, harmonised, effective and efficient system of redress for consumers.
+          providing for an accessible, consistent, harmonised, effective and efficient system of redress for consumers.
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      To better ensure the realisation of the purposes of this Act, and the enjoyment of the consumer rights recognised or conferred by this Act, the Commission, in addition to its responsibilities set out elsewhere in this Act, is responsible to—
+        To better ensure the realisation of the purposes of this Act, and the enjoyment of the consumer rights recognised or conferred by this Act, the Commission, in addition to its responsibilities set out elsewhere in this Act, is responsible to—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        take reasonable and practical measures to promote the purposes of this Act and to protect and advance the interests of all consumers, and in particular those consumers contemplated in subsection (1)(b);
+          take reasonable and practical measures to promote the purposes of this Act and to protect and advance the interests of all consumers, and in particular those consumers contemplated in subsection (1)(b);
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        monitor and report each year to the Minister on the following matters:
+          monitor and report each year to the Minister on the following matters:
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          The availability of goods and services to persons contemplated in
+            The availability of goods and services to persons contemplated in
 
-          subsection (1)(b), including price and market conditions, conduct and trends affecting their consumer rights;
+            subsection (1)(b), including price and market conditions, conduct and trends affecting their consumer rights;
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          access to the supply of goods and services by small businesses and persons contemplated in subsection (1)(b); and
+            access to the supply of goods and services by small businesses and persons contemplated in subsection (1)(b); and
 
-        SUBPARAGRAPH (iii)
+          SUBPARAGRAPH (iii)
 
-          any other matter relating to the supply of goods and services; and
+            any other matter relating to the supply of goods and services; and
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        conduct research and propose policies to the Minister in relation to any matter affecting the supply of goods and services, including proposals for legislative, regulatory or policy initiatives that would improve the realisation and full enjoyment of their consumer rights by persons contemplated in subsection (1)(b).
+          conduct research and propose policies to the Minister in relation to any matter affecting the supply of goods and services, including proposals for legislative, regulatory or policy initiatives that would improve the realisation and full enjoyment of their consumer rights by persons contemplated in subsection (1)(b).
 
-  SECTION 4. - Realisation of consumer rights
+    SECTION 4. - Realisation of consumer rights
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      Any of the following persons may, in the manner provided for in this Act, approach a court, the Tribunal or the Commission alleging that a consumer’s rights in terms of this Act have been infringed, impaired or threatened, or that prohibited conduct has occurred or is occurring:
+        Any of the following persons may, in the manner provided for in this Act, approach a court, the Tribunal or the Commission alleging that a consumer’s rights in terms of this Act have been infringed, impaired or threatened, or that prohibited conduct has occurred or is occurring:
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        A person acting on his or her own behalf;
+          A person acting on his or her own behalf;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        an authorised person acting on behalf of another person who cannot act in his or her own name;
+          an authorised person acting on behalf of another person who cannot act in his or her own name;
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        a person acting as a member of, or in the interest of, a group or class of affected persons;
+          a person acting as a member of, or in the interest of, a group or class of affected persons;
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        a person acting in the public interest, with leave of the Tribunal or court, as the case may be; and
+          a person acting in the public interest, with leave of the Tribunal or court, as the case may be; and
 
-      PARAGRAPH (e)
+        PARAGRAPH (e)
 
-        an association acting in the interest of its members.
+          an association acting in the interest of its members.
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      In any matter brought before the Tribunal or a court in terms of this Act—
+        In any matter brought before the Tribunal or a court in terms of this Act—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        the court must develop the common law as necessary to improve the realisation and enjoyment of consumer rights generally, and in particular by persons contemplated in section 3(1)(b); and
+          the court must develop the common law as necessary to improve the realisation and enjoyment of consumer rights generally, and in particular by persons contemplated in section 3(1)(b); and
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        the Tribunal or court, as the case may be, must—
+          the Tribunal or court, as the case may be, must—
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          promote the spirit and purposes of this Act; and
+            promote the spirit and purposes of this Act; and
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          make appropriate orders to give practical effect to the consumer’s right of access to redress, including, but not limited to—
+            make appropriate orders to give practical effect to the consumer’s right of access to redress, including, but not limited to—
 
-          SUBPARAGRAPH (aa)
+            SUBPARAGRAPH (aa)
 
-            any order provided for in this Act; and
+              any order provided for in this Act; and
 
-          SUBPARAGRAPH (bb)
+            SUBPARAGRAPH (bb)
 
-            any innovative order that better advances, protects, promotes and assures the realisation by consumers of their rights in terms of this Act.
+              any innovative order that better advances, protects, promotes and assures the realisation by consumers of their rights in terms of this Act.
 
-    SUBSECTION (3)
+      SUBSECTION (3)
 
-      If any provision of this Act, read in its context, can reasonably be construed to have more than one meaning, the Tribunal or court must prefer the meaning that best promotes the spirit and purposes of this Act, and will best improve the realisation and enjoyment of consumer rights generally, and in particular by persons contemplated in section 3(1)(b).
+        If any provision of this Act, read in its context, can reasonably be construed to have more than one meaning, the Tribunal or court must prefer the meaning that best promotes the spirit and purposes of this Act, and will best improve the realisation and enjoyment of consumer rights generally, and in particular by persons contemplated in section 3(1)(b).
 
-    SUBSECTION (4)
+      SUBSECTION (4)
 
-      To the extent consistent with advancing the purposes and policies of this Act, the Tribunal or court must interpret any standard form, contract or other document prepared or published by or on behalf of a supplier, or required by this Act to be produced by a supplier, to the benefit of the consumer—
+        To the extent consistent with advancing the purposes and policies of this Act, the Tribunal or court must interpret any standard form, contract or other document prepared or published by or on behalf of a supplier, or required by this Act to be produced by a supplier, to the benefit of the consumer—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        so that any ambiguity that allows for more than one reasonable interpretation of a part of such a document is resolved to the benefit of the consumer; and
+          so that any ambiguity that allows for more than one reasonable interpretation of a part of such a document is resolved to the benefit of the consumer; and
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        so that any restriction, limitation, exclusion or deprivation of a consumer’s legal rights set out in such a document or notice is limited to the extent that a reasonable person would ordinarily contemplate or expect, having regard to—
+          so that any restriction, limitation, exclusion or deprivation of a consumer’s legal rights set out in such a document or notice is limited to the extent that a reasonable person would ordinarily contemplate or expect, having regard to—
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          the content of the document;
+            the content of the document;
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          the manner and form in which the document was prepared and presented; and
+            the manner and form in which the document was prepared and presented; and
 
-        SUBPARAGRAPH (iii)
+          SUBPARAGRAPH (iii)
 
-          the circumstances of the transaction or agreement.
+            the circumstances of the transaction or agreement.
 
-    SUBSECTION (5)
+      SUBSECTION (5)
 
-      In any dealings with a consumer in the ordinary course of business, a person must not—
+        In any dealings with a consumer in the ordinary course of business, a person must not—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        engage in any conduct contrary to, or calculated to frustrate or defeat the purposes and policy of, this Act;
+          engage in any conduct contrary to, or calculated to frustrate or defeat the purposes and policy of, this Act;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        engage in any conduct that is unconscionable, misleading or deceptive, or that is reasonably likely to mislead or deceive; or
+          engage in any conduct that is unconscionable, misleading or deceptive, or that is reasonably likely to mislead or deceive; or
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        make any representation about a supplier or any goods or services, or a related matter, unless the person has reasonable grounds for believing that the representation is true.
+          make any representation about a supplier or any goods or services, or a related matter, unless the person has reasonable grounds for believing that the representation is true.
 
-  SECTION 5. - Application of Act
+    SECTION 5. - Application of Act
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      This Act applies to—
+        This Act applies to—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        every transaction occurring within the Republic, unless it is exempted by subsection (2), or in terms of subsections (3) and (4);
+          every transaction occurring within the Republic, unless it is exempted by subsection (2), or in terms of subsections (3) and (4);
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        the promotion of any goods or services, or of the supplier of any goods or services, within the Republic, unless—
+          the promotion of any goods or services, or of the supplier of any goods or services, within the Republic, unless—
 
-        SUBPARAGRAPH (i)
+          SUBPARAGRAPH (i)
 
-          those goods or services could not reasonably be the subject of a transaction to which this Act applies in terms of paragraph (a); or
+            those goods or services could not reasonably be the subject of a transaction to which this Act applies in terms of paragraph (a); or
 
-        SUBPARAGRAPH (ii)
+          SUBPARAGRAPH (ii)
 
-          the promotion of those goods or services has been exempted in terms of subsections (3) and (4);
+            the promotion of those goods or services has been exempted in terms of subsections (3) and (4);
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        goods or services that are supplied or performed in terms of a transaction to which this Act applies, irrespective of whether any of those goods or services are offered or supplied in conjunction with any other goods or services, or separate from any other goods or services; and
+          goods or services that are supplied or performed in terms of a transaction to which this Act applies, irrespective of whether any of those goods or services are offered or supplied in conjunction with any other goods or services, or separate from any other goods or services; and
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        goods that are supplied in terms of a transaction that is exempt from the application of this Act, but only to the extent provided for in subsection (5).
+          goods that are supplied in terms of a transaction that is exempt from the application of this Act, but only to the extent provided for in subsection (5).
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      This Act does not apply to any transaction—
+        This Act does not apply to any transaction—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        in terms of which goods or services are promoted or supplied to the State;
+          in terms of which goods or services are promoted or supplied to the State;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        in terms of which the consumer is a juristic person whose asset value or annual turnover, at the time of the transaction, equals or exceeds the threshold value determined by the Minister in terms of section 6;
+          in terms of which the consumer is a juristic person whose asset value or annual turnover, at the time of the transaction, equals or exceeds the threshold value determined by the Minister in terms of section 6;
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        if the transaction falls within an exemption granted by the Minister in terms of subsections (3) and (4);
+          if the transaction falls within an exemption granted by the Minister in terms of subsections (3) and (4);
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        that constitutes a credit agreement under the National Credit Act, but the goods or services that are the subject of the credit agreement are not excluded from the ambit of this Act;
+          that constitutes a credit agreement under the National Credit Act, but the goods or services that are the subject of the credit agreement are not excluded from the ambit of this Act;
 
-      PARAGRAPH (e)
+        PARAGRAPH (e)
 
-        pertaining to services to be supplied under an employment contract;
+          pertaining to services to be supplied under an employment contract;
 
-      PARAGRAPH (f)
+        PARAGRAPH (f)
 
-        giving effect to a collective bargaining agreement within the meaning of section 23 of the Constitution and the Labour Relations Act, 1995 (Act No. 66 of 1995); or
+          giving effect to a collective bargaining agreement within the meaning of section 23 of the Constitution and the Labour Relations Act, 1995 (Act No. 66 of 1995); or
 
-      PARAGRAPH (g)
+        PARAGRAPH (g)
 
-        giving effect to a collective agreement as defined in section 213 of the Labour Relations Act, 1995 (Act No. 66 of 1995).
+          giving effect to a collective agreement as defined in section 213 of the Labour Relations Act, 1995 (Act No. 66 of 1995).
 
-    SUBSECTION (3)
+      SUBSECTION (3)
 
-      A regulatory authority may apply to the Minister for an industry-wide exemption from one or more provisions of this Act on the grounds that those provisions overlap or duplicate a regulatory scheme administered by that regulatory authority in terms of—
+        A regulatory authority may apply to the Minister for an industry-wide exemption from one or more provisions of this Act on the grounds that those provisions overlap or duplicate a regulatory scheme administered by that regulatory authority in terms of—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        any other national legislation; or
+          any other national legislation; or
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        any treaty, international law, convention or protocol.
+          any treaty, international law, convention or protocol.
 
-    SUBSECTION (4)
+      SUBSECTION (4)
 
-      The Minister, by notice in the Gazette after receiving the advice of the Commission, may grant an exemption contemplated in subsection (3)—
+        The Minister, by notice in the Gazette after receiving the advice of the Commission, may grant an exemption contemplated in subsection (3)—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        only to the extent that the relevant regulatory scheme ensures the achievement of the purposes of this Act at least as well as the provisions of this Act; and
+          only to the extent that the relevant regulatory scheme ensures the achievement of the purposes of this Act at least as well as the provisions of this Act; and
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        subject to any limits or conditions necessary to ensure the achievement of the purposes of this Act.
+          subject to any limits or conditions necessary to ensure the achievement of the purposes of this Act.
 
-    SUBSECTION (5)
+      SUBSECTION (5)
 
-      If any goods are supplied within the Republic to any person in terms of a transaction that is exempt from the application of this Act, those goods, and the importer or producer, distributor and retailer of those goods, respectively, are nevertheless subject to sections 60 and 61.
+        If any goods are supplied within the Republic to any person in terms of a transaction that is exempt from the application of this Act, those goods, and the importer or producer, distributor and retailer of those goods, respectively, are nevertheless subject to sections 60 and 61.
 
-    SUBSECTION (6)
+      SUBSECTION (6)
 
-      For greater certainty, the following arrangements must be regarded as a transaction between a supplier and consumer, within the meaning of this Act:
+        For greater certainty, the following arrangements must be regarded as a transaction between a supplier and consumer, within the meaning of this Act:
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        The supply of any goods or services in the ordinary course of business to any of its members by a club, trade union, association, society or other collectivity, whether corporate or unincorporated, of persons voluntarily associated and organised for a common purpose or purposes, whether for fair value consideration or otherwise, irrespective of whether there is a charge or economic contribution demanded or expected in order to become or remain a member of that entity;
+          The supply of any goods or services in the ordinary course of business to any of its members by a club, trade union, association, society or other collectivity, whether corporate or unincorporated, of persons voluntarily associated and organised for a common purpose or purposes, whether for fair value consideration or otherwise, irrespective of whether there is a charge or economic contribution demanded or expected in order to become or remain a member of that entity;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        a solicitation of offers to enter into a franchise agreement;
+          a solicitation of offers to enter into a franchise agreement;
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        an offer by a potential franchisor to enter into a franchise agreement with a potential franchisee;
+          an offer by a potential franchisor to enter into a franchise agreement with a potential franchisee;
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        a franchise agreement or an agreement supplementary to a franchise agreement; and
+          a franchise agreement or an agreement supplementary to a franchise agreement; and
 
-      PARAGRAPH (e)
+        PARAGRAPH (e)
 
-        the supply of any goods or services to a franchisee in terms of a franchise agreement.
+          the supply of any goods or services to a franchisee in terms of a franchise agreement.
 
-    SUBSECTION (7)
+      SUBSECTION (7)
 
-      Despite subsection (2)(b), this Act applies to a transaction contemplated in subsection (6)(b) to (e) irrespective of whether the size of the juristic person falls above or below the threshold determined in terms of section 6.
+        Despite subsection (2)(b), this Act applies to a transaction contemplated in subsection (6)(b) to (e) irrespective of whether the size of the juristic person falls above or below the threshold determined in terms of section 6.
 
-    SUBSECTION (8)
+      SUBSECTION (8)
 
-      The application of this Act in terms of subsections (1) to (7) extends to a matter irrespective of whether the supplier—
+        The application of this Act in terms of subsections (1) to (7) extends to a matter irrespective of whether the supplier—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        resides or has its principal office within or outside the Republic;
+          resides or has its principal office within or outside the Republic;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        operates on a for-profit basis or otherwise; or
+          operates on a for-profit basis or otherwise; or
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        is an individual, juristic person, partnership, trust, organ of state, an entity owned or directed by an organ of state, a person contracted or licensed by an organ of state to offer or supply any goods or services, or is a public-private partnership; or
+          is an individual, juristic person, partnership, trust, organ of state, an entity owned or directed by an organ of state, a person contracted or licensed by an organ of state to offer or supply any goods or services, or is a public-private partnership; or
 
-      PARAGRAPH (d)
+        PARAGRAPH (d)
 
-        is required or licensed in terms of any public regulation to make the supply of the particular goods or services available to all or part of the public.
+          is required or licensed in terms of any public regulation to make the supply of the particular goods or services available to all or part of the public.
 
-  SECTION 6. - Threshold determination
+    SECTION 6. - Threshold determination
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      On the early effective date as determined in accordance with item 2 of Schedule 2, and subsequently at intervals of not more than five years, the Minister, by notice in the Gazette, must determine a monetary threshold applicable to the size of the juristic person for the purposes of section 5(2)(b).
+        On the early effective date as determined in accordance with item 2 of Schedule 2, and subsequently at intervals of not more than five years, the Minister, by notice in the Gazette, must determine a monetary threshold applicable to the size of the juristic person for the purposes of section 5(2)(b).
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      The initial threshold determined by the Minister in terms of this section takes effect on the general effective date as determined in accordance with item 2 of Schedule
+        The initial threshold determined by the Minister in terms of this section takes effect on the general effective date as determined in accordance with item 2 of Schedule
 
-    2, and each subsequent threshold takes effect six months after the date on which it is published in the Gazette.
+      2, and each subsequent threshold takes effect six months after the date on which it is published in the Gazette.
 
-  SECTION 7. - Requirements of franchise agreements
+    SECTION 7. - Requirements of franchise agreements
 
-    SUBSECTION (1)
+      SUBSECTION (1)
 
-      A franchise agreement must—
+        A franchise agreement must—
 
-      PARAGRAPH (a)
+        PARAGRAPH (a)
 
-        be in writing and signed by or on behalf of the franchisee;
+          be in writing and signed by or on behalf of the franchisee;
 
-      PARAGRAPH (b)
+        PARAGRAPH (b)
 
-        include any prescribed information, or address any prescribed categories of information; and
+          include any prescribed information, or address any prescribed categories of information; and
 
-      PARAGRAPH (c)
+        PARAGRAPH (c)
 
-        comply with the requirements of section 22.
+          comply with the requirements of section 22.
 
-    SUBSECTION (2)
+      SUBSECTION (2)
 
-      A franchisee may cancel a franchise agreement without cost or penalty within 10 business days after signing such agreement, by giving written notice to the franchisor.
+        A franchisee may cancel a franchise agreement without cost or penalty within 10 business days after signing such agreement, by giving written notice to the franchisor.
 
-    SUBSECTION (3)
+      SUBSECTION (3)
 
-      The Minister may prescribe information to be set out in franchise agreements, generally, or within specific categories or industries.
+        The Minister may prescribe information to be set out in franchise agreements, generally, or within specific categories or industries.
 
 CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 

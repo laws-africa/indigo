@@ -91,25 +91,25 @@ class ImporterBluebellTestCase(TestCase):
             """
 BODY 
 
-  PARAGRAPH 1.
+PARAGRAPH 1.
 
-    First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm
+  First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm
 
-    SUBPARAGRAPH 1.1.1.
+  SUBPARAGRAPH 1.1.1.
 
-      Nested paragraph.
+    Nested paragraph.
 
-      Text text text.
+    Text text text.
 
-    SUBPARAGRAPH 1.1.2
+  SUBPARAGRAPH 1.1.2
 
-      Also this one.
+    Also this one.
 
-    1.1.3Not this one.
+  1.1.3Not this one.
 
-  PARAGRAPH 123
+PARAGRAPH 123
 
-    Section
+  Section
 """.strip(),
             self.html_to_bluebell("""
 <p>1. First paragraph of text that is long enough not to be a heading lorum ipsum lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsu lorum ipsummmmmm</p>
@@ -128,17 +128,17 @@ BODY
         self.assertMultiLineEqual(
             """BODY 
 
-  SECTION 1. - Section heading
+SECTION 1. - Section heading
 
-    Section body
+  Section body
 
-  SECTION 2. - Section heading that is extra long and verbose but is bold and therefore can safely be taken as a section heading
+SECTION 2. - Section heading that is extra long and verbose but is bold and therefore can safely be taken as a section heading
 
-    Section 2 body that is substantial and shouldn't be mistaken for a section heading, so that the next line is a paragraph.
+  Section 2 body that is substantial and shouldn't be mistaken for a section heading, so that the next line is a paragraph.
 
-    PARAGRAPH 3.
+  PARAGRAPH 3.
 
-      Numbered paragraph with a very long body that looks like a section heading but is not and should not be mistaken for a section heading.""",
+    Numbered paragraph with a very long body that looks like a section heading but is not and should not be mistaken for a section heading.""",
             self.html_to_bluebell("""
 <p>1. Section heading</p>
 <p>Section body</p>
@@ -153,17 +153,17 @@ BODY
         self.assertMultiLineEqual(
             """BODY 
 
-  SECTION 1. - Section heading
+SECTION 1. - Section heading
 
-    \SECTION should be escaped
+  \SECTION should be escaped
 
-    these should be escaped:
+  these should be escaped:
 
-    \{\{
+  \{\{
 
-    \PREAMBLE
+  \PREAMBLE
 
-    \{\{""",
+  \{\{""",
             self.html_to_bluebell("""
 <p>1. Section heading</p>
 <p>SECTION should be escaped</p>
@@ -192,15 +192,15 @@ PREAMBLE
 
 BODY 
 
-  SECTION 1. - Section heading
+SECTION 1. - Section heading
 
-    Section body
+  Section body
 
-    These should be ignored
+  These should be ignored
 
-    Preface
+  Preface
 
-    Preamble""",
+  Preamble""",
             self.html_to_bluebell("""
 <p>Preface</p>
 <p>Some text</p>
@@ -219,31 +219,31 @@ BODY
             """
 BODY 
 
-  SECTION 2.
+SECTION 2.
 
-    SUBSECTION (1)
+  SUBSECTION (1)
 
-      directly into subsection no heading
+    directly into subsection no heading
 
-  SECTION 3. - A short heading
+SECTION 3. - A short heading
 
-    SUBSECTION (1)
+  SUBSECTION (1)
 
-      directly into subsection but with a heading
+    directly into subsection but with a heading
 
-  SECTION 4. - A very long heading that is too long to normally look like a heading but is bold, and therefore assumed to be a section heading
+SECTION 4. - A very long heading that is too long to normally look like a heading but is bold, and therefore assumed to be a section heading
 
-    SUBSECTION (1)
+  SUBSECTION (1)
 
-      directly into subsection but with a heading
+    directly into subsection but with a heading
 
-      PARAGRAPH 5.
+    PARAGRAPH 5.
 
-        looks like a section initially but should be a paragraph
+      looks like a section initially but should be a paragraph
 
-      PARAGRAPH 6.
+    PARAGRAPH 6.
 
-        because the next element is not its content, but another akn-block!
+      because the next element is not its content, but another akn-block!
 """.strip(),
             self.html_to_bluebell("""
 <p>2. (1) directly into subsection no heading</p>
@@ -262,27 +262,27 @@ BODY
             """
 BODY 
 
-  SECTION 16. - CONSOLIDATION OF A DEBTOR’S ACCOUNTS
+SECTION 16. - CONSOLIDATION OF A DEBTOR’S ACCOUNTS
 
-    PARAGRAPH 1.
+  PARAGRAPH 1.
 
-      The Municipal Manager may -
+    The Municipal Manager may -
 
-      SUBPARAGRAPH a)
+    SUBPARAGRAPH a)
 
-        Consolidate any separate accounts of a debtor;
+      Consolidate any separate accounts of a debtor;
 
-      SUBPARAGRAPH b)
+    SUBPARAGRAPH b)
 
-        Credit a payment by a debtor against my account of that debtor; and
+      Credit a payment by a debtor against my account of that debtor; and
 
-      SUBPARAGRAPH c)
+    SUBPARAGRAPH c)
 
-        Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
+      Implement any of the measures provided for in this By-law and the policy, in relation to any arrears on any of the accounts of such debtor.
 
-    PARAGRAPH 2.
+  PARAGRAPH 2.
 
-      Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
+    Subsection (1) does not apply where there is a dispute between the Municipality and a debtor referred to in that subsection concerning any specific amount claimed by the Municipality from that person.
 """.strip(),
             self.html_to_bluebell("""
 <p>16. <b>CONSOLIDATION OF A DEBTOR’S ACCOUNTS</b></p>
@@ -298,43 +298,43 @@ BODY
             """
 BODY 
 
-  SECTION 10. - POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE
+SECTION 10. - POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE
 
-    PARAGRAPH 1.
+  PARAGRAPH 1.
 
-      The Municipal Manager may restrict or disconnect the supply of any service to the premises of any user whenever such user of a service -
+    The Municipal Manager may restrict or disconnect the supply of any service to the premises of any user whenever such user of a service -
 
-      SUBPARAGRAPH a)
+    SUBPARAGRAPH a)
 
-        fails to make payment on the due date;
+      fails to make payment on the due date;
 
-      SUBPARAGRAPH b)
+    SUBPARAGRAPH b)
 
-        fails to comply with an arrangement; or
+      fails to comply with an arrangement; or
 
-      SUBPARAGRAPH c)
+    SUBPARAGRAPH c)
 
-        fails to comply with a condition of supply imposed by the Municipality;
+      fails to comply with a condition of supply imposed by the Municipality;
 
-      SUBPARAGRAPH d)
+    SUBPARAGRAPH d)
 
-        tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.
+      tenders a negotiable instrument which is dishonoured by the bank, when presented for payment.
 
-    PARAGRAPH 2.
+  PARAGRAPH 2.
 
-      The Municipal Manager may reconnect and restore full levels of supply of any of the restricted or discontinued services only -
+    The Municipal Manager may reconnect and restore full levels of supply of any of the restricted or discontinued services only -
 
-      SUBPARAGRAPH a)
+    SUBPARAGRAPH a)
 
-        after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or
+      after the arrear debt, including the costs of disconnection or reconnection, if any, have been paid in full and any other conditions has been complied with; or
 
-      SUBPARAGRAPH b)
+    SUBPARAGRAPH b)
 
-        after an arrangement with the debtor has been concluded.
+      after an arrangement with the debtor has been concluded.
 
-    PARAGRAPH 3.
+  PARAGRAPH 3.
 
-      The Municipal Manager may restrict, disconnect or discontinue any service in respect of any arrear debt.
+    The Municipal Manager may restrict, disconnect or discontinue any service in respect of any arrear debt.
 """.strip(),
             self.html_to_bluebell("""
 <p>10. <b>POWER TO RESTRICT OR DISCONNECT SUPPLY OF SERVICE</b></p>
@@ -354,17 +354,17 @@ BODY
             """
 BODY 
 
-  SECTION 14. - Expiry and renewal of fixed-term agreements
+SECTION 14. - Expiry and renewal of fixed-term agreements
 
-    SUBSECTION (1)
+  SUBSECTION (1)
 
-      This section does not apply to transactions between juristic persons regardless of their annual turnover or asset value.
+    This section does not apply to transactions between juristic persons regardless of their annual turnover or asset value.
 
-  SECTION 15. - Pre-authorisation of repair or maintenance services
+SECTION 15. - Pre-authorisation of repair or maintenance services
 
-    SUBSECTION (1)
+  SUBSECTION (1)
 
-      This section applies only to a transaction or consumer agreement—
+    This section applies only to a transaction or consumer agreement—
 """.strip(),
             self.html_to_bluebell("""
 <h1 class="western" align="justify" style="margin-top: 0cm">Expiry and renewal of fixed-term agreements</h1> <p class="western" align="left" style="margin-left: 0cm; text-indent: 0cm; margin-top: 0.02cm"><br> </p>
@@ -556,9 +556,9 @@ SCHEDULE Schedule 3
             """
 BODY 
 
-  SECTION 1. - Heading
+SECTION 1. - Heading
 
-    Section body
+  Section body
 
 ANNEXURE FIRST ANNEX (Sections 5(3) and (4))
   SUBHEADING Heading
@@ -598,9 +598,9 @@ ANNEXURE Annex
             """
 BODY 
 
-  SECTION 1. - Heading
+SECTION 1. - Heading
 
-    Section body
+  Section body
 
 APPENDIX FIRST APPENDIX (Sections 5(3) and (4))
   SUBHEADING Heading
@@ -640,9 +640,9 @@ APPENDIX Appendix
             """
 BODY 
 
-  SECTION 1. - Heading
+SECTION 1. - Heading
 
-    Section body
+  Section body
 
 ATTACHMENT FIRST ATTACHMENT (Sections 5(3) and (4))
   SUBHEADING Heading
@@ -682,29 +682,29 @@ ATTACHMENT Attachment
             """
 BODY 
 
-  PARAGRAPH (a)
+PARAGRAPH (a)
 
-    foo
+  foo
 
-    SUBPARAGRAPH (i)
+  SUBPARAGRAPH (i)
+
+    item
+
+  SUBPARAGRAPH (ii)
+
+    item
+
+  SUBPARAGRAPH (iii)
+
+    item
+
+    SUBPARAGRAPH (aa)
 
       item
 
-    SUBPARAGRAPH (ii)
+    SUBPARAGRAPH (bb)
 
       item
-
-    SUBPARAGRAPH (iii)
-
-      item
-
-      SUBPARAGRAPH (aa)
-
-        item
-
-      SUBPARAGRAPH (bb)
-
-        item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -762,29 +762,29 @@ SCHEDULE Schedule
             """
 BODY 
 
-  PARAGRAPH (a)
+PARAGRAPH (a)
 
-    chief electoral officer;
+  chief electoral officer;
 
-  PARAGRAPH (b)
+PARAGRAPH (b)
 
-    deputy chief electoral officer; and
+  deputy chief electoral officer; and
 
-  PARAGRAPH (c)
+PARAGRAPH (c)
 
-    electoral officer.
+  electoral officer.
 
-  PARAGRAPH (d)
+PARAGRAPH (d)
 
-    whitespace before d too
+  whitespace before d too
 
-  PARAGRAPH (e)
+PARAGRAPH (e)
 
-    bold whitespace before e
+  bold whitespace before e
 
-  PARAGRAPH (f)
+PARAGRAPH (f)
 
-    bold whitespace before f
+  bold whitespace before f
 """.strip(),
 
             self.html_to_bluebell("""
@@ -801,21 +801,21 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (a)
+PARAGRAPH (a)
 
-    foo
+  foo
 
-    SUBPARAGRAPH (i)
-
-      item
-
-    SUBPARAGRAPH (ii)
-
-      item
-
-  PARAGRAPH (c)
+  SUBPARAGRAPH (i)
 
     item
+
+  SUBPARAGRAPH (ii)
+
+    item
+
+PARAGRAPH (c)
+
+  item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -830,17 +830,17 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (h)
+PARAGRAPH (h)
 
-    item
+  item
 
-  PARAGRAPH (i)
+PARAGRAPH (i)
 
-    item
+  item
 
-  PARAGRAPH (j)
+PARAGRAPH (j)
 
-    item
+  item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -854,13 +854,13 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (h)
+PARAGRAPH (h)
 
-    item
+  item
 
-  PARAGRAPH (i)
+PARAGRAPH (i)
 
-    item
+  item
 
 """.strip(),
 
@@ -874,29 +874,29 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (h)
+PARAGRAPH (h)
+
+  item
+
+PARAGRAPH (i)
+
+  item
+
+PARAGRAPH (j)
+
+  item
+
+  SUBPARAGRAPH (i)
 
     item
 
-  PARAGRAPH (i)
+  SUBPARAGRAPH (ii)
 
     item
 
-  PARAGRAPH (j)
+  SUBPARAGRAPH (iii)
 
     item
-
-    SUBPARAGRAPH (i)
-
-      item
-
-    SUBPARAGRAPH (ii)
-
-      item
-
-    SUBPARAGRAPH (iii)
-
-      item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -913,33 +913,33 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (h)
+PARAGRAPH (h)
+
+  item
+
+PARAGRAPH (i)
+
+  item
+
+  SUBPARAGRAPH (I)
 
     item
 
-  PARAGRAPH (i)
+  SUBPARAGRAPH (II)
 
     item
 
-    SUBPARAGRAPH (I)
+PARAGRAPH (j)
 
-      item
+  item
 
-    SUBPARAGRAPH (II)
-
-      item
-
-  PARAGRAPH (j)
+  SUBPARAGRAPH (i)
 
     item
 
-    SUBPARAGRAPH (i)
+  SUBPARAGRAPH (ii)
 
-      item
-
-    SUBPARAGRAPH (ii)
-
-      item
+    item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -957,21 +957,21 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (u)
+PARAGRAPH (u)
 
-    item
+  item
 
-  PARAGRAPH (v)
+PARAGRAPH (v)
 
-    item
+  item
 
-  PARAGRAPH (w)
+PARAGRAPH (w)
 
-    item
+  item
 
-  PARAGRAPH (x)
+PARAGRAPH (x)
 
-    item
+  item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -986,21 +986,21 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (y)
+PARAGRAPH (y)
 
-    item
+  item
 
-  PARAGRAPH (z)
+PARAGRAPH (z)
 
-    item
+  item
 
-  PARAGRAPH (aa)
+PARAGRAPH (aa)
 
-    item
+  item
 
-  PARAGRAPH (bb)
+PARAGRAPH (bb)
 
-    item
+  item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -1015,17 +1015,17 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (z)
+PARAGRAPH (z)
+
+  item
+
+  SUBPARAGRAPH (AA)
 
     item
 
-    SUBPARAGRAPH (AA)
+  SUBPARAGRAPH (BB)
 
-      item
-
-    SUBPARAGRAPH (BB)
-
-      item
+    item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -1039,45 +1039,45 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (a)
+PARAGRAPH (a)
+
+  item
+
+PARAGRAPH (b)
+
+  item
+
+  SUBPARAGRAPH (i)
 
     item
 
-  PARAGRAPH (b)
+    SUBPARAGRAPH (aa)
+
+      item
+
+    SUBPARAGRAPH (bb)
+
+      item
+
+  SUBPARAGRAPH (ii)
 
     item
 
-    SUBPARAGRAPH (i)
+PARAGRAPH (c)
 
-      item
+  item
 
-      SUBPARAGRAPH (aa)
-
-        item
-
-      SUBPARAGRAPH (bb)
-
-        item
-
-    SUBPARAGRAPH (ii)
-
-      item
-
-  PARAGRAPH (c)
+  SUBPARAGRAPH (i)
 
     item
 
-    SUBPARAGRAPH (i)
+  SUBPARAGRAPH (ii)
 
-      item
+    item
 
-    SUBPARAGRAPH (ii)
+  SUBPARAGRAPH (iii)
 
-      item
-
-    SUBPARAGRAPH (iii)
-
-      item
+    item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -1098,21 +1098,21 @@ BODY
             """
 BODY 
 
-  PARAGRAPH (h)
+PARAGRAPH (h)
+
+  item
+
+  SUBPARAGRAPH (i)
 
     item
 
-    SUBPARAGRAPH (i)
-
-      item
-
-    SUBPARAGRAPH (ii)
-
-      item
-
-  PARAGRAPH (i)
+  SUBPARAGRAPH (ii)
 
     item
+
+PARAGRAPH (i)
+
+  item
 """.strip(),
 
             self.html_to_bluebell("""
@@ -1127,21 +1127,21 @@ BODY
             """
 BODY 
 
-  PARAGRAPH 9.2.1
+PARAGRAPH 9.2.1
+
+  item
+
+  SUBPARAGRAPH 9.2.1.1
 
     item
 
-    SUBPARAGRAPH 9.2.1.1
-
-      item
-
-    SUBPARAGRAPH 9.2.1.2
-
-      item
-
-  PARAGRAPH 9.2.2
+  SUBPARAGRAPH 9.2.1.2
 
     item
+
+PARAGRAPH 9.2.2
+
+  item
 """.strip(),
 
             self.html_to_bluebell("""

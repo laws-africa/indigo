@@ -1999,12 +1999,10 @@ SCHEDULE SCHEDULE
       TC{style width: 50%}
         Malta
 
-      TC{style width: 50%}
     TR
       TC{style width: 50%}
         Mozambique
 
-      TC{style width: 50%}
   1Cap. 16
 
   2Cap. 358

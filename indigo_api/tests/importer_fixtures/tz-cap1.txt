@@ -856,167 +856,167 @@ CHAPTER 1
 
       SUBSECTION (2)
 
-APPENDIX An appendix or Schedule to or a table in a written law, together with any notes thereto, forms part of the written law.
+        An appendix or Schedule to or a table in a written law, together with any notes thereto, forms part of the written law.
 
-  PARAGRAPH 26. - Headings, marginal notes, footnotes and rectification of errors
+    SECTION 26. - Headings, marginal notes, footnotes and rectification of errors
 
-    SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
-      The headings of the Parts, divisions and subdivisions into which a written law is divided form part of the written law.
+        The headings of the Parts, divisions and subdivisions into which a written law is divided form part of the written law.
 
-    SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
-      A marginal note or footnote to a written law and, notwithstanding subsection (1), a heading to a section, regulation, rule, by-law, or clause of a written law shall be taken not to be part of the written law.
+        A marginal note or footnote to a written law and, notwithstanding subsection (1), a heading to a section, regulation, rule, by-law, or clause of a written law shall be taken not to be part of the written law.
 
-    SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
-      Where there is any clerical or printing error in any Bill or Act published in the Gazette, the Chief Parliamentary Draftsman or any member of the Attorney-General's Chambers authorised in writing in that behalf by the Chief Parliamentary Draftsman, may, by order published in the Gazette, give directions as to the rectification of such error and every such direction shall be read as one with the Bill or Act to which it relates and such Bill or Act shall, with effect from the date of its first publication, take effect as so rectified.
+        Where there is any clerical or printing error in any Bill or Act published in the Gazette, the Chief Parliamentary Draftsman or any member of the Attorney-General's Chambers authorised in writing in that behalf by the Chief Parliamentary Draftsman, may, by order published in the Gazette, give directions as to the rectification of such error and every such direction shall be read as one with the Bill or Act to which it relates and such Bill or Act shall, with effect from the date of its first publication, take effect as so rectified.
 
   PART V - AMENDMENT AND REPEAL OF WRITTEN LAW (ss 27-34)
 
-    PARAGRAPH 27. - Construction of amending Act with amended Act
+    SECTION 27. - Construction of amending Act with amended Act
 
       Where one Act amends another Act, the amending Act shall, so far as it is consistent with the tenor thereof, and unless the contrary intention appears, be construed as one with the amended Act.
 
-    PARAGRAPH 28. - Repeal of written law as amended
+    SECTION 28. - Repeal of written law as amended
 
       Where a written law which has been amended by any other written law is repealed, such repeal shall include the repeal of all those provisions of such other written law by which the first-mentioned written law was amended.
 
-    PARAGRAPH 29. - Repeal of repeal
+    SECTION 29. - Repeal of repeal
 
       Where a written law repeals a repealing enactment, the repeal does not revive any enactment previously repealed unless words are added reviving it.
 
-    PARAGRAPH 30. - Repeal and substitution
+    SECTION 30. - Repeal and substitution
 
       Where a written law repeals an enactment and substitutes provisions for the repealed enactment the repealed enactment remains in operation until the substituted provisions come into operation.
 
-    PARAGRAPH 31. - Effect of substituting provisions
+    SECTION 31. - Effect of substituting provisions
 
       Where a written law repeals and re-enacts, with or without modification, any enactment–
 
-      SUBPARAGRAPH (a)
+      PARAGRAPH (a)
 
         all districts or other local divisions or areas;
 
-      SUBPARAGRAPH (b)
+      PARAGRAPH (b)
 
         all councils, corporations, boards, tribunals, commissions, trusts, or other bodies constituted, and all elections and appointments of members made; and
 
-      SUBPARAGRAPH (c)
+      PARAGRAPH (c)
 
         all offices constituted and appointments of officers made;
 
-      SUBPARAGRAPH (d)
+      PARAGRAPH (d)
 
         all subsidiary legislation, warrants, certificates, and documents made; and
 
-      SUBPARAGRAPH (e)
+      PARAGRAPH (e)
 
         all other acts, matters, and things,
 
       which, at the commencement of the repealing law, are respectively in existence, or in force or operation, under or for the purposes of such provision, shall, in so far as is consistent with the repealing law, subsist and enure for the purposes of such law and shall continue as if the repealing law had been in operation when they respectively originated or were constituted, made or done and they had originated or been constituted, made or done under that law.
 
-    PARAGRAPH 32. - General savings on repeal
+    SECTION 32. - General savings on repeal
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law repeals an enactment, the repeal does not, unless the contrary intention appears–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           revive anything not in force or existing at the time at which the repeal takes effect;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           affect the previous operation of the enactment repealed or anything duly done or suffered under that enactment;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           affect any right, interest, title, power or privilege created, acquired, accrued, established or exercisable or any status or capacity existing prior to the repeal;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           affect any duty, obligation, liability, or burden of proof imposed, created, or incurred prior to the repeal;
 
-        SUBPARAGRAPH (e)
+        PARAGRAPH (e)
 
           affect any penalty or forfeiture incurred or liable to be incurred in respect of an offence committed against that enactment;
 
-        SUBPARAGRAPH (f)
+        PARAGRAPH (f)
 
           affect any investigation, legal proceeding or remedy in respect of any such right, interest, title, power, privilege, status, capacity, duty, obligation, liability, burden of proof, penalty or forfeiture,
 
         and any such investigation, legal proceeding or remedy may be instituted, continued, or enforced, and any such penalty or forfeiture may be imposed and enforced as if the repealing written law had not been passed or made.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         The inclusion in the repealing provisions of an enactment of any express saving with respect to the repeals effected shall not be taken to prejudice the operation of this section with respect to the effect of those repeals.
 
-    PARAGRAPH 33. - Effect of repeal of Act on subsidiary legislation
+    SECTION 33. - Effect of repeal of Act on subsidiary legislation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where an Act–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           repeals an Act and substitutes other provisions; or
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           repeals and re-enacts an Act, with or without modification,
 
         any subsidiary legislation made under the repealed Act and in operation immediately before the commencement of the repealing Act shall, so far as it is consistent with the repealing Act, continue in operation and have effect for all purposes as if made under the repealing Act.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Subsidiary legislation which continues in operation under subsection (1), may be amended or repealed as if it has been made under the repealing Act.
 
-    PARAGRAPH 34. - Effect of expiry of written law
+    SECTION 34. - Effect of expiry of written law
 
       Upon the expiry or lapse of any enactment, the provisions of section 33 shall apply as if that enactment had been repealed.
 
   PART VI - PROVISIONS RELATING TO SUBSIDIARY LEGISLATION (ss 35-43)
 
-    PARAGRAPH 35. - President may make subsidiary legislation
+    SECTION 35. - President may make subsidiary legislation
 
       If a written law provides that subsidiary legislation may or shall be made and does not provide by whom, such subsidiary legislation made under such a provision shall be made by the President.
 
-    PARAGRAPH 36. - General provisions regarding power to make subsidiary legislation
+    SECTION 36. - General provisions regarding power to make subsidiary legislation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Subsidiary legislation shall not be inconsistent with the provisions of the written law under which it is made, or of any Act, and subsidiary legislation shall be void to the extent of any such inconsistency.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where any subsidiary legislation purports to be made in exercise of a particular power or powers, it shall be deemed also to be made in exercise of all powers under which it may be made.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         It shall be presumed, in the absence of evidence to the contrary, that all conditions and preliminary steps precedent to the making of subsidiary legislation have been complied with and performed.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         Where a written law confers a power to make subsidiary legislation, it shall be deemed also to include a power exercisable in the like manner and subject to the like conditions (if any) to amend or repeal any such subsidiary legislation; and if the person on whom such power is conferred has been replaced wholly or in part by another person, the power conferred by this subsection upon the original person may be exercised by the replacing person concerning all matters or things within his jurisdiction as if he were the original person.
 
-      SUBPARAGRAPH (5)
+      SUBSECTION (5)
 
         Where a written law confers power on a person to make subsidiary legislation for any general purpose and also for any special purposes incidental thereto, the enumeration of the special purposes shall not derogate from the generality of the powers conferred with reference to the general purpose.
 
-      SUBPARAGRAPH (6)
+      SUBSECTION (6)
 
         Subject to subsection (4) of section 2, subsidiary legislation may provide that contravention of a provision constitutes an offence and may provide for a penalty in respect of such a contravention not exceeding a fine of six hundred thousand shillings.
 
-      SUBPARAGRAPH (7)
+      SUBSECTION (7)
 
         A power to make subsidiary legislation may be exercised–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           either in relation to all cases to which the power extends, or in relation to all those cases subject to specified exceptions, or in relation to any specified case or category of cases; and
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           so as to make, as respects the cases in relation to which it is exercised–
 
@@ -1028,11 +1028,11 @@ APPENDIX An appendix or Schedule to or a table in a written law, together with a
 
             any such provision either unconditionally or subject to any specified condition.
 
-      SUBPARAGRAPH (8)
+      SUBSECTION (8)
 
         Subsidiary legislation may be made–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           so as to apply–
 
@@ -1044,7 +1044,7 @@ APPENDIX An appendix or Schedule to or a table in a written law, together with a
 
             throughout or in a specified part of;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           so as to require a matter affected by the legislation to be–
 
@@ -1056,323 +1056,323 @@ APPENDIX An appendix or Schedule to or a table in a written law, together with a
 
             approved by or to the satisfaction of a specified person or body or a specified class of persons or body;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           so as to confer a discretionary authority on a specified person or body or a specified class of person or body; and
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           so as to provide, in a specified case or class of cases for the exemption of persons or things or a class of persons or things from the provisions of the subsidiary legislation, whether unconditionally or on specified conditions and either wholly or to such an extent as is specified.
 
-      SUBPARAGRAPH (9)
+      SUBSECTION (9)
 
         In subsections (7) and (8) "specified" means specified in the subsidiary legislation.
 
-    PARAGRAPH 37. - Publication and commencement of subsidiary legislation
+    SECTION 37. - Publication and commencement of subsidiary legislation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers power to make subsidiary legislation, all subsidiary legislation made under that power shall, unless the contrary intention appears–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           be published in the Gazette;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           subject to subsection (2) and to section 39, come into operation on the day of publication, or where another day is specified or provided for in the subsidiary legislation, on that day.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Subsidiary legislation shall not be expressed to come into operation on a day before the day of publication in any case where, if the subsidiary legislation so came into operation–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           the rights of a person (other than the Government or an institution of the Government) existing immediately before the day of publication would be affected in a manner prejudicial to that person; or
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           liabilities would be imposed on any person (other than the Government or an institution of the Government) in respect of anything done or omitted to be done before the day of publication,
 
         and if any provision is made in contravention of this subsection, that provision shall be void.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         A power to fix a day on which subsidiary legislation shall come into operation does not include power to fix different days for different provisions of that legislation unless express provision is made in that behalf.
 
-    PARAGRAPH 38. - Laying regulations before National Assembly and disallowance
+    SECTION 38. - Laying regulations before National Assembly and disallowance
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         All regulations shall be laid before the National Assembly within 6 sitting days of the National Assembly next following publication of the regulations in the Gazette.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Notwithstanding any provision in any Act to the contrary, if the National Assembly passes a resolution disallowing any regulations of which resolution notice has been given within 14 sitting days of the National Assembly after such regulations have been laid before it or if any regulations are not laid before the National Assembly in accordance with subsection (1), such regulations shall cease to have effect, but without affecting the validity or curing the invalidity of anything done or of the omission of anything in the meantime.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Subsection (2) applies notwithstanding that the period of 14 days referred to in that subsection, or part of that period, does not occur in or during the same session of the National Assembly, that in which the regulation is laid before the National Assembly concerned.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         Notwithstanding any provision in any Act to the contrary, if the National Assembly at any time passes a resolution amending any such regulation or substituting another regulation or part of a regulation for that which has been disallowed by the National Assembly under subsection (2), then on the passing of any such resolution–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           amending a regulation or part of a regulation the regulation or part of a regulation so amended shall, after the expiration of 7 days from the publication in the Gazette of the notice provided for in subsection (5), take effect as so amended;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           substituting a regulation or part of a regulation in place of a regulation so substituted shall, after the expiration of 7 days from the publication in the Gazette of the notice provided for in subsection (5), take effect in place of that for which it is so substituted.
 
-      SUBPARAGRAPH (5)
+      SUBSECTION (5)
 
         When a resolution has been passed under subsection (2) or (4), notice of such resolution shall be published in the Gazette within 21 days of the passing of the resolution.
 
-      SUBPARAGRAPH (6)
+      SUBSECTION (6)
 
         Notwithstanding subsection (1) of section 34, where–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           regulations are disallowed under this section; and
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           those regulations amended or repealed regulations that were in operation immediately before the first-mentioned regulations commenced,
 
         the disallowance revives the previous regulations on and after the day of the disallowance.
 
-      SUBPARAGRAPH (7)
+      SUBSECTION (7)
 
         If a written law which empowers or directs the making of regulations by a person other than the President and requires that the regulations be confirmed or approved by the President or by any other person or institution before having the force of law, subsection (1) does not apply to such regulations unless they are confirmed or approved as so required.
 
-      SUBPARAGRAPH (8)
+      SUBSECTION (8)
 
         In this section "regulations" include rules and by-laws.
 
-    PARAGRAPH 39. - Construction of subsidiary legislation
+    SECTION 39. - Construction of subsidiary legislation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Words and expressions used in subsidiary legislation shall have the same respective meaning as in the written law under which the subsidiary legislation is made.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         A reference in subsidiary legislation to "the Act" shall be constructed as a reference to the Act under which the subsidiary legislation is made.
 
-    PARAGRAPH 40. - Citation of subsidiary legislation
+    SECTION 40. - Citation of subsidiary legislation
 
       Subsidiary legislation may be cited by reference to the short title if any, or by reference to the number of the notices under which it appeared in the Gazette.
 
-    PARAGRAPH 41. - Reference to written law to include subsidiary legislation
+    SECTION 41. - Reference to written law to include subsidiary legislation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         A reference in a written law to a written law shall be construed to include a reference to any subsidiary legislation made under that written law.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         A reference in a written law to an Applied Act shall be construed to include a reference to any subsidiary legislation made under that Act.
 
-    PARAGRAPH 42. - Acts under subsidiary legislation deemed done under Act
+    SECTION 42. - Acts under subsidiary legislation deemed done under Act
 
       Any act done under subsidiary legislation shall be deemed to be done under the written law under which the subsidiary legislation was made.
 
-    PARAGRAPH 43. - Fees and charges
+    SECTION 43. - Fees and charges
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Subsidiary legislation may provide for the imposition of fees and charges in respect of any matter with regard to which provision is made in such subsidiary legislation or in the written law under which such subsidiary legislation is made.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where a provision is made by subsidiary legislation in respect of fees or charges, the subsidiary legislation may provide for all or any of the following matters–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           specific fees or charges;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           maximum or minimum fees or charges;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           maximum and minimum fees or charges;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           ad valorem fees or charges;
 
-        SUBPARAGRAPH (e)
+        PARAGRAPH (e)
 
           the payment of fees and charges either generally or under specified conditions or in specified circumstances; and
 
-        SUBPARAGRAPH (f)
+        PARAGRAPH (f)
 
           the reduction, waiver or refund, in whole or in part, of such fees or charges.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Where any reduction, waiver or refund, in whole or in part, of any fee or charge is provided for by subsidiary legislation, such reduction, waiver or refund may be expressed to apply or be applicable either generally or specifically–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           in respect of certain matters or transactions or classes of matter or transaction;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           in respect of certain documents or classes of document;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           when any event happens or ceases to happen;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           in respect of certain persons or classes of person; or
 
-        SUBPARAGRAPH (e)
+        PARAGRAPH (e)
 
           in respect of any combination of such matters, transactions, documents, events, or persons, and may be expressed to apply or to be applicable subject to such conditions as may be specified in the subsidiary legislation or in the discretion of any person specified in the subsidiary legislation.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         Subject to subsection (4) of section 2 this section applies to subsidiary legislation made under a power conferred by an enactment passed after the commencement of this Act.
 
   PART VII - STATUTORY POWERS AND DUTIES (ss 44-59)
 
-    PARAGRAPH 44. - Time for exercise of power or performance of duty
+    SECTION 44. - Time for exercise of power or performance of duty
 
       Where a written law confers a power or imposes a duty, the power may be exercised and the duty shall be performed from time to time as occasion requires.
 
-    PARAGRAPH 45. - Reference to holder of office includes successors
+    SECTION 45. - Reference to holder of office includes successors
 
       Where a written law confers a power or imposes a duty on the holder of a public office as such, the power may be exercised and the duty shall be performed by the person for the time being lawfully holding, acting in, or performing the functions of the office.
 
-    PARAGRAPH 46. - Construction of enabling words
+    SECTION 46. - Construction of enabling words
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers upon a person power to do or enforce the doing of any act or thing, all such power shall also be deemed to be conferred on the persons as are reasonably necessary to enable him to do or to enforce the doing of the act or thing.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Without prejudice to the generality of subsection (1), where a written law confers power–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           to provide for, prohibit, control or regulate any matter, such power includes power to provide for the same by the licensing or registration thereof or the granting of permits and power to prohibit acts whereby the prohibition, control, or regulation of such matter might be evaded;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           to grant a licence, registration, lease, right, permit, authority, approval, or exemption, such power includes power to impose reasonable conditions subject to which such licence, registration, lease, right, permit, authority, approval or exemption may be granted;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           to approve any person, matter, or thing, such power includes power to withdraw that approval;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           to give directions, such power includes power to express the same in the form of prohibitions.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Subject to subsection (4) of section 2, this section applies to written laws passed or made after the commencement of this Act.
 
-    PARAGRAPH 47. - Power to issue licence, etc., discretionary
+    SECTION 47. - Power to issue licence, etc., discretionary
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers power upon a person to issue, grant, give or renew any licence, registration, lease, right, authority, approval, permit, or exemption, the person so empowered shall have a discretion either to issue, grant, give or renew or to refuse to issue, grant, give or renew such licence, registration, lease, right, authority, approval, permit, or exemption.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Nothing in this section shall affect any right which may be conferred by any written law upon a person to appeal against a refusal to issue, grant, give or renew any licence, registration, lease, right, authority, approval, permit, or exemption.
 
-    PARAGRAPH 48. - Power to appoint includes power to suspend, dismiss, etc
+    SECTION 48. - Power to appoint includes power to suspend, dismiss, etc
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers a power or imposes a duty upon a person to make an appointment to an office or position, including an acting appointment, the person having such power or duty shall also have the power–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           to remove or suspend a person so appointed to an office or position, and to re-appoint or reinstate, any person appointed in exercise of such power or duty;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           where a person so appointed to an office or position is suspended or unable, or expected to become unable, for any other cause to perform the functions of such office or position, to appoint a person to act temporarily in place of the person so appointed during the period of suspension or inability, but a person shall not be appointed to so act temporarily unless he is eligible and qualified to be appointed to the office or position; and
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           to specify the period for which any person appointed in exercise of such a power or duty shall hold his appointment.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         For the purposes of paragraph (b) of subsection (1), "cause" includes–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           illness;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           temporary absence from the United Republic; and
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           conflict of interest.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         The validity of anything done by a person purporting to act under an appointment made under paragraph (c) of subsection (1) shall not be called in question on the ground that the occasion for his appointment had not arisen or had ceased.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         Where a written law confers a power or imposes a duty upon a person to make an appointment to an office or position and that power or duty is exercisable only upon the nomination or recommendation, or is subject to the approval, concurrence, or consent of some other person, then the powers conferred by paragraphs (a) to (c) of subsection (1) shall only be exercisable upon such nomination or recommendation or subject to such approval concurrence, or consent.
 
-      SUBPARAGRAPH (5)
+      SUBSECTION (5)
 
         Nothing in this section affects the tenure of office or position of any person under the express provisions of any written law.
 
-    PARAGRAPH 49. - Appointment by name or officer, etc., and appointment of Chairman, etc., of Board, etc
+    SECTION 49. - Appointment by name or officer, etc., and appointment of Chairman, etc., of Board, etc
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers a power or imposes a duty upon a person to appoint or designate a person to–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           perform any function;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           be a member of any board, tribunal, commission, committee, council, or other similar body, whether corporate or unincorporated; or
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           be or do any other thing,
 
         that person may make the appointment or designation either by appointing or designating a person by name or by appointing or designating the holder of an office by the term designating his office; and any such appointment or designation of the holder of an office shall be construed as the appointment or designation of the person from time to time holding, acting in, or lawfully performing the functions of the office.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where by or under any Act power is conferred on any person or authority to appoint any board, commission, committee or similar body, such person or as the case may be authority, may, unless the contrary intention appears, appoint or provide, by regulations, for the appointment of Chairman or deputy chairman and a secretary of the board, commission, committee or similar body.
 
-    PARAGRAPH 50. - Power of majority, quorum, etc
+    SECTION 50. - Power of majority, quorum, etc
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers or imposes a function upon a body or number of persons consisting of not less than three persons, the function may be performed by a majority of those persons.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where a written law establishes a board, commission, committee, council or other similar body consisting of 3 or more members (in this section called an "association")–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           at a meeting of the association, a number of members of the association equal to–
 
@@ -1384,341 +1384,341 @@ APPENDIX An appendix or Schedule to or a table in a written law, together with a
 
             if the number of members provided for by the written law is not a fixed number but is within a range having a maximum or minimum, at least one-half of the number of members in office if that number is within the range, constitutes a quorum; and
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           an act or thing done by a majority of the members of the association present at a meeting, if the members present constitute a quorum, shall be deemed to have been done by the association.
 
-    PARAGRAPH 51. - Exercise of power may be corrected
+    SECTION 51. - Exercise of power may be corrected
 
       Where a written law confers a power or imposes a duty upon a person to do any act or thing of an administrative or executive character or to make any appointment, the power or duty may be exercised or performed as often as is necessary to correct any error or omission in any previous purported exercise or performance of the power or duty, notwithstanding that the power or duty is not in general capable of being exercised or performed from time to time.
 
-    PARAGRAPH 52. - Effect of appointment when retiring officer on leave
+    SECTION 52. - Effect of appointment when retiring officer on leave
 
       When a substantive holder of any office created under any Act is on leave of absence pending relinquishment of his office, it shall be lawful for another person to be appointed substantively to the same office.
 
-    PARAGRAPH 53. - "May" imports discretion, "shall" is imperative
+    SECTION 53. - "May" imports discretion, "shall" is imperative
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where in a written law the word "may" is used in conferring a power, such word shall be interpreted to imply that the power so conferred may be exercised or not, at discretion.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where in a written law the word "shall" is used in conferring a function, such word shall be interpreted to mean that the function so conferred must be performed.
 
-    PARAGRAPH 54. - Power of board, etc., not affected by vacancy or certain defects
+    SECTION 54. - Power of board, etc., not affected by vacancy or certain defects
 
       Where a board, tribunal, commission, committee, council or other similar body, whether corporate or unincorporated, is established under a written law, the powers of such a body shall not be affected by–
 
-      SUBPARAGRAPH (a)
+      PARAGRAPH (a)
 
         any vacancy in the membership of the body;
 
-      SUBPARAGRAPH (b)
+      PARAGRAPH (b)
 
         any defect afterwards discovered in the appointment or qualification of a person purporting to be a member of the body or the deputy member;
 
-      SUBPARAGRAPH (c)
+      PARAGRAPH (c)
 
         a minor irregularity in the convening or conduct of a meeting of the body; or
 
-      SUBPARAGRAPH (d)
+      PARAGRAPH (d)
 
         the presence or participation at a meeting of a person not entitled to be present or participate.
 
-    PARAGRAPH 55. - Exercise of certain powers by delegate
+    SECTION 55. - Exercise of certain powers by delegate
 
       Where under a written law the performance of a function by a person is dependent upon the opinion, belief, or state of mind of that person in relation to a matter and that function has been delegated under a written law, the function may be performed by the delegate upon the opinion, belief, or state of mind of the delegate in relation to that matter.
 
-    PARAGRAPH 56. - Reference to an area by designation
+    SECTION 56. - Reference to an area by designation
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where an Act applies or refers to any area of United Republic by a particular designation it shall apply or refer, as the case may be, to the area so designated as from time to time defined, delimited or described unless otherwise provided.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where the designation by reference of any such area is changed, all reference in any written law to such area by its previous designation shall be construed as reference to the area so redesignated.
 
-    PARAGRAPH 57. - Construction of power to delegate
+    SECTION 57. - Construction of power to delegate
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law confers power upon a person to delegate the exercise of any power or the performance of any duty conferred or imposed upon him under a written law–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           such a delegation shall not preclude a person so delegating from exercising or performing at any time a power or duty so delegated;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           such a delegation may be made subject to such conditions, qualifications, limitations or exceptions as the person so delegating may specify;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           if the delegation may be made only with the approval of some person, such delegation, and any amendment of the delegation, may be made subject to such conditions, qualifications, limitations or exceptions as the person whose approval is required may specify;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           such a delegation may be made to a specified person or to persons of a specified class, or may be made to the holder or holders for the time being of a specified office or class of offices;
 
-        SUBPARAGRAPH (e)
+        PARAGRAPH (e)
 
           such a delegation may be amended or revoked by instrument in writing signed by the person so delegating;
 
-        SUBPARAGRAPH (f)
+        PARAGRAPH (f)
 
           in the case of a power conferred upon a person by reference to the term designating an office, such a delegation shall not cease to have effect by reason only of a change in the person lawfully holding, acting in or performing the functions of that office.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         The delegation of a power shall be deemed to include the delegation of any incidental or connected duty and the delegation of a duty shall be deemed to include the delegation of any incidental or connected power.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Where under a written law an act or thing may, or is required to be done to, by reference to or in relation to, a person and that person has been under a written law delegated a relevant function conferred or imposed on him with respect to or in consequence of the doing of that act or thing, the act or thing shall be regarded as effectually done if done to, by reference to or in relation to the person to whom the said function has been delegated.
 
-    PARAGRAPH 58. - Who shall affix the common seal of a body corporate
+    SECTION 58. - Who shall affix the common seal of a body corporate
 
       Where in a written law a board or committee is authorised or required to do any act, matter, or thing, it shall be taken to mean that such act, matter, or thing may or shall be done by the board or committee as the case may be.
 
-    PARAGRAPH 59. - Rights of the Government
+    SECTION 59. - Rights of the Government
 
       No Act shall in any manner bind or otherwise affect the right of the United Republic unless it is expressly provided, or unless it appears by necessary implication that the United Republic is bound.
 
   PART VIII - PROVISIONS REGARDING TIME AND DISTANCE (ss 60-65)
 
-    PARAGRAPH 60. - Computation of time
+    SECTION 60. - Computation of time
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         In computing time for the purposes of a written law–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           where a period of time is expressed to be at, on, or with a specified day, that day shall be included in the period;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           where a period of time is expressed to be reckoned from, or after, a specified day, that day shall not be included in the period;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           where anything is to be done within a time before a specified day, the time shall not include that day;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           where a period of time is expressed to end at, on, or with a specified day or to continue to or until a specified day, that day shall be included in the period;
 
-        SUBPARAGRAPH (e)
+        PARAGRAPH (e)
 
           where the time limited for the doing of a thing expires or falls upon an excluded day, the thing may be done on the next day that is not an excluded day;
 
-        SUBPARAGRAPH (f)
+        PARAGRAPH (f)
 
           where there is a reference to a number of clear days or "at least" or "not less than" a number of days between two events, in calculating the number of days there shall be excluded the days on which the events happen;
 
-        SUBPARAGRAPH (g)
+        PARAGRAPH (g)
 
           where there is a reference to a number of days not expressed to be clear days or "at least" or "not less than" a number of days between two events, in calculating the number of days there shall be excluded the day on which the first event happens and there shall be included the day on which the second event happens;
 
-        SUBPARAGRAPH (h)
+        PARAGRAPH (h)
 
           where an act or proceeding is directed or allowed to be done or taken on a certain day, or on or before a certain day, then, if that day is an excluded day, the act or proceeding shall be considered as done or taken in due time if it is done or taken on the next day that is not an excluded day.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         For the purposes of this section, "excluded day" means Saturday, Sunday or public holiday throughout or in that part of which is relevant to the event, act, thing or proceeding concerned.
 
-    PARAGRAPH 61. - Reckoning of months
+    SECTION 61. - Reckoning of months
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         In a written law, "month" means a calendar month, that is to say, a month reckoned according to the calendar.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         If a period of one month indicated in a written law begins on any date other than the first day of any of the 12 months of the calendar, it shall be reckoned from the date on which it is to begin to the date in the next month numerically corresponding, less one, or, if there is no corresponding date, to the last day of that month.
 
         For example: a month beginning on 15 January, ends on 14 February and a month beginning on 30, 31 January ends on 28 February (or 29 February in a leap year).
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         If a period indicated in a written law is of 2, 3 or more months, it shall be reckoned from the date on which it is to begin to the numerically corresponding, less one, in the second, third or other successive month thereafter or, if there is no such corresponding date, to the last day of the latter month.
 
       For example: a period of 6 months beginning on 15 August ends on 14 February and a period of 6 months beginning on 30 or 31 August ends on 28 February (or 29 February in a leap year).
 
-    PARAGRAPH 62. - Provisions where no time fixed
+    SECTION 62. - Provisions where no time fixed
 
       Where no time is fixed or allowed within which an act or thing shall be done, such act or thing shall be done with all convenient speed and as often as due occasion arises.
 
-    PARAGRAPH 63. - Construction of power to extend time
+    SECTION 63. - Construction of power to extend time
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where in a written law a time is fixed or allowed for doing any act or thing or taking any proceeding and power is given to a court or other authority to extend that time, such power may be exercised by the court or other authority although the application for an extension is not made until after the expiration of the time fixed or allowed.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Subject to subsection (1) this section applies to written laws passed or made after the commencement of this Act.
 
-    PARAGRAPH 64. - Deviations from forms
+    SECTION 64. - Deviations from forms
 
       Except as is otherwise provided, wherever forms are prescribed, deviations therefrom not affecting the substance and not calculated to mislead, shall not vitiate them.
 
-    PARAGRAPH 65. - Measurement of distance
+    SECTION 65. - Measurement of distance
 
       In the measurement of any distance for the purposes of a written law, the distance shall be measured in a straight line on a horizontal plane.
 
   PART IX - PROCEDURES AND PENALTIES (ss 66-81)
 
-    PARAGRAPH 66. - Ex officio proceeding not to abate on death
+    SECTION 66. - Ex officio proceeding not to abate on death
 
       Any civil or criminal proceedings taken by or against any person by virtue of his office shall not be discontinued or abate by his death, resignation or absence or removal from office, but may be carried on by or against, as the case may be, the person for the time being holding that office.
 
-    PARAGRAPH 67. - Rules of court
+    SECTION 67. - Rules of court
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         In a written law, "rules of court" in relation to any court, means rules made by the authority having for the time being power to make rules or orders regulating the practice and procedure of such court.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         The power of an authority referred to in subsection (1) includes a power to make rules of court for the purpose of any written law which directs or authorises anything to be done by or in accordance with rules of court.
 
-    PARAGRAPH 68. - Imposition of penalty not a bar to civil action
+    SECTION 68. - Imposition of penalty not a bar to civil action
 
       The imposition of a penalty or fine by or under the authority of any Act shall not, in the absence of express provisions to the contrary, relieve any person from liability to answer for damages to any person injured.
 
-    PARAGRAPH 69. - Recovery of fines and penalties
+    SECTION 69. - Recovery of fines and penalties
 
       Where a fine or other penalty is recoverable under a written law and no means is provided in that law for the recovery of the fine or penalty shall be deemed to provide that such fine or penalty may be recovered summarily under the provision of the Criminal Procedure Act {{^13}}*, or any written law for the time being in force relating to summary proceedings.
 
-    PARAGRAPH 70. - Double jeopardy
+    SECTION 70. - Double jeopardy
 
       Where an act constitutes two or more offences, whether under the same written law or otherwise, the offender is liable to be prosecuted and punished for any or all such offences but is not liable to be punished twice for the same offence.
 
-    PARAGRAPH 71. - Application of penal laws to bodies corporate
+    SECTION 71. - Application of penal laws to bodies corporate
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Every enactment relating to an offence punishable on conviction or on summary conviction shall be taken to refer to bodies corporate as well as to individuals.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where under a written law, a forfeiture or penalty is payable to a party aggrieved, it shall be payable to a body corporate in every case where that body is the party aggrieved.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Except where otherwise expressly provided, where the penalty prescribed in a written law in respect of an offence does not consist of or include a fine, the court before which the offence is tried may, in the case of a body corporate, impose a fine–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           where a term of imprisonment not exceeding six months is prescribed, a fine of two million shillings;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           where a term of imprisonment exceeding six months but not exceeding one year is prescribed, a fine of three million shillings;
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           where a term of imprisonment exceeding one year but not exceeding two years is prescribed, a fine of five million shillings;
 
-        SUBPARAGRAPH (d)
+        PARAGRAPH (d)
 
           where a term of imprisonment exceeding three years is prescribed, a fine of ten million shillings.
 
-    PARAGRAPH 72. - Provisions as to offences under two or more Acts
+    SECTION 72. - Provisions as to offences under two or more Acts
 
       Where any act constitutes an offence under two or more Acts, the offender shall unless the contrary intention appears, be liable to be prosecuted and punished under either or any of such Act, but shall not be liable to be punished more than once for the same offence.
 
-    PARAGRAPH 73. - Amendment of penalty
+    SECTION 73. - Amendment of penalty
 
       Where an act constitutes an offence, and the penalty for such offence is amended between the time of the commission of such offence and the conviction therefor, the offender shall, unless the contrary intention appears, be liable to the penalty prescribed at the time of the commission of such offence.
 
-    PARAGRAPH 74. - Prescription of maximum minimum, daily and cumulative penalties
+    SECTION 74. - Prescription of maximum minimum, daily and cumulative penalties
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where in a written law a penalty is specified in respect of an offence, that penalty is the maximum penalty that may be imposed for that offence.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where in a written law more than one penalty is specified in respect of an offence, the use of the word "and" between the respective penalties means that the penalties may be imposed alternatively or cumulatively.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Where in a written law a maximum penalty and a minimum penalty are specified in respect of an offence, the offence is punishable by a penalty not less than that minimum nor greater than that maximum.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         Where in any written law a minimum penalty is specified in respect of an offence, the offence is punishable by a penalty not less than the minimum.
 
-      SUBPARAGRAPH (5)
+      SUBSECTION (5)
 
         Where in a written law a penalty specified in respect of an offence is referred to as being a daily penalty, that reference indicates that a penalty not exceeding that daily penalty may, in addition to any other penalty that may be imposed in respect of the offence, be imposed for each day or part of a day during which the offence continues.
 
-    PARAGRAPH 75. - Provision as to attempts
+    SECTION 75. - Provision as to attempts
 
       A provision in any Act which constitutes an offence shall, unless a contrary intention appears, be deemed to provide also that an attempt to commit such offence shall be an offence under such provision, punishable as if the offence itself had been committed.
 
-    PARAGRAPH 76. - Disposal of forfeits
+    SECTION 76. - Disposal of forfeits
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where by or under any act any animal or any thing is adjudged by any court or other authority to be forfeited, it shall, unless the contrary is otherwise provided or unless it is expressed by law to be forfeited to any person, be forfeited to the Government of the United Republic, and the net proceeds thereof, if it is ordered by a competent authority to be sold, shall be paid into and shall form part of the public revenue unless other provision is made.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Nothing in this section shall affect any provision in any written law whereby any portion of any fine or forfeit, or of the proceeds of any forfeit, is expressed to be recoverable by any person or may be granted by any authority to any person.
 
-    PARAGRAPH 77. - Liability of employer or principal
+    SECTION 77. - Liability of employer or principal
 
       Where any offence under any Act is committed by a person as an agent or employee then, unless a contrary intention appears, as well as the agent or employee, the principal or employer shall be guilty of the offence and shall be liable to be proceeded against and punished accordingly unless he proves to the satisfaction of the court that he had no knowledge, and could not, by the exercise of reasonable diligence, have had knowledge, of the commission of the offence.
 
-    PARAGRAPH 78. - Evidence of fiat, sanction or consent of public officer
+    SECTION 78. - Evidence of fiat, sanction or consent of public officer
 
       Wherever the fiat, sanction or consent of any public officer is necessary before any prosecution or action is commenced, any document purporting to bear such fiat, sanction or consent shall be received as prima facie evidence in any proceeding without proof being given that the signature is that of the public officer.
 
-    PARAGRAPH 79. - Exercise of D.P.P.'s functions in his absence
+    SECTION 79. - Exercise of D.P.P.'s functions in his absence
 
       The functions of the Director of Public Prosecutions may, in his absence from headquarters office or incapacity to act through illness or otherwise, be exercised by such Law Officer as the Attorney-General may nominate in that behalf.
 
-    PARAGRAPH 80. - Statement of penalty at end of provision
+    SECTION 80. - Statement of penalty at end of provision
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where in an Act a penalty–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           is specified without qualification at the foot of a section of the Act;
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           is specified at the foot of a subsection of a section of the Act, but not at the foot of the section; or
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           is specified at the foot of a section of the Act and expressed to apply to a specified subsection or specified subsections of the section,
 
         then, unless the contrary is expressly provided, that specification indicates that a contravention of the section or subsection, or as the case may be, any of the subsections, is an offence and that the offence is punishable on conviction by a penalty not exceeding that so specified.
 
-    PARAGRAPH 81. - Continuing offences
+    SECTION 81. - Continuing offences
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           by or under a written law an act or thing is required or directed to be done within a particular period or before a particular time; and
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           failure to do that act or thing within the period or before the time referred to in paragraph (a) constitutes an offence; and
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           that act or thing is not done within the period or before the time referred to in paragraph (a), the following provisions have effect–
 
@@ -1734,83 +1734,83 @@ APPENDIX An appendix or Schedule to or a table in a written law, together with a
 
             unless otherwise provided, the penalty applicable to each separate and further offence is the sum equivalent to thirty thousand shillings.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where–
 
-        SUBPARAGRAPH (a)
+        PARAGRAPH (a)
 
           by or under a written law an act or thing is required or directed to be done but no period within which or time by which that act or thing is to be done is specified; and
 
-        SUBPARAGRAPH (b)
+        PARAGRAPH (b)
 
           failure to do that act or thing constitutes an offence; and
 
-        SUBPARAGRAPH (c)
+        PARAGRAPH (c)
 
           a person is convicted of an offence in respect of a failure to do that act or thing,
 
         that person is guilty of a separate and further offence in respect of each day after the day of the conviction during which the failure to do that act or thing continues and, unless otherwise provided, the penalty applicable to each such separate and further offence is the sum of thirty thousand shillings.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Charges against the same person for any number of offences under paragraph (ii) of subsection (1) or under subsection (2) may be joined in the same information or complaint if those offences relate to a failure to do the same act or thing.
 
-      SUBPARAGRAPH (4)
+      SUBSECTION (4)
 
         If a person is convicted of more than one offence under paragraph (ii) of subsection (1) or more than the offence under subsection (2), the court may impose one penalty in respect of all the offences of which the person is so convicted under the relevant subsection, but that penalty shall not exceed the sum of the maximum penalties that could be imposed if a penalty were imposed separately in respect of each offence.
 
   PART X - MISCELLANEOUS PROVISIONS (ss 82-84)
 
-    PARAGRAPH 82. - Service of documents by post
+    SECTION 82. - Service of documents by post
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         Where a written law authorises or requires a document to be served by post, whether the word "serve" or any of the words "give", "deliver", or "send" or any other similar word or expression is used, service shall be deemed to be effected by properly addressing and posting (by pre-paid post) the document as a letter to the last-known address and unless the contrary is proved, to have been effected at the time when the letter would have been delivered in the ordinary course of post.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where a written law authorises or requires a document to be served by registered post, whether the word "serve" or any of the words "give", "deliver", or "send" or any other similar word or expression is used, then, if similar word or expression is used, then, if the document is eligible and acceptable for transmission as certified mail, the service of the document may be effected either by registered post or by certified mail.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Subsections (1) and (2) apply unless the contrary intention appears and subsection (2) does not apply where a written law requires the production of an acknowledgement signed by a person to whom a document was addressed to the effect that the document was delivered to that person.
 
-    PARAGRAPH 83. - Service of documents generally
+    SECTION 83. - Service of documents generally
 
       Where a written law authorises or requires a document to be served, whether the word "serve" or any of the words "give", "deliver", or "send" or any other similar word or expression is used, without directing it to be served in a particular manner, service of that document may be effected on the person to be served–
 
-      SUBPARAGRAPH (a)
+      PARAGRAPH (a)
 
         by delivering the document to him personally; or
 
-      SUBPARAGRAPH (b)
+      PARAGRAPH (b)
 
         by post in accordance with subsection (1) of section 82; or
 
-      SUBPARAGRAPH (c)
+      PARAGRAPH (c)
 
         by leaving it for him at his usual or last known place of abode, or if he is a principal of a business, at his usual or last known place of business; or
 
-      SUBPARAGRAPH (d)
+      PARAGRAPH (d)
 
         in the case of a corporation or of an association of persons (whether incorporated or not) by delivering or leaving the document or posting it as a letter, addressed in each case to the corporation or association, at its principal place of business or principal office in the United Republic.
 
-    PARAGRAPH 84. - Language of the Laws of Tanzania
+    SECTION 84. - Language of the Laws of Tanzania
 
-      SUBPARAGRAPH (1)
+      SUBSECTION (1)
 
         The language of the laws of Tanzania shall be English or Kiswahili or both.
 
-      SUBPARAGRAPH (2)
+      SUBSECTION (2)
 
         Where any written law is translated from one language into another and published in both languages, then in the case of conflict or doubt as to the meaning of any word or expression, the version of the language in which the law was enacted shall take precedence.
 
-      SUBPARAGRAPH (3)
+      SUBSECTION (3)
 
         Where any written law is enacted in both languages and there occurs a conflict or doubt as to the meaning of any word or expression, the English version shall take precedence.
 
-    PARAGRAPH 85. - Repeal of Act No. 30 of 1972
+    SECTION 85. - Repeal of Act No. 30 of 1972
 
       [Repeals the Interpretation of Laws and General Clauses Act.]
 

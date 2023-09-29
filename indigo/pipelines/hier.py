@@ -1101,7 +1101,7 @@ class EscapeArrangementOfSections(Stage):
     Writes: context.html
     """
     arrangement_of_sections = ['arrangement of sections', 'table of contents']
-    retain_names = ['CHAPTER', 'PART']
+    retain_names = ['CHAPTER', 'PART', 'SCHEDULE']
     first_nums = ['1', 'I', 'A']
 
     def __call__(self, context):
@@ -1136,7 +1136,7 @@ class EscapeArrangementOfSections(Stage):
                     elem_full_text = f'{elem.attrib["name"].capitalize()} {elem_num_heading_text}' \
                         if elem.attrib["name"] in self.retain_names else elem_num_heading_text
 
-                    if elem.attrib['num'].rstrip('.') in self.first_nums:
+                    if elem_num.rstrip('.') in self.first_nums:
                         # this could be a legitimate second Part 1, so rather compare
                         # e.g. '1. Short title' (elem_num_heading_text in the AoS)
                         # to '1. Short title' (elem_num_heading in the body)

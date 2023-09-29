@@ -399,7 +399,9 @@ class IdentifySchedules(Stage):
                     p.getparent().remove(p)
 
     def set_header_re(self):
-        self.header_re = re.compile(rf"^((\w+\s+)?{self.header_re_keyword}\b)(.*)?", re.IGNORECASE)
+        # only match (optionally) one word before, and/or up to 40 characters after, the keyword
+        # e.g. First Schedule / Schedule 12 (Sections 5(3) and (4)) / Schedule
+        self.header_re = re.compile(rf"^(\w+\s+)?{self.header_re_keyword}\b.{{0,40}}$", re.IGNORECASE)
 
 
 class IdentifyAnnexes(IdentifySchedules):
@@ -1101,7 +1103,7 @@ class EscapeArrangementOfSections(Stage):
     Writes: context.html
     """
     arrangement_of_sections = ['arrangement of sections', 'table of contents']
-    retain_names = ['CHAPTER', 'PART', 'SCHEDULE']
+    retain_names = ['CHAPTER', 'PART']
     first_nums = ['1', 'I', 'A']
 
     def __call__(self, context):
@@ -1191,10 +1193,11 @@ hierarchicalize = Pipeline([
     IdentifyAppendixes(),
     IdentifyAttachments(),
     IdentifyAttachmentSubheadings(),
-    RenameSectionsInAttachments(),
 
     # mark up our guess at the AoS in plain text
     EscapeArrangementOfSections(),
+    # and then turn sections into paragraphs
+    RenameSectionsInAttachments(),
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

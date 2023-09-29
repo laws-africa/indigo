@@ -597,7 +597,7 @@ class NestBlocks(Stage):
     """
 
     # never indent inside these
-    never = ["PREFACE", "PREAMBLE"]
+    never = ["PREFACE", "PREAMBLE", "BODY"]
 
     # highest precedence
     high = ["ANNEXURE", "APPENDIX", "ATTACHMENT", "SCHEDULE"]
@@ -632,6 +632,9 @@ class NestBlocks(Stage):
                 # for discovery-based precedence, record the first time we encounter a name
                 if curr_name not in self.lows and curr_name not in self.encountered:
                     self.encountered.append(curr_name)
+                # also record the next name, e.g. for the first time we encounter a Part in a Chapter (or vice versa)
+                if next_name not in self.lows and next_name not in self.encountered:
+                    self.encountered.append(next_name)
 
                 if curr_name != next_name:
                     if next_name in self.lows:
@@ -1056,6 +1059,115 @@ class IdentifyContainerHeadings(Stage):
                     block.remove(first)
 
 
+class EscapeArrangementOfSections(Stage):
+    """ Looks for 'arrangement of sections' wording (can be configured).
+        Marks all <akn-block>s up as <p>s instead.
+            (If the name of the element is in retain_names, keep e.g. 'Chapter'.)
+
+        Uses some guesswork as to when to stop:
+        - Deals with the fact that AoS entries can be paragraphs rather than sections,
+            so compares (num + content) in the AoS to (num + heading) in the body, rather than comparing (name + num)s.
+        - Deals with the fact that containers are often still missing their headings at this point in the pipeline,
+            so also breaks if the first-hit first element (Chapter I, or Part A, etc.) is hit a second time.
+
+    Before:
+    <p><b>ARRANGEMENT OF SECTIONS</b></p>
+    <akn-block name="CHAPTER" num="I"></akn-block>
+    <p><b> PRELIMINARY PROVISIONS</b></p>
+    <akn-block name="PARAGRAPH" num="1." stop_stripped="true">
+      <p>Short title.</p>
+    </akn-block>
+    <akn-block name="PARAGRAPH" num="2." stop_stripped="true">
+      <p>Application.</p>
+    </akn-block>
+    ...
+    <akn-block name="CHAPTER" num="I"></akn-block>
+    <p><b> PRELIMINARY PROVISIONS (ss 1-6)</b></p>
+    <akn-block name="SECTION" num="1." heading="Short title" stop_stripped="false"></akn-block>
+    <p> This Act may be cited as the Evidence Act.</p>
+    <akn-block name="SECTION" num="2." heading="Application" stop_stripped="false"></akn-block>
+    <p> Except as otherwise provided in any other law this Act shall apply ….</p>
+
+    After:
+    <p><b>ARRANGEMENT OF SECTIONS</b></p>
+    <p>Chapter I</p>
+    <p><b> PRELIMINARY PROVISIONS</b></p>
+    <p>1. Short title.</p>
+    <p>2. Application.</p>
+    ...
+    [rest / body is unchanged]
+
+    Reads: context.html
+    Writes: context.html
+    """
+    arrangement_of_sections = ['arrangement of sections', 'table of contents']
+    retain_names = ['CHAPTER', 'PART']
+    first_nums = ['1', 'I', 'A']
+
+    def __call__(self, context):
+        in_aos = False
+        # in some cases the first-hit element will be Chapter 1, and we can safely break the second time we encounter it
+        first_hit_element = ''
+        # otherwise, we need to track the wording, e.g. '1. Short title', because
+        # - we can't rely on matching e.g. paragraph 1 (in the AoS) to section 1 (in the body)
+        # - we don't want to break at the second instance of Part 1 if they're two different ones in Chapters 1 and 2
+        first_hit_full_text = []
+
+        for elem in context.html:
+            # e.g. 'Short title.' -- the content of paragraph 1 in the AoS;
+            # e.g. 'This Act will be called …' -- the content of section 1 in the body
+            elem_text = ''.join(elem.itertext()).strip()
+
+            if in_aos:
+                if elem.tag == 'akn-block':
+                    # e.g. 'I' or '1.' -- could be Chapter I, Part I, section 1, etc.
+                    elem_num = elem.attrib.get('num', '')
+
+                    # e.g. '1.' in the AoS (with 'Short title' as the content of the paragraph);
+                    # e.g. '1. Short title' in the body
+                    elem_num_heading = elem_num + (f' {elem.attrib["heading"]}' if elem.attrib.get('heading') else '')
+
+                    # e.g. '1. Short title' -- the full content of paragraph 1 in the AoS;
+                    # e.g. '1. Short title This Act will be called …' in the body
+                    elem_num_heading_text = elem_num_heading + (f' {elem_text}' if elem_text else '')
+
+                    # same as above, with the exception of retain_names
+                    # e.g. 'Chapter I' -- the full content of Chapter I in the AoS
+                    elem_full_text = f'{elem.attrib["name"].capitalize()} {elem_num_heading_text}' \
+                        if elem.attrib["name"] in self.retain_names else elem_num_heading_text
+
+                    if elem.attrib['num'].rstrip('.') in self.first_nums:
+                        # this could be a legitimate second Part 1, so rather compare
+                        # e.g. '1. Short title' (elem_num_heading_text in the AoS)
+                        # to '1. Short title' (elem_num_heading in the body)
+                        # with the exception of e.g. 'Chapter I', where it's the first-hit element,
+                        # and at this point in the pipeline its heading hasn't been picked up yet
+                        if elem_num_heading.lower() in first_hit_full_text or elem.attrib['name'] == first_hit_element:
+                            break
+
+                        # record the first-hit element in the AoS in case it's a container without a heading
+                        if not first_hit_element:
+                            first_hit_element = elem.attrib['name']
+
+                        # track e.g. '1. Short title'
+                        # - it could be a para in the AoS and a section in the body, so disregard the name
+                        # - it could have a stop in the AoS but not in the body, so strip the stop
+                        # don't just append a bunch of Is either though, or we'll break too early
+                        if elem_num != elem_num_heading_text:
+                            first_hit_full_text.append(elem_num_heading_text.rstrip('.').lower())
+
+                    # transform the block into a plain p
+                    p = elem.makeelement('p')
+                    p.text = elem_full_text
+                    elem.addprevious(p)
+                    elem.getparent().remove(elem)
+
+            else:
+                # start of AoS
+                if elem_text.lower() in self.arrangement_of_sections:
+                    in_aos = True
+
+
 hierarchicalize = Pipeline([
     # these are unambiguous and can be identified up front
     IdentifyArticles(),
@@ -1080,6 +1192,9 @@ hierarchicalize = Pipeline([
     IdentifyAttachments(),
     IdentifyAttachmentSubheadings(),
     RenameSectionsInAttachments(),
+
+    # mark up our guess at the AoS in plain text
+    EscapeArrangementOfSections(),
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

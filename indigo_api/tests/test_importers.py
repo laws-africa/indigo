@@ -76,6 +76,9 @@ class ImporterBluebellTestCase(TestCase):
     def test_tz_cap6(self):
         self.run_file_test("tz-cap6")
 
+    def test_tz_with_schedule(self):
+        self.run_file_test("tz-cap1")
+
     def test_identify_part_headings(self):
         self.run_file_test('identify-part-headings')
 

@@ -1101,7 +1101,7 @@ class EscapeArrangementOfSections(Stage):
     Writes: context.html
     """
     arrangement_of_sections = ['arrangement of sections', 'table of contents']
-    retain_names = ['CHAPTER', 'PART', 'SCHEDULE']
+    retain_names = ['CHAPTER', 'PART']
     first_nums = ['1', 'I', 'A']
 
     def __call__(self, context):
@@ -1191,10 +1191,11 @@ hierarchicalize = Pipeline([
     IdentifyAppendixes(),
     IdentifyAttachments(),
     IdentifyAttachmentSubheadings(),
-    RenameSectionsInAttachments(),
 
     # mark up our guess at the AoS in plain text
     EscapeArrangementOfSections(),
+    # and then turn sections into paragraphs
+    RenameSectionsInAttachments(),
 
     # do these after identifying everything else, so we can stop the moment we find an akn-block, since these must
     # always come before everything else.

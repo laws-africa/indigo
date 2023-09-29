@@ -399,7 +399,9 @@ class IdentifySchedules(Stage):
                     p.getparent().remove(p)
 
     def set_header_re(self):
-        self.header_re = re.compile(rf"^((\w+\s+)?{self.header_re_keyword}\b)(.*)?", re.IGNORECASE)
+        # only match (optionally) one word before, and/or up to 40 characters after, the keyword
+        # e.g. First Schedule / Schedule 12 (Sections 5(3) and (4)) / Schedule
+        self.header_re = re.compile(rf"^(\w+\s+)?{self.header_re_keyword}\b.{{0,40}}$", re.IGNORECASE)
 
 
 class IdentifyAnnexes(IdentifySchedules):

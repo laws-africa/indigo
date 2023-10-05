@@ -102,6 +102,12 @@
         <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'swa'">
+          <xsl:text>Sura </xsl:text>
+          <xsl:if test="a:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
         <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
@@ -157,6 +163,12 @@
         <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'swa'">
+          <xsl:text>Ibara </xsl:text>
+          <xsl:if test="a:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
         <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -173,6 +185,12 @@
         <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'swa'">
+          <xsl:text>Sehemu </xsl:text>
+          <xsl:if test="a:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
         <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>

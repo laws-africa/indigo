@@ -8,7 +8,7 @@ from lxml import etree
 from lxml.etree import Element
 
 from cobalt import FrbrUri
-from docpipe.matchers import TextPatternMatcher
+from docpipe.matchers import CitationMatcher
 from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
@@ -263,7 +263,7 @@ class ProvisionRefsResolver:
                 return elem
 
 
-class ProvisionRefsMatcher(TextPatternMatcher):
+class ProvisionRefsMatcher(CitationMatcher):
     """ Finds internal references to sections in documents, of the form:
 
         # singletons
@@ -282,9 +282,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         in terms of section 2 or 7
         A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.
     """
-    xml_marker_tag = "ref"
-    xml_ancestor_xpath = '|'.join(f'//ns:{x}'
-                                  for x in ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'judgmentBody', 'conclusions'])
     xml_candidate_xpath = (".//text()[not("
                            "ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num "
                            "or ancestor::ns:embeddedStructure or ancestor::ns:quotedStructure or ancestor::ns:table "

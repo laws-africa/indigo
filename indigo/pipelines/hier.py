@@ -288,7 +288,7 @@ class IdentifyParts(Stage):
                 if m:
                     attrib = {
                         "name": self.block_name,
-                        "num": m.group("num"),
+                        "num": self.clean_num(m.group("num")),
                     }
 
                     # is there a heading?
@@ -310,6 +310,9 @@ class IdentifyParts(Stage):
 
     def set_header_re(self):
         self.header_re = re.compile(rf"^{self.header_re_keyword}{self.header_re_base}$", re.IGNORECASE)
+
+    def clean_num(self, num):
+        return num
 
     def clean_heading(self, heading):
         return heading.lstrip('-').rstrip('.')
@@ -1044,7 +1047,7 @@ class IdentifyContainerHeadings(Stage):
     Writes: context.html
     """
     containers = ['CHAPTER', 'PART']
-    max_heading_length = 60
+    max_heading_length = 80
 
     def __call__(self, context):
         # target elements are akn-blocks without headings that contain at least one p and one akn-block

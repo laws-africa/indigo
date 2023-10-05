@@ -860,9 +860,7 @@ CHAPTER II - THE RELEVANCY OF FACTS (ss 7-57)
 
         In this section, "offence" includes the abetment of, or attempt to commit, the offence charged and any other offences which are minor and cognate to the offence charged which are disclosed in the confession and admitted by the accused.
 
-  PART IV
-
-    STATEMENTS BY PERSONS WHO CANNOT BE CALLED AS WITNESSES (ss 34-35)
+  PART IV - STATEMENTS BY PERSONS WHO CANNOT BE CALLED AS WITNESSES (ss 34-35)
 
     SECTION 34. - Statement of persons who cannot be called as witnesses
 
@@ -2002,9 +2000,7 @@ CHAPTER IV - PRODUCTION AND EFFECT OF EVIDENCE (ss 110-126)
 
 CHAPTER V - WITNESSES (ss 127-177)
 
-  PART I
-
-    COMPETENCY, COMPELLABILITY AND PRIVILEGE OF WITNESSES (ss 127-143)
+  PART I - COMPETENCY, COMPELLABILITY AND PRIVILEGE OF WITNESSES (ss 127-143)
 
     SECTION 127. - Who may testify
 

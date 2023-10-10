@@ -71,31 +71,37 @@
 
     {% regroup matches by doc as doc_matches %}
 
-    {% for document, elements in doc_matches %}
-      <div class="card mb-3">
-        <h5 class="card-header">
-          <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
-        </h5>
+    <div id="accordion">
+      {% for document, elements in doc_matches %}
+        <div class="card mb-3" id="heading-{{ forloop.counter }}" data-toggle="collapse"
+             data-target="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+          <h5 class="card-header">
+            <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
+          </h5>
 
-        <div class="card-body">
-          {% for elem in elements %}
-            {% if not forloop.first %}<hr>{% endif %}
+          <div id="collapse-{{ forloop.counter }}" class="collapse" aria-labelledby="heading-{{ forloop.counter }}"
+               data-parent="#accordion">
+            <div class="card-body">
+              {% for elem in elements %}
+                {% if not forloop.first %}<hr>{% endif %}
 
-            <div class="row">
-              <div class="col-6">
-                <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}">
-                  {{ elem.html|safe }}
-                </la-akoma-ntoso>
-              </div>
+                <div class="row">
+                  <div class="col-6">
+                    <la-akoma-ntoso frbr-expression-uri="{{ document.expression_frbr_uri }}">
+                      {{ elem.html|safe }}
+                    </la-akoma-ntoso>
+                  </div>
 
-              <div class="col-6">
-                <pre><code class="xml">{{ elem.xml }}</code></pre>
-              </div>
+                  <div class="col-6">
+                    <pre><code class="xml">{{ elem.xml }}</code></pre>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
-          {% endfor %}
+          </div>
         </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
 
     {% if is_paginated %}
       <nav class="mt-4">

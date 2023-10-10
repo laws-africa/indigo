@@ -567,6 +567,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
         if self.priority:
             workflows = Workflow.objects\
@@ -643,3 +644,73 @@ class TaskAssigneesView(TaskViewBase, TemplateView):
             'potential_assignees': users,
             'unassign': 'unassign' in request.POST,
         })
+
+
+class TaxonomyProjectListView(AbstractAuthedIndigoView, TemplateView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/taxonomy_project_list.html'
+    tab = 'projects'
+    permission_required = ('indigo_api.view_task',)
+    context_object_name = 'projects'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['taxonomy_toc'] = self.get_tree()
+        return context
+
+    def get_tree(self):
+        tree = TaxonomyTopic.dump_bulk()
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            item["href"] = reverse('taxonomy_project_detail', kwargs={'slug': item["data"]["slug"]})
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        for item in tree:
+            fix_up(item)
+
+        return tree
+
+class TaxonomyProjectCreateView(AbstractAuthedIndigoView, CreateView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/taxonomy_project_create.html'
+    tab = 'projects'
+    permission_required = ('indigo_api.add_taxonomy_topic',)
+    context_object_name = 'project'
+    model = TaxonomyTopic
+    fields = ['name', 'description',]
+
+    def form_valid(self, form):
+        from django.http import HttpResponseRedirect
+        from django.core.exceptions import ValidationError
+        from django.db import IntegrityError
+
+        name = form.cleaned_data.get('name')
+        description = form.cleaned_data.get('description')
+        project_root = TaxonomyTopic.objects.get(slug='projects')
+        try:
+            self.object = project_root.add_child(name=name, description=description)
+        except IntegrityError as e:
+            form.add_error('name', 'A project with this name already exists.')
+            return self.form_invalid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('taxonomy_project_detail', kwargs={'slug': self.object.slug})
+
+
+class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/taxonomy_project_detail.html'
+    tab = 'projects'
+    permission_required = ('indigo_api.view_task',)
+    context_object_name = 'project'
+    model = TaxonomyTopic
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = tasks = Task.objects.filter(work__taxonomy_topics=self.object)
+        context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)
+        return context

@@ -1,0 +1,30 @@
+{% extends "indigo_app/tasks/tabbed_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Projects" %}{% endblock %}
+
+{% block content %}
+  <div class="container mt-3 mb-5">
+    <div class="flex-fill">
+      <h5>{{ project.name }}</h5>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+        <div class="col">
+          {% if project.description %}
+            {{ project.description|safe }}
+          {% endif %}
+        </div>
+        </div>
+      </div>
+      <div class="card-header p-sticky-0">
+        {% include 'indigo_api/_task_filter_form.html' with form=form formats=False status=False %}
+      </div>
+        {% if tasks %}
+          {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True selectable=True %}
+        {% endif %}
+    </div>
+  </div>
+{% endblock %}

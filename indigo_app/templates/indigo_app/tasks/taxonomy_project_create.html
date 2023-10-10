@@ -1,0 +1,59 @@
+{% extends "indigo_app/tasks/tabbed_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Projects" %}{% endblock %}
+
+{% block content %}
+  <form method="post" id="workflow-form">
+  {% csrf_token %}
+  {%  if form.non_field_errors %}
+    <div class="text-danger">
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <div class="container mt-3 mb-5">
+    <div class="card">
+      <div class="card-body">
+      <div class="">
+        <h3 class="card-title">Create Project</h3>
+      </div>
+        <div class="form-group">
+          <label for="{{ form.name.id_for_name }}" class="required">{{ form.name.label }}</label>
+          <input type="text"
+                 class="form-control"
+                 name="{{ form.name.name }}"
+                 value="{{ form.name.value|default:'' }}"
+                 id="{{ form.name.id_for_name }}"
+          >
+          {% if form.name.errors %}
+            <div class="text-danger">
+              {% for error in form.name.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <label for="{{ form.description.id_for_name }}" class="required">{{ form.description.label }}</label>
+          <textarea class="form-control"
+                    name="{{ form.description.name }}"
+                    id="{{ form.description.id_for_name }}"
+          >{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+            <div class="text-danger">
+              {% for error in form.description.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+      </div>
+    </div>
+      <div class="card-footer">
+        <button class="btn btn-success" type="submit">Create Project</button>
+      </div>
+  </div>
+
+
+  </form>
+
+{% endblock %}

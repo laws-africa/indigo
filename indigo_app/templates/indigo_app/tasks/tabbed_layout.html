@@ -6,6 +6,12 @@
   <div class="container">
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
+      <a class="nav-item nav-link {% if view.tab == 'projects' %}active{% endif %}" href="{% url 'taxonomy_project_list' %}">
+        {% trans "Projects" %}
+        {% if view.tab == 'projects' %}
+          <span class="badge badge-light">{{ tab_count }}</span>
+        {% endif %}
+      </a>
       <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">
         {% trans "My tasks" %}
         {% if view.tab == 'my_tasks' %}

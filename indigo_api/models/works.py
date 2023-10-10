@@ -96,6 +96,7 @@ class VocabularyTopic(models.Model):
 class TaxonomyTopic(MP_Node):
     name = models.CharField(max_length=512, null=False, blank=False)
     slug = models.SlugField(max_length=512, null=False, unique=True, blank=False)
+    description = models.TextField(null=True, blank=True)
     node_order_by = ['name']
 
     class Meta:

@@ -34,12 +34,14 @@
                 {% trans 'Approve' %}
               </button>
             {% endif %}
+          {% if workflow.pk %}
             <button type="submit"
                     class="dropdown-item"
                     formaction="{% url 'workflow_remove_task' place=task.place.place_code pk=workflow.pk task_pk=task.pk %}"
                     data-confirm="{% trans 'Are you sure you want to remove this task?' %}">
               {% trans 'Remove from project' %}
             </button>
+            {% endif %}
           </div>
       </div>
     </form>
@@ -97,7 +99,7 @@
           <div class="mb-1">
             <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="{% trans 'Assigned to' %}"></i>
             <small class="text-muted">{% user_profile task.assigned_to %}</small>
-
+'
             <!-- assign button-->
             {% if assign_button and perms.indigo_api.change_task %}
               <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">

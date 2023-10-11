@@ -75,8 +75,12 @@ class ProvisionRefsResolver:
         "sections": "section",
         "subparagraph": "subparagraph",
         "subparagraphs": "subparagraph",
+        "sub-paragraph": "subparagraph",
+        "sub-paragraphs": "subparagraph",
         "subsection": "subsection",
         "subsections": "subsection",
+        "sub-section": "subsection",
+        "sub-sections": "subsection",
         # af
         "artikel": ["article", "section"],
         "artikels": ["article", "section"],

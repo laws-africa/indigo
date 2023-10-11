@@ -1469,36 +1469,96 @@ class Grammar(object):
                                                                             self._expected.append(('ProvisionRefs::unit_en', '`subparagraph`'))
                                                                     if address0 is FAILURE:
                                                                         self._offset = index1
-                                                                        chunk16, max16 = None, self._offset + 11
+                                                                        chunk16, max16 = None, self._offset + 14
                                                                         if max16 <= self._input_size:
                                                                             chunk16 = self._input[self._offset:max16]
-                                                                        if chunk16 is not None and chunk16.lower() == 'subsections'.lower():
-                                                                            address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
-                                                                            self._offset = self._offset + 11
+                                                                        if chunk16 is not None and chunk16.lower() == 'sub-paragraphs'.lower():
+                                                                            address0 = TreeNode(self._input[self._offset:self._offset + 14], self._offset, [])
+                                                                            self._offset = self._offset + 14
                                                                         else:
                                                                             address0 = FAILURE
                                                                             if self._offset > self._failure:
                                                                                 self._failure = self._offset
                                                                                 self._expected = []
                                                                             if self._offset == self._failure:
-                                                                                self._expected.append(('ProvisionRefs::unit_en', '`subsections`'))
+                                                                                self._expected.append(('ProvisionRefs::unit_en', '`sub-paragraphs`'))
                                                                         if address0 is FAILURE:
                                                                             self._offset = index1
-                                                                            chunk17, max17 = None, self._offset + 10
+                                                                            chunk17, max17 = None, self._offset + 13
                                                                             if max17 <= self._input_size:
                                                                                 chunk17 = self._input[self._offset:max17]
-                                                                            if chunk17 is not None and chunk17.lower() == 'subsection'.lower():
-                                                                                address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
-                                                                                self._offset = self._offset + 10
+                                                                            if chunk17 is not None and chunk17.lower() == 'sub-paragraph'.lower():
+                                                                                address0 = TreeNode(self._input[self._offset:self._offset + 13], self._offset, [])
+                                                                                self._offset = self._offset + 13
                                                                             else:
                                                                                 address0 = FAILURE
                                                                                 if self._offset > self._failure:
                                                                                     self._failure = self._offset
                                                                                     self._expected = []
                                                                                 if self._offset == self._failure:
-                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`subsection`'))
+                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`sub-paragraph`'))
                                                                             if address0 is FAILURE:
                                                                                 self._offset = index1
+                                                                                chunk18, max18 = None, self._offset + 11
+                                                                                if max18 <= self._input_size:
+                                                                                    chunk18 = self._input[self._offset:max18]
+                                                                                if chunk18 is not None and chunk18.lower() == 'subsections'.lower():
+                                                                                    address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+                                                                                    self._offset = self._offset + 11
+                                                                                else:
+                                                                                    address0 = FAILURE
+                                                                                    if self._offset > self._failure:
+                                                                                        self._failure = self._offset
+                                                                                        self._expected = []
+                                                                                    if self._offset == self._failure:
+                                                                                        self._expected.append(('ProvisionRefs::unit_en', '`subsections`'))
+                                                                                if address0 is FAILURE:
+                                                                                    self._offset = index1
+                                                                                    chunk19, max19 = None, self._offset + 10
+                                                                                    if max19 <= self._input_size:
+                                                                                        chunk19 = self._input[self._offset:max19]
+                                                                                    if chunk19 is not None and chunk19.lower() == 'subsection'.lower():
+                                                                                        address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                                                                                        self._offset = self._offset + 10
+                                                                                    else:
+                                                                                        address0 = FAILURE
+                                                                                        if self._offset > self._failure:
+                                                                                            self._failure = self._offset
+                                                                                            self._expected = []
+                                                                                        if self._offset == self._failure:
+                                                                                            self._expected.append(('ProvisionRefs::unit_en', '`subsection`'))
+                                                                                    if address0 is FAILURE:
+                                                                                        self._offset = index1
+                                                                                        chunk20, max20 = None, self._offset + 12
+                                                                                        if max20 <= self._input_size:
+                                                                                            chunk20 = self._input[self._offset:max20]
+                                                                                        if chunk20 is not None and chunk20.lower() == 'sub-sections'.lower():
+                                                                                            address0 = TreeNode(self._input[self._offset:self._offset + 12], self._offset, [])
+                                                                                            self._offset = self._offset + 12
+                                                                                        else:
+                                                                                            address0 = FAILURE
+                                                                                            if self._offset > self._failure:
+                                                                                                self._failure = self._offset
+                                                                                                self._expected = []
+                                                                                            if self._offset == self._failure:
+                                                                                                self._expected.append(('ProvisionRefs::unit_en', '`sub-sections`'))
+                                                                                        if address0 is FAILURE:
+                                                                                            self._offset = index1
+                                                                                            chunk21, max21 = None, self._offset + 11
+                                                                                            if max21 <= self._input_size:
+                                                                                                chunk21 = self._input[self._offset:max21]
+                                                                                            if chunk21 is not None and chunk21.lower() == 'sub-section'.lower():
+                                                                                                address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+                                                                                                self._offset = self._offset + 11
+                                                                                            else:
+                                                                                                address0 = FAILURE
+                                                                                                if self._offset > self._failure:
+                                                                                                    self._failure = self._offset
+                                                                                                    self._expected = []
+                                                                                                if self._offset == self._failure:
+                                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`sub-section`'))
+                                                                                            if address0 is FAILURE:
+                                                                                                self._offset = index1
         self._cache['unit_en'][index0] = (address0, self._offset)
         return address0
 

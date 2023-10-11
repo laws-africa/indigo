@@ -74,7 +74,9 @@ grammar ProvisionRefs
                  `points` / `point` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
-                 `subsections` / `subsection`
+                 `sub-paragraphs` / `sub-paragraph` /
+                 `subsections` / `subsection` /
+                 `sub-sections` / `sub-section`
 
                  # afrikaans
   unit_af     <- `afdelings` / `afdeling` /

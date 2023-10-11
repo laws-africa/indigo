@@ -575,7 +575,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    def test_local_relative_deep(self):
+    def test_local_breadth_first_search(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_5">
               <num>5.</num>

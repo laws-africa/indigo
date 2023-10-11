@@ -574,6 +574,113 @@ class ProvisionRefsMatcherTestCase(TestCase):
             expected.to_xml(encoding='unicode'),
             etree.tostring(actual, encoding='unicode')
         )
+
+    def test_local_relative_deep(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_5">
+              <num>5.</num>
+              <heading>Section 5</heading>
+              <subsection eId="sec_5__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_5__subsec_3__para_b">
+                  <num>(b)</num>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_i">
+                    <num>(i)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_ee">
+                      <num>(ee)</num>
+                      <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_ee__subpara_iii">
+                        <num>(iii)</num>
+                      </subparagraph>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii">
+                    <num>(ii)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii__subpara_bb">
+                      <num>(bb)</num>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii">
+                    <num>(iii)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii__subpara_bb">
+                      <num>(bb)</num>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_iv">
+                    <num>(iv)</num>
+                    <content>
+                      <p>for the purposes of subparagraph (iii)(aa), something</p>
+                    </content>
+                  </subparagraph>
+                </paragraph>
+              </subsection>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_5">
+              <num>5.</num>
+              <heading>Section 5</heading>
+              <subsection eId="sec_5__subsec_3">
+                <num>(3)</num>
+                <paragraph eId="sec_5__subsec_3__para_b">
+                  <num>(b)</num>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_i">
+                    <num>(i)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_ee">
+                      <num>(ee)</num>
+                      <subparagraph eId="sec_5__subsec_3__para_b__subpara_i__subpara_ee__subpara_iii">
+                        <num>(iii)</num>
+                      </subparagraph>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii">
+                    <num>(ii)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_ii__subpara_bb">
+                      <num>(bb)</num>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii">
+                    <num>(iii)</num>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii__subpara_aa">
+                      <num>(aa)</num>
+                    </subparagraph>
+                    <subparagraph eId="sec_5__subsec_3__para_b__subpara_iii__subpara_bb">
+                      <num>(bb)</num>
+                    </subparagraph>
+                  </subparagraph>
+                  <subparagraph eId="sec_5__subsec_3__para_b__subpara_iv">
+                    <num>(iv)</num>
+                    <content>
+                      <p>for the purposes of subparagraph <ref href="#sec_5__subsec_3__para_b__subpara_iii__subpara_aa">(iii)(aa)</ref>, something</p>
+                    </content>
+                  </subparagraph>
+                </paragraph>
+              </subsection>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_remote_sections(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
@@ -651,6 +758,34 @@ class ProvisionRefsMatcherTestCase(TestCase):
         )
 
     def test_remote_sections_multiple(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Active ref heading</heading>
+              <content>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(b)(b)(iii)(dd)(A) and section 31(a) thereof.</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Active ref heading</heading>
+              <content>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A) and section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>(a) thereof.</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_remote_sections_multiple_same_name(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>

@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Union, Tuple
 import logging
+from collections import deque
 
 from lxml import etree
 from lxml.etree import Element
@@ -154,18 +155,20 @@ class ProvisionRefsResolver:
         if names is None. If above_root is True, then we'll look above the root element if nothing inside matches.
         """
         names = names or AkomaNtoso30.hier_elements
-        ns = {'a': root.nsmap[None]}
+        ns = root.nsmap[None]
 
-        # we start at the start_node, and walk upwards, expanding until we find something or reach the top
-        while root is not None:
-            # TODO: the .// isn't quite right, because we want to do a breadth-first search of hier children
-            xpath = '|'.join(f'.//a:{x}[not(ancestor::a:quotedStructure or ancestor::a:embeddedStructure)]' for x in names)
-            for elem in root.xpath(xpath, namespaces=ns):
-                num_elem = elem.find('a:num', ns)
-                if num_elem is not None and num_elem.text.rstrip(".") == num:
-                    return elem
-            # keep looking upwards?
-            root = root.getparent() if above_root else None
+        # prefix with namespace
+        names = [f'{{{ns}}}{n}' for n in names]
+        dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
+
+        # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
+        for elem in bfs_upward_search(root, names, dead_ends, above_root):
+            # ignore matches to the root element, which avoids things like section (1)(a)(a) matching the same (a) twice
+            if elem == root:
+                continue
+            num_elem = elem.find('a:num', {'a': ns})
+            if num_elem is not None and num_elem.text.rstrip(".") == num:
+                return elem
 
 
 class ProvisionRefsMatcher(TextPatternMatcher):
@@ -433,3 +436,27 @@ def parse_provision_refs(text):
             return "thereof"
 
     return parse(text, Actions())
+
+
+def bfs_upward_search(root, names, dead_ends, above_root):
+    """ Do a breadth-first search for tag_name elements, starting at root and not descending into elements named in
+    dead_ends. If nothing matches, go up to the parent node (if above_root is True) and search from there. """
+    # keep track of nodes we have seen, so we don't search back down into a node when we're going up a level
+    visited = set()
+    # the frontier is the set of nodes that we need to check
+    frontier = deque([root])
+
+    while frontier:
+        node = frontier.popleft()
+        visited.add(node)
+
+        if node.tag in names:
+            yield node
+
+        # Add children to frontier
+        frontier.extend(child for child in node.iterchildren() if child not in visited and child.tag not in dead_ends)
+
+        # If queue is empty (i.e., leaf node), move upwards
+        if not frontier and node.getparent() is not None and above_root:
+            parent = node.getparent()
+            frontier.append(parent)

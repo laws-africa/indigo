@@ -38,11 +38,11 @@
       <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif">
         <fo:block>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Kwanza<fo:block keep-with-previous="always">(ib 1-32)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Kwanza<fo:block keep-with-previous="always">(ib 1-32)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">JAMHURI YA MUUNGANO, VYAMA VYA SIASA, WATU NA SIASA YA UJAMAA NA KUJITEGEMEA</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Jamhuri ya muungano na watu (ib 1-5)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Jamhuri ya muungano na watu (ib 1-5)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -337,7 +337,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">MALENGO MUHIMU NA MISINGI YA MWELEKEO</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">WA SHUGHULI ZA SERIKALI (ss 6-11)</fo:block>
@@ -674,7 +674,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tatu</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Kwanza__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tatu</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">HAKI NA WAJIBU MUHIMU (Ib 12-32)</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">Haki ya Usawa (Ib 12-13)</fo:block>
@@ -2262,11 +2262,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Pili<fo:block keep-with-previous="always">(ib 33-61)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Pili<fo:block keep-with-previous="always">(ib 33-61)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">SERIKALI YA JAMHURI YA MUUNGANO</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Rais (ib 33-46b)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Rais (ib 33-46b)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -3807,7 +3807,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili – Makamu wa rais (ib 47-50)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili – Makamu wa rais (ib 47-50)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -4281,7 +4281,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tatu</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Pili__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tatu</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">WAZIRI MKUU, BARAZA LA MAWAZIRI NA SERIKALI (Ib 51-61)</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">Waziri Mkuu (Ib 51-53A)</fo:block>
@@ -5147,11 +5147,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Tatu<fo:block keep-with-previous="always">(ib 62-101)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Tatu<fo:block keep-with-previous="always">(ib 62-101)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">BUNGE LA JAMHURI YA MUUNGANO</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Bunge (ib 62-65)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Bunge (ib 62-65)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -5456,7 +5456,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">WABUNGE, WILAYA ZA UCHAGUZI NA UCHAGUZI WA WABUNGE (Ib 66-83)</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">Wajumbe wa Bunge (Ib 66-73)</fo:block>
@@ -6982,7 +6982,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tatu</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tatu__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tatu</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">UTARATIBU, MADARAKA NA HAKI ZA BUNGE (Ib 84-101)</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">Spika na Naibu wa Spika (Ib 84-86)</fo:block>
@@ -8162,11 +8162,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Nne" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Nne<fo:block keep-with-previous="always">(ib 102-107)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Nne" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Nne<fo:block keep-with-previous="always">(ib 102-107)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">SERIKALI YA MAPINDUZI YA ZANZIBAR, BARAZA LA MAPINDUZI LA ZANZIBAR NA BARAZA LA WAWAKILISHI LA ZANZIBAR</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Serikali ya mapinduzi ya zanzibar na rais wa zanzibar (ib 102-104)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Serikali ya mapinduzi ya zanzibar na rais wa zanzibar (ib 102-104)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -8363,7 +8363,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili – Baraza la mapinduzi la zanzibar (s 105)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili – Baraza la mapinduzi la zanzibar (s 105)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -8452,7 +8452,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tatu – Baraza la wawakilishi la zanzibar (ib 106-107)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Nne__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tatu – Baraza la wawakilishi la zanzibar (ib 106-107)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -8615,11 +8615,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Tano" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Tano<fo:block keep-with-previous="always">(ib 107a-128)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Tano" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Tano<fo:block keep-with-previous="always">(ib 107a-128)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">UTOAJI HAKI KATIKA JAMHURI YA MUUNGANO, MAHAKAMA KUU YA JAMHURI YA MUUNGANO, TUME YA KUAJIRI YA MAHAKAMA YA TANZANIA BARA, MAHAKAMA KUU YA ZANZIBAR, MAHAKAMA YA RUFANI YA JAMHURI YA MUUNGANO NA MAHAKAMA MAALUM YA KATIBA YA JAMHURI YA MUUNGANO</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Utoaji haki katika jamhuri ya muungano (ib 107a-107b)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Utoaji haki katika jamhuri ya muungano (ib 107a-107b)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -8721,7 +8721,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili – Mahakama kuu ya jamhuri ya muungano (ib 108-111)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili – Mahakama kuu ya jamhuri ya muungano (ib 108-111)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -9102,7 +9102,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tatu</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Tatu" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tatu</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">MADARAKA YA KUAJIRI MAHAKIMU NA WATUMISHI WENGINE WA MAHAKAMA ZA TANZANIA BARA NA TUME YA KUAJIRI YA MAHAKAMA (Ib 112-113A)</fo:block>
                   <fo:block-container>
@@ -9277,7 +9277,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Nne" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Nne – Mahakama kuu ya zanzibar (ib 114-115)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Nne" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Nne – Mahakama kuu ya zanzibar (ib 114-115)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -9331,7 +9331,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Tano" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Tano – Mahakama ya rufani ya jamhuri ya muungano (ib 116-123)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Tano" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Tano – Mahakama ya rufani ya jamhuri ya muungano (ib 116-123)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -9776,7 +9776,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Sita" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Sita</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Sita" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Sita</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">UTARATIBU WA KUPELEKA HATI ZA KUTEKELEZA MAAGIZO YALIYOMO KATIKA HATI ZILIZOTOLEWA NA MAHAKAMA (Ib 124)</fo:block>
                   <fo:block-container>
@@ -9854,7 +9854,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Saba" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Saba – Mahakama maalum ya katiba ya jamhuri ya muungano (ib 125-128)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Tano__part_Saba" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Saba – Mahakama maalum ya katiba ya jamhuri ya muungano (ib 125-128)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -10031,11 +10031,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Sita" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Sita<fo:block keep-with-previous="always">(ib 129-132)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Sita" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Sita<fo:block keep-with-previous="always">(ib 129-132)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">TUME YA HAKI ZA BINADAMU NA UTAWALA BORA NA SEKRETARIETI YA MAADILI YA VIONGOZI WA UMMA</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Sita__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Tume ya haki za binadamu na utawala bora (ib 129-131)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Sita__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Tume ya haki za binadamu na utawala bora (ib 129-131)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -10569,7 +10569,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Sita__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Sita__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block margin-top="0.8em" keep-with-next="always">SEKRETARIETI YA MAADILI YA VIONGOZI</fo:block>
                   <fo:block margin-top="0.8em" keep-with-next="always">WA UMMA (s 132)</fo:block>
@@ -10734,11 +10734,11 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Saba" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Saba<fo:block keep-with-previous="always">(ib 133-144)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Saba" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Saba<fo:block keep-with-previous="always">(ib 133-144)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">MASHARTI KUHUSU MCHANGO WA SERIKALI NA MAMBO MENGINEYO YA FEDHA ZINAZOINGIA KATIKA HAZINA YA SERIKALI YA JAMHURI YA MUUNGANO</fo:block>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Saba__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Kwanza – Mchango na mgawanyo wa mapato ya jamhuri ya muungano (ib 133-134)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Saba__part_Kwanza" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Kwanza – Mchango na mgawanyo wa mapato ya jamhuri ya muungano (ib 133-134)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -10828,7 +10828,7 @@
                 </fo:block>
               </fo:block-container>
               <fo:block-container>
-                <fo:block font-weight="bold" start-indent="0" id="chp_Saba__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Part Pili – Mfuko mkuu wa hazina na fedha za jamhuri ya muungano (ib 135-144)</fo:block>
+                <fo:block font-weight="bold" start-indent="0" id="chp_Saba__part_Pili" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sehemu ya Pili – Mfuko mkuu wa hazina na fedha za jamhuri ya muungano (ib 135-144)</fo:block>
                 <fo:block margin-top="0.8em">
                   <fo:block-container>
                     <fo:list-block margin-top="0.8em*2" start-indent="0">
@@ -11495,7 +11495,7 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Nane" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Nane<fo:block keep-with-previous="always">(ib 145-146)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Nane" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Nane<fo:block keep-with-previous="always">(ib 145-146)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">MADARAKA YA UMMA</fo:block>
               <fo:block-container>
@@ -11609,7 +11609,7 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Tisa" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Tisa<fo:block keep-with-previous="always">(ib 147-148)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Tisa" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Tisa<fo:block keep-with-previous="always">(ib 147-148)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">MAJESHI YA ULINZI</fo:block>
               <fo:block-container>
@@ -11771,7 +11771,7 @@
             </fo:block>
           </fo:block-container>
           <fo:block-container>
-            <fo:block font-weight="bold" start-indent="0" id="chp_Kumi" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Chapter Kumi<fo:block keep-with-previous="always">(ib 149-152)</fo:block></fo:block>
+            <fo:block font-weight="bold" start-indent="0" id="chp_Kumi" keep-with-next="always" orphans="2" widows="2" text-align="center" font-size="9pt * 1.25&#10;  " margin-top="0.8em*2">Sura ya Kumi<fo:block keep-with-previous="always">(ib 149-152)</fo:block></fo:block>
             <fo:block margin-top="0.8em">
               <fo:block margin-top="0.8em" keep-with-next="always">MENGINEYO</fo:block>
               <fo:block-container>

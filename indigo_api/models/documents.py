@@ -367,6 +367,11 @@ class Document(DocumentMixin, models.Model):
         and other attributes -- such as the document title and FRBR URI based on the XML. """
         self.reset_xml(value, from_model=False)
 
+    def is_fully_commenced(self):
+        """ Return a boolean based on whether there are any uncommenced provisions at the present document's date.
+        """
+        return not bool(self.work.all_uncommenced_provision_ids(self.expression_date))
+
     def amendments(self):
         if self.expression_date:
             return [a for a in self.work.amendments.all() if a.date <= self.expression_date]

@@ -11,7 +11,7 @@ import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
-from django.utils.translation import activate, deactivate
+from django.utils.translation import override
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree
@@ -210,11 +210,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Generates the frontmatter and inserts it before the body (and coverpage if present) in the XML.
             The document's document_xml isn't updated.
         """
-        # explicitly set the document's language for e.g. numbered title to be translated
-        activate(document.django_language)
-        frontmatter = render_to_string(self.frontmatter_template(document), self.get_frontmatter_context(document))
-        # unset the language (return to default)
-        deactivate()
+        # explicitly set the document's language for e.g. numbered title to be translated; deactivate after
+        with override(document.django_language, deactivate=True):
+            frontmatter = render_to_string(self.frontmatter_template(document), self.get_frontmatter_context(document))
         frontmatter_xml = etree.fromstring(frontmatter.encode('utf-8'))
         # insert the frontmatter before the coverpage, or the main content (preface / preamble / body)
         document.doc.meta.addnext(frontmatter_xml)

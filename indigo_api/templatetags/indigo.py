@@ -63,6 +63,14 @@ def document_commencement_description(document):
 
     if commencement_description.subtype == 'multiple':
         # scope to document's date -- future commencements might not be applicable
-        return document.work.commencement_description(commencements=document.commencements_relevant_at_expression_date())
+        commencements = document.commencements_relevant_at_expression_date()
+        document_has_uncommenced_provisions = None
+        # we only care about whether there are uncommenced provisions in the case of a single commencement
+        # (it's not cheap to calculate)
+        if len(commencements) == 1:
+            document_has_uncommenced_provisions = has_uncommenced_provisions(document)
+        return document.work.commencement_description(
+            commencements=commencements,
+            has_uncommenced_provisions=document_has_uncommenced_provisions)
 
     return commencement_description

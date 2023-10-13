@@ -400,21 +400,31 @@ class WorkMixin(object):
     def consolidation_note(self):
         return self.consolidation_note_override or self.place.settings.consolidation_note
 
-    def commencement_description(self, friendly_date=True, commencements=None):
+    def commencement_description(self, friendly_date=True, commencements=None, has_uncommenced_provisions=None):
         """ Returns a TimelineCommencementEvent object describing the commencement status of a work.
+            - If there's more than one commencement, OR if some provisions are yet to commence, describe it as 'multiple'.
+            - If there are none, describe it as 'uncommenced'.
+            - If there's one, AND no uncommenced provisions, describe the single commencement in more detail.
+
             If specific commencements are passed in, evaluate those rather than all commencements on the work.
-            Similarly, passing in a scoped_date will evaluate commencements (with regard to uncommenced provisions)
-             only up to that date.
+            If has_uncommenced_provisions (bool) is passed in, use that rather than checking a single commencement for all_provisions.
             By default, commencement dates are formatted as e.g. '1 January 2023'.
                 Passing in friendly_date=False leaves them as e.g. 2023-01-01.
         """
         n_commencements = len(commencements) if commencements is not None else len(self.commencements.all())
+        # if the commencement description isn't scoped, has_uncommenced_provisions should be True
+        # when there's a single commencement that does not commence all provisions
+        # (we only care about whether there are uncommenced provisions when there's a single commencement)
+        if has_uncommenced_provisions is None and n_commencements == 1:
+            has_uncommenced_provisions = not self.commencements.first().all_provisions
 
-        if n_commencements > 1:
-            return TimelineCommencementEvent(subtype='multiple', description=_('There are multiple commencements'))
-
-        elif n_commencements == 0:
+        if n_commencements == 0:
             return TimelineCommencementEvent(subtype='uncommenced', description=_('Not commenced'))
+
+        # we have 'multiple' commencements if there are more than one,
+        # OR if there's only one but it doesn't commence everything
+        elif n_commencements > 1 or has_uncommenced_provisions:
+            return TimelineCommencementEvent(subtype='multiple', description=_('There are multiple commencements'))
 
         # single commencement
         commencement = commencements[0] if commencements else self.commencements.first()

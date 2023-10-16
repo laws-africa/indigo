@@ -1,4 +1,3 @@
-import io
 import logging
 import os
 import re
@@ -174,13 +173,10 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             # fix tables to have the right number of columns and rows; else FOP complains
             self.resize_tables(document.doc)
             # write the XML to file
-            xml_string = etree.tostring(document.doc.main, encoding='unicode')
-            xml_bytes = xml_string.encode('utf-8')
+            xml = etree.tostring(document.doc.main, encoding='unicode')
             xml_file = os.path.join(tmpdir, 'raw.xml')
-            # use io.open, BytesIO, getbuffer to avoid XML parse error in production
-            with io.open(xml_file, "wb") as f:
-                stream_str = io.BytesIO(xml_bytes)
-                f.write(stream_str.getbuffer())
+            with open(xml_file, "wb") as f:
+                f.write(xml.encode('utf-8'))
 
             xsl_fo = self.find_xsl_fo(document)
             self.update_base_xsl_fo_dir(xsl_fo)

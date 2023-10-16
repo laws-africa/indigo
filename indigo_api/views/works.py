@@ -48,7 +48,7 @@ class WorkViewSet(viewsets.ReadOnlyModelViewSet):
                           'taxonomies', 'taxonomies__vocabulary')
     serializer_class = WorkSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
-    filter_class = WorkFilterSet
+    filterset_class = WorkFilterSet
     search_fields = ('title', 'frbr_uri')
 
 

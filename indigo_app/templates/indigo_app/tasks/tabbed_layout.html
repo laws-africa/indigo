@@ -7,7 +7,7 @@
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
       <a class="nav-item nav-link {% if view.tab == 'projects' %}active{% endif %}" href="{% url 'taxonomy_project_list' %}">
-        {% trans "Projects" %}
+        {% trans "Project Topics" %}
         {% if view.tab == 'projects' %}
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}

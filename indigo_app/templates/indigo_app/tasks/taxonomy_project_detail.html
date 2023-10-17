@@ -12,10 +12,27 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-        <div class="col">
+        <div class="col-7">
           {% if project.description %}
             {{ project.description|safe }}
           {% endif %}
+        </div>
+        <div class="col-5">
+          <div class="row mt-2">
+            <div class="col-8">
+              <div class="progress bg-light">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ project.pct_done }}%"></div>
+              </div>
+            </div>
+            <div class="col text-muted">
+              {% blocktrans trimmed with n_done=project.n_done count n_tasks=project.n_tasks %}
+                {{ n_done }} of {{ n_tasks }} task
+              {% plural %}
+                {{ n_done }} of {{ n_tasks }} tasks
+              {% endblocktrans %}
+            </div>
+          </div>
+
         </div>
         </div>
       </div>

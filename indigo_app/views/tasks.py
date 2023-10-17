@@ -694,6 +694,10 @@ class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        self.object.n_tasks = self.get_tasks().count()
+        self.object.n_done = self.get_tasks().closed().count()
+        self.object.pct_done = self.object.n_done / self.object.n_tasks * 100.0 if self.object.n_tasks else 0.0
+
         context['form'] = self.form
         context['tasks'] = tasks = self.get_tasks()
         context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)

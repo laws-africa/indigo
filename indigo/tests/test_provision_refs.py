@@ -311,6 +311,108 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_local_sections_synonyms(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section 26, blah.</p>
+                <p>As given in regulation 26B, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                  <content>
+                    <p>As given in paragraph (a), blah.</p>
+                    <p>As given in subparagraph (1), blah.</p>
+                    <p>As given in paragraph (a)(2), blah.</p>
+                    <p>As given in subregulation (a)(1), blah.</p>
+                  </content>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26B.</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+            <section eId="sec_31">
+              <num>31.</num>
+              <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section <ref href="#sec_26">26</ref>, blah.</p>
+                <p>As given in regulation <ref href="#sec_26B">26B</ref>, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                  <content>
+                    <p>As given in paragraph <ref href="#sec_26__subsec_a">(a)</ref>, blah.</p>
+                    <p>As given in subparagraph <ref href="#sec_26__subsec_a__para_1">(1)</ref>, blah.</p>
+                    <p>As given in paragraph <ref href="#sec_26__subsec_a__para_2">(a)(2)</ref>, blah.</p>
+                    <p>As given in subregulation <ref href="#sec_26__subsec_a__para_1">(a)(1)</ref>, blah.</p>
+                  </content>
+                </paragraph>
+              </subsection>
+              <subsection eId="sec_26__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26B.</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+            <section eId="sec_31">
+              <num>31.</num>
+              <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_local_ambiugous_levels(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">

@@ -72,9 +72,12 @@ grammar ProvisionRefs
                  `paragraphs` / `paragraph` /
                  `parts` / `part` /
                  `points` / `point` /
+                 `regulations` / `regulation` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
                  `sub-paragraphs` / `sub-paragraph` /
+                 `subregulations` / `subregulation` /
+                 `sub-regulations` / `sub-regulation` /
                  `subsections` / `subsection` /
                  `sub-sections` / `sub-section`
 

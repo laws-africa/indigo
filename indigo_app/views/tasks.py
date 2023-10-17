@@ -671,33 +671,6 @@ class TaxonomyProjectListView(AbstractAuthedIndigoView, TemplateView):
 
         return tree
 
-class TaxonomyProjectCreateView(AbstractAuthedIndigoView, CreateView):
-    authentication_required = True
-    template_name = 'indigo_app/tasks/taxonomy_project_create.html'
-    tab = 'projects'
-    permission_required = ('indigo_api.add_taxonomy_topic',)
-    context_object_name = 'project'
-    model = TaxonomyTopic
-    fields = ['name', 'description',]
-
-    def form_valid(self, form):
-        from django.http import HttpResponseRedirect
-        from django.core.exceptions import ValidationError
-        from django.db import IntegrityError
-
-        name = form.cleaned_data.get('name')
-        description = form.cleaned_data.get('description')
-        project_root = TaxonomyTopic.objects.get(slug='projects')
-        try:
-            self.object = project_root.add_child(name=name, description=description)
-        except IntegrityError as e:
-            form.add_error('name', 'A project with this name already exists.')
-            return self.form_invalid(form)
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_success_url(self):
-        return reverse('taxonomy_project_detail', kwargs={'slug': self.object.slug})
-
 
 class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
     authentication_required = True
@@ -709,8 +682,19 @@ class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+    def get_tasks(self):
+        topics = [self.object] + [t for t in self.object.get_descendants()]
+        tasks = Task.objects.filter(work__taxonomy_topics__in=topics)
+        return self.form.filter_queryset(tasks)
+
+    def get(self, request, *args, **kwargs):
+        self.form = TaskFilterForm(None, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tasks'] = tasks = Task.objects.filter(work__taxonomy_topics=self.object)
+        context['form'] = self.form
+        context['tasks'] = tasks = self.get_tasks()
         context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)
         return context

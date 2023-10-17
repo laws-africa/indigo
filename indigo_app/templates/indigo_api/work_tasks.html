@@ -12,7 +12,7 @@
 
   <div class="card">
     {% if tasks %}
-      {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
+      {% include 'indigo_api/_task_cards.html' with show_assign_controls=True task_groups=task_groups %}
     {% else %}
       <div class="card-body">
         <p class="text-center"><em>{% trans 'No tasks.' %}</em></p>

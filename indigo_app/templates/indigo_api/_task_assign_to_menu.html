@@ -8,7 +8,7 @@
   {% for potential_assignee in potential_assignees %}
     <button class="dropdown-item" type="submit" name="assigned_to"
             {% if potential_assignee.too_many_tasks %}disabled{% endif %}
-            {% if task %}formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}"{% endif %}
+            {% if task %}formaction="{% url 'assign_task' place=task.work.country.code pk=task.pk %}"{% endif %}
             value="{{ potential_assignee.id }}">
       {% user_display potential_assignee %}
       {% if potential_assignee.too_many_tasks %}

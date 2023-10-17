@@ -23,7 +23,7 @@
         {% include 'indigo_api/_task_filter_form.html' with form=form formats=False status=False %}
       </div>
         {% if tasks %}
-          {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True selectable=True %}
+          {% include 'indigo_api/_task_cards.html' with task_groups=task_groups assign_button=False  %}
         {% endif %}
     </div>
   </div>

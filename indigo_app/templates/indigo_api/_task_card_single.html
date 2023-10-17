@@ -95,11 +95,17 @@
           <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
         {% endfor %}
 
+
         {% if assigned and task.assigned_to %}
-          <div class="mb-1">
+          <div>
             <i class="fas fa-user-tag fa-xs text-{{ task.state }}" title="{% trans 'Assigned to' %}"></i>
             <small class="text-muted">{% user_profile task.assigned_to %}</small>
-'
+          </div>
+      {% endif %}
+
+      {% if assign_controls %}
+        {% if assigned and task.assigned_to %}
+          <div class="mb-1">
             <!-- assign button-->
             {% if assign_button and perms.indigo_api.change_task %}
               <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
@@ -133,6 +139,7 @@
             </form>
           {% endif %}
         {% endif %}
+      {% endif %}
 
         {% if approved and task.reviewed_by_user %}
           <div class="mb-1">

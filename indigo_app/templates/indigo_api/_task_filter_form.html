@@ -81,8 +81,10 @@
       </div>
     {% endif %}
 
-  <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
-  {{ form.taxonomy_topic.as_hidden }}
+  {% if taxonomy %}
+    <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
+    {{ form.taxonomy_topic.as_hidden }}
+  {% endif %}
 
   </div>
 </form>

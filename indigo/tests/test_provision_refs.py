@@ -548,7 +548,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <num>(4)</num>
                 <content>
                   <p>referred to in sub-section <ref href="#sec_1__subsec_1">(1)</ref>, <ref href="#sec_1__subsec_2">(2)</ref> or <ref href="#sec_1__subsec_3__para_b">(3)(b)</ref>, to the extent that...</p>
-                  <p>For the purposes of subsection <ref href="#sec_2__subsec_3__para_b">(1)(b)</ref> of section <ref href="sec_2">2</ref> the intention is that</p>
+                  <p>For the purposes of subsection <ref href="#sec_2__subsec_1__para_b">(1)(b)</ref> of section <ref href="#sec_2">2</ref> the intention is that</p>
                 </content>
               </subsection>
             </section>

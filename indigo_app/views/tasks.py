@@ -646,12 +646,12 @@ class TaskAssigneesView(TaskViewBase, TemplateView):
         })
 
 
-class TaxonomyProjectListView(AbstractAuthedIndigoView, TemplateView):
+class TaxonomyTopicTaskListView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
-    template_name = 'indigo_app/tasks/taxonomy_project_list.html'
-    tab = 'projects'
+    template_name = 'indigo_app/tasks/taxonomy_task_list.html'
+    tab = 'topics'
     permission_required = ('indigo_api.view_task',)
-    context_object_name = 'projects'
+    context_object_name = 'topics'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -662,7 +662,7 @@ class TaxonomyProjectListView(AbstractAuthedIndigoView, TemplateView):
         tree = TaxonomyTopic.dump_bulk()
         def fix_up(item):
             item["title"] = item["data"]["name"]
-            item["href"] = reverse('taxonomy_project_detail', kwargs={'slug': item["data"]["slug"]})
+            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
             for kid in item.get("children", []):
                 fix_up(kid)
 
@@ -672,12 +672,12 @@ class TaxonomyProjectListView(AbstractAuthedIndigoView, TemplateView):
         return tree
 
 
-class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
+class TaxonomyTopicTaskDetailView(AbstractAuthedIndigoView, DetailView):
     authentication_required = True
-    template_name = 'indigo_app/tasks/taxonomy_project_detail.html'
-    tab = 'projects'
+    template_name = 'indigo_app/tasks/taxonomy_task_detail.html'
+    tab = 'topics'
     permission_required = ('indigo_api.view_task',)
-    context_object_name = 'project'
+    context_object_name = 'topic'
     model = TaxonomyTopic
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
@@ -701,4 +701,20 @@ class TaxonomyProjectDetailView(AbstractAuthedIndigoView, DetailView):
         context['form'] = self.form
         context['tasks'] = tasks = self.get_tasks()
         context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)
+        context['taxonomy_toc'] = self.get_tree()
         return context
+
+    def get_tree(self):
+        tree = TaxonomyTopic.dump_bulk()
+
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
+            item["selected"] = item["data"]["slug"] == self.object.slug
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        for item in tree:
+            fix_up(item)
+
+        return tree

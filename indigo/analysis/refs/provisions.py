@@ -356,7 +356,7 @@ class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
         root = etree.fromstring(document.content)
         self.setup(root)
         self.markup_xml_matches(document.frbr_uri, root)
-        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        document.content = etree.tostring(root, encoding='unicode')
 
 
 @plugins.register('internal-refs')

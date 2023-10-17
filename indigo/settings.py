@@ -162,6 +162,7 @@ db_config['ATOMIC_REQUESTS'] = True
 DATABASES = {
     'default': db_config,
 }
+CONN_MAX_AGE = int(os.environ.get('CONN_MAX_AGE', 0))
 
 # Auto-created primary keys
 # see: https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys

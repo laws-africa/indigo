@@ -125,6 +125,9 @@ def parse_provision_refs(text):
         def of_this(self, input, start, end, elements):
             return "this"
 
+        def of_the_act(self, input, start, end, elements):
+            return "the_act"
+
         def of(self, input, start, end, elements):
             return "of"
 
@@ -404,6 +407,10 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             # refs are to the local node, and we may look above that if necessary
             return None, node
 
+        if target == "the_act":
+            # assume this is subleg and this refers to the parent work
+            return self.find_parent_document_target()
+
         def candidates():
             # this yields candidate notes to look at, either forwards or backwards, until the first useful one is found
             # or we run out
@@ -445,6 +452,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         The frbr_uri may be a local one (eg. "#sec_2") or it may be a full FRBR URI.
         """
         if self.target_root_cache is None:
+            # this must be initialised here otherwise we have no way to override it when testing
             self.target_root_cache = {}
 
         if frbr_uri not in self.target_root_cache:
@@ -470,11 +478,9 @@ class ProvisionRefsMatcher(TextPatternMatcher):
                         self.target_root_cache[frbr_uri] = (None, elements[0])
             else:
                 try:
-                    uri = FrbrUri.parse(frbr_uri)
                     # we normalise the FRBR URI to the work level
-                    doc = self.find_document_root(uri)
-                    if doc:
-                        self.target_root_cache[frbr_uri] = (frbr_uri, doc.doc.root)
+                    uri = FrbrUri.parse(frbr_uri)
+                    self.target_root_cache[frbr_uri] = (frbr_uri, self.find_document_root(uri))
                 except ValueError:
                     # bad FRBR URI
                     pass
@@ -482,7 +488,24 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         return self.target_root_cache[frbr_uri]
 
     def find_document_root(self, frbr_uri: FrbrUri) -> Union[Element, None]:
-        return self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()
+        doc = self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()
+        if doc:
+            return doc.doc.root
+
+    def find_parent_document_target(self) -> Union[Element, None]:
+        # find a document for this frbr uri, provided it has a parent
+        doc = (
+            self.document_queryset
+            .filter(work__frbr_uri=self.frbr_uri.work_uri(False), work__parent_work__isnull=False)
+            .only('work_id')
+            .first())
+        if doc:
+            # now get the parent
+            doc = self.document_queryset.filter(work_id=doc.work_id).latest_expression().first()
+            if doc:
+                return doc.work.frbr_uri, doc.doc.root
+
+        return None, None
 
 
 class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):

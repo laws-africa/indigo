@@ -50,12 +50,15 @@ grammar ProvisionRefs
                  / ((WS* comma)? WS* _or WS+) %and_or
                  / (WS* comma WS*) %and_or
 
-  target      <- of_this / of / thereof
+  target      <- of_this / of_the_act / thereof / of
 
-                 # of the Act
+                 # of this...
   of_this     <- comma? WS* (of_this_en / of_this_af) WS+ %of_this
 
                  # of the Act
+  of_the_act  <- comma? WS* (of_the_act_en) %of_the_act
+
+                 # of...
   of          <- comma? WS* (of_en / of_af) WS+ %of
 
                  # thereof
@@ -110,6 +113,8 @@ grammar ProvisionRefs
 
   of_this_en  <- `of this`
   of_this_af  <- `van hierdie`
+
+  of_the_act_en <- `of the Act` / `of the act`
 
   thereof_en  <- `thereof`
   thereof_af  <- `daarvan`

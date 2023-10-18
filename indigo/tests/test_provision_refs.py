@@ -1,4 +1,5 @@
 import unittest.util
+from unittest.mock import patch
 
 from django.test import TestCase
 from lxml import etree
@@ -975,6 +976,38 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_remote_of_the_act(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Active ref heading</heading>
+              <content>
+                <p>As given in section 26 of the Act.</p>
+                <p>As given in section 26 of the act.</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Active ref heading</heading>
+              <content>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> of the Act.</p>
+                <p>As given in section <ref href="/akn/za/act/2009/1/~sec_26">26</ref> of the act.</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        with patch.object(self.finder, 'find_parent_document_target') as mock:
+            mock.return_value = ("/akn/za/act/2009/1", self.target_doc.root)
+            self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_section_invalid(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
           <section eId="sec_7">
@@ -1389,12 +1422,12 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual(result.end, 18)
 
         result = parse_provision_refs("Section 2 of the Act")
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 13)
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 20)
 
         result = parse_provision_refs("Section 2, of the Act with junk")
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 14)
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 21)
 
     def test_target_truncated(self):
         # the remainder of the text is wrapped in another tag

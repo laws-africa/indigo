@@ -122,6 +122,12 @@ class TreeNode17(TreeNode):
         self.comma = elements[1]
 
 
+class TreeNode18(TreeNode):
+    def __init__(self, text, offset, elements):
+        super(TreeNode18, self).__init__(text, offset, elements)
+        self.of_the_act_en = elements[2]
+
+
 FAILURE = object()
 
 
@@ -1006,12 +1012,15 @@ class Grammar(object):
         address0 = self._read_of_this()
         if address0 is FAILURE:
             self._offset = index1
-            address0 = self._read_of()
+            address0 = self._read_of_the_act()
             if address0 is FAILURE:
                 self._offset = index1
                 address0 = self._read_thereof()
                 if address0 is FAILURE:
                     self._offset = index1
+                    address0 = self._read_of()
+                    if address0 is FAILURE:
+                        self._offset = index1
         self._cache['target'][index0] = (address0, self._offset)
         return address0
 
@@ -1088,6 +1097,57 @@ class Grammar(object):
             address0 = self._actions.of_this(self._input, index1, self._offset, elements0)
             self._offset = self._offset
         self._cache['of_this'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_the_act(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_the_act'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1, elements0 = self._offset, []
+        address1 = FAILURE
+        index2 = self._offset
+        address1 = self._read_comma()
+        if address1 is FAILURE:
+            address1 = TreeNode(self._input[index2:index2], index2, [])
+            self._offset = index2
+        if address1 is not FAILURE:
+            elements0.append(address1)
+            address2 = FAILURE
+            index3, elements1, address3 = self._offset, [], None
+            while True:
+                address3 = self._read_WS()
+                if address3 is not FAILURE:
+                    elements1.append(address3)
+                else:
+                    break
+            if len(elements1) >= 0:
+                address2 = TreeNode(self._input[index3:self._offset], index3, elements1)
+                self._offset = self._offset
+            else:
+                address2 = FAILURE
+            if address2 is not FAILURE:
+                elements0.append(address2)
+                address4 = FAILURE
+                address4 = self._read_of_the_act_en()
+                if address4 is not FAILURE:
+                    elements0.append(address4)
+                else:
+                    elements0 = None
+                    self._offset = index1
+            else:
+                elements0 = None
+                self._offset = index1
+        else:
+            elements0 = None
+            self._offset = index1
+        if elements0 is None:
+            address0 = FAILURE
+        else:
+            address0 = self._actions.of_the_act(self._input, index1, self._offset, elements0)
+            self._offset = self._offset
+        self._cache['of_the_act'][index0] = (address0, self._offset)
         return address0
 
     def _read_of(self):
@@ -2188,6 +2248,46 @@ class Grammar(object):
             if self._offset == self._failure:
                 self._expected.append(('ProvisionRefs::of_this_af', '`van hierdie`'))
         self._cache['of_this_af'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_the_act_en(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_the_act_en'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        chunk0, max0 = None, self._offset + 10
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of the Act'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+            self._offset = self._offset + 10
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_the_act_en', '`of the Act`'))
+        if address0 is FAILURE:
+            self._offset = index1
+            chunk1, max1 = None, self._offset + 10
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == 'of the act'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                self._offset = self._offset + 10
+            else:
+                address0 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('ProvisionRefs::of_the_act_en', '`of the act`'))
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['of_the_act_en'][index0] = (address0, self._offset)
         return address0
 
     def _read_thereof_en(self):

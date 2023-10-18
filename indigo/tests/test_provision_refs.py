@@ -1151,7 +1151,8 @@ class ProvisionRefsGrammarTest(TestCase):
                 "Section",
                 ProvisionRef("1", 8, 9)
             )
-        ], result['references'])
+        ], result.references)
+        self.assertEqual(result.end, 9)
 
         result = parse_provision_refs("paragraph (a)")
         self.assertEqual([
@@ -1159,7 +1160,7 @@ class ProvisionRefsGrammarTest(TestCase):
                 "paragraph",
                 ProvisionRef("(a)", 10, 13)
             )
-        ], result['references'])
+        ], result.references)
 
     def test_multiple_main_numbers(self):
         result = parse_provision_refs("Section 1, 32 and 33")
@@ -1176,7 +1177,8 @@ class ProvisionRefsGrammarTest(TestCase):
                 "Section",
                 ProvisionRef("33", 18, 20)
             )
-        ], result['references'])
+        ], result.references)
+        self.assertEqual(result.end, 20)
 
         result = parse_provision_refs("paragraph (a) and subparagraph (c)")
         self.assertEqual([
@@ -1188,7 +1190,7 @@ class ProvisionRefsGrammarTest(TestCase):
                 "subparagraph",
                 ProvisionRef("(c)", 31, 34)
             )
-        ], result['references'])
+        ], result.references)
 
     def test_multiple_main(self):
         result = parse_provision_refs("Section 1 and section 2, section 3 and chapter 4")
@@ -1209,7 +1211,7 @@ class ProvisionRefsGrammarTest(TestCase):
                 "chapter",
                 ProvisionRef("4", 47, 48)
             )
-        ], result['references'])
+        ], result.references)
 
     def test_mixed(self):
         result = parse_provision_refs("Section 1.2(1)(a),(c) to (e), (f)(ii) and (2), and (3)(g),(h) and section 32(a)")
@@ -1239,8 +1241,8 @@ class ProvisionRefsGrammarTest(TestCase):
                     ProvisionRef("(a)", 76, 79),
                 ),
             )
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
     def test_mixed_af(self):
         result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdelings 32(a)")
@@ -1268,8 +1270,8 @@ class ProvisionRefsGrammarTest(TestCase):
                     ProvisionRef("(a)", 77, 80),
                 ),
             )
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
     def test_multiple_mains(self):
         result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a)")
@@ -1277,30 +1279,30 @@ class ProvisionRefsGrammarTest(TestCase):
             MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
             MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
             MainProvisionRef('section', ProvisionRef('32', 39, 41, None, ProvisionRef('(a)', 41, 44)))
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
         result = parse_provision_refs("Sections 26 and 31")
         self.assertEqual([
             MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
             MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
         result = parse_provision_refs("Sections 26 and 31.")
         self.assertEqual([
             MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
             MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
     def test_multiple_mains_range(self):
         result = parse_provision_refs("Sections 26 to 31")
         self.assertEqual([
             MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
             MainProvisionRef('Sections', ProvisionRef('31', 15, 17)),
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
         result = parse_provision_refs("Sections 26, 27 and 28 to 31")
         self.assertEqual([
@@ -1308,8 +1310,8 @@ class ProvisionRefsGrammarTest(TestCase):
             MainProvisionRef('Sections', ProvisionRef('27', 13, 15)),
             MainProvisionRef('Sections', ProvisionRef('28', 20, 22)),
             MainProvisionRef('Sections', ProvisionRef('31', 26, 28)),
-        ], result['references'])
-        self.assertIsNone(result["target"])
+        ], result.references)
+        self.assertIsNone(result.target)
 
     def test_multiple_mains_target(self):
         result = parse_provision_refs("Sections 2(1), section 3(b) and section 32(a) of another Act")
@@ -1317,34 +1319,44 @@ class ProvisionRefsGrammarTest(TestCase):
             MainProvisionRef('Sections', ProvisionRef('2', 9, 10, None, ProvisionRef('(1)', 10, 13))),
             MainProvisionRef('section', ProvisionRef('3', 23, 24, None, ProvisionRef('(b)', 24, 27))),
             MainProvisionRef('section', ProvisionRef('32', 40, 42, None, ProvisionRef('(a)', 42, 45)))
-        ], result['references'])
-        self.assertEqual("of", result["target"])
+        ], result.references)
+        self.assertEqual("of", result.target)
+        self.assertEqual(result.end, 49)
 
     def test_target(self):
         result = parse_provision_refs("Section 2 of this Act")
-        self.assertEqual("this", result["target"])
+        self.assertEqual("this", result.target)
+        self.assertEqual(result.end, 18)
 
         result = parse_provision_refs("Section 2, of this Act")
-        self.assertEqual("this", result["target"])
+        self.assertEqual("this", result.target)
+        self.assertEqual(result.end, 19)
 
         result = parse_provision_refs("Section 2 thereof")
-        self.assertEqual("thereof", result["target"])
+        self.assertEqual("thereof", result.target)
+        self.assertEqual(result.end, 17)
 
         result = parse_provision_refs("Section 2, thereof and some")
-        self.assertEqual("thereof", result["target"])
+        self.assertEqual("thereof", result.target)
+        self.assertEqual(result.end, 18)
 
         result = parse_provision_refs("Section 2 of the Act")
-        self.assertEqual("of", result["target"])
+        self.assertEqual("of", result.target)
+        self.assertEqual(result.end, 13)
 
         result = parse_provision_refs("Section 2, of the Act with junk")
-        self.assertEqual("of", result["target"])
+        self.assertEqual("of", result.target)
+        self.assertEqual(result.end, 14)
 
     def test_target_af(self):
         result = parse_provision_refs("Afdeling 2 van hierdie Wet")
-        self.assertEqual("this", result["target"])
+        self.assertEqual("this", result.target)
+        self.assertEqual(result.end, 23)
 
         result = parse_provision_refs("Afdeling 2 daarvan")
-        self.assertEqual("thereof", result["target"])
+        self.assertEqual("thereof", result.target)
+        self.assertEqual(result.end, 18)
 
         result = parse_provision_refs("Afdeling 2 van die Wet met kak")
-        self.assertEqual("of", result["target"])
+        self.assertEqual("of", result.target)
+        self.assertEqual(result.end, 15)

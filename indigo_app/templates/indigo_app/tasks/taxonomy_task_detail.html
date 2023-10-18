@@ -1,7 +1,7 @@
 {% extends "indigo_app/tasks/tabbed_layout.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Projects" %}{% endblock %}
+{% block title %}{% trans "Topics" %}{% endblock %}
 
 {% block content %}
   <div class="container-fluid mt-3 mb-5">
@@ -30,7 +30,7 @@
                 <div class="row mt-2">
                   <div class="col-8">
                     <div class="progress bg-light">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ project.pct_done }}%"></div>
+                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ topic.pct_done }}%"></div>
                     </div>
                   </div>
                   <div class="col text-muted">

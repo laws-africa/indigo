@@ -87,8 +87,8 @@ urlpatterns = [
     path('documents/<int:doc_id>/popup', documents.DocumentPopupView.as_view(), name='document_popup'),
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),
-    path('tasks/project/', tasks.TaxonomyTopicTaskListView.as_view(), name='taxonomy_task_list'),
-    path('tasks/project/<slug:slug>/', tasks.TaxonomyTopicTaskDetailView.as_view(), name='taxonomy_task_detail'),
+    path('tasks/topic/', tasks.TaxonomyTopicTaskListView.as_view(), name='taxonomy_task_list'),
+    path('tasks/topic/<slug:slug>/', tasks.TaxonomyTopicTaskDetailView.as_view(), name='taxonomy_task_detail'),
     path('tasks/available/', tasks.AvailableTasksView.as_view(), name='available_tasks'),
     path('tasks/priority/', tasks.AvailableTasksView.as_view(priority=True, tab='priority_tasks'), name='priority_tasks'),
 

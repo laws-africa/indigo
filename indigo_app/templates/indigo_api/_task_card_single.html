@@ -34,13 +34,13 @@
                 {% trans 'Approve' %}
               </button>
             {% endif %}
-          {% if workflow.pk %}
-            <button type="submit"
-                    class="dropdown-item"
-                    formaction="{% url 'workflow_remove_task' place=task.place.place_code pk=workflow.pk task_pk=task.pk %}"
-                    data-confirm="{% trans 'Are you sure you want to remove this task?' %}">
-              {% trans 'Remove from project' %}
-            </button>
+            {% if workflow.pk %}
+              <button type="submit"
+                      class="dropdown-item"
+                      formaction="{% url 'workflow_remove_task' place=task.place.place_code pk=workflow.pk task_pk=task.pk %}"
+                      data-confirm="{% trans 'Are you sure you want to remove this task?' %}">
+                {% trans 'Remove from project' %}
+              </button>
             {% endif %}
           </div>
       </div>

@@ -13,6 +13,7 @@ from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
 from indigo.analysis.refs.provision_refs import parse, ParseError
+from indigo.xmlutils import closest
 
 log = logging.getLogger(__name__)
 
@@ -302,34 +303,13 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         # There is at least one match in this node's text (or tail). If there are multiple, we must resolve them
         # from right to left, to ensure that relative provisions are linked correctly. So, we find all non-overlapping
         # full matches (using the grammar) and process them from right to left.
-        parses = self.all_grammar_parses(match)
+        parses = self.parse_all_refs(match)
         result = None
         for m, details in reversed(parses):
             res = self.handle_node_refs(m, details, node, in_tail)
             if result is None and res is not None:
                 result = res
         return result
-
-    def all_grammar_parses(self, match) -> List[Tuple[re.Match, ParseResult]]:
-        """Find all the starting points and use the grammar to find non-overlapping references."""
-        parses = []
-        candidates = list(self.pattern_re.finditer(match.string))
-        for candidate in candidates:
-            # we want non-overlapping matches, so skip this candidate if it overlaps with the previous one
-            if parses:
-                prev_start = parses[-1][0].start()
-                prev_end = prev_start + parses[-1][1].end
-                if prev_start <= candidate.start() < prev_end:
-                    continue
-
-            s = match.string[candidate.start():]
-            try:
-                # parse the text into a list of refs using our grammar
-                parses.append((candidate, self.parse_refs(s)))
-            except ParseError as e:
-                log.info(f"Failed to parse refs for: {s}", exc_info=e)
-
-        return parses
 
     def handle_node_refs(self, match, parse_result: ParseResult, node, in_tail) -> Union[Element, None]:
         # work out if the target document is this one, or another one
@@ -386,6 +366,27 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             wrap_text(node, in_tail, lambda t: marker, start, end)
             return marker
 
+    def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
+        """Find all the starting points and use the grammar to find non-overlapping references."""
+        parses = []
+        candidates = list(self.pattern_re.finditer(match.string))
+        for candidate in candidates:
+            # we want non-overlapping matches, so skip this candidate if it overlaps with the previous one
+            if parses:
+                prev_start = parses[-1][0].start()
+                prev_end = prev_start + parses[-1][1].end
+                if prev_start <= candidate.start() < prev_end:
+                    continue
+
+            s = match.string[candidate.start():]
+            try:
+                # parse the text into a list of refs using our grammar
+                parses.append((candidate, self.parse_refs(s)))
+            except ParseError as e:
+                log.info(f"Failed to parse refs for: {s}", exc_info=e)
+
+        return parses
+
     def parse_refs(self, text: str) -> ParseResult:
         return parse_provision_refs(text)
 
@@ -403,33 +404,38 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             # refs are to the local node, and we may look above that if necessary
             return None, node
 
-        if target == "thereof":
-            # look backwards
-            if in_tail:
-                # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
-                prev = node
+        def candidates():
+            # this yields candidate notes to look at, either forwards or backwards, until the first useful one is found
+            # or we run out
+            if target == "thereof":
+                # look backwards
+                if in_tail:
+                    # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
+                    prev = node
+                else:
+                    # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
+                    prev = node.getprevious()
+                while prev is not None:
+                    yield prev
+                    prev = prev.getprevious()
             else:
-                # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
-                prev = node.getprevious()
-            while prev is not None:
-                if prev.tag == self.marker_tag and prev.get('href'):
-                    frbr_uri = prev.get('href')
-                    return self.resolve_target(node, frbr_uri)
-                prev = prev.getprevious()
-            return None, None
+                # it's 'of', look forwards
+                if in_tail:
+                    # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    nxt = node.getnext()
+                else:
+                    # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    nxt = next(node.iterchildren(), None)
+                while nxt is not None:
+                    yield nxt
+                    nxt = nxt.getnext()
 
-        # it's 'of', look forwards
-        if in_tail:
-            # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
-            nxt = node.getnext()
-        else:
-            # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
-            nxt = next(node.iterchildren(), None)
-        while nxt is not None:
-            if nxt.tag == self.marker_tag and nxt.get('href'):
-                frbr_uri = nxt.get('href')
-                return self.resolve_target(node, frbr_uri)
-            nxt = nxt.getnext()
+        for el in candidates():
+            # look for the first marker tag (usually <ref>) or <term>
+            if el.tag == self.marker_tag and el.get('href'):
+                return self.resolve_target(node, el.get('href'))
+            elif self.ns and el.tag == "{%s}%s" % (self.ns, "term") and el.get('refersTo'):
+                return self.resolve_target(node, el.get('refersTo'))
 
         return None, None
 
@@ -447,9 +453,21 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
             # is the URI a local one?
             if frbr_uri.startswith('#'):
-                elements = node.xpath(f'//a:*[@eId="{frbr_uri[1:]}"]', namespaces={'a': node.nsmap[None]})
-                if elements:
-                    self.target_root_cache[frbr_uri] = (None, elements[0])
+                if frbr_uri.startswith('#term-'):
+                    # look for a ref in the definition of the term
+                    elements = node.xpath(f'//a:def[@refersTo="{frbr_uri}"]', namespaces={'a': node.nsmap[None]})
+                    if elements:
+                        # find the element that wraps the definition
+                        defn = closest(elements[0].getparent(), lambda e: e.get('refersTo', '') == frbr_uri)
+                        if defn is not None:
+                            # find the first absolute ref in the definition
+                            elements = defn.xpath('.//a:ref[starts-with(@href, "/akn")]', namespaces={'a': node.nsmap[None]})
+                            if elements:
+                                self.target_root_cache[frbr_uri] = self.resolve_target(None, elements[0].get('href'))
+                else:
+                    elements = node.xpath(f'//a:*[@eId="{frbr_uri[1:]}"]', namespaces={'a': node.nsmap[None]})
+                    if elements:
+                        self.target_root_cache[frbr_uri] = (None, elements[0])
             else:
                 try:
                     uri = FrbrUri.parse(frbr_uri)

@@ -929,6 +929,52 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_remote_term(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_1">
+              <num>1.</num>
+              <heading>Section 1</heading>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+                <content>
+                  <p refersTo="#term-the_Act">“<def refersTo="#term-the_Act">the Act</def>” means the Civil Union Act, 2006 (<ref href="/akn/za/act/2009/1">Act No. 1 of 2009</ref>).</p>
+                </content>
+              </subsection>
+              <subsection eId="sec_1__subsec_4">
+                <num>(4)</num>
+                <content>
+                  <p>Referring to section 26(a) of <term refersTo="#term-the_Act">the Act</term>.</p>
+                </content>
+              </subsection>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_1">
+              <num>1.</num>
+              <heading>Section 1</heading>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+                <content>
+                  <p refersTo="#term-the_Act">“<def refersTo="#term-the_Act">the Act</def>” means the Civil Union Act, 2006 (<ref href="/akn/za/act/2009/1">Act No. 1 of 2009</ref>).</p>
+                </content>
+              </subsection>
+              <subsection eId="sec_1__subsec_4">
+                <num>(4)</num>
+                <content>
+                  <p>Referring to section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a">26(a)</ref> of <term refersTo="#term-the_Act">the Act</term>.</p>
+                </content>
+              </subsection>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_section_invalid(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
           <section eId="sec_7">
@@ -1349,6 +1395,12 @@ class ProvisionRefsGrammarTest(TestCase):
         result = parse_provision_refs("Section 2, of the Act with junk")
         self.assertEqual("of", result.target)
         self.assertEqual(result.end, 14)
+
+    def test_target_truncated(self):
+        # the remainder of the text is wrapped in another tag
+        result = parse_provision_refs("section 26(a) of ")
+        self.assertEqual("of", result.target)
+        self.assertEqual(result.end, 17)
 
     def test_target_af(self):
         result = parse_provision_refs("Afdeling 2 van hierdie Wet")

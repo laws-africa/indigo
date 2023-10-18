@@ -54,6 +54,85 @@ class MainProvisionRef:
     sub_refs: List[ProvisionRef] = None
 
 
+@dataclass
+class ParseResult:
+    references: List[MainProvisionRef]
+    target: str
+    # end is the offset of the meaningful text that was parsed, up to the end of the target or the last reference
+    end: int
+
+
+def parse_provision_refs(text):
+    class Actions:
+        def root(self, input, start, end, elements):
+            refs = elements[0]
+            for main_refs in elements[1].elements:
+                refs.extend(main_refs.references)
+            target = elements[2] if not hasattr(elements[2], 'elements') else None
+            return ParseResult(refs, target, elements[3].offset)
+
+        def references(self, input, start, end, elements):
+            refs = [elements[2]]
+            refs.extend(e.main_ref for e in elements[3].elements)
+            for r in refs:
+                r.name = elements[0].text
+            return refs
+
+        def main_ref(self, input, start, end, elements):
+            ref = elements[0]
+            sub_refs = elements[1].sub_refs if elements[1].elements else None
+            if sub_refs:
+                ref.child = sub_refs[0]
+                sub_refs = sub_refs[1:]
+            return MainProvisionRef("", ref, sub_refs or None)
+
+        def main_num(self, input, start, end, elements):
+            text = input[start:end]
+            # strip right trailing dots
+            if text.endswith("."):
+                stripped = text[:-1]
+                end = end - (len(text) - len(stripped))
+                text = stripped
+            return ProvisionRef(text, start, end)
+
+        def sub_refs(self, input, start, end, elements):
+            refs = [elements[0]]
+            for sep, ref in elements[1].elements:
+                # the first sub ref is joined with "and", "to" etc.
+                ref.separator = sep
+                refs.append(ref)
+            return refs
+
+        def sub_ref(self, input, start, end, elements):
+            first = elements[0]
+            # add the rest as children
+            curr = first
+            for item in elements[1].elements:
+                curr.child = item.num
+                curr = item.num
+            return first
+
+        def num(self, input, start, end, elements):
+            return ProvisionRef(input[start:end], start, end)
+
+        def range(self, input, start, end, elements):
+            return "range"
+
+        def and_or(self, input, start, end, elements):
+            return "and_or"
+
+        def of_this(self, input, start, end, elements):
+            return "this"
+
+        def of(self, input, start, end, elements):
+            return "of"
+
+        def thereof(self, input, start, end, elements):
+            return "thereof"
+
+    return parse(text, Actions())
+
+
 class ProvisionRefsResolver:
     """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
 
@@ -219,34 +298,40 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         super().setup(*args, **kwargs)
         self.document_queryset = Document.objects.undeleted()
 
-    def all_grammar_matches(self, match) -> List[Tuple[re.Match, 'ParseResult']]:
-        """Find all the starting points and use the grammar to find non-overlapping references."""
-        matches = []
-        candidates = list(self.pattern_re.finditer(match.string))
-        for candidate in candidates:
-            # parse the text into a list of refs using our grammar
-            end = matches[-1][1].end if matches else -1
-            s = match.string[candidate.start():end]
-            try:
-                matches.append((candidate, self.parse_refs(s)))
-            except ParseError as e:
-                log.info(f"Failed to parse refs for: {s}", exc_info=e)
-
-        return matches
-
     def handle_node_match(self, node, match, in_tail):
         # There is at least one match in this node's text (or tail). If there are multiple, we must resolve them
         # from right to left, to ensure that relative provisions are linked correctly. So, we find all non-overlapping
         # full matches (using the grammar) and process them from right to left.
-        matches = self.all_grammar_matches(match)
+        parses = self.all_grammar_parses(match)
         result = None
-        for m, details in reversed(matches):
+        for m, details in reversed(parses):
             res = self.handle_node_refs(m, details, node, in_tail)
             if result is None and res is not None:
                 result = res
         return result
 
-    def handle_node_refs(self, match, parse_result: 'ParseResult', node, in_tail) -> Union[Element, None]:
+    def all_grammar_parses(self, match) -> List[Tuple[re.Match, ParseResult]]:
+        """Find all the starting points and use the grammar to find non-overlapping references."""
+        parses = []
+        candidates = list(self.pattern_re.finditer(match.string))
+        for candidate in candidates:
+            # we want non-overlapping matches, so skip this candidate if it overlaps with the previous one
+            if parses:
+                prev_start = parses[-1][0].start()
+                prev_end = prev_start + parses[-1][1].end
+                if prev_start <= candidate.start() < prev_end:
+                    continue
+
+            s = match.string[candidate.start():]
+            try:
+                # parse the text into a list of refs using our grammar
+                parses.append((candidate, self.parse_refs(s)))
+            except ParseError as e:
+                log.info(f"Failed to parse refs for: {s}", exc_info=e)
+
+        return parses
+
+    def handle_node_refs(self, match, parse_result: ParseResult, node, in_tail) -> Union[Element, None]:
         # work out if the target document is this one, or another one
         target_frbr_uri, target_root = self.get_target(node, match, in_tail, parse_result.target)
         if target_root is None:
@@ -301,12 +386,13 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             wrap_text(node, in_tail, lambda t: marker, start, end)
             return marker
 
-    def parse_refs(self, text: str) -> 'ParseResult':
+    def parse_refs(self, text: str) -> ParseResult:
         return parse_provision_refs(text)
 
     def get_target(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
-        appropriate root XML element of the document to use to resolve the references.
+        appropriate root XML element of the document to use to resolve the references. If the target element
+        is local to the current node, the returned target_frbr_uri is None.
 
         Remote targets look something like:
 
@@ -328,7 +414,7 @@ class ProvisionRefsMatcher(TextPatternMatcher):
             while prev is not None:
                 if prev.tag == self.marker_tag and prev.get('href'):
                     frbr_uri = prev.get('href')
-                    return frbr_uri, self.get_target_root(frbr_uri)
+                    return self.resolve_target(node, frbr_uri)
                 prev = prev.getprevious()
             return None, None
 
@@ -342,29 +428,40 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         while nxt is not None:
             if nxt.tag == self.marker_tag and nxt.get('href'):
                 frbr_uri = nxt.get('href')
-                return frbr_uri, self.get_target_root(frbr_uri)
+                return self.resolve_target(node, frbr_uri)
             nxt = nxt.getnext()
 
         return None, None
 
-    def get_target_root(self, frbr_uri: str) -> Union[Element, None]:
-        """Return the root element of the document for the given frbr_uri."""
-        # check the cache
+    def resolve_target(self, node: Element, frbr_uri: str) -> Tuple[Union[str, None], Union[Element, None]]:
+        """Return the target FRBR URI (if not local) and an appropriate root element for the given frbr_uri.
+
+        The frbr_uri may be a local one (eg. "#sec_2") or it may be a full FRBR URI.
+        """
         if self.target_root_cache is None:
             self.target_root_cache = {}
-        elif frbr_uri in self.target_root_cache:
-            return self.target_root_cache[frbr_uri]
 
-        try:
-            uri = FrbrUri.parse(frbr_uri)
-        except ValueError:
-            return None
+        if frbr_uri not in self.target_root_cache:
+            # set default
+            self.target_root_cache[frbr_uri] = (None, None)
 
-        # we normalise the FRBR URI to the work level
-        doc = self.find_document_root(uri)
-        if doc:
-            self.target_root_cache[frbr_uri] = root = doc.doc.root
-            return root
+            # is the URI a local one?
+            if frbr_uri.startswith('#'):
+                elements = node.xpath(f'//a:*[@eId="{frbr_uri[1:]}"]', namespaces={'a': node.nsmap[None]})
+                if elements:
+                    self.target_root_cache[frbr_uri] = (None, elements[0])
+            else:
+                try:
+                    uri = FrbrUri.parse(frbr_uri)
+                    # we normalise the FRBR URI to the work level
+                    doc = self.find_document_root(uri)
+                    if doc:
+                        self.target_root_cache[frbr_uri] = (frbr_uri, doc.doc.root)
+                except ValueError:
+                    # bad FRBR URI
+                    pass
+
+        return self.target_root_cache[frbr_uri]
 
     def find_document_root(self, frbr_uri: FrbrUri) -> Union[Element, None]:
         return self.document_queryset.filter(work__frbr_uri=frbr_uri.work_uri(False)).latest_expression().first()
@@ -392,85 +489,6 @@ class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
 class ProvisionRefsFinderAFR(BaseProvisionRefsFinder):
     # country, language, locality
     locale = (None, 'afr', None)
-
-
-@dataclass
-class ParseResult:
-    references: List[MainProvisionRef]
-    target: str
-    # end is the offset of the meaningful text that was parsed, up to the end of the target or the last reference
-    end: int
-
-
-def parse_provision_refs(text):
-    class Actions:
-        def root(self, input, start, end, elements):
-            refs = elements[0]
-            for main_refs in elements[1].elements:
-                refs.extend(main_refs.references)
-            target = elements[2] if not hasattr(elements[2], 'elements') else None
-            return ParseResult(refs, target, elements[3].offset)
-
-        def references(self, input, start, end, elements):
-            refs = [elements[2]]
-            refs.extend(e.main_ref for e in elements[3].elements)
-            for r in refs:
-                r.name = elements[0].text
-            return refs
-
-        def main_ref(self, input, start, end, elements):
-            ref = elements[0]
-            sub_refs = elements[1].sub_refs if elements[1].elements else None
-            if sub_refs:
-                ref.child = sub_refs[0]
-                sub_refs = sub_refs[1:]
-            return MainProvisionRef("", ref, sub_refs or None)
-
-        def main_num(self, input, start, end, elements):
-            text = input[start:end]
-            # strip right trailing dots
-            if text.endswith("."):
-                stripped = text[:-1]
-                end = end - (len(text) - len(stripped))
-                text = stripped
-            return ProvisionRef(text, start, end)
-
-        def sub_refs(self, input, start, end, elements):
-            refs = [elements[0]]
-            for sep, ref in elements[1].elements:
-                # the first sub ref is joined with "and", "to" etc.
-                ref.separator = sep
-                refs.append(ref)
-            return refs
-
-        def sub_ref(self, input, start, end, elements):
-            first = elements[0]
-            # add the rest as children
-            curr = first
-            for item in elements[1].elements:
-                curr.child = item.num
-                curr = item.num
-            return first
-
-        def num(self, input, start, end, elements):
-            return ProvisionRef(input[start:end], start, end)
-
-        def range(self, input, start, end, elements):
-            return "range"
-
-        def and_or(self, input, start, end, elements):
-            return "and_or"
-
-        def of_this(self, input, start, end, elements):
-            return "this"
-
-        def of(self, input, start, end, elements):
-            return "of"
-
-        def thereof(self, input, start, end, elements):
-            return "thereof"
-
-    return parse(text, Actions())
 
 
 def bfs_upward_search(root, names, dead_ends, above_root):

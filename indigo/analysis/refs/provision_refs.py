@@ -2038,19 +2038,7 @@ class Grammar(object):
         if cached:
             self._offset = cached[1]
             return cached[0]
-        chunk0, max0 = None, self._offset + 2
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'of'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
-            self._offset = self._offset + 2
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::or_af', '`of`'))
+        address0 = self._read_or_en()
         self._cache['or_af'][index0] = (address0, self._offset)
         return address0
 

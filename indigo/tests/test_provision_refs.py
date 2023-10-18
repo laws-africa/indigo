@@ -185,7 +185,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
         """))
 
         # inject the remote target document fixture
-        self.finder.target_root_cache = {"/akn/za/act/2009/1": self.target_doc.root}
+        self.finder.target_root_cache = {"/akn/za/act/2009/1": ("/akn/za/act/2009/1", self.target_doc.root)}
 
     def test_local_sections(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
@@ -577,9 +577,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    @unittest.expectedFailure
     def test_local_relative(self):
-        # TODO: this doesn't pass yet, because we don't do local relative resolution correctly
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_1">
               <num>1.</num>
@@ -602,8 +600,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <subsection eId="sec_1__subsec_4">
                 <num>(4)</num>
                 <content>
-                  <p>referred to in sub-section (1), (2) or (3)(b), to the extent that...</p>
                   <p>For the purposes of subsection (1)(b) of section 2 the intention is that</p>
+                  <p>For the purposes of subsection (3)(b) of section 2 the intention is that</p>
+                  <p>The particulars of subsection (3)(b) of section 2 and paragraph (a) of subsection (3) are</p>
+                  <p>referred to in sub-section (1), (2) or (3)(b), to the extent that...</p>
                 </content>
               </subsection>
             </section>
@@ -649,8 +649,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <subsection eId="sec_1__subsec_4">
                 <num>(4)</num>
                 <content>
+                  <p>For the purposes of subsection <ref href="#sec_2__subsec_1">(1)</ref>(b) of section <ref href="#sec_2">2</ref> the intention is that</p>
+                  <p>For the purposes of subsection <ref href="#sec_2__subsec_3__para_b">(3)(b)</ref> of section <ref href="#sec_2">2</ref> the intention is that</p>
+                  <p>The particulars of subsection <ref href="#sec_2__subsec_3__para_b">(3)(b)</ref> of section <ref href="#sec_2">2</ref> and paragraph <ref href="#sec_1__subsec_3__para_a">(a)</ref> of subsection <ref href="#sec_1__subsec_3">(3)</ref> are</p>
                   <p>referred to in sub-section <ref href="#sec_1__subsec_1">(1)</ref>, <ref href="#sec_1__subsec_2">(2)</ref> or <ref href="#sec_1__subsec_3__para_b">(3)(b)</ref>, to the extent that...</p>
-                  <p>For the purposes of subsection <ref href="#sec_2__subsec_1__para_b">(1)(b)</ref> of section <ref href="#sec_2">2</ref> the intention is that</p>
                 </content>
               </subsection>
             </section>

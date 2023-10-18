@@ -97,7 +97,8 @@ grammar ProvisionRefs
 
   _or         <- or_en / or_af
   or_en       <- `or`
-  or_af       <- `of`
+  # HACK: Afrikaans 'of' for 'or' not supported because it clashes with English 'of'
+  or_af       <- or_en # `of`
 
                  # note that "tot" must come before "to" because the latter is a substring of the former
   to          <- to_af / to_en

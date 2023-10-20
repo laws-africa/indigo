@@ -497,11 +497,11 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         doc = (
             self.document_queryset
             .filter(work__frbr_uri=self.frbr_uri.work_uri(False), work__parent_work__isnull=False)
-            .only('work_id')
+            .only('work__parent_work_id')
             .first())
         if doc:
             # now get the parent
-            doc = self.document_queryset.filter(work_id=doc.work_id).latest_expression().first()
+            doc = self.document_queryset.filter(work_id=doc.work.parent_work_id).latest_expression().first()
             if doc:
                 return doc.work.frbr_uri, doc.doc.root
 
@@ -515,8 +515,7 @@ class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
         root = etree.fromstring(document.content)
-        self.setup(root)
-        self.markup_xml_matches(document.frbr_uri, root)
+        self.markup_xml_matches(document.expression_uri, root)
         document.content = etree.tostring(root, encoding='unicode')
 
 

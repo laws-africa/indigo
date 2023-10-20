@@ -1,3 +1,4 @@
+import dataclasses
 import re
 from dataclasses import dataclass
 from typing import List, Union, Tuple
@@ -36,6 +37,9 @@ class ProvisionRef:
     element: Union[Element, None] = None
     # eId of the matched element
     eId: Union[str, None] = None
+
+    def as_dict(self):
+        return dataclasses.asdict(self)
 
 
 @dataclass
@@ -298,7 +302,8 @@ class ProvisionRefsMatcher(CitationMatcher):
     def setup(self, *args, **kwargs):
         from indigo_api.models import Document
         super().setup(*args, **kwargs)
-        self.document_queryset = Document.objects.undeleted()
+        self.document_queryset = Document.objects.undeleted().published()
+        self.matches = []
 
     def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
         """Find all the starting points and use the grammar to find non-overlapping references."""
@@ -318,6 +323,11 @@ class ProvisionRefsMatcher(CitationMatcher):
                 parses.append((candidate, self.parse_refs(s)))
             except ParseError as e:
                 log.info(f"Failed to parse refs for: {s}", exc_info=e)
+
+        # store matches for debugging purposes
+        for _, pr in parses:
+            if pr:
+                self.matches.extend(m.ref for m in pr.references)
 
         return parses
 
@@ -423,7 +433,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                 if eId:
                     self.citations.append(
                         ExtractedCitation(
-                            ref.text,
+                            match.string[ref.start_pos:last_ref.end_pos],
                             ref.start_pos,
                             last_ref.end_pos,
                             href + eId,
@@ -521,12 +531,12 @@ class ProvisionRefsMatcher(CitationMatcher):
             # it's 'of', look forwards
             # find the first citation after the end of this match
             for c in self.citations:
-                if c.start_pos > match.end():
+                if c.start > match.end():
                     frbr_uri = c.href
                     break
 
         if frbr_uri:
-            return frbr_uri, self.resolve_target_uri(None, frbr_uri)
+            return self.resolve_target_uri(None, frbr_uri)
 
         return None, None
 

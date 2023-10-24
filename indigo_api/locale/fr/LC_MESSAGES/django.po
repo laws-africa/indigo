@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 10:13+0200\n"
-"PO-Revision-Date: 2023-08-21 11:30\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
+"PO-Revision-Date: 2023-10-24 07:17\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -65,20 +65,28 @@ msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour examen ?"
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour révision au nom de %s?"
 
-#: models/works.py:103
+#: models/works.py:102
 msgid "taxonomy topic"
 msgstr "sujet de taxonomie"
 
-#: models/works.py:104
+#: models/works.py:103
 msgid "taxonomy topics"
 msgstr "sujets de taxonomie"
 
-#: models/works.py:478
+#: models/works.py:414
+msgid "There are multiple commencements"
+msgstr "Il y a plusieurs commencements"
+
+#: models/works.py:417
+msgid "Not commenced"
+msgstr "Non commencé"
+
+#: models/works.py:507
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr "Localité introuvable pour ce pays : %s"
 
-#: models/works.py:488
+#: models/works.py:517
 msgid "Invalid FRBR URI"
 msgstr "FRBR URI invalide"
 
@@ -150,83 +158,78 @@ msgstr "Acceptée %(date)s"
 msgid "Table of Contents"
 msgstr "Table des matières"
 
-#: templatetags/indigo.py:67
+#: timeline.py:57
+#, python-format
+msgid "Note: %(note)s"
+msgstr "Remarque : %(note)s"
+
+#: timeline.py:73
+#, python-format
+msgid "Commenced on %(date)s by"
+msgstr "Commencé le %(date)s par"
+
+#: timeline.py:77
+#, python-format
+msgid "Commenced on %(date)s"
+msgstr "Commencé le %(date)s"
+
+#: timeline.py:81
+msgid "Commenced by"
+msgstr "Commencé par"
+
+#: timeline.py:85
+msgid "Commenced"
+msgstr "Commencé"
+
+#: timeline.py:107
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
 msgstr "Publié en %(nom)s %(numero)s sur %(date)s"
 
-#: templatetags/indigo.py:73
+#: timeline.py:113
 #, python-format
 msgid "Published in %(name)s on %(date)s"
 msgstr "Publié dans %(nom)s le %(date)s"
 
-#: templatetags/indigo.py:78
+#: timeline.py:118
 #, python-format
 msgid "Published on %(date)s"
 msgstr "Publié le %(date)s"
 
-#: templatetags/indigo.py:83
+#: timeline.py:124
 #, python-format
 msgid "Published in %(name)s %(number)s"
 msgstr "Publié dans %(name)s %(number)s"
 
-#: templatetags/indigo.py:89
+#: timeline.py:131
 #, python-format
 msgid "Published in %(name)s"
 msgstr "Publié dans %(name)s"
 
-#: templatetags/indigo.py:93
+#: timeline.py:136
 msgid "Published"
 msgstr "Publié"
 
-#: templatetags/indigo.py:112
-msgid "There are multiple commencements"
-msgstr "Il y a plusieurs commencements"
+#: timeline.py:179
+msgid "Assented to"
+msgstr "Consenti à"
 
-#: templatetags/indigo.py:115
-msgid "Not commenced"
-msgstr "Non commencé"
+#: timeline.py:187
+msgid "Amended by"
+msgstr "Modifié par"
 
-#: templatetags/indigo.py:134
+#: timeline.py:197
 #, python-format
-msgid "Note: %(commencement_note)s"
-msgstr "Remarque : %(commencement_note)s"
+msgid "Commencement note: %(note)s"
+msgstr "Note de début : %(note)s"
 
-#: templatetags/indigo.py:148
-#, python-format
-msgid "Commenced in full on %(date)s by"
-msgstr "Commencé en toutes lettres le %(date)s par"
+#: timeline.py:209
+msgid "Consolidation"
+msgstr "Consolidation"
 
-#: templatetags/indigo.py:149
-#, python-format
-msgid "Commenced in part on %(date)s by"
-msgstr "Commencé en partie le %(date)s par"
-
-#: templatetags/indigo.py:153
-#, python-format
-msgid "Commenced in full on %(date)s"
-msgstr "Commencé en entier le %(date)s"
-
-#: templatetags/indigo.py:154
-#, python-format
-msgid "Commenced in part on %(date)s"
-msgstr "Commencé en partie le %(date)s"
-
-#: templatetags/indigo.py:159
-msgid "Commenced in full by"
-msgstr "Commencé en entier par"
-
-#: templatetags/indigo.py:160
-msgid "Commenced in part by"
-msgstr "Commencé en partie par"
-
-#: templatetags/indigo.py:164
-msgid "Commenced in full"
-msgstr "Commencé en entier"
-
-#: templatetags/indigo.py:165
-msgid "Commenced in part"
-msgstr "Commencé en partie"
+#: timeline.py:213
+msgid "Repealed by"
+msgstr "Abrogé par"
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:06+0200\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
 "PO-Revision-Date: 2023-05-02 15:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -71,285 +71,457 @@ msgstr "Chapitre %(cap)s"
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s sur %(year)s"
 
-#: bulk_creator.py:281
+#: bulk_creator.py:294
 #, python-format
 msgid "Error talking to Google Sheets: %s"
 msgstr "Erreur de communication avec Google Sheets : %s"
 
-#: bulk_creator.py:288
-msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
-msgstr "Votre feuille n'a pas été importée avec succès ; veuillez vérifier que vous avez le partage de liens activé. (Quiconque avec le lien)."
+#: bulk_creator.py:301
+msgid ""
+"Your sheet did not import successfully; please check that you have link "
+"sharing ON (Anyone with the link)."
+msgstr ""
+"Votre feuille n'a pas été importée avec succès ; veuillez vérifier que vous "
+"avez le partage de liens activé. (Quiconque avec le lien)."
 
-#: bulk_creator.py:321
+#: bulk_creator.py:334
 #, python-format
-msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
-msgstr "Impossible d'accéder à la feuille de calcul. L'URL est-elle correcte et l'avez-vous partagée avec %s?"
+msgid ""
+"Unable to access spreadsheet. Is the URL correct and have you shared it with "
+"%s?"
+msgstr ""
+"Impossible d'accéder à la feuille de calcul. L'URL est-elle correcte et "
+"l'avez-vous partagée avec %s?"
 
-#: bulk_creator.py:327
+#: bulk_creator.py:340
 #, python-format
 msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
 msgstr "Il ne semble pas y avoir de données dans la feuille %(name)s de %(id)s"
 
-#: bulk_creator.py:914
+#: bulk_creator.py:956
 msgid "Link gazette"
 msgstr "Lier la gazette"
 
-#: bulk_creator.py:915
-msgid "This work's gazette (original publication document) couldn't be linked automatically.\n\n"
+#: bulk_creator.py:957
+msgid ""
+"This work's gazette (original publication document) couldn't be linked "
+"automatically.\n"
+"\n"
 "Find it and upload it manually."
-msgstr "La gazette de ce travail (document de publication original) n'a pas pu être lié automatiquement.\n\n"
+msgstr ""
+"La gazette de ce travail (document de publication original) n'a pas pu être "
+"lié automatiquement.\n"
+"\n"
 "Trouvez-la et téléchargez-la manuellement."
 
-#: bulk_creator.py:920
+#: bulk_creator.py:962
 msgid "Import content"
 msgstr "Importer du contenu"
 
-#: bulk_creator.py:921
-msgid "Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file)."
-msgstr "Importez le contenu de ce travail – soit la publication initiale (généralement un PDF de la Gazette) ou une consolidation ultérieure (généralement un fichier .docx)."
+#: bulk_creator.py:963
+msgid ""
+"Import the content for this work – either the initial publication (usually a "
+"PDF of the Gazette) or a later consolidation (usually a .docx file)."
+msgstr ""
+"Importez le contenu de ce travail – soit la publication initiale "
+"(généralement un PDF de la Gazette) ou une consolidation ultérieure "
+"(généralement un fichier .docx)."
 
-#: bulk_creator.py:924
+#: bulk_creator.py:966
 msgid "Link commencement (passive)"
 msgstr "Début du lien (passif)"
 
-#: bulk_creator.py:925
+#: bulk_creator.py:967
 #, python-format
-msgid "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n\n"
+msgid ""
+"It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s "
+"(see row %(row_num)s of the spreadsheet), but it couldn't be linked "
+"automatically. This work has thus been recorded as 'Not commenced'.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the commencing work doesn't exist on the system.\n\n"
+"– the commencing work doesn't exist on the system.\n"
+"\n"
 "Please link the commencement date and commencing work manually."
-msgstr "On dirait que cette œuvre a été commencée par \"%(commenced_by)s\" sur %(date)s (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement. Ce travail a donc été enregistré comme \"Non commencé\".\n\n"
+msgstr ""
+"On dirait que cette œuvre a été commencée par \"%(commenced_by)s\" sur "
+"%(date)s (voir la ligne %(row_num)s de la feuille de calcul), mais il ne "
+"peut pas être lié automatiquement. Ce travail a donc été enregistré comme "
+"\"Non commencé\".\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– le début du travail n'existe pas sur le système.\n\n"
+"– le début du travail n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier la date de début et le début des travaux manuellement."
 
-#: bulk_creator.py:933
+#: bulk_creator.py:975
 msgid "(unknown)"
 msgstr "(inconnu)"
 
-#: bulk_creator.py:938
+#: bulk_creator.py:980
 msgid "'Commences on' date missing"
 msgstr "La date \"commence le\" manque"
 
-#: bulk_creator.py:939
+#: bulk_creator.py:981
 #, python-format
-msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
+msgid ""
+"It looks like this work commences \"%(commences)s\" (see row %(row_num)s of "
+"the spreadsheet), but 'commences_on_date' wasn't given so no action has been "
+"taken.\n"
+"\n"
 "If it should be linked, please do so manually."
-msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(row_num)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
+msgstr ""
+"On dirait que cette œuvre commence «%(commences)s» (voir la ligne "
+"%(row_num)s de la feuille de calcul), mais 'commences_on_date' n'a pas été "
+"donné, donc aucune action n'a été prise.\n"
+"\n"
 "Si elle doit être liée, veuillez le faire manuellement."
 
-#: bulk_creator.py:947
+#: bulk_creator.py:989
 msgid "Link commencement (active)"
 msgstr "Début du lien (actif)"
 
-#: bulk_creator.py:948
+#: bulk_creator.py:990
 #, python-format
-msgid "It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n\n"
+msgid ""
+"It looks like this work commences \"%(commences)s\" on %(date)s (see row "
+"%(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no "
+"action has been taken.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the commenced work doesn't exist on the system.\n\n"
+"– the commenced work doesn't exist on the system.\n"
+"\n"
 "If the commencement should be linked, please do so manually."
-msgstr "On dirait que cette œuvre commence «%(commences)s» sur %(date)s (voir la ligne %(row_num)s de la feuille de calcul), mais \"%(commences)s\" n'a pas été trouvé, donc aucune action n'a été prise.\n\n"
+msgstr ""
+"On dirait que cette œuvre commence «%(commences)s» sur %(date)s (voir la "
+"ligne %(row_num)s de la feuille de calcul), mais \"%(commences)s\" n'a pas "
+"été trouvé, donc aucune action n'a été prise.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– le travail commencé est inexistant pas sur le système.\n\n"
+"– le travail commencé est inexistant pas sur le système.\n"
+"\n"
 "Si le début doit être lié, veuillez le faire manuellement."
 
-#: bulk_creator.py:961
+#: bulk_creator.py:1003
 msgid "Link amendment (active)"
 msgstr "Amendement du lien (actif)"
 
-#: bulk_creator.py:965
+#: bulk_creator.py:1007
 #, python-format
-msgid "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of "
+"the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
 "– more than one amended work was listed (it only works if there's one)\n"
-"– the amended work doesn't exist on the system.\n\n"
+"– the amended work doesn't exist on the system.\n"
+"\n"
 "Please link the amendment manually."
-msgstr "On dirait que cette œuvre modifie \"%(amended_work)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre modifie \"%(amended_work)s\" (voir la ligne "
+"%(row_num)s de la feuille de calcul), mais il ne peut pas être lié "
+"automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– plus d'une œuvre modifiées ont été répertoriées (elle ne fonctionne que s'il y en a une)\n"
-"– l'œuvre modifiée n'existe pas dans le système.\n\n"
+"– plus d'une œuvre modifiées ont été répertoriées (elle ne fonctionne que "
+"s'il y en a une)\n"
+"– l'œuvre modifiée n'existe pas dans le système.\n"
+"\n"
 "Veuillez lier la modification manuellement."
 
-#: bulk_creator.py:978
+#: bulk_creator.py:1020
 msgid "Link amendment (passive)"
 msgstr "Amendement du lien (passif)"
 
-#: bulk_creator.py:982
+#: bulk_creator.py:1024
 #, python-format
-msgid "It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work is amended by \"%(amending_work)s\" (see row "
+"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
 "– more than one amending work was listed (it only works if there's one)\n"
-"– the amending work doesn't exist on the system.\n\n"
+"– the amending work doesn't exist on the system.\n"
+"\n"
 "Please link the amendment manually."
-msgstr "On dirait que cette œuvre soit modifiée par \"%(amending_work)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais elle ne peut pas être liée automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre soit modifiée par \"%(amending_work)s\" (voir la "
+"ligne %(row_num)s de la feuille de calcul), mais elle ne peut pas être liée "
+"automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– plus d'une œuvre rectificative a été listée (elle ne fonctionne que s'il y en a une)\n"
-"– le œuvre modificatif n'existe pas sur le système.\n\n"
+"– plus d'une œuvre rectificative a été listée (elle ne fonctionne que s'il y "
+"en a une)\n"
+"– le œuvre modificatif n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier la modification manuellement."
 
-#: bulk_creator.py:995
+#: bulk_creator.py:1037
 msgid "Link amendment (pending commencement)"
 msgstr "Amendement du lien (en attente de commencement)"
 
-#: bulk_creator.py:996
+#: bulk_creator.py:1038
 #, python-format
-msgid "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n\n"
-"Please link the amendment manually (and apply it) when this work comes into force."
-msgstr "On dirait que cette œuvre modifie %(amended_title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'amendement).\n\n"
-"Veuillez lier la modification manuellement (et l'appliquer) lorsque ce œuvre entrera en vigueur."
+msgid ""
+"It looks like this work amends %(amended_title)s (%(numbered_title)s), but "
+"it couldn't be linked automatically because this work hasn't commenced yet "
+"(so there's no date for the amendment).\n"
+"\n"
+"Please link the amendment manually (and apply it) when this work comes into "
+"force."
+msgstr ""
+"On dirait que cette œuvre modifie %(amended_title)s (%(numbered_title)s), "
+"mais il ne peut pas être lié automatiquement parce que ce travail n'a pas "
+"encore commencé (donc il n'y a pas de date pour l'amendement).\n"
+"\n"
+"Veuillez lier la modification manuellement (et l'appliquer) lorsque ce œuvre "
+"entrera en vigueur."
 
-#: bulk_creator.py:1004
+#: bulk_creator.py:1046
 msgid "Apply amendment"
 msgstr "Appliquer la modification"
 
-#: bulk_creator.py:1005
+#: bulk_creator.py:1047
 #, python-format
-msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n\n"
-"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr "Appliquer les modifications apportées par %(amending_title)s (%(numbered_title)s) le %(date)s.\n\n"
-"L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
+msgid ""
+"Apply the amendments made by %(amending_title)s (%(numbered_title)s) on "
+"%(date)s.\n"
+"\n"
+"The amendment has already been linked, so start at Step 3 of https://docs."
+"laws.africa/managing-works/amending-works."
+msgstr ""
+"Appliquer les modifications apportées par %(amending_title)s "
+"(%(numbered_title)s) le %(date)s.\n"
+"\n"
+"L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs."
+"laws.africa/managing-works/amending-works."
 
-#: bulk_creator.py:1014
+#: bulk_creator.py:1056
 msgid "Link repealed by"
 msgstr "Lien abrogé par"
 
-#: bulk_creator.py:1015
+#: bulk_creator.py:1057
 #, python-format
-msgid "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work was repealed by \"%(repealed_by)s\" (see row "
+"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the repealing work doesn't exist on the system.\n\n"
+"– the repealing work doesn't exist on the system.\n"
+"\n"
 "Please link the repeal manually."
-msgstr "On dirait que cette œuvre ait été abrogé par \"%(repealed_by)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être relié automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre ait été abrogé par \"%(repealed_by)s\" (voir la "
+"ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être relié "
+"automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– le œuvre d'abrogation n'existe pas sur le système.\n\n"
+"– le œuvre d'abrogation n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier l'abrogation manuellement."
 
-#: bulk_creator.py:1027 bulk_creator.py:1064
+#: bulk_creator.py:1069 bulk_creator.py:1106
 msgid "Link repeal"
 msgstr "Abrogation du lien"
 
-#: bulk_creator.py:1028
+#: bulk_creator.py:1070
 #, python-format
-msgid "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the "
+"spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the repealed work doesn't exist on the system.\n\n"
+"– the repealed work doesn't exist on the system.\n"
+"\n"
 "Please link the repeal manually."
-msgstr "Il semble que ce travail supprime \"%(repeals)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il n'a pas pu être lié automatiquement.\n\n"
+msgstr ""
+"Il semble que ce travail supprime \"%(repeals)s\" (voir la ligne %(row_num)s "
+"de la feuille de calcul), mais il n'a pas pu être lié automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– l'ouvrage abrogé n'existe pas sur le système.\n\n"
+"– l'ouvrage abrogé n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier l'abrogation manuellement."
 
-#: bulk_creator.py:1040
+#: bulk_creator.py:1082
 msgid "Check / update repeal"
 msgstr "Vérifier / mettre à jour l'abrogation"
 
-#: bulk_creator.py:1041
+#: bulk_creator.py:1083
 #, python-format
-msgid "On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
-"But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n\n"
-"If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
-msgstr "Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cette œuvre a été abrogée par %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
-"Mais ce travail est déjà répertorié comme ayant été abrogé par %(repealed_by)s (%(repealed_by_numbered_title)s), les informations d'abrogation n'ont donc pas été mises à jour automatiquement.\n\n"
-"Si les informations d'abrogation antérieures ou existantes sont erronées, mettez à jour manuellement. Sinon, si la feuille de calcul est incorrecte, annulez cette tâche avec un commentaire.\n"
+msgid ""
+"On the spreadsheet (see row %(row_num)s), it says that this work was "
+"repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
+"\n"
+"But this work is already listed as having been repealed by %(repealed_by)s "
+"(%(repealed_by_numbered_title)s), so the repeal information wasn't updated "
+"automatically.\n"
+"\n"
+"If the old / existing repeal information was wrong, update it manually. "
+"Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
+msgstr ""
+"Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cette "
+"œuvre a été abrogée par %(repealing_title)s (%(repealing_numbered_title)s).\n"
+"\n"
+"Mais ce travail est déjà répertorié comme ayant été abrogé par "
+"%(repealed_by)s (%(repealed_by_numbered_title)s), les informations "
+"d'abrogation n'ont donc pas été mises à jour automatiquement.\n"
+"\n"
+"Si les informations d'abrogation antérieures ou existantes sont erronées, "
+"mettez à jour manuellement. Sinon, si la feuille de calcul est incorrecte, "
+"annulez cette tâche avec un commentaire.\n"
 
-#: bulk_creator.py:1055
+#: bulk_creator.py:1097
 msgid "Link repeal (pending commencement)"
 msgstr "Abrogation du lien (en attente de commencement)"
 
-#: bulk_creator.py:1056
+#: bulk_creator.py:1098
 #, python-format
-msgid "It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n\n"
+msgid ""
+"It looks like this work repeals %(title)s (%(numbered_title)s), but it "
+"couldn't be linked automatically because this work hasn't commenced yet (so "
+"there's no date for the repeal).\n"
+"\n"
 "Please link the repeal manually when this work comes into force."
-msgstr "On dirait que cette œuvre abroge %(title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'abrogation).\n\n"
+msgstr ""
+"On dirait que cette œuvre abroge %(title)s (%(numbered_title)s), mais il ne "
+"peut pas être lié automatiquement parce que ce travail n'a pas encore "
+"commencé (donc il n'y a pas de date pour l'abrogation).\n"
+"\n"
 "Veuillez lier l'abrogation manuellement lorsque ce travail entre en vigueur."
 
-#: bulk_creator.py:1065
+#: bulk_creator.py:1107
 #, python-format
-msgid "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work was repealed by %(title)s (%(numbered_title)s), but "
+"it couldn't be linked automatically.\n"
+"\n"
 "Please link it manually."
-msgstr "On dirait que cette œuvre ait été abrogé par %(title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre ait été abrogé par %(title)s (%(numbered_title)s), "
+"mais il ne peut pas être lié automatiquement.\n"
+"\n"
 "Veuillez le lier manuellement."
 
-#: bulk_creator.py:1073
+#: bulk_creator.py:1115
 msgid "Link primary work"
 msgstr "Lier l'œuvre principal"
 
-#: bulk_creator.py:1074
+#: bulk_creator.py:1116
 #, python-format
-msgid "It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s "
+"of the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the primary work doesn't exist on the system.\n\n"
+"– the primary work doesn't exist on the system.\n"
+"\n"
 "Please link the primary work manually."
-msgstr "On dirait que le travail principal de cette œuvre soit \"%(work)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr ""
+"On dirait que le travail principal de cette œuvre soit \"%(work)s\" (voir la "
+"ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié "
+"automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– le travail principal n'existe pas sur le système.\n\n"
+"– le travail principal n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier le travail principal manuellement."
 
-#: bulk_creator.py:1086
+#: bulk_creator.py:1128
 msgid "Link subleg"
 msgstr "Lier la législation subordonnée"
 
-#: bulk_creator.py:1087
+#: bulk_creator.py:1129
 #, python-format
-msgid "It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of "
+"the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
-"– the subleg work doesn't exist on the system.\n\n"
+"– the subleg work doesn't exist on the system.\n"
+"\n"
 "Please link the subleg work manually."
-msgstr "On dirait que cette œuvre ait une législation subordonnée \"%(subleg)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre ait une législation subordonnée "
+"\"%(subleg)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il "
+"ne peut pas être lié automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
-"– le travail de législation subordonnée n'existe pas sur le système.\n\n"
+"– le travail de législation subordonnée n'existe pas sur le système.\n"
+"\n"
 "Veuillez lier le travail de législation subordonnée manuellement."
 
-#: bulk_creator.py:1099
+#: bulk_creator.py:1141
 msgid "Check / update primary work"
 msgstr "Vérifier / mettre à jour le travail principal"
 
-#: bulk_creator.py:1100
+#: bulk_creator.py:1142
 #, python-format
-msgid "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n\n"
-"But this work is already subleg under %(parent)s, so nothing was done.\n\n"
-"Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment."
-msgstr "Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cette œuvre est sublime sous %(title)s (%(numbered_title)s).\n\n"
-"Mais ce travail est déjà une législation subordonnée sous %(parent)s, donc rien n'a été fait.\n\n"
-"Vérifiez à nouveau de quel travail ce travail est une législation subordonnée, et mettez-le à jour manuellement si nécessaire. Si la feuille de calcul était erronée, annulez cette tâche avec un commentaire."
+msgid ""
+"On the spreadsheet (see row %(row_num)s), it says that this work is subleg "
+"under %(title)s (%(numbered_title)s).\n"
+"\n"
+"But this work is already subleg under %(parent)s, so nothing was done.\n"
+"\n"
+"Double-check which work this work is subleg of and update it manually if "
+"needed. If the spreadsheet was wrong, cancel this task with a comment."
+msgstr ""
+"Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cette "
+"œuvre est sublime sous %(title)s (%(numbered_title)s).\n"
+"\n"
+"Mais ce travail est déjà une législation subordonnée sous %(parent)s, donc "
+"rien n'a été fait.\n"
+"\n"
+"Vérifiez à nouveau de quel travail ce travail est une législation "
+"subordonnée, et mettez-le à jour manuellement si nécessaire. Si la feuille "
+"de calcul était erronée, annulez cette tâche avec un commentaire."
 
-#: bulk_creator.py:1112
+#: bulk_creator.py:1154
 msgid "Link taxonomy"
 msgstr "Lier la taxonomie"
 
-#: bulk_creator.py:1113
+#: bulk_creator.py:1155
 #, python-format
-msgid "It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+msgid ""
+"It looks like this work has the following taxonomy: \"%(topics)s\" (see row "
+"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
 "– the taxonomy doesn't exist on the system."
-msgstr "On dirait que cette œuvre a la taxonomie suivante : \"%(topics)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr ""
+"On dirait que cette œuvre a la taxonomie suivante : \"%(topics)s\" (voir la "
+"ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié "
+"automatiquement.\n"
+"\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
 "– la taxonomie n'existe pas sur le système."
 
-#: bulk_creator.py:1165
+#: bulk_creator.py:1235
 #, python-format
 msgid "%s (about to be imported)"
 msgstr "%s (vers être importé)"
 
 #: pipelines/text.py:30
-msgid "There is not enough text in the document to import. You may need to OCR the file first."
-msgstr "Il n'y a pas assez de texte dans le document pour l'importation. Vous pouvez avoir besoin de OCR le fichier d'abord."
-
+msgid ""
+"There is not enough text in the document to import. You may need to OCR the "
+"file first."
+msgstr ""
+"Il n'y a pas assez de texte dans le document pour l'importation. Vous pouvez "
+"avoir besoin de OCR le fichier d'abord."

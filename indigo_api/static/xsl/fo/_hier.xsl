@@ -6,9 +6,19 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template name="heading-keyword">
-    <!-- TODO: translations -->
+    <!-- TODO: more translations -->
     <xsl:if test="self::akn:article">
-      <xsl:text>Article </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$language='swa'">
+          <xsl:text>Ibara </xsl:text>
+          <xsl:if test="akn:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>Article </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::akn:book">
       <xsl:text>Book </xsl:text>
@@ -17,10 +27,30 @@
       <xsl:text>Clause </xsl:text>
     </xsl:if>
     <xsl:if test="self::akn:chapter">
-      <xsl:text>Chapter </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$language='swa'">
+          <xsl:text>Sura </xsl:text>
+          <xsl:if test="akn:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>Chapter </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::akn:part">
-      <xsl:text>Part </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$language='swa'">
+          <xsl:text>Sehemu </xsl:text>
+          <xsl:if test="akn:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>Part </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::akn:title">
       <xsl:text>Title </xsl:text>

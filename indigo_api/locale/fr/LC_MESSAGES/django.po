@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 10:13+0200\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
 "PO-Revision-Date: 2023-06-20 14:49\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -83,20 +83,30 @@ msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 "Êtes-vous sûr de vouloir soumettre cette tâche pour révision au nom de %s?"
 
-#: models/works.py:103
+#: models/works.py:102
 msgid "taxonomy topic"
 msgstr ""
 
-#: models/works.py:104
+#: models/works.py:103
 msgid "taxonomy topics"
 msgstr ""
 
-#: models/works.py:478
+#: models/works.py:414
+#, fuzzy
+#| msgid "There are multiple commencements:"
+msgid "There are multiple commencements"
+msgstr "Il y a plusieurs commencements :"
+
+#: models/works.py:417
+msgid "Not commenced"
+msgstr "Non commencé"
+
+#: models/works.py:507
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr "Localité introuvable pour ce pays : %s"
 
-#: models/works.py:488
+#: models/works.py:517
 msgid "Invalid FRBR URI"
 msgstr "FRBR URI invalide"
 
@@ -190,96 +200,88 @@ msgstr "Acceptée le %(date)s"
 msgid "Table of Contents"
 msgstr "Table des matières"
 
-#: templatetags/indigo.py:67
+#: timeline.py:57
+#, fuzzy, python-format
+#| msgid "Not commenced"
+msgid "Note: %(note)s"
+msgstr "Non commencé"
+
+#: timeline.py:73
+#, fuzzy, python-format
+#| msgid "commenced on %(date)s"
+msgid "Commenced on %(date)s by"
+msgstr "commencé le %(date)s"
+
+#: timeline.py:77
+#, fuzzy, python-format
+#| msgid "commenced on %(date)s"
+msgid "Commenced on %(date)s"
+msgstr "commencé le %(date)s"
+
+#: timeline.py:81
+#, fuzzy
+#| msgid "Commenced on %(date)s"
+msgid "Commenced by"
+msgstr "Commencé le %(date)s"
+
+#: timeline.py:85
+#, fuzzy
+#| msgid "Not commenced"
+msgid "Commenced"
+msgstr "Non commencé"
+
+#: timeline.py:107
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
 msgstr "Publié en %(name)s %(number)s sur %(date)s"
 
-#: templatetags/indigo.py:73
+#: timeline.py:113
 #, python-format
 msgid "Published in %(name)s on %(date)s"
 msgstr "Publié dans %(name)s le %(date)s"
 
-#: templatetags/indigo.py:78
+#: timeline.py:118
 #, python-format
 msgid "Published on %(date)s"
 msgstr "Publié le %(date)s"
 
-#: templatetags/indigo.py:83
+#: timeline.py:124
 #, python-format
 msgid "Published in %(name)s %(number)s"
 msgstr "Publié dans %(name)s %(number)s"
 
-#: templatetags/indigo.py:89
+#: timeline.py:131
 #, python-format
 msgid "Published in %(name)s"
 msgstr "Publié dans %(name)s"
 
-#: templatetags/indigo.py:93
+#: timeline.py:136
 msgid "Published"
 msgstr "Publié"
 
-#: templatetags/indigo.py:112
+#: timeline.py:179
 #, fuzzy
-#| msgid "There are multiple commencements:"
-msgid "There are multiple commencements"
-msgstr "Il y a plusieurs commencements :"
+#| msgid "Assented to on %(date)s"
+msgid "Assented to"
+msgstr "Acceptée le %(date)s"
 
-#: templatetags/indigo.py:115
-msgid "Not commenced"
-msgstr "Non commencé"
-
-#: templatetags/indigo.py:134
-#, fuzzy, python-format
-#| msgid "Not commenced"
-msgid "Note: %(commencement_note)s"
-msgstr "Non commencé"
-
-#: templatetags/indigo.py:148
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full on %(date)s by"
-msgstr "Commencé le %(date)s"
-
-#: templatetags/indigo.py:149
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part on %(date)s by"
-msgstr "Commencé le %(date)s"
-
-#: templatetags/indigo.py:153
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full on %(date)s"
-msgstr "Commencé le %(date)s"
-
-#: templatetags/indigo.py:154
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part on %(date)s"
-msgstr "Commencé le %(date)s"
-
-#: templatetags/indigo.py:159
-msgid "Commenced in full by"
+#: timeline.py:187
+msgid "Amended by"
 msgstr ""
 
-#: templatetags/indigo.py:160
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part by"
-msgstr "Commencé le %(date)s"
+#: timeline.py:197
+#, fuzzy, python-format
+#| msgid "Commencement date unknown"
+msgid "Commencement note: %(note)s"
+msgstr "Date de commencement inconnue"
 
-#: templatetags/indigo.py:164
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full"
-msgstr "Commencé le %(date)s"
+#: timeline.py:209
+msgid "Consolidation"
+msgstr ""
 
-#: templatetags/indigo.py:165
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part"
-msgstr "Commencé le %(date)s"
+#: timeline.py:213
+msgid "Repealed by"
+msgstr ""
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
@@ -293,8 +295,35 @@ msgstr "Impossible de créer une tâche pour une annotation de réponse."
 msgid "Error during import"
 msgstr "Erreur lors de l'importation"
 
-#~ msgid "Commencement date unknown"
-#~ msgstr "Date de commencement inconnue"
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full on %(date)s by"
+#~ msgstr "Commencé le %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part on %(date)s by"
+#~ msgstr "Commencé le %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full on %(date)s"
+#~ msgstr "Commencé le %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part on %(date)s"
+#~ msgstr "Commencé le %(date)s"
+
+#, fuzzy
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full"
+#~ msgstr "Commencé le %(date)s"
+
+#, fuzzy
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part"
+#~ msgstr "Commencé le %(date)s"
 
 #, python-format
 #~ msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"

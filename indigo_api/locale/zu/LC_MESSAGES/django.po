@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 10:13+0200\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
 "PO-Revision-Date: 2023-06-20 14:50\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
@@ -80,20 +80,30 @@ msgstr ""
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 
-#: models/works.py:103
+#: models/works.py:102
 msgid "taxonomy topic"
 msgstr ""
 
-#: models/works.py:104
+#: models/works.py:103
 msgid "taxonomy topics"
 msgstr ""
 
-#: models/works.py:478
+#: models/works.py:414
+#, fuzzy
+#| msgid "There are multiple commencements:"
+msgid "There are multiple commencements"
+msgstr "Kunezinsuku eziningi zokuqalisa:"
+
+#: models/works.py:417
+msgid "Not commenced"
+msgstr "Ayikaqali"
+
+#: models/works.py:507
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr ""
 
-#: models/works.py:488
+#: models/works.py:517
 msgid "Invalid FRBR URI"
 msgstr ""
 
@@ -188,96 +198,88 @@ msgstr "Yasayindwa ngomhla zingu %(date)s"
 msgid "Table of Contents"
 msgstr "Okuqukethwe"
 
-#: templatetags/indigo.py:67
+#: timeline.py:57
+#, fuzzy, python-format
+#| msgid "Not commenced"
+msgid "Note: %(note)s"
+msgstr "Ayikaqali"
+
+#: timeline.py:73
+#, fuzzy, python-format
+#| msgid "commenced on %(date)s"
+msgid "Commenced on %(date)s by"
+msgstr "yaqala ngomhla zingu %(date)s"
+
+#: timeline.py:77
+#, fuzzy, python-format
+#| msgid "commenced on %(date)s"
+msgid "Commenced on %(date)s"
+msgstr "yaqala ngomhla zingu %(date)s"
+
+#: timeline.py:81
+#, fuzzy
+#| msgid "Commenced on %(date)s"
+msgid "Commenced by"
+msgstr "Yaqala ngomhla zingu %(date)s"
+
+#: timeline.py:85
+#, fuzzy
+#| msgid "Not commenced"
+msgid "Commenced"
+msgstr "Ayikaqali"
+
+#: timeline.py:107
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
 msgstr ""
 
-#: templatetags/indigo.py:73
+#: timeline.py:113
 #, python-format
 msgid "Published in %(name)s on %(date)s"
 msgstr "Ishicilelwe kwi %(name)s ngomhla zingu %(date)s"
 
-#: templatetags/indigo.py:78
+#: timeline.py:118
 #, python-format
 msgid "Published on %(date)s"
 msgstr ""
 
-#: templatetags/indigo.py:83
+#: timeline.py:124
 #, python-format
 msgid "Published in %(name)s %(number)s"
 msgstr ""
 
-#: templatetags/indigo.py:89
+#: timeline.py:131
 #, python-format
 msgid "Published in %(name)s"
 msgstr ""
 
-#: templatetags/indigo.py:93
+#: timeline.py:136
 msgid "Published"
 msgstr ""
 
-#: templatetags/indigo.py:112
+#: timeline.py:179
 #, fuzzy
-#| msgid "There are multiple commencements:"
-msgid "There are multiple commencements"
-msgstr "Kunezinsuku eziningi zokuqalisa:"
+#| msgid "Assented to on %(date)s"
+msgid "Assented to"
+msgstr "Yasayindwa ngomhla zingu %(date)s"
 
-#: templatetags/indigo.py:115
-msgid "Not commenced"
-msgstr "Ayikaqali"
-
-#: templatetags/indigo.py:134
-#, fuzzy, python-format
-#| msgid "Not commenced"
-msgid "Note: %(commencement_note)s"
-msgstr "Ayikaqali"
-
-#: templatetags/indigo.py:148
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full on %(date)s by"
-msgstr "Yaqala ngomhla zingu %(date)s"
-
-#: templatetags/indigo.py:149
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part on %(date)s by"
-msgstr "Yaqala ngomhla zingu %(date)s"
-
-#: templatetags/indigo.py:153
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full on %(date)s"
-msgstr "Yaqala ngomhla zingu %(date)s"
-
-#: templatetags/indigo.py:154
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part on %(date)s"
-msgstr "Yaqala ngomhla zingu %(date)s"
-
-#: templatetags/indigo.py:159
-msgid "Commenced in full by"
+#: timeline.py:187
+msgid "Amended by"
 msgstr ""
 
-#: templatetags/indigo.py:160
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part by"
-msgstr "Yaqala ngomhla zingu %(date)s"
+#: timeline.py:197
+#, fuzzy, python-format
+#| msgid "Commencement date unknown"
+msgid "Commencement note: %(note)s"
+msgstr "Usuku ezoqala ngayo alwaziwa"
 
-#: templatetags/indigo.py:164
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in full"
-msgstr "Yaqala ngomhla zingu %(date)s"
+#: timeline.py:209
+msgid "Consolidation"
+msgstr ""
 
-#: templatetags/indigo.py:165
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced in part"
-msgstr "Yaqala ngomhla zingu %(date)s"
+#: timeline.py:213
+msgid "Repealed by"
+msgstr ""
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
@@ -291,8 +293,35 @@ msgstr ""
 msgid "Error during import"
 msgstr ""
 
-#~ msgid "Commencement date unknown"
-#~ msgstr "Usuku ezoqala ngayo alwaziwa"
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full on %(date)s by"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part on %(date)s by"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full on %(date)s"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
+
+#, fuzzy, python-format
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part on %(date)s"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
+
+#, fuzzy
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in full"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
+
+#, fuzzy
+#~| msgid "Commenced on %(date)s"
+#~ msgid "Commenced in part"
+#~ msgstr "Yaqala ngomhla zingu %(date)s"
 
 #, python-format
 #~ msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"

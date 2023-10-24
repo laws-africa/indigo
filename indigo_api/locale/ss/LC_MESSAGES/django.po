@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 10:13+0200\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
 "PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Swati\n"
@@ -71,20 +71,28 @@ msgstr ""
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 
-#: models/works.py:103
+#: models/works.py:102
 msgid "taxonomy topic"
 msgstr ""
 
-#: models/works.py:104
+#: models/works.py:103
 msgid "taxonomy topics"
 msgstr ""
 
-#: models/works.py:478
+#: models/works.py:414
+msgid "There are multiple commencements"
+msgstr ""
+
+#: models/works.py:417
+msgid "Not commenced"
+msgstr ""
+
+#: models/works.py:507
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr ""
 
-#: models/works.py:488
+#: models/works.py:517
 msgid "Invalid FRBR URI"
 msgstr ""
 
@@ -167,82 +175,77 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: templatetags/indigo.py:67
+#: timeline.py:57
+#, python-format
+msgid "Note: %(note)s"
+msgstr ""
+
+#: timeline.py:73
+#, python-format
+msgid "Commenced on %(date)s by"
+msgstr ""
+
+#: timeline.py:77
+#, python-format
+msgid "Commenced on %(date)s"
+msgstr ""
+
+#: timeline.py:81
+msgid "Commenced by"
+msgstr ""
+
+#: timeline.py:85
+msgid "Commenced"
+msgstr ""
+
+#: timeline.py:107
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
 msgstr ""
 
-#: templatetags/indigo.py:73
+#: timeline.py:113
 #, python-format
 msgid "Published in %(name)s on %(date)s"
 msgstr ""
 
-#: templatetags/indigo.py:78
+#: timeline.py:118
 #, python-format
 msgid "Published on %(date)s"
 msgstr ""
 
-#: templatetags/indigo.py:83
+#: timeline.py:124
 #, python-format
 msgid "Published in %(name)s %(number)s"
 msgstr ""
 
-#: templatetags/indigo.py:89
+#: timeline.py:131
 #, python-format
 msgid "Published in %(name)s"
 msgstr ""
 
-#: templatetags/indigo.py:93
+#: timeline.py:136
 msgid "Published"
 msgstr ""
 
-#: templatetags/indigo.py:112
-msgid "There are multiple commencements"
+#: timeline.py:179
+msgid "Assented to"
 msgstr ""
 
-#: templatetags/indigo.py:115
-msgid "Not commenced"
+#: timeline.py:187
+msgid "Amended by"
 msgstr ""
 
-#: templatetags/indigo.py:134
+#: timeline.py:197
 #, python-format
-msgid "Note: %(commencement_note)s"
+msgid "Commencement note: %(note)s"
 msgstr ""
 
-#: templatetags/indigo.py:148
-#, python-format
-msgid "Commenced in full on %(date)s by"
+#: timeline.py:209
+msgid "Consolidation"
 msgstr ""
 
-#: templatetags/indigo.py:149
-#, python-format
-msgid "Commenced in part on %(date)s by"
-msgstr ""
-
-#: templatetags/indigo.py:153
-#, python-format
-msgid "Commenced in full on %(date)s"
-msgstr ""
-
-#: templatetags/indigo.py:154
-#, python-format
-msgid "Commenced in part on %(date)s"
-msgstr ""
-
-#: templatetags/indigo.py:159
-msgid "Commenced in full by"
-msgstr ""
-
-#: templatetags/indigo.py:160
-msgid "Commenced in part by"
-msgstr ""
-
-#: templatetags/indigo.py:164
-msgid "Commenced in full"
-msgstr ""
-
-#: templatetags/indigo.py:165
-msgid "Commenced in part"
+#: timeline.py:213
+msgid "Repealed by"
 msgstr ""
 
 #: views/documents.py:98

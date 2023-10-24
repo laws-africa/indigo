@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:06+0200\n"
+"POT-Creation-Date: 2023-10-12 09:54+0200\n"
 "PO-Revision-Date: 2023-05-02 15:21\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
@@ -33,7 +33,9 @@ msgstr "Masharti ya Matumizi na Sera ya Faragha"
 #: templates/account/base.html:21
 #, python-format
 msgid "Need help? Please <a href=\"mailto:%(email)s\">email us</a>"
-msgstr "Je, unahitaji usaidizi? Tafadhali <a href=\"mailto:%(email)s\">tutumie barua pepe</a>"
+msgstr ""
+"Je, unahitaji usaidizi? Tafadhali <a href=\"mailto:%(email)s\">tutumie barua "
+"pepe</a>"
 
 #: templates/account/email.html:16
 msgid "You can use any of these email addresses to log in."
@@ -46,8 +48,11 @@ msgid "Note:"
 msgstr "Kumbuka:"
 
 #: templates/account/email.html:19
-msgid "We only send email notifications to your <strong>primary</strong> email address."
-msgstr "Tunatuma arifa za barua pepe kwa anwani yako <strong></strong> ya barua pepe."
+msgid ""
+"We only send email notifications to your <strong>primary</strong> email "
+"address."
+msgstr ""
+"Tunatuma arifa za barua pepe kwa anwani yako <strong></strong> ya barua pepe."
 
 #: templates/account/email.html:33 templates/account/login.html:28
 #: templates/account/password_reset.html:18
@@ -56,8 +61,8 @@ msgstr "Anwani ya baruapepe"
 
 #: templates/account/email.html:34
 #: templates/indigo_api/_task_filter_form.html:58
-#: templates/indigo_api/work_batch_create.html:109
-#: templates/indigo_api/work_batch_create.html:233
+#: templates/indigo_api/work_batch_create.html:139
+#: templates/indigo_api/work_batch_create.html:273
 #: templates/indigo_api/work_batch_update.html:45
 #: templates/indigo_api/work_batch_update.html:123
 msgid "Status"
@@ -92,8 +97,12 @@ msgid "Warning:"
 msgstr "Onyo:"
 
 #: templates/account/email.html:72
-msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
-msgstr "Kwa sasa huna anwani yoyote ya barua pepe iliyosanidiwa. Unapaswa kuongeza anwani ya barua pepe ili uweze kupokea arifa, kuweka upya nenosiri lako, nk."
+msgid ""
+"You currently do not have any e-mail address set up. You should really add "
+"an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Kwa sasa huna anwani yoyote ya barua pepe iliyosanidiwa. Unapaswa kuongeza "
+"anwani ya barua pepe ili uweze kupokea arifa, kuweka upya nenosiri lako, nk."
 
 #: templates/account/email.html:76
 msgid "Add an email address"
@@ -109,8 +118,12 @@ msgstr "Thibitisha Anwani ya Barua Pepe"
 
 #: templates/account/email_confirm.html:13
 #, python-format
-msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s."
-msgstr "Tafadhali thibitisha kuwa <a href=\"mailto:%(email)s\">%(email)s</a> ni anwani ya barua pepe ya mtumiaji %(user_display)s."
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+"Tafadhali thibitisha kuwa <a href=\"mailto:%(email)s\">%(email)s</a> ni "
+"anwani ya barua pepe ya mtumiaji %(user_display)s."
 
 #: templates/account/email_confirm.html:17
 msgid "Confirm"
@@ -118,8 +131,13 @@ msgstr "Thibitisha"
 
 #: templates/account/email_confirm.html:24
 #, python-format
-msgid "This e-mail confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
-msgstr "Kiungo hiki cha uthibitishaji wa barua pepe kimeisha muda wake au ni batili. Tafadhali <a href=\"%(email_url)s\">toa ombi jipya la uthibitishaji wa barua pepe</a>."
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a "
+"href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+"Kiungo hiki cha uthibitishaji wa barua pepe kimeisha muda wake au ni batili. "
+"Tafadhali <a href=\"%(email_url)s\">toa ombi jipya la uthibitishaji wa barua "
+"pepe</a>."
 
 #: templates/account/login.html:11
 msgid "Log In"
@@ -152,8 +170,12 @@ msgstr "Ingia na %(provider)s"
 
 #: templates/account/login.html:86
 #, python-format
-msgid "By logging in you agree to our <a href=\"%(tos_url)s\">Terms of Use and Privacy Policy</a>."
-msgstr "Kwa kuingia unakubali <a href=\"%(tos_url)s\">Sheria na Masharti yetu na Sera ya Faragha</a>."
+msgid ""
+"By logging in you agree to our <a href=\"%(tos_url)s\">Terms of Use and "
+"Privacy Policy</a>."
+msgstr ""
+"Kwa kuingia unakubali <a href=\"%(tos_url)s\">Sheria na Masharti yetu na "
+"Sera ya Faragha</a>."
 
 #: templates/account/logout.html:4 templates/account/logout.html:7
 #: templates/account/logout.html:17
@@ -178,8 +200,12 @@ msgid "Reset Your Password"
 msgstr "Weka upya nenosiri lako"
 
 #: templates/account/password_reset.html:12
-msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
-msgstr "Umesahau nenosiri lako? Ingiza anwani yako ya barua pepe hapa chini, na tutakutumia barua pepe ili kuiweka upya."
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail to reset it."
+msgstr ""
+"Umesahau nenosiri lako? Ingiza anwani yako ya barua pepe hapa chini, na "
+"tutakutumia barua pepe ili kuiweka upya."
 
 #: templates/account/password_reset.html:29
 #: templates/account/password_reset_from_key.html:50
@@ -197,8 +223,14 @@ msgstr "Weka upya nenosiri"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
-msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr "Kiungo cha kuweka upya nenosiri kilikuwa batili, pengine kwa sababu tayari kimetumika. Tafadhali omba <a href=\"%(passwd_reset_url)s\">uwekaji upya wa nenosiri</a>."
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+"Kiungo cha kuweka upya nenosiri kilikuwa batili, pengine kwa sababu tayari "
+"kimetumika. Tafadhali omba <a href=\"%(passwd_reset_url)s\">uwekaji upya wa "
+"nenosiri</a>."
 
 #: templates/account/password_reset_from_key.html:27
 msgid "New Password"
@@ -338,7 +370,8 @@ msgstr "ametoa maoni"
 #: templates/indigo_api/_task_detail.html:98
 #, python-format
 msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
-msgstr "Hapa kuna <a href=\"%(item_url)s\">%(title)s</a> kama inavyoonekana sasa"
+msgstr ""
+"Hapa kuna <a href=\"%(item_url)s\">%(title)s</a> kama inavyoonekana sasa"
 
 #: templates/indigo_api/_task_detail.html:104
 #, python-format
@@ -347,8 +380,12 @@ msgstr "(<b>%(a)s</b> inaweza kuwa imehamishwa au kuondolewa)"
 
 #: templates/indigo_api/_task_detail.html:113
 #, python-format
-msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
-msgstr "Maudhui katika <b>%(a)s</b> hayapatikani na huenda yamehamishwa au kuondolewa."
+msgid ""
+"The content at <b>%(a)s</b> is not available and may have been moved or "
+"removed."
+msgstr ""
+"Maudhui katika <b>%(a)s</b> hayapatikani na huenda yamehamishwa au "
+"kuondolewa."
 
 #: templates/indigo_api/_task_detail.html:141
 msgid "Add comment"
@@ -376,8 +413,10 @@ msgid "Unassigned"
 msgstr "Haijakabidhiwa"
 
 #: templates/indigo_api/_task_detail.html:228
-msgid "Finish your other assigned tasks before assigning this task to yourself."
-msgstr "Maliza majukumu yako mengine uliyokabidhiwa kabla ya kujikabidhi jukumu hili."
+msgid ""
+"Finish your other assigned tasks before assigning this task to yourself."
+msgstr ""
+"Maliza majukumu yako mengine uliyokabidhiwa kabla ya kujikabidhi jukumu hili."
 
 #: templates/indigo_api/_task_detail.html:236
 #: templates/indigo_api/_task_filter_form.html:16
@@ -484,13 +523,13 @@ msgid "Create a new work"
 msgstr "Unda kazi mpya"
 
 #: templates/indigo_api/_work_chooser_modal.html:38
-#: templates/indigo_api/_work_points_in_time.html:95
-#: templates/indigo_api/_work_points_in_time.html:129
 #: templates/indigo_api/document/_annotations.html:47
 #: templates/indigo_api/document/_attachments.html:67
 #: templates/indigo_api/document/_insert_image_modal.html:16
 #: templates/indigo_api/task_form.html:141
 #: templates/indigo_api/task_form.html:143
+#: templates/indigo_api/timeline/_edit_amendment.html:26
+#: templates/indigo_api/timeline/_edit_consolidation.html:26
 #: templates/indigo_api/work_commencements.html:160
 #: templates/indigo_api/work_form.html:33
 #: templates/indigo_api/workflow_detail.html:136
@@ -505,8 +544,8 @@ msgstr "sawa"
 
 #: templates/indigo_api/_work_chooser_modal.html:52
 #: templates/indigo_api/_work_related_table.html:12
-#: templates/indigo_api/work_batch_create.html:113
-#: templates/indigo_api/work_batch_create.html:237
+#: templates/indigo_api/work_batch_create.html:143
+#: templates/indigo_api/work_batch_create.html:277
 msgid "Year"
 msgstr "Mwaka"
 
@@ -518,8 +557,8 @@ msgstr "Mada"
 
 #: templates/indigo_api/_work_chooser_modal.html:54
 #: templates/indigo_api/_work_filter_form.html:35
-#: templates/indigo_api/work_batch_create.html:117
-#: templates/indigo_api/work_batch_create.html:241
+#: templates/indigo_api/work_batch_create.html:147
+#: templates/indigo_api/work_batch_create.html:281
 #: templates/indigo_api/work_batch_update.html:47
 #: templates/indigo_api/work_batch_update.html:125
 msgid "FRBR URI"
@@ -528,7 +567,7 @@ msgstr "FRBR URI"
 #: templates/indigo_api/_work_chooser_modal.html:65
 #: templates/indigo_api/work_layout.html:26
 #: templates/indigo_api/work_overview.html:17
-#: templates/indigo_api/work_popup.html:7 templates/place/works.html:67
+#: templates/indigo_api/work_popup.html:7 templates/place/works.html:79
 msgid "stub"
 msgstr "mbegu"
 
@@ -608,7 +647,6 @@ msgid "Apply"
 msgstr "Omba"
 
 #: templates/indigo_api/_work_filter_form.html:66
-#: templates/indigo_api/_work_points_in_time.html:44
 msgid "Published"
 msgstr "Imechapishwa"
 
@@ -621,7 +659,7 @@ msgid "Taxonomies..."
 msgstr "Taxonomia..."
 
 #: templates/indigo_api/_work_filter_form.html:97
-#: templates/indigo_api/work_overview.html:125
+#: templates/indigo_api/work_overview.html:127
 msgid "Assent"
 msgstr "Idhini"
 
@@ -630,14 +668,14 @@ msgid "Official publication (eg. gazette)"
 msgstr "Uchapishaji rasmi (km. gazeti la serikali)"
 
 #: templates/indigo_api/_work_filter_form.html:145
-#: templates/indigo_api/work_form.html:426
-#: templates/indigo_api/work_overview.html:134
+#: templates/indigo_api/work_form.html:436
+#: templates/indigo_api/work_overview.html:136
 msgid "Repeal"
 msgstr "Kufuta"
 
 #: templates/indigo_api/_work_filter_form.html:168
-#: templates/indigo_api/work_form.html:270
-#: templates/indigo_api/work_overview.html:67
+#: templates/indigo_api/work_form.html:280
+#: templates/indigo_api/work_overview.html:68
 #: templates/indigo_api/work_related.html:25
 msgid "Commencement"
 msgstr "Kuanza"
@@ -646,116 +684,21 @@ msgstr "Kuanza"
 msgid "Amendment"
 msgstr "Marekebisho"
 
-#: templates/indigo_api/_work_filter_form.html:216
+#: templates/indigo_api/_work_filter_form.html:219
 msgid "Clear filters"
 msgstr "Futa vichungi"
 
-#: templates/indigo_api/_work_filter_form.html:217
+#: templates/indigo_api/_work_filter_form.html:220
 msgid "Apply filters"
 msgstr "Weka vichungi"
-
-#: templates/indigo_api/_work_points_in_time.html:9
-msgid "Add amendment"
-msgstr "Ongeza marekebisho"
-
-#: templates/indigo_api/_work_points_in_time.html:22
-msgid "Add consolidation date"
-msgstr "Ongeza tarehe ya ujumuishaji"
-
-#: templates/indigo_api/_work_points_in_time.html:40
-msgid "Assented to"
-msgstr "Imeidhinishwa"
-
-#: templates/indigo_api/_work_points_in_time.html:50
-#: templates/indigo_api/work_form.html:431
-msgid "Repealed by"
-msgstr "Imefutwa na"
-
-#: templates/indigo_api/_work_points_in_time.html:53
-msgid "Repealed"
-msgstr "Imefutwa"
-
-#: templates/indigo_api/_work_points_in_time.html:61
-#: templates/indigo_api/work_commencements.html:73
-#: templates/indigo_api/work_overview.html:73
-msgid "Commenced"
-msgstr "Imeanza"
-
-#: templates/indigo_api/_work_points_in_time.html:63
-#: templates/indigo_api/work_commencements.html:75
-#: templates/indigo_api/work_overview.html:71
-msgid "Commenced in part"
-msgstr "Ilianza kwa sehemu"
-
-#: templates/indigo_api/_work_points_in_time.html:66
-#: templates/indigo_api/work_commencements.html:78
-#: templates/indigo_api/work_overview.html:79
-#: templates/indigo_api/work_overview.html:139 templates/place/detail.html:223
-#: templates/place/detail.html:259
-msgid "by"
-msgstr "kwa"
-
-#: templates/indigo_api/_work_points_in_time.html:80
-#: templates/indigo_api/_work_points_in_time.html:109
-msgid "Options"
-msgstr "Chaguo"
-
-#: templates/indigo_api/_work_points_in_time.html:83
-#: templates/indigo_api/_work_points_in_time.html:112
-msgid "Change date"
-msgstr "Badilisha tarehe"
-
-#: templates/indigo_api/_work_points_in_time.html:85
-msgid "Really delete this expression date?"
-msgstr "Je, ungependa kufuta tarehe hii ya kujieleza?"
-
-#: templates/indigo_api/_work_points_in_time.html:85
-#: templates/indigo_api/_work_points_in_time.html:114
-#: templates/indigo_api/document/_annotations.html:24
-#: templates/indigo_api/work_commencements.html:63
-#: templates/indigo_api/work_form.html:493
-#: templates/indigo_api/work_form.html:509
-msgid "Delete"
-msgstr "Futa"
-
-#: templates/indigo_api/_work_points_in_time.html:91
-msgid "Consolidation"
-msgstr "Kuunganisha"
-
-#: templates/indigo_api/_work_points_in_time.html:94
-#: templates/indigo_api/_work_points_in_time.html:128
-#: templates/indigo_api/task_form.html:145
-#: templates/indigo_api/work_commencements.html:161
-#: templates/indigo_api/work_form.html:37
-#: templates/indigo_app/user_account/edit.html:20
-#: templates/place/settings.html:126
-msgid "Save"
-msgstr "Hifadhi"
-
-#: templates/indigo_api/_work_points_in_time.html:121
-msgid "Amended by"
-msgstr "Imerekebishwa na"
-
-#: templates/indigo_api/_work_points_in_time.html:156
-#: templates/indigo_api/work_form.html:37
-msgid "Create"
-msgstr "Unda"
-
-#: templates/indigo_api/_work_points_in_time.html:158
-msgid "Create amended version"
-msgstr "Unda toleo lililorekebishwa"
-
-#: templates/indigo_api/_work_points_in_time.html:168
-msgid "Import document"
-msgstr "Ingiza hati"
 
 #: templates/indigo_api/_work_related_table.html:11
 msgid "Related work"
 msgstr "Kazi inayohusiana"
 
 #: templates/indigo_api/_work_related_table.html:13
-#: templates/indigo_api/work_batch_create.html:112
-#: templates/indigo_api/work_batch_create.html:236
+#: templates/indigo_api/work_batch_create.html:142
+#: templates/indigo_api/work_batch_create.html:276
 msgid "Number"
 msgstr "Nambari"
 
@@ -768,7 +711,7 @@ msgstr "Tarehe"
 #: templates/indigo_api/work_layout.html:27
 #: templates/indigo_api/work_overview.html:18
 #: templates/indigo_api/work_popup.html:10 templates/place/detail.html:250
-#: templates/place/works.html:70
+#: templates/place/works.html:82
 msgid "repealed"
 msgstr "kufutwa"
 
@@ -788,6 +731,15 @@ msgstr "Unda jukumu"
 #: templates/indigo_api/work_form.html:5
 msgid "Edit"
 msgstr "Hariri"
+
+#: templates/indigo_api/document/_annotations.html:24
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+#: templates/indigo_api/work_commencements.html:63
+#: templates/indigo_api/work_form.html:503
+#: templates/indigo_api/work_form.html:519
+msgid "Delete"
+msgstr "Futa"
 
 #: templates/indigo_api/document/_annotations.html:45
 #: templates/indigo_api/document/_annotations.html:46
@@ -817,8 +769,14 @@ msgid "Defined Terms"
 msgstr "Masharti Yaliyofafanuliwa"
 
 #: templates/indigo_api/document/_defined_terms.html:12
-msgid "These are terms that are explicitly defined in this document. Always refresh defined terms before publishing a document to ensure that all references to terms are captured."
-msgstr "Haya ni masharti ambayo yamefafanuliwa kwa uwazi katika hati hii. Onyesha upya masharti yaliyobainishwa kila wakati kabla ya kuchapisha hati ili kuhakikisha kuwa marejeleo yote ya masharti yananaswa."
+msgid ""
+"These are terms that are explicitly defined in this document. Always refresh "
+"defined terms before publishing a document to ensure that all references to "
+"terms are captured."
+msgstr ""
+"Haya ni masharti ambayo yamefafanuliwa kwa uwazi katika hati hii. Onyesha "
+"upya masharti yaliyobainishwa kila wakati kabla ya kuchapisha hati ili "
+"kuhakikisha kuwa marejeleo yote ya masharti yananaswa."
 
 #: templates/indigo_api/document/_defined_terms.html:22
 msgid "Remove defined terms"
@@ -861,7 +819,9 @@ msgstr "Masharti ambayo yataandikwa katika %(country)s:"
 #: templates/indigo_api/document/_italics_terms.html:42
 #, python-format
 msgid "No terms have been selected to be italicised in %(country)s."
-msgstr "Hakuna sheria na masharti ambayo yamechaguliwa ili kuandikwa katika %(country)s."
+msgstr ""
+"Hakuna sheria na masharti ambayo yamechaguliwa ili kuandikwa katika "
+"%(country)s."
 
 #: templates/indigo_api/document/_italics_terms.html:49
 msgid "Remove italics"
@@ -905,8 +865,12 @@ msgid "consolidation"
 msgstr "uimarishaji"
 
 #: templates/indigo_api/document/_properties.html:46
-msgid "Date of this version of the document, either the publication date or an amendment date"
-msgstr "Tarehe ya toleo hili la hati, ama tarehe ya kuchapishwa au tarehe ya marekebisho"
+msgid ""
+"Date of this version of the document, either the publication date or an "
+"amendment date"
+msgstr ""
+"Tarehe ya toleo hili la hati, ama tarehe ya kuchapishwa au tarehe ya "
+"marekebisho"
 
 #: templates/indigo_api/document/_properties.html:49
 #: templates/indigo_api/document/show.html:104
@@ -954,13 +918,13 @@ msgid "Restore this revision"
 msgstr "Rejesha marekebisho haya"
 
 #: templates/indigo_api/document/show.html:25
-#: templates/indigo_api/document_popup.html:9 templates/place/works.html:102
-#: templates/place/works.html:138
+#: templates/indigo_api/document_popup.html:9 templates/place/works.html:114
+#: templates/place/works.html:150
 msgid "published"
 msgstr "iliyochapishwa"
 
 #: templates/indigo_api/document/show.html:26
-#: templates/indigo_api/document_popup.html:7 templates/place/works.html:136
+#: templates/indigo_api/document_popup.html:7 templates/place/works.html:148
 msgid "draft"
 msgstr "rasimu"
 
@@ -998,7 +962,7 @@ msgstr "Inafanya kazi"
 msgid "this document"
 msgstr "hati hii"
 
-#: templates/indigo_api/task_form.html:4 templates/indigo_api/task_list.html:18
+#: templates/indigo_api/task_form.html:4 templates/indigo_api/task_list.html:30
 msgid "New task"
 msgstr "Jukumu jipya"
 
@@ -1056,20 +1020,72 @@ msgstr "Je, una uhakika unataka kuondoa kizuizi cha kazi hii?"
 msgid "Unblock task"
 msgstr "Ondoa kizuizi"
 
+#: templates/indigo_api/task_form.html:145
+#: templates/indigo_api/timeline/_edit_amendment.html:25
+#: templates/indigo_api/timeline/_edit_consolidation.html:25
+#: templates/indigo_api/work_commencements.html:161
+#: templates/indigo_api/work_form.html:37
+#: templates/indigo_app/user_account/edit.html:20
+#: templates/place/settings.html:125 templates/place/users.html:15
+msgid "Save"
+msgstr "Hifadhi"
+
 #: templates/indigo_api/task_list.html:4
-#: templates/indigo_api/work_batch_create.html:119
-#: templates/indigo_api/work_batch_create.html:243
-#: templates/indigo_api/work_batch_update.html:126
+#: templates/indigo_api/work_batch_create.html:150
+#: templates/indigo_api/work_batch_create.html:283
 #: templates/indigo_api/work_layout.html:49
 #: templates/indigo_api/work_tasks.html:4 templates/main.html:37
 #: templates/place/detail.html:120 templates/place/tabbed_layout.html:44
 msgid "Tasks"
 msgstr "Kazi"
 
-#: templates/indigo_api/task_list.html:36
+#: templates/indigo_api/task_list.html:48
 #: templates/indigo_app/tasks/available_tasks.html:101
 msgid "No tasks found."
 msgstr "Hakuna kazi zilizopatikana."
+
+#: templates/indigo_api/timeline/_edit_amendment.html:10
+#: templates/indigo_api/timeline/_edit_consolidation.html:10
+msgid "Options"
+msgstr "Chaguo"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:13
+#: templates/indigo_api/timeline/_edit_consolidation.html:13
+msgid "Change date"
+msgstr "Badilisha tarehe"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+#, fuzzy
+#| msgid "Really delete this commencement?"
+msgid "Really delete this amendment?"
+msgstr "Je, ungependa kufuta mwanzo huu?"
+
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+#, fuzzy
+#| msgid "Really delete this commencement?"
+msgid "Really delete this consolidation?"
+msgstr "Je, ungependa kufuta mwanzo huu?"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:9
+msgid "Add amendment"
+msgstr "Ongeza marekebisho"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:22
+msgid "Add consolidation date"
+msgstr "Ongeza tarehe ya ujumuishaji"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:63
+#: templates/indigo_api/work_form.html:37
+msgid "Create"
+msgstr "Unda"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:65
+msgid "Create amended version"
+msgstr "Unda toleo lililorekebishwa"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:75
+msgid "Import document"
+msgstr "Ingiza hati"
 
 #: templates/indigo_api/work_amendments.html:5
 #: templates/indigo_api/work_amendments.html:8
@@ -1083,7 +1099,8 @@ msgstr "Kazi za stub hazipaswi kuwa na pointi kwa wakati."
 
 #: templates/indigo_api/work_amendments.html:15
 msgid "Either remove these points in time or don't mark this work as a stub."
-msgstr "Unaweza kuondoa vidokezo hivi kwa wakati au usitie alama kazi hii kama mbegu."
+msgstr ""
+"Unaweza kuondoa vidokezo hivi kwa wakati au usitie alama kazi hii kama mbegu."
 
 #: templates/indigo_api/work_batch_create.html:5
 msgid "Create a new batch"
@@ -1125,129 +1142,182 @@ msgstr "Hakuna miradi (unda moja na uonyeshe ukurasa huu upya)"
 msgid "Create a new project"
 msgstr "Unda mradi mpya"
 
-#: templates/indigo_api/work_batch_create.html:89
+#: templates/indigo_api/work_batch_create.html:85
+msgid "Block ALL 'Import content' tasks on creation"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:90
+msgid ""
+"Cancel ALL 'Import content' tasks on creation (this will override blocking "
+"them)"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:95
+msgid "Block ALL 'Link gazette' tasks on creation"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:100
+msgid ""
+"Cancel ALL 'Link gazette' tasks on creation (this will override blocking "
+"them)"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:105
+msgid "Block ALL 'Apply amendment' tasks on creation"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:110
+msgid ""
+"Cancel ALL 'Apply amendment' tasks on creation (this will override blocking "
+"them)"
+msgstr ""
+
+#: templates/indigo_api/work_batch_create.html:119
 msgid "Preview"
 msgstr "Hakiki"
 
-#: templates/indigo_api/work_batch_create.html:91
-#: templates/indigo_api/work_batch_create.html:219
-#: templates/indigo_api/work_batch_create.html:332
+#: templates/indigo_api/work_batch_create.html:121
+#: templates/indigo_api/work_batch_create.html:259
+#: templates/indigo_api/work_batch_create.html:372
 msgid "You don't have permission to create works."
 msgstr "Huna ruhusa ya kuunda kazi."
 
-#: templates/indigo_api/work_batch_create.html:102
+#: templates/indigo_api/work_batch_create.html:132
 msgid "Preview of your import"
 msgstr "Onyesho la kukagua uagizaji wako"
 
-#: templates/indigo_api/work_batch_create.html:108
-#: templates/indigo_api/work_batch_create.html:232
+#: templates/indigo_api/work_batch_create.html:138
+#: templates/indigo_api/work_batch_create.html:272
 #: templates/indigo_api/work_batch_update.html:44
 #: templates/indigo_api/work_batch_update.html:122
 msgid "Row"
 msgstr "Safu"
 
-#: templates/indigo_api/work_batch_create.html:110
-#: templates/indigo_api/work_batch_create.html:234
+#: templates/indigo_api/work_batch_create.html:140
+#: templates/indigo_api/work_batch_create.html:274
 #: templates/indigo_api/work_batch_update.html:46
 #: templates/indigo_api/work_batch_update.html:124
 msgid "Title / Error message"
 msgstr "Kichwa / Ujumbe wa hitilafu"
 
-#: templates/indigo_api/work_batch_create.html:111
-#: templates/indigo_api/work_batch_create.html:235
+#: templates/indigo_api/work_batch_create.html:141
+#: templates/indigo_api/work_batch_create.html:275
 msgid "Type"
 msgstr "Aina"
 
-#: templates/indigo_api/work_batch_create.html:118
-#: templates/indigo_api/work_batch_create.html:242
+#: templates/indigo_api/work_batch_create.html:148
+#: templates/indigo_api/work_batch_create.html:282
 msgid "Taxonomy"
 msgstr "Taksonomia"
 
-#: templates/indigo_api/work_batch_create.html:120
-#: templates/indigo_api/work_batch_create.html:244
+#: templates/indigo_api/work_batch_create.html:149
+#: templates/indigo_api/work_form.html:165
+#, fuzzy
+#| msgid "Taxonomy tags"
+msgid "Taxonomy topics"
+msgstr "Vitambulisho vya Taxonomy"
+
+#: templates/indigo_api/work_batch_create.html:151
+#: templates/indigo_api/work_batch_create.html:284
 msgid "Relationships"
 msgstr "Mahusiano"
 
-#: templates/indigo_api/work_batch_create.html:121
+#: templates/indigo_api/work_batch_create.html:152
 msgid "Notes"
 msgstr "Vidokezo"
 
-#: templates/indigo_api/work_batch_create.html:132
+#: templates/indigo_api/work_batch_create.html:163
 msgid "Ready to import"
 msgstr "Tayari kuagiza"
 
-#: templates/indigo_api/work_batch_create.html:134
-#: templates/indigo_api/work_batch_create.html:257
+#: templates/indigo_api/work_batch_create.html:165
+#: templates/indigo_api/work_batch_create.html:297
 msgid "Duplicate"
 msgstr "Nakala"
 
-#: templates/indigo_api/work_batch_create.html:136
-#: templates/indigo_api/work_batch_create.html:259
+#: templates/indigo_api/work_batch_create.html:167
+#: templates/indigo_api/work_batch_create.html:299
 #: templates/indigo_api/work_batch_update.html:64
 #: templates/indigo_api/work_batch_update.html:141
 msgid "Error"
 msgstr "Hitilafu"
 
-#: templates/indigo_api/work_batch_create.html:143
-#: templates/indigo_api/work_batch_create.html:266
+#: templates/indigo_api/work_batch_create.html:174
+#: templates/indigo_api/work_batch_create.html:306
 msgid "A work with this type, year and number already exists in this place."
 msgstr "Kazi yenye aina hii, mwaka na nambari tayari ipo mahali hapa."
 
-#: templates/indigo_api/work_batch_create.html:216
-#: templates/indigo_api/work_batch_create.html:329
+#: templates/indigo_api/work_batch_create.html:256
+#: templates/indigo_api/work_batch_create.html:369
 #: templates/indigo_api/work_batch_update.html:106
 #: templates/indigo_api/work_batch_update.html:174
 msgid "Refresh preview"
 msgstr "Onyesha upya onyesho la kukagua"
 
-#: templates/indigo_api/work_batch_create.html:217
-#: templates/indigo_api/work_batch_create.html:330
+#: templates/indigo_api/work_batch_create.html:257
 #: templates/indigo_api/work_batch_create.html:370
+#: templates/indigo_api/work_batch_create.html:410
 msgid "Import works"
 msgstr "Ingiza kazi"
 
-#: templates/indigo_api/work_batch_create.html:226
+#: templates/indigo_api/work_batch_create.html:266
 msgid "Import complete"
 msgstr "Uingizaji umekamilika"
 
-#: templates/indigo_api/work_batch_create.html:255
+#: templates/indigo_api/work_batch_create.html:295
 msgid "Imported"
 msgstr "Imeingizwa"
 
-#: templates/indigo_api/work_batch_create.html:349
+#: templates/indigo_api/work_batch_create.html:389
 msgid "Instructions"
 msgstr "Maagizo"
 
-#: templates/indigo_api/work_batch_create.html:353
+#: templates/indigo_api/work_batch_create.html:393
 #, python-format
-msgid "Make a copy of the <a href=\"%(template_href)s\" target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
-msgstr "Tengeneza nakala ya kiolezo <a href=\"%(template_href)s\" target=\"_blank\"></a>faharasa ya Sheria : 'Faili | Tengeneza nakala'."
+msgid ""
+"Make a copy of the <a href=\"%(template_href)s\" "
+"target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
+msgstr ""
+"Tengeneza nakala ya kiolezo <a href=\"%(template_href)s\" "
+"target=\"_blank\"></a>faharasa ya Sheria : 'Faili | Tengeneza nakala'."
 
-#: templates/indigo_api/work_batch_create.html:358
+#: templates/indigo_api/work_batch_create.html:398
 #, python-format
-msgid "Record the Spreadsheet URL under <a href=\"%(place_url)s\" target=\"_blank\">Settings</a>."
-msgstr "Rekodi URL ya Lahajedwali chini ya <a href=\"%(place_url)s\" target=\"_blank\">Mipangilio</a>."
+msgid ""
+"Record the Spreadsheet URL under <a href=\"%(place_url)s\" "
+"target=\"_blank\">Settings</a>."
+msgstr ""
+"Rekodi URL ya Lahajedwali chini ya <a href=\"%(place_url)s\" "
+"target=\"_blank\">Mipangilio</a>."
 
-#: templates/indigo_api/work_batch_create.html:363
+#: templates/indigo_api/work_batch_create.html:403
 #, python-format
 msgid "Share the spreadsheet with %(share)s."
 msgstr "Shiriki lahajedwali na %(share)s."
 
-#: templates/indigo_api/work_batch_create.html:364
+#: templates/indigo_api/work_batch_create.html:404
 msgid "Choose a spreadsheet tab and a project."
 msgstr "Chagua kichupo cha lahajedwali na mradi."
 
-#: templates/indigo_api/work_batch_create.html:366
-msgid "Make it accessible by turning link sharing on: 'Share | General access | Anyone with the link' (top-right corner)."
-msgstr "Ifanye ipatikane kwa kuwasha kushiriki kiungo: 'Shiriki | Ufikiaji wa jumla | Yeyote aliye na kiungo' (kona ya juu kulia)."
+#: templates/indigo_api/work_batch_create.html:406
+msgid ""
+"Make it accessible by turning link sharing on: 'Share | General access | "
+"Anyone with the link' (top-right corner)."
+msgstr ""
+"Ifanye ipatikane kwa kuwasha kushiriki kiungo: 'Shiriki | Ufikiaji wa jumla "
+"| Yeyote aliye na kiungo' (kona ya juu kulia)."
 
-#: templates/indigo_api/work_batch_create.html:367
+#: templates/indigo_api/work_batch_create.html:407
 msgid "Choose a project."
 msgstr "Chagua mradi."
 
-#: templates/indigo_api/work_batch_create.html:369
-msgid "<strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>."
-msgstr "<strong>Hakiki</strong> kazi mpya zitakazoundwa, suluhisha makosa / nakala zozote na <strong>Onyesha upya</strong>."
+#: templates/indigo_api/work_batch_create.html:409
+msgid ""
+"<strong>Preview</strong> the new works to be created, resolve any errors / "
+"duplicates and <strong>Refresh preview</strong>."
+msgstr ""
+"<strong>Hakiki</strong> kazi mpya zitakazoundwa, suluhisha makosa / nakala "
+"zozote na <strong>Onyesha upya</strong>."
 
 #: templates/indigo_api/work_batch_update.html:5
 msgid "Update an existing batch"
@@ -1303,6 +1373,12 @@ msgstr "Huna ruhusa ya kusasisha kazi."
 msgid "Update complete"
 msgstr "Usasishaji umekamilika"
 
+#: templates/indigo_api/work_batch_update.html:126
+#, fuzzy
+#| msgid "Current tasks"
+msgid "Open tasks"
+msgstr "Kazi za sasa"
+
 #: templates/indigo_api/work_commencements.html:5
 #: templates/indigo_api/work_commencements.html:8
 #: templates/indigo_api/work_layout.html:46
@@ -1319,14 +1395,22 @@ msgstr "Kazi hii haijaanza."
 
 #: templates/indigo_api/work_commencements.html:20
 #, python-format
-msgid "This work has %(count)s <a href=\"#uncommenced\">uncommenced provision</a>."
-msgid_plural "This work has %(count)s <a href=\"#uncommenced\">uncommenced provisions</a>."
-msgstr[0] "Kazi hii ina %(count)s <a href=\"#uncommenced\">utoaji ambao haujaanza</a>."
-msgstr[1] "Kazi hii ina %(count)s <a href=\"#uncommenced\">vifungu ambavyo havijaanza</a>."
+msgid ""
+"This work has %(count)s <a href=\"#uncommenced\">uncommenced provision</a>."
+msgid_plural ""
+"This work has %(count)s <a href=\"#uncommenced\">uncommenced provisions</a>."
+msgstr[0] ""
+"Kazi hii ina %(count)s <a href=\"#uncommenced\">utoaji ambao haujaanza</a>."
+msgstr[1] ""
+"Kazi hii ina %(count)s <a href=\"#uncommenced\">vifungu ambavyo havijaanza</"
+"a>."
 
 #: templates/indigo_api/work_commencements.html:29
-msgid "All provisions have commenced, no additional commencement events are required."
-msgstr "Masharti yote yameanza, hakuna matukio ya ziada ya kuanza yanayohitajika."
+msgid ""
+"All provisions have commenced, no additional commencement events are "
+"required."
+msgstr ""
+"Masharti yote yameanza, hakuna matukio ya ziada ya kuanza yanayohitajika."
 
 #: templates/indigo_api/work_commencements.html:38
 msgid "Add commencement"
@@ -1343,6 +1427,20 @@ msgstr "Haijulikani"
 #: templates/indigo_api/work_commencements.html:63
 msgid "Really delete this commencement?"
 msgstr "Je, ungependa kufuta mwanzo huu?"
+
+#: templates/indigo_api/work_commencements.html:73
+msgid "Commenced"
+msgstr "Imeanza"
+
+#: templates/indigo_api/work_commencements.html:75
+msgid "Commenced in part"
+msgstr "Ilianza kwa sehemu"
+
+#: templates/indigo_api/work_commencements.html:78
+#: templates/indigo_api/work_overview.html:141 templates/place/detail.html:223
+#: templates/place/detail.html:259
+msgid "by"
+msgstr "kwa"
 
 #: templates/indigo_api/work_commencements.html:89
 #: templates/indigo_api/work_commencements.html:127
@@ -1392,8 +1490,12 @@ msgid "You don't have permission to create or change a work."
 msgstr "Huna ruhusa ya kuunda au kubadilisha kazi."
 
 #: templates/indigo_api/work_form.html:15
-msgid "There were some errors in the information you entered. Please correct the following:"
-msgstr "Kulikuwa na baadhi ya makosa katika maelezo uliyoweka. Tafadhali sahihisha yafuatayo:"
+msgid ""
+"There were some errors in the information you entered. Please correct the "
+"following:"
+msgstr ""
+"Kulikuwa na baadhi ya makosa katika maelezo uliyoweka. Tafadhali sahihisha "
+"yafuatayo:"
 
 #: templates/indigo_api/work_form.html:51
 msgid "Work identification"
@@ -1424,22 +1526,30 @@ msgid "Number within year"
 msgstr "Idadi ndani ya mwaka"
 
 #: templates/indigo_api/work_form.html:98
-msgid "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only."
-msgstr "Nambari au jina fupi ambalo linatambulisha sheria hii kwa njia ya kipekee ndani ya mwaka wa kuanzishwa. Nambari, herufi na '-' pekee."
+msgid ""
+"Number or short name that uniquely identifies this legislation within the "
+"year of introduction. Numbers, letters and '-' only."
+msgstr ""
+"Nambari au jina fupi ambalo linatambulisha sheria hii kwa njia ya kipekee "
+"ndani ya mwaka wa kuanzishwa. Nambari, herufi na '-' pekee."
 
 #: templates/indigo_api/work_form.html:106
 msgid "Classification"
 msgstr "Uainishaji"
 
 #: templates/indigo_api/work_form.html:113
-#: templates/indigo_api/work_overview.html:147
+#: templates/indigo_api/work_overview.html:149
 msgid "Principal work"
 msgstr "Kazi kuu"
 
 #: templates/indigo_api/work_form.html:115
-#: templates/indigo_api/work_overview.html:148
-msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
-msgstr "Kazi kuu sio kubatilisha tu, marekebisho au kuanza, na zinapaswa kuwa na maandishi kamili."
+#: templates/indigo_api/work_overview.html:150
+msgid ""
+"Principal works are not simply repeals, amendments or commencements, and "
+"should have full text content."
+msgstr ""
+"Kazi kuu sio kubatilisha tu, marekebisho au kuanza, na zinapaswa kuwa na "
+"maandishi kamili."
 
 #: templates/indigo_api/work_form.html:121
 msgid "Choose primary work"
@@ -1450,8 +1560,8 @@ msgid "The primary work for regulations and notices is the primary Act."
 msgstr "Kazi ya msingi ya kanuni na matangazo ni Sheria ya msingi."
 
 #: templates/indigo_api/work_form.html:132
-#: templates/indigo_api/work_form.html:538
-#: templates/indigo_api/work_form.html:552
+#: templates/indigo_api/work_form.html:548
+#: templates/indigo_api/work_form.html:562
 msgid "remove"
 msgstr "ondoa"
 
@@ -1460,169 +1570,210 @@ msgid "Stub – this work will have no content"
 msgstr "Stub - kazi hii haitakuwa na maudhui"
 
 #: templates/indigo_api/work_form.html:143
-msgid "Check this option for commencing or amending works that are not captured in detail."
-msgstr "Angalia chaguo hili kwa ajili ya kuanza au kurekebisha kazi ambazo hazijanaswa kwa kina."
+msgid ""
+"Check this option for commencing or amending works that are not captured in "
+"detail."
+msgstr ""
+"Angalia chaguo hili kwa ajili ya kuanza au kurekebisha kazi ambazo "
+"hazijanaswa kwa kina."
 
 #: templates/indigo_api/work_form.html:151
 msgid "Taxonomy tags"
 msgstr "Vitambulisho vya Taxonomy"
 
-#: templates/indigo_api/work_form.html:188
+#: templates/indigo_api/work_form.html:198
 msgid "Publication"
 msgstr "Uchapishaji"
 
-#: templates/indigo_api/work_form.html:195
+#: templates/indigo_api/work_form.html:205
 msgid "Publication date"
 msgstr "Tarehe ya kuchapishwa"
 
-#: templates/indigo_api/work_form.html:197
+#: templates/indigo_api/work_form.html:207
 msgid "Date when first published. "
 msgstr "Tarehe ilipochapishwa kwa mara ya kwanza. "
 
-#: templates/indigo_api/work_form.html:202
+#: templates/indigo_api/work_form.html:212
 msgid "Publication name"
 msgstr "Jina la uchapishaji"
 
-#: templates/indigo_api/work_form.html:204
+#: templates/indigo_api/work_form.html:214
 msgid "Original publication, eg. national gazette."
 msgstr "Uchapishaji wa asili, kwa mfano. gazeti la taifa."
 
-#: templates/indigo_api/work_form.html:213
+#: templates/indigo_api/work_form.html:223
 msgid "Publication number"
 msgstr "Nambari ya uchapishaji"
 
-#: templates/indigo_api/work_form.html:215
+#: templates/indigo_api/work_form.html:225
 msgid "The publication's sequence number, eg. gazette number."
 msgstr "Nambari ya mfuatano wa chapisho, kwa mfano. nambari ya gazeti."
 
-#: templates/indigo_api/work_form.html:222
+#: templates/indigo_api/work_form.html:232
 msgid "Official publication document"
 msgstr "Hati rasmi ya uchapishaji"
 
-#: templates/indigo_api/work_form.html:223
+#: templates/indigo_api/work_form.html:233
 msgid "A copy of the official publication document, such as the gazette."
 msgstr "Nakala ya hati rasmi ya uchapishaji, kama vile gazeti la serikali."
 
-#: templates/indigo_api/work_form.html:246
+#: templates/indigo_api/work_form.html:256
 msgid "Possible documents"
 msgstr "Nyaraka zinazowezekana"
 
-#: templates/indigo_api/work_form.html:253
+#: templates/indigo_api/work_form.html:263
 msgid "Attach document"
 msgstr "Ambatisha hati"
 
-#: templates/indigo_api/work_form.html:277
-#, python-format
-msgid "This work has mixed commencements, <a href=\"%(comm_url)s\">edit them in the Commencements page</a>."
-msgstr "Kazi hii ina mianzo mchanganyiko, <a href=\"%(comm_url)s\">ihariri katika ukurasa wa</a>wa Kuanza."
-
 #: templates/indigo_api/work_form.html:287
-msgid "Commenced – this work has come into force, or has a future commencement date"
-msgstr "Imeanza - kazi hii imeanza kutumika, au ina tarehe ya kuanza kwa siku zijazo"
+#, python-format
+msgid ""
+"This work has mixed commencements, <a href=\"%(comm_url)s\">edit them in the "
+"Commencements page</a>."
+msgstr ""
+"Kazi hii ina mianzo mchanganyiko, <a href=\"%(comm_url)s\">ihariri katika "
+"ukurasa wa</a>wa Kuanza."
 
-#: templates/indigo_api/work_form.html:295
+#: templates/indigo_api/work_form.html:297
+msgid ""
+"Commenced – this work has come into force, or has a future commencement date"
+msgstr ""
+"Imeanza - kazi hii imeanza kutumika, au ina tarehe ya kuanza kwa siku zijazo"
+
+#: templates/indigo_api/work_form.html:305
 msgid "Commencement date"
 msgstr "Tarehe ya kuanza"
 
-#: templates/indigo_api/work_form.html:297
+#: templates/indigo_api/work_form.html:307
 msgid "Date when most of the work comes into force."
 msgstr "Tarehe ambapo kazi nyingi huanza kutumika."
 
-#: templates/indigo_api/work_form.html:302
+#: templates/indigo_api/work_form.html:312
 #, python-format
-msgid "If you change this commencement date, you may also have to manually change the dates for related <a href=\"%(work_url)s\">amendments and repeals</a> made by this work."
-msgstr "Ukibadilisha tarehe hii ya kuanza, unaweza pia kubadilisha wewe mwenyewe tarehe za marekebisho <a href=\"%(work_url)s\">yanayohusiana na kufuta</a> yaliyofanywa na kazi hii."
+msgid ""
+"If you change this commencement date, you may also have to manually change "
+"the dates for related <a href=\"%(work_url)s\">amendments and repeals</a> "
+"made by this work."
+msgstr ""
+"Ukibadilisha tarehe hii ya kuanza, unaweza pia kubadilisha wewe mwenyewe "
+"tarehe za marekebisho <a href=\"%(work_url)s\">yanayohusiana na kufuta</a> "
+"yaliyofanywa na kazi hii."
 
-#: templates/indigo_api/work_form.html:311
+#: templates/indigo_api/work_form.html:321
 msgid "Choose commencing work"
 msgstr "Chagua kuanza kazi"
 
-#: templates/indigo_api/work_form.html:312
+#: templates/indigo_api/work_form.html:322
 msgid "Commenced by"
 msgstr "Ilianzishwa na"
 
-#: templates/indigo_api/work_form.html:315
+#: templates/indigo_api/work_form.html:325
 msgid "The work that gives the commencement date of this work."
 msgstr "Kazi ambayo inatoa tarehe ya kuanza kwa kazi hii."
 
-#: templates/indigo_api/work_form.html:323
+#: templates/indigo_api/work_form.html:333
 msgid "Commencement date is unknown"
 msgstr "Tarehe ya kuanza haijulikani"
 
-#: templates/indigo_api/work_form.html:326
-msgid "Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation."
-msgstr "Weka alama kwenye kisanduku hiki wakati kazi imeanza kutumika, lakini tarehe kamili ya kuanza haijulikani au inaweza kutafsiriwa."
+#: templates/indigo_api/work_form.html:336
+msgid ""
+"Check this box when a work has come into force, but the exact commencement "
+"date is unknown or open to interpretation."
+msgstr ""
+"Weka alama kwenye kisanduku hiki wakati kazi imeanza kutumika, lakini tarehe "
+"kamili ya kuanza haijulikani au inaweza kutafsiriwa."
 
-#: templates/indigo_api/work_form.html:331
+#: templates/indigo_api/work_form.html:341
 msgid "Commencement note"
 msgstr "Ujumbe wa kuanza"
 
-#: templates/indigo_api/work_form.html:334
-msgid "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context."
-msgstr "Wakati tarehe ya kuanza iko wazi kwa tafsiri, toa rejeleo kwa kifungu cha hii au kazi ya kuanza kwa muktadha ulioongezwa."
+#: templates/indigo_api/work_form.html:344
+msgid ""
+"When the commencement date is open to interpretation, give a reference to a "
+"provision of this or a commencing work for added context."
+msgstr ""
+"Wakati tarehe ya kuanza iko wazi kwa tafsiri, toa rejeleo kwa kifungu cha "
+"hii au kazi ya kuanza kwa muktadha ulioongezwa."
 
-#: templates/indigo_api/work_form.html:345
+#: templates/indigo_api/work_form.html:355
 msgid "Key dates"
 msgstr "Tarehe muhimu"
 
-#: templates/indigo_api/work_form.html:349
+#: templates/indigo_api/work_form.html:359
 msgid "Assent date"
 msgstr "Tarehe ya kupitishwa"
 
-#: templates/indigo_api/work_form.html:352
+#: templates/indigo_api/work_form.html:362
 msgid "Date when approved by the responsible authority."
 msgstr "Tarehe ilipoidhinishwa na mamlaka inayohusika."
 
-#: templates/indigo_api/work_form.html:360
+#: templates/indigo_api/work_form.html:370
 #, python-format
-msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date."
-msgstr "Tarehe ambayo kazi hii iliangaliwa mara ya mwisho ili kupata masasisho. Weka hii tu ikiwa inapaswa kuwa tofauti na %(name)s's as-at date."
+msgid ""
+"Date up to which this work was last checked for updates. Only set this if it "
+"should be different from %(name)s's as-at date."
+msgstr ""
+"Tarehe ambayo kazi hii iliangaliwa mara ya mwisho ili kupata masasisho. Weka "
+"hii tu ikiwa inapaswa kuwa tofauti na %(name)s's as-at date."
 
-#: templates/indigo_api/work_form.html:377
-#: templates/indigo_api/work_overview.html:177
+#: templates/indigo_api/work_form.html:387
+#: templates/indigo_api/work_overview.html:179
 msgid "Consolidation note"
 msgstr "Ujumbe wa ujumuishaji"
 
-#: templates/indigo_api/work_form.html:384
+#: templates/indigo_api/work_form.html:394
 #, python-format
-msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
-msgstr "Kumbuka ya ujumuishaji ambayo inatumika kwa kazi hii tu. Hubatilisha kidokezo cha ujumuishaji katika %(name)s ikiwa imewekwa."
+msgid ""
+"Consolidation note that applies to just this work. Overrides a consolidation "
+"note in %(name)s if set."
+msgstr ""
+"Kumbuka ya ujumuishaji ambayo inatumika kwa kazi hii tu. Hubatilisha "
+"kidokezo cha ujumuishaji katika %(name)s ikiwa imewekwa."
 
-#: templates/indigo_api/work_form.html:401
-#: templates/indigo_api/work_overview.html:191
+#: templates/indigo_api/work_form.html:411
+#: templates/indigo_api/work_overview.html:193
 msgid "Disclaimer"
 msgstr "Zuio"
 
-#: templates/indigo_api/work_form.html:408
+#: templates/indigo_api/work_form.html:418
 msgid "Disclaimer for this work; it will be shown on all expressions."
 msgstr "Kanusho kwa kazi hii; itaonyeshwa kwenye misemo yote."
 
-#: templates/indigo_api/work_form.html:432
+#: templates/indigo_api/work_form.html:441
+msgid "Repealed by"
+msgstr "Imefutwa na"
+
+#: templates/indigo_api/work_form.html:442
 msgid "Choose repealing work"
 msgstr "Chagua kazi ya kufuta"
 
-#: templates/indigo_api/work_form.html:440
+#: templates/indigo_api/work_form.html:450
 msgid "Repeal date"
 msgstr "Tarehe ya kufutwa"
 
-#: templates/indigo_api/work_form.html:450
+#: templates/indigo_api/work_form.html:460
 msgid "Change country or locality"
 msgstr "Badilisha nchi au eneo"
 
-#: templates/indigo_api/work_form.html:454
+#: templates/indigo_api/work_form.html:464
 msgid "Country and locality (advanced)"
 msgstr "Nchi na eneo (ya hali ya juu)"
 
-#: templates/indigo_api/work_form.html:485
+#: templates/indigo_api/work_form.html:495
 #, python-format
-msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
-msgstr "Kazi hii haiwezi kufutwa wakati hati <a href=\"%(amendments_url)s\">zilizounganishwa</a> na <a href=\"%(related_url)s\">kazi zinazohusiana</a> zipo."
+msgid ""
+"This work cannot be deleted while <a href=\"%(amendments_url)s\">linked "
+"documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
+msgstr ""
+"Kazi hii haiwezi kufutwa wakati hati <a "
+"href=\"%(amendments_url)s\">zilizounganishwa</a> na <a "
+"href=\"%(related_url)s\">kazi zinazohusiana</a> zipo."
 
-#: templates/indigo_api/work_form.html:492
+#: templates/indigo_api/work_form.html:502
 msgid "Are you sure you want to delete this work?"
 msgstr "Je, una uhakika unataka kufuta kazi hii?"
 
-#: templates/indigo_api/work_form.html:540
+#: templates/indigo_api/work_form.html:550
 msgid "Not repealed."
 msgstr "Haijafutwa."
 
@@ -1647,8 +1798,12 @@ msgid "or"
 msgstr "au"
 
 #: templates/indigo_api/work_import_document.html:59
-msgid "You can import legislation from most document formats including PDF, Word, RTF and plain text."
-msgstr "Unaweza kuleta sheria kutoka kwa miundo mingi ya hati ikiwa ni pamoja na PDF, Word, RTF na maandishi wazi."
+msgid ""
+"You can import legislation from most document formats including PDF, Word, "
+"RTF and plain text."
+msgstr ""
+"Unaweza kuleta sheria kutoka kwa miundo mingi ya hati ikiwa ni pamoja na "
+"PDF, Word, RTF na maandishi wazi."
 
 #: templates/indigo_api/work_import_document.html:76
 msgid "Pages to import"
@@ -1701,95 +1856,85 @@ msgstr "mabadiliko ya hivi karibuni"
 msgid "Promulgation"
 msgstr "Kutangaza"
 
-#: templates/indigo_api/work_overview.html:56
-#, python-format
-msgid "Published in %(name)s"
-msgstr "Imechapishwa katika %(name)s"
-
-#: templates/indigo_api/work_overview.html:57
-msgid "no."
-msgstr "Hapana."
-
-#: templates/indigo_api/work_overview.html:58
-#: templates/indigo_api/work_overview.html:76
-msgid "on"
-msgstr "juu"
-
-#: templates/indigo_api/work_overview.html:85
-#, python-format
-msgid "This work has <a href=\"%(work_rul)s\">multiple commencements</a>."
-msgstr "Kazi hii ina mwanzo <a href=\"%(work_rul)s\">nyingi</a>."
-
-#: templates/indigo_api/work_overview.html:94
-msgid "Not commenced"
-msgstr "Haijaanza"
-
-#: templates/indigo_api/work_overview.html:98
-msgid "Up to date as at"
-msgstr "Imesasishwa kama saa"
-
-#: templates/indigo_api/work_overview.html:102
-#: templates/indigo_api/work_overview.html:179
-msgid "Set explicitly on this work"
-msgstr "Weka kwa uwazi juu ya kazi hii"
-
-#: templates/indigo_api/work_overview.html:103
-#: templates/indigo_api/work_overview.html:180
-msgid "Overridden"
-msgstr "Imebatilishwa"
-
-#: templates/indigo_api/work_overview.html:128
-msgid "Assented to on"
-msgstr "Imekubaliwa kuendelea"
-
-#: templates/indigo_api/work_overview.html:130
+#: templates/indigo_api/work_overview.html:59
+#: templates/indigo_api/work_overview.html:132
 msgid "(unknown)"
 msgstr "(haijulikani)"
 
-#: templates/indigo_api/work_overview.html:137
+#: templates/indigo_api/work_overview.html:90
+msgid "Up to date as at"
+msgstr "Imesasishwa kama saa"
+
+#: templates/indigo_api/work_overview.html:101
+#: templates/indigo_api/work_overview.html:181
+msgid "Set explicitly on this work"
+msgstr "Weka kwa uwazi juu ya kazi hii"
+
+#: templates/indigo_api/work_overview.html:102
+#: templates/indigo_api/work_overview.html:182
+msgid "Overridden"
+msgstr "Imebatilishwa"
+
+#: templates/indigo_api/work_overview.html:109
+#, fuzzy
+#| msgid "Taxonomies..."
+msgid "Taxonomies"
+msgstr "Taxonomia..."
+
+#: templates/indigo_api/work_overview.html:130
+msgid "Assented to on"
+msgstr "Imekubaliwa kuendelea"
+
+#: templates/indigo_api/work_overview.html:139
 msgid "Repealed on"
 msgstr "Imefutwa"
 
-#: templates/indigo_api/work_overview.html:142
+#: templates/indigo_api/work_overview.html:144
 msgid "(not repealed)"
 msgstr "(haijafutwa)"
 
-#: templates/indigo_api/work_overview.html:152
-#: templates/indigo_api/work_popup.html:122 templates/place/works.html:76
+#: templates/indigo_api/work_overview.html:154
+#: templates/indigo_api/work_popup.html:72 templates/place/works.html:88
 msgid "Primary work"
 msgstr "Kazi ya msingi"
 
-#: templates/indigo_api/work_overview.html:160
-msgid "Subsidary works"
+#: templates/indigo_api/work_overview.html:162
+#, fuzzy
+#| msgid "Subsidary works"
+msgid "Subsidiary works"
 msgstr "Kazi za ruzuku"
 
-#: templates/indigo_api/work_overview.html:219
+#: templates/indigo_api/work_overview.html:221
 msgid "Core Details"
 msgstr "Maelezo ya Msingi"
 
-#: templates/indigo_api/work_overview.html:227
+#: templates/indigo_api/work_overview.html:229
 #: templates/place/_place_cards.html:32 templates/place/detail.html:22
 #: templates/place/metrics.html:68
 msgid "Complete"
 msgstr "Kamilisha"
 
-#: templates/indigo_api/work_overview.html:234
+#: templates/indigo_api/work_overview.html:236
 msgid "Add a publication document."
 msgstr "Ongeza hati ya uchapishaji."
 
-#: templates/indigo_api/work_overview.html:237
+#: templates/indigo_api/work_overview.html:239
 msgid "Publish at least one point in time."
 msgstr "Chapisha angalau nukta moja kwa wakati."
 
-#: templates/indigo_api/work_overview.html:248
+#: templates/indigo_api/work_overview.html:250
 msgid "Manage points in time"
 msgstr "Dhibiti pointi kwa wakati"
 
-#: templates/indigo_api/work_overview.html:255
-msgid "Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub."
-msgstr "Kazi za stub hazipaswi kuwa na pointi kwa wakati. Unaweza kuondoa vidokezo hivi kwa wakati au usiandike kazi hii kama mbegu."
+#: templates/indigo_api/work_overview.html:257
+msgid ""
+"Stub works should not have points in time. Either remove these points in "
+"time or don't mark this work as a stub."
+msgstr ""
+"Kazi za stub hazipaswi kuwa na pointi kwa wakati. Unaweza kuondoa vidokezo "
+"hivi kwa wakati au usiandike kazi hii kama mbegu."
 
-#: templates/indigo_api/work_overview.html:280
+#: templates/indigo_api/work_overview.html:282
 #, python-format
 msgid "%(user.task_count)s task"
 msgid_plural "%(user.task_count)s tasks"
@@ -1801,52 +1946,12 @@ msgstr[1] "%(user.task_count)s kazi"
 msgid "Assented to on %(date)s"
 msgstr "Imeidhinishwa tarehe %(date)s"
 
-#: templates/indigo_api/work_popup.html:36
-#, python-format
-msgid "Published on %(pub_date)s in <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\">%(pubdoc)s</a>."
-msgstr "Ilichapishwa mnamo %(pub_date)s kwa <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\">%(pubdoc)s</a>."
-
-#: templates/indigo_api/work_popup.html:43
-#, python-format
-msgid "Published on %(pub_date)s."
-msgstr "Ilichapishwa mnamo %(pub_date)s."
-
-#: templates/indigo_api/work_popup.html:54
-#, python-format
-msgid "Published in <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\">%(pubdoc)s</a>."
-msgstr "Imechapishwa katika <a href=\"%(url)s\" target=\"_blank\" rel=\"noopener\">%(pubdoc)s</a>."
-
-#: templates/indigo_api/work_popup.html:71
-#, python-format
-msgid "Commenced in part on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
-msgstr "Ilianza kwa sehemu mnamo %(date)s kwa <a href=\"%(url)s\">%(title)s</a>."
-
-#: templates/indigo_api/work_popup.html:75
-#, python-format
-msgid "Commenced in part on %(date)s."
-msgstr "Ilianza kwa sehemu mnamo %(date)s."
-
-#: templates/indigo_api/work_popup.html:84
-#, python-format
-msgid "Commenced on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
-msgstr "Ilianza %(date)s kwa <a href=\"%(url)s\">%(title)s</a>."
-
-#: templates/indigo_api/work_popup.html:88
-#, python-format
-msgid "Commenced on %(date)s."
-msgstr "Ilianza tarehe %(date)s."
-
-#: templates/indigo_api/work_popup.html:98
-#, python-format
-msgid "This work has <a href=\"%(url)s\">multiple commencements</a>."
-msgstr "Kazi hii ina mwanzo <a href=\"%(url)s\">nyingi</a>."
-
-#: templates/indigo_api/work_popup.html:109
+#: templates/indigo_api/work_popup.html:59
 #, python-format
 msgid "Repealed on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
 msgstr "Ilifutwa tarehe %(date)s kwa <a href=\"%(url)s\">%(title)s</a>."
 
-#: templates/indigo_api/work_popup.html:113
+#: templates/indigo_api/work_popup.html:63
 #, python-format
 msgid "Repealed on %(date)s."
 msgstr "Ilifutwa tarehe %(date)s."
@@ -1965,8 +2070,14 @@ msgid "Priority project"
 msgstr "Mradi wa kipaumbele"
 
 #: templates/indigo_api/workflow_form.html:89
-msgid "Are you sure you want to permanently delete this project? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)"
-msgstr "Je, una uhakika unataka kufuta mradi huu kabisa? Unaweza pia kuifunga kutoka kwa muhtasari. Kitendo hiki hakiwezi kutenduliwa. (Kazi zozote zinazohusiana hazitaathiriwa.)"
+msgid ""
+"Are you sure you want to permanently delete this project? You can also close "
+"it from the overview. This action cannot be undone. (Any related tasks will "
+"not be affected.)"
+msgstr ""
+"Je, una uhakika unataka kufuta mradi huu kabisa? Unaweza pia kuifunga kutoka "
+"kwa muhtasari. Kitendo hiki hakiwezi kutenduliwa. (Kazi zozote zinazohusiana "
+"hazitaathiriwa.)"
 
 #: templates/indigo_api/workflow_form.html:90
 msgid "Delete workflow"
@@ -1986,13 +2097,21 @@ msgstr "Imefungwa"
 
 #: templates/indigo_api/workflow_list.html:68
 #, python-format
-msgid "Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span> by"
-msgstr "Imeundwa <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span> na"
+msgid ""
+"Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</"
+"span> by"
+msgstr ""
+"Imeundwa <span class=\"time-ago\" data-"
+"timestamp=\"%(date)s\">%(created_at)s</span> na"
 
 #: templates/indigo_api/workflow_list.html:73
 #, python-format
-msgid "Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span>"
-msgstr "Imeundwa <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span>"
+msgid ""
+"Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</"
+"span>"
+msgstr ""
+"Imeundwa <span class=\"time-ago\" data-"
+"timestamp=\"%(date)s\">%(created_at)s</span>"
 
 #: templates/indigo_api/workflow_list.html:114
 msgid "Create projects to group and track related tasks."
@@ -2195,20 +2314,32 @@ msgstr "Ili kuendelea, tafadhali ukubali Sheria na Masharti"
 
 #: templates/indigo_app/user_account/accept_terms.html:16
 #, python-format
-msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
-msgstr "Nimesoma na kukubali Sheria na Masharti <a href=\"%(url)s\" target=\"_blank\"></a>."
+msgid ""
+"I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of "
+"Use</a>."
+msgstr ""
+"Nimesoma na kukubali Sheria na Masharti <a href=\"%(url)s\" "
+"target=\"_blank\"></a>."
 
 #: templates/indigo_app/user_account/accept_terms.html:30
 msgid "Continue"
 msgstr "Endelea"
 
 #: templates/indigo_app/user_account/api.html:17
-msgid "Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong>"
-msgstr "Tumia tokeni ya API iliyo hapa chini ili kuthibitisha simu zako kwa API ya Indigo. <strong>Weka siri!</strong>"
+msgid ""
+"Use the API token below to authenticate your calls to the Indigo API. "
+"<strong>Keep it secret!</strong>"
+msgstr ""
+"Tumia tokeni ya API iliyo hapa chini ili kuthibitisha simu zako kwa API ya "
+"Indigo. <strong>Weka siri!</strong>"
 
 #: templates/indigo_app/user_account/api.html:26
-msgid "Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong>"
-msgstr "Tengeneza tokeni mpya ya API ikiwa tokeni yako ya sasa imevuja. <strong>Tokeni yako ya zamani itaacha kufanya kazi.</strong>"
+msgid ""
+"Generate a new API token if your current token has been leaked. <strong>Your "
+"old token will stop working.</strong>"
+msgstr ""
+"Tengeneza tokeni mpya ya API ikiwa tokeni yako ya sasa imevuja. "
+"<strong>Tokeni yako ya zamani itaacha kufanya kazi.</strong>"
 
 #: templates/indigo_app/user_account/api.html:32
 msgid "Generate new API token"
@@ -2263,30 +2394,38 @@ msgid "Your account"
 msgstr "Akaunti yako"
 
 #: templates/place/_place_cards.html:14
-msgid "\n"
+msgid ""
+"\n"
 "                  Work\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Works\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  Kazi\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  Inafanya kazi\n"
 "                "
 
 #: templates/place/_place_cards.html:23
-msgid "\n"
+msgid ""
+"\n"
 "                  Task\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Tasks\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  Kazi ya\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  Kazi\n"
 "                "
 
@@ -2295,16 +2434,20 @@ msgid "As at date"
 msgstr "Kama tarehe"
 
 #: templates/place/_place_cards.html:43
-msgid "\n"
+msgid ""
+"\n"
 "                  Page\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Pages\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  Ukurasa wa\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  Kurasa\n"
 "                "
 
@@ -2408,8 +2551,18 @@ msgid "Go"
 msgstr "Nenda"
 
 #: templates/place/explorer.html:20
-msgid "Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\">regular expressions</a>. Also see the <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">XPath cheatsheet</a>."
-msgstr "Tumia <code>a:</code> kama kiambishi awali cha nafasi ya majina ya Akoma Ntoso, na <code>re:</code> kwa misemo <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\">ya kawaida</a>. Pia tazama <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">XPath cheatsheet</a>."
+msgid ""
+"Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</"
+"code> for <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-"
+"xpath\" target=\"_blank\" rel=\"noreferrer noopener\">regular expressions</"
+"a>. Also see the <a href=\"https://devhints.io/xpath\" target=\"_blank\" "
+"rel=\"noreferrer noopener\">XPath cheatsheet</a>."
+msgstr ""
+"Tumia <code>a:</code> kama kiambishi awali cha nafasi ya majina ya Akoma "
+"Ntoso, na <code>re:</code> kwa misemo <a href=\"https://lxml.de/xpathxslt."
+"html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer "
+"noopener\">ya kawaida</a>. Pia tazama <a href=\"https://devhints.io/xpath\" "
+"target=\"_blank\" rel=\"noreferrer noopener\">XPath cheatsheet</a>."
 
 #: templates/place/explorer.html:34
 msgid "Parent context"
@@ -2472,41 +2625,69 @@ msgstr "Maneno (hati)"
 msgid "Changes and updates"
 msgstr "Mabadiliko na sasisho"
 
-#: templates/place/settings.html:4 templates/place/settings.html:12
+#: templates/place/settings.html:4 templates/place/settings.html:11
+#: templates/place/settings_layout.html:4
+#: templates/place/settings_layout.html:12
 #: templates/place/tabbed_layout.html:62
 msgid "Settings"
 msgstr "Mipangilio"
 
-#: templates/place/settings.html:18
+#: templates/place/settings.html:17
 msgid "URL of the Google Sheets spreadsheet with work metadata."
 msgstr "URL ya lahajedwali ya Majedwali ya Google yenye metadata ya kazini."
 
-#: templates/place/settings.html:32
+#: templates/place/settings.html:31
 msgid "Date up to which all works have been consolidated."
 msgstr "Tarehe ambayo kazi zote zimeunganishwa."
 
-#: templates/place/settings.html:46
+#: templates/place/settings.html:45
 #, python-format
 msgid "URL of the Style Guide documentation for %(place_name)s."
 msgstr "URL ya hati za Mwongozo wa Sinema kwa %(place_name)s."
 
-#: templates/place/settings.html:59
-msgid "The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work."
-msgstr "Maandishi ya kuonyesha kwenye ukurasa wa jalada wa hati wakati hakuna Gazeti la Serikali (au hati ya uchapishaji) inayohusishwa na kazi hiyo."
+#: templates/place/settings.html:58
+msgid ""
+"The text to display on a document's coverpage when no Gazette (or "
+"publication document) is associated with the work."
+msgstr ""
+"Maandishi ya kuonyesha kwenye ukurasa wa jalada wa hati wakati hakuna Gazeti "
+"la Serikali (au hati ya uchapishaji) inayohusishwa na kazi hiyo."
 
-#: templates/place/settings.html:72
-msgid "The text to display on a document's coverpage when it's part of a consolidation."
-msgstr "Maandishi ya kuonyesha kwenye ukurasa wa jalada wa hati wakati ni sehemu ya ujumuishaji."
+#: templates/place/settings.html:71
+msgid ""
+"The text to display on a document's coverpage when it's part of a "
+"consolidation."
+msgstr ""
+"Maandishi ya kuonyesha kwenye ukurasa wa jalada wa hati wakati ni sehemu ya "
+"ujumuishaji."
 
-#: templates/place/settings.html:88
-msgid "Is a consolidation being worked on in this place?<br> If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br> For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import."
-msgstr "Je, ujumuishaji unafanyiwa kazi mahali hapa?<br> Ikichaguliwa, hatua ya Ujumuishaji itaundwa kwa kuagiza kwa wingi kwa kazi zote kuu ambazo ni za zamani zaidi ya tarehe ya ujumuishaji iliyotolewa - ambayo ni ama tarehe_ya_kuunganisha iliyotolewa kwa kila kazi katika lahajedwali au tarehe iliyorekodiwa hapa.<br> Kwa mfano, ikiwa tarehe ya ujumuishaji ni mwaka wa 2000 na Sheria ni ya 2001, hatua ya kuunganisha kwa wakati HAITAundwa kwa Sheria hiyo ya uingizaji wa wingi."
+#: templates/place/settings.html:87
+msgid ""
+"Is a consolidation being worked on in this place?<br> If checked, a "
+"Consolidation point in time will be created on bulk import for all principal "
+"works that are older than the given consolidation date — which is either the "
+"consolidation_date given per work in the spreadsheet or the as-at date "
+"recorded here.<br> For example, if the consolidation date is in 2000 and an "
+"Act is from 2001, a consolidation point in time will NOT be created for that "
+"Act on bulk import."
+msgstr ""
+"Je, ujumuishaji unafanyiwa kazi mahali hapa?<br> Ikichaguliwa, hatua ya "
+"Ujumuishaji itaundwa kwa kuagiza kwa wingi kwa kazi zote kuu ambazo ni za "
+"zamani zaidi ya tarehe ya ujumuishaji iliyotolewa - ambayo ni ama "
+"tarehe_ya_kuunganisha iliyotolewa kwa kila kazi katika lahajedwali au tarehe "
+"iliyorekodiwa hapa.<br> Kwa mfano, ikiwa tarehe ya ujumuishaji ni mwaka wa "
+"2000 na Sheria ni ya 2001, hatua ya kuunganisha kwa wakati HAITAundwa kwa "
+"Sheria hiyo ya uingizaji wa wingi."
 
-#: templates/place/settings.html:104
-msgid "Are Chapters used for Acts in this place?<br> If checked, the 'cap' column will be recorded on bulk import."
-msgstr "Je, Sura zinatumika kwa Matendo mahali hapa?<br> Ikiwekwa alama, safu wima ya 'cap' itarekodiwa kwenye uingizaji wa wingi."
+#: templates/place/settings.html:103
+msgid ""
+"Are Chapters used for Acts in this place?<br> If checked, the 'cap' column "
+"will be recorded on bulk import."
+msgstr ""
+"Je, Sura zinatumika kwa Matendo mahali hapa?<br> Ikiwekwa alama, safu wima "
+"ya 'cap' itarekodiwa kwenye uingizaji wa wingi."
 
-#: templates/place/settings.html:118
+#: templates/place/settings.html:117
 msgid "Is the publication date optional in this place?"
 msgstr "Je, tarehe ya kuchapishwa ni ya hiari mahali hapa?"
 
@@ -2514,6 +2695,12 @@ msgstr "Je, tarehe ya kuchapishwa ni ya hiari mahali hapa?"
 #, python-format
 msgid "Download full legislation index for %(place)s"
 msgstr "Pakua faharasa kamili ya sheria ya %(place)s"
+
+#: templates/place/settings_layout.html:15
+#, fuzzy
+#| msgid "Permission Denied"
+msgid "Permissions"
+msgstr "Ruhusa imekataliwa"
 
 #: templates/place/tabbed_layout.html:19
 msgid "Change locality"
@@ -2527,6 +2714,14 @@ msgstr "Chagua eneo"
 msgid "Insights"
 msgstr "Maarifa"
 
+#: templates/place/users.html:4
+msgid "Users"
+msgstr ""
+
+#: templates/place/users.html:10
+msgid "Allowed Users"
+msgstr ""
+
 #: templates/place/works.html:13
 msgid "Add new work"
 msgstr "Ongeza kazi mpya"
@@ -2539,45 +2734,45 @@ msgstr "Kundi ongeza kazi mpya"
 msgid "Batch update works"
 msgstr "Usasishaji wa kundi hufanya kazi"
 
-#: templates/place/works.html:36
+#: templates/place/works.html:48
 #, python-format
 msgid "%(count)s work (of %(total_works)s total)"
 msgid_plural "%(count)s works (of %(total_works)s total)"
 msgstr[0] "Kazi %(count)s (ya %(total_works)s jumla)"
 msgstr[1] "Kazi %(count)s (ya jumla %(total_works)s)"
 
-#: templates/place/works.html:41
+#: templates/place/works.html:53
 #, python-format
 msgid "· %(page_count)s page"
 msgid_plural "· %(page_count)s pages"
 msgstr[0] "· %(page_count)s ukurasa"
 msgstr[1] "· kurasa %(page_count)s"
 
-#: templates/place/works.html:49
+#: templates/place/works.html:61
 msgid "Download to Excel"
 msgstr "Pakua hadi Excel"
 
-#: templates/place/works.html:84 templates/place/works.html:147
+#: templates/place/works.html:96 templates/place/works.html:159
 msgid "Active tasks"
 msgstr "Kazi zinazofanya kazi"
 
-#: templates/place/works.html:86 templates/place/works.html:150
+#: templates/place/works.html:98 templates/place/works.html:162
 msgid "open"
 msgstr "wazi"
 
-#: templates/place/works.html:87 templates/place/works.html:151
+#: templates/place/works.html:99 templates/place/works.html:163
 msgid "pending review"
 msgstr "inasubiri ukaguzi"
 
-#: templates/place/works.html:88 templates/place/works.html:152
+#: templates/place/works.html:100 templates/place/works.html:164
 msgid "blocked"
 msgstr "imezuiwa"
 
-#: templates/place/works.html:103
+#: templates/place/works.html:115
 msgid "drafts"
 msgstr "rasimu"
 
-#: templates/place/works.html:118 templates/place/works.html:166
+#: templates/place/works.html:130 templates/place/works.html:178
 msgid "you"
 msgstr "wewe"
 
@@ -2587,16 +2782,22 @@ msgid "Social Network Login Failure"
 msgstr "Kushindwa Kuingia kwa Mtandao wa Kijamii"
 
 #: templates/socialaccount/authentication_error.html:10
-msgid "An error occurred while attempting to login via your social network account."
-msgstr "Hitilafu ilitokea wakati wa kujaribu kuingia kupitia akaunti yako ya mtandao wa kijamii."
+msgid ""
+"An error occurred while attempting to login via your social network account."
+msgstr ""
+"Hitilafu ilitokea wakati wa kujaribu kuingia kupitia akaunti yako ya mtandao "
+"wa kijamii."
 
 #: templates/socialaccount/authentication_error.html:12
 msgid "Details"
 msgstr "Maelezo"
 
 #: templates/socialaccount/connections.html:14
-msgid "You can sign in to your account using any of these third party accounts:"
-msgstr "Unaweza kuingia katika akaunti yako kwa kutumia mojawapo ya akaunti hizi za wahusika wengine:"
+msgid ""
+"You can sign in to your account using any of these third party accounts:"
+msgstr ""
+"Unaweza kuingia katika akaunti yako kwa kutumia mojawapo ya akaunti hizi za "
+"wahusika wengine:"
 
 #: templates/socialaccount/connections.html:36
 msgid "Really remove this social account?"
@@ -2607,8 +2808,11 @@ msgid "Disconnect"
 msgstr "Tenganisha"
 
 #: templates/socialaccount/connections.html:46
-msgid "You currently have no social network accounts connected to this account."
-msgstr "Kwa sasa huna akaunti za mtandao wa kijamii zilizounganishwa kwenye akaunti hii."
+msgid ""
+"You currently have no social network accounts connected to this account."
+msgstr ""
+"Kwa sasa huna akaunti za mtandao wa kijamii zilizounganishwa kwenye akaunti "
+"hii."
 
 #: templates/socialaccount/connections.html:51
 msgid "Connect a social account"
@@ -2616,7 +2820,8 @@ msgstr "Unganisha akaunti ya kijamii"
 
 #: templates/socialaccount/connections.html:53
 msgid "Connecting to a social account allows you to use it to login to Indigo."
-msgstr "Kuunganisha kwa akaunti ya kijamii hukuruhusu kuitumia kuingia kwa Indigo."
+msgstr ""
+"Kuunganisha kwa akaunti ya kijamii hukuruhusu kuitumia kuingia kwa Indigo."
 
 #: templates/socialaccount/connections.html:62
 msgid "Connect to"
@@ -2627,3 +2832,75 @@ msgstr "Unganisha kwa"
 msgid "The %(INDIGO_ORGANISATION)s Team"
 msgstr "Timu %(INDIGO_ORGANISATION)s"
 
+#~ msgid "Assented to"
+#~ msgstr "Imeidhinishwa"
+
+#~ msgid "Repealed"
+#~ msgstr "Imefutwa"
+
+#~ msgid "Really delete this expression date?"
+#~ msgstr "Je, ungependa kufuta tarehe hii ya kujieleza?"
+
+#~ msgid "Consolidation"
+#~ msgstr "Kuunganisha"
+
+#~ msgid "Amended by"
+#~ msgstr "Imerekebishwa na"
+
+#, python-format
+#~ msgid "Published in %(name)s"
+#~ msgstr "Imechapishwa katika %(name)s"
+
+#~ msgid "no."
+#~ msgstr "Hapana."
+
+#~ msgid "on"
+#~ msgstr "juu"
+
+#, python-format
+#~ msgid "This work has <a href=\"%(work_rul)s\">multiple commencements</a>."
+#~ msgstr "Kazi hii ina mwanzo <a href=\"%(work_rul)s\">nyingi</a>."
+
+#~ msgid "Not commenced"
+#~ msgstr "Haijaanza"
+
+#, python-format
+#~ msgid ""
+#~ "Published on %(pub_date)s in <a href=\"%(url)s\" target=\"_blank\" "
+#~ "rel=\"noopener\">%(pubdoc)s</a>."
+#~ msgstr ""
+#~ "Ilichapishwa mnamo %(pub_date)s kwa <a href=\"%(url)s\" target=\"_blank\" "
+#~ "rel=\"noopener\">%(pubdoc)s</a>."
+
+#, python-format
+#~ msgid "Published on %(pub_date)s."
+#~ msgstr "Ilichapishwa mnamo %(pub_date)s."
+
+#, python-format
+#~ msgid ""
+#~ "Published in <a href=\"%(url)s\" target=\"_blank\" "
+#~ "rel=\"noopener\">%(pubdoc)s</a>."
+#~ msgstr ""
+#~ "Imechapishwa katika <a href=\"%(url)s\" target=\"_blank\" "
+#~ "rel=\"noopener\">%(pubdoc)s</a>."
+
+#, python-format
+#~ msgid "Commenced in part on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
+#~ msgstr ""
+#~ "Ilianza kwa sehemu mnamo %(date)s kwa <a href=\"%(url)s\">%(title)s</a>."
+
+#, python-format
+#~ msgid "Commenced in part on %(date)s."
+#~ msgstr "Ilianza kwa sehemu mnamo %(date)s."
+
+#, python-format
+#~ msgid "Commenced on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
+#~ msgstr "Ilianza %(date)s kwa <a href=\"%(url)s\">%(title)s</a>."
+
+#, python-format
+#~ msgid "Commenced on %(date)s."
+#~ msgstr "Ilianza tarehe %(date)s."
+
+#, python-format
+#~ msgid "This work has <a href=\"%(url)s\">multiple commencements</a>."
+#~ msgstr "Kazi hii ina mwanzo <a href=\"%(url)s\">nyingi</a>."

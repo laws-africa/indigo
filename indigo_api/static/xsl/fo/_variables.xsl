@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="2.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
 
+  <xsl:variable name="language"
+                select="akn:akomaNtoso/*/akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRlanguage/@language"/>
   <xsl:variable name="font-fam">PT Serif</xsl:variable>
   <xsl:variable name="font-fam-frontmatter">PT Sans</xsl:variable>
   <xsl:variable name="font-fam-headings">PT Sans</xsl:variable>

@@ -165,7 +165,7 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
 
     user = instance
     added = action == "post_add"
-    groups = Group.objects.filter(pk__in=pk_set).all()
+    groups = Group.objects.filter(pk__in=pk_set)
     PermissionBadge.group_membership_changed(user, groups, added)
 
 
@@ -241,7 +241,7 @@ def editor_countries_changed(sender, instance, action, reverse, model, pk_set, *
 
     editor = instance
     added = action == "post_add"
-    countries = model.objects.filter(pk__in=pk_set).all()
+    countries = model.objects.filter(pk__in=pk_set)
     CountryBadge.editor_countries_changed(editor, countries, added)
 
 

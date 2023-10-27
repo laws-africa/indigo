@@ -670,7 +670,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['family'] = family
 
         # amended works
-        amended = Amendment.objects.filter(amending_work=self.work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
+        amended = Amendment.objects.filter(amending_work=self.work).prefetch_related('amended_work').order_by('amended_work__frbr_uri')
         amended = [{
             'rel': 'amends',
             'work': a.amended_work,
@@ -679,7 +679,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['amended'] = amended
 
         # amending works
-        amended_by = Amendment.objects.filter(amended_work=self.work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
+        amended_by = Amendment.objects.filter(amended_work=self.work).prefetch_related('amending_work').order_by('amending_work__frbr_uri')
         amended_by = [{
             'rel': 'amended by',
             'work': a.amending_work,
@@ -854,7 +854,7 @@ class BatchAddWorkView(PlaceViewBase, FormView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['workflow'].queryset = Workflow.objects.filter(country=self.country, locality=self.locality, closed=False).order_by('title').all()
+        form.fields['workflow'].queryset = Workflow.objects.filter(country=self.country, locality=self.locality, closed=False).order_by('title')
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 
@@ -985,4 +985,3 @@ class ImportDocumentView(WorkViewBase, FormView):
 
 class WorkPopupView(WorkViewBase, DetailView):
     template_name = 'indigo_api/work_popup.html'
-

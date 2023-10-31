@@ -1221,6 +1221,61 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_ignore_tags(self):
+        # tables and other tags should be ignored
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <subheading>As given in section 26.</subheading>
+              <content>
+                <crossHeading>As given in section 26.</crossHeading>
+                <embeddedStructure>As given in section 26.</embeddedStructure>
+                <quotedStructure>As given in section 26.</quotedStructure>
+                <p>As given in section 26.</p>
+                <table>
+                  <tr>
+                    <td><p>As given in section 26.</p></td>
+                  </tr>
+                </table>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <subheading>As given in section 26.</subheading>
+              <content>
+                <crossHeading>As given in section 26.</crossHeading>
+                <embeddedStructure>As given in section 26.</embeddedStructure>
+                <quotedStructure>As given in section 26.</quotedStructure>
+                <p>As given in section <ref href="#sec_26">26</ref>.</p>
+                <table>
+                  <tr>
+                    <td><p>As given in section 26.</p></td>
+                  </tr>
+                </table>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
 
 class ProvisionRefsGrammarTest(TestCase):
     maxDiff = None

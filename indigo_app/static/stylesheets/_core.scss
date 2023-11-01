@@ -227,3 +227,8 @@ body.is-staff {
 .user-profile-photo {
   border-radius: 5px;
 }
+
+.popover-body {
+  max-height: 50vh;
+  overflow-y: auto;
+}

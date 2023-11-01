@@ -22,8 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --prefer-offline --ignore-scripts
 
-      - name: Build
+      - name: Build javascript
         run: npx webpack
+
+      - name: Build provision grammar
+        run: canopy indigo/analysis/refs/provision_refs.peg --lang python
 
       - name: Copy node dependencies
         # Keep the local copy of some node dependencies up to date
@@ -36,5 +39,5 @@ jobs:
       - name: Push
         uses: EndBug/add-and-commit@v7
         with:
-          add: 'indigo_app/static/javascript/indigo/bluebell-monaco.js indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js indigo_app/static/lib/indigo-web/ --force'
+          add: 'indigo_app/static/javascript/indigo/bluebell-monaco.js indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js indigo_app/static/lib/indigo-web/ indigo/analysis/refs/provision_refs.py --force'
           message: 'Update compiled bluebell-monaco.js, external-imports.js and indigo-app.js'

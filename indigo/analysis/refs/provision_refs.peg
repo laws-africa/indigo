@@ -1,0 +1,125 @@
+grammar ProvisionRefs
+  # This grammar matches runs of references, such as:
+  #   Section 32(a), (b) and (f)(ii), 33 and chapter 4 of the Act
+  #
+  # The main reference is the "section 32" or "chapter 4", and form the root used by
+  # the subsequent references.
+
+  root        <- references (to_and_or references)* target? .* %root
+
+                 # section 32
+                 # section (a)
+                 # section 32(a)(c)
+                 # section 32.1a.2
+  references  <- unit WS+ main_ref (to_and_or main_ref)* %references
+
+  unit        <- unit_en / unit_af
+
+  main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
+
+                 # section 32
+                 # section 32A
+                 # section 32.1a.2
+  main_num    <- digit alpha_num_dot* %main_num
+
+                 # (a)(ii) to (iv)
+                 # (a), (b) and (f)(ii)
+                 # (a)(ii), (b)(iii) and (v), and (d)
+  sub_refs    <- sub_ref (to_and_or sub_ref)* %sub_refs
+
+                 # (a)
+                 # (a) (ii)
+  sub_ref     <- num (WS* num)* %sub_ref
+
+                 # (a)
+                 # (a1)
+                 # (a-bis)
+                 # (iv)
+  num         <- "(" alpha_num_dot+ ")" %num
+
+  to_and_or   <- range / and_or
+
+                 # (a) to (b)
+                 # (a), to (b)
+  range       <- (WS* comma)? WS+ to WS+ %range
+
+                 # (a) and (b)
+                 # (a), or (b)
+                 # (a), (b)
+  and_or      <- ((WS* comma)? WS* _and WS+) %and_or
+                 / ((WS* comma)? WS* _or WS+) %and_or
+                 / (WS* comma WS*) %and_or
+
+  target      <- of_this / of_the_act / thereof / of
+
+                 # of this...
+  of_this     <- comma? WS* (of_this_en / of_this_af) WS+ %of_this
+
+                 # of the Act
+  of_the_act  <- comma? WS* (of_the_act_en) %of_the_act
+
+                 # of...
+  of          <- comma? WS* (of_en / of_af) WS+ %of
+
+                 # thereof
+  thereof     <- comma? WS* (thereof_en / thereof_af) %thereof
+
+  # --------
+  # terminals
+  # --------
+
+                 # english
+  unit_en     <- `articles` / `article` /
+                 `chapters` / `chapter` /
+                 `items` / `item` /
+                 `paragraphs` / `paragraph` /
+                 `parts` / `part` /
+                 `points` / `point` /
+                 `regulations` / `regulation` /
+                 `sections` / `section` /
+                 `subparagraphs` / `subparagraph` /
+                 `sub-paragraphs` / `sub-paragraph` /
+                 `subregulations` / `subregulation` /
+                 `sub-regulations` / `sub-regulation` /
+                 `subsections` / `subsection` /
+                 `sub-sections` / `sub-section`
+
+                 # afrikaans
+  unit_af     <- `afdelings` / `afdeling` /
+                 `artikels` / `artikel`
+                 `dele` / `deel`
+                 `hoofstukke` / `hoofstuk` /
+                 `paragrawe` / `paragraaf` /
+                 `punte` / `punt` /
+                 `subafdelings` / `subafdeling` /
+                 `subparagrawe` / `subparagraaf`
+
+  _and        <- and_en / and_af
+  and_en      <- `and`
+  and_af      <- `en`
+
+  _or         <- or_en / or_af
+  or_en       <- `or`
+  # HACK: Afrikaans 'of' for 'or' not supported because it clashes with English 'of'
+  or_af       <- or_en # `of`
+
+                 # note that "tot" must come before "to" because the latter is a substring of the former
+  to          <- to_af / to_en
+  to_en       <- `to`
+  to_af       <- `tot`
+
+  of_en       <- `of`
+  of_af       <- `van`
+
+  of_this_en  <- `of this`
+  of_this_af  <- `van hierdie`
+
+  of_the_act_en <- `of the Act` / `of the act`
+
+  thereof_en  <- `thereof`
+  thereof_af  <- `daarvan`
+
+  comma       <- [,;]
+  digit       <- [0-9]
+  alpha_num_dot <- [a-zA-Z0-9.-]
+  WS          <- " " / "\t"

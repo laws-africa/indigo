@@ -608,7 +608,6 @@ class ProvisionRefsMatcher(CitationMatcher):
         return None, None
 
 
-
 class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
     def find_references_in_document(self, document):
         """ Find references in +document+, which is an Indigo Document object.

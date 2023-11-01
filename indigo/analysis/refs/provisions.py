@@ -426,6 +426,7 @@ class ProvisionRefsMatcher(CitationMatcher):
             self.resolver.resolve_references(ref, target_root)
 
         href = '#' if not target_frbr_uri else f'{target_frbr_uri}/~'
+        offset = match.start()
 
         for main_ref in parse_result.references:
             for ref in [main_ref.ref] + (main_ref.sub_refs or []):
@@ -433,15 +434,15 @@ class ProvisionRefsMatcher(CitationMatcher):
                 if eId:
                     self.citations.append(
                         ExtractedCitation(
-                            match.string[ref.start_pos:last_ref.end_pos],
-                            ref.start_pos,
-                            last_ref.end_pos,
+                            match.string[offset + ref.start_pos:offset + last_ref.end_pos],
+                            offset + ref.start_pos,
+                            offset + last_ref.end_pos,
                             href + eId,
                             self.pagenum,
                             # prefix
-                            match.string[max(ref.start_pos - self.text_prefix_length, 0):ref.start_pos],
+                            match.string[max(offset + ref.start_pos - self.text_prefix_length, 0):offset + ref.start_pos],
                             # suffix
-                            match.string[ref.end_pos:min(ref.end_pos + self.text_suffix_length, len(match.string))],
+                            match.string[offset + ref.end_pos:min(offset + ref.end_pos + self.text_suffix_length, len(match.string))],
                         )
                     )
 
@@ -519,10 +520,14 @@ class ProvisionRefsMatcher(CitationMatcher):
         if not target or target == "this":
             return None, None
 
+        # only consider citations on this page
+        # TODO: we could also look at citations in previous or later pages, and ignore offsets
+        citations = [c for c in self.citations if c.target_id == self.pagenum]
+
         frbr_uri = None
         if target == "thereof":
             # look backwards - find the first citation before the start of this match
-            for c in reversed(self.citations):
+            for c in reversed(citations):
                 if c.end_pos < match.start():
                     frbr_uri = c.href
                     break
@@ -530,7 +535,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         elif target == "of":
             # it's 'of', look forwards
             # find the first citation after the end of this match
-            for c in self.citations:
+            for c in citations:
                 if c.start > match.end():
                     frbr_uri = c.href
                     break

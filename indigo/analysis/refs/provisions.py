@@ -442,7 +442,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                             # prefix
                             match.string[max(offset + ref.start_pos - self.text_prefix_length, 0):offset + ref.start_pos],
                             # suffix
-                            match.string[offset + ref.end_pos:min(offset + ref.end_pos + self.text_suffix_length, len(match.string))],
+                            match.string[offset + last_ref.end_pos:min(offset + last_ref.end_pos + self.text_suffix_length, len(match.string))],
                         )
                     )
 

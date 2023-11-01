@@ -126,8 +126,9 @@ class AKNHTMLDiffer:
             # it was deleted
             return '<div class="del">' + old_html + '</div>'
 
-        old_tree = lxml.html.fromstring(old_html)
-        new_tree = lxml.html.fromstring(new_html)
+        parser = lxml.html.HTMLParser(encoding='utf-8')
+        old_tree = lxml.html.fromstring(old_html.encode('utf-8'), parser=parser)
+        new_tree = lxml.html.fromstring(new_html.encode('utf-8'), parser=parser)
         diff = self.diff_html(old_tree, new_tree)
         return lxml.html.tostring(diff, encoding='unicode')
 

@@ -25,9 +25,6 @@ jobs:
       - name: Build javascript
         run: npx webpack
 
-      - name: Build provision grammar
-        run: canopy indigo/analysis/refs/provision_refs.peg --lang python
-
       - name: Copy node dependencies
         # Keep the local copy of some node dependencies up to date
         # indigo-web: only used for PDF exports

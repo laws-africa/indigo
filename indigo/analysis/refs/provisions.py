@@ -1,3 +1,4 @@
+import dataclasses
 import re
 from dataclasses import dataclass
 from typing import List, Union, Tuple
@@ -8,7 +9,7 @@ from lxml import etree
 from lxml.etree import Element
 
 from cobalt import FrbrUri
-from docpipe.matchers import TextPatternMatcher
+from docpipe.matchers import CitationMatcher, ExtractedCitation
 from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
@@ -36,6 +37,9 @@ class ProvisionRef:
     element: Union[Element, None] = None
     # eId of the matched element
     eId: Union[str, None] = None
+
+    def as_dict(self):
+        return dataclasses.asdict(self)
 
 
 @dataclass
@@ -263,7 +267,7 @@ class ProvisionRefsResolver:
                 return elem
 
 
-class ProvisionRefsMatcher(TextPatternMatcher):
+class ProvisionRefsMatcher(CitationMatcher):
     """ Finds internal references to sections in documents, of the form:
 
         # singletons
@@ -282,9 +286,6 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         in terms of section 2 or 7
         A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.
     """
-    xml_marker_tag = "ref"
-    xml_ancestor_xpath = '|'.join(f'//ns:{x}'
-                                  for x in ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'judgmentBody', 'conclusions'])
     xml_candidate_xpath = (".//text()[not("
                            "ancestor::ns:ref or ancestor::ns:heading or ancestor::ns:subheading or ancestor::ns:num "
                            "or ancestor::ns:embeddedStructure or ancestor::ns:quotedStructure or ancestor::ns:table "
@@ -301,23 +302,72 @@ class ProvisionRefsMatcher(TextPatternMatcher):
     def setup(self, *args, **kwargs):
         from indigo_api.models import Document
         super().setup(*args, **kwargs)
-        self.document_queryset = Document.objects.undeleted()
+        self.document_queryset = Document.objects.undeleted().published()
+        self.matches = []
+
+    def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
+        """Find all the starting points and use the grammar to find non-overlapping references."""
+        parses = []
+        candidates = list(self.pattern_re.finditer(match.string))
+        for candidate in candidates:
+            # we want non-overlapping matches, so skip this candidate if it overlaps with the previous one
+            if parses:
+                prev_start = parses[-1][0].start()
+                prev_end = prev_start + parses[-1][1].end
+                if prev_start <= candidate.start() < prev_end:
+                    continue
+
+            s = match.string[candidate.start():]
+            try:
+                # parse the text into a list of refs using our grammar
+                parses.append((candidate, self.parse_refs(s)))
+            except ParseError as e:
+                log.info(f"Failed to parse refs for: {s}", exc_info=e)
+
+        # store matches for debugging purposes
+        for _, pr in parses:
+            if pr:
+                self.matches.extend(m.ref for m in pr.references)
+
+        return parses
+
+    def parse_refs(self, text: str) -> ParseResult:
+        return parse_provision_refs(text)
 
     def handle_node_match(self, node, match, in_tail):
+        """Process a potential citation match in the text (or tail) of a node.
+
+        This is the main entry point for this subclass for node-based matches.
+
+        :return: Element the rightmost newly marked up node, to continue matching in that node's tail
+        """
         # There is at least one match in this node's text (or tail). If there are multiple, we must resolve them
         # from right to left, to ensure that relative provisions are linked correctly. So, we find all non-overlapping
         # full matches (using the grammar) and process them from right to left.
         parses = self.parse_all_refs(match)
         result = None
         for m, details in reversed(parses):
-            res = self.handle_node_refs(m, details, node, in_tail)
+            res = self.handle_node_parse_result(m, details, node, in_tail)
             if result is None and res is not None:
                 result = res
         return result
 
-    def handle_node_refs(self, match, parse_result: ParseResult, node, in_tail) -> Union[Element, None]:
+    def handle_text_match(self, text, match):
+        """Process a potential citation match in the text of a plain-text document.
+
+        This is the main entry point for this subclass for text-based matches.
+        """
+        parses = self.parse_all_refs(match)
+        for m, details in reversed(parses):
+            self.handle_text_parse_result(m, details)
+
+    def handle_node_parse_result(self, match, parse_result: ParseResult, node, in_tail) -> Union[Element, None]:
+        """Handle a single fully-parse match in the text (or tail) of a node.
+
+        :return: Element the rightmost newly marked up node, to continue matching in that node's tail
+        """
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target(node, match, in_tail, parse_result.target)
+        target_frbr_uri, target_root = self.get_target_from_node(node, match, in_tail, parse_result.target)
         if target_root is None:
             # no target, so we can't do anything
             return None
@@ -350,6 +400,54 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         return next((m for m in markers if m is not None), None)
 
     def markup_ref(self, ref: ProvisionRef, href: str, start: int, offset: int, node: Element, in_tail: bool):
+        """Markup a single provision reference by wrapping it in a new market_tag node."""
+        eId, last_ref = self.get_ref_eId(ref)
+
+        # markup text[start:ref.end_pos] with ref.eId
+        if eId:
+            start = offset + start
+            end = offset + last_ref.end_pos
+            marker = etree.Element(self.marker_tag)
+            marker.text = node.tail[start:end] if in_tail else node.text[start:end]
+            marker.set('href', href + eId)
+            wrap_text(node, in_tail, lambda t: marker, start, end)
+            return marker
+
+    def handle_text_parse_result(self, match: re.Match, parse_result: ParseResult):
+        """Record a single fully-parse reference in a plain text document."""
+        # work out if the target document is this one, or another one
+        target_frbr_uri, target_root = self.get_target_from_text(match, parse_result.target)
+        if target_root is None:
+            # no target, so we can't do anything
+            return None
+
+        # resolve references into eIds
+        for ref in parse_result.references:
+            self.resolver.resolve_references(ref, target_root)
+
+        href = '#' if not target_frbr_uri else f'{target_frbr_uri}/~'
+        offset = match.start()
+
+        for main_ref in parse_result.references:
+            for ref in [main_ref.ref] + (main_ref.sub_refs or []):
+                eId, last_ref = self.get_ref_eId(ref)
+                if eId:
+                    self.citations.append(
+                        ExtractedCitation(
+                            match.string[offset + ref.start_pos:offset + last_ref.end_pos],
+                            offset + ref.start_pos,
+                            offset + last_ref.end_pos,
+                            href + eId,
+                            self.pagenum,
+                            # prefix
+                            match.string[max(offset + ref.start_pos - self.text_prefix_length, 0):offset + ref.start_pos],
+                            # suffix
+                            match.string[offset + last_ref.end_pos:min(offset + last_ref.end_pos + self.text_suffix_length, len(match.string))],
+                        )
+                    )
+
+    def get_ref_eId(self, ref: ProvisionRef):
+        """Get the eId to use for this ref, and the (sub)-ref that it belongs to."""
         eId = ref.eId
         last = ref
         if ref.child:
@@ -359,42 +457,9 @@ class ProvisionRefsMatcher(TextPatternMatcher):
                 eId = curr.eId
                 last = curr
                 curr = curr.child
+        return eId, last
 
-        # markup text[start:ref.end_pos] with ref.eId
-        if eId:
-            start = offset + start
-            end = offset + last.end_pos
-            marker = etree.Element(self.marker_tag)
-            marker.text = node.tail[start:end] if in_tail else node.text[start:end]
-            marker.set('href', href + eId)
-            wrap_text(node, in_tail, lambda t: marker, start, end)
-            return marker
-
-    def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
-        """Find all the starting points and use the grammar to find non-overlapping references."""
-        parses = []
-        candidates = list(self.pattern_re.finditer(match.string))
-        for candidate in candidates:
-            # we want non-overlapping matches, so skip this candidate if it overlaps with the previous one
-            if parses:
-                prev_start = parses[-1][0].start()
-                prev_end = prev_start + parses[-1][1].end
-                if prev_start <= candidate.start() < prev_end:
-                    continue
-
-            s = match.string[candidate.start():]
-            try:
-                # parse the text into a list of refs using our grammar
-                parses.append((candidate, self.parse_refs(s)))
-            except ParseError as e:
-                log.info(f"Failed to parse refs for: {s}", exc_info=e)
-
-        return parses
-
-    def parse_refs(self, text: str) -> ParseResult:
-        return parse_provision_refs(text)
-
-    def get_target(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
+    def get_target_from_node(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
         appropriate root XML element of the document to use to resolve the references. If the target element
         is local to the current node, the returned target_frbr_uri is None.
@@ -441,13 +506,46 @@ class ProvisionRefsMatcher(TextPatternMatcher):
         for el in candidates():
             # look for the first marker tag (usually <ref>) or <term>
             if el.tag == self.marker_tag and el.get('href'):
-                return self.resolve_target(node, el.get('href'))
+                return self.resolve_target_uri(node, el.get('href'))
             elif self.ns and el.tag == "{%s}%s" % (self.ns, "term") and el.get('refersTo'):
-                return self.resolve_target(node, el.get('refersTo'))
+                return self.resolve_target_uri(node, el.get('refersTo'))
 
         return None, None
 
-    def resolve_target(self, node: Element, frbr_uri: str) -> Tuple[Union[str, None], Union[Element, None]]:
+    def get_target_from_text(self, match: re.Match, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
+        """Determine and resolve a remote target and return the target_frbr_uri and the appropriate root XML element of
+        the document to use to resolve the references. References to the local document are not supported because
+        the local document is assumed to be plain text.
+        """
+        if not target or target == "this":
+            return None, None
+
+        # only consider citations on this page
+        # TODO: we could also look at citations in previous or later pages, and ignore offsets
+        citations = [c for c in self.citations if c.target_id == self.pagenum]
+
+        frbr_uri = None
+        if target == "thereof":
+            # look backwards - find the first citation before the start of this match
+            for c in reversed(citations):
+                if c.end_pos < match.start():
+                    frbr_uri = c.href
+                    break
+
+        elif target == "of":
+            # it's 'of', look forwards
+            # find the first citation after the end of this match
+            for c in citations:
+                if c.start > match.end():
+                    frbr_uri = c.href
+                    break
+
+        if frbr_uri:
+            return self.resolve_target_uri(None, frbr_uri)
+
+        return None, None
+
+    def resolve_target_uri(self, node: Element, frbr_uri: str) -> Tuple[Union[str, None], Union[Element, None]]:
         """Return the target FRBR URI (if not local) and an appropriate root element for the given frbr_uri.
 
         The frbr_uri may be a local one (eg. "#sec_2") or it may be a full FRBR URI.
@@ -462,21 +560,22 @@ class ProvisionRefsMatcher(TextPatternMatcher):
 
             # is the URI a local one?
             if frbr_uri.startswith('#'):
-                if frbr_uri.startswith('#term-'):
-                    # look for a ref in the definition of the term
-                    elements = node.xpath(f'//a:def[@refersTo="{frbr_uri}"]', namespaces={'a': node.nsmap[None]})
-                    if elements:
-                        # find the element that wraps the definition
-                        defn = closest(elements[0].getparent(), lambda e: e.get('refersTo', '') == frbr_uri)
-                        if defn is not None:
-                            # find the first absolute ref in the definition
-                            elements = defn.xpath('.//a:ref[starts-with(@href, "/akn")]', namespaces={'a': node.nsmap[None]})
-                            if elements:
-                                self.target_root_cache[frbr_uri] = self.resolve_target(None, elements[0].get('href'))
-                else:
-                    elements = node.xpath(f'//a:*[@eId="{frbr_uri[1:]}"]', namespaces={'a': node.nsmap[None]})
-                    if elements:
-                        self.target_root_cache[frbr_uri] = (None, elements[0])
+                if node is not None:
+                    if frbr_uri.startswith('#term-'):
+                        # look for a ref in the definition of the term
+                        elements = node.xpath(f'//a:def[@refersTo="{frbr_uri}"]', namespaces={'a': node.nsmap[None]})
+                        if elements:
+                            # find the element that wraps the definition
+                            defn = closest(elements[0].getparent(), lambda e: e.get('refersTo', '') == frbr_uri)
+                            if defn is not None:
+                                # find the first absolute ref in the definition
+                                elements = defn.xpath('.//a:ref[starts-with(@href, "/akn")]', namespaces={'a': node.nsmap[None]})
+                                if elements:
+                                    self.target_root_cache[frbr_uri] = self.resolve_target_uri(None, elements[0].get('href'))
+                    else:
+                        elements = node.xpath(f'//a:*[@eId="{frbr_uri[1:]}"]', namespaces={'a': node.nsmap[None]})
+                        if elements:
+                            self.target_root_cache[frbr_uri] = (None, elements[0])
             else:
                 try:
                     # we normalise the FRBR URI to the work level

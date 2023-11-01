@@ -5,6 +5,7 @@ from django.test import TestCase
 from lxml import etree
 
 from cobalt import AkomaNtosoDocument, FrbrUri
+from docpipe.matchers import ExtractedCitation
 
 from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_provision_refs, MainProvisionRef
 from indigo_api.tests.fixtures import document_fixture
@@ -1275,6 +1276,33 @@ class ProvisionRefsMatcherTestCase(TestCase):
             expected.to_xml(encoding='unicode'),
             etree.tostring(actual, encoding='unicode')
         )
+
+    def test_markup_text(self):
+        text = """According to section 26 and 26(a) of Act No. 1 of 2009."""
+        self.finder.setup(self.frbr_uri, text=text)
+        self.finder.citations = [
+            ExtractedCitation("Act No. 1 of 2009", 54, 62, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
+        ]
+        self.finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("Act No. 1 of 2009", 54, 62, "/akn/za/act/2009/1", 0, 'of Act No. ', '.'),
+            ExtractedCitation("26", 21, 23, "/akn/za/act/2009/1/~sec_26", 0, 'According to section ', ' and 26(a) of Act No. 1 of 200' ),
+            ExtractedCitation("26(a)", 28, 33, "/akn/za/act/2009/1/~sec_26__subsec_a", 0, 'According to section 26 and ', ' of Act No. 1 of 2009.'),
+        ], self.finder.citations)
+
+    def test_markup_text_mixed_page_numbers(self):
+        text = """Reference to Act No. 1 of 2009.\x0COn a new page section 26 of Act No. 1 of 2009.\x0CAct No. 1 of 2009."""
+        self.finder.setup(self.frbr_uri, text=text)
+        self.finder.citations = [
+            ExtractedCitation("Act No. 1 of 2009", 21, 30, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
+            ExtractedCitation("Act No. 1 of 2009", 0, 9, "/akn/za/act/2009/1", 2, '', '.'),
+        ]
+        # nothing is found because the Act references are on different pages
+        self.finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("Act No. 1 of 2009", 21, 30, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
+            ExtractedCitation("Act No. 1 of 2009", 0, 9, "/akn/za/act/2009/1", 2, '', '.'),
+        ], self.finder.citations)
 
 
 class ProvisionRefsGrammarTest(TestCase):

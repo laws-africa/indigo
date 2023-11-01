@@ -23,7 +23,7 @@
           <div>
             <div class="d-flex">
               <div class="flex-grow-1">
-                {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True %}
+                {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True taxonomy=True %}
               </div>
 
               <div class="pl-3 border-left">
@@ -40,7 +40,7 @@
           {% if form.format.value == 'list' %}
             {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
           {% else %}
-            {% include 'indigo_api/_task_cards.html' with task_groups=task_groups selectable=True %}
+            {% include 'indigo_api/_task_cards.html' with task_groups=task_groups assign_controls=True selectable=True %}
           {% endif %}
 
         {% else %}

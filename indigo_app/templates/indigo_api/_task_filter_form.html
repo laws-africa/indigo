@@ -66,6 +66,17 @@
           </select>
         </div>
       {% endif %}
+
+      {% if show_country %}
+        <div class="mr-2 mb-2">
+          <select class="narrow selectpicker notooltip" multiple title="{% trans 'Country' %}" name="{{ form.country.name }}"
+                  data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
+            {% for country in form.fields.country.queryset %}
+              <option value="{{ country.pk }}" {% if country.pk|stringformat:"i" in form.country.value %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
     </div>
 
     {% if format %}
@@ -81,8 +92,10 @@
       </div>
     {% endif %}
 
-  <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
-  {{ form.taxonomy_topic.as_hidden }}
+  {% if taxonomy %}
+    <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
+    {{ form.taxonomy_topic.as_hidden }}
+  {% endif %}
 
   </div>
 </form>

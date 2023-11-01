@@ -20,7 +20,7 @@ export default {
     // Set expanded state of current item and its parents
     function formatItem (x) {
       const children = (x.children || []).map(y => formatItem(y));
-      x.expanded = x.data.slug === current || children.some(y => y.expanded);
+      x.expanded = x.selected || x.data.slug === current || children.some(y => y.expanded);
       return x;
     }
     taxonomy.map(x => formatItem(x));
@@ -35,7 +35,7 @@ export default {
     toc[0].addEventListener('itemRendered', (e) => {
       const tocItem = e.target;
       if (!tocItem) return;
-      if (this.current === tocItem.item.data?.slug) {
+      if (tocItem.item.selected || this.current === tocItem.item.data?.slug) {
         tocItem.querySelector('.content__action__title').classList.add('active');
       }
     });

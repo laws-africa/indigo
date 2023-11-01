@@ -1,0 +1,15 @@
+{% extends "indigo_app/tasks/tabbed_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Topics" %}{% endblock %}
+
+{% block content %}
+  <div class="container mt-3">
+    <div class="card">
+        <div class="card-body">
+          <div data-vue-component="TaxonomyTOC"></div>
+          {{ taxonomy_toc|json_script:"taxonomy_toc" }}
+        </div>
+    </div>
+  </div>
+{% endblock %}

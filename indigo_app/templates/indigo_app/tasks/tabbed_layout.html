@@ -24,6 +24,9 @@
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}
       </a>
+        <a class="nav-item nav-link {% if view.tab == 'topics' %}active{% endif %}" href="{% url 'taxonomy_task_list' %}">
+          {% trans "Topics" %}
+        </a>
       {% endblock %}
     </nav>
   </div>

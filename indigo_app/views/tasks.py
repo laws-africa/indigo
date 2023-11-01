@@ -567,6 +567,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
         if self.priority:
             workflows = Workflow.objects\
@@ -643,3 +644,77 @@ class TaskAssigneesView(TaskViewBase, TemplateView):
             'potential_assignees': users,
             'unassign': 'unassign' in request.POST,
         })
+
+
+class TaxonomyTopicTaskListView(AbstractAuthedIndigoView, TemplateView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/taxonomy_task_list.html'
+    tab = 'topics'
+    permission_required = ('indigo_api.view_task',)
+    context_object_name = 'topics'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['taxonomy_toc'] = self.get_tree()
+        return context
+
+    def get_tree(self):
+        tree = TaxonomyTopic.dump_bulk()
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        for item in tree:
+            fix_up(item)
+
+        return tree
+
+
+class TaxonomyTopicTaskDetailView(AbstractAuthedIndigoView, DetailView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/taxonomy_task_detail.html'
+    tab = 'topics'
+    permission_required = ('indigo_api.view_task',)
+    context_object_name = 'topic'
+    model = TaxonomyTopic
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_tasks(self):
+        topics = [self.object] + [t for t in self.object.get_descendants()]
+        tasks = Task.objects.filter(work__taxonomy_topics__in=topics)
+        return self.form.filter_queryset(tasks)
+
+    def get(self, request, *args, **kwargs):
+        self.form = TaskFilterForm(None, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.object.n_tasks = self.get_tasks().count()
+        self.object.n_done = self.get_tasks().closed().count()
+        self.object.pct_done = self.object.n_done / self.object.n_tasks * 100.0 if self.object.n_tasks else 0.0
+
+        context['form'] = self.form
+        context['tasks'] = tasks = self.get_tasks()
+        context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)
+        context['taxonomy_toc'] = self.get_tree()
+        return context
+
+    def get_tree(self):
+        tree = TaxonomyTopic.dump_bulk()
+
+        def fix_up(item):
+            item["title"] = item["data"]["name"]
+            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
+            item["selected"] = item["data"]["slug"] == self.object.slug
+            for kid in item.get("children", []):
+                fix_up(kid)
+
+        for item in tree:
+            fix_up(item)
+
+        return tree

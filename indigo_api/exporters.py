@@ -10,7 +10,7 @@ import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
-from django.utils.translation import override
+from django.utils.translation import override, ugettext as _
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree
@@ -156,6 +156,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             raise NotImplementedError
         log.info(f'Rendering PDF for document {document.pk} ({document.frbr_uri})')
         self.insert_coverpage(document)
+        self.insert_static_content(document)
         self.insert_frontmatter(document)
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -202,6 +203,41 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         # turn string into bytes and parse into xml
         return etree.fromstring(xml.encode('utf-8'))
 
+    def insert_static_content(self, document):
+        """ Generates the static content used in running headers and footers and inserts it before the body
+            (and before the coverpage and frontmatter if present) in the XML.
+            This allows us to use translation tags in the template rather than doing it in FO.
+            The document's document_xml isn't updated.
+        """
+        # explicitly set the document's language for e.g. numbered title to be translated; deactivate after
+        with override(document.django_language, deactivate=True):
+            static_content = render_to_string(self.static_content_template(document), self.get_static_content_context(document))
+        static_content_xml = etree.fromstring(static_content.encode('utf-8'))
+        # insert the static content before the frontmatter, coverpage, or main content (preface / preamble / body)
+        document.doc.meta.addnext(static_content_xml)
+
+    def static_content_template(self, document):
+        return self.find_template(document, prefix='export/pdf_static_content_', suffix='.xml')
+
+    def get_static_content_context(self, document):
+        return {
+            'document': document,
+            'ns': document.doc.namespace,
+            'place_string': self.get_place_string(document),
+        }
+
+    def get_place_string(self, document):
+        """ Get the appropriate string based on the locality and country, in the right language.
+        """
+        locality = document.work.locality.name if document.work.locality else None
+        country = document.work.country.name if document.country not in self.dont_include_countries else None
+        if locality and country:
+            return _('%(locality), %(country)s') % {'locality': _(locality), 'country': _(country)}
+        elif locality:
+            return _(locality)
+        elif country:
+            return _(country)
+
     def insert_frontmatter(self, document):
         """ Generates the frontmatter and inserts it before the body (and coverpage if present) in the XML.
             The document's document_xml isn't updated.
@@ -228,6 +264,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'ns': document.doc.namespace,
             'toc': toc,
             'include_country': document.country not in self.dont_include_countries,
+            'place_string': self.get_place_string(document),
         }
 
     def stash_assets(self, document, tmpdir):

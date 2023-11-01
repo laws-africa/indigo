@@ -10,8 +10,7 @@
   {% endblock %}
   {% block place %}
     <div name="place">
-      {% if document.work.locality %}{{ document.work.locality.name }}{% if include_country %},{% endif %}{% endif %}
-      {% if include_country %}{{ document.work.country.name }}{% endif %}
+      {{ place_string }}
     </div>
   {% endblock %}
   {% block title %}

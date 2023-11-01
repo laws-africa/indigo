@@ -1,0 +1,22 @@
+{% load i18n %}
+<staticContent xmlns="{{ ns }}">
+  {% block running-header %}
+    <container name="running-header">
+      <span class="left-align">
+        {{ document.title }}
+      </span>
+      <span class="right-align">
+        {{ place_string }}
+      </span>
+    </container>
+  {% endblock %}
+  {% block running-footer %}
+    <container name="running-footer">
+      {% blocktrans %}
+        <span>
+          By <a href="https://edit.laws.africa/widgets/pdf-attribution">Laws.Africa</a> and contributors. Licensed under <a href="https://edit.laws.africa/widgets/pdf-cc-by">CC-BY</a>. Share widely and freely.
+        </span>
+      {% endblocktrans %}
+    </container>
+  {% endblock %}
+</staticContent>

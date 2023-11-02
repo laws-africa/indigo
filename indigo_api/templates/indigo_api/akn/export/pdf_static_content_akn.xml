@@ -12,11 +12,11 @@
   {% endblock %}
   {% block running-footer %}
     <container name="running-footer">
-      {% blocktrans %}
-        <span>
-          By <a href="https://edit.laws.africa/widgets/pdf-attribution">Laws.Africa</a> and contributors. Licensed under <a href="https://edit.laws.africa/widgets/pdf-cc-by">CC-BY</a>. Share widely and freely.
-        </span>
-      {% endblocktrans %}
+      <span>
+        {% with lawsafrica="https://edit.laws.africa/widgets/pdf-attribution" ccby="https://edit.laws.africa/widgets/pdf-cc-by" %}
+          {% blocktrans %}By <a href="{{ lawsafrica }}">Laws.Africa</a> and contributors. Licensed under <a href="{{ ccby }}">CC-BY</a>. Share widely and freely.{% endblocktrans %}
+        {% endwith %}
+      </span>
     </container>
   {% endblock %}
 </staticContent>

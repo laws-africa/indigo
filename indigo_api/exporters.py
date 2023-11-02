@@ -232,7 +232,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         locality = document.work.locality.name if document.work.locality else None
         country = document.work.country.name if document.country not in self.dont_include_countries else None
         if locality and country:
-            return _('%(locality), %(country)s') % {'locality': _(locality), 'country': _(country)}
+            return f'{_(locality)}, {_(country)}'
         elif locality:
             return _(locality)
         elif country:

@@ -528,7 +528,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         if target == "thereof":
             # look backwards - find the first citation before the start of this match
             for c in reversed(citations):
-                if c.end_pos < match.start():
+                if c.end < match.start():
                     frbr_uri = c.href
                     break
 

@@ -1290,6 +1290,18 @@ class ProvisionRefsMatcherTestCase(TestCase):
             ExtractedCitation("26(a)", 28, 33, "/akn/za/act/2009/1/~sec_26__subsec_a", 0, 'According to section 26 and ', ' of Act No. 1 of 2009.'),
         ], self.finder.citations)
 
+    def test_markup_text_thereof(self):
+        text = """Regarding Act No. 1 of 2009 and section 26 thereof."""
+        self.finder.setup(self.frbr_uri, text=text)
+        self.finder.citations = [
+            ExtractedCitation("Act No. 1 of 2009", 10, 27, "/akn/za/act/2009/1", 0, 'Regarding ', ' and section' ),
+        ]
+        self.finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("Act No. 1 of 2009", 10, 27, "/akn/za/act/2009/1", 0, 'Regarding ', ' and section' ),
+            ExtractedCitation("26", 40, 42, "/akn/za/act/2009/1/~sec_26", 0, 'Act No. 1 of 2009 and section ', ' thereof.' ),
+        ], self.finder.citations)
+
     def test_markup_text_mixed_page_numbers(self):
         text = """Reference to Act No. 1 of 2009.\x0COn a new page section 26 of Act No. 1 of 2009.\x0CAct No. 1 of 2009."""
         self.finder.setup(self.frbr_uri, text=text)

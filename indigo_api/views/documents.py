@@ -263,8 +263,10 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_document.document_xml = differ.preprocess_xml_str(new_document.document_xml)
         new_html = new_document.to_html()
 
-        old_tree = lxml.html.fromstring(old_html.encode('utf-8')) if old_html else None
-        new_tree = lxml.html.fromstring(new_html.encode('utf-8'))
+        # we have to explicitly tell the HTML parser that we're dealing with utf-8
+        parser = lxml.html.HTMLParser(encoding='utf-8')
+        old_tree = lxml.html.fromstring(old_html.encode('utf-8'), parser=parser) if old_html else None
+        new_tree = lxml.html.fromstring(new_html.encode('utf-8'), parser=parser)
 
         diff = differ.diff_html(old_tree, new_tree)
         n_changes = differ.count_differences(diff)

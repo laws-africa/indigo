@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from lxml import etree
+import lxml.html
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 from docpipe.matchers import ExtractedCitation
@@ -1274,6 +1275,28 @@ class ProvisionRefsMatcherTestCase(TestCase):
         self.finder.markup_xml_matches(self.frbr_uri, actual)
         self.assertEqual(
             expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_markup_html(self):
+        html = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section 26(b) and section 31(a) thereof.</p>'
+        expected = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section <a href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</a> and section <a href="/akn/za/act/2009/1/~sec_31">31</a>(a) thereof.</p>'
+
+        actual = lxml.html.fromstring(html)
+        self.finder.markup_html_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected,
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_markup_html_local(self):
+        html = '<p>Concerning section 26(b) of this act.</p>'
+        expected = '<p>Concerning section 26(b) of this act.</p>'
+
+        actual = lxml.html.fromstring(html)
+        self.finder.markup_html_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected,
             etree.tostring(actual, encoding='unicode')
         )
 

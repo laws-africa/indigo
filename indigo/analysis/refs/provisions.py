@@ -251,7 +251,10 @@ class ProvisionRefsResolver:
         if names is None. If above_root is True, then we'll look above the root element if nothing inside matches.
         """
         names = names or AkomaNtoso30.hier_elements
-        ns = root.nsmap[None]
+        ns = root.nsmap.get(None)
+        if not ns:
+            # it's not an Akoma Ntoso document, so we can't do anything
+            return None
 
         # prefix with namespace
         names = [f'{{{ns}}}{n}' for n in names]

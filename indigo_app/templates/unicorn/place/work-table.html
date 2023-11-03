@@ -48,7 +48,7 @@
             <div class="card-body">
               {% if selected %}
                 <div class="flex-grow-1">
-                  <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-secondary">Edit</button>
+                  <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-secondary">Edit {{ selected|length }} selected</button>
                 </div>
               {% else %}
                 <div class="text-muted me-3">
@@ -59,7 +59,10 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Title</th>
+                  <th>
+                    <input type="checkbox" u:change="toggle_all" {% if all_selected %}checked{% endif %}>
+                    Title
+                  </th>
                   <th>FRBR URI</th>
                 </tr>
               </thead>
@@ -67,8 +70,7 @@
                 <tr>
                   <td>
                     <label>
-                      <input type="checkbox" name="selected" value="{{ work.pk }}"
-                             u:change="toggle({{ work.pk }})"
+                      <input type="checkbox" u:change="toggle({{ work.pk }})"
                              {% if work.pk in selected %}checked{% endif %}>
                       {{ work.title }}
                     </label>

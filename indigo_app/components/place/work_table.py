@@ -23,17 +23,13 @@ class WorkTableView(UnicornView):
     order = "title"
     selected = []
 
-    def toggle(self, pk):
-        if pk in self.selected:
-            self.selected = [x for x in self.selected if x != pk]
-        else:
-            self.selected.append(pk)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         works = self.filter_queryset(self._qs)
         context["paginator"], context["page"] = self.paginate(works.all())
+        if context["page"]:
+            context["all_selected"] = sorted(self.selected) == sorted([w.pk for w in context["page"]])
 
         return context
 
@@ -66,4 +62,20 @@ class WorkTableView(UnicornView):
             page = paginator.page(page_number)
             return paginator, page
         except InvalidPage:
-            return paginator, None
+            page_number = 1
+            page = paginator.page(page_number)
+            return paginator, page
+
+    def toggle(self, pk):
+        if pk in self.selected:
+            self.selected = [x for x in self.selected if x != pk]
+        else:
+            self.selected.append(pk)
+
+    def toggle_all(self):
+        if self.selected:
+            self.selected = []
+        else:
+            works = self.filter_queryset(self._qs)
+            _, page = self.paginate(works.all())
+            self.selected = [w.pk for w in page]

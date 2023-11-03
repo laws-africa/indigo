@@ -848,3 +848,11 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
             p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
 
         return context
+
+
+class PlaceWorksView2(PlaceViewBase, ListView):
+    template_name = 'place/works2.html'
+    tab = 'works'
+    context_object_name = 'works'
+    paginate_by = 50
+    queryset = Work.objects.all()

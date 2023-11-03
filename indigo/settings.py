@@ -96,6 +96,7 @@ INSTALLED_APPS = (
 
     # required for commenting on tasks
     'django_comments',
+    'django_unicorn',
 )
 
 MIDDLEWARE = (

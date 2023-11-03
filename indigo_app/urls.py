@@ -22,6 +22,7 @@ urlpatterns = [
     path('places/', places.PlaceListView.as_view(), name='places'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', places.PlaceDetailView.as_view(), name='place'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/$', places.PlaceWorksView.as_view(), name='place_works'),
+    re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works2/$', places.PlaceWorksView2.as_view(), name='place_works2'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/activity$', places.PlaceActivityView.as_view(), name='place_activity'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/metrics$', places.PlaceMetricsView.as_view(), name='place_metrics'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/explorer$', places.PlaceExplorerView.as_view(), name='place_explorer'),
@@ -94,4 +95,5 @@ urlpatterns = [
 
     path('comments/', include('django_comments.urls')),
 
+    path('unicorn/', include("django_unicorn.urls")),
 ]

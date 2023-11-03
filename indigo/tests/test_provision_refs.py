@@ -1290,13 +1290,12 @@ class ProvisionRefsMatcherTestCase(TestCase):
         )
 
     def test_markup_html_local(self):
-        html = '<p>Concerning section 26(b) of this act.</p>'
-        expected = '<p>Concerning section 26(b) of this act.</p>'
+        html = '<p>Concerning section 26(b) of this act, and section 2 of <a href="#footnote">a footnote</a>.</p>'
 
         actual = lxml.html.fromstring(html)
         self.finder.markup_html_matches(self.frbr_uri, actual)
         self.assertEqual(
-            expected,
+            html,
             etree.tostring(actual, encoding='unicode')
         )
 

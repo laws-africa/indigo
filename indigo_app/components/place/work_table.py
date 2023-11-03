@@ -21,6 +21,13 @@ class WorkTableView(UnicornView):
     page = 1
     primary_subsidiary = "b"
     order = "title"
+    selected = []
+
+    def toggle(self, pk):
+        if pk in self.selected:
+            self.selected = [x for x in self.selected if x != pk]
+        else:
+            self.selected.append(pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

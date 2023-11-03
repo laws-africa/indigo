@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-02 15:32+0200\n"
-"PO-Revision-Date: 2023-11-03 07:40\n"
+"PO-Revision-Date: 2023-11-03 08:43\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -157,11 +157,11 @@ msgstr "Acceptée %(date)s"
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Document date: %(date)s"
-msgstr ""
+msgstr "Date du document : %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:43
 msgid "Please note that there may have been updates since this file was created."
-msgstr ""
+msgstr "Veuillez noter qu'il peut y avoir eu des mises à jour depuis la création de ce fichier."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:46
 #, python-format
@@ -175,7 +175,7 @@ msgstr "Dernière vérification des mises à jour de la collection : %(as_at_da
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:56
 msgid "About this collection"
-msgstr ""
+msgstr "À propos de cette collection"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
@@ -183,11 +183,11 @@ msgstr "La législation de cette collection a été reproduite telle qu'elle a �
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:67
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Il n'y a aucun droit d'auteur sur le contenu législatif de ce document."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:68
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Cette copie PDF est sous licence Creative Commons Attribution 4.0 (CC BY 4.0). Partagez largement et librement."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:78
 msgid "Contents"

@@ -11,6 +11,8 @@
     </fo:block>
   </xsl:template>
 
+  <!-- don't render the containers in the staticContent tag -->
+  <xsl:template match="akn:staticContent"/>
   <xsl:template match="akn:container">
     <fo:block page-break-after="always">
       <xsl:apply-templates/>

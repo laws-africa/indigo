@@ -72,9 +72,9 @@
                     margin-top="-1.5cm">
             <fo:block start-indent="1pt" end-indent="1pt">
               <fo:inline>
-                <xsl:value-of select="//akn:div[@name='short-title']"/>
+                <xsl:value-of select="//akn:staticContent/akn:container[@name='running-header']/akn:span[@class='left-align']"/>
                 <fo:leader leader-pattern="space"/>
-                <xsl:value-of select="//akn:div[@name='place']"/>
+                <xsl:value-of select="//akn:staticContent/akn:container[@name='running-header']/akn:span[@class='right-align']"/>
               </fo:inline>
             </fo:block>
           </fo:block>
@@ -88,13 +88,7 @@
                     margin-top="1cm" padding-top="3pt">
             <fo:block start-indent="2pt" end-indent="2pt">
               <fo:inline>
-                <xsl:text>By </xsl:text>
-                <fo:basic-link external-destination="https://edit.laws.africa/widgets/pdf-attribution"
-                               color="{$link-colour}" text-decoration="underline">Laws.Africa</fo:basic-link>
-                <xsl:text> and contributors. Licensed under </xsl:text>
-                <fo:basic-link external-destination="https://edit.laws.africa/widgets/pdf-cc-by"
-                               color="{$link-colour}" text-decoration="underline">CC-BY</fo:basic-link>
-                <xsl:text>. Share widely and freely.</xsl:text>
+                <xsl:apply-templates select="//akn:staticContent/akn:container[@name='running-footer']/akn:span"/>
                 <fo:leader leader-pattern="space"/>
                 <fo:page-number/>
               </fo:inline>

@@ -563,7 +563,8 @@ class ProvisionRefsMatcher(CitationMatcher):
 
             # is the URI a local one?
             if frbr_uri.startswith('#'):
-                if node is not None:
+                # only try to look locally if we have a node and it has a namespace (it's XML)
+                if node is not None and node.nsmap.get(None):
                     if frbr_uri.startswith('#term-'):
                         # look for a ref in the definition of the term
                         elements = node.xpath(f'//a:def[@refersTo="{frbr_uri}"]', namespaces={'a': node.nsmap[None]})

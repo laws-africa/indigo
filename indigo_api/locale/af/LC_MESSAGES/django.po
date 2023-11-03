@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 09:54+0200\n"
-"PO-Revision-Date: 2023-10-24 07:17\n"
+"POT-Creation-Date: 2023-11-02 15:32+0200\n"
+"PO-Revision-Date: 2023-11-03 07:40\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -65,28 +65,28 @@ msgstr ""
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr ""
 
-#: models/works.py:102
+#: models/works.py:103
 msgid "taxonomy topic"
 msgstr ""
 
-#: models/works.py:103
+#: models/works.py:104
 msgid "taxonomy topics"
 msgstr ""
 
-#: models/works.py:414
-msgid "There are multiple commencements"
-msgstr ""
-
-#: models/works.py:417
+#: models/works.py:444
 msgid "Not commenced"
 msgstr "Nog nie in werking"
 
-#: models/works.py:507
+#: models/works.py:449
+msgid "There are multiple commencements"
+msgstr ""
+
+#: models/works.py:539
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr ""
 
-#: models/works.py:517
+#: models/works.py:549
 msgid "Invalid FRBR URI"
 msgstr ""
 
@@ -153,6 +153,50 @@ msgstr "nog nie in werking"
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr "Ingestem op %(date)s"
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
+#, python-format
+msgid "Document date: %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:43
+msgid "Please note that there may have been updates since this file was created."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:46
+#, python-format
+msgid "PDF created on %(current_date)s at %(current_time)s."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:49
+#, python-format
+msgid "Collection last checked for updates: %(as_at_date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:56
+msgid "About this collection"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
+msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:67
+msgid "There is no copyright on the legislative content of this document."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:68
+msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:78
+msgid "Contents"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_static_content_akn.xml:17
+#, python-format
+msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
+msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"

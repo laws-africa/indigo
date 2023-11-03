@@ -8,17 +8,19 @@ from indigo_api.models import Work
 class WorkFilterForm(forms.Form):
     q = forms.CharField(required=False)
     page = forms.IntegerField(required=False)
-    primary_subsidiary = forms.ChoiceField(required=False, choices=[("p", "Primary"), ("s", "Subsidiary")])
+    primary_subsidiary = forms.ChoiceField(required=False)
+    order = forms.CharField(required=False)
 
 
 class WorkTableView(UnicornView):
+    _per_page = 15
+    _qs = Work.objects
+    form_class = WorkFilterForm
+
     q = ""
     page = 1
-    primary_subsidiary = ""
-    _per_page = 15
-    _qs = Work.objects.order_by('title')
-
-    form_class = WorkFilterForm
+    primary_subsidiary = "b"
+    order = "title"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,8 +31,11 @@ class WorkTableView(UnicornView):
         return context
 
     def filter_queryset(self, qs):
+        qs = qs.order_by(self.order)
+
         if self.q:
             qs = qs.filter(title__icontains=self.q)
+
         if self.primary_subsidiary == "p":
             qs = qs.filter(parent_work__isnull=True)
         elif self.primary_subsidiary == "s":

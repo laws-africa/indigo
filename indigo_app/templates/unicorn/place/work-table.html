@@ -3,26 +3,28 @@
     <div class="col-2">
       <div class="card">
         <h5 class="card-header">Filters</h5>
-        <div class="card-body">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="radio" name="primary_subsidiary" value="" unicorn:model="primary_subsidiary">
-              Both
-            </label>
+        <div class="list-group">
+          <div class="list-group-item">
+            <h6>Primary / subsidiary</h6>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="primary_subsidiary" value="b" unicorn:model="primary_subsidiary">
+                Both
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="primary_subsidiary" value="p" unicorn:model="primary_subsidiary">
+                Primary
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="primary_subsidiary" value="s" unicorn:model="primary_subsidiary">
+                Subsidiary
+              </label>
+            </div>
           </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="radio" name="primary_subsidiary" value="p" unicorn:model="primary_subsidiary">
-              Primary
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="radio" name="primary_subsidiary" value="s" unicorn:model="primary_subsidiary">
-              Subsidiary
-            </label>
-          </div>
-
         </div>
       </div>
     </div>
@@ -30,14 +32,29 @@
     <div class="col">
       <div class="card">
         <div class="card-header">
-          <input unicorn:model="q" type="text" class="form-control" placeholder="Filter titles">
+          <div class="row">
+            <div class="col-9">
+              <input unicorn:model="q" type="text" class="form-control" placeholder="Filter titles">
+            </div>
+            <div class="col">
+              <select class="form-control" unicorn:model="order">
+                <option value="title" selected>Title</option>
+                <option value="frbr_uri">FRBR URI</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
           {% if page %}
-            <div>
+            <div class="card-body text-muted">
               {{ page.start_index }}-{{ page.end_index }} of {{ paginator.count }} works
             </div>
-            <table class="table table-condensed">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>FRBR URI</th>
+                </tr>
+              </thead>
               {% for work in page %}
                 <tr>
                   <td>{{ work.title }}</td>
@@ -46,9 +63,10 @@
               {% endfor %}
             </table>
           {% else %}
-            No works found.
+            <div class="card-body">
+              No works found.
+            </div>
           {% endif %}
-        </div>
       </div>
 
       <ul class="pagination mt-3">

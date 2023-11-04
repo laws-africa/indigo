@@ -2,6 +2,10 @@
 {% load humanize indigo_app i18n %}
 
 {% block title %}{% trans 'Tasks' %}{{ block.super }}{% endblock %}
+{% block head-css %}
+  {{ block.super }}
+  <script src="https://unpkg.com/htmx.org@1.9.7" integrity="sha384-EAzY246d6BpbWR7sQ8+WEm40J8c3dHFsqC58IgPlh4kMbRRI6P6WA+LA/qGAyAu8" crossorigin="anonymous"></script>
+{% endblock %}
 
 {% block content %}
 

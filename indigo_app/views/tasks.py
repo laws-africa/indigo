@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Subquery, OuterRef, Count, IntegerField
-from django.http import QueryDict
+from django.http import QueryDict, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -626,11 +626,19 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
 
 
 class TaskAssigneesView(TaskViewBase, TemplateView):
-    http_method_names = ['post']
+    http_method_names = ['post', 'get']
     template_name = 'indigo_api/_task_assign_to_menu.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('task'):
+            return self.render_options([request.GET['task']], 'unassign' in request.GET)
+        return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
         pks = request.POST.getlist('tasks', [])
+        return self.render_options(pks, 'unassign' in request.POST)
+
+    def render_options(self, pks, unassign):
         tasks = Task.objects.filter(pk__in=pks)
         users = []
 
@@ -642,7 +650,7 @@ class TaskAssigneesView(TaskViewBase, TemplateView):
 
         return self.render_to_response({
             'potential_assignees': users,
-            'unassign': 'unassign' in request.POST,
+            'unassign': unassign,
         })
 
 

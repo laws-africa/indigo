@@ -131,10 +131,20 @@
             <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
             {% csrf_token %}
               <div class="dropdown">
-                <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button
+                  class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  hx-get="{% url 'task_assignees_menu' place=task.place.place_code %}?task={{ task.id }}"
+                  hx-target="next .dropdown-menu"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
                   {% trans 'Assign to' %}
                 </button>
-                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
+                <div class="dropdown-menu" id="task-{{ task.id }}-assign-menu">
+                  <div class="dropdown-item">Loading...</div>
+                </div>
               </div>
             </form>
           {% endif %}

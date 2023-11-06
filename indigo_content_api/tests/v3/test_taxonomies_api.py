@@ -16,6 +16,33 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
         taxonomy_topics = response.json()['results']
         self.assertEqual([
             {
+                "name": "Projects",
+                "slug": "projects",
+                "children": [
+                    {
+                        "name": "Priority: High",
+                        "slug": "projects-priority-high",
+                        "children": [],
+                    },
+                    {
+                        "name": "Priority: Medium",
+                        "slug": "projects-priority-medium",
+                        "children": [],
+                    },
+                    {
+                        "name": "Priority: Low",
+                        "slug": "projects-priority-low",
+                        "children": [
+                            {
+                                "name": "A workflow",
+                                "slug": "projects-priority-low-a-workflow",
+                                "children": [],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
                 "name": "Laws.Africa Subject Areas",
                 "slug": "lawsafrica-subject-areas",
                 "children": [

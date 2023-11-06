@@ -23,7 +23,7 @@
             <div class="row">
               <div class="col-7">
                 {% if topic.description %}
-                  {{ topic.description|safe }}
+                  {{ topic.description|safe|urlize|linebreaksbr }}
                 {% endif %}
               </div>
               <div class="col-5">

@@ -1,9 +1,9 @@
 [
   {
     "model": "indigo_api.taxonomytopic",
-    "pk": 1,
+    "pk": 998,
     "fields": {
-      "path": "0001",
+      "path": "0999",
       "depth": 1,
       "numchild": 1,
       "name": "Laws.Africa Subject Areas",
@@ -12,9 +12,9 @@
   },
   {
     "model": "indigo_api.taxonomytopic",
-    "pk": 2,
+    "pk": 999,
     "fields": {
-      "path": "00010002",
+      "path": "09990002",
       "depth": 2,
       "numchild": 0,
       "name": "Money and Business",

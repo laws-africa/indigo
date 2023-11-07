@@ -296,7 +296,6 @@ class TaxonomyTopicSerializer(serializers.ModelSerializer):
         model = TaxonomyTopic
         fields = ['name', 'slug', 'children']
 
-
     def get_children(self, instance):
         children = instance.get_children()
         return TaxonomyTopicSerializer(children, many=True).data

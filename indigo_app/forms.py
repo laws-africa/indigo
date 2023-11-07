@@ -215,7 +215,7 @@ class BatchCreateWorkForm(forms.Form):
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
-    project_topic = forms.ModelChoiceField(queryset=TaxonomyTopic.objects.filter(slug__startswith='projects-', depth__gte=3), empty_label='Choose a topic')
+    taxonomy_topic = forms.ModelChoiceField(queryset=TaxonomyTopic.objects.filter(slug__startswith='projects-', depth__gte=3), empty_label='Choose a topic')
     block_import_tasks = forms.BooleanField(initial=False, required=False)
     cancel_import_tasks = forms.BooleanField(initial=False, required=False)
     block_gazette_tasks = forms.BooleanField(initial=False, required=False)
@@ -250,7 +250,7 @@ class ColumnSelectWidget(SelectMultiple):
 
 class BatchUpdateWorkForm(BatchCreateWorkForm):
     update_columns = forms.MultipleChoiceField()
-    project_topic = None
+    taxonomy_topic = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

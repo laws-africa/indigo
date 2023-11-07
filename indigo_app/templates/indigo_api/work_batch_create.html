@@ -86,21 +86,21 @@
 
         {% block topic %}
           <div class="form-group">
-            <label for="{{ form.project_topic.id_for_label }}">{% trans 'Choose a topic for newly created works' %}</label>
+            <label for="{{ form.taxonomy_topic.id_for_label }}">{% trans 'Choose a topic for newly created works' %}</label>
 
-            {% if form.fields.project_topic.choices %}
+            {% if form.fields.taxonomy_topic.choices %}
               <div class="form-group">
                 <div class="form-row">
                   <div class="col-md-6">
-                    <select class="selectpicker form-control" name="{{ form.project_topic.name }}" id="{{ form.project_topic.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project topic' %}" required>
-                      {% for option in form.project_topic %}
+                    <select class="selectpicker form-control" name="{{ form.taxonomy_topic.name }}" id="{{ form.taxonomy_topic.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project topic' %}" required>
+                      {% for option in form.taxonomy_topic %}
                         {{ option }}
                       {% endfor %}
                     </select>
                   </div>
                 </div>
               </div>
-              {% for err in form.project_topic.errors %}
+              {% for err in form.taxonomy_topic.errors %}
                 <div class="form-text text-danger">{{ err }}</div>
               {% endfor %}
             {% else %}

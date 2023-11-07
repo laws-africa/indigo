@@ -222,6 +222,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     consolidation_date = None
 
     workflow = None
+    taxonomy_topic = None
     block_import_tasks = False
     cancel_import_tasks = False
     block_gazette_tasks = False
@@ -379,6 +380,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def create_works(self, table, dry_run, form_data):
         self.workflow = form_data.get('workflow')
+        self.taxonomy_topic = form_data.get('taxonomy_topic')
         self.block_import_tasks = form_data.get('block_import_tasks')
         self.cancel_import_tasks = form_data.get('cancel_import_tasks')
         self.block_gazette_tasks = form_data.get('block_gazette_tasks')
@@ -482,6 +484,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             if old_title and new_title:
                 work.update_document_titles(old_title, new_title)
+
+            # project taxonomy
+            if self.taxonomy_topic:
+                work.taxonomy_topics.add(self.taxonomy_topic)
 
             # signals
             if not self.testing:

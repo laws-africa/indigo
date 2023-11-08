@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from django.urls import reverse
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
@@ -104,7 +105,7 @@ class TaxonomyTopic(MP_Node):
         verbose_name_plural = _("taxonomy topics")
 
     def __str__(self):
-        return self.name
+        return f"{'-' * (self.depth - 1)} {self.name}"
 
     @property
     def range_space(self):
@@ -453,15 +454,23 @@ class Work(WorkMixin, models.Model):
             ('bulk_export_work', 'Can export works in bulk'),
         )
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
+    class Doctype(models.TextChoices):
+        ACT = 'act', _('Act')
+        NOTICE = 'notice', _('Notice')
+
+    class Subtype(models.TextChoices):
+        SUBSIDIARY = 'subleg', _('Subsidiary Legislation')
+
+
+    frbr_uri = models.CharField(max_length=512, null=False, blank=True, unique=True, help_text="Used globally to identify this work")
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works')
+    country = models.ForeignKey('indigo_api.Country', null=False, blank=False, on_delete=models.PROTECT, related_name='works')
     locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
-    doctype = models.CharField(max_length=64, null=False, blank=True, help_text="FRBR doctype")
-    subtype = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR subtype")
+    doctype = models.CharField(max_length=64, null=False, blank=True, choices=Doctype.choices, default=Doctype.ACT,  help_text="FRBR doctype")
+    subtype = models.CharField(max_length=512, null=True, blank=True, choices=Subtype.choices, help_text="FRBR subtype")
     actor = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR actor")
     date = models.CharField(max_length=10, null=False, blank=True, help_text="FRBR date")
     number = models.CharField(max_length=512, null=False, blank=True, help_text="FRBR number")
@@ -489,7 +498,7 @@ class Work(WorkMixin, models.Model):
     properties = JSONField(null=False, blank=True, default=dict)
 
     # taxonomies
-    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works', blank=True)
 
     taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True)
 
@@ -502,6 +511,9 @@ class Work(WorkMixin, models.Model):
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    draft = models.BooleanField(default=False, help_text="Is this a draft work?")
+    comments = models.TextField(null=True, blank=True, help_text="Comments about this work")
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
 
@@ -635,6 +647,9 @@ class Work(WorkMixin, models.Model):
 
     def as_at_date(self):
         return self.as_at_date_override or self.place.settings.as_at_date
+
+    def get_absolute_url(self):
+        return reverse('work', kwargs={'frbr_uri': self.frbr_uri})
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

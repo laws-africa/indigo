@@ -5,12 +5,13 @@
   id="work-filter-form"
   hx-post="{% url 'place_works2' place=place.place_code %}"
   hx-target="#work-list"
-  hx-trigger="submit, change from:.work-list-facets"
+  hx-trigger="submit, change from:find select, change from:.work-list-facets"
 >
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
-      <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="{% trans 'Filter...' %}" value="{{ form.q.value | default:'' }}">
+      <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="{% trans 'Filter...' %}"
+             value="{{ form.q.value | default:'' }}">
     </div>
 
     <!-- Time updated filter -->

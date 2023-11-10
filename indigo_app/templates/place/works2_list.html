@@ -1,0 +1,178 @@
+{% load indigo_app humanize static i18n %}
+
+<div id="work-list">
+  <div class="row">
+
+    <div class="col-md-3">
+      <div hx-get="{{ facets_url }}" hx-trigger="load"></div>
+    </div>
+
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header">
+          {% block filter-form %}
+            {% include 'indigo_api/_work_filter_form.html' with form=form %}
+          {% endblock %}
+        </div>
+
+        <div id="library">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item p-2 text-muted">
+                <span>
+                  {% blocktrans trimmed count count=paginator.count %}
+                    {{ count }} work (of {{ total_works }} total)
+                  {% plural %}
+                    {{ count }} works (of {{ total_works }} total)
+                  {% endblocktrans %}
+                  {% blocktrans trimmed count page_count=page_count %}
+                    · {{ page_count }} page
+                  {% plural %}
+                    · {{ page_count }} pages
+                  {% endblocktrans %}
+                </span>
+              {% if perms.indigo_api.bulk_export_work %}
+                <span class="float-right">
+                    <a href="{{ request.get_full_path }}?&format=xlsx"><i class="fas fa-file-excel fa-fw mr-1"></i>{% trans "Download to Excel" %}</a>
+                  </span>
+              {% endif %}
+            </div>
+
+            {% for work in works %}
+              <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ work.pk }}">
+                <div class="d-flex">
+                  <div class="float-left">
+                    <span class="text-muted fas fa-caret-right fa-fw collapse-indicator"></span>
+                  </div>
+
+                  <div class="float-left flex-fill">
+                    <div class="d-flex">
+                      <div class="col-5">
+                        <div>
+                          <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+                          {% if work.stub %}
+                            <span class="badge badge-info">{% trans "stub" %}</span>
+                          {% endif %}
+                          {% if work.repealed_date %}
+                            <span class="badge badge-info">{% trans "repealed" %}</span>
+                          {% endif %}
+                        </div>
+                        <div class="text-muted">{{ work.frbr_uri }}</div>
+                        {% if work.parent_work %}
+                          <div>
+                            {% trans "Primary work" %}:
+                            <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+                          </div>
+                        {% endif %}
+                      </div>
+
+                      <div class="col-2">
+                        {% if work.task_stats.n_active_tasks %}
+                          <div><i class="fas fa-thumbtack"></i> <strong>{{ work.task_stats.n_active_tasks }}</strong> {% trans "Active tasks" %}</div>
+                          <div class="progress mt-1 progress-thin">
+                            <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
+                            <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
+                            <div class="progress-bar task-badge-blocked" style="width: {{ work.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
+                          </div>
+                        {% endif %}
+                      </div>
+
+                      <div class="col-2">
+                        {% if work.filtered_docs %}
+                          <div>
+                            <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ work.filtered_docs|length }}</strong></span>
+                            {% if work.n_annotations %}
+                              <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
+                            {% endif %}
+                          </div>
+                          <div class="progress mt-1 progress-thin">
+                            <div class="progress-bar bg-primary" style="width: {{ work.pub_ratio }}%" title="{% trans "published" %}"></div>
+                            <div class="progress-bar bg-warning" style="width: {{ work.drafts_ratio }}%" title="{% trans "drafts" %}"></div>
+                          </div>
+                        {% endif %}
+                      </div>
+
+                      <div class="col-1">
+                        {% if work.metrics %}
+                          {% include 'indigo_metrics/_progress_ball.html' with size=40 progress=work.metrics.p_breadth_complete title=work.metrics.p_breadth_complete|floatformat:0|add:"%" %}
+                        {% endif %}
+                      </div>
+
+                      <div class="col-2">
+                        <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>
+                        {% if work.most_recent_updated_by %}
+                          {% if work.most_recent_updated_by == request.user %}
+                            {% trans "you" %}
+                          {% else %}
+                            <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    {% if work.filtered_docs %}
+                      <div class="collapse work-extra-detail mt-1" id="work-detail-{{ work.pk }}">
+                        {% for doc in work.filtered_docs %}
+                          <div class="d-flex">
+                            <div class="col-2">
+                              <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
+                            </div>
+
+                            <div class="col-4">
+                              {% if doc.draft %}
+                                <i class="fas fa-fw fa-circle draft" title="{% trans "draft" %}"></i>
+                              {% else %}
+                                <i class="fas fa-fw fa-circle published" title="{% trans "published" %}"></i>
+                              {% endif %}
+                              {{ doc.title }}
+                            </div>
+
+                            <div class="col-2">
+                              {% if doc.task_stats.n_active_tasks %}
+                                <div>
+                                  <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong>
+                                  {% trans "Active tasks" %}
+                                </div>
+                                <div class="progress mt-1 progress-thin">
+                                  <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
+                                  <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
+                                  <div class="progress-bar task-badge-blocked" style="width: {{ doc.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
+                                </div>
+                              {% endif %}
+                            </div>
+
+                            <div class="col-2">
+                              {% if doc.n_annotations %}
+                                <i class="far fa-comments"></i> {{ doc.n_annotations }}
+                              {% endif %}
+                            </div>
+
+                            <div class="col-2">
+                              <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
+                              {% if doc.updated_by_user == request.user %}
+                                {% trans "you" %}
+                              {% else %}
+                                <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+
+      {% if is_paginated %}
+        <nav class="mt-4">
+          {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+        </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>

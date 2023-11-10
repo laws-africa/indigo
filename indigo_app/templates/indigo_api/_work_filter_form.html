@@ -1,28 +1,16 @@
 {% load account i18n %}
 
-<form method="GET" id="work-filter-form">
+<form
+  method="GET"
+  id="work-filter-form"
+  hx-post="{% url 'place_works2' place=place.place_code %}"
+  hx-target="#work-list"
+  hx-trigger="submit"
+>
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
       <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="{% trans 'Filter...' %}" value="{{ form.q.value | default:'' }}">
-    </div>
-
-    <!-- Subtypes filter -->
-    <div class="mr-2">
-      <select class="form-control" name="subtype">
-        {% for option in form.subtype %}
-          {{ option }}
-        {% endfor %}
-      </select>
-    </div>
-
-    <!-- Stubs filter -->
-    <div class="mr-2">
-      <select class="form-control" name="stub">
-        {% for opt in form.stub %}
-          <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
-        {% endfor %}
-      </select>
     </div>
 
     <!-- Time updated filter -->
@@ -37,7 +25,10 @@
     </div>
 
     <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
-    <button type="submit" class="btn btn-success mr-2">{% trans 'Apply' %}</button>
+    <button type="submit" class="btn btn-success mr-2">
+      {% trans 'Apply' %}
+      <span class="htmx-indicator"><i class="fa fa-spinner fa-spin"></i></span>
+    </button>
   </div>
 
   <div class="collapse border-top mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">

@@ -1,0 +1,41 @@
+{% extends "place/tabbed_layout.html" %}
+{% load indigo_app humanize static i18n %}
+{% load django_htmx %}
+
+{% block title %}{% trans "Works" %} {{ block.super }}{% endblock %}
+{% block body-attributes %}
+  {{ block.super }}
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid mt-3 mb-5">
+
+    {% block content-header %}
+      <div class="text-right mb-3">
+        <div class="btn-group">
+          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">{% trans "Add new work" %}</a>
+          {% if perms.indigo_api.bulk_add_work %}
+            <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">{% trans "Batch add new works" %}</a>
+              <a class="dropdown-item" href="{% url 'update_batch_work' place=place.place_code %}">{% trans "Batch update works" %}</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endblock %}
+
+    {% include 'place/works2_list.html' %}
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
+
+  <script src="https://unpkg.com/htmx.org@1.9.8" integrity="sha384-rgjA7mptc2ETQqXoYC3/zJvkU7K/aP44Y+z7xQuJiVnB/422P/Ak+F/AqFR7E4Wr" crossorigin="anonymous"></script>
+  {% django_htmx_script %}
+{% endblock %}

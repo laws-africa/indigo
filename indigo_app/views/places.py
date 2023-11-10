@@ -1,8 +1,11 @@
 import logging
 from collections import defaultdict, Counter
+from dataclasses import dataclass, field
 from datetime import timedelta, date
 from itertools import chain, groupby
 import json
+from typing import List
+
 from lxml import etree
 
 from actstream import action
@@ -17,6 +20,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView, FormView
 from django.views.generic.list import MultipleObjectMixin
+from django_htmx.http import push_url
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
 from indigo_api.views.documents import DocumentViewSet
@@ -848,3 +852,151 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
             p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
 
         return context
+
+
+class PlaceWorksView2(PlaceViewBase, ListView):
+    template_name = 'place/works2.html'
+    tab = 'works'
+    context_object_name = 'works'
+    paginate_by = 50
+    http_method_names = ['post', 'get']
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.form = WorkFilterForm(self.country, request.POST or request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Work.objects \
+            .select_related('parent_work', 'metrics') \
+            .filter(country=self.country, locality=self.locality) \
+            .distinct() \
+            .order_by('-updated_at')
+
+        queryset = self.form.filter_queryset(queryset)
+
+        # prefetch and filter documents
+        # TODO
+        queryset = queryset.prefetch_related(Prefetch(
+            'document_set',
+            to_attr='filtered_docs',
+            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
+        ))
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+        # TODO
+        works = context["works"]
+        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
+        context['facets_url'] = (
+            reverse('place_works2_facets', kwargs={'place': self.kwargs['place']}) +
+            '?' + (self.request.POST or self.request.GET).urlencode()
+        )
+
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.request.POST.urlencode()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['place/works2_list.html']
+        return super().get_template_names()
+
+
+@dataclass
+class FacetItem:
+    label: str
+    value: str
+    count: int
+    selected: bool
+
+
+@dataclass
+class Facet:
+    label: str
+    name: str
+    items: List[FacetItem] = field(default_factory=list)
+
+
+class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
+    template_name = 'place/works2_facets.html'
+
+    def get(self, request, *args, **kwargs):
+        self.form = WorkFilterForm(self.country, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+
+        qs = Work.objects.filter(country=self.country, locality=self.locality)
+
+        # build facets
+        context["facets"] = facets = []
+        self.facet_subtype(facets, qs)
+        self.facet_stub(facets, qs)
+
+        return context
+
+    def facet_subtype(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="subtype")
+
+        # count subtypes by code
+        counts = {c['subtype']: c['count'] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        items = [
+            FacetItem(
+                st.name,
+                st.abbreviation,
+                counts.get(st.abbreviation, 0),
+                self.form.cleaned_data.get("subtype") == st.abbreviation
+            )
+            for st in Subtype.objects.all()
+            if counts.get(st.abbreviation)
+        ]
+        items.insert(0, FacetItem(
+            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
+        ))
+
+        facets.append(Facet("Type", "subtype", items))
+
+    def facet_stub(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="stub")
+
+        # group by both principal and stub, and count distinct combinations
+        counts = {
+            (c["stub"], c["principal"]): c["count"]
+            for c in qs.values("stub", "principal").annotate(count=Count("id")).order_by()
+        }
+        form = self.form.cleaned_data
+        items = [
+            FacetItem("No stubs", "",
+                      counts.get((False, False), 0) + counts.get((False, True), 0),
+                      not(form.get("stub"))),
+            FacetItem("All stubs", "only",
+                      counts.get((True, False), 0) + counts.get((True, True), 0),
+                      form.get("stub") == "only"),
+            FacetItem("Temporary", "temporary",
+                      counts.get((True, True), 0),
+                      form.get("stub") == "temporary"),
+            FacetItem("Permanent", "permanent",
+                      counts.get((True, False), 0),
+                      form.get("stub") == "permanent"),
+        ]
+
+        facets.append(Facet("Stubs", "stub", items))
+

@@ -408,18 +408,19 @@ class WorkFilterForm(forms.Form):
 
         return any(is_set(a) for a in self.advanced_filters)
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, exclude=None):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if not self.cleaned_data.get('stub'):
-            queryset = queryset.filter(stub=False)
-        elif self.cleaned_data.get('stub') == 'only':
-            queryset = queryset.filter(stub=True)
-        elif self.cleaned_data.get('stub') == 'temporary':
-            queryset = queryset.filter(stub=True, principal=True)
-        elif self.cleaned_data.get('stub') == 'permanent':
-            queryset = queryset.filter(stub=True, principal=False)
+        if exclude != "stub":
+            if not self.cleaned_data.get('stub'):
+                queryset = queryset.filter(stub=False)
+            elif self.cleaned_data.get('stub') == 'only':
+                queryset = queryset.filter(stub=True)
+            elif self.cleaned_data.get('stub') == 'temporary':
+                queryset = queryset.filter(stub=True, principal=True)
+            elif self.cleaned_data.get('stub') == 'permanent':
+                queryset = queryset.filter(stub=True, principal=False)
 
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:
@@ -431,7 +432,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
         
         # filter by subtype indicated on frbr_uri
-        if self.cleaned_data.get('subtype'):
+        if self.cleaned_data.get('subtype') and exclude != "subtype":
             if self.cleaned_data['subtype'] == 'acts_only':
                 queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d{4}\/\w+')
             else:

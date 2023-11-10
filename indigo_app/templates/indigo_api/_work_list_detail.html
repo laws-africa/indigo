@@ -1,0 +1,95 @@
+{% load indigo_app humanize i18n %}
+
+<ul class="nav nav-tabs">
+  {% if documents %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab == "docs" %}active{% endif %}"
+         href="#work-{{ work.pk }}-docs" data-toggle="tab">
+        Documents <span class="badge badge-light">{{ documents|length }}</span>
+      </a>
+    </li>
+  {% endif %}
+  {% if n_commenced_by or n_commencements_made %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
+         href="#work-{{ work.pk }}-commencements" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
+         hx-get="{% url 'place_works2_work_commencements' place=place.place_code pk=work.pk %}"
+      >Commencements <span class="badge badge-light">{{ n_commencements_made|default:'-' }}/{{ n_commenced_by|default:'-' }}</span></a>
+    </li>
+  {% endif %}
+  {% if n_amendments or n_amendments_made %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab == "amendments" %}active{% endif %}"
+         href="#work-{{ work.pk }}-amendments" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
+         hx-get="{% url 'place_works2_work_amendments' place=place.place_code pk=work.pk %}"
+      >Amendments <span class="badge badge-light">{{ n_amendments_made|default:'-' }}/{{ n_amendments|default:'-' }}</span></a>
+    </li>
+  {% endif %}
+  <li class="nav-item">
+    <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab">Repeals</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab">Subsidiary</a>
+  </li>
+</ul>
+
+<div class="tab-content border-left border-right border-bottom p-3">
+  {% if documents %}
+    <div class="tab-pane fade show active py-2" id="work-{{ work.pk }}-docs">
+      {% for doc in documents %}
+        <div class="d-flex">
+          <div class="col-2">
+            <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
+          </div>
+
+          <div class="col-4">
+            {% if doc.draft %}
+              <i class="fas fa-fw fa-circle draft" title="{% trans "draft" %}"></i>
+            {% else %}
+              <i class="fas fa-fw fa-circle published" title="{% trans "published" %}"></i>
+            {% endif %}
+            {{ doc.title }}
+          </div>
+
+          <div class="col-2">
+            {% if doc.task_stats.n_active_tasks %}
+              <div>
+                <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong>
+                {% trans "Active tasks" %}
+              </div>
+              <div class="progress mt-1 progress-thin">
+                <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
+                <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
+                <div class="progress-bar task-badge-blocked" style="width: {{ doc.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-2">
+            {% if doc.n_annotations %}
+              <i class="far fa-comments"></i> {{ doc.n_annotations }}
+            {% endif %}
+          </div>
+
+          <div class="col-2">
+            <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
+            {% if doc.updated_by_user == request.user %}
+              {% trans "you" %}
+            {% else %}
+              <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if n_commenced_by or n_commencements_made %}
+    <div class="tab-pane" id="work-{{ work.pk }}-commencements"></div>
+  {% endif %}
+  {% if n_amendments or n_amendments_made %}
+    <div class="tab-pane" id="work-{{ work.pk }}-amendments"></div>
+  {% endif %}
+</div>

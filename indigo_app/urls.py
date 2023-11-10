@@ -26,8 +26,12 @@ urlpatterns = [
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works2/$', places.PlaceWorksView2.as_view(), name='place_works2'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works2/facets$', places.PlaceWorksView2Facets.as_view(), name='place_works2_facets'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works2/actions$', places.PlaceWorksView2Actions.as_view(), name='place_works2_actions'),
+    path('places/<str:place>/works2/detail/<int:pk>', places.PlaceWorks2WorkDetailView.as_view(),
+         name='place_works2_work_detail'),
     path('places/<str:place>/works2/detail/<int:pk>/commencements', places.PlaceWorks2WorkCommencementsView.as_view(),
             name='place_works2_work_commencements'),
+    path('places/<str:place>/works2/detail/<int:pk>/amendments', places.PlaceWorks2WorkAmendmentsView.as_view(),
+         name='place_works2_work_amendments'),
 
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/activity$', places.PlaceActivityView.as_view(), name='place_activity'),
     re_path(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/metrics$', places.PlaceMetricsView.as_view(), name='place_metrics'),

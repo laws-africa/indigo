@@ -1,0 +1,59 @@
+{% load i18n %}
+
+<h5>{% trans "Commencements made" %}</h5>
+
+{% with work.commencements_made.all as commencements_made %}
+  {% if commencements_made %}
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Date' %}</th>
+      </tr>
+      </thead>
+      {% for item in commencements_made %}
+        <tr>
+          <td>
+            <a href="{% url 'work' frbr_uri=item.commenced_work.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=item.commenced_work.frbr_uri %}"
+            >{{ item.commenced_work.title }}</a>
+            <span class="text-muted">· {{ item.commenced_work.frbr_uri }}</span>
+          </td>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    -
+  {% endif %}
+{% endwith %}
+
+<h5 class="mt-3">{% trans "Commenced by" %}</h5>
+
+{% with work.commencements.all as commencements %}
+  {% if commencements %}
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Date' %}</th>
+      </tr>
+      </thead>
+      {% for item in commencements %}
+        {% if item.commencing_work %}
+          <tr>
+            <td>
+              <a href="{% url 'work' frbr_uri=item.commencing_work.frbr_uri %}"
+                 data-popup-url="{% url 'work_popup' frbr_uri=item.commencing_work.frbr_uri %}"
+              >{{ item.commencing_work.title }}</a>
+              <span class="text-muted">· {{ item.commencing_work.frbr_uri }}</span>
+            </td>
+            <td>{{ item.date|date:"Y-m-d" }}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </table>
+  {% else %}
+    -
+  {% endif %}
+{% endwith %}

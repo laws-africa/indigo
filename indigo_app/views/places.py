@@ -1070,11 +1070,44 @@ class PlaceWorksView2Actions(PlaceViewBase, FormView):
         return context
 
 
-class PlaceWorks2WorkCommencementsView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_list_commencements.html'
+class PlaceWorks2WorkDetailView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_list_detail.html'
     queryset = Work.objects
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        work = self.object
+
+        context["documents"] = Document.objects.undeleted().no_xml().filter(work=work)
+        context["tab"] = "docs" if context["documents"] else None
+
+        # count commenced works
+        context["n_commencements_made"] = work.commencements_made.count()
+        context["n_commenced_by"] = work.commencements.filter(commencing_work__isnull=False).count()
+        context["tab"] = context["tab"] or (
+            "commencements" if context["n_commencements_made"] + context["n_commenced_by"] else None
+        )
+
+        # count amended works
+        context["n_amendments_made"] = work.amendments_made.count()
+        context["n_amendments"] = work.amendments.count()
+        context["tab"] = context["tab"] or (
+            "amendments" if context["n_amendments_made"] + context["n_amendments"] else None
+        )
+
         return context
+
+
+class PlaceWorks2WorkCommencementsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_commencement_tables.html'
+    queryset = Work.objects.prefetch_related(
+        'commencements', 'commencements__commenced_work', 'commencements__commencing_work'
+    )
+
+
+class PlaceWorks2WorkAmendmentsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_amendment_tables.html'
+    queryset = Work.objects.prefetch_related(
+        'amendments', 'amendments__amended_work', 'amendments__amending_work'
+    )

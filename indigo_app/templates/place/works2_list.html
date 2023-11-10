@@ -24,9 +24,9 @@
         {% plural %}
           · {{ page_count }} pages
         {% endblocktrans %}
+        <span class="htmx-indicator"><i class="fa fa-spinner fa-spin"></i></span>
       </div>
-      <div class="flex-grow-1" id="work-bulk-actions">
-      </div>
+      <div class="flex-grow-1" id="work-bulk-actions"></div>
       {% if perms.indigo_api.bulk_export_work %}
         <div>
           <a href="{{ request.get_full_path }}?&format=xlsx"><i class="fas fa-file-excel fa-fw mr-1"></i>{% trans "Download to Excel" %}</a>

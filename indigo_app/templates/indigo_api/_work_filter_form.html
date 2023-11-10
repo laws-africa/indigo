@@ -6,6 +6,7 @@
   hx-post="{% url 'place_works2' place=place.place_code %}"
   hx-target="#work-list"
   hx-trigger="submit, change from:#work-list target:.work-list-facet"
+  hx-indicator="#work-list"
 >
   <div class="d-flex">
 
@@ -27,10 +28,7 @@
 
     <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
 
-    <button type="submit" class="btn btn-primary">
-      {% trans 'Apply' %}
-      <span class="htmx-indicator"><i class="fa fa-spinner fa-spin"></i></span>
-    </button>
+    <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
   </div>
 
   <div class="collapse mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">

@@ -684,3 +684,23 @@ class ExplorerForm(forms.Form):
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
+
+
+class WorkBulkActionsForm(forms.Form):
+    save = forms.BooleanField()
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+    add_taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
+        required=False)
+    del_taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
+        required=False)
+
+    def save_changes(self):
+        if self.cleaned_data.get('add_taxonomy_topics'):
+            for work in self.cleaned_data['works']:
+                work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
+
+        if self.cleaned_data.get('del_taxonomy_topics'):
+            for work in self.cleaned_data['works']:
+                work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])

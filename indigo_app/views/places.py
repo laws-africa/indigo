@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Case, When
 from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict
+from django.http import QueryDict, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -28,7 +28,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
@@ -958,7 +958,7 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="subtype")
 
         # count subtypes by code
-        counts = {c['subtype']: c['count'] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
         items = [
             FacetItem(
                 st.name,
@@ -1027,3 +1027,30 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
 
         facets.append(Facet("Primary or subsidiary", "primary_subsidiary", items))
 
+
+class PlaceWorksView2Actions(PlaceViewBase, FormView):
+    form_class = WorkBulkActionsForm
+    template_name = "place/works2_actions.html"
+
+    def form_valid(self, form):
+        if form.cleaned_data['save']:
+            form.save_changes()
+            messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
+            return redirect(
+                self.request.META.get('HTTP_REFERER')
+                or reverse('place_works2', kwargs={'place': self.kwargs['place']})
+            )
+        else:
+            return self.form_invalid(form)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # get the union of all the work's taxonomy topics
+        if form.cleaned_data.get('works'):
+            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
+
+        if form.is_valid:
+            context["works"] = form.cleaned_data.get("works", [])
+
+        return context

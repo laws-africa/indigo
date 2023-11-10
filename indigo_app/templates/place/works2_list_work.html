@@ -66,14 +66,7 @@
         </div>
 
         <div class="col-2">
-          <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>
-          {% if work.most_recent_updated_by %}
-            {% if work.most_recent_updated_by == request.user %}
-              {% trans "you" %}
-            {% else %}
-              <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
-            {% endif %}
-          {% endif %}
+          <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
         </div>
       </div>
 

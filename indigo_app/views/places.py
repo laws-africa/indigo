@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Case, When
 from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict, HttpResponse
+from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -951,6 +951,7 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         self.facet_subtype(facets, qs)
         self.facet_stub(facets, qs)
         self.facet_primary_subsidiary(facets, qs)
+        self.facet_status(facets, qs)
 
         return context
 
@@ -1026,6 +1027,22 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         ]
 
         facets.append(Facet("Primary or subsidiary", "primary_subsidiary", items))
+
+    def facet_status(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="status")
+
+        # filter qs on whether there is a draft document, and count distinct work ids
+        n_drafts = qs.filter(document__draft=True).values("id").distinct().count()
+        n_published = qs.filter(document__draft=False).values("id").distinct().count()
+
+        form = self.form.cleaned_data
+        items = [
+            FacetItem("Either", "", None, not(form.get("status"))),
+            FacetItem("Draft", "draft", n_drafts, form.get("status") == "draft"),
+            FacetItem("Published", "published", n_published, form.get("status") == "published"),
+        ]
+
+        facets.append(Facet("Expression status", "status", items))
 
 
 class PlaceWorksView2Actions(PlaceViewBase, FormView):

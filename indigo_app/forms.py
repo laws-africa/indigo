@@ -355,7 +355,7 @@ class TaskFilterForm(forms.Form):
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('temporary', 'Temporary stubs'), ('permanent', 'Permanent stubs'), ('all', 'Everything')])
-    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')], initial=['published', 'draft'])
+    status = forms.ChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -385,8 +385,7 @@ class WorkFilterForm(forms.Form):
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
-    advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'taxonomies', 'completeness', 'status']
+    advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement', 'taxonomies', 'completeness']
 
     taxonomy_topic = forms.CharField()
 
@@ -422,11 +421,12 @@ class WorkFilterForm(forms.Form):
             elif self.cleaned_data.get('stub') == 'permanent':
                 queryset = queryset.filter(stub=True, principal=False)
 
-        if self.cleaned_data.get('status'):
-            if self.cleaned_data['status'] == ['draft']:
-                queryset = queryset.filter(document__draft=True)            
-            elif self.cleaned_data['status'] == ['published']:
-                queryset = queryset.filter(document__draft=False)
+        if exclude != "status":
+            if self.cleaned_data.get('status'):
+                if self.cleaned_data['status'] == 'draft':
+                    queryset = queryset.filter(document__draft=True)
+                elif self.cleaned_data['status'] == 'published':
+                    queryset = queryset.filter(document__draft=False)
 
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))        

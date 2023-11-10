@@ -45,14 +45,6 @@
               {% endfor %}
             </select>
           </div>
-
-          <!-- Status filter -->
-          <div class="col-md-3">
-            <select class="selectpicker notooltip" multiple name="status" data-width="100%" data-style="btn-outline-secondary">
-              <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">{% trans 'Published' %}</option>
-              <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">{% trans 'Draft' %}</option>
-            </select>
-          </div>
         </div>
 
         <!-- Work Taxonomy filter -->

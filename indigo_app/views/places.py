@@ -11,7 +11,7 @@ from lxml import etree
 from actstream import action
 from actstream.models import Action
 from django.contrib.auth.models import User
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Case, When
 from django.db.models.functions import Extract
 from django.contrib import messages
 from django.http import QueryDict
@@ -950,6 +950,7 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         context["facets"] = facets = []
         self.facet_subtype(facets, qs)
         self.facet_stub(facets, qs)
+        self.facet_primary_subsidiary(facets, qs)
 
         return context
 
@@ -999,4 +1000,30 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         ]
 
         facets.append(Facet("Stubs", "stub", items))
+
+    def facet_primary_subsidiary(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="primary_subsidiary")
+
+        # aggregate on the queryset to count the items that have a primary work or not
+        counts = qs.annotate(
+            is_primary=Case(
+                When(parent_work_id__isnull=True, then=True),
+                When(parent_work_id__isnull=False, then=False)
+        )).values("is_primary").annotate(count=Count(1)).order_by()
+        counts = {c["is_primary"]: c["count"] for c in counts}
+
+        form = self.form.cleaned_data
+        items = [
+            FacetItem("Both", "",
+                      counts.get(True, 0) + counts.get(False, 0),
+                      not(form.get("primary_subsidiary"))),
+            FacetItem("Primary", "primary",
+                      counts.get(True, 0),
+                      form.get("primary_subsidiary") == "primary"),
+            FacetItem("Subsidiary", "subsidiary",
+                      counts.get(False, 0),
+                      form.get("primary_subsidiary") == "subsidiary"),
+        ]
+
+        facets.append(Facet("Primary or subsidiary", "primary_subsidiary", items))
 

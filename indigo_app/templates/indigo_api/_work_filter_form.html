@@ -34,15 +34,6 @@
 
   <div class="collapse border-top mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">
     <div class="row mt-2">
-      <!-- Primary work or subleg filter -->
-      <div class="col-md-3">
-        <select class="form-control" name="{{ form.primary_subsidiary.html_name }}">
-          {% for opt in form.primary_subsidiary %}
-            <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
       <!-- Complete works filter -->
       <div class="col-md-3">
         <select name="completeness" class="form-control">

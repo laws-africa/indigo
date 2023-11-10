@@ -386,7 +386,7 @@ class WorkFilterForm(forms.Form):
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'primary_subsidiary', 'taxonomies', 'completeness', 'status']
+                        'taxonomies', 'completeness', 'status']
 
     taxonomy_topic = forms.CharField()
 
@@ -488,11 +488,12 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
         # filter by primary work
-        if self.cleaned_data.get('primary_subsidiary'):
-            if self.cleaned_data['primary_subsidiary'] == 'primary':
-                queryset = queryset.filter(parent_work__isnull=True)
-            elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
-                queryset = queryset.filter(parent_work__isnull=False)
+        if exclude != "primary_subsidiary":
+            if self.cleaned_data.get('primary_subsidiary'):
+                if self.cleaned_data['primary_subsidiary'] == 'primary':
+                    queryset = queryset.filter(parent_work__isnull=True)
+                elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
+                    queryset = queryset.filter(parent_work__isnull=False)
 
         # filter by work completeness
         if self.cleaned_data.get('completeness'):

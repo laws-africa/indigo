@@ -158,9 +158,9 @@ class DailyWorkMetrics(models.Model):
     """ Daily summarised work metrics.
     """
     date = models.DateField(null=False, db_index=True)
-    place_code = models.CharField(null=False, db_index=True, max_length=20)
+    place_code = models.CharField(null=False, db_index=True, max_length=120)
     country = models.CharField(null=False, max_length=20)
-    locality = models.CharField(null=True, max_length=20)
+    locality = models.CharField(null=True, max_length=100)
 
     n_works = models.IntegerField(null=False)
     n_expressions = models.IntegerField(null=True)
@@ -235,7 +235,7 @@ GROUP BY
 
 class DailyPlaceMetrics(models.Model):
     date = models.DateField(null=False, db_index=True)
-    place_code = models.CharField(null=False, db_index=True, max_length=20)
+    place_code = models.CharField(null=False, db_index=True, max_length=120)
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.CASCADE)
     locality = models.ForeignKey('indigo_api.Locality', null=True, on_delete=models.CASCADE)
 

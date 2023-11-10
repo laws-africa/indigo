@@ -18,7 +18,7 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
-from django.views.generic import ListView, TemplateView, UpdateView, FormView
+from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
 
@@ -299,9 +299,6 @@ class PlaceWorksView(PlaceViewBase, ListView):
         # set defaults for: sort order, status, stub and subtype
         if not params.get('sortby'):
             params.setdefault('sortby', '-updated_at')
-
-        if not params.get('status'):
-            params.setlist('status', WorkFilterForm.declared_fields['status'].initial)
 
         if not params.get('stub'):
             params.setdefault('stub', 'excl')
@@ -1069,5 +1066,15 @@ class PlaceWorksView2Actions(PlaceViewBase, FormView):
 
         if form.is_valid:
             context["works"] = form.cleaned_data.get("works", [])
+
+        return context
+
+
+class PlaceWorks2WorkCommencementsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_list_commencements.html'
+    queryset = Work.objects
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
         return context

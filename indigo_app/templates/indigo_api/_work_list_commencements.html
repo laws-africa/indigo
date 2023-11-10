@@ -1,0 +1,24 @@
+<h6>Commences</h6>
+
+<ul>
+  {% for c in work.commencements_made.all %}
+    <li>
+      <a href="{% url 'work' frbr_uri=c.commenced_work.frbr_uri %}">{{ c.commenced_work.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+<a href="#" class="btn btn-outline-primary btn-sm">Commence a work</a>
+
+<h6 class="mt-3">Commenced by</h6>
+
+<ul>
+  {% for c in work.commencements.all %}
+    {% if c.commencing_work %}
+      <li>
+        <a href="{% url 'work' frbr_uri=c.commencing_work.frbr_uri %}">{{ c.commencing_work.title }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<a href="#" class="btn btn-outline-primary btn-sm">Add a commencement</a>

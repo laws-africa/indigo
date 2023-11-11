@@ -11,6 +11,7 @@ import {
   LaDecorateTerms
 } from '@lawsafrica/law-widgets/dist/components';
 import './compat-imports';
+import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 
 customElements.define('la-akoma-ntoso', LaAkomaNtoso);
@@ -28,6 +29,7 @@ class IndigoApp {
     this.components = [];
     this.componentLibrary = {};
     this.Vue = getVue();
+    this.setupHtmx();
 
     registerComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
@@ -35,6 +37,18 @@ class IndigoApp {
     this.createComponents(document);
     this.createVueComponents(document);
     window.dispatchEvent(new Event('indigo.components-created'));
+  }
+
+  setupHtmx () {
+    window.htmx = htmx;
+    document.body.addEventListener('htmx:configRequest', (e) => {
+      e.detail.headers['X-CSRFToken'] = window.Indigo.csrfToken;
+    });
+    document.body.addEventListener('htmx:load', (e) => {
+      // mount components on new elements
+      this.createComponents(e.target);
+      this.createVueComponents(e.target);
+    });
   }
 
   createComponents (root) {

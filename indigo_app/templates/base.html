@@ -1,6 +1,4 @@
-{% load pipeline %}
-{% load sass_tags %}
-{% load static account %}
+{% load pipeline sass_tags static account django_htmx %}
 
 <!DOCTYPE html>
 <html>
@@ -89,6 +87,7 @@
       {% endif %}
     </script>
 
+    {% django_htmx_script %}
     {% endblock %}
 
   </body>

@@ -1,12 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load indigo_app humanize static i18n %}
-{% load django_htmx %}
 
 {% block title %}{% trans "Works" %} {{ block.super }}{% endblock %}
-{% block body-attributes %}
-  {{ block.super }}
-  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-{% endblock %}
 
 {% block content %}
   <div class="container-fluid mt-3 mb-5">
@@ -45,7 +40,4 @@
 
   <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
-
-  <script src="https://unpkg.com/htmx.org@1.9.8" integrity="sha384-rgjA7mptc2ETQqXoYC3/zJvkU7K/aP44Y+z7xQuJiVnB/422P/Ak+F/AqFR7E4Wr" crossorigin="anonymous"></script>
-  {% django_htmx_script %}
 {% endblock %}

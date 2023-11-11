@@ -1,4 +1,4 @@
-{% load indigo_app humanize static i18n %}
+{% load indigo_app humanize i18n %}
 
 <div class="row">
   <div class="col-md-3">
@@ -35,14 +35,14 @@
     </div>
 
     <form
-      hx-post="{% url 'place_works2_actions' place=place.place_code %}"
+      hx-post="{% url 'place_works_actions' place=place.place_code %}"
       hx-target="#work-bulk-actions"
       hx-trigger="change from:.work-checkbox"
     >
       {% csrf_token %}
 
       {% for work in works %}
-        {% include 'place/works2_list_work.html' %}
+        {% include 'indigo_app/place/_work.html' %}
       {% endfor %}
     </form>
 

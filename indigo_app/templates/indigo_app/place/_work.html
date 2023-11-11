@@ -5,7 +5,7 @@
     <div class="float-left">
       <a class="text-muted fas fa-caret-right fa-fw collapse-indicator" data-toggle="collapse"
          href="#work-detail-{{ work.pk }}"
-         hx-get="{% url 'place_works2_work_detail' place=place.place_code pk=work.pk %}"
+         hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
          hx-target="#work-detail-{{ work.pk }}"
          hx-trigger="click once"
       ></a>

@@ -14,7 +14,7 @@
       <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
          href="#work-{{ work.pk }}-commencements" data-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
-         hx-get="{% url 'place_works2_work_commencements' place=place.place_code pk=work.pk %}"
+         hx-get="{% url 'place_works_work_commencements' place=place.place_code pk=work.pk %}"
       >Commencements <span class="badge badge-light">{{ n_commencements_made|default:'-' }}/{{ n_commenced_by|default:'-' }}</span></a>
     </li>
   {% endif %}
@@ -23,7 +23,7 @@
       <a class="nav-link {% if tab == "amendments" %}active{% endif %}"
          href="#work-{{ work.pk }}-amendments" data-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
-         hx-get="{% url 'place_works2_work_amendments' place=place.place_code pk=work.pk %}"
+         hx-get="{% url 'place_works_work_amendments' place=place.place_code pk=work.pk %}"
       >Amendments <span class="badge badge-light">{{ n_amendments_made|default:'-' }}/{{ n_amendments|default:'-' }}</span></a>
     </li>
   {% endif %}
@@ -37,7 +37,7 @@
 
 <div class="tab-content border-left border-right border-bottom p-3">
   {% if documents %}
-    <div class="tab-pane fade show active py-2" id="work-{{ work.pk }}-docs">
+    <div class="tab-pane show active py-2" id="work-{{ work.pk }}-docs">
       {% for doc in documents %}
         <div class="d-flex">
           <div class="col-2">

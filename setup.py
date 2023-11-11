@@ -56,6 +56,7 @@ setup(
         'django-jsonfield-compat>=0.4.4',
         'django-filter==2.4.0',
         'django-fsm>=2.6.0',
+        'django-htmx>=1.17.0',
         'django-languages-plus>=1.1.1',
         'django-pipeline>=1.6.11',
         'django-recaptcha>=1.4.0,<2.0.0',

@@ -5,13 +5,14 @@
     </button>
   </div>
 
-  <form method="post" action="{% url 'place_works2_actions' place=place.place_code %}">
+  <form method="post" action="{% url 'place_works_actions' place=place.place_code %}">
+    {% csrf_token %}
+
     <input type="hidden" name="save" value="1">
     {% for work in works %}
       <input type="hidden" name="works" value="{{ work.pk }}">
     {% endfor %}
 
-    {% csrf_token %}
     <div class="modal fade" tabindex="-1" id="bulk-update-modal">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">

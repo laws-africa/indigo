@@ -852,7 +852,7 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
 
 
 class PlaceWorksView2(PlaceViewBase, ListView):
-    template_name = 'place/works2.html'
+    template_name = 'indigo_app/place/works.html'
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
@@ -893,7 +893,7 @@ class PlaceWorksView2(PlaceViewBase, ListView):
         works = context["works"]
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (
-            reverse('place_works2_facets', kwargs={'place': self.kwargs['place']}) +
+            reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + (self.request.POST or self.request.GET).urlencode()
         )
 
@@ -928,8 +928,8 @@ class Facet:
     items: List[FacetItem] = field(default_factory=list)
 
 
-class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
-    template_name = 'place/works2_facets.html'
+class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_app/place/_works_facets.html'
 
     def get(self, request, *args, **kwargs):
         self.form = WorkFilterForm(self.country, request.GET)
@@ -1042,9 +1042,9 @@ class PlaceWorksView2Facets(PlaceViewBase, TemplateView):
         facets.append(Facet("Expression status", "status", items))
 
 
-class PlaceWorksView2Actions(PlaceViewBase, FormView):
+class WorkActionsView(PlaceViewBase, FormView):
     form_class = WorkBulkActionsForm
-    template_name = "place/works2_actions.html"
+    template_name = "indigo_app/place/_works_actions.html"
 
     def form_valid(self, form):
         if form.cleaned_data['save']:
@@ -1070,8 +1070,8 @@ class PlaceWorksView2Actions(PlaceViewBase, FormView):
         return context
 
 
-class PlaceWorks2WorkDetailView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_list_detail.html'
+class WorkDetailView(PlaceViewBase, DetailView):
+    template_name = 'indigo_app/place/_work_detail.html'
     queryset = Work.objects
 
     def get_context_data(self, **kwargs):
@@ -1099,14 +1099,14 @@ class PlaceWorks2WorkDetailView(PlaceViewBase, DetailView):
         return context
 
 
-class PlaceWorks2WorkCommencementsView(PlaceViewBase, DetailView):
+class WorkCommencementsView(PlaceViewBase, DetailView):
     template_name = 'indigo_api/_work_commencement_tables.html'
     queryset = Work.objects.prefetch_related(
         'commencements', 'commencements__commenced_work', 'commencements__commencing_work'
     )
 
 
-class PlaceWorks2WorkAmendmentsView(PlaceViewBase, DetailView):
+class WorkAmendmentsView(PlaceViewBase, DetailView):
     template_name = 'indigo_api/_work_amendment_tables.html'
     queryset = Work.objects.prefetch_related(
         'amendments', 'amendments__amended_work', 'amendments__amending_work'

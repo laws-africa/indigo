@@ -909,7 +909,7 @@ class PlaceWorksView2(PlaceViewBase, ListView):
 
     def get_template_names(self):
         if self.request.htmx:
-            return ['place/works2_list.html']
+            return ['indigo_app/place/_works_list.html']
         return super().get_template_names()
 
 

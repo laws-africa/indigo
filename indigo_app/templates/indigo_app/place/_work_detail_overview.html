@@ -1,0 +1,56 @@
+{% load indigo i18n %}
+
+{% if work.properties %}
+  <div class="col-6 mb-3">
+    {% for prop in work.labeled_properties %}
+      <div>
+        {% include "indigo_app/place/_heading_and_content.html" with heading=prop.label content=prop.value %}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="col-6 mb-3">
+  {% publication_document_description work placeholder=True as description %}
+  {% include "indigo_app/place/_heading_and_content.html" with heading="Publication" content=description %}
+  {% if work.publication_document %}
+    <div>
+      <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+    </div>
+  {% endif %}
+</div>
+{% if work.assent_date %}
+  <div class="col-6 mb-3">
+    {% include "indigo_app/place/_heading_and_content.html" with heading="Assented to" content=work.assent_date|date:"j E Y" %}
+  </div>
+{% endif %}
+{% work_as_at_date work as as_at_date %}
+{% if as_at_date %}
+  <div class="col-6 mb-3">
+    {% include "indigo_app/place/_heading_and_content.html" with heading="As-at date" content=as_at_date|date:"j E Y" overridden=work.as_at_date_override %}
+  </div>
+{% endif %}
+{% if work.consolidation_note %}
+  <div class="col-12 mb-3">
+    {% include "indigo_app/place/_heading_and_content.html" with heading="Consolidation note" content=work.consolidation_note overridden=work.consolidation_note_override %}
+  </div>
+{% endif %}
+{% if work.disclaimer %}
+  <div class="col-12 mb-3">
+    {% include "indigo_app/place/_heading_and_content.html" with heading="Disclaimer" content=work.disclaimer %}
+  </div>
+{% endif %}
+{% with work.taxonomy_topics.all as topics %}
+  {% if topics %}
+    <div class="col-12 mt-4">
+      <h6>{% trans "Topics" %}</h6>
+      {% for topic in topics %}
+        <div class="mb-1">
+          {% for item in topic.get_ancestors %}
+            <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
+          {% endfor %}
+          <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

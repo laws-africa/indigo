@@ -399,7 +399,8 @@ class WorkMixin(object):
         return self.arbitrary_expression_dates.exists()
 
     def consolidation_note(self):
-        return self.consolidation_note_override or self.place.settings.consolidation_note
+        if self.has_consolidation:
+            return self.consolidation_note_override or self.place.settings.consolidation_note
 
     def commencement_description(self, friendly_date=True, commencements=None, has_uncommenced_provisions=None):
         """ Returns a TimelineCommencementEvent object describing the commencement status of a work.

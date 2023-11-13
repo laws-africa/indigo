@@ -1,6 +1,12 @@
 {% load indigo_app humanize i18n %}
 
 <ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link {% if tab == "overview" %}active{% endif %}"
+       href="#work-{{ work.pk }}-overview" data-toggle="tab">
+      {% trans "Overview" %}
+    </a>
+  </li>
   {% if documents %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "docs" %}active{% endif %}"
@@ -36,8 +42,11 @@
 </ul>
 
 <div class="tab-content border-left border-right border-bottom p-3">
+  <div class="tab-pane show active py-2" id="work-{{ work.pk }}-overview">
+    {% include 'indigo_app/place/_work_detail_overview.html' %}
+  </div>
   {% if documents %}
-    <div class="tab-pane show active py-2" id="work-{{ work.pk }}-docs">
+    <div class="tab-pane" id="work-{{ work.pk }}-docs">
       {% for doc in documents %}
         <div class="d-flex">
           <div class="col-2">

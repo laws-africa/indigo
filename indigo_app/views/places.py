@@ -1079,22 +1079,20 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         work = self.object
 
+        context["tab"] = "overview"
+
+        # get documents
         context["documents"] = Document.objects.undeleted().no_xml().filter(work=work)
-        context["tab"] = "docs" if context["documents"] else None
 
         # count commenced works
         context["n_commencements_made"] = work.commencements_made.count()
         context["n_commenced_by"] = work.commencements.filter(commencing_work__isnull=False).count()
-        context["tab"] = context["tab"] or (
-            "commencements" if context["n_commencements_made"] + context["n_commenced_by"] else None
-        )
 
         # count amended works
         context["n_amendments_made"] = work.amendments_made.count()
         context["n_amendments"] = work.amendments.count()
-        context["tab"] = context["tab"] or (
-            "amendments" if context["n_amendments_made"] + context["n_amendments"] else None
-        )
+
+        # TODO: count repeals, primary / subsidiary legislation
 
         return context
 

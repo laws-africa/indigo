@@ -58,6 +58,31 @@ def publication_document_description(work, placeholder=False, internal=False):
 
 
 @register.simple_tag
+def work_as_at_date(work):
+    """ Return either:
+        - the as-at date override on this work, or
+        - the work's latest expression's date, or
+        - the as-at date for the work's place, if it's after the work's latest expression, or
+        - None
+    """
+    as_at_date = work.as_at_date_override
+    if not as_at_date:
+        expressions = work.expressions()
+        as_at_date = max([d.expression_date for d in expressions]) if expressions else as_at_date
+        place_date = work.place.settings.as_at_date
+
+        # no latest expression -- fall back to the place's date (can be None)
+        if not as_at_date:
+            as_at_date = place_date
+
+        # only use the place's date if it's later than the latest expression's
+        elif place_date and place_date > as_at_date:
+            as_at_date = place_date
+
+    return as_at_date
+
+
+@register.simple_tag
 def document_commencement_description(document):
     commencement_description = document.work.commencement_description_external()
 

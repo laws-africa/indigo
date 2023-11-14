@@ -1102,7 +1102,11 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["n_amendments_made"] = work.amendments_made.count()
         context["n_amendments"] = work.amendments.count()
 
-        # TODO: count repeals, primary / subsidiary legislation
+        # count repealed works
+        context["n_repeals_made"] = work.repealed_works.count()
+        context["n_repeals"] = 1 if work.repealed_by else 0
+
+        # TODO: count primary / subsidiary legislation
 
         return context
 
@@ -1167,3 +1171,8 @@ class WorkAmendmentsView(PlaceViewBase, DetailView):
     queryset = Work.objects.prefetch_related(
         'amendments', 'amendments__amended_work', 'amendments__amending_work'
     )
+
+
+class WorkRepealsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_repeal_tables.html'
+    model = Work

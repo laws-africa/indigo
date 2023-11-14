@@ -33,9 +33,14 @@
       >Amendments <span class="badge badge-light">{{ n_amendments_made|default:'-' }}/{{ n_amendments|default:'-' }}</span></a>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab">Repeals</a>
-  </li>
+  {% if n_repeals or n_repeals_made %}
+    <li class="nav-item">
+      <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-repeals"
+         hx-get="{% url 'place_works_work_repeals' place=place.place_code pk=work.pk %}"
+      >{% trans "Repeals" %} <span class="badge badge-light">{{ n_repeals_made|default:'-' }}/{{ n_repeals|default:'-' }}</span></a>
+    </li>
+  {% endif %}
   <li class="nav-item">
     <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab">Subsidiary</a>
   </li>
@@ -100,5 +105,8 @@
   {% endif %}
   {% if n_amendments or n_amendments_made %}
     <div class="tab-pane" id="work-{{ work.pk }}-amendments"></div>
+  {% endif %}
+  {% if n_repeals or n_repeals_made %}
+    <div class="tab-pane" id="work-{{ work.pk }}-repeals"></div>
   {% endif %}
 </div>

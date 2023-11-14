@@ -59,6 +59,7 @@ def publication_document_description(work, placeholder=False, internal=False):
 
 @register.simple_tag
 def work_as_at_date(work):
+    # TODO: update work.as_at_date() and get rid of this
     """ Return either:
         - the as-at date override on this work, or
         - the work's latest expression's date, or

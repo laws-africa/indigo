@@ -18,11 +18,13 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import ugettext as _
 from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
+from indigo_api.timeline import describe_publication_event
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
@@ -928,6 +930,13 @@ class Facet:
     items: List[FacetItem] = field(default_factory=list)
 
 
+@dataclass
+class OverviewDataEntry:
+    key: str
+    value: str
+    overridden: bool = False
+
+
 class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
 
@@ -1079,6 +1088,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         work = self.object
 
+        context["overview_data"] = self.get_overview_data(work)
         context["tab"] = "overview"
 
         # get documents
@@ -1095,6 +1105,54 @@ class WorkDetailView(PlaceViewBase, DetailView):
         # TODO: count repeals, primary / subsidiary legislation
 
         return context
+
+    def get_overview_data(self, work):
+        """ Return overview data for the work as a list of OverviewDataEntry objects"""
+        # TODO: are the translations being done correctly here?
+        # properties, e.g. Chapter number
+        overview_data = [
+            OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
+        ]
+
+        publication = describe_publication_event(work, placeholder=bool(work.publication_document))
+        if publication:
+            overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
+
+        if work.assent_date:
+            overview_data.append(OverviewDataEntry(key=_("Assent date"), value=work.assent_date.strftime("%-d %B %Y")))
+
+        as_at_date = self.get_as_at_date(work)
+        if as_at_date:
+            overview_data.append(OverviewDataEntry(key=_("As-at date"), value=as_at_date.strftime("%-d %B %Y"),
+                                                   overridden=work.as_at_date_override))
+
+        consolidation_note = work.consolidation_note()
+        if consolidation_note:
+            overview_data.append(OverviewDataEntry(key=_("Consolidation note"), value=_(consolidation_note),
+                                                   overridden=work.consolidation_note_override))
+
+        if work.disclaimer:
+            overview_data.append(OverviewDataEntry(key=_("Disclaimer"), value=_(work.disclaimer)))
+
+        return overview_data
+
+    def get_as_at_date(self, work):
+        # TODO: update work.as_at_date() and use that here instead
+        as_at_date = work.as_at_date_override
+        if not as_at_date:
+            expressions = work.expressions()
+            as_at_date = max([d.expression_date for d in expressions]) if expressions else as_at_date
+            place_date = work.place.settings.as_at_date
+
+            # no latest expression -- fall back to the place's date (can be None)
+            if not as_at_date:
+                as_at_date = place_date
+
+            # only use the place's date if it's later than the latest expression's
+            elif place_date and place_date > as_at_date:
+                as_at_date = place_date
+
+        return as_at_date
 
 
 class WorkCommencementsView(PlaceViewBase, DetailView):

@@ -7,7 +7,7 @@ from indigo_content_api.v3.views import PublishedDocumentDetailViewV3
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'countries', CountryViewSet, basename='country')
-router.register(r'taxonomy_topics', TaxonomyTopicView, basename='taxonomy_topic')
+router.register(r'taxonomy-topics', TaxonomyTopicView, basename='taxonomy_topic')
 
 
 urlpatterns = urlpatterns_base + [

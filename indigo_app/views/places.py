@@ -1106,7 +1106,9 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["n_repeals_made"] = work.repealed_works.count()
         context["n_repeals"] = 1 if work.repealed_by else 0
 
-        # TODO: count primary / subsidiary legislation
+        # count primary / subsidiary works
+        context["n_primary_works"] = 1 if work.parent_work else 0
+        context["n_subsidiary_works"] = work.child_works.count()
 
         return context
 
@@ -1175,4 +1177,9 @@ class WorkAmendmentsView(PlaceViewBase, DetailView):
 
 class WorkRepealsView(PlaceViewBase, DetailView):
     template_name = 'indigo_api/_work_repeal_tables.html'
+    model = Work
+
+
+class WorkSubsidiaryView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_subsidiary_tables.html'
     model = Work

@@ -41,9 +41,14 @@
       >{% trans "Repeals" %} <span class="badge badge-light">{{ n_repeals_made|default:'-' }}/{{ n_repeals|default:'-' }}</span></a>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab">Subsidiary</a>
-  </li>
+  {% if n_primary_works or n_subsidiary_works %}
+    <li class="nav-item">
+      <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-subsidiary"
+         hx-get="{% url 'place_works_work_subsidiary' place=place.place_code pk=work.pk %}"
+      >{% trans "Subsidiary" %} <span class="badge badge-light">{{ n_subsidiary_works|default:'-' }}/{{ n_primary_works|default:'-' }}</span></a>
+    </li>
+  {% endif %}
 </ul>
 
 <div class="tab-content border-left border-right border-bottom p-3">
@@ -63,5 +68,8 @@
   {% endif %}
   {% if n_repeals or n_repeals_made %}
     <div class="tab-pane" id="work-{{ work.pk }}-repeals"></div>
+  {% endif %}
+  {% if n_primary_works or n_subsidiary_works %}
+    <div class="tab-pane" id="work-{{ work.pk }}-subsidiary"></div>
   {% endif %}
 </div>

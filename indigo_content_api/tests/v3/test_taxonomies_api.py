@@ -10,7 +10,7 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
         # /taxonomies isn't in v3
         self.assertEqual(404, response.status_code)
 
-        response = self.client.get(self.api_path + '/taxonomy_topics.json')
+        response = self.client.get(self.api_path + '/taxonomy-topics.json')
         self.assertEqual(200, response.status_code)
 
         taxonomy_topics = response.json()['results']
@@ -18,10 +18,12 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
             {
                 "name": "Laws.Africa Subject Areas",
                 "slug": "lawsafrica-subject-areas",
+                "id": 1,
                 "children": [
                     {
                         "name": "Money and Business",
                         "slug": "lawsafrica-subject-areas-money-and-business",
+                        "id": 2,
                         "children": [],
                     },
                 ],

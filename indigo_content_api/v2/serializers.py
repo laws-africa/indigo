@@ -289,13 +289,20 @@ class TaxonomySerializer(serializers.ModelSerializer):
         fields = ['vocabulary', 'title', 'topics']
 
 
-class TaxonomyTopicSerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
+class TaxonomyTopicSerializer(serializers.BaseSerializer):
+    """ Smart(er) serializer that loads the entire tree once. """
 
-    class Meta:
-        model = TaxonomyTopic
-        fields = ['name', 'slug', 'children']
+    fields = ['name', 'slug', 'id']
 
-    def get_children(self, instance):
-        children = instance.get_children()
-        return TaxonomyTopicSerializer(children, many=True).data
+    def to_representation(self, instance):
+        data = TaxonomyTopic.dump_bulk(instance)[0]
+        def fix(node):
+            # move data out of "data" object
+            data = node['data']
+            data['id'] = node['id']
+            for key in list(data.keys()):
+                if key not in self.fields:
+                    del data[key]
+            data['children'] = [fix(n) for n in node.get('children', [])]
+            return data
+        return fix(data)

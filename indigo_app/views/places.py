@@ -1118,6 +1118,9 @@ class WorkDetailView(PlaceViewBase, DetailView):
     def get_overview_data(self, work):
         """ Return overview data for the work as a list of OverviewDataEntry objects"""
         # TODO: are the translations being done correctly here?
+        def format_date(date_obj):
+            return date_obj.strftime("%-d %B %Y")
+
         # properties, e.g. Chapter number
         overview_data = [
             OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
@@ -1128,12 +1131,15 @@ class WorkDetailView(PlaceViewBase, DetailView):
             overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
 
         if work.assent_date:
-            overview_data.append(OverviewDataEntry(key=_("Assent date"), value=work.assent_date.strftime("%-d %B %Y")))
+            overview_data.append(OverviewDataEntry(key=_("Assent date"), value=format_date(work.assent_date)))
 
         as_at_date = self.get_as_at_date(work)
         if as_at_date:
-            overview_data.append(OverviewDataEntry(key=_("As-at date"), value=as_at_date.strftime("%-d %B %Y"),
+            overview_data.append(OverviewDataEntry(key=_("As-at date"), value=format_date(as_at_date),
                                                    overridden=work.as_at_date_override))
+
+        for consolidation in work.arbitrary_expression_dates.all():
+            overview_data.append(OverviewDataEntry(key=_("Consolidation date"), value=format_date(consolidation.date)))
 
         consolidation_note = work.consolidation_note()
         if consolidation_note:

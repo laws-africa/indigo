@@ -779,6 +779,7 @@ class FacetItem:
 class Facet:
     label: str
     name: str
+    type: str
     items: List[FacetItem] = field(default_factory=list)
 
 
@@ -806,33 +807,33 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
         # build facets
         context["facets"] = facets = []
-        self.facet_subtype(facets, qs)
+        # self.facet_subtype(facets, qs)
+        self.facet_principal(facets, qs)
         self.facet_stub(facets, qs)
-        self.facet_primary_subsidiary(facets, qs)
-        self.facet_status(facets, qs)
+        # self.facet_primary_subsidiary(facets, qs)
+        # self.facet_status(facets, qs)
 
         return context
 
-    def facet_subtype(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="subtype")
+    def facet_principal(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="principal")
 
-        # count subtypes by code
-        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
         items = [
             FacetItem(
-                st.name,
-                st.abbreviation,
-                counts.get(st.abbreviation, 0),
-                self.form.cleaned_data.get("subtype") == st.abbreviation
-            )
-            for st in Subtype.objects.all()
-            if counts.get(st.abbreviation)
+                "Principal",
+                "principal",
+                qs.filter(principal=True).count(),
+                "principal" in self.form.cleaned_data.get("principal", [])
+            ),
+            FacetItem(
+                "Not Principal",
+                "not_principal",
+                qs.filter(principal=False).count(),
+                "not_principal" in self.form.cleaned_data.get("principal", [])
+            ),
         ]
-        items.insert(0, FacetItem(
-            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
-        ))
 
-        facets.append(Facet("Type", "subtype", items))
+        facets.append(Facet("Principal", "principal", "checkbox", items))
 
     def facet_stub(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="stub")
@@ -858,7 +859,30 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                       form.get("stub") == "permanent"),
         ]
 
-        facets.append(Facet("Stubs", "stub", items))
+        facets.append(Facet("Stubs", "stub", "radio", items))
+
+
+    def facet_subtype(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="subtype")
+
+        # count subtypes by code
+        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        items = [
+            FacetItem(
+                st.name,
+                st.abbreviation,
+                counts.get(st.abbreviation, 0),
+                self.form.cleaned_data.get("subtype") == st.abbreviation
+            )
+            for st in Subtype.objects.all()
+            if counts.get(st.abbreviation)
+        ]
+        items.insert(0, FacetItem(
+            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
+        ))
+
+        facets.append(Facet("Type", "subtype", "checkbox", items))
+
 
     def facet_primary_subsidiary(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="primary_subsidiary")
@@ -884,7 +908,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                       form.get("primary_subsidiary") == "subsidiary"),
         ]
 
-        facets.append(Facet("Primary or subsidiary", "primary_subsidiary", items))
+        facets.append(Facet("Primary or subsidiary", "primary_subsidiary", "radio", items))
 
     def facet_status(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="status")
@@ -900,7 +924,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             FacetItem("Published", "published", n_published, form.get("status") == "published"),
         ]
 
-        facets.append(Facet("Expression status", "status", items))
+        facets.append(Facet("Expression status", "status", "radio",  items))
 
 
 class WorkActionsView(PlaceViewBase, FormView):

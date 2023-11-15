@@ -387,7 +387,12 @@ class WorkFilterForm(forms.Form):
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement', 'taxonomies', 'completeness']
 
+
+    # Principal
+    principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
+
     taxonomy_topic = forms.CharField()
+
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -420,6 +425,16 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(stub=True, principal=True)
             elif self.cleaned_data.get('stub') == 'permanent':
                 queryset = queryset.filter(stub=True, principal=False)
+
+        if exclude != "principal":
+            principal_filter = self.cleaned_data.get('principal', [])
+            principal_qs = Q()
+            if "principal" in principal_filter:
+                principal_qs |= Q(principal=True)
+            if "not_principal" in principal_filter:
+                principal_qs |= Q(principal=False)
+
+            queryset = queryset.filter(principal_qs)
 
         if exclude != "status":
             if self.cleaned_data.get('status'):

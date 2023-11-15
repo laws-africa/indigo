@@ -17,12 +17,7 @@
           <div>
             <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-            {% if work.stub %}
-              <span class="badge badge-info">{% trans "stub" %}</span>
-            {% endif %}
-            {% if work.repealed_date %}
-              <span class="badge badge-info">{% trans "repealed" %}</span>
-            {% endif %}
+            {% include 'indigo_api/_work_info_badges.html' %}
           </div>
           <div class="text-muted">{{ work.frbr_uri }}</div>
         </div>

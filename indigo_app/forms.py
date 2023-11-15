@@ -402,6 +402,9 @@ class WorkFilterForm(forms.Form):
     # Documents
     documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
 
+    # Tasks States
+    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Tasks'), ('no_open_tasks', 'No Tasks')])
+
     taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):

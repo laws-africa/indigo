@@ -27,6 +27,7 @@ urlpatterns = [
     path('places/<str:place>/works/facets', places.PlaceWorksFacetsView.as_view(), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),
+    path('places/<str:place>/works/detail/<int:pk>/documents', places.WorkDocumentsView.as_view(), name='place_works_work_documents'),
     path('places/<str:place>/works/detail/<int:pk>/commencements', places.WorkCommencementsView.as_view(), name='place_works_work_commencements'),
     path('places/<str:place>/works/detail/<int:pk>/amendments', places.WorkAmendmentsView.as_view(), name='place_works_work_amendments'),
     path('places/<str:place>/works/detail/<int:pk>/repeals', places.WorkRepealsView.as_view(), name='place_works_work_repeals'),

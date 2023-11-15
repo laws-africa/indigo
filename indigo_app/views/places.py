@@ -1091,8 +1091,8 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["overview_data"] = self.get_overview_data(work)
         context["tab"] = "overview"
 
-        # get documents
-        context["documents"] = Document.objects.undeleted().no_xml().filter(work=work)
+        # count documents
+        context["n_documents"] = Document.objects.undeleted().filter(work=work).count()
 
         # count commenced works
         context["n_commencements_made"] = work.commencements_made.count()
@@ -1168,6 +1168,18 @@ class WorkDetailView(PlaceViewBase, DetailView):
                 as_at_date = place_date
 
         return as_at_date
+
+
+class WorkDocumentsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_app/place/_work_detail_documents.html'
+    model = Work
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('expression_date', 'language')
+
+        return context
 
 
 class WorkCommencementsView(PlaceViewBase, DetailView):

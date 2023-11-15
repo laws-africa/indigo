@@ -7,12 +7,13 @@
       {% trans "Overview" %}
     </a>
   </li>
-  {% if documents %}
+  {% if n_documents %}
     <li class="nav-item">
-      <a class="nav-link {% if tab == "docs" %}active{% endif %}"
-         href="#work-{{ work.pk }}-docs" data-toggle="tab">
-        Documents <span class="badge badge-light">{{ documents|length }}</span>
-      </a>
+      <a class="nav-link {% if tab == "documents" %}active{% endif %}"
+         href="#work-{{ work.pk }}-documents" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-documents"
+         hx-get="{% url 'place_works_work_documents' place=place.place_code pk=work.pk %}"
+      >{% trans "Documents" %} <span class="badge badge-light">{{ n_documents }}</span></a>
     </li>
   {% endif %}
   {% if n_commenced_by or n_commencements_made %}
@@ -64,10 +65,8 @@
   <div class="tab-pane show active py-2" id="work-{{ work.pk }}-overview">
     {% include 'indigo_app/place/_work_detail_overview.html' %}
   </div>
-  {% if documents %}
-    <div class="tab-pane" id="work-{{ work.pk }}-docs">
-      {% include 'indigo_app/place/_work_detail_documents.html' %}
-    </div>
+  {% if n_documents %}
+    <div class="tab-pane" id="work-{{ work.pk }}-documents"></div>
   {% endif %}
   {% if n_commenced_by or n_commencements_made %}
     <div class="tab-pane" id="work-{{ work.pk }}-commencements"></div>

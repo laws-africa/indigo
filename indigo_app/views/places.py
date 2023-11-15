@@ -1088,23 +1088,23 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         work = self.object
 
-        context["overview_data"] = self.get_overview_data(work)
+        context["overview_data"] = self.get_overview_data()
         context["tab"] = "overview"
 
         # count documents
         context["n_documents"] = Document.objects.undeleted().filter(work=work).count()
 
-        # count commenced works
+        # count commencements
+        context["n_commencements"] = work.commencements.count()
         context["n_commencements_made"] = work.commencements_made.count()
-        context["n_commenced_by"] = work.commencements.filter(commencing_work__isnull=False).count()
 
-        # count amended works
-        context["n_amendments_made"] = work.amendments_made.count()
+        # count amendments
         context["n_amendments"] = work.amendments.count()
+        context["n_amendments_made"] = work.amendments_made.count()
 
-        # count repealed works
-        context["n_repeals_made"] = work.repealed_works.count()
+        # count repeals
         context["n_repeals"] = 1 if work.repealed_by else 0
+        context["n_repeals_made"] = work.repealed_works.count()
 
         # count primary / subsidiary works
         context["n_primary_works"] = 1 if work.parent_work else 0
@@ -1115,11 +1115,13 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         return context
 
-    def get_overview_data(self, work):
+    def get_overview_data(self):
         """ Return overview data for the work as a list of OverviewDataEntry objects"""
         # TODO: are the translations being done correctly here?
         def format_date(date_obj):
             return date_obj.strftime("%-d %B %Y")
+
+        work = self.object
 
         # properties, e.g. Chapter number
         overview_data = [
@@ -1133,7 +1135,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
         if work.assent_date:
             overview_data.append(OverviewDataEntry(key=_("Assent date"), value=format_date(work.assent_date)))
 
-        as_at_date = self.get_as_at_date(work)
+        as_at_date = self.get_as_at_date()
         if as_at_date:
             overview_data.append(OverviewDataEntry(key=_("As-at date"), value=format_date(as_at_date),
                                                    overridden=work.as_at_date_override))
@@ -1151,8 +1153,9 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         return overview_data
 
-    def get_as_at_date(self, work):
+    def get_as_at_date(self):
         # TODO: update work.as_at_date() and use that here instead
+        work = self.object
         as_at_date = work.as_at_date_override
         if not as_at_date:
             expressions = work.expressions()

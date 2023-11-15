@@ -49,6 +49,15 @@
       >{% trans "Subsidiary" %} <span class="badge badge-light">{{ n_subsidiary_works|default:'-' }}/{{ n_primary_works|default:'-' }}</span></a>
     </li>
   {% endif %}
+  {% if n_tasks %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab == "tasks" %}active{% endif %}"
+         href="#work-{{ work.pk }}-tasks" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-tasks"
+         hx-get="{% url 'place_works_work_tasks' place=place.place_code pk=work.pk %}"
+      >{% trans "Tasks" %} <span class="badge badge-light">{{ n_tasks }}</span></a>
+    </li>
+  {% endif %}
 </ul>
 
 <div class="tab-content border-left border-right border-bottom p-3">
@@ -71,5 +80,8 @@
   {% endif %}
   {% if n_primary_works or n_subsidiary_works %}
     <div class="tab-pane" id="work-{{ work.pk }}-subsidiary"></div>
+  {% endif %}
+  {% if n_tasks %}
+    <div class="tab-pane" id="work-{{ work.pk }}-tasks"></div>
   {% endif %}
 </div>

@@ -1110,6 +1110,9 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["n_primary_works"] = 1 if work.parent_work else 0
         context["n_subsidiary_works"] = work.child_works.count()
 
+        # count tasks
+        context["n_tasks"] = work.tasks.filter(state__in=Task.OPEN_STATES).count()
+
         return context
 
     def get_overview_data(self, work):
@@ -1183,3 +1186,16 @@ class WorkRepealsView(PlaceViewBase, DetailView):
 class WorkSubsidiaryView(PlaceViewBase, DetailView):
     template_name = 'indigo_api/_work_subsidiary_tables.html'
     model = Work
+
+
+class WorkTasksView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_task_cards.html'
+    model = Work
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        tasks = self.object.tasks.filter(state__in=Task.OPEN_STATES)
+        context['task_groups'] = Task.task_columns(['blocked', 'open', 'assigned', 'pending_review'], tasks)
+
+        return context

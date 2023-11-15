@@ -15,33 +15,14 @@
       {{ doc.title }}
     </div>
 
+    {# TODO: task, annotation counts? #}
     <div class="col-2">
-      {% if doc.task_stats.n_active_tasks %}
-        <div>
-          <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong>
-          {% trans "Active tasks" %}
-        </div>
-        <div class="progress mt-1 progress-thin">
-          <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
-          <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
-          <div class="progress-bar task-badge-blocked" style="width: {{ doc.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
-        </div>
-      {% endif %}
     </div>
 
-    <div class="col-2">
-      {% if doc.n_annotations %}
-        <i class="far fa-comments"></i> {{ doc.n_annotations }}
-      {% endif %}
-    </div>
-
-    <div class="col-2">
+    <div class="col-4">
+      Updated
       <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
-      {% if doc.updated_by_user == request.user %}
-        {% trans "you" %}
-      {% else %}
-        <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
-      {% endif %}
+      by {% user_profile doc.updated_by_user %}
     </div>
   </div>
 {% endfor %}

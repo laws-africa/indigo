@@ -292,13 +292,14 @@ class TaxonomySerializer(serializers.ModelSerializer):
 class TaxonomyTopicSerializer(serializers.BaseSerializer):
     """ Smart(er) serializer that loads the entire tree once. """
 
-    fields = ['name', 'slug']
+    fields = ['name', 'slug', 'id']
 
     def to_representation(self, instance):
-        data = TaxonomyTopic.dump_bulk(instance, keep_ids=False)[0]
+        data = TaxonomyTopic.dump_bulk(instance)[0]
         def fix(node):
             # move data out of "data" object
             data = node['data']
+            data['id'] = node['id']
             for key in list(data.keys()):
                 if key not in self.fields:
                     del data[key]

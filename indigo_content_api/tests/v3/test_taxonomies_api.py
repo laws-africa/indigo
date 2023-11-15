@@ -18,10 +18,12 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
             {
                 "name": "Laws.Africa Subject Areas",
                 "slug": "lawsafrica-subject-areas",
+                "id": 1,
                 "children": [
                     {
                         "name": "Money and Business",
                         "slug": "lawsafrica-subject-areas-money-and-business",
+                        "id": 2,
                         "children": [],
                     },
                 ],

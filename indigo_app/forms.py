@@ -387,9 +387,11 @@ class WorkFilterForm(forms.Form):
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement', 'taxonomies', 'completeness']
 
-
     # Principal
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
+
+    # Tasks States
+    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Tasks'), ('no_open_tasks', 'No Tasks')])
 
     taxonomy_topic = forms.CharField()
 
@@ -435,6 +437,18 @@ class WorkFilterForm(forms.Form):
                 principal_qs |= Q(principal=False)
 
             queryset = queryset.filter(principal_qs)
+
+        if exclude != "tasks":
+            tasks_filter = self.cleaned_data.get('tasks', [])
+            tasks_qs = Q()
+            if "has_open_tasks" in tasks_filter:
+                tasks_qs |= Q(tasks__state__in=Task.OPEN_STATES)
+            if "no_open_tasks" in tasks_filter:
+                # works can have tasks with both open and closed states,
+                # so here we need to exclude works that have open states
+                tasks_qs |= ~Q(tasks__state__in=Task.OPEN_STATES)
+
+            queryset = queryset.filter(tasks_qs)
 
         if exclude != "status":
             if self.cleaned_data.get('status'):

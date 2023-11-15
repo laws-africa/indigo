@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
+from django.db.models import Q
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
 from indigo_api.timeline import describe_publication_event
@@ -807,9 +808,10 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
         # build facets
         context["facets"] = facets = []
-        # self.facet_subtype(facets, qs)
         self.facet_principal(facets, qs)
         self.facet_stub(facets, qs)
+        self.facet_tasks(facets, qs)
+        # self.facet_subtype(facets, qs)
         # self.facet_primary_subsidiary(facets, qs)
         # self.facet_status(facets, qs)
 
@@ -860,6 +862,26 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
 
         facets.append(Facet("Stubs", "stub", "radio", items))
+
+    def facet_tasks(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="tasks")
+
+        items = [
+            FacetItem(
+                "Has open tasks",
+                "has_open_tasks",
+                qs.filter(tasks__state__in=Task.OPEN_STATES).distinct().count(),
+                "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "No open tasks",
+                "no_open_tasks",
+                qs.filter(~Q(tasks__state__in=Task.OPEN_STATES)).distinct().count(),
+                "no_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+        ]
+
+        facets.append(Facet("Tasks", "tasks", "checkbox", items))
 
 
     def facet_subtype(self, facets, qs):

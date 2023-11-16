@@ -3,9 +3,9 @@
 <form
   method="GET"
   id="work-filter-form"
-  hx-post="{% url 'place_works2' place=place.place_code %}"
+  hx-post="{% url 'place_works' place=place.place_code %}"
   hx-target="#work-list"
-  hx-trigger="submit, change from:#work-list target:.work-list-facet"
+  hx-trigger="submit, change from:#work-list target:.work-list-facet, change from:[name=sortby]"
   hx-indicator="#work-list"
 >
   <div class="d-flex">
@@ -15,14 +15,15 @@
              value="{{ form.q.value | default:'' }}">
     </div>
 
-    <!-- Time updated filter -->
+    <!-- Sorting -->
     <div class="mr-2">
       <select class="form-control" name="sortby">
+        <option value="-created_at" {% if form.sortby.value == '-created_at' %} selected {% endif %}>{% trans 'Most recently created' %}</option>
+        <option value="created_at" {% if form.sortby.value == 'created_at' %} selected {% endif %}>{% trans 'Least recently created' %}</option>
         <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>{% trans 'Most recently updated' %}</option>
         <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>{% trans 'Least recently updated' %}</option>
         <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>{% trans 'Title (A-Z)' %}</option>
         <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>{% trans 'Title (Z-A)' %}</option>
-        <option value="frbr_uri" {% if form.sortby.value == 'frbr_uri' %} selected {% endif %}>{% trans 'FRBR URI' %}</option>
       </select>
     </div>
 

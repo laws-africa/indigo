@@ -1,21 +1,28 @@
 {% load indigo_app humanize i18n %}
 
 <ul class="nav nav-tabs">
-  {% if documents %}
+  <li class="nav-item">
+    <a class="nav-link {% if tab == "overview" %}active{% endif %}"
+       href="#work-{{ work.pk }}-overview" data-toggle="tab">
+      {% trans "Overview" %}
+    </a>
+  </li>
+  {% if n_documents %}
     <li class="nav-item">
-      <a class="nav-link {% if tab == "docs" %}active{% endif %}"
-         href="#work-{{ work.pk }}-docs" data-toggle="tab">
-        Documents <span class="badge badge-light">{{ documents|length }}</span>
-      </a>
+      <a class="nav-link {% if tab == "documents" %}active{% endif %}"
+         href="#work-{{ work.pk }}-documents" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-documents"
+         hx-get="{% url 'place_works_work_documents' place=place.place_code pk=work.pk %}"
+      >{% trans "Documents" %} <span class="badge badge-light">{{ n_documents }}</span></a>
     </li>
   {% endif %}
-  {% if n_commenced_by or n_commencements_made %}
+  {% if n_commencements or n_commencements_made %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
          href="#work-{{ work.pk }}-commencements" data-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
          hx-get="{% url 'place_works_work_commencements' place=place.place_code pk=work.pk %}"
-      >Commencements <span class="badge badge-light">{{ n_commencements_made|default:'-' }}/{{ n_commenced_by|default:'-' }}</span></a>
+      >{% trans "Commencements" %} <span class="badge badge-light">{{ n_commencements|default:'–' }}/{{ n_commencements_made|default:'–' }}</span></a>
     </li>
   {% endif %}
   {% if n_amendments or n_amendments_made %}
@@ -24,72 +31,56 @@
          href="#work-{{ work.pk }}-amendments" data-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
          hx-get="{% url 'place_works_work_amendments' place=place.place_code pk=work.pk %}"
-      >Amendments <span class="badge badge-light">{{ n_amendments_made|default:'-' }}/{{ n_amendments|default:'-' }}</span></a>
+      >{% trans "Amendments" %} <span class="badge badge-light">{{ n_amendments|default:'–' }}/{{ n_amendments_made|default:'–' }}</span></a>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab">Repeals</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab">Subsidiary</a>
-  </li>
+  {% if n_repeals or n_repeals_made %}
+    <li class="nav-item">
+      <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-repeals"
+         hx-get="{% url 'place_works_work_repeals' place=place.place_code pk=work.pk %}"
+      >{% trans "Repeals" %} <span class="badge badge-light">{{ n_repeals|default:'–' }}/{{ n_repeals_made|default:'–' }}</span></a>
+    </li>
+  {% endif %}
+  {% if n_primary_works or n_subsidiary_works %}
+    <li class="nav-item">
+      <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-subsidiary"
+         hx-get="{% url 'place_works_work_subsidiary' place=place.place_code pk=work.pk %}"
+      >{% trans "Subsidiary" %} <span class="badge badge-light">{{ n_primary_works|default:'–' }}/{{ n_subsidiary_works|default:'–' }}</span></a>
+    </li>
+  {% endif %}
+  {% if n_tasks %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab == "tasks" %}active{% endif %}"
+         href="#work-{{ work.pk }}-tasks" data-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-tasks"
+         hx-get="{% url 'place_works_work_tasks' place=place.place_code pk=work.pk %}"
+      >{% trans "Tasks" %} <span class="badge badge-light">{{ n_tasks }}</span></a>
+    </li>
+  {% endif %}
 </ul>
 
 <div class="tab-content border-left border-right border-bottom p-3">
-  {% if documents %}
-    <div class="tab-pane show active py-2" id="work-{{ work.pk }}-docs">
-      {% for doc in documents %}
-        <div class="d-flex">
-          <div class="col-2">
-            <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
-          </div>
-
-          <div class="col-4">
-            {% if doc.draft %}
-              <i class="fas fa-fw fa-circle draft" title="{% trans "draft" %}"></i>
-            {% else %}
-              <i class="fas fa-fw fa-circle published" title="{% trans "published" %}"></i>
-            {% endif %}
-            {{ doc.title }}
-          </div>
-
-          <div class="col-2">
-            {% if doc.task_stats.n_active_tasks %}
-              <div>
-                <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong>
-                {% trans "Active tasks" %}
-              </div>
-              <div class="progress mt-1 progress-thin">
-                <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
-                <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
-                <div class="progress-bar task-badge-blocked" style="width: {{ doc.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="col-2">
-            {% if doc.n_annotations %}
-              <i class="far fa-comments"></i> {{ doc.n_annotations }}
-            {% endif %}
-          </div>
-
-          <div class="col-2">
-            <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
-            {% if doc.updated_by_user == request.user %}
-              {% trans "you" %}
-            {% else %}
-              <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %}
-    </div>
+  <div class="tab-pane show active py-2" id="work-{{ work.pk }}-overview">
+    {% include 'indigo_app/place/_work_detail_overview.html' %}
+  </div>
+  {% if n_documents %}
+    <div class="tab-pane" id="work-{{ work.pk }}-documents"></div>
   {% endif %}
-
-  {% if n_commenced_by or n_commencements_made %}
+  {% if n_commencements or n_commencements_made %}
     <div class="tab-pane" id="work-{{ work.pk }}-commencements"></div>
   {% endif %}
   {% if n_amendments or n_amendments_made %}
     <div class="tab-pane" id="work-{{ work.pk }}-amendments"></div>
+  {% endif %}
+  {% if n_repeals or n_repeals_made %}
+    <div class="tab-pane" id="work-{{ work.pk }}-repeals"></div>
+  {% endif %}
+  {% if n_primary_works or n_subsidiary_works %}
+    <div class="tab-pane" id="work-{{ work.pk }}-subsidiary"></div>
+  {% endif %}
+  {% if n_tasks %}
+    <div class="tab-pane" id="work-{{ work.pk }}-tasks"></div>
   {% endif %}
 </div>

@@ -1,0 +1,53 @@
+{% load i18n %}
+
+<h5 class="mt-3">{% trans "Repealed by" %}</h5>
+
+{% if work.repealed_by %}
+  <table class="table table-sm">
+    <thead>
+    <tr>
+      <th>{% trans 'Work' %}</th>
+      <th>{% trans 'Date' %}</th>
+    </tr>
+    </thead>
+    <tr>
+      <td>
+        <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}"
+           data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}"
+        >{{ work.repealed_by.title }}</a>
+        <span class="text-muted">· {{ work.repealed_by.frbr_uri }}</span>
+      </td>
+      <td>{{ work.repealed_date|date:"Y-m-d" }}</td>
+    </tr>
+  </table>
+{% else %}
+  —
+{% endif %}
+
+<h5>{% trans "Repeals made" %}</h5>
+
+{% with work.repealed_works.all as repeals_made %}
+  {% if repeals_made %}
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Date' %}</th>
+      </tr>
+      </thead>
+      {% for repealed_work in repeals_made %}
+        <tr>
+          <td>
+            <a href="{% url 'work' frbr_uri=repealed_work.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=repealed_work.frbr_uri %}"
+            >{{ repealed_work.title }}</a>
+            <span class="text-muted">· {{ repealed_work.frbr_uri }}</span>
+          </td>
+          <td>{{ repealed_work.repealed_date|date:"Y-m-d" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    —
+  {% endif %}
+{% endwith %}

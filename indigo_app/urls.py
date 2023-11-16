@@ -23,12 +23,15 @@ urlpatterns = [
     path('places/<str:place>', places.PlaceDetailView.as_view(), name='place'),
     path('places/<str:place>/works', places.PlaceWorksView.as_view(), name='place_works'),
 
-    path('places/<str:place>/works2', places.PlaceWorksView2.as_view(), name='place_works2'),
     path('places/<str:place>/works/facets', places.PlaceWorksFacetsView.as_view(), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),
+    path('places/<str:place>/works/detail/<int:pk>/documents', places.WorkDocumentsView.as_view(), name='place_works_work_documents'),
     path('places/<str:place>/works/detail/<int:pk>/commencements', places.WorkCommencementsView.as_view(), name='place_works_work_commencements'),
     path('places/<str:place>/works/detail/<int:pk>/amendments', places.WorkAmendmentsView.as_view(), name='place_works_work_amendments'),
+    path('places/<str:place>/works/detail/<int:pk>/repeals', places.WorkRepealsView.as_view(), name='place_works_work_repeals'),
+    path('places/<str:place>/works/detail/<int:pk>/subsidiary', places.WorkSubsidiaryView.as_view(), name='place_works_work_subsidiary'),
+    path('places/<str:place>/works/detail/<int:pk>/tasks', places.WorkTasksView.as_view(), name='place_works_work_tasks'),
 
     path('places/<str:place>/activity', places.PlaceActivityView.as_view(), name='place_activity'),
     path('places/<str:place>/metrics', places.PlaceMetricsView.as_view(), name='place_metrics'),

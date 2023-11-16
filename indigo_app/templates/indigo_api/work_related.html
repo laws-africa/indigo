@@ -7,15 +7,12 @@
 {% block work-content %}
   <h4>{% trans 'Related works' %}</h4>
 
-  {% if family %}
-    {% trans "Parents and children" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=family title=title id="parent_kids" %}
-  {% endif %}
-
-  {% if repeals %}
-    {% trans "Repeals" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=repeals title=title id="repeals" with_date=True %}
-  {% endif %}
+  <div class="card mb-3" id="subsidiary">
+    <h5 class="card-header">{% trans "Subsidiary" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_subsidiary_tables.html' %}
+    </div>
+  </div>
 
   <div class="card mb-3" id="commencement">
     <h5 class="card-header">{% trans "Commencement" %}</h5>
@@ -28,6 +25,13 @@
     <h5 class="card-header">{% trans "Amendment" %}</h5>
     <div class="card-body">
       {% include 'indigo_api/_work_amendment_tables.html' %}
+    </div>
+  </div>
+
+  <div class="card mb-3" id="repeal">
+    <h5 class="card-header">{% trans "Repeal" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_repeal_tables.html' %}
     </div>
   </div>
 {% endblock %}

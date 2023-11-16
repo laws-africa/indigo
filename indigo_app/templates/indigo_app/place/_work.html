@@ -13,60 +13,26 @@
 
     <div class="float-left flex-fill">
       <div class="d-flex">
-        <div class="col-5">
+        <div class="col-8">
           <div>
             <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-            {% if work.stub %}
-              <span class="badge badge-info">{% trans "stub" %}</span>
-            {% endif %}
-            {% if work.repealed_date %}
-              <span class="badge badge-info">{% trans "repealed" %}</span>
-            {% endif %}
+            {% include 'indigo_api/_work_info_badges.html' %}
           </div>
           <div class="text-muted">{{ work.frbr_uri }}</div>
-          {% if work.parent_work %}
-            <div>
-              {% trans "Primary work" %}:
-              <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-            </div>
-          {% endif %}
         </div>
 
-        <div class="col-2">
-          {% if work.task_stats.n_active_tasks %}
-            <div><i class="fas fa-thumbtack"></i> <strong>{{ work.task_stats.n_active_tasks }}</strong> {% trans "Active tasks" %}</div>
-            <div class="progress mt-1 progress-thin">
-              <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="{% trans "open" %}"></div>
-              <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="{% trans "pending review" %}"></div>
-              <div class="progress-bar task-badge-blocked" style="width: {{ work.task_stats.blocked_task_ratio }}%" title="{% trans "blocked" %}"></div>
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="col-2">
-          {% if work.filtered_docs %}
-            <div>
-              <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ work.filtered_docs|length }}</strong></span>
-              {% if work.n_annotations %}
-                <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
-              {% endif %}
-            </div>
-            <div class="progress mt-1 progress-thin">
-              <div class="progress-bar bg-primary" style="width: {{ work.pub_ratio }}%" title="{% trans "published" %}"></div>
-              <div class="progress-bar bg-warning" style="width: {{ work.drafts_ratio }}%" title="{% trans "drafts" %}"></div>
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="col-1">
-          {% if work.metrics %}
-            {% include 'indigo_metrics/_progress_ball.html' with size=40 progress=work.metrics.p_breadth_complete title=work.metrics.p_breadth_complete|floatformat:0|add:"%" %}
-          {% endif %}
-        </div>
-
-        <div class="col-2">
-          <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+        <div class="col-4">
+          <div>
+            Created
+            <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
+            by {% user_profile work.created_by_user %}
+          </div>
+          <div>
+            Updated
+            <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+            by {% user_profile work.updated_by_user %}
+          </div>
         </div>
       </div>
 

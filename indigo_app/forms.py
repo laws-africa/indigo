@@ -580,7 +580,7 @@ class WorkFilterForm(forms.Form):
             if 'no' in commencement_filter:
                 commencement_qs |= Q(commenced=False)
             if 'date_unknown' in commencement_filter:
-                commencement_qs |= Q(commencements__main=True, commencements__date__isnull=True, commenced=True)
+                commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
             if 'partial' in commencement_filter:
                 # ignore uncommenced works, include works that have any uncommenced provisions
                 work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]

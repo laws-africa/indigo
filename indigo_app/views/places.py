@@ -957,7 +957,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             FacetItem(
                 "Commencement date unknown",
                 "date_unknown",
-                qs.filter(commencements__main=True, commencements__date__isnull=True, commenced=True).count(),
+                qs.filter(commencements__date__isnull=True, commenced=True).count(),
                 "date_unknown" in self.form.cleaned_data.get("commencement", [])
             ),
         ]

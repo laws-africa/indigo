@@ -19,9 +19,9 @@ class WorksTest(testcases.TestCase):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
 
     def test_new_work(self):
-        response = self.client.get('/places/za/works/new/')
+        response = self.client.get('/places/za/works/new')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/places/za-cpt/works/new/')
+        response = self.client.get('/places/za-cpt/works/new')
         self.assertEqual(response.status_code, 200)
 
     def test_edit_page(self):
@@ -361,7 +361,7 @@ class WorksWebTest(WebTest):
         self.app.set_user(User.objects.get(username='email@example.com'))
 
     def test_create_work_with_publication(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Title"
         form['work-frbr_uri'] = '/akn/za/act/2019/5'
         form['work-publication_date'] = '2019-02-01'
@@ -388,7 +388,7 @@ class WorksWebTest(WebTest):
         self.assertEqual(len(initial), 1)
 
     def test_create_work_with_commencement_date_and_commencing_work(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Date and Commencing Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/3'
         form['work-commenced'] = True
@@ -405,7 +405,7 @@ class WorksWebTest(WebTest):
         self.assertTrue(commencement.all_provisions)
 
     def test_create_work_without_commencement_date_but_with_commencing_work(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Commencing Work but No Date"
         form['work-frbr_uri'] = '/akn/za/act/2020/4'
         form['work-commenced'] = True
@@ -421,7 +421,7 @@ class WorksWebTest(WebTest):
         self.assertTrue(commencement.all_provisions)
 
     def test_create_work_without_commencement_date_or_commencing_work(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work Without Date or Commencing Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/5'
         form['work-commenced'] = True
@@ -435,7 +435,7 @@ class WorksWebTest(WebTest):
         self.assertTrue(commencement.all_provisions)
 
     def test_create_uncommenced_work(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Uncommenced Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/6'
         form.submit()
@@ -486,7 +486,7 @@ class WorksWebTest(WebTest):
         self.assertEqual("Different Title", doc.title)
 
     def test_create_non_act_work(self):
-        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Title"
         form['work-frbr_uri'] = '/akn/za/statement/deliberation/my-org/2018-02-02/123-45'
         response = form.submit()

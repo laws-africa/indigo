@@ -73,7 +73,7 @@ class TasksTest(WebTest):
             created_by_user_id=1,
         )
 
-        form = self.app.get(f'/places/za/tasks/{task.id}/').forms['task-workflow-form']
+        form = self.app.get(f'/places/za/tasks/{task.id}').forms['task-workflow-form']
         form['workflows'] = str(workflow.id)
         form.submit().follow()
 
@@ -88,7 +88,7 @@ class TasksTest(WebTest):
             work=Work.objects.get(frbr_uri='/akn/za/act/2014/10'),
             created_by_user_id=1,
         )
-        csrf_token = self.app.get(f'/places/za/tasks/{task.pk}/').forms[0]['csrfmiddlewaretoken'].value
+        csrf_token = self.app.get(f'/places/za/tasks/{task.pk}').forms[0]['csrfmiddlewaretoken'].value
 
         # assign
         response = self.app.post(f'/places/za/tasks/{task.pk}/assign', params={
@@ -125,7 +125,7 @@ class TasksTest(WebTest):
             created_by_user_id=1,
             assigned_to_id=1,
         )
-        csrf_token = self.app.get(f'/places/za/tasks/{task.pk}/').forms[0]['csrfmiddlewaretoken'].value
+        csrf_token = self.app.get(f'/places/za/tasks/{task.pk}').forms[0]['csrfmiddlewaretoken'].value
 
         # submit
         response = self.app.post(f'/places/za/tasks/{task.pk}/submit', params={
@@ -150,7 +150,7 @@ class TasksTest(WebTest):
         response = form.submit()
         self.assertEqual(response.status_code, 302)
 
-        response = self.app.get('/places/za/tasks/')
+        response = self.app.get('/places/za/tasks')
         self.assertEqual(response.status_code, 200)
         self.assertIn('test title', response.text)
 
@@ -182,7 +182,7 @@ class TasksTest(WebTest):
             created_by_user_id=1,
         )
 
-        form = self.app.get(f'/places/za/tasks/{task.id}/').forms['task-blocked_by-form']
+        form = self.app.get(f'/places/za/tasks/{task.id}').forms['task-blocked_by-form']
         form['blocked_by'] = [blocking_task.id]
         form.submit().follow()
 

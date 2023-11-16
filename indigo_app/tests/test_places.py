@@ -11,7 +11,7 @@ class PlacesTest(testcases.TestCase):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
 
     def test_place_detail(self):
-        response = self.client.get('/places/za/')
+        response = self.client.get('/places/za')
         self.assertEqual(response.status_code, 200)
 
     def test_place_activity(self):
@@ -36,11 +36,11 @@ class PlacesTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_place_works(self):
-        response = self.client.get('/places/za/works/')
+        response = self.client.get('/places/za/works')
         self.assertEqual(response.status_code, 200)
 
     def test_place_works_xlsx(self):
-        response = self.client.get('/places/za/works/?format=xlsx')
+        response = self.client.get('/places/za/works?format=xlsx')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 

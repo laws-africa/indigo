@@ -811,7 +811,9 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_principal(facets, qs)
         self.facet_stub(facets, qs)
         self.facet_tasks(facets, qs)
+        self.facet_primary(facets, qs)
         # self.facet_subtype(facets, qs)
+        self.facet_commencement(facets, qs)
         # self.facet_primary_subsidiary(facets, qs)
         # self.facet_status(facets, qs)
 
@@ -882,6 +884,71 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
 
         facets.append(Facet("Tasks", "tasks", "checkbox", items))
+
+    def facet_primary(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="primary")
+
+        items = [
+            FacetItem(
+                "Primary only",
+                "primary",
+                qs.filter(parent_work__isnull=True).count(),
+                "primary" in self.form.cleaned_data.get("primary", [])
+            ),
+            FacetItem(
+                "Primary that have subsidiary ",
+                "primary_subsidiary",
+                qs.values_list("parent_work_id", flat=True).distinct().count(),
+                "primary_subsidiary" in self.form.cleaned_data.get("primary", [])
+            ),
+            FacetItem(
+                "Subsidiary only",
+                "subsidiary",
+                qs.filter(parent_work__isnull=False).count(),
+                "subsidiary" in self.form.cleaned_data.get("primary", [])
+            ),
+        ]
+
+        facets.append(Facet("Primary and Subsidiary", "primary", "checkbox", items))
+
+    def facet_commencement(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="commencement")
+
+        items = [
+            FacetItem(
+                "Commenced",
+                "yes",
+                qs.filter(commenced=True).count(),
+                "yes" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Not commenced",
+                "no",
+                qs.filter(commenced=False).count(),
+                "no" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Partially commenced",
+                "partial",
+                qs.filter(pk__in=[w.pk for w in qs if w.commencements.exists() and w.all_uncommenced_provision_ids()]).count(),
+                "partial" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Multiple commencement",
+                "multiple",
+                qs.filter(pk__in=qs.annotate(Count('commencements')).filter(commencements__count__gt=1).values_list('pk', flat=True)).count(),
+
+                "multiple" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Commencement date unknown",
+                "date_unknown",
+                qs.filter(commencements__main=True, commencements__date__isnull=True, commenced=True).count(),
+                "date_unknown" in self.form.cleaned_data.get("commencement", [])
+            ),
+        ]
+
+        facets.append(Facet("Commencement", "commencement", "checkbox", items))
 
 
     def facet_subtype(self, facets, qs):

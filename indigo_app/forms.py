@@ -370,7 +370,7 @@ class WorkFilterForm(forms.Form):
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
+    commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
@@ -392,6 +392,11 @@ class WorkFilterForm(forms.Form):
 
     # Tasks States
     tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Tasks'), ('no_open_tasks', 'No Tasks')])
+
+    # Primary and subsidiary works
+    primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary only'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary only')])
+
+    # Commencements
 
     taxonomy_topic = forms.CharField()
 
@@ -449,6 +454,19 @@ class WorkFilterForm(forms.Form):
                 tasks_qs |= ~Q(tasks__state__in=Task.OPEN_STATES)
 
             queryset = queryset.filter(tasks_qs)
+
+        if exclude != "primary":
+            primary_filter = self.cleaned_data.get('primary', [])
+            primary_qs = Q()
+            if "primary" in primary_filter:
+                primary_qs |= Q(parent_work__isnull=True)
+            if "primary_subsidiary" in primary_filter:
+                parent_ids = Work.objects.filter(country=self.country, parent_work__isnull=False).values_list('parent_work_id', flat=True)
+                primary_qs |= Q(id__in=parent_ids)
+            if "subsidiary" in primary_filter:
+                primary_qs |= Q(parent_work__isnull=False)
+
+            queryset = queryset.filter(primary_qs)
 
         if exclude != "status":
             if self.cleaned_data.get('status'):
@@ -532,25 +550,33 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
 
         # filter by commencement status (last because expensive)
-        if self.cleaned_data.get('commencement') == 'yes':
-            queryset = queryset.filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'no':
-            queryset = queryset.filter(commenced=False)
-        elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencements__main=True, commencements__date__isnull=True).filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'partial':
-            # ignore uncommenced works, include works that have any uncommenced provisions
-            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
-            queryset = queryset.filter(pk__in=work_ids)
-        elif self.cleaned_data.get('commencement') == 'multiple':
-            queryset = queryset \
-                .annotate(Count('commencements')) \
-                .filter(commencements__count__gt=1)
-        elif self.cleaned_data.get('commencement') == 'range':
-            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
-                start_date = self.cleaned_data['commencement_date_start']
-                end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+        if exclude != "commencement":
+            commencement_filter = self.cleaned_data.get('commencement', [])
+            commencement_qs = Q()
+            if 'yes' in commencement_filter:
+                commencement_qs |= Q(commenced=True)
+            if 'no' in commencement_filter:
+                commencement_qs |= Q(commenced=False)
+            if 'date_unknown' in commencement_filter:
+                commencement_qs |= Q(commencements__main=True, commencements__date__isnull=True, commenced=True)
+            if 'partial' in commencement_filter:
+                # ignore uncommenced works, include works that have any uncommenced provisions
+                work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
+                commencement_qs |= Q(pk__in=work_ids)
+            if 'multiple' in commencement_filter:
+                multiple_ids = queryset \
+                    .annotate(Count('commencements')) \
+                    .filter(commencements__count__gt=1) \
+                    .values_list('pk', flat=True)
+                commencement_qs |= Q(id__in=multiple_ids)
+
+            queryset = queryset.filter(commencement_qs)
+
+            if self.cleaned_data.get('commencement') == 'range':
+                if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+                    start_date = self.cleaned_data['commencement_date_start']
+                    end_date = self.cleaned_data['commencement_date_end']
+                    queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
 
         if self.cleaned_data.get('taxonomy_topic'):
             topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()

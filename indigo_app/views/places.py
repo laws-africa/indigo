@@ -1128,7 +1128,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
             OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
         ]
 
-        publication = describe_publication_event(work, placeholder=bool(work.publication_document))
+        publication = describe_publication_event(work, placeholder=hasattr(work, 'publication_document'))
         if publication:
             overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
 

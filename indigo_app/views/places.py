@@ -809,15 +809,15 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         # build facets
         context["facets"] = facets = []
         self.facet_principal(facets, qs)
-        # self.facet_stub(facets, qs)
         self.facet_tasks(facets, qs)
         self.facet_primary(facets, qs)
-        # self.facet_subtype(facets, qs)
         self.facet_commencement(facets, qs)
         self.facet_amendment(facets, qs)
         self.facet_consolidation(facets, qs)
+        self.facet_repeal(facets, qs)
+        self.facet_documents(facets, qs)
+        # self.facet_subtype(facets, qs)
         # self.facet_primary_subsidiary(facets, qs)
-        # self.facet_status(facets, qs)
 
         return context
 
@@ -1004,6 +1004,67 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
         facets.append(Facet("Consolidation", "consolidation", "checkbox", items))
 
+    def facet_repeal(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="repeal")
+
+        items = [
+            FacetItem(
+                "Repealed",
+                "yes",
+                qs.filter(repealed_date__isnull=False).count(),
+                "yes" in self.form.cleaned_data.get("repeal", [])
+            ),
+            FacetItem(
+                "Not repealed",
+                "no",
+                qs.filter(repealed_date__isnull=True).count(),
+                "no" in self.form.cleaned_data.get("repeal", [])
+            ),
+        ]
+
+        facets.append(Facet("Repeal", "repeal", "checkbox", items))
+
+
+    def facet_documents(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="documents")
+
+        items = [
+            FacetItem(
+                "Has one document",
+                "one",
+                qs.annotate(Count('document')).filter(document__count=1).count(),
+                "one" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has multiple documents",
+                "multiple",
+                qs.annotate(Count('document')).filter(document__count__gt=1).count(),
+                "multiple" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has no documents",
+                "none",
+                qs.annotate(Count('document')).filter(document__isnull=True).count(),
+                "none" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has published documents",
+                "published",
+                qs.filter(document__draft=False).count(),
+                "published" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has draft documents",
+                "draft",
+                qs.filter(document__draft=True).count(),
+                "draft" in self.form.cleaned_data.get("documents", [])
+            ),
+        ]
+
+        facets.append(Facet("Documents", "documents", "checkbox", items))
+
+
+
     def facet_subtype(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="subtype")
 
@@ -1024,7 +1085,6 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ))
 
         facets.append(Facet("Type", "subtype", "checkbox", items))
-
 
     def facet_primary_subsidiary(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="primary_subsidiary")

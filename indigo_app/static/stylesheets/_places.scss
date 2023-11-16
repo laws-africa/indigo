@@ -1,0 +1,25 @@
+/* place works list */
+.progress.progress-thin {
+  height: 7px;
+}
+
+.work-list-facets {
+  label {
+    font-weight: normal;
+  }
+}
+
+.work-list-work {
+  .collapse-indicator {
+    padding-top: 1em;
+    padding-bottom: 1em;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &.collapsed::before { content: "\f0da"; }
+    &::before { content: "\f0d7"; }
+  }
+
+}

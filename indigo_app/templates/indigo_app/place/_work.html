@@ -1,9 +1,9 @@
 {% load indigo_app humanize i18n %}
 
-<div class="border bg-white mb-2">
+<div class="border bg-white mb-2 work-list-work">
   <div class="d-flex p-2">
-    <div>
-      <a class="text-muted fas fa-caret-right fa-fw collapse-indicator" data-toggle="collapse"
+    <div class="align-self-center">
+      <a class="text-muted fas fa-fw collapse-indicator collapsed" data-toggle="collapse"
          href="#work-detail-{{ work.pk }}"
          hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
          hx-target="#work-detail-{{ work.pk }}"
@@ -12,8 +12,8 @@
     </div>
 
     <div class="flex-fill">
-      <div class="row">
-        <div class="col-8">
+      <div class="d-flex">
+        <div class="col-8 pl-0">
           <div>
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
             {% include 'indigo_api/_work_info_badges.html' %}

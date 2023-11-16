@@ -35,76 +35,15 @@
   <div class="collapse mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">
     <div class="card">
       <div class="card-body">
-        <div class="row mt-2">
-          <!-- Complete works filter -->
-          <div class="col-md-3">
-            <select name="completeness" class="form-control">
-              {% for opt in form.completeness %}
-                <option value="{{ opt.data.value}}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
 
-        <!-- Work Taxonomy filter -->
-        {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
-        {% if topic_groups %}
-          <div class="form-group mt-2">
-            <label>Taxonomies</label>
-            <div class="form-row">
-              <div class="col-md-6">
-                <select name="taxonomies" class="selectpicker notooltip" title="{% trans 'Taxonomies...' %}" data-width="100%" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
-                  {% for topic in topic_groups %}
-                    <optgroup label="{{ topic.grouper }}">
-                      {% for taxonomy in topic.list %}
-                        <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
-                      {% endfor %}
-                    </optgroup>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
+        <!-- Publication date range -->
         <div class="row mt-2">
-          <!-- Assent Date filter -->
-          <div class="col-md-6 mt-2">
+          <div class="col-md-4">
             <div class="form-group">
-              <label for="{{ form.assent.id_for_label }}">{% trans 'Assent' %}</label>
+              <label for="publication-daterange">{% trans 'Publication date range' %}</label>
               <div class="form-row">
                 <div class="col">
-                  <select name="{{ form.assent.html_name }}" class="form-control" id="{{ form.assent.id_for_label }}" data-toggle="daterange">
-                    {% for opt in form.assent %}
-                      {{ opt }}
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col">
-                  <div class="input-group input-daterange {% if form.assent.value != 'range'%}d-none{% endif %}" id="assent-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
-                    <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Publication Date filter -->
-          <div class="col-md-6 mt-2">
-            <div class="form-group">
-              <label for="{{ form.publication.id_for_label }}">{% trans 'Official publication (eg. gazette)' %}</label>
-              <div class="form-row">
-                <div class="col">
-                  <select name="{{ form.publication.html_name }}" class="form-control" id="{{ form.publication.id_for_label }}" data-toggle="daterange">
-                    {% for opt in form.publication %}
-                      {{ opt }}
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col">
-                  <div class="input-group input-daterange {% if form.publication.value != 'range'%}d-none{% endif %}" id="publication-daterange">
+                  <div class="input-group input-daterange" id="publication-daterange">
                     <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
                     <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
@@ -115,44 +54,14 @@
           </div>
         </div>
 
-        <div class="row">
-          <!-- Repealed filter -->
-          <div class="col-md-6 mt-2">
+        <!-- Commenced date range -->
+        <div class="row mt-2">
+          <div class="col-md-4">
             <div class="form-group">
-              <label for="{{ form.repeal.id_for_label }}">{% trans 'Repeal' %}</label>
+              <label for="commencement-daterange">{% trans 'Commencement date range' %}</label>
               <div class="form-row">
                 <div class="col">
-                  <select name="{{ form.repeal.html_name }}" class="form-control" id="{{ form.repeal.id_for_label }}" data-toggle="daterange">
-                    {% for opt in form.repeal %}
-                      {{ opt }}
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col">
-                  <div class="input-group input-daterange {% if form.repeal.value != 'range'%}d-none{% endif %}" id="repeal-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
-                    <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Commenced filter -->
-          <div class="col-md-6 mt-2">
-            <div class="form-group">
-              <label for="{{ form.commencement.id_for_label }}">{% trans 'Commencement' %}</label>
-              <div class="form-row">
-                <div class="col">
-                  <select name="{{ form.commencement.html_name }}" class="form-control" id="{{ form.commencement.id_for_label }}" data-toggle="daterange">
-                    {% for opt in form.commencement %}
-                      {{ opt }}
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col">
-                  <div class="input-group input-daterange {% if form.commencement.value != 'range'%}d-none{% endif %}" id="commencement-daterange">
+                  <div class="input-group input-daterange" id="commencement-daterange">
                     <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
                     <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
@@ -163,24 +72,53 @@
           </div>
         </div>
 
-        <div class="row">
-          <!-- Amendment Date Filter-->
-          <div class="col-md-6 mt-2">
+        <!-- Amendment date range -->
+        <div class="row mt-2">
+          <div class="col-md-4">
             <div class="form-group">
-              <label for="{{ form.amendment.id_for_label }}">{% trans 'Amendment' %}</label>
+              <label for="amendment-daterange">{% trans 'Amendment date range' %}</label>
               <div class="form-row">
                 <div class="col">
-                  <select name="{{ form.amendment.html_name }}" class="form-control" id="{{ form.amendment.id_for_label }}" data-toggle="daterange">
-                    {% for opt in form.amendment %}
-                      {{ opt }}
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col">
-                  <div class="input-group input-daterange {% if form.amendment.value != 'range'%}d-none{% endif %}" id="amendment-daterange">
+                  <div class="input-group input-daterange" id="amendment-daterange">
                     <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
                     <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Repealed date range -->
+        <div class="row mt-2">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="repeal-daterange">{% trans 'Repeal date range' %}</label>
+              <div class="form-row">
+                <div class="col">
+                  <div class="input-group input-daterange" id="repeal-daterange">
+                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
+                    <div class="input-group-addon"> and </div>
+                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assent date range -->
+        <div class="row mt-2">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="assent-daterange">{% trans 'Assent date range' %}</label>
+              <div class="form-row">
+                <div class="col">
+                  <div class="input-group input-daterange" id="assent-daterange">
+                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
+                    <div class="input-group-addon"> and </div>
+                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>

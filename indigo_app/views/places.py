@@ -287,159 +287,6 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         return {"open_tasks_chart": open_tasks_chart, "labels_chart": labels_chart, "total_open_tasks": total_open_tasks}
 
 
-class PlaceWorksView(PlaceViewBase, ListView):
-    template_name = 'place/works.html'
-    tab = 'works'
-    context_object_name = 'works'
-    paginate_by = 50
-    js_view = 'PlaceWorksView WorkFilterFormView'
-
-    def get(self, request, *args, **kwargs):
-        params = QueryDict(mutable=True)
-        params.update(request.GET)
-
-        # set defaults for: sort order, status, stub and subtype
-        if not params.get('sortby'):
-            params.setdefault('sortby', '-updated_at')
-
-        if not params.get('stub'):
-            params.setdefault('stub', 'excl')
-
-        if not params.get('subtype'):
-            params.setdefault('subtype', '-')
-
-        self.form = WorkFilterForm(self.country, params)
-        self.form.is_valid()
-
-        if params.get('format') == 'xlsx':
-            exporter = XlsxExporter(self.country, self.locality)
-            return exporter.generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
-
-        return super().get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = Work.objects\
-            .select_related('parent_work', 'metrics')\
-            .filter(country=self.country, locality=self.locality)\
-            .distinct()\
-            .order_by('-updated_at')
-
-        queryset = self.form.filter_queryset(queryset)
-
-        # prefetch and filter documents
-        queryset = queryset.prefetch_related(Prefetch(
-            'document_set',
-            to_attr='filtered_docs',
-            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
-        ))
-
-        return queryset
-
-    def count_tasks(self, obj, counts):
-        obj.task_stats = {'n_%s_tasks' % s: counts.get(s, 0) for s in Task.STATES}
-        obj.task_stats['n_tasks'] = sum(counts.values())
-        obj.task_stats['n_active_tasks'] = (
-            obj.task_stats['n_open_tasks'] +
-            obj.task_stats['n_pending_review_tasks'] +
-            obj.task_stats['n_blocked_tasks']
-        )
-        obj.task_stats['pending_task_ratio'] = 100 * (
-            obj.task_stats['n_pending_review_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-        obj.task_stats['open_task_ratio'] = 100 * (
-            obj.task_stats['n_open_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-        obj.task_stats['blocked_task_ratio'] = 100 * (
-            obj.task_stats['n_blocked_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-
-    def decorate_works(self, works):
-        """ Do some calculations that aid listing of works.
-        """
-        docs_by_id = {d.id: d for w in works for d in w.filtered_docs}
-        works_by_id = {w.id: w for w in works}
-
-        # count annotations
-        annotations = Annotation.objects.values('document_id') \
-            .filter(closed=False) \
-            .filter(document__deleted=False) \
-            .annotate(n_annotations=Count('document_id')) \
-            .filter(document_id__in=docs_by_id)
-        for count in annotations:
-            docs_by_id[count['document_id']].n_annotations = count['n_annotations']
-
-        # count tasks
-        tasks = Task.objects.filter(work__in=works)
-
-        # tasks counts per state and per work
-        work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
-        task_states = defaultdict(dict)
-        for row in work_tasks:
-            task_states[row['work_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per work
-        for work_id, states in task_states.items():
-            self.count_tasks(works_by_id[work_id], states)
-
-        # tasks counts per state and per document
-        doc_tasks = tasks.filter(document_id__in=list(docs_by_id.keys()))\
-            .values('document_id', 'state')\
-            .annotate(n_tasks=Count('document_id'))
-        task_states = defaultdict(dict)
-        for row in doc_tasks:
-            task_states[row['document_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per document
-        for doc_id, states in task_states.items():
-            self.count_tasks(docs_by_id[doc_id], states)
-
-        # decorate works
-        for work in works:
-            # most recent update, their the work or its documents
-            update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
-            work.most_recent_updated_at = update.updated_at
-            work.most_recent_updated_by = update.updated_by_user
-
-            # count annotations
-            work.n_annotations = sum(getattr(d, 'n_annotations', 0) for d in work.filtered_docs)
-
-            # ratios
-            try:
-                # work metrics may not exist
-                metrics = work.metrics
-            except WorkMetrics.DoesNotExist:
-                metrics = None
-
-            if metrics and metrics.n_expected_expressions > 0:
-                n_drafts = sum(1 if d.draft else 0 for d in work.filtered_docs)
-                n_published = sum(0 if d.draft else 1 for d in work.filtered_docs)
-                work.drafts_ratio = 100 * (n_drafts / metrics.n_expected_expressions)
-                work.pub_ratio = 100 * (n_published / metrics.n_expected_expressions)
-            else:
-                work.drafts_ratio = 0
-                work.pub_ratio = 0
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = self.form
-        works = context['works']
-        context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        self.decorate_works(list(works))
-
-        # total works
-        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
-        # page count
-        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
-
-        return context
-
-    def get_xlsx_filename(self):
-        return f"legislation {self.kwargs['place']}.xlsx"
-
-
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     model = None
     slug_field = 'place'
@@ -853,7 +700,7 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
         return context
 
 
-class PlaceWorksView2(PlaceViewBase, ListView):
+class PlaceWorksView(PlaceViewBase, ListView):
     template_name = 'indigo_app/place/works.html'
     tab = 'works'
     context_object_name = 'works'
@@ -866,6 +713,11 @@ class PlaceWorksView2(PlaceViewBase, ListView):
     def get(self, request, *args, **kwargs):
         self.form = WorkFilterForm(self.country, request.POST or request.GET)
         self.form.is_valid()
+
+        if self.form.data.get('format') == 'xlsx':
+            exporter = XlsxExporter(self.country, self.locality)
+            return exporter.generate_xlsx(self.get_queryset(), f"legislation {self.kwargs['place']}.xlsx", False)
+
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -1061,7 +913,7 @@ class WorkActionsView(PlaceViewBase, FormView):
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
                 self.request.META.get('HTTP_REFERER')
-                or reverse('place_works2', kwargs={'place': self.kwargs['place']})
+                or reverse('place_works', kwargs={'place': self.kwargs['place']})
             )
         else:
             return self.form_invalid(form)
@@ -1128,7 +980,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
             OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
         ]
 
-        publication = describe_publication_event(work, placeholder=bool(work.publication_document))
+        publication = describe_publication_event(work, placeholder=hasattr(work, 'publication_document'))
         if publication:
             overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
 

@@ -815,6 +815,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         # self.facet_subtype(facets, qs)
         self.facet_commencement(facets, qs)
         self.facet_amendment(facets, qs)
+        self.facet_consolidation(facets, qs)
         # self.facet_primary_subsidiary(facets, qs)
         # self.facet_status(facets, qs)
 
@@ -982,6 +983,26 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
 
         facet.append(Facet("Amendment", "amendment", "checkbox", items))
+
+    def facet_consolidation(self, facets,  qs):
+        qs = self.form.filter_queryset(qs, exclude="consolidation")
+
+        items = [
+            FacetItem(
+                "Has consolidation",
+                "has_consolidation",
+                qs.filter(arbitrary_expression_dates__date__isnull=False).count(),
+                "has_consolidation" in self.form.cleaned_data.get("consolidation", [])
+            ),
+            FacetItem(
+                "No consolidation",
+                "no_consolidation",
+                qs.filter(arbitrary_expression_dates__date__isnull=True).count(),
+                "no_consolidation" in self.form.cleaned_data.get("consolidation", [])
+            ),
+        ]
+
+        facets.append(Facet("Consolidation", "consolidation", "checkbox", items))
 
     def facet_subtype(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="subtype")

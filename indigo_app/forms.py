@@ -396,6 +396,9 @@ class WorkFilterForm(forms.Form):
     # Primary and subsidiary works
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary only'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary only')])
 
+    # Consolidation
+    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No Consolidation')])
+
     taxonomy_topic = forms.CharField()
 
 
@@ -529,11 +532,10 @@ class WorkFilterForm(forms.Form):
         if exclude != "amendment":
             amendment_filter = self.cleaned_data.get('amendment', [])
             amendment_qs = Q()
-            if "yes" in self.cleaned_data.get('amendment', []):
+            if "yes" in amendment_filter:
                 amendment_qs |= Q(amendments__date__isnull=False)
-            if self.cleaned_data.get('amendment') == 'no':
+            if 'no' in amendment_filter:
                 amendment_qs |= Q(amendments__date__isnull=True)
-
 
             if self.cleaned_data.get('amendment') == 'range':
                 if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
@@ -586,6 +588,16 @@ class WorkFilterForm(forms.Form):
                     start_date = self.cleaned_data['commencement_date_start']
                     end_date = self.cleaned_data['commencement_date_end']
                     queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+
+        if exclude != "consolidation":
+            consolidation_filter = self.cleaned_data.get('consolidation', [])
+            consolidation_qs = Q()
+            if 'has_consolidation' in consolidation_filter:
+                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=False)
+            if 'no_consolidation' in consolidation_filter:
+                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=True)
+
+            queryset = queryset.filter(consolidation_qs)
 
         if self.cleaned_data.get('taxonomy_topic'):
             topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()

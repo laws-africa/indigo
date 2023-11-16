@@ -53,8 +53,5 @@
   "bugs": {
     "url": "https://github.com/laws-africa/indigo/issues"
   },
-  "homepage": "https://github.com/laws-africa/indigo#readme",
-  "dependencies": {
-    "htmx": "^0.0.2"
-  }
+  "homepage": "https://github.com/laws-africa/indigo#readme"
 }

@@ -24,7 +24,7 @@ class WorkAPITest(APITestCase):
         work.expressions().delete()
 
         # now can delete
-        self.assertRedirects(self.client.post('/works%s/delete' % work.frbr_uri), '/places/za/')
+        self.assertRedirects(self.client.post('/works%s/delete' % work.frbr_uri), '/places/za')
 
     def test_filters(self):
         response = self.client.get('/api/works?country=za')

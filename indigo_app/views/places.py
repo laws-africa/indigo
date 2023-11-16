@@ -866,6 +866,11 @@ class PlaceWorksView2(PlaceViewBase, ListView):
     def get(self, request, *args, **kwargs):
         self.form = WorkFilterForm(self.country, request.POST or request.GET)
         self.form.is_valid()
+
+        if self.form.data.get('format') == 'xlsx':
+            exporter = XlsxExporter(self.country, self.locality)
+            return exporter.generate_xlsx(self.get_queryset(), f"legislation {self.kwargs['place']}.xlsx", False)
+
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):

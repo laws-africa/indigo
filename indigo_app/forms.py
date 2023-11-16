@@ -358,34 +358,41 @@ class WorkFilterForm(forms.Form):
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
     # assent date filter
-    assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
+    # no longer an option
+    # assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # publication date filter
-    publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'No publication date'), ('yes', 'Published'), ('range', 'Published between...')])
+    # no longer an option
+    # publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'No publication date'), ('yes', 'Published'), ('range', 'Published between...')])
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # amendment date filter
-    amendment = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended'), ('range', 'Amended between...')])
+    # range is no longer an option
+    amendment = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended')])
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
+    # range is no longer an option
+    commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
-    repeal = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed'), ('range', 'Repealed between...')])
+    # range is no longer an option
+    repeal = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed')])
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # primary work filter
     primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
-    completeness = forms.ChoiceField(choices=[('', 'Complete and incomplete works'), ('complete', 'Complete works only'), ('incomplete', 'Incomplete works only')])
-    taxonomies = forms.ModelMultipleChoiceField(
-        queryset=VocabularyTopic.objects
-            .select_related('vocabulary')
-            .order_by('vocabulary__title', 'level_1', 'level_2'))
+    # no longer an option
+    # completeness = forms.ChoiceField(choices=[('', 'Complete and incomplete works'), ('complete', 'Complete works only'), ('incomplete', 'Incomplete works only')])
+    # no longer an option
+    # taxonomies = forms.ModelMultipleChoiceField(
+    #     queryset=VocabularyTopic.objects
+    #         .select_related('vocabulary')
+    #         .order_by('vocabulary__title', 'level_1', 'level_2'))
 
-    advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement', 'taxonomies', 'completeness']
+    advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start']
 
     # Principal
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal'), ('stub', 'Stub'), ('not_stub', 'Not Stub')])
@@ -502,22 +509,24 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(assent_date__isnull=False)
         elif self.cleaned_data.get('assent') == 'no':
             queryset = queryset.filter(assent_date__isnull=True)
-        elif self.cleaned_data.get('assent') == 'range':
-            if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
-                start_date = self.cleaned_data['assent_date_start']
-                end_date = self.cleaned_data['assent_date_end']
-                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
+        # range is no longer an option
+        # elif self.cleaned_data.get('assent') == 'range':
+        if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
+            start_date = self.cleaned_data['assent_date_start']
+            end_date = self.cleaned_data['assent_date_end']
+            queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
         # filter by publication date range
-        if self.cleaned_data.get('publication') == 'yes':
-            queryset = queryset.filter(publication_date__isnull=False)
-        elif self.cleaned_data.get('publication') == 'no':
-            queryset = queryset.filter(publication_date__isnull=True)
-        elif self.cleaned_data.get('publication') == 'range':
-            if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
-                start_date = self.cleaned_data['publication_date_start']
-                end_date = self.cleaned_data['publication_date_end']
-                queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
+        # these are no longer options
+        # if self.cleaned_data.get('publication') == 'yes':
+        #     queryset = queryset.filter(publication_date__isnull=False)
+        # elif self.cleaned_data.get('publication') == 'no':
+        #     queryset = queryset.filter(publication_date__isnull=True)
+        # elif self.cleaned_data.get('publication') == 'range':
+        if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
+            start_date = self.cleaned_data['publication_date_start']
+            end_date = self.cleaned_data['publication_date_end']
+            queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
 
         # filter by repeal date
         if exclude != "repeal":
@@ -527,13 +536,6 @@ class WorkFilterForm(forms.Form):
                 repeal_qs |= Q(repealed_date__isnull=False)
             if "no" in repeal_filter:
                 repeal_qs |= Q(repealed_date__isnull=True)
-
-            # TODO: fix repeal range filter
-            if self.cleaned_data.get('repeal') == 'range':
-                if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
-                    start_date = self.cleaned_data['repealed_date_start']
-                    end_date = self.cleaned_data['repealed_date_end']
-                    queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
             queryset = queryset.filter(repeal_qs)
 
@@ -554,6 +556,28 @@ class WorkFilterForm(forms.Form):
                     queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
             queryset = queryset.filter(amendment_qs)
+        if self.cleaned_data.get('repeal') == 'yes':
+            queryset = queryset.filter(repealed_date__isnull=False)
+        elif self.cleaned_data.get('repeal') == 'no':
+            queryset = queryset.filter(repealed_date__isnull=True)
+        # range is no longer an option
+        # elif self.cleaned_data.get('repeal') == 'range':
+        if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
+            start_date = self.cleaned_data['repealed_date_start']
+            end_date = self.cleaned_data['repealed_date_end']
+            queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
+
+        # filter by amendment date
+        if self.cleaned_data.get('amendment') == 'yes':
+            queryset = queryset.filter(amendments__date__isnull=False)
+        elif self.cleaned_data.get('amendment') == 'no':
+            queryset = queryset.filter(amendments__date__isnull=True)
+        # range is no longer an option
+        # elif self.cleaned_data.get('amendment') == 'range':
+        if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
+            start_date = self.cleaned_data['amendment_date_start']
+            end_date = self.cleaned_data['amendment_date_end']
+            queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
         # filter by primary work
         if exclude != "primary_subsidiary":
@@ -581,14 +605,14 @@ class WorkFilterForm(forms.Form):
             if 'date_unknown' in commencement_filter:
                 commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
 
-            # TODO: fix commencement range filter
-            if self.cleaned_data.get('commencement') == 'range':
-                if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
-                    start_date = self.cleaned_data['commencement_date_start']
-                    end_date = self.cleaned_data['commencement_date_end']
-                    queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
-
             queryset = queryset.filter(commencement_qs)
+
+
+        if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+            start_date = self.cleaned_data['commencement_date_start']
+            end_date = self.cleaned_data['commencement_date_end']
+            queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+
 
         if exclude != "consolidation":
             consolidation_filter = self.cleaned_data.get('consolidation', [])

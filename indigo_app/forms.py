@@ -366,7 +366,7 @@ class WorkFilterForm(forms.Form):
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # amendment date filter
-    amendment = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended'), ('range', 'Amended between...')])
+    amendment = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended'), ('range', 'Amended between...')])
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
@@ -388,15 +388,13 @@ class WorkFilterForm(forms.Form):
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement', 'taxonomies', 'completeness']
 
     # Principal
-    principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
+    principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal'), ('stub', 'Stub'), ('not_stub', 'Not Stub')])
 
     # Tasks States
     tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Tasks'), ('no_open_tasks', 'No Tasks')])
 
     # Primary and subsidiary works
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary only'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary only')])
-
-    # Commencements
 
     taxonomy_topic = forms.CharField()
 
@@ -423,15 +421,15 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if exclude != "stub":
-            if not self.cleaned_data.get('stub'):
-                queryset = queryset.filter(stub=False)
-            elif self.cleaned_data.get('stub') == 'only':
-                queryset = queryset.filter(stub=True)
-            elif self.cleaned_data.get('stub') == 'temporary':
-                queryset = queryset.filter(stub=True, principal=True)
-            elif self.cleaned_data.get('stub') == 'permanent':
-                queryset = queryset.filter(stub=True, principal=False)
+        # if exclude != "stub":
+        #     if not self.cleaned_data.get('stub'):
+        #         queryset = queryset.filter(stub=False)
+        #     elif self.cleaned_data.get('stub') == 'only':
+        #         queryset = queryset.filter(stub=True)
+        #     elif self.cleaned_data.get('stub') == 'temporary':
+        #         queryset = queryset.filter(stub=True, principal=True)
+        #     elif self.cleaned_data.get('stub') == 'permanent':
+        #         queryset = queryset.filter(stub=True, principal=False)
 
         if exclude != "principal":
             principal_filter = self.cleaned_data.get('principal', [])
@@ -440,6 +438,10 @@ class WorkFilterForm(forms.Form):
                 principal_qs |= Q(principal=True)
             if "not_principal" in principal_filter:
                 principal_qs |= Q(principal=False)
+            if "stub" in principal_filter:
+                principal_qs |= Q(stub=True)
+            if "not_stub" in principal_filter:
+                principal_qs |= Q(stub=False)
 
             queryset = queryset.filter(principal_qs)
 
@@ -524,15 +526,22 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
         # filter by amendment date
-        if self.cleaned_data.get('amendment') == 'yes':
-            queryset = queryset.filter(amendments__date__isnull=False)
-        elif self.cleaned_data.get('amendment') == 'no':
-            queryset = queryset.filter(amendments__date__isnull=True)
-        elif self.cleaned_data.get('amendment') == 'range':
-            if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
-                start_date = self.cleaned_data['amendment_date_start']
-                end_date = self.cleaned_data['amendment_date_end']
-                queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
+        if exclude != "amendment":
+            amendment_filter = self.cleaned_data.get('amendment', [])
+            amendment_qs = Q()
+            if "yes" in self.cleaned_data.get('amendment', []):
+                amendment_qs |= Q(amendments__date__isnull=False)
+            if self.cleaned_data.get('amendment') == 'no':
+                amendment_qs |= Q(amendments__date__isnull=True)
+
+
+            if self.cleaned_data.get('amendment') == 'range':
+                if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
+                    start_date = self.cleaned_data['amendment_date_start']
+                    end_date = self.cleaned_data['amendment_date_end']
+                    queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
+
+            queryset = queryset.filter(amendment_qs)
 
         # filter by primary work
         if exclude != "primary_subsidiary":

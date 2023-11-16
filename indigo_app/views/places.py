@@ -809,11 +809,12 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         # build facets
         context["facets"] = facets = []
         self.facet_principal(facets, qs)
-        self.facet_stub(facets, qs)
+        # self.facet_stub(facets, qs)
         self.facet_tasks(facets, qs)
         self.facet_primary(facets, qs)
         # self.facet_subtype(facets, qs)
         self.facet_commencement(facets, qs)
+        self.facet_amendment(facets, qs)
         # self.facet_primary_subsidiary(facets, qs)
         # self.facet_status(facets, qs)
 
@@ -834,6 +835,18 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "not_principal",
                 qs.filter(principal=False).count(),
                 "not_principal" in self.form.cleaned_data.get("principal", [])
+            ),
+            FacetItem(
+                "Stub",
+                "stub",
+                qs.filter(stub=True).count(),
+                "stub" in self.form.cleaned_data.get("principal", [])
+            ),
+            FacetItem(
+                "Not Stub",
+                "not_stub",
+                qs.filter(stub=False).count(),
+                "not_stub" in self.form.cleaned_data.get("principal", [])
             ),
         ]
 
@@ -950,6 +963,25 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
         facets.append(Facet("Commencement", "commencement", "checkbox", items))
 
+    def facet_amendment(self, facet, qs):
+        qs = self.form.filter_queryset(qs, exclude="amendment")
+
+        items = [
+            FacetItem(
+                "Amended",
+                "yes",
+                qs.filter(amendments__isnull=False).count(),
+                "yes" in self.form.cleaned_data.get("amendment", [])
+            ),
+            FacetItem(
+                "Not amended",
+                "no",
+                qs.filter(amendments__isnull=True).count(),
+                "no" in self.form.cleaned_data.get("amendment", [])
+            ),
+        ]
+
+        facet.append(Facet("Amendment", "amendment", "checkbox", items))
 
     def facet_subtype(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="subtype")

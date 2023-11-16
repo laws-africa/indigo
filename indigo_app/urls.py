@@ -23,7 +23,6 @@ urlpatterns = [
     path('places/<str:place>', places.PlaceDetailView.as_view(), name='place'),
     path('places/<str:place>/works', places.PlaceWorksView.as_view(), name='place_works'),
 
-    path('places/<str:place>/works2', places.PlaceWorksView2.as_view(), name='place_works2'),
     path('places/<str:place>/works/facets', places.PlaceWorksFacetsView.as_view(), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),

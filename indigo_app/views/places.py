@@ -873,7 +873,7 @@ class PlaceWorksView2(PlaceViewBase, ListView):
             .select_related('parent_work', 'metrics') \
             .filter(country=self.country, locality=self.locality) \
             .distinct() \
-            .order_by('-updated_at')
+            .order_by('-created_at')
 
         queryset = self.form.filter_queryset(queryset)
 

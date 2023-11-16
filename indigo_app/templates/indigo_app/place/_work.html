@@ -13,7 +13,7 @@
 
     <div class="float-left flex-fill">
       <div class="d-flex">
-        <div class="col-5">
+        <div class="col-8">
           <div>
             <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
@@ -22,14 +22,17 @@
           <div class="text-muted">{{ work.frbr_uri }}</div>
         </div>
 
-        {# TODO: task, document, annotation counts, metrics? #}
         <div class="col-4">
-        </div>
-
-        <div class="col-3">
-          Created
-          <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
-          by {% user_profile work.created_by_user %}
+          <div>
+            Created
+            <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
+            by {% user_profile work.created_by_user %}
+          </div>
+          <div>
+            Updated
+            <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+            by {% user_profile work.updated_by_user %}
+          </div>
         </div>
       </div>
 

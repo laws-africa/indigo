@@ -1,9 +1,9 @@
 {% load indigo_app humanize i18n %}
 
-<div class="border bg-white p-2 mb-2">
-  <div class="d-flex">
-    <div class="float-left">
-      <a class="text-muted fas fa-caret-right fa-fw collapse-indicator" data-toggle="collapse"
+<div class="border bg-white mb-2 work-list-work">
+  <div class="d-flex p-2">
+    <div class="align-self-center">
+      <a class="text-muted fas fa-fw collapse-indicator collapsed" data-toggle="collapse"
          href="#work-detail-{{ work.pk }}"
          hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
          hx-target="#work-detail-{{ work.pk }}"
@@ -11,11 +11,10 @@
       ></a>
     </div>
 
-    <div class="float-left flex-fill">
+    <div class="flex-fill">
       <div class="d-flex">
-        <div class="col-8">
+        <div class="col-8 pl-0">
           <div>
-            <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
             {% include 'indigo_api/_work_info_badges.html' %}
           </div>
@@ -36,7 +35,7 @@
         </div>
       </div>
 
-      <div class="collapse work-extra-detail mt-2" id="work-detail-{{ work.pk }}">Loading...</div>
     </div>
   </div>
+  <div class="collapse work-extra-detail" id="work-detail-{{ work.pk }}">Loading...</div>
 </div>

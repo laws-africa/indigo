@@ -17,7 +17,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
 
 
 class WorkForm(forms.ModelForm):
@@ -770,3 +770,31 @@ class WorkBulkActionsForm(forms.Form):
         if self.cleaned_data.get('del_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
+
+
+class WorkChooserForm(forms.Form):
+    country = forms.ModelChoiceField(queryset=Country.objects)
+    locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
+    q = forms.CharField(required=False)
+
+    def clean_locality(self):
+        if self.cleaned_data.get('country'):
+            # update the queryset on the locality field for rendering
+            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
+            if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
+                return None
+        else:
+            return None
+        return self.cleaned_data['locality']
+
+    def filter_queryset(self, qs):
+        if self.cleaned_data['country']:
+            qs = qs.filter(country=self.cleaned_data['country'])
+
+        if self.cleaned_data['locality']:
+            qs = qs.filter(locality=self.cleaned_data['locality'])
+
+        if self.cleaned_data['q']:
+            qs = qs.filter(title__icontains=self.cleaned_data['q'])
+
+        return qs

@@ -1,0 +1,74 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-xl">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <form
+          method="get"
+          hx-get="{% url 'place_work_chooser_list' place.place_code %}"
+          hx-trigger="keyup changed from:input delay:0.5s"
+          hx-target=".work-list-table tbody"
+        >
+          <div class="row">
+
+            <div class="col-3">
+              <select
+                class="form-control" name="country" hx-post="{% url 'place_work_chooser' place.place_code %}"
+                hx-target="closest .modal-dialog"
+                hx-swap="outerHTML"
+              >
+                {% for opt in form.country %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-3">
+              <select
+                class="form-control" name="locality" hx-post="{% url 'place_work_chooser' place.place_code %}"
+                hx-target="closest .modal-dialog"
+                hx-swap="outerHTML"
+              >
+                {% for opt in form.locality %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-6">
+              <input type="text" name="q" class="form-control" value="{{ form.q.value|default_if_none:'' }}"
+                     placeholder="{% trans 'Search...'%}" autocomplete="off">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="work-chooser-list scrollable">
+        <table class="table table-sm table-hover work-list-table">
+          <thead>
+            <tr>
+              <th class="year">{% trans 'Year' %}</th>
+              <th class="title">{% trans 'Title' %}</th>
+              <th class="frbr_uri">{% trans 'FRBR URI' %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% include 'indigo_app/place/_work_chooser_list.html' %}
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
+      <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">{% trans 'Cancel' %}</a>
+      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}">
+    </div>
+
+  </div>
+</div>

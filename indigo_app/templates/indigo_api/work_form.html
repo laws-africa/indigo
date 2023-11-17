@@ -435,21 +435,8 @@
     <div class="card mb-3" id="repeal">
       <h5 class="card-header">{% trans 'Repeal' %}</h5>
       <div class="card-body">
-
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label>{% trans 'Repealed by' %}</label>
-            <button class="btn btn-outline-primary change-repeal float-right" type="button">{% trans 'Choose repealing work' %}</button>
-            <div class="work-repeal-view form-text"></div>
-            <input type="hidden" id="{{ form.repealed_by.id_for_label }}" name="{{ form.repealed_by.html_name }}" value="{{ form.repealed_by.value|default:'' }}">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group col-md-4 if-repealed">
-            <label class="required">{% trans 'Repeal date' %}</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
-          </div>
+        <div id="work-form-repeal">
+          {% include 'indigo_api/_work_repeal_form.html' %}
         </div>
       </div>
     </div>

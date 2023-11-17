@@ -32,7 +32,8 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
+    WorkChooserForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
@@ -1121,6 +1122,39 @@ class WorkActionsView(PlaceViewBase, FormView):
             context["works"] = form.cleaned_data.get("works", [])
 
         return context
+
+
+class WorkChooserView(PlaceViewBase, ListView):
+    template_name = 'indigo_app/place/_work_chooser.html'
+    model = Work
+    paginate_by = 25
+
+    http_method_names = ['get', 'post']
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        data = (self.request.POST or self.request.GET).copy()
+        if 'country' not in data:
+            data['country'] = self.country.pk
+            if 'locality' not in data and self.locality:
+                data['locality'] = self.locality.pk
+        self.form = WorkChooserForm(data)
+        self.form.is_valid()
+
+        return self.form.filter_queryset(super().get_queryset())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form"] = self.form
+
+        return context
+
+
+class WorkChooserListView(WorkChooserView):
+    template_name = 'indigo_app/place/_work_chooser_list.html'
 
 
 class WorkDetailView(PlaceViewBase, DetailView):

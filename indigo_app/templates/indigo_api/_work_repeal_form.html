@@ -1,0 +1,39 @@
+{% load i18n %}
+
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <input type="hidden" id="{{ form.repealed_by.id_for_label }}" name="{{ form.repealed_by.html_name }}" value="{{ form.repealed_by.value|default:'' }}">
+    <label>{% trans 'Repealed by' %}</label>
+
+    {% url 'work_edit_repeal' work.frbr_uri as edit_url %}"
+    <button
+      class="btn btn-outline-primary float-right"
+      type="button"
+      hx-get="{% url 'place_work_chooser' place.place_code %}?post={{ edit_url|urlencode }}&target=work-form-repeal"
+      hx-target="#work-repeal-modal"
+      hx-trigger="click"
+      data-toggle="modal"
+      data-target="#work-repeal-modal"
+    >{% trans 'Choose repealing work' %}</button>
+
+    <div
+      id="work-repeal-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">Loading...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+TODO: hide/show this
+<div class="form-row">
+  <div class="form-group col-md-4 if-repealed">
+    <label class="required">{% trans 'Repeal date' %}</label>
+    <input type="text" class="form-control" data-provide="datepicker" id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
+  </div>
+</div>

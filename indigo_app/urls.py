@@ -26,6 +26,8 @@ urlpatterns = [
 
     path('places/<str:place>/works/facets', cache_page(30)(places.PlaceWorksFacetsView.as_view()), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
+    path('places/<str:place>/works/chooser', places.WorkChooserView.as_view(), name='place_work_chooser'),
+    path('places/<str:place>/works/chooser/list', cache_page(30)(places.WorkChooserListView.as_view()), name='place_work_chooser_list'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),
     path('places/<str:place>/works/detail/<int:pk>/documents', places.WorkDocumentsView.as_view(), name='place_works_work_documents'),
     path('places/<str:place>/works/detail/<int:pk>/commencements', places.WorkCommencementsView.as_view(), name='place_works_work_commencements'),
@@ -88,6 +90,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/repeal$', works.EditWorkRepealView.as_view(), name='work_edit_repeal'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/delete$', works.DeleteWorkView.as_view(), name='work_delete'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/$', works.WorkVersionsView.as_view(), name='work_versions'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/tasks/$', works.WorkTasksView.as_view(), name='work_tasks'),

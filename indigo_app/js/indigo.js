@@ -11,6 +11,7 @@ import {
   LaDecorateTerms
 } from '@lawsafrica/law-widgets/dist/components';
 import './compat-imports';
+import { relativeTimestamps } from './timestamps';
 import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 
@@ -48,6 +49,7 @@ class IndigoApp {
       // mount components on new elements
       this.createComponents(e.target);
       this.createVueComponents(e.target);
+      relativeTimestamps(e.target);
     });
   }
 

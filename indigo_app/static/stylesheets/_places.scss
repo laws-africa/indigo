@@ -4,8 +4,18 @@
 }
 
 .work-list-facets {
+  max-height: 100vh;
+  position: sticky;
+  top: 0px;
+  overflow-y: auto;
+
   label {
     font-weight: normal;
+  }
+
+  .list-group-item {
+    max-height: 30vh;
+    overflow-y: auto;
   }
 }
 

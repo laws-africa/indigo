@@ -404,7 +404,6 @@ class WorkFilterForm(forms.Form):
 
     taxonomy_topic = forms.CharField()
 
-
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
@@ -473,7 +472,7 @@ class WorkFilterForm(forms.Form):
         if exclude != "status":
             status_filter = self.cleaned_data.get('status', [])
             status_qs = Q()
-            if  'draft' in status_filter:
+            if 'draft' in status_filter:
                 status_qs |= Q(document__draft=True)
             if 'published' in status_filter:
                 status_qs |= Q(document__draft=False)
@@ -578,12 +577,6 @@ class WorkFilterForm(forms.Form):
                 commencement_qs |= Q(commenced=False)
             if 'date_unknown' in commencement_filter:
                 commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
-            if 'multiple' in commencement_filter:
-                multiple_ids = queryset \
-                    .annotate(Count('commencements')) \
-                    .filter(commencements__count__gt=1) \
-                    .values_list('pk', flat=True)
-                commencement_qs |= Q(id__in=multiple_ids)
 
             # TODO: fix commencement range filter
             if self.cleaned_data.get('commencement') == 'range':

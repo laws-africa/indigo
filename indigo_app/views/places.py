@@ -927,7 +927,6 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             commenced_count=Count("pk", filter=Q(commenced=True), distinct=True),
             not_commenced_count=Count("pk", filter=Q(commenced=False), distinct=True),
             date_unknown_count=Count("pk", filter=Q(commencements__date__isnull=True, commenced=True), distinct=True),
-            multiple_count=Count("pk", filter=Q(pk__in=qs.annotate(Count('commencements')).filter(commencements__count__gt=1).values_list('pk', flat=True)), distinct=True)
         )
         items = [
             FacetItem(
@@ -941,12 +940,6 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "no",
                 counts.get("not_commenced_count", 0),
                 "no" in self.form.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Multiple commencements",
-                "multiple",
-                counts.get("multiple_count", 0),
-                "multiple" in self.form.cleaned_data.get("commencement", [])
             ),
             FacetItem(
                 "Commencement date unknown",

@@ -809,18 +809,20 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = Work.objects.filter(country=self.country, locality=self.locality)
 
         # build facets
-        context["facets"] = facets = []
-        self.facet_principal(facets, qs)
-        self.facet_stub(facets, qs)
-        self.facet_tasks(facets, qs)
-        self.facet_primary(facets, qs)
-        self.facet_commencement(facets, qs)
-        self.facet_amendment(facets, qs)
-        self.facet_consolidation(facets, qs)
-        self.facet_repeal(facets, qs)
-        self.facet_documents(facets, qs)
-        self.facet_status(facets, qs)
-        self.facet_subtype(facets, qs)
+        context["work_facets"] = work_facets = []
+        self.facet_principal(work_facets, qs)
+        self.facet_stub(work_facets, qs)
+        self.facet_tasks(work_facets, qs)
+        self.facet_primary(work_facets, qs)
+        self.facet_commencement(work_facets, qs)
+        self.facet_amendment(work_facets, qs)
+        self.facet_consolidation(work_facets, qs)
+        self.facet_repeal(work_facets, qs)
+        self.facet_status(work_facets, qs)
+        self.facet_subtype(work_facets, qs)
+
+        context["document_facets"] = doc_facets = []
+        self.facet_documents(doc_facets, qs)
 
         return context
 

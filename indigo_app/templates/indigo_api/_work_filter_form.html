@@ -5,7 +5,7 @@
   id="work-filter-form"
   hx-post="{% url 'place_works' place=place.place_code %}"
   hx-target="#work-list"
-  hx-trigger="submit, change from:#work-list target:.work-list-facet, change from:[name=sortby]"
+  hx-trigger="submit, change from:#work-list target:.work-list-facet delay:2s, change from:[name=sortby], "
   hx-indicator="#work-list"
 >
   <div class="d-flex">

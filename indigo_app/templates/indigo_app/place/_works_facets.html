@@ -1,3 +1,9 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div data-vue-component="TaxonomyTOC"></div>
+    {{ taxonomy_toc|json_script:"taxonomy_toc" }}
+  </div>
+</div>
 <ul class="list-group">
   {% for facet in facets %}
     <li class="list-group-item">

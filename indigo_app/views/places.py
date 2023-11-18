@@ -804,6 +804,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['form'] = self.form
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
         qs = Work.objects.filter(country=self.country, locality=self.locality)
 

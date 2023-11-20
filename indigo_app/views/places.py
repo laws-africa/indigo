@@ -810,6 +810,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
         # build facets
         context["work_facets"] = work_facets = []
+        self.facet_subtype(work_facets, qs)
         self.facet_principal(work_facets, qs)
         self.facet_stub(work_facets, qs)
         self.facet_tasks(work_facets, qs)
@@ -818,13 +819,31 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_amendment(work_facets, qs)
         self.facet_consolidation(work_facets, qs)
         self.facet_repeal(work_facets, qs)
-        self.facet_status(work_facets, qs)
-        self.facet_subtype(work_facets, qs)
 
         context["document_facets"] = doc_facets = []
-        self.facet_documents(doc_facets, qs)
+        self.facet_points_in_time(doc_facets, qs)
+        self.facet_point_in_time_status(doc_facets, qs)
 
         return context
+
+    def facet_subtype(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="subtype")
+        # count subtypes by code
+        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        items = [
+            FacetItem(
+                st.name,
+                st.abbreviation,
+                counts.get(st.abbreviation, 0),
+                self.form.cleaned_data.get("subtype") == st.abbreviation
+            )
+            for st in Subtype.objects.all()
+            if counts.get(st.abbreviation)
+        ]
+        items.insert(0, FacetItem(
+            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
+        ))
+        facets.append(Facet("Type", "subtype", "checkbox", items))
 
     def facet_principal(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="principal")
@@ -1019,7 +1038,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
         facets.append(Facet("Repeals", "repeal", "checkbox", items))
 
-    def facet_documents(self, facets, qs):
+    def facet_points_in_time(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="documents")
         items = [
             FacetItem(
@@ -1041,28 +1060,9 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "multiple" in self.form.cleaned_data.get("documents", [])
             ),
         ]
-        facets.append(Facet("Documents", "documents", "checkbox", items))
+        facets.append(Facet("Points in time", "documents", "checkbox", items))
 
-    def facet_subtype(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="subtype")
-        # count subtypes by code
-        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
-        items = [
-            FacetItem(
-                st.name,
-                st.abbreviation,
-                counts.get(st.abbreviation, 0),
-                self.form.cleaned_data.get("subtype") == st.abbreviation
-            )
-            for st in Subtype.objects.all()
-            if counts.get(st.abbreviation)
-        ]
-        items.insert(0, FacetItem(
-            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
-        ))
-        facets.append(Facet("Type", "subtype", "checkbox", items))
-
-    def facet_status(self, facets, qs):
+    def facet_point_in_time_status(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="status")
         counts = qs.aggregate(
             drafts_count=Count("pk", filter=Q(document__draft=True), distinct=True),
@@ -1082,7 +1082,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "published" in self.form.cleaned_data.get("status", [])
             ),
         ]
-        facets.append(Facet("Expression status", "status", "checkbox",  items))
+        facets.append(Facet("Point in time status", "status", "checkbox",  items))
 
 
 class WorkActionsView(PlaceViewBase, FormView):

@@ -9,7 +9,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 
     # homepage
-    path('', RedirectView.as_view(url='/places/', permanent=False)),
+    path('', RedirectView.as_view(url='/places', permanent=False)),
 
     # auth and accounts
     path('accounts/', include('allauth.urls')),

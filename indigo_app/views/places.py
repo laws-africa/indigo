@@ -743,16 +743,14 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context['form'] = self.form
-        # TODO
         works = context["works"]
+        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + (self.request.POST or self.request.GET).urlencode()
         )
-
         return context
 
     def render_to_response(self, context, **response_kwargs):

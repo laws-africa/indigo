@@ -354,8 +354,8 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('temporary', 'Temporary stubs'), ('permanent', 'Permanent stubs'), ('all', 'Everything')])
-    status = forms.ChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+    stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not stub'), ])
+    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -404,7 +404,6 @@ class WorkFilterForm(forms.Form):
 
     taxonomy_topic = forms.CharField()
 
-
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
@@ -424,18 +423,19 @@ class WorkFilterForm(forms.Form):
         return any(is_set(a) for a in self.advanced_filters)
 
     def filter_queryset(self, queryset, exclude=None):
+
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        # if exclude != "stub":
-        #     if not self.cleaned_data.get('stub'):
-        #         queryset = queryset.filter(stub=False)
-        #     elif self.cleaned_data.get('stub') == 'only':
-        #         queryset = queryset.filter(stub=True)
-        #     elif self.cleaned_data.get('stub') == 'temporary':
-        #         queryset = queryset.filter(stub=True, principal=True)
-        #     elif self.cleaned_data.get('stub') == 'permanent':
-        #         queryset = queryset.filter(stub=True, principal=False)
+        if exclude != "stub":
+            stub_filter = self.cleaned_data.get('stub', [])
+            stub_qs = Q()
+            if "stub" in stub_filter:
+                stub_qs |= Q(stub=True)
+            if "not_stub" in stub_filter:
+                stub_qs |= Q(stub=False)
+
+            queryset = queryset.filter(stub_qs)
 
         if exclude != "principal":
             principal_filter = self.cleaned_data.get('principal', [])
@@ -444,10 +444,6 @@ class WorkFilterForm(forms.Form):
                 principal_qs |= Q(principal=True)
             if "not_principal" in principal_filter:
                 principal_qs |= Q(principal=False)
-            if "stub" in principal_filter:
-                principal_qs |= Q(stub=True)
-            if "not_stub" in principal_filter:
-                principal_qs |= Q(stub=False)
 
             queryset = queryset.filter(principal_qs)
 
@@ -468,20 +464,20 @@ class WorkFilterForm(forms.Form):
             primary_qs = Q()
             if "primary" in primary_filter:
                 primary_qs |= Q(parent_work__isnull=True)
-            if "primary_subsidiary" in primary_filter:
-                parent_ids = Work.objects.filter(country=self.country, parent_work__isnull=False).values_list('parent_work_id', flat=True)
-                primary_qs |= Q(id__in=parent_ids)
             if "subsidiary" in primary_filter:
                 primary_qs |= Q(parent_work__isnull=False)
 
             queryset = queryset.filter(primary_qs)
 
         if exclude != "status":
-            if self.cleaned_data.get('status'):
-                if self.cleaned_data['status'] == 'draft':
-                    queryset = queryset.filter(document__draft=True)
-                elif self.cleaned_data['status'] == 'published':
-                    queryset = queryset.filter(document__draft=False)
+            status_filter = self.cleaned_data.get('status', [])
+            status_qs = Q()
+            if 'draft' in status_filter:
+                status_qs |= Q(document__draft=True)
+            if 'published' in status_filter:
+                status_qs |= Q(document__draft=False)
+
+            queryset = queryset.filter(status_qs)
 
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
@@ -581,16 +577,6 @@ class WorkFilterForm(forms.Form):
                 commencement_qs |= Q(commenced=False)
             if 'date_unknown' in commencement_filter:
                 commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
-            if 'partial' in commencement_filter:
-                # ignore uncommenced works, include works that have any uncommenced provisions
-                work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
-                commencement_qs |= Q(pk__in=work_ids)
-            if 'multiple' in commencement_filter:
-                multiple_ids = queryset \
-                    .annotate(Count('commencements')) \
-                    .filter(commencements__count__gt=1) \
-                    .values_list('pk', flat=True)
-                commencement_qs |= Q(id__in=multiple_ids)
 
             # TODO: fix commencement range filter
             if self.cleaned_data.get('commencement') == 'range':

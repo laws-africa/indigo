@@ -1,21 +1,9 @@
-<ul class="list-group">
-  {% for facet in facets %}
-    <li class="list-group-item">
-      <strong>{{ facet.label }}</strong>
-      <div class="facets-scrollable">
-        {% for item in facet.items %}
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="form-check flex-grow-1">
-              <input id="{{ facet.name }}_{{ forloop.counter0 }}" class="form-check-input work-list-facet"
-                     type="{{ facet.type }}" name="{{ facet.name }}" value="{{ item.value }}"
-                     {% if item.selected %}checked{% endif %}
-                     form="work-filter-form">
-              <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">{{ item.label }}</label>
-            </div>
-            <span class="badge bg-light">{{ item.count|default_if_none:'' }}</span>
-          </div>
-        {% endfor %}
-      </div>
-    </li>
-  {% endfor %}
-</ul>
+<div class="card mb-3">
+  <div class="card-body">
+    <div data-vue-component="TaxonomyTOC"></div>
+    {{ taxonomy_toc|json_script:"taxonomy_toc" }}
+  </div>
+</div>
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets %}
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=document_facets %}
+

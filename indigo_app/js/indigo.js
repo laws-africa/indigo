@@ -45,6 +45,12 @@ class IndigoApp {
     document.body.addEventListener('htmx:configRequest', (e) => {
       e.detail.headers['X-CSRFToken'] = window.Indigo.csrfToken;
     });
+    document.body.addEventListener('htmx:beforeRequest', (e) => {
+      window.Indigo.progressView.push();
+    });
+    document.body.addEventListener('htmx:afterRequest', (e) => {
+      window.Indigo.progressView.pop();
+    });
     document.body.addEventListener('htmx:load', (e) => {
       // mount components on new elements
       this.createComponents(e.target);

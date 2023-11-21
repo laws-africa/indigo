@@ -857,7 +857,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "principal" in self.form.cleaned_data.get("principal", [])
             ),
             FacetItem(
-                "Not Principal",
+                "Not principal",
                 "not_principal",
                 counts.get("not_principal_counts", 0),
                 "not_principal" in self.form.cleaned_data.get("principal", [])
@@ -879,7 +879,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "stub" in self.form.cleaned_data.get("stub", [])
             ),
             FacetItem(
-                "Not Stub",
+                "Not a stub",
                 "not_stub",
                 counts.get("not_stub_counts", 0),
                 "not_stub" in self.form.cleaned_data.get("stub", [])
@@ -911,7 +911,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
             ),
             FacetItem(
-                "No open tasks",
+                "Has no open tasks",
                 "no_open_tasks",
                 counts['no_open_states'],
                 "no_open_tasks" in self.form.cleaned_data.get("tasks", [])

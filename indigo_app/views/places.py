@@ -833,13 +833,15 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 st.name,
                 st.abbreviation,
                 counts.get(st.abbreviation, 0),
-                self.form.cleaned_data.get("subtype") == st.abbreviation
+                st.abbreviation in self.form.cleaned_data.get("subtype")
             )
             for st in Subtype.objects.all()
             if counts.get(st.abbreviation)
         ]
+        n_total = len(qs)
+        n_subtypes = sum(counts.values())
         items.insert(0, FacetItem(
-            "Acts only", "", None, not(self.form.cleaned_data.get("subtype"))
+            "Acts only", "acts_only", n_total - n_subtypes, "acts_only" in self.form.cleaned_data.get("subtype")
         ))
         facets.append(Facet("Type", "subtype", "checkbox", items))
 

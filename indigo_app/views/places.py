@@ -833,7 +833,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 st.name,
                 st.abbreviation,
                 counts.get(st.abbreviation, 0),
-                st.abbreviation in self.form.cleaned_data.get("subtype")
+                st.abbreviation in self.form.cleaned_data.get("subtype", [])
             )
             for st in Subtype.objects.all()
             if counts.get(st.abbreviation)

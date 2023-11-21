@@ -1,5 +1,6 @@
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView, TemplateView
+from django.views.decorators.cache import cache_page
 
 from .views import users, works, documents, tasks, places, workflows
 
@@ -8,7 +9,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 
     # homepage
-    path('', RedirectView.as_view(url='/places/', permanent=False)),
+    path('', RedirectView.as_view(url='/places', permanent=False)),
 
     # auth and accounts
     path('accounts/', include('allauth.urls')),
@@ -23,7 +24,7 @@ urlpatterns = [
     path('places/<str:place>', places.PlaceDetailView.as_view(), name='place'),
     path('places/<str:place>/works', places.PlaceWorksView.as_view(), name='place_works'),
 
-    path('places/<str:place>/works/facets', places.PlaceWorksFacetsView.as_view(), name='place_works_facets'),
+    path('places/<str:place>/works/facets', cache_page(30)(places.PlaceWorksFacetsView.as_view()), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),
     path('places/<str:place>/works/detail/<int:pk>/documents', places.WorkDocumentsView.as_view(), name='place_works_work_documents'),

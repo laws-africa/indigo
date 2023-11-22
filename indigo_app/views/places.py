@@ -1152,8 +1152,9 @@ class WorkDetailView(PlaceViewBase, DetailView):
     def get_overview_data(self):
         """ Return overview data for the work as a list of OverviewDataEntry objects"""
         # TODO: are the translations being done correctly here?
+        # TODO: turn this into a form; overview_data will fall away
         def format_date(date_obj):
-            return date_obj.strftime("%-d %B %Y")
+            return date_obj.strftime("%Y-%m-%d")
 
         work = self.object
 

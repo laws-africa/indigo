@@ -1160,31 +1160,31 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         # properties, e.g. Chapter number
         overview_data = [
-            OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
+            OverviewDataEntry(_(prop["label"]), prop["value"]) for prop in work.labeled_properties()
         ]
 
         publication = describe_publication_event(work, friendly_date=False, placeholder=hasattr(work, 'publication_document'))
         if publication:
-            overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
+            overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
 
         if work.assent_date:
-            overview_data.append(OverviewDataEntry(key=_("Assent date"), value=format_date(work.assent_date)))
+            overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
 
         as_at_date = work.as_at_date()
         if as_at_date:
-            overview_data.append(OverviewDataEntry(key=_("As-at date"), value=format_date(as_at_date),
+            overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
                                                    overridden=work.as_at_date_override))
 
         for consolidation in work.arbitrary_expression_dates.all():
-            overview_data.append(OverviewDataEntry(key=_("Consolidation date"), value=format_date(consolidation.date)))
+            overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
 
         consolidation_note = work.consolidation_note()
         if consolidation_note:
-            overview_data.append(OverviewDataEntry(key=_("Consolidation note"), value=_(consolidation_note),
+            overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
                                                    overridden=work.consolidation_note_override))
 
         if work.disclaimer:
-            overview_data.append(OverviewDataEntry(key=_("Disclaimer"), value=_(work.disclaimer)))
+            overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
 
         return overview_data
 

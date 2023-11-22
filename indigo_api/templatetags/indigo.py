@@ -2,8 +2,6 @@ from copy import deepcopy
 
 from django import template
 from django.conf import settings
-from django.utils.formats import date_format
-from django.utils.translation import ugettext as _
 
 from indigo.plugins import plugins
 from indigo_api.timeline import describe_publication_event
@@ -55,32 +53,6 @@ def publication_document_description(work, placeholder=False, internal=False):
     event = describe_publication_event(work, with_date=True, friendly_date=not internal, placeholder=placeholder)
     if event:
         return event.description
-
-
-@register.simple_tag
-def work_as_at_date(work):
-    # TODO: update work.as_at_date() and get rid of this
-    """ Return either:
-        - the as-at date override on this work, or
-        - the work's latest expression's date, or
-        - the as-at date for the work's place, if it's after the work's latest expression, or
-        - None
-    """
-    as_at_date = work.as_at_date_override
-    if not as_at_date:
-        expressions = work.expressions()
-        as_at_date = max([d.expression_date for d in expressions]) if expressions else as_at_date
-        place_date = work.place.settings.as_at_date
-
-        # no latest expression -- fall back to the place's date (can be None)
-        if not as_at_date:
-            as_at_date = place_date
-
-        # only use the place's date if it's later than the latest expression's
-        elif place_date and place_date > as_at_date:
-            as_at_date = place_date
-
-    return as_at_date
 
 
 @register.simple_tag

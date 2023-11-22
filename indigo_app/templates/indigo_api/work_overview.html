@@ -83,18 +83,19 @@
                       {% endwith %}
                     </dd>
 
-                    {% work_as_at_date work as as_at_date %}
-                    {% if as_at_date %}
-                      <dt>
-                        {% trans 'Up to date as at' %}
-                        {% if work.as_at_date_override %}
-                          {% include 'indigo_app/place/_overridden.html' %}
-                        {% endif %}
-                      </dt>
-                      <dd>
-                        {{ work.as_at_date|date:'Y-m-d' }}
-                      </dd>
-                    {% endif %}
+                    {% with work.as_at_date as as_at_date %}
+                      {% if as_at_date %}
+                        <dt>
+                          {% trans 'Up to date as at' %}
+                          {% if work.as_at_date_override %}
+                            {% include 'indigo_app/place/_overridden.html' %}
+                          {% endif %}
+                        </dt>
+                        <dd>
+                          {{ work.as_at_date|date:'Y-m-d' }}
+                        </dd>
+                      {% endif %}
+                    {% endwith %}
 
                     {% with work.taxonomy_topics.all as topics %}
                       {% if topics %}

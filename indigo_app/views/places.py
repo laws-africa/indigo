@@ -1152,59 +1152,41 @@ class WorkDetailView(PlaceViewBase, DetailView):
     def get_overview_data(self):
         """ Return overview data for the work as a list of OverviewDataEntry objects"""
         # TODO: are the translations being done correctly here?
+        # TODO: turn this into a form; overview_data will fall away
         def format_date(date_obj):
-            return date_obj.strftime("%-d %B %Y")
+            return date_obj.strftime("%Y-%m-%d")
 
         work = self.object
 
         # properties, e.g. Chapter number
         overview_data = [
-            OverviewDataEntry(key=_(prop["label"]), value=prop["value"]) for prop in work.labeled_properties()
+            OverviewDataEntry(_(prop["label"]), prop["value"]) for prop in work.labeled_properties()
         ]
 
-        publication = describe_publication_event(work, placeholder=hasattr(work, 'publication_document'))
+        publication = describe_publication_event(work, friendly_date=False, placeholder=hasattr(work, 'publication_document'))
         if publication:
-            overview_data.append(OverviewDataEntry(key=_("Publication"), value=_(publication.description)))
+            overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
 
         if work.assent_date:
-            overview_data.append(OverviewDataEntry(key=_("Assent date"), value=format_date(work.assent_date)))
+            overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
 
-        as_at_date = self.get_as_at_date()
+        as_at_date = work.as_at_date()
         if as_at_date:
-            overview_data.append(OverviewDataEntry(key=_("As-at date"), value=format_date(as_at_date),
+            overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
                                                    overridden=work.as_at_date_override))
 
         for consolidation in work.arbitrary_expression_dates.all():
-            overview_data.append(OverviewDataEntry(key=_("Consolidation date"), value=format_date(consolidation.date)))
+            overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
 
         consolidation_note = work.consolidation_note()
         if consolidation_note:
-            overview_data.append(OverviewDataEntry(key=_("Consolidation note"), value=_(consolidation_note),
+            overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
                                                    overridden=work.consolidation_note_override))
 
         if work.disclaimer:
-            overview_data.append(OverviewDataEntry(key=_("Disclaimer"), value=_(work.disclaimer)))
+            overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
 
         return overview_data
-
-    def get_as_at_date(self):
-        # TODO: update work.as_at_date() and use that here instead
-        work = self.object
-        as_at_date = work.as_at_date_override
-        if not as_at_date:
-            expressions = work.expressions()
-            as_at_date = max([d.expression_date for d in expressions]) if expressions else as_at_date
-            place_date = work.place.settings.as_at_date
-
-            # no latest expression -- fall back to the place's date (can be None)
-            if not as_at_date:
-                as_at_date = place_date
-
-            # only use the place's date if it's later than the latest expression's
-            elif place_date and place_date > as_at_date:
-                as_at_date = place_date
-
-        return as_at_date
 
 
 class WorkDocumentsView(PlaceViewBase, DetailView):

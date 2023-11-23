@@ -1039,19 +1039,19 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="documents")
         items = [
             FacetItem(
-                "Has no documents",
+                "Has no points in time",
                 "none",
                 qs.annotate(Count('document')).filter(document__isnull=True).count(),
                 "none" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
-                "Has one document",
+                "Has one point in time",
                 "one",
                 qs.annotate(Count('document')).filter(document__count=1).count(),
                 "one" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
-                "Has multiple documents",
+                "Has multiple points in time",
                 "multiple",
                 qs.annotate(Count('document')).filter(document__count__gt=1).count(),
                 "multiple" in self.form.cleaned_data.get("documents", [])

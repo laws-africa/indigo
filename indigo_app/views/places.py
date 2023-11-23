@@ -1037,23 +1037,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
     def facet_points_in_time(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="documents")
+        no_document_ids = qs.filter(document__isnull=True).values_list('pk', flat=True)
+        deleted_document_ids = qs.filter(document__deleted=True).values_list('pk', flat=True)
+        undeleted_document_ids = qs.filter(document__deleted=False).values_list('pk', flat=True)
+        all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
+        no_document_ids = list(no_document_ids) + list(all_deleted_document_ids)
         items = [
             FacetItem(
                 "Has no points in time",
                 "none",
-                qs.annotate(Count('document')).filter(document__isnull=True).count(),
+                qs.annotate(Count('document')).filter(id__in=no_document_ids).count(),
                 "none" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
                 "Has one point in time",
                 "one",
-                qs.annotate(Count('document')).filter(document__count=1).count(),
+                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).count(),
                 "one" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
                 "Has multiple points in time",
                 "multiple",
-                qs.annotate(Count('document')).filter(document__count__gt=1).count(),
+                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).count(),
                 "multiple" in self.form.cleaned_data.get("documents", [])
             ),
         ]

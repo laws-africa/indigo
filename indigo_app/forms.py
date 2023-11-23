@@ -534,6 +534,9 @@ class WorkFilterForm(forms.Form):
                 commencement_qs |= Q(commenced=False)
             if 'date_unknown' in commencement_filter:
                 commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
+            if 'multiple' in commencement_filter:
+                queryset = queryset.annotate(Count("commencements"))
+                commencement_qs |= Q(commencements__count__gt=1)
 
             queryset = queryset.filter(commencement_qs)
 

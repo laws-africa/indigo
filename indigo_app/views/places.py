@@ -947,6 +947,8 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             not_commenced_count=Count("pk", filter=Q(commenced=False), distinct=True),
             date_unknown_count=Count("pk", filter=Q(commencements__date__isnull=True, commenced=True), distinct=True),
         )
+        qs = qs.annotate(Count("commencements"))
+        counts['multipe_count'] = qs.filter(commencements__count__gt=1).count()
         items = [
             FacetItem(
                 "Commenced",
@@ -965,6 +967,12 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 "date_unknown",
                 counts.get("date_unknown_count", 0),
                 "date_unknown" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Multiple commencements",
+                "multiple",
+                counts.get("multipe_count", 0),
+                "multiple" in self.form.cleaned_data.get("commencement", [])
             ),
         ]
         facets.append(Facet("Commencements", "commencement", "checkbox", items))

@@ -388,7 +388,11 @@ class WorkFilterForm(forms.Form):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
-        self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=[('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
+        doctypes = [(d[1].lower(), d[0]) for d in
+                    settings.INDIGO['DOCTYPES'] +
+                    settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
+        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
@@ -456,16 +460,16 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
 
-        # filter by subtype indicated on frbr_uri
-        # subtype
+        # doctype, subtype
         if exclude != "subtype":
             subtype_filter = self.cleaned_data.get("subtype", [])
             subtype_qs = Q()
+            subtypes = [s.abbreviation for s in Subtype.objects.all()]
             for subtype in subtype_filter:
-                if subtype == "acts_only":
-                   subtype_qs |= Q(frbr_uri__regex=r".\/act\/\d{4}\/\w+")
+                if subtype in subtypes:
+                    subtype_qs |= Q(subtype=subtype)
                 else:
-                    subtype_qs |= Q(frbr_uri__contains='/act/%s/' % subtype)
+                    subtype_qs |= Q(doctype=subtype, subtype=None)
 
             queryset = queryset.filter(subtype_qs)
 

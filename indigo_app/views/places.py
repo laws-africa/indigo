@@ -826,23 +826,20 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
 
     def facet_subtype(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="subtype")
-        # count subtypes by code
-        counts = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        # count doctypes, subtypes by code
+        counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
+        counts_subtype = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts.update(counts_subtype)
         items = [
             FacetItem(
-                st.name,
-                st.abbreviation,
-                counts.get(st.abbreviation, 0),
-                st.abbreviation in self.form.cleaned_data.get("subtype", [])
+                c[1],
+                c[0],
+                counts.get(c[0], 0),
+                c[0] in self.form.cleaned_data.get("subtype", [])
             )
-            for st in Subtype.objects.all()
-            if counts.get(st.abbreviation)
+            for c in self.form.fields["subtype"].choices
+            if counts.get(c[0])
         ]
-        n_total = len(qs)
-        n_subtypes = sum(counts.values())
-        items.insert(0, FacetItem(
-            "Acts only", "acts_only", n_total - n_subtypes, "acts_only" in self.form.cleaned_data.get("subtype")
-        ))
         facets.append(Facet("Type", "subtype", "checkbox", items))
 
     def facet_principal(self, facets, qs):

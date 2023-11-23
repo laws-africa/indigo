@@ -1039,19 +1039,19 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="documents")
         items = [
             FacetItem(
-                "Has no documents",
+                "Has no points in time",
                 "none",
                 qs.annotate(Count('document')).filter(document__isnull=True).count(),
                 "none" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
-                "Has one document",
+                "Has one point in time",
                 "one",
                 qs.annotate(Count('document')).filter(document__count=1).count(),
                 "one" in self.form.cleaned_data.get("documents", [])
             ),
             FacetItem(
-                "Has multiple documents",
+                "Has multiple points in time",
                 "multiple",
                 qs.annotate(Count('document')).filter(document__count__gt=1).count(),
                 "multiple" in self.form.cleaned_data.get("documents", [])
@@ -1193,7 +1193,7 @@ class WorkDocumentsView(PlaceViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('expression_date', 'language')
+        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('-expression_date', 'language')
 
         return context
 

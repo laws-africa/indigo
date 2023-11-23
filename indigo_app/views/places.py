@@ -1193,7 +1193,7 @@ class WorkDocumentsView(PlaceViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('expression_date', 'language')
+        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('-expression_date', 'language')
 
         return context
 

@@ -558,17 +558,17 @@ class WorkFilterForm(forms.Form):
             documents_filter = self.cleaned_data.get('documents', [])
             documents_qs = Q()
             if 'one' in documents_filter:
-                one_document_ids = queryset.annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)
+                one_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)
                 documents_qs |= Q(id__in=one_document_ids)
             if 'multiple' in documents_filter:
-                multiple_document_ids = queryset.annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)
+                multiple_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)
                 documents_qs |= Q(id__in=multiple_document_ids)
             if 'none' in documents_filter:
+                # either there are no documents at all
                 documents_qs |= Q(document__isnull=True)
-            if 'published' in documents_filter:
-                documents_qs |= Q(document__draft=False)
-            if 'draft' in documents_filter:
-                documents_qs |= Q(document__draft=True)
+                # or they're all deleted
+                all_deleted_document_ids = queryset.filter(document__deleted=True).annotate(Count('document')).filter(document__count=0).values_list('pk', flat=True)
+                documents_qs |= Q(id__in=all_deleted_document_ids)
 
             queryset = queryset.filter(documents_qs)
 

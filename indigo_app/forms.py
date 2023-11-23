@@ -567,7 +567,9 @@ class WorkFilterForm(forms.Form):
                 # either there are no documents at all
                 documents_qs |= Q(document__isnull=True)
                 # or they're all deleted
-                all_deleted_document_ids = queryset.filter(document__deleted=True).annotate(Count('document')).filter(document__count=0).values_list('pk', flat=True)
+                deleted_document_ids = queryset.filter(document__deleted=True).values_list('pk', flat=True)
+                undeleted_document_ids = queryset.filter(document__deleted=False).values_list('pk', flat=True)
+                all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
                 documents_qs |= Q(id__in=all_deleted_document_ids)
 
             queryset = queryset.filter(documents_qs)

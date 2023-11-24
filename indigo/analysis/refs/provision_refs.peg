@@ -104,7 +104,8 @@ grammar ProvisionRefs
   or_af       <- or_en # `of`
 
                  # note that "tot" must come before "to" because the latter is a substring of the former
-  to          <- to_af / to_en
+  to          <- dash / to_af / to_en
+  dash        <- `-` / `–` / `—`
   to_en       <- `to`
   to_af       <- `tot`
 

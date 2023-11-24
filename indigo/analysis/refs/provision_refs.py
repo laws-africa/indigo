@@ -2109,13 +2109,71 @@ class Grammar(object):
             self._offset = cached[1]
             return cached[0]
         index1 = self._offset
-        address0 = self._read_to_af()
+        address0 = self._read_dash()
         if address0 is FAILURE:
             self._offset = index1
-            address0 = self._read_to_en()
+            address0 = self._read_to_af()
             if address0 is FAILURE:
                 self._offset = index1
+                address0 = self._read_to_en()
+                if address0 is FAILURE:
+                    self._offset = index1
         self._cache['to'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_dash(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['dash'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        chunk0, max0 = None, self._offset + 1
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == '-'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+            self._offset = self._offset + 1
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::dash', '`-`'))
+        if address0 is FAILURE:
+            self._offset = index1
+            chunk1, max1 = None, self._offset + 1
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == '–'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+                self._offset = self._offset + 1
+            else:
+                address0 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('ProvisionRefs::dash', '`–`'))
+            if address0 is FAILURE:
+                self._offset = index1
+                chunk2, max2 = None, self._offset + 1
+                if max2 <= self._input_size:
+                    chunk2 = self._input[self._offset:max2]
+                if chunk2 is not None and chunk2.lower() == '—'.lower():
+                    address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+                    self._offset = self._offset + 1
+                else:
+                    address0 = FAILURE
+                    if self._offset > self._failure:
+                        self._failure = self._offset
+                        self._expected = []
+                    if self._offset == self._failure:
+                        self._expected.append(('ProvisionRefs::dash', '`—`'))
+                if address0 is FAILURE:
+                    self._offset = index1
+        self._cache['dash'][index0] = (address0, self._offset)
         return address0
 
     def _read_to_en(self):

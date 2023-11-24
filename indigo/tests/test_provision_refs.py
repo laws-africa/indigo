@@ -1443,7 +1443,7 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertIsNone(result.target)
 
     def test_range(self):
-        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g) - (j)")
+        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g)- (j)")
         self.assertEqual([
             MainProvisionRef(
                 'Section',
@@ -1454,7 +1454,43 @@ class ProvisionRefsGrammarTest(TestCase):
                                  ProvisionRef('(ii)', 23, 27, 'and_or'),
                                  ProvisionRef('(iii)', 30, 35, 'range'),
                                  ProvisionRef('(g)', 37, 40, 'and_or'),
-                                 ProvisionRef('(j)', 43, 46, 'range')
+                                 ProvisionRef('(j)', 42, 45, 'range')
+                             ]
+            )
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_range_space_before(self):
+        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g) -(j)")
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('1.2', 8, 11, None,
+                             ProvisionRef('(1)', 11, 14)),
+                             [
+                                 ProvisionRef('(3)', 18, 21, 'range'),
+                                 ProvisionRef('(ii)', 23, 27, 'and_or'),
+                                 ProvisionRef('(iii)', 30, 35, 'range'),
+                                 ProvisionRef('(g)', 37, 40, 'and_or'),
+                                 ProvisionRef('(j)', 42, 45, 'range')
+                             ]
+            )
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_range_no_spaces(self):
+        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g)-(j)")
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('1.2', 8, 11, None,
+                             ProvisionRef('(1)', 11, 14)),
+                             [
+                                 ProvisionRef('(3)', 18, 21, 'range'),
+                                 ProvisionRef('(ii)', 23, 27, 'and_or'),
+                                 ProvisionRef('(iii)', 30, 35, 'range'),
+                                 ProvisionRef('(g)', 37, 40, 'and_or'),
+                                 ProvisionRef('(j)', 41, 44, 'range')
                              ]
             )
         ], result.references)

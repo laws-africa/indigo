@@ -1454,7 +1454,7 @@ class ProvisionRefsGrammarTest(TestCase):
                                  ProvisionRef('(ii)', 23, 27, 'and_or'),
                                  ProvisionRef('(iii)', 30, 35, 'range'),
                                  ProvisionRef('(g)', 37, 40, 'and_or'),
-                                 ProvisionRef('(j)', 43, 46, 'range')
+                                 ProvisionRef('(j)', 42, 45, 'range')
                              ]
             )
         ], result.references)

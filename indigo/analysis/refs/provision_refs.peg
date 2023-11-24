@@ -41,7 +41,7 @@ grammar ProvisionRefs
 
                  # (a) to (b)
                  # (a), to (b)
-  range       <- (WS* comma)? WS+ to WS+ %range
+  range       <- (WS* comma)? to %range
 
                  # (a) and (b)
                  # (a), or (b)
@@ -104,7 +104,8 @@ grammar ProvisionRefs
   or_af       <- or_en # `of`
 
                  # note that "tot" must come before "to" because the latter is a substring of the former
-  to          <- dash / to_af / to_en
+                 # whitespace is required around 'to' word, optional around dashes
+  to          <- WS* dash WS* / WS+ to_af WS+ / WS+ to_en WS+
   dash        <- `-` / `–` / `—`
   to_en       <- `to`
   to_af       <- `tot`

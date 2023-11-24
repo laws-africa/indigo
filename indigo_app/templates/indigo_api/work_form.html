@@ -118,18 +118,8 @@
           </div>
 
           <div class="form-group col-md-6">
-            <button class="btn btn-outline-primary choose-parent float-right" type="button">{% trans 'Choose primary work' %}</button>
-            <label>Primary work</label>
-            <p class="form-text text-muted">
-              {% trans 'The primary work for regulations and notices is the primary Act.' %}
-            </p>
-            <input type="hidden" id="{{ form.parent_work.id_for_label }}" name="{{ form.parent_work.html_name }}" value="{{ form.parent_work.value|default:'' }}">
-            <div id="work_parent_work" class="form-text" style="display: none">
-              <a class="work_parent_title"></a>
-              <br>
-              <span class="work_parent_uri"></span>
-              <br>
-              <a href="#" class="delete-parent">{% trans 'remove' %}</a>
+            <div id="work-form-parent">
+              {% include 'indigo_api/_work_parent_form.html' %}
             </div>
           </div>
         </div>

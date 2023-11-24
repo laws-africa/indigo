@@ -1033,3 +1033,24 @@ class EditWorkRepealView(WorkViewBase, DetailView):
         return context
 
 
+class EditWorkParentView(WorkViewBase, DetailView):
+    """Just the parent part of the work form to re-render the form when the user changes the parent work through HTMX.
+    """
+    template_name = 'indigo_api/_work_parent_form.html'
+
+    class WorkParentForm(forms.ModelForm):
+        class Meta:
+            model = Work
+            fields = ('parent_work',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # update the object with the submitted form data, without saving the changes
+        context["form"] = form = self.WorkParentForm(self.request.GET, instance=self.object)
+        form.is_valid()
+        context["work"] = self.object
+
+        return context
+
+

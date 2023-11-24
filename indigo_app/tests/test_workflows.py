@@ -24,7 +24,7 @@ class WorkflowsTest(WebTest):
         self.assertEqual(workflow.title, "test title")
         self.assertEqual(workflow.description, "test description")
 
-        response = self.app.get('/places/za/projects/')
+        response = self.app.get('/places/za/projects')
         self.assertEqual(response.status_code, 200)
         self.assertIn('test title', response.text)
 
@@ -45,7 +45,7 @@ class WorkflowsTest(WebTest):
         self.assertEqual(workflow.title, "updated title")
         self.assertEqual(workflow.description, "updated description")
 
-        response = self.app.get('/places/za/projects/')
+        response = self.app.get('/places/za/projects')
         self.assertEqual(response.status_code, 200)
         self.assertIn('updated title', response.text)
 

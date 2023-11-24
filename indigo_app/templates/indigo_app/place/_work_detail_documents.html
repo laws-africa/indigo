@@ -1,0 +1,28 @@
+{% load indigo_app humanize i18n %}
+
+{% for doc in documents %}
+  <div class="d-flex">
+    <div class="col-2">
+      <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
+    </div>
+
+    <div class="col-4">
+      {% if doc.draft %}
+        <i class="fas fa-fw fa-circle draft" title="{% trans "draft" %}"></i>
+      {% else %}
+        <i class="fas fa-fw fa-circle published" title="{% trans "published" %}"></i>
+      {% endif %}
+      {{ doc.title }}
+    </div>
+
+    {# TODO: task, annotation counts? #}
+    <div class="col-2">
+    </div>
+
+    <div class="col-4">
+      Updated
+      <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
+      by {% user_profile doc.updated_by_user %}
+    </div>
+  </div>
+{% endfor %}

@@ -14,11 +14,7 @@
 
   <h3>
     {{ work.title }}
-    {% if work.stub %}<span class="badge badge-info">{% trans 'stub' %}</span>{% endif %}
-    {% if work.repealed_date %} <span class="badge badge-info">{% trans 'repealed' %}</span> {% endif %}
-    {% if not work.commenced %} <span class="badge badge-info">{% trans 'not commenced' %}</span>
-    {% elif not work.commencement_date %} <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
-    {% endif %}
+    {% include 'indigo_api/_work_info_badges.html' %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
@@ -87,15 +83,19 @@
                       {% endwith %}
                     </dd>
 
-                    <dt>{% trans 'Up to date as at' %}</dt>
-                    <dd>
-                      {{ work.as_at_date|date:'Y-m-d' }}
-                      {% if work.as_at_date_override %}
-                        <span class="text-muted" title="{% trans 'Set explicitly on this work' %}">
-                          <i class="fa fa-info-circle"></i> {% trans 'Overridden' %}
-                        </span>
+                    {% with work.as_at_date as as_at_date %}
+                      {% if as_at_date %}
+                        <dt>
+                          {% trans 'Up to date as at' %}
+                          {% if work.as_at_date_override %}
+                            {% include 'indigo_app/place/_overridden.html' %}
+                          {% endif %}
+                        </dt>
+                        <dd>
+                          {{ work.as_at_date|date:'Y-m-d' }}
+                        </dd>
                       {% endif %}
-                    </dd>
+                    {% endwith %}
 
                     {% with work.taxonomy_topics.all as topics %}
                       {% if topics %}
@@ -171,9 +171,7 @@
                       <dt>
                         {% trans 'Consolidation note' %}
                         {% if work.consolidation_note_override %}
-                          <span class="text-muted" title="{% trans 'Set explicitly on this work' %}">
-                            <i class="fa fa-info-circle"></i> {% trans 'Overridden' %}
-                          </span>
+                          {% include 'indigo_app/place/_overridden.html' %}
                         {% endif %}
                       </dt>
                       <dd>

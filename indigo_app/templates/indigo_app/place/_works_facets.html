@@ -1,0 +1,9 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div data-vue-component="TaxonomyTOC"></div>
+    {{ taxonomy_toc|json_script:"taxonomy_toc" }}
+  </div>
+</div>
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets %}
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=document_facets %}
+

@@ -354,46 +354,45 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('temporary', 'Temporary stubs'), ('permanent', 'Permanent stubs'), ('all', 'Everything')])
-    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')], initial=['published', 'draft'])
-    sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
-    # assent date filter
-    assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
+
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # publication date filter
-    publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'No publication date'), ('yes', 'Published'), ('range', 'Published between...')])
+
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # amendment date filter
-    amendment = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended'), ('range', 'Amended between...')])
+
+    amendment = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended')])
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements'), ('range', 'Commenced between...')])
+    
+    commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # repealed work filter
-    repeal = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed'), ('range', 'Repealed between...')])
+
+    repeal = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed')])
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # primary work filter
-    primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
-    completeness = forms.ChoiceField(choices=[('', 'Complete and incomplete works'), ('complete', 'Complete works only'), ('incomplete', 'Incomplete works only')])
-    taxonomies = forms.ModelMultipleChoiceField(
-        queryset=VocabularyTopic.objects
-            .select_related('vocabulary')
-            .order_by('vocabulary__title', 'level_1', 'level_2'))
 
-    advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'primary_subsidiary', 'taxonomies', 'completeness', 'status']
-
+    stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
+    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+    sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
+    principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
+    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('no_open_tasks', 'Has no open tasks')])
+    primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])
+    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No Consolidation')])
+    documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
     taxonomy_topic = forms.CharField()
+
+    advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
-        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All types'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
+        doctypes = [(d[1].lower(), d[0]) for d in
+                    settings.INDIGO['DOCTYPES'] +
+                    settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
+        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
@@ -408,90 +407,115 @@ class WorkFilterForm(forms.Form):
 
         return any(is_set(a) for a in self.advanced_filters)
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, exclude=None):
+
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if not self.cleaned_data.get('stub'):
-            queryset = queryset.filter(stub=False)
-        elif self.cleaned_data.get('stub') == 'only':
-            queryset = queryset.filter(stub=True)
-        elif self.cleaned_data.get('stub') == 'temporary':
-            queryset = queryset.filter(stub=True, principal=True)
-        elif self.cleaned_data.get('stub') == 'permanent':
-            queryset = queryset.filter(stub=True, principal=False)
+        # filter by stub
+        if exclude != "stub":
+            stub_filter = self.cleaned_data.get('stub', [])
+            stub_qs = Q()
+            if "stub" in stub_filter:
+                stub_qs |= Q(stub=True)
+            if "not_stub" in stub_filter:
+                stub_qs |= Q(stub=False)
 
-        if self.cleaned_data.get('status'):
-            if self.cleaned_data['status'] == ['draft']:
-                queryset = queryset.filter(document__draft=True)            
-            elif self.cleaned_data['status'] == ['published']:
-                queryset = queryset.filter(document__draft=False)
+            queryset = queryset.filter(stub_qs)
 
+        # filter by principal
+        if exclude != "principal":
+            principal_filter = self.cleaned_data.get('principal', [])
+            principal_qs = Q()
+            if "principal" in principal_filter:
+                principal_qs |= Q(principal=True)
+            if "not_principal" in principal_filter:
+                principal_qs |= Q(principal=False)
+
+            queryset = queryset.filter(principal_qs)
+
+        # filter by tasks status
+        if exclude != "tasks":
+            tasks_filter = self.cleaned_data.get('tasks', [])
+            tasks_qs = Q()
+            if "has_open_tasks" in tasks_filter:
+                tasks_qs |= Q(tasks__state__in=Task.OPEN_STATES)
+            if "no_open_tasks" in tasks_filter:
+                tasks_qs |= ~Q(tasks__state__in=Task.OPEN_STATES)
+
+            queryset = queryset.filter(tasks_qs)
+
+        # filter by primary or subsidiary work
+        if exclude != "primary":
+            primary_filter = self.cleaned_data.get('primary', [])
+            primary_qs = Q()
+            if "primary" in primary_filter:
+                primary_qs |= Q(parent_work__isnull=True)
+            if "subsidiary" in primary_filter:
+                primary_qs |= Q(parent_work__isnull=False)
+
+            queryset = queryset.filter(primary_qs)
+
+        # sort by
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
-        
-        # filter by subtype indicated on frbr_uri
-        if self.cleaned_data.get('subtype'):
-            if self.cleaned_data['subtype'] == 'acts_only':
-                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d{4}\/\w+')
-            else:
-                queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 
-        if self.cleaned_data.get('taxonomies'):
-            queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
+        # doctype, subtype
+        if exclude != "subtype":
+            subtype_filter = self.cleaned_data.get("subtype", [])
+            subtype_qs = Q()
+            subtypes = [s.abbreviation for s in Subtype.objects.all()]
+            for subtype in subtype_filter:
+                if subtype in subtypes:
+                    subtype_qs |= Q(subtype=subtype)
+                else:
+                    subtype_qs |= Q(doctype=subtype, subtype=None)
 
-        # Advanced filters
+            queryset = queryset.filter(subtype_qs)
 
         # filter by assent date range
-        if self.cleaned_data.get('assent') == 'yes':
-            queryset = queryset.filter(assent_date__isnull=False)
-        elif self.cleaned_data.get('assent') == 'no':
-            queryset = queryset.filter(assent_date__isnull=True)
-        elif self.cleaned_data.get('assent') == 'range':
-            if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
-                start_date = self.cleaned_data['assent_date_start']
-                end_date = self.cleaned_data['assent_date_end']
-                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
+        if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
+            start_date = self.cleaned_data['assent_date_start']
+            end_date = self.cleaned_data['assent_date_end']
+            queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
-        # filter by publication date range
-        if self.cleaned_data.get('publication') == 'yes':
-            queryset = queryset.filter(publication_date__isnull=False)
-        elif self.cleaned_data.get('publication') == 'no':
-            queryset = queryset.filter(publication_date__isnull=True)
-        elif self.cleaned_data.get('publication') == 'range':
-            if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
-                start_date = self.cleaned_data['publication_date_start']
-                end_date = self.cleaned_data['publication_date_end']
-                queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
+        # filter by publication date
+        if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
+            start_date = self.cleaned_data['publication_date_start']
+            end_date = self.cleaned_data['publication_date_end']
+            queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
 
-        # filter by repeal date
-        if self.cleaned_data.get('repeal') == 'yes':
-            queryset = queryset.filter(repealed_date__isnull=False)
-        elif self.cleaned_data.get('repeal') == 'no':
-            queryset = queryset.filter(repealed_date__isnull=True)
-        elif self.cleaned_data.get('repeal') == 'range':
-            if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
-                start_date = self.cleaned_data['repealed_date_start']
-                end_date = self.cleaned_data['repealed_date_end']
-                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
+        # filter by repeal
+        if exclude != "repeal":
+            repeal_filter = self.cleaned_data.get('repeal', [])
+            repeal_qs = Q()
+            if "yes" in repeal_filter:
+                repeal_qs |= Q(repealed_date__isnull=False)
+            if "no" in repeal_filter:
+                repeal_qs |= Q(repealed_date__isnull=True)
 
-        # filter by amendment date
-        if self.cleaned_data.get('amendment') == 'yes':
-            queryset = queryset.filter(amendments__date__isnull=False)
-        elif self.cleaned_data.get('amendment') == 'no':
-            queryset = queryset.filter(amendments__date__isnull=True)
-        elif self.cleaned_data.get('amendment') == 'range':
-            if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
-                start_date = self.cleaned_data['amendment_date_start']
-                end_date = self.cleaned_data['amendment_date_end']
-                queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
+            queryset = queryset.filter(repeal_qs)
 
-        # filter by primary work
-        if self.cleaned_data.get('primary_subsidiary'):
-            if self.cleaned_data['primary_subsidiary'] == 'primary':
-                queryset = queryset.filter(parent_work__isnull=True)
-            elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
-                queryset = queryset.filter(parent_work__isnull=False)
+        if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
+            start_date = self.cleaned_data['repealed_date_start']
+            end_date = self.cleaned_data['repealed_date_end']
+            queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
+
+        # filter by amendment
+        if exclude != "amendment":
+            amendment_filter = self.cleaned_data.get('amendment', [])
+            amendment_qs = Q()
+            if "yes" in amendment_filter:
+                amendment_qs |= Q(amendments__date__isnull=False)
+            if 'no' in amendment_filter:
+                amendment_qs |= Q(amendments__date__isnull=True)
+
+            queryset = queryset.filter(amendment_qs)
+        
+        if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
+            start_date = self.cleaned_data['amendment_date_start']
+            end_date = self.cleaned_data['amendment_date_end']
+            queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
         # filter by work completeness
         if self.cleaned_data.get('completeness'):
@@ -500,27 +524,71 @@ class WorkFilterForm(forms.Form):
             elif self.cleaned_data['completeness'] == 'incomplete':
                 queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
 
-        # filter by commencement status (last because expensive)
-        if self.cleaned_data.get('commencement') == 'yes':
-            queryset = queryset.filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'no':
-            queryset = queryset.filter(commenced=False)
-        elif self.cleaned_data.get('commencement') == 'date_unknown':
-            queryset = queryset.filter(commencements__main=True, commencements__date__isnull=True).filter(commenced=True)
-        elif self.cleaned_data.get('commencement') == 'partial':
-            # ignore uncommenced works, include works that have any uncommenced provisions
-            work_ids = [w.pk for w in queryset if w.commencements.exists() and w.all_uncommenced_provision_ids()]
-            queryset = queryset.filter(pk__in=work_ids)
-        elif self.cleaned_data.get('commencement') == 'multiple':
-            queryset = queryset \
-                .annotate(Count('commencements')) \
-                .filter(commencements__count__gt=1)
-        elif self.cleaned_data.get('commencement') == 'range':
-            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
-                start_date = self.cleaned_data['commencement_date_start']
-                end_date = self.cleaned_data['commencement_date_end']
-                queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+        # filter by commencement status
+        if exclude != "commencement":
+            commencement_filter = self.cleaned_data.get('commencement', [])
+            commencement_qs = Q()
+            if 'yes' in commencement_filter:
+                commencement_qs |= Q(commenced=True)
+            if 'no' in commencement_filter:
+                commencement_qs |= Q(commenced=False)
+            if 'date_unknown' in commencement_filter:
+                commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
+            if 'multiple' in commencement_filter:
+                queryset = queryset.annotate(Count("commencements"))
+                commencement_qs |= Q(commencements__count__gt=1)
 
+            queryset = queryset.filter(commencement_qs)
+
+        if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+            start_date = self.cleaned_data['commencement_date_start']
+            end_date = self.cleaned_data['commencement_date_end']
+            queryset = queryset.filter(commencements__date__range=[start_date, end_date]).order_by('-commencements__date')
+
+        # filter by consolidation
+        if exclude != "consolidation":
+            consolidation_filter = self.cleaned_data.get('consolidation', [])
+            consolidation_qs = Q()
+            if 'has_consolidation' in consolidation_filter:
+                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=False)
+            if 'no_consolidation' in consolidation_filter:
+                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=True)
+
+            queryset = queryset.filter(consolidation_qs)
+
+        # filter by points in time
+        if exclude != "documents":
+            documents_filter = self.cleaned_data.get('documents', [])
+            documents_qs = Q()
+            if 'one' in documents_filter:
+                one_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)
+                documents_qs |= Q(id__in=one_document_ids)
+            if 'multiple' in documents_filter:
+                multiple_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)
+                documents_qs |= Q(id__in=multiple_document_ids)
+            if 'none' in documents_filter:
+                # either there are no documents at all
+                documents_qs |= Q(document__isnull=True)
+                # or they're all deleted
+                deleted_document_ids = queryset.filter(document__deleted=True).values_list('pk', flat=True)
+                undeleted_document_ids = queryset.filter(document__deleted=False).values_list('pk', flat=True)
+                all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
+                documents_qs |= Q(id__in=all_deleted_document_ids)
+
+            queryset = queryset.filter(documents_qs)
+
+        # filter by point in time status
+        if exclude != "status":
+            status_filter = self.cleaned_data.get('status', [])
+            status_qs = Q()
+            if 'draft' in status_filter:
+                status_qs |= Q(document__draft=True)
+            if 'published' in status_filter:
+                status_qs |= Q(document__draft=False)
+
+            queryset = queryset.filter(status_qs)
+
+        # filter by taxonomy topic
         if self.cleaned_data.get('taxonomy_topic'):
             topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
             if topic:
@@ -682,3 +750,23 @@ class ExplorerForm(forms.Form):
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
+
+
+class WorkBulkActionsForm(forms.Form):
+    save = forms.BooleanField()
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+    add_taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
+        required=False)
+    del_taxonomy_topics = forms.ModelMultipleChoiceField(
+        queryset=TaxonomyTopic.objects.all(),
+        required=False)
+
+    def save_changes(self):
+        if self.cleaned_data.get('add_taxonomy_topics'):
+            for work in self.cleaned_data['works']:
+                work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
+
+        if self.cleaned_data.get('del_taxonomy_topics'):
+            for work in self.cleaned_data['works']:
+                work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])

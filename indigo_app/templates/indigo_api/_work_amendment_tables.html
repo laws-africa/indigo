@@ -1,0 +1,57 @@
+{% load i18n %}
+
+<h5 class="mt-3">{% trans "Amended by" %}</h5>
+
+{% with work.amendments.all as amendments %}
+  {% if amendments %}
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Date' %}</th>
+      </tr>
+      </thead>
+      {% for item in amendments %}
+        <tr>
+          <td>
+            <a href="{% url 'work' frbr_uri=item.amending_work.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=item.amending_work.frbr_uri %}"
+            >{{ item.amending_work.title }}</a>
+            <span class="text-muted">· {{ item.amending_work.frbr_uri }}</span>
+          </td>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    —
+  {% endif %}
+{% endwith %}
+
+<h5>{% trans "Amendments made" %}</h5>
+
+{% with work.amendments_made.all as amendments_made %}
+  {% if amendments_made %}
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Date' %}</th>
+      </tr>
+      </thead>
+      {% for item in amendments_made %}
+        <tr>
+          <td>
+            <a href="{% url 'work' frbr_uri=item.amended_work.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=item.amended_work.frbr_uri %}"
+            >{{ item.amended_work.title }}</a>
+            <span class="text-muted">· {{ item.amended_work.frbr_uri }}</span>
+          </td>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    —
+  {% endif %}
+{% endwith %}

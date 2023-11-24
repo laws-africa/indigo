@@ -1,0 +1,54 @@
+{% load indigo_app humanize i18n %}
+
+<div class="row">
+  <div class="col-md-3">
+    <div hx-get="{{ facets_url }}" hx-trigger="load" class="work-list-facets">
+      <ul class="list-group">
+        <li class="list-group-item text-center">
+          <i class="fa fa-spinner fa-spin"></i>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md">
+    <div class="d-flex mb-3">
+      <div class="text-muted mb-3">
+        {% blocktrans trimmed count count=paginator.count %}
+          {{ count }} work (of {{ total_works }} total)
+        {% plural %}
+          {{ count }} works (of {{ total_works }} total)
+        {% endblocktrans %}
+        {% blocktrans trimmed count page_count=page_count %}
+          · {{ page_count }} page
+        {% plural %}
+          · {{ page_count }} pages
+        {% endblocktrans %}
+      </div>
+      <div class="flex-grow-1" id="work-bulk-actions"></div>
+      {% if perms.indigo_api.bulk_export_work %}
+        <div>
+          <a href="{{ request.get_full_path }}?&format=xlsx"><i class="fas fa-file-excel fa-fw mr-1"></i>{% trans "Download to Excel" %}</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <form
+      hx-post="{% url 'place_works_actions' place=place.place_code %}"
+      hx-target="#work-bulk-actions"
+      hx-trigger="change from:.work-checkbox"
+    >
+      {% csrf_token %}
+
+      {% for work in works %}
+        {% include 'indigo_app/place/_work.html' %}
+      {% endfor %}
+    </form>
+
+    {% if is_paginated %}
+      <nav class="mt-4">
+        {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+      </nav>
+    {% endif %}
+  </div>
+</div>

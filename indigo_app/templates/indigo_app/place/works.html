@@ -1,0 +1,36 @@
+{% extends "place/tabbed_layout.html" %}
+{% load indigo_app humanize static i18n %}
+
+{% block title %}{% trans "Works" %} {{ block.super }}{% endblock %}
+
+{% block content %}
+  <div class="container-fluid mt-3 mb-5">
+
+    {% block content-header %}
+      <div class="d-flex mb-3">
+        <div class="flex-grow-1">
+          {% block filter-form %}
+            {% include 'indigo_api/_work_filter_form.html' with form=form %}
+          {% endblock %}
+        </div>
+
+        <div class="ml-3">
+          <div class="btn-group">
+            <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">{% trans "Add new work" %}</a>
+            {% if perms.indigo_api.bulk_add_work %}
+              <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">{% trans "Batch add new works" %}</a>
+                <a class="dropdown-item" href="{% url 'update_batch_work' place=place.place_code %}">{% trans "Batch update works" %}</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endblock %}
+
+    <div id="work-list">
+      {% include 'indigo_app/place/_works_list.html' %}
+    </div>
+  </div>
+{% endblock %}

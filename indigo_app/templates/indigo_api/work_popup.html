@@ -3,17 +3,7 @@
 <div class="popup-content lh-compact">
   <h6>
     {{ work.title }}
-    {% if work.stub %}
-      <span class="badge badge-info">{% trans 'stub' %}</span>
-    {% endif %}
-    {% if work.repealed_date %}
-      <span class="badge badge-info">{% trans 'repealed' %}</span>
-    {% endif %}
-    {% if not work.commenced %}
-      <span class="badge badge-info">{% trans 'not commenced' %}</span>
-    {% elif not work.commencement_date %}
-      <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
-    {% endif %}
+    {% include 'indigo_api/_work_info_badges.html' %}
     <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
   </h6>
 

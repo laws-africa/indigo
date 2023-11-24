@@ -7,32 +7,31 @@
 {% block work-content %}
   <h4>{% trans 'Related works' %}</h4>
 
-  {% if no_related %}
-    <div class="alert alert-primary">{% trans 'No related works.' %}</div>
-  {% endif %}
+  <div class="card mb-3" id="subsidiary">
+    <h5 class="card-header">{% trans "Subsidiary" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_subsidiary_tables.html' %}
+    </div>
+  </div>
 
-  {% if family %}
-    {% trans "Parents and children" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=family title=title id="parent_kids" %}
-  {% endif %}
+  <div class="card mb-3" id="commencement">
+    <h5 class="card-header">{% trans "Commencement" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_commencement_tables.html' %}
+    </div>
+  </div>
 
-  {% if repeals %}
-    {% trans "Repeals" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=repeals title=title id="repeals" with_date=True %}
-  {% endif %}
+  <div class="card mb-3" id="amended">
+    <h5 class="card-header">{% trans "Amendment" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_amendment_tables.html' %}
+    </div>
+  </div>
 
-  {% if commencement %}
-    {% trans "Commencement" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=commencement title=title id="commencement" with_date=True %}
-  {% endif %}
-
-  {% if amended %}
-    {% trans "Works amended by this work" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended title=title id="amended" with_date=True %}
-  {% endif %}
-
-  {% if amended_by %}
-    {% trans "Works amending this work" as title %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended_by title=title id="amended_by" with_date=True %}
-  {% endif %}
+  <div class="card mb-3" id="repeal">
+    <h5 class="card-header">{% trans "Repeal" %}</h5>
+    <div class="card-body">
+      {% include 'indigo_api/_work_repeal_tables.html' %}
+    </div>
+  </div>
 {% endblock %}

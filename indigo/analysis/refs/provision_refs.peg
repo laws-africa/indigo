@@ -105,7 +105,7 @@ grammar ProvisionRefs
 
                  # note that "tot" must come before "to" because the latter is a substring of the former
   to          <- dash / to_af / to_en
-  dash        <- `-` / `—`
+  dash        <- `-` / `–` / `—`
   to_en       <- `to`
   to_af       <- `tot`
 

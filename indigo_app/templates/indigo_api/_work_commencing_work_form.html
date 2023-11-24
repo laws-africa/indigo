@@ -1,0 +1,49 @@
+{% load i18n %}
+
+<div class="form-group row">
+  <label class="col-2 col-form-label">{% trans 'Commenced by' %}</label>
+  <div class="col">
+    <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
+    {% if commencing_work %}
+      <div class="mb-2">
+        <a href="{% url 'work' commencing_work.frbr_uri %}">{{ commencing_work.title }}</a>
+        <br>
+        <span class="text-muted">{{ commencing_work.frbr_uri }}</span>
+      </div>
+    {% endif %}
+
+    <div>
+      {% url 'work_edit_commencing_work' work.frbr_uri as edit_url %}
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=commencing_work"
+        hx-target="#work-commencing-work-modal"
+        hx-trigger="click"
+        data-toggle="modal"
+        data-target="#work-commencing-work-modal"
+      >{% trans 'Choose work' %}</button>
+
+      {% if commencing_work %}
+        <button
+          class="btn btn-outline-danger ml-2"
+          hx-get="{{ edit_url }}"
+          hx-target="#work-form-commencing-work"
+        >Clear</button>
+      {% endif %}
+    </div>
+
+    <p class="form-text text-muted">{% trans 'The work that gives the commencement date of this work.' %}</p>
+  </div>
+</div>
+
+<div
+  id="work-commencing-work-modal"
+  class="modal modal-blur fade"
+  style="display: none"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">Loading...</div>
+  </div>
+</div>

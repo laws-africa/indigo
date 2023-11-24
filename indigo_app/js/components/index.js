@@ -1,3 +1,14 @@
-export { default as DocumentTOCView } from './DocumentTOCView.vue';
-export { default as LinterPopup } from './LinterPopup.vue';
-export { default as TaxonomyTOC } from './TaxonomyTOC.vue';
+import DocumentTOCView from './DocumentTOCView.vue';
+import LinterPopup from './LinterPopup.vue';
+import TaxonomyTOC from './TaxonomyTOC.vue';
+import WorkChooser from './work_chooser';
+
+export const vueComponents = {
+  DocumentTOCView,
+  LinterPopup,
+  TaxonomyTOC
+};
+
+export const components = {
+  WorkChooser
+};

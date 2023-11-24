@@ -5,6 +5,7 @@ from collections import Counter
 from itertools import chain
 from datetime import timedelta
 
+from django import  forms
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -1007,12 +1008,28 @@ class WorkPopupView(WorkViewBase, DetailView):
 
 
 class EditWorkRepealView(WorkViewBase, DetailView):
+    """Just the repeal part of the work form to re-render the form when the user changes the repeal status
+    through HTMX.
+    """
     template_name = 'indigo_api/_work_repeal_form.html'
+
+    class WorkRepealForm(forms.ModelForm):
+        class Meta:
+            model = Work
+            fields = ('repealed_by', 'repealed_date')
+
+        def clean(self):
+            if self.cleaned_data.get('repealed_by'):
+                self.cleaned_data['repealed_date'] = self.cleaned_data['repealed_by'].publication_date
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # update the object with the submitted form data, without saving the changes
+        context["form"] = form = self.WorkRepealForm(self.request.GET, instance=self.object)
+        form.is_valid()
         context["work"] = self.object
-        context["form"] = WorkForm(self.request.GET, instance=self.object)
+
         return context
 
 

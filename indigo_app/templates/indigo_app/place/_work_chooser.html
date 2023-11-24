@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="modal-dialog modal-xl">
+<div class="modal-dialog modal-xl" data-component="WorkChooser">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
@@ -10,11 +10,11 @@
     <div class="card">
       <div class="card-header">
         <form
-          method="get"
           hx-get="{% url 'place_work_chooser_list' place.place_code %}"
           hx-trigger="keyup changed from:input delay:0.5s"
           hx-target=".work-list-table tbody"
         >
+          <input type="hidden" name="field" value="{{ work_field }}">
           <div class="row">
 
             <div class="col-3">
@@ -49,25 +49,33 @@
         </form>
       </div>
 
-      <div class="work-chooser-list scrollable">
-        <table class="table table-sm table-hover work-list-table">
-          <thead>
-            <tr>
-              <th class="year">{% trans 'Year' %}</th>
-              <th class="title">{% trans 'Title' %}</th>
-              <th class="frbr_uri">{% trans 'FRBR URI' %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% include 'indigo_app/place/_work_chooser_list.html' %}
-        </table>
-      </div>
+      <form
+        id="work-chooser-form"
+        hx-get="{{ request.GET.submit }}"
+        hx-target="{{ request.GET.target }}"
+      >
+        <div class="work-chooser-list scrollable">
+          <table class="table table-sm table-hover work-list-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="year">{% trans 'Year' %}</th>
+                <th class="title">{% trans 'Title' %}</th>
+                <th class="frbr_uri">{% trans 'FRBR URI' %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% include 'indigo_app/place/_work_chooser_list.html' %}
+            </tbody>
+          </table>
+        </div>
+      </form>
     </div>
 
     <div class="modal-footer">
       <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
       <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">{% trans 'Cancel' %}</a>
-      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}">
+      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}" form="work-chooser-form">
     </div>
 
   </div>

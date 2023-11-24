@@ -1443,7 +1443,7 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertIsNone(result.target)
 
     def test_range(self):
-        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g) - (j)")
+        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g)- (j)")
         self.assertEqual([
             MainProvisionRef(
                 'Section',

@@ -326,13 +326,14 @@
               {% include 'indigo_api/_work_commencing_work_form.html' with commencing_work=work.commencing_work %}
             </div>
 
-          <div class="form-group row">
-            <label class="col-2 col-form-label">{% trans 'Commencement note' %}</label>
-            <div class="col">
-              <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
-              <p class="form-text text-muted">
-                {% trans "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context." %}
-              </p>
+            <div class="form-group row">
+              <label class="col-2 col-form-label">{% trans 'Commencement note' %}</label>
+              <div class="col">
+                <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
+                <p class="form-text text-muted">
+                  {% trans "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context." %}
+                </p>
+              </div>
             </div>
           </div>
         {% endif %}

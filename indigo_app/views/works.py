@@ -1032,7 +1032,11 @@ class EditWorkRepealView(EditWorkPortionViewBase):
 
         def clean(self):
             if self.cleaned_data.get('repealed_by'):
-                self.cleaned_data['repealed_date'] = self.cleaned_data['repealed_by'].publication_date
+                self.cleaned_data['repealed_date'] = (
+                    self.cleaned_data['repealed_by'].commencement_date
+                    or self.cleaned_data['repealed_by'].publication_date
+                )
+            return self.cleaned_data
 
 
 class EditWorkParentView(EditWorkPortionViewBase):

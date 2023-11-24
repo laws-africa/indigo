@@ -26,10 +26,6 @@
     events: {
       'change #edit-work-form': 'setDirty',
       'submit #edit-work-form': 'onSubmit',
-      'click .change-repeal': 'changeRepeal',
-      'click .delete-repeal': 'deleteRepeal',
-      'click .choose-parent': 'changeParent',
-      'click .delete-parent': 'deleteParent',
       'click .change-commencing-work': 'changeCommencingWork',
       'click .delete-commencing-work': 'deleteCommencingWork',
       'click .delete-publication-document': 'deletePublicationDocument',
@@ -37,7 +33,6 @@
       'click .attach-publication-url': 'attachPublicationUrl',
       'change #commencement_date_unknown': 'commencementDateUnknownChanged',
     },
-    workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
     publicationDocumentTemplate: '#publication-document-template',
     publicationUrlTemplate: '#publication-document-url-template',
@@ -57,20 +52,8 @@
         observe: 'commencement_date',
         onSet: emptyIsNull,
       },
-      '#id_work-repealed_date': {
-        observe: 'repealed_date',
-        onSet: emptyIsNull,
-      },
-      '#id_work-parent_work': {
-        observe: 'parent_work',
-        onGet: idOrNull,
-      },
       '#id_work-commencing_work': {
         observe: 'commencing_work',
-        onGet: idOrNull,
-      },
-      '#id_work-repealed_by': {
-        observe: 'repealed_by',
         onGet: idOrNull,
       },
 
@@ -153,10 +136,8 @@
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commenced', this.commencedChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
-      this.listenTo(this.model, 'change:parent_work', this.parentChanged);
       this.listenTo(this.model, 'change:number', this.numberChanged);
       this.listenTo(this.model, 'change:publication_document', this.publicationDocumentChanged);
       this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
@@ -164,9 +145,7 @@
 
       this.model.updateFrbrUri();
       this.stickit();
-      this.repealChanged();
       this.commencingWorkChanged();
-      this.parentChanged();
       this.publicationChanged();
       this.publicationDocumentChanged();
       if (!this.model.get('commencement_date')) {
@@ -201,44 +180,6 @@
       this.saving = true;
     },
 
-    deleteRepeal: function(e) {
-      e.preventDefault();
-      this.model.set('repealed_by', null);
-    },
-
-    changeRepeal: function() {
-      var chooser = new Indigo.WorkChooserView({
-            country: this.model.get('country'),
-            locality: this.model.get('locality') || '-',
-          }),
-          self = this;
-
-      if (this.model.get('repealed_by')) {
-        chooser.choose(Indigo.works.get(this.model.get('repealed_by')));
-      }
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          self.model.set('repealed_by', chosen);
-          self.model.set('repealed_date', chosen.get('commencement_date') || chosen.get('publication_date'));
-        }
-      });
-    },
-
-    repealChanged: function() {
-      var repealed_by = this.model.get('repealed_by');
-
-      if (repealed_by) {
-        this.$el.addClass('is-repealed');
-        this.$('.work-repeal-view').html(this.workRepealTemplate({
-          repealed_by: repealed_by.toJSON(),
-        }));
-        this.$('#id_work-repealed_date').attr('required', 'required');
-      } else {
-        this.$el.removeClass('is-repealed');
-        this.$('.work-repeal-view').html(this.workRepealTemplate({}));
-        this.$('#id_work-repealed_date').removeAttr('required');
-      }
-    },
 
     deleteCommencingWork: function(e) {
       e.preventDefault();
@@ -298,45 +239,6 @@
         }));
       } else {
         this.$('.work-commencing-work').html(this.commencingWorkTemplate({}));
-      }
-    },
-
-    changeParent: function() {
-      var chooser = new Indigo.WorkChooserView({
-            country: this.model.get('country'),
-            locality: this.model.get('locality') || '-',
-          }),
-          self = this;
-
-      if (this.model.get('parent_work')) {
-        chooser.choose(this.model.get('parent_work'));
-      }
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          self.model.set('parent_work', chosen);
-        }
-      });
-    },
-
-    deleteParent: function(e) {
-      e.preventDefault();
-      this.model.set('parent_work', null);
-    },
-
-    parentChanged: function() {
-      if (this.model.get('parent_work')) {
-        var parent = this.model.get('parent_work');
-
-        this.$('#work_parent_work')
-          .show('hidden')
-          .find('.work_parent_title')
-            .text(parent.get('title'))
-            .attr('href', '/works' + parent.get('frbr_uri') + '/')
-            .end()
-          .find('.work_parent_uri')
-            .text(parent.get('frbr_uri'));
-      } else {
-        this.$('#work_parent_work').hide();
       }
     },
 

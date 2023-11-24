@@ -1153,7 +1153,10 @@ class WorkChooserView(PlaceViewBase, ListView):
         context = super().get_context_data(**kwargs)
 
         context["form"] = self.form
-        context["work_field"] = (self.request.POST or self.request.GET).get('field', 'work')
+        # these are used when the final form is submitted
+        context["work_field"] = self.form.data.get('field', 'work')
+        context["hx_submit"] = self.form.data.get('submit')
+        context["hx_target"] = self.form.data.get('target')
 
         return context
 

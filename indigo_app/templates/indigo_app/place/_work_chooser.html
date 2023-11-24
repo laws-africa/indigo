@@ -16,6 +16,8 @@
           hx-target=".work-list-table tbody"
         >
           <input type="hidden" name="field" value="{{ work_field }}">
+          <input type="hidden" name="submit" value="{{ hx_submit }}">
+          <input type="hidden" name="target" value="{{ hx_target }}">
           <div class="row">
 
             <div class="col-3">
@@ -52,8 +54,8 @@
 
       <form
         id="work-chooser-form"
-        hx-get="{{ request.GET.submit }}"
-        hx-target="{{ request.GET.target }}"
+        hx-get="{{ hx_submit }}"
+        hx-target="{{ hx_target }}"
       >
         <div class="work-chooser-list scrollable">
           <table class="table table-sm table-hover work-list-table">

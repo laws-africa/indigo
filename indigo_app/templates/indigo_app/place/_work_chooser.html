@@ -10,8 +10,9 @@
     <div class="card">
       <div class="card-header">
         <form
+          id="work-chooser-filter-form"
           hx-get="{% url 'place_work_chooser_list' place.place_code %}"
-          hx-trigger="keyup changed from:input delay:0.5s"
+          hx-trigger="keyup changed from:input delay:0.5s, submit"
           hx-target=".work-list-table tbody"
         >
           <input type="hidden" name="field" value="{{ work_field }}">

@@ -1125,6 +1125,9 @@ class WorkActionsView(PlaceViewBase, FormView):
 
 
 class WorkChooserView(PlaceViewBase, ListView):
+    """This renders the filter form and the first page of results for the work chooser modal.
+    HTMX reloads this view when filtering criteria are changed.
+    """
     template_name = 'indigo_app/place/_work_chooser.html'
     model = Work
     paginate_by = 25
@@ -1132,6 +1135,7 @@ class WorkChooserView(PlaceViewBase, ListView):
     http_method_names = ['get', 'post']
 
     def post(self, request, *args, **kwargs):
+        # treat POST as GET
         return self.get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -1155,6 +1159,7 @@ class WorkChooserView(PlaceViewBase, ListView):
 
 
 class WorkChooserListView(WorkChooserView):
+    """This renders the list of results for the work chooser modal."""
     template_name = 'indigo_app/place/_work_chooser_list.html'
 
 

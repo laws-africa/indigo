@@ -7,17 +7,36 @@
     <td>
       <label for="work-chooser-work-{{ work.pk }}">
         {{ work.title }}
-        (stubs...)
+        {% include 'indigo_api/_work_info_badges.html' %}
       </label>
     </td>
-    <td class="frbr_uri">{{ work.frbr_uri }}</td>
+    <td class="frbr_uri">
+      <label for="work-chooser-work-{{ work.pk }}">{{ work.frbr_uri }}</label>
+    </td>
   </tr>
 {% endfor %}
 
-{% if page.has_next %}
+{% if page_obj.has_next or page_obj.has_previous %}
   <tr>
-    <td colspan="3" class="text-center">
-      (paginator)
+    <td colspan="4" class="text-center">
+      {% if page_obj.has_previous %}
+        <button
+          class="btn btn-outline-primary me-3"
+          type="submit"
+          form="work-chooser-filter-form"
+          name="page"
+          value="{{ page_obj.previous_page_number }}"
+        >&leftarrow;</button>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <button
+          class="btn btn-outline-primary"
+          type="submit"
+          form="work-chooser-filter-form"
+          name="page"
+          value="{{ page_obj.next_page_number }}"
+        >&rightarrow;</button>
+      {% endif %}
     </td>
   </tr>
 {% endif %}

@@ -2146,7 +2146,7 @@ class Grammar(object):
             chunk1, max1 = None, self._offset + 1
             if max1 <= self._input_size:
                 chunk1 = self._input[self._offset:max1]
-            if chunk1 is not None and chunk1.lower() == '—'.lower():
+            if chunk1 is not None and chunk1.lower() == '–'.lower():
                 address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
                 self._offset = self._offset + 1
             else:
@@ -2155,9 +2155,24 @@ class Grammar(object):
                     self._failure = self._offset
                     self._expected = []
                 if self._offset == self._failure:
-                    self._expected.append(('ProvisionRefs::dash', '`—`'))
+                    self._expected.append(('ProvisionRefs::dash', '`–`'))
             if address0 is FAILURE:
                 self._offset = index1
+                chunk2, max2 = None, self._offset + 1
+                if max2 <= self._input_size:
+                    chunk2 = self._input[self._offset:max2]
+                if chunk2 is not None and chunk2.lower() == '—'.lower():
+                    address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+                    self._offset = self._offset + 1
+                else:
+                    address0 = FAILURE
+                    if self._offset > self._failure:
+                        self._failure = self._offset
+                        self._expected = []
+                    if self._offset == self._failure:
+                        self._expected.append(('ProvisionRefs::dash', '`—`'))
+                if address0 is FAILURE:
+                    self._offset = index1
         self._cache['dash'][index0] = (address0, self._offset)
         return address0
 

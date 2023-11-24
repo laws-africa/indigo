@@ -1,0 +1,35 @@
+/* place works list */
+.progress.progress-thin {
+  height: 7px;
+}
+
+.work-list-facets {
+  max-height: 100vh;
+  position: sticky;
+  top: 0px;
+  overflow-y: auto;
+
+  label {
+    font-weight: normal;
+  }
+
+  .list-group-item {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+}
+
+.work-list-work {
+  .collapse-indicator {
+    padding-top: 1em;
+    padding-bottom: 1em;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &.collapsed::before { content: "\f0da"; }
+    &::before { content: "\f0d7"; }
+  }
+
+}

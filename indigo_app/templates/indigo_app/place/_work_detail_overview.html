@@ -1,0 +1,43 @@
+{% load indigo i18n %}
+
+{% for entry in overview_data %}
+  <div class="d-flex mb-1">
+    <div class="col-2">
+      <b>{{ entry.key }}</b>
+    </div>
+    <div class="d-flex flex-column col-10">
+      <div>
+        {% if entry.overridden %}{% include 'indigo_app/place/_overridden.html' %}{% endif %}
+        {{ entry.value }}
+      </div>
+      {% if entry.key == "Publication" and work.publication_document %}
+        <div>
+          <i class="fas fa-file text-muted" title="{% trans "Publication document" %}"></i>
+          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
+             target="_blank" rel="noopener">{{ work.publication_document.filename }}</a>
+          <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+
+{% with work.taxonomy_topics.all as topics %}
+  {% if topics %}
+    <div class="d-flex">
+      <div class="col-2">
+        <b>{% trans "Topics" %}</b>
+      </div>
+      <div class="d-flex flex-column col-10">
+        {% for topic in topics %}
+          <div>
+            {% for item in topic.get_ancestors %}
+              <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
+            {% endfor %}
+            <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}

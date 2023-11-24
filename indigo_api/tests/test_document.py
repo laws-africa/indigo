@@ -1,8 +1,8 @@
 from nose.tools import *  # noqa
 from django.test import TestCase
-from datetime import date
+from datetime import date, datetime
 
-from indigo_api.models import Document, Work, Amendment, Language, Country, User
+from indigo_api.models import Document, Work, Amendment, Language, Country, User, ArbitraryExpressionDate
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -132,6 +132,7 @@ class DocumentTestCase(TestCase):
         self.assertTrue(d.is_consolidation())
 
     def test_consolidation_note(self):
+        ArbitraryExpressionDate.objects.create(work=self.work, date=datetime(2002, 1, 1), created_by_user=User.objects.get(pk=1))
         d = Document(work=self.work)
         self.assertEqual('A general consolidation note that applies to all consolidations in this place.', d.work.consolidation_note())
         d = Document.objects.get(id=4)

@@ -715,21 +715,6 @@ class WorkRelatedView(WorkViewBase, DetailView):
         } for w in self.work.repealed_works.all()]
         context['repeals'] = repeals
 
-        # commencement
-        commencement = [{
-            'rel': 'commenced by',
-            'work': c.commencing_work,
-            'date': c.date,
-        } for c in self.work.commencements.all() if c.commencing_work]
-        commencement = commencement + [{
-            'rel': 'commenced',
-            'work': c.commenced_work,
-            'date': c.date,
-        } for c in self.work.commencements_made.all()]
-        context['commencement'] = commencement
-
-        context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
-
         return context
 
 

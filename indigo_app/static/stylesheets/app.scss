@@ -32,7 +32,7 @@ $fa-font-path: '../lib/fontawesome-5.2/webfonts';
 @import 'forms';
 @import 'gutter';
 @import 'importform';
-@import 'library';
+@import 'places';
 @import 'standalone';
 @import 'tasks';
 @import 'timeline';
@@ -41,6 +41,7 @@ $fa-font-path: '../lib/fontawesome-5.2/webfonts';
 @import 'works';
 @import 'provisions-list';
 @import 'treeview';
+@import 'navs';
 
 // import custom styles right at the end
 @import 'indigo/custom';

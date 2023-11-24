@@ -2,8 +2,6 @@ from copy import deepcopy
 
 from django import template
 from django.conf import settings
-from django.utils.formats import date_format
-from django.utils.translation import ugettext as _
 
 from indigo.plugins import plugins
 from indigo_api.timeline import describe_publication_event

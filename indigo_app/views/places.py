@@ -1,30 +1,38 @@
 import logging
 from collections import defaultdict, Counter
+from dataclasses import dataclass, field
 from datetime import timedelta, date
 from itertools import chain, groupby
 import json
+from typing import List
+
 from lxml import etree
 
 from actstream import action
 from actstream.models import Action
 from django.contrib.auth.models import User
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.db import connection
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Case, When, Value, Q
 from django.db.models.functions import Extract
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
-from django.views.generic import ListView, TemplateView, UpdateView, FormView
+from django.utils.translation import ugettext as _
+from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
+from django_htmx.http import push_url
+from django.db.models import Q
 
 from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
+from indigo_api.timeline import describe_publication_event
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
@@ -279,162 +287,6 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
             })
 
         return {"open_tasks_chart": open_tasks_chart, "labels_chart": labels_chart, "total_open_tasks": total_open_tasks}
-
-
-class PlaceWorksView(PlaceViewBase, ListView):
-    template_name = 'place/works.html'
-    tab = 'works'
-    context_object_name = 'works'
-    paginate_by = 50
-    js_view = 'PlaceWorksView WorkFilterFormView'
-
-    def get(self, request, *args, **kwargs):
-        params = QueryDict(mutable=True)
-        params.update(request.GET)
-
-        # set defaults for: sort order, status, stub and subtype
-        if not params.get('sortby'):
-            params.setdefault('sortby', '-updated_at')
-
-        if not params.get('status'):
-            params.setlist('status', WorkFilterForm.declared_fields['status'].initial)
-
-        if not params.get('stub'):
-            params.setdefault('stub', 'excl')
-
-        if not params.get('subtype'):
-            params.setdefault('subtype', '-')
-
-        self.form = WorkFilterForm(self.country, params)
-        self.form.is_valid()
-
-        if params.get('format') == 'xlsx':
-            exporter = XlsxExporter(self.country, self.locality)
-            return exporter.generate_xlsx(self.get_queryset(), self.get_xlsx_filename(), False)
-
-        return super().get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = Work.objects\
-            .select_related('parent_work', 'metrics')\
-            .filter(country=self.country, locality=self.locality)\
-            .distinct()\
-            .order_by('-updated_at')
-
-        queryset = self.form.filter_queryset(queryset)
-
-        # prefetch and filter documents
-        queryset = queryset.prefetch_related(Prefetch(
-            'document_set',
-            to_attr='filtered_docs',
-            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
-        ))
-
-        return queryset
-
-    def count_tasks(self, obj, counts):
-        obj.task_stats = {'n_%s_tasks' % s: counts.get(s, 0) for s in Task.STATES}
-        obj.task_stats['n_tasks'] = sum(counts.values())
-        obj.task_stats['n_active_tasks'] = (
-            obj.task_stats['n_open_tasks'] +
-            obj.task_stats['n_pending_review_tasks'] +
-            obj.task_stats['n_blocked_tasks']
-        )
-        obj.task_stats['pending_task_ratio'] = 100 * (
-            obj.task_stats['n_pending_review_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-        obj.task_stats['open_task_ratio'] = 100 * (
-            obj.task_stats['n_open_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-        obj.task_stats['blocked_task_ratio'] = 100 * (
-            obj.task_stats['n_blocked_tasks'] /
-            (obj.task_stats['n_active_tasks'] or 1)
-        )
-
-    def decorate_works(self, works):
-        """ Do some calculations that aid listing of works.
-        """
-        docs_by_id = {d.id: d for w in works for d in w.filtered_docs}
-        works_by_id = {w.id: w for w in works}
-
-        # count annotations
-        annotations = Annotation.objects.values('document_id') \
-            .filter(closed=False) \
-            .filter(document__deleted=False) \
-            .annotate(n_annotations=Count('document_id')) \
-            .filter(document_id__in=docs_by_id)
-        for count in annotations:
-            docs_by_id[count['document_id']].n_annotations = count['n_annotations']
-
-        # count tasks
-        tasks = Task.objects.filter(work__in=works)
-
-        # tasks counts per state and per work
-        work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
-        task_states = defaultdict(dict)
-        for row in work_tasks:
-            task_states[row['work_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per work
-        for work_id, states in task_states.items():
-            self.count_tasks(works_by_id[work_id], states)
-
-        # tasks counts per state and per document
-        doc_tasks = tasks.filter(document_id__in=list(docs_by_id.keys()))\
-            .values('document_id', 'state')\
-            .annotate(n_tasks=Count('document_id'))
-        task_states = defaultdict(dict)
-        for row in doc_tasks:
-            task_states[row['document_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per document
-        for doc_id, states in task_states.items():
-            self.count_tasks(docs_by_id[doc_id], states)
-
-        # decorate works
-        for work in works:
-            # most recent update, their the work or its documents
-            update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
-            work.most_recent_updated_at = update.updated_at
-            work.most_recent_updated_by = update.updated_by_user
-
-            # count annotations
-            work.n_annotations = sum(getattr(d, 'n_annotations', 0) for d in work.filtered_docs)
-
-            # ratios
-            try:
-                # work metrics may not exist
-                metrics = work.metrics
-            except WorkMetrics.DoesNotExist:
-                metrics = None
-
-            if metrics and metrics.n_expected_expressions > 0:
-                n_drafts = sum(1 if d.draft else 0 for d in work.filtered_docs)
-                n_published = sum(0 if d.draft else 1 for d in work.filtered_docs)
-                work.drafts_ratio = 100 * (n_drafts / metrics.n_expected_expressions)
-                work.pub_ratio = 100 * (n_published / metrics.n_expected_expressions)
-            else:
-                work.drafts_ratio = 0
-                work.pub_ratio = 0
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = self.form
-        works = context['works']
-        context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        self.decorate_works(list(works))
-
-        # total works
-        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
-        # page count
-        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
-
-        return context
-
-    def get_xlsx_filename(self):
-        return f"legislation {self.kwargs['place']}.xlsx"
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
@@ -846,5 +698,543 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
         # page counts
         for p in context['localities']:
             p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
+
+        return context
+
+
+class PlaceWorksView(PlaceViewBase, ListView):
+    template_name = 'indigo_app/place/works.html'
+    tab = 'works'
+    context_object_name = 'works'
+    paginate_by = 50
+    http_method_names = ['post', 'get']
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.form = WorkFilterForm(self.country, request.POST or request.GET)
+        self.form.is_valid()
+
+        if self.form.data.get('format') == 'xlsx':
+            exporter = XlsxExporter(self.country, self.locality)
+            return exporter.generate_xlsx(self.get_queryset(), f"legislation {self.kwargs['place']}.xlsx", False)
+
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Work.objects \
+            .select_related('parent_work', 'metrics') \
+            .filter(country=self.country, locality=self.locality) \
+            .distinct() \
+            .order_by('-created_at')
+
+        queryset = self.form.filter_queryset(queryset)
+
+        # prefetch and filter documents
+        # TODO
+        queryset = queryset.prefetch_related(Prefetch(
+            'document_set',
+            to_attr='filtered_docs',
+            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
+        ))
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form
+        works = context["works"]
+        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
+        context['facets_url'] = (
+            reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
+            '?' + (self.request.POST or self.request.GET).urlencode()
+        )
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.request.POST.urlencode()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_app/place/_works_list.html']
+        return super().get_template_names()
+
+
+@dataclass
+class FacetItem:
+    label: str
+    value: str
+    count: int
+    selected: bool
+
+
+@dataclass
+class Facet:
+    label: str
+    name: str
+    type: str
+    items: List[FacetItem] = field(default_factory=list)
+
+
+@dataclass
+class OverviewDataEntry:
+    key: str
+    value: str
+    overridden: bool = False
+
+
+class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_app/place/_works_facets.html'
+
+    def get(self, request, *args, **kwargs):
+        self.form = WorkFilterForm(self.country, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = self.form
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
+
+        qs = Work.objects.filter(country=self.country, locality=self.locality)
+
+        # build facets
+        context["work_facets"] = work_facets = []
+        self.facet_subtype(work_facets, qs)
+        self.facet_principal(work_facets, qs)
+        self.facet_stub(work_facets, qs)
+        self.facet_tasks(work_facets, qs)
+        self.facet_primary(work_facets, qs)
+        self.facet_commencement(work_facets, qs)
+        self.facet_amendment(work_facets, qs)
+        self.facet_consolidation(work_facets, qs)
+        self.facet_repeal(work_facets, qs)
+
+        context["document_facets"] = doc_facets = []
+        self.facet_points_in_time(doc_facets, qs)
+        self.facet_point_in_time_status(doc_facets, qs)
+
+        return context
+
+    def facet_subtype(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="subtype")
+        # count doctypes, subtypes by code
+        counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
+        counts_subtype = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts.update(counts_subtype)
+        items = [
+            FacetItem(
+                c[1],
+                c[0],
+                counts.get(c[0], 0),
+                c[0] in self.form.cleaned_data.get("subtype", [])
+            )
+            for c in self.form.fields["subtype"].choices
+            if counts.get(c[0])
+        ]
+        facets.append(Facet("Type", "subtype", "checkbox", items))
+
+    def facet_principal(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="principal")
+        counts = qs.aggregate(
+            principal_counts=Count("pk", filter=Q(principal=True), distinct=True),
+            not_principal_counts=Count("pk", filter=Q(principal=False), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Principal",
+                "principal",
+                counts.get("principal_counts", 0),
+                "principal" in self.form.cleaned_data.get("principal", [])
+            ),
+            FacetItem(
+                "Not principal",
+                "not_principal",
+                counts.get("not_principal_counts", 0),
+                "not_principal" in self.form.cleaned_data.get("principal", [])
+            ),
+        ]
+        facets.append(Facet("Principal", "principal", "checkbox", items))
+
+    def facet_stub(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="stub")
+        counts = qs.aggregate(
+            stub_counts=Count("pk", filter=Q(stub=True), distinct=True),
+            not_stub_counts=Count("pk", filter=Q(stub=False), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Stub",
+                "stub",
+                counts.get("stub_counts", 0),
+                "stub" in self.form.cleaned_data.get("stub", [])
+            ),
+            FacetItem(
+                "Not a stub",
+                "not_stub",
+                counts.get("not_stub_counts", 0),
+                "not_stub" in self.form.cleaned_data.get("stub", [])
+            ),
+        ]
+        facets.append(Facet("Stubs", "stub", "checkbox", items))
+
+    def facet_tasks(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="tasks")
+        task_states = qs.annotate(
+            has_open_states=Count(
+                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField()))
+        ).values('has_open_states')
+
+        # Organize the results into open_states and no_open_states
+        counts = {'open_states': 0, 'no_open_states': 0}
+
+        for item in task_states:
+            if item['has_open_states'] > 0:
+                counts['open_states'] += 1
+            else:
+                counts['no_open_states'] += 1
+
+        items = [
+            FacetItem(
+                "Has open tasks",
+                "has_open_tasks",
+                counts['open_states'],
+                "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has no open tasks",
+                "no_open_tasks",
+                counts['no_open_states'],
+                "no_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+        ]
+        facets.append(Facet("Tasks", "tasks", "checkbox", items))
+
+    def facet_primary(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="primary")
+        counts = qs.aggregate(
+            primary_counts=Count("pk", filter=Q(parent_work__isnull=True), distinct=True),
+            subsidiary_counts=Count("pk", filter=Q(parent_work__isnull=False), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Primary",
+                "primary",
+                counts.get("primary_counts", 0),
+                "primary" in self.form.cleaned_data.get("primary", [])
+            ),
+            FacetItem(
+                "Subsidiary",
+                "subsidiary",
+                counts.get("subsidiary_counts", 0),
+                "subsidiary" in self.form.cleaned_data.get("primary", [])
+            ),
+        ]
+        facets.append(Facet("Primary and Subsidiary", "primary", "checkbox", items))
+
+    def facet_commencement(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="commencement")
+        counts = qs.aggregate(
+            commenced_count=Count("pk", filter=Q(commenced=True), distinct=True),
+            not_commenced_count=Count("pk", filter=Q(commenced=False), distinct=True),
+            date_unknown_count=Count("pk", filter=Q(commencements__date__isnull=True, commenced=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Commenced",
+                "yes",
+                counts.get("commenced_count", 0),
+                "yes" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Not commenced",
+                "no",
+                counts.get("not_commenced_count", 0),
+                "no" in self.form.cleaned_data.get("commencement", [])
+            ),
+            FacetItem(
+                "Commencement date unknown",
+                "date_unknown",
+                counts.get("date_unknown_count", 0),
+                "date_unknown" in self.form.cleaned_data.get("commencement", [])
+            ),
+        ]
+        facets.append(Facet("Commencements", "commencement", "checkbox", items))
+
+    def facet_amendment(self, facet, qs):
+        qs = self.form.filter_queryset(qs, exclude="amendment")
+        counts = qs.aggregate(
+            amended_count=Count("pk", filter=Q(amendments__isnull=False), distinct=True),
+            not_amended_count=Count("pk", filter=Q(amendments__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Amended",
+                "yes",
+                counts.get("amended_count", 0),
+                "yes" in self.form.cleaned_data.get("amendment", [])
+            ),
+            FacetItem(
+                "Not amended",
+                "no",
+                counts.get("not_amended_count", 0),
+                "no" in self.form.cleaned_data.get("amendment", [])
+            ),
+        ]
+        facet.append(Facet("Amendments", "amendment", "checkbox", items))
+
+    def facet_consolidation(self, facets,  qs):
+        qs = self.form.filter_queryset(qs, exclude="consolidation")
+        counts = qs.aggregate(
+            has_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=False), distinct=True),
+            no_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Has consolidation",
+                "has_consolidation",
+                counts.get("has_consolidation", 0),
+                "has_consolidation" in self.form.cleaned_data.get("consolidation", [])
+            ),
+            FacetItem(
+                "No consolidation",
+                "no_consolidation",
+                counts.get("no_consolidation", 0),
+                "no_consolidation" in self.form.cleaned_data.get("consolidation", [])
+            ),
+        ]
+        facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
+
+    def facet_repeal(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="repeal")
+        counts = qs.aggregate(
+            repealed_count=Count("pk", filter=Q(repealed_date__isnull=False), distinct=True),
+            not_repealed_count=Count("pk", filter=Q(repealed_date__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Repealed",
+                "yes",
+                counts.get("repealed_count", 0),
+                "yes" in self.form.cleaned_data.get("repeal", [])
+            ),
+            FacetItem(
+                "Not repealed",
+                "no",
+                counts.get("not_repealed_count", 0),
+                "no" in self.form.cleaned_data.get("repeal", [])
+            ),
+        ]
+        facets.append(Facet("Repeals", "repeal", "checkbox", items))
+
+    def facet_points_in_time(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="documents")
+        no_document_ids = qs.filter(document__isnull=True).values_list('pk', flat=True)
+        deleted_document_ids = qs.filter(document__deleted=True).values_list('pk', flat=True)
+        undeleted_document_ids = qs.filter(document__deleted=False).values_list('pk', flat=True)
+        all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
+        no_document_ids = list(no_document_ids) + list(all_deleted_document_ids)
+        items = [
+            FacetItem(
+                "Has no points in time",
+                "none",
+                qs.annotate(Count('document')).filter(id__in=no_document_ids).count(),
+                "none" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has one point in time",
+                "one",
+                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).count(),
+                "one" in self.form.cleaned_data.get("documents", [])
+            ),
+            FacetItem(
+                "Has multiple points in time",
+                "multiple",
+                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).count(),
+                "multiple" in self.form.cleaned_data.get("documents", [])
+            ),
+        ]
+        facets.append(Facet("Points in time", "documents", "checkbox", items))
+
+    def facet_point_in_time_status(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="status")
+        counts = qs.aggregate(
+            drafts_count=Count("pk", filter=Q(document__draft=True), distinct=True),
+            published_count=Count("pk", filter=Q(document__draft=False), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Draft",
+                "draft",
+                counts.get("drafts_count", 0),
+                "draft" in self.form.cleaned_data.get("status", [])
+            ),
+            FacetItem(
+                "Published",
+                "published",
+                counts.get("published_count", 0),
+                "published" in self.form.cleaned_data.get("status", [])
+            ),
+        ]
+        facets.append(Facet("Point in time status", "status", "checkbox",  items))
+
+
+class WorkActionsView(PlaceViewBase, FormView):
+    form_class = WorkBulkActionsForm
+    template_name = "indigo_app/place/_works_actions.html"
+
+    def form_valid(self, form):
+        if form.cleaned_data['save']:
+            form.save_changes()
+            messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
+            return redirect(
+                self.request.META.get('HTTP_REFERER')
+                or reverse('place_works', kwargs={'place': self.kwargs['place']})
+            )
+        else:
+            return self.form_invalid(form)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # get the union of all the work's taxonomy topics
+        if form.cleaned_data.get('works'):
+            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
+
+        if form.is_valid:
+            context["works"] = form.cleaned_data.get("works", [])
+
+        return context
+
+
+class WorkDetailView(PlaceViewBase, DetailView):
+    template_name = 'indigo_app/place/_work_detail.html'
+    queryset = Work.objects
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        work = self.object
+
+        context["overview_data"] = self.get_overview_data()
+        context["tab"] = "overview"
+
+        # count documents
+        context["n_documents"] = Document.objects.undeleted().filter(work=work).count()
+
+        # count commencements
+        context["n_commencements"] = work.commencements.count()
+        context["n_commencements_made"] = work.commencements_made.count()
+
+        # count amendments
+        context["n_amendments"] = work.amendments.count()
+        context["n_amendments_made"] = work.amendments_made.count()
+
+        # count repeals
+        context["n_repeals"] = 1 if work.repealed_by else 0
+        context["n_repeals_made"] = work.repealed_works.count()
+
+        # count primary / subsidiary works
+        context["n_primary_works"] = 1 if work.parent_work else 0
+        context["n_subsidiary_works"] = work.child_works.count()
+
+        # count tasks
+        context["n_tasks"] = work.tasks.filter(state__in=Task.OPEN_STATES).count()
+
+        return context
+
+    def get_overview_data(self):
+        """ Return overview data for the work as a list of OverviewDataEntry objects"""
+        # TODO: are the translations being done correctly here?
+        # TODO: turn this into a form; overview_data will fall away
+        def format_date(date_obj):
+            return date_obj.strftime("%Y-%m-%d")
+
+        work = self.object
+
+        # properties, e.g. Chapter number
+        overview_data = [
+            OverviewDataEntry(_(prop["label"]), prop["value"]) for prop in work.labeled_properties()
+        ]
+
+        publication = describe_publication_event(work, friendly_date=False, placeholder=hasattr(work, 'publication_document'))
+        if publication:
+            overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
+
+        if work.assent_date:
+            overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
+
+        as_at_date = work.as_at_date()
+        if as_at_date:
+            overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
+                                                   overridden=work.as_at_date_override))
+
+        for consolidation in work.arbitrary_expression_dates.all():
+            overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
+
+        consolidation_note = work.consolidation_note()
+        if consolidation_note:
+            overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
+                                                   overridden=work.consolidation_note_override))
+
+        if work.disclaimer:
+            overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
+
+        return overview_data
+
+
+class WorkDocumentsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_app/place/_work_detail_documents.html'
+    model = Work
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['documents'] = Document.objects.no_xml().undeleted().filter(work=self.object).order_by('-expression_date', 'language')
+
+        return context
+
+
+class WorkCommencementsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_commencement_tables.html'
+    queryset = Work.objects.prefetch_related(
+        'commencements', 'commencements__commenced_work', 'commencements__commencing_work'
+    )
+
+
+class WorkAmendmentsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_amendment_tables.html'
+    queryset = Work.objects.prefetch_related(
+        'amendments', 'amendments__amended_work', 'amendments__amending_work'
+    )
+
+
+class WorkRepealsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_repeal_tables.html'
+    model = Work
+
+
+class WorkSubsidiaryView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_subsidiary_tables.html'
+    model = Work
+
+
+class WorkTasksView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_task_cards.html'
+    model = Work
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        tasks = self.object.tasks.filter(state__in=Task.OPEN_STATES)
+        context['task_groups'] = Task.task_columns(['blocked', 'open', 'assigned', 'pending_review'], tasks)
 
         return context

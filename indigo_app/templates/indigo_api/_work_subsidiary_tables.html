@@ -1,0 +1,39 @@
+{% load i18n %}
+
+<h5 class="mt-3">{% trans "Primary work" %}</h5>
+
+{% if work.parent_work %}
+  <table class="table table-sm">
+    <tr>
+      <td>
+        <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}"
+           data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}"
+        >{{ work.parent_work.title }}</a>
+        <span class="text-muted">· {{ work.parent_work.frbr_uri }}</span>
+      </td>
+    </tr>
+  </table>
+{% else %}
+  —
+{% endif %}
+
+<h5>{% trans "Subsidiary works" %}</h5>
+
+{% with work.child_works.all as subsidiary_works %}
+  {% if subsidiary_works %}
+    <table class="table table-sm">
+      {% for subsidiary_work in subsidiary_works %}
+        <tr>
+          <td>
+            <a href="{% url 'work' frbr_uri=subsidiary_work.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=subsidiary_work.frbr_uri %}"
+            >{{ subsidiary_work.title }}</a>
+            <span class="text-muted">· {{ subsidiary_work.frbr_uri }}</span>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    —
+  {% endif %}
+{% endwith %}

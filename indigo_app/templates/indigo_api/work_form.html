@@ -25,7 +25,7 @@
   <form id="edit-work-form" method="POST" enctype="multipart/form-data" data-component="WorkForm">
     {% csrf_token %}
 
-    <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
+    <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
 
     <div class="mb-3">
       <div class="float-right">
@@ -60,40 +60,51 @@
 
         <div class="form-row">
           <div class="form-group col-4">
-            <label for="work_doctype" class="required">{% trans 'Work type' %}</label>
-            <select id="work_doctype" class="form-control">
+            <label for="{{ form.frbr_doctype.id_for_label }}" class="required">{% trans 'Work type' %}</label>
+            <select id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
               {% for label, code in doctypes %}
-                <option value="{{ code }}" selected>{{ label }} ({{ code }})</option>
+                <option value="{{ code }}" {% if form.frbr_doctype.value == code %}selected{% endif %}>{{ label }} ({{ code }})</option>
               {% endfor %}
             </select>
           </div>
 
           <div class="form-group col-4">
-            <label for="work_subtype">{% trans 'Work subtype' %}</label>
-            <select id="work_subtype" class="form-control">
+            <label for="{{ form.frbr_subtype.id_for_label }}">{% trans 'Work subtype' %}</label>
+            <select id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
               <option value="">{% trans '(none)' %}</option>
               {% for subtype in subtypes %}
-                <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+                <option
+                  value="{{ subtype.abbreviation }}"
+                  {% if form.frbr_subtype.value == subtype.abbreviation %}selected{% endif %}
+                >{{ subtype }}</option>
               {% endfor %}
             </select>
           </div>
 
           <div class="form-group col-4">
-            <label for="work_actor">{% trans 'Responsible organisation (actor)' %}</label>
-            <input type="text" class="form-control" id="work_actor">
+            <label for="{{ form.frbr_actor.id_for_label }}">{% trans 'Responsible organisation (actor)' %}</label>
+            <input type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
+                   name="{{ form.frbr_actor.html_name }}"
+                   value="{{ form.frbr_actor.value|default:'' }}">
             <div class="form-text text-muted">{% trans 'Organisation that created this work. Not normally used for acts.' %}</div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-3 mb-0">
-            <label for="work_date" class="required">{% trans 'Year (or date) of introduction' %}</label>
-            <input type="text" class="form-control" id="work_date" required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)">
+            <label for="{{ form.frbr_date.id_for_label }}" class="required">{% trans 'Year (or date) of introduction' %}</label>
+            <input type="text" class="form-control" id="{{ form.frbr_date.id_for_label }}"
+                   required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)"
+                   name="{{ form.frbr_date.html_name }}"
+                   value="{{ form.frbr_date.value|default:'' }}">
           </div>
 
           <div class="form-group col-md-6 offset-md-3 mb-0">
-            <label for="work_number" class="required">{% trans 'Number within year' %}</label>
-            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+            <label for="{{ form.frbr_number.id_for_label }}" class="required">{% trans 'Number within year' %}</label>
+            <input type="text" class="form-control" id="{{ form.frbr_number.id_for_label }}"
+                   name="{{ form.frbr_number.html_name }}"
+                   value="{{ form.frbr_number.value|default:'' }}"
+                   required pattern="[^\s]+">
             <div class="form-text text-muted">
               {% trans "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only." %}
             </div>

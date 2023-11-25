@@ -40,11 +40,6 @@
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
 
-      // actual frbr_uri
-      '#id_work-frbr_uri': 'frbr_uri',
-      // shows the FRBR uri as text
-      '#work_frbr_uri': 'frbr_uri',
-
       '#id_work-country': {
         observe: 'country',
         onSet: function(val) {
@@ -91,11 +86,6 @@
           defaultOption: {label: "(none)", value: null},
         }
       },
-      '#work_doctype': 'nature',
-      '#work_subtype': 'subtype',
-      '#work_actor': 'actor',
-      '#work_date': 'date',
-      '#work_number': 'number',
     },
 
     initialize: function(options) {
@@ -107,7 +97,6 @@
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:number', this.numberChanged);
       this.listenTo(this.model, 'change:publication_document', this.publicationDocumentChanged);
       this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
                     _.debounce(this.publicationChanged, 1000));
@@ -116,10 +105,6 @@
       this.stickit();
       this.publicationChanged();
       this.publicationDocumentChanged();
-    },
-
-    numberChanged: function(model, value, options) {
-      model.set('number', value.replace(/[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"'“”‘’‟„‛‚«»‹›]+/gi, '-').replace(/--+/g, '-'));
     },
 
     setDirty: function() {

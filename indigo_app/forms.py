@@ -14,6 +14,7 @@ from django.forms import SelectMultiple
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
+from cobalt import FrbrUri
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
@@ -30,6 +31,16 @@ class WorkForm(forms.ModelForm):
             'stub', 'principal', 'taxonomies', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
         )
+
+    # FRBR URI fields
+    # TODO: these should be choice fields and the options restricted to the place
+    frbr_doctype = forms.CharField()
+    frbr_subtype = forms.CharField(required=False)
+    frbr_actor = forms.CharField(required=False)
+    # TODO: clean and validate these
+    frbr_date = forms.CharField()
+    # TODO: clean this up
+    frbr_number = forms.CharField()
 
     # The user can provide either a file attachment, or a trusted
     # remote URL with supporting data. The form sorts out which fields
@@ -68,6 +79,13 @@ class WorkForm(forms.ModelForm):
                 self.initial[key] = self.instance.properties.get(prop)
             self.fields[key] = forms.CharField(label=label, required=False)
 
+        if self.instance:
+            self.fields['frbr_doctype'].initial = self.instance.doctype
+            self.fields['frbr_subtype'].initial = self.instance.subtype
+            self.fields['frbr_date'].initial = self.instance.date
+            self.fields['frbr_number'].initial = self.instance.number
+            self.fields['frbr_actor'].initial = self.instance.actor
+
     def property_fields(self):
         fields = [
             self[f'property_{prop}']
@@ -76,6 +94,24 @@ class WorkForm(forms.ModelForm):
         ]
         fields.sort(key=lambda f: f.label)
         return fields
+
+    def clean_frbr_number(self):
+        value = self.cleaned_data['frbr_number']
+        value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
+        value = re.sub(r'--+', '-', value)
+        return value
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # build up the FRBR URI from its constituent parts
+        # TODO: this should really be done on the model itself, so that we can store and query the FRBR URI fields independently
+        frbr_uri = FrbrUri(
+            self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
+            cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
+        self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+
+        return self.cleaned_data
 
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)

@@ -22,7 +22,7 @@
     </div>
   {% endif %}
 
-  <form id="edit-work-form" method="POST" enctype="multipart/form-data">
+  <form id="edit-work-form" method="POST" enctype="multipart/form-data" data-component="WorkForm">
     {% csrf_token %}
 
     <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
@@ -297,7 +297,7 @@
                        id="{{ form.commencement_date.id_for_label }}"
                        name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd"
                        pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
-                <p class="form-text text-muted">{% trans 'Date when most of the work comes into force.' %}</p>
+                <div class="form-text text-muted">{% trans 'Date when most of the work comes into force.' %}</div>
 
                 {% if work.pk and work.commencement_date %}
                   {% if work.amendments_made.exists or work.repealed_works.exists %}
@@ -310,15 +310,15 @@
                   {% endif %}
                 {% endif %}
 
-              <div class="form-check">
+              <div class="form-check mt-2">
                 <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
                 <label class="form-check-label" for="commencement_date_unknown">
                   {% trans 'Commencement date is unknown' %}
                 </label>
               </div>
-                <p class="form-text text-muted">
+                <div class="form-text text-muted">
                   {% trans "Check this box when a work has come into force, but the exact commencement date is unknown or open to interpretation." %}
-                </p>
+                </div>
               </div>
             </div>
 
@@ -330,9 +330,9 @@
               <label class="col-2 col-form-label">{% trans 'Commencement note' %}</label>
               <div class="col">
                 <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
-                <p class="form-text text-muted">
+                <div class="form-text text-muted">
                   {% trans "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context." %}
-                </p>
+                </div>
               </div>
             </div>
           </div>

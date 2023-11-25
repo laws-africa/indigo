@@ -26,36 +26,19 @@
     events: {
       'change #edit-work-form': 'setDirty',
       'submit #edit-work-form': 'onSubmit',
-      'click .change-commencing-work': 'changeCommencingWork',
-      'click .delete-commencing-work': 'deleteCommencingWork',
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
       'click .attach-publication-url': 'attachPublicationUrl',
-      'change #commencement_date_unknown': 'commencementDateUnknownChanged',
     },
-    commencingWorkTemplate: '#commencing-work-template',
     publicationDocumentTemplate: '#publication-document-template',
     publicationUrlTemplate: '#publication-document-url-template',
     bindings: {
-      // these are handled directly by the HTML form, but we need the values
-      // to be synchronised on the model so that we can use them elsewhere on the page
-      '#id_work-title': 'title',
       '#id_work-publication_date': {
         observe: 'publication_date',
         onSet: emptyIsNull,
       },
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
-      '#id_work-commenced': 'commenced',
-      '#id_work-commencement_note': 'commencement_note',
-      '#id_work-commencement_date': {
-        observe: 'commencement_date',
-        onSet: emptyIsNull,
-      },
-      '#id_work-commencing_work': {
-        observe: 'commencing_work',
-        onGet: idOrNull,
-      },
 
       // actual frbr_uri
       '#id_work-frbr_uri': 'frbr_uri',
@@ -115,29 +98,15 @@
       '#work_number': 'number',
     },
 
-    countryCodeFromId: function(countryId) {
-      for (var c in Indigo.countries) {
-        if(Indigo.countries[c].id.toString() === countryId) {
-          return c;
-        }
-      }
-    },
-
     initialize: function(options) {
       this.dirty = false;
       this.saving = false;
 
-      this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
-      this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
       this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
       this.publicationUrlTemplate = Handlebars.compile($(this.publicationUrlTemplate).html());
-      this.commencementDateUnknown = document.getElementById('commencement_date_unknown');
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
-      this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:commenced', this.commencedChanged);
-      this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:number', this.numberChanged);
       this.listenTo(this.model, 'change:publication_document', this.publicationDocumentChanged);
       this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
@@ -145,23 +114,8 @@
 
       this.model.updateFrbrUri();
       this.stickit();
-      this.commencingWorkChanged();
       this.publicationChanged();
       this.publicationDocumentChanged();
-      if (!this.model.get('commencement_date')) {
-        this.commencementDateUnknown.checked = true;
-        this.commencementDateUnknownChanged();
-      }
-    },
-
-    updatePageTitle: function() {
-      if (this.model.get('title')) {
-        document.title = this.model.get('title') + ' – Indigo';
-      } else {
-        document.title = 'New work – Indigo';
-      }
-      this.$('.work-title').text(this.model.get('title') || '(untitled work)');
-      this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },
 
     numberChanged: function(model, value, options) {
@@ -178,68 +132,6 @@
 
     onSubmit: function() {
       this.saving = true;
-    },
-
-
-    deleteCommencingWork: function(e) {
-      e.preventDefault();
-      this.model.set('commencing_work', null);
-    },
-
-    changeCommencingWork: function() {
-      var chooser = new Indigo.WorkChooserView({
-            country: this.model.get('country'),
-            locality: this.model.get('locality') || '-',
-          }),
-          self = this;
-
-      if (this.model.get('commencing_work')) {
-        chooser.choose(Indigo.works.get(this.model.get('commencing_work')));
-      }
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          self.model.set({
-            'commencing_work': chosen,
-            'commencement_date': chosen.get('commencement_date') || chosen.get('publication_date'),
-          });
-        }
-      });
-    },
-
-    commencedChanged: function() {
-      if (this.model.get('commenced')) {
-        this.$('#commencement_details').removeClass('d-none');
-
-        if (!this.model.get('commencement_date')) {
-          this.model.set('commencement_date', this.model.get('publication_date'));
-        }
-
-        this.commencementDateUnknown.checked = false;
-        this.commencementDateUnknownChanged();
-      } else {
-        this.model.set('commencement_date', null);
-        this.model.set('commencing_work', null);
-        this.$('#commencement_details').addClass('d-none');
-      }
-    },
-
-    commencementDateUnknownChanged: function() {
-      this.$('#id_work-commencement_date').attr('disabled', this.commencementDateUnknown.checked);
-      if (this.commencementDateUnknown.checked) {
-        this.model.set('commencement_date', null);
-      }
-    },
-
-    commencingWorkChanged: function() {
-      var commencing_work = this.model.get('commencing_work');
-
-      if (commencing_work) {
-        this.$('.work-commencing-work').html(this.commencingWorkTemplate({
-          commencing_work: commencing_work.toJSON(),
-        }));
-      } else {
-        this.$('.work-commencing-work').html(this.commencingWorkTemplate({}));
-      }
     },
 
     publicationChanged: function() {

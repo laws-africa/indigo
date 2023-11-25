@@ -34,8 +34,8 @@ class WorkForm(forms.ModelForm):
 
     # FRBR URI fields
     # TODO: these should be choice fields and the options restricted to the place
-    frbr_doctype = forms.CharField()
-    frbr_subtype = forms.CharField(required=False)
+    frbr_doctype = forms.ChoiceField()
+    frbr_subtype = forms.ChoiceField(required=False)
     frbr_actor = forms.CharField(required=False)
     # TODO: clean and validate these
     frbr_date = forms.CharField()
@@ -69,9 +69,11 @@ class WorkForm(forms.ModelForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commencement_note = forms.CharField(max_length=1024, required=False)
 
-    def __init__(self, place, *args, **kwargs):
+    def __init__(self, country, locality, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.place = place
+        self.country = country
+        self.locality = locality
+        self.place = locality or country
 
         for prop, label in self.place.settings.work_properties.items():
             key = f'property_{prop}'
@@ -85,6 +87,15 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+
+        self.fields['frbr_doctype'].choices = [
+            (y, x)
+            for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
+        ]
+        self.fields['frbr_subtype'].choices = [
+            (s.abbreviation, s.name)
+            for s in Subtype.objects.order_by('name')
+        ]
 
     def property_fields(self):
         fields = [

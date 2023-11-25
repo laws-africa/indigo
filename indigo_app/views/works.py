@@ -123,14 +123,9 @@ class EditWorkView(WorkViewBase, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['place'] = self.place
+        kwargs['country'] = self.country
+        kwargs['locality'] = self.locality
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(EditWorkView, self).get_context_data(**kwargs)
-        context['doctypes'] = self.doctypes()
-        context['subtypes'] = Subtype.objects.order_by('name').all()
-        return context
 
     def form_valid(self, form):
         # save as a revision
@@ -193,7 +188,8 @@ class AddWorkView(PlaceViewBase, CreateView):
         work.country = self.country
         work.locality = self.locality
         kwargs['instance'] = work
-        kwargs['place'] = self.place
+        kwargs['country'] = self.country
+        kwargs['locality'] = self.locality
 
         return kwargs
 

@@ -62,8 +62,8 @@
           <div class="form-group col-4">
             <label for="{{ form.frbr_doctype.id_for_label }}" class="required">{% trans 'Work type' %}</label>
             <select id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
-              {% for label, code in doctypes %}
-                <option value="{{ code }}" {% if form.frbr_doctype.value == code %}selected{% endif %}>{{ label }} ({{ code }})</option>
+              {% for opt in form.frbr_doctype %}
+                {{ opt }}
               {% endfor %}
             </select>
           </div>
@@ -72,11 +72,8 @@
             <label for="{{ form.frbr_subtype.id_for_label }}">{% trans 'Work subtype' %}</label>
             <select id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
               <option value="">{% trans '(none)' %}</option>
-              {% for subtype in subtypes %}
-                <option
-                  value="{{ subtype.abbreviation }}"
-                  {% if form.frbr_subtype.value == subtype.abbreviation %}selected{% endif %}
-                >{{ subtype }}</option>
+              {% for opt in form.frbr_subtype %}
+                {{ opt }}
               {% endfor %}
             </select>
           </div>

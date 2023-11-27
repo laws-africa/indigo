@@ -521,13 +521,6 @@ class WorkFilterForm(forms.Form):
             end_date = self.cleaned_data['amendment_date_end']
             queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
-        # filter by work completeness
-        if self.cleaned_data.get('completeness'):
-            if self.cleaned_data['completeness'] == 'complete':
-                queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
-            elif self.cleaned_data['completeness'] == 'incomplete':
-                queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
-
         # filter by commencement status
         if exclude != "commencement":
             commencement_filter = self.cleaned_data.get('commencement', [])

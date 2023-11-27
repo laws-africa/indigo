@@ -53,6 +53,7 @@ class Task(models.Model):
 
     CLOSED_STATES = (CANCELLED, DONE)
     OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
+    UNBLOCKED_STATES = (OPEN, PENDING_REVIEW)
 
     VERBS = {
         'submit': 'submitted',

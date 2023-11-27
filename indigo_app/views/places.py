@@ -890,11 +890,15 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="tasks")
         task_states = qs.annotate(
             has_open_states=Count(
-                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField()))
-        ).values('has_open_states')
+                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField())),
+            has_unblocked_states=Count(
+                Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
+            has_blocked_states=Count(
+                Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
+        ).values('has_open_states', 'has_unblocked_states', 'has_blocked_states')
 
-        # Organize the results into open_states and no_open_states
-        counts = {'open_states': 0, 'no_open_states': 0}
+        # Organize the results into totals per state
+        counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}
 
         for item in task_states:
             if item['has_open_states'] > 0:
@@ -902,12 +906,30 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             else:
                 counts['no_open_states'] += 1
 
+            # unblocked and only blocked tasks
+            if item['has_unblocked_states'] > 0:
+                counts['unblocked_states'] += 1
+            if item['has_blocked_states'] > 0 and not item['has_unblocked_states'] > 0:
+                counts['only_blocked_states'] += 1
+
         items = [
             FacetItem(
                 "Has open tasks",
                 "has_open_tasks",
                 counts['open_states'],
                 "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has unblocked tasks",
+                "has_unblocked_tasks",
+                counts['unblocked_states'],
+                "has_unblocked_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has only blocked tasks",
+                "has_only_blocked_tasks",
+                counts['only_blocked_states'],
+                "has_only_blocked_tasks" in self.form.cleaned_data.get("tasks", [])
             ),
             FacetItem(
                 "Has no open tasks",

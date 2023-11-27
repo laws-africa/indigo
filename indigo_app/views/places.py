@@ -825,6 +825,11 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         return context
 
     def facet_subtype(self, facets, qs):
+        # count doctypes, subtypes in the current place first, so these are always shown as an option
+        counts_in_place = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
+        counts_subtype_in_place = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts_in_place.update(counts_subtype_in_place)
+
         qs = self.form.filter_queryset(qs, exclude="subtype")
         # count doctypes, subtypes by code
         counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
@@ -838,7 +843,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 c[0] in self.form.cleaned_data.get("subtype", [])
             )
             for c in self.form.fields["subtype"].choices
-            if counts.get(c[0])
+            if counts_in_place.get(c[0])
         ]
         facets.append(Facet("Type", "subtype", "checkbox", items))
 

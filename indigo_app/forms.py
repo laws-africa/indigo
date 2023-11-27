@@ -439,14 +439,17 @@ class WorkFilterForm(forms.Form):
             tasks_filter = self.cleaned_data.get('tasks', [])
             tasks_qs = Q()
             if "has_open_tasks" in tasks_filter:
-                tasks_qs |= Q(tasks__state__in=Task.OPEN_STATES)
+                open_task_ids = queryset.filter(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=open_task_ids)
             if "has_unblocked_tasks" in tasks_filter:
-                tasks_qs |= Q(tasks__state__in=Task.UNBLOCKED_STATES)
+                unblocked_task_ids = queryset.filter(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=unblocked_task_ids)
             if "has_only_blocked_tasks" in tasks_filter:
                 only_blocked_task_ids = queryset.filter(tasks__state=Task.BLOCKED).exclude(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
                 tasks_qs |= Q(id__in=only_blocked_task_ids)
             if "no_open_tasks" in tasks_filter:
-                tasks_qs |= ~Q(tasks__state__in=Task.OPEN_STATES)
+                no_open_task_ids = queryset.exclude(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=no_open_task_ids)
 
             queryset = queryset.filter(tasks_qs)
 

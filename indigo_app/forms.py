@@ -464,10 +464,6 @@ class WorkFilterForm(forms.Form):
 
             queryset = queryset.filter(primary_qs)
 
-        # sort by
-        if self.cleaned_data.get('sortby'):
-            queryset = queryset.order_by(self.cleaned_data.get('sortby'))
-
         # doctype, subtype
         if exclude != "subtype":
             subtype_filter = self.cleaned_data.get("subtype", [])
@@ -602,6 +598,10 @@ class WorkFilterForm(forms.Form):
             if topic:
                 topics = [topic] + [t for t in topic.get_descendants()]
                 queryset = queryset.filter(taxonomy_topics__in=topics)
+
+        # sort by
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data.get('sortby'))
 
         return queryset
 

@@ -379,7 +379,8 @@ class WorkFilterForm(forms.Form):
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
     tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('has_unblocked_tasks', 'Has unblocked tasks'), ('has_only_blocked_tasks', 'Has only blocked tasks'), ('no_open_tasks', 'Has no open tasks')])
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])
-    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No Consolidation')])
+    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No consolidation')])
+    publication_document = forms.MultipleChoiceField(required=False, choices=[('has_publication_document', 'Has publication document'), ('no_publication_document', 'No publication document')])
     documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
     taxonomy_topic = forms.CharField()
 
@@ -552,6 +553,17 @@ class WorkFilterForm(forms.Form):
                 consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=True)
 
             queryset = queryset.filter(consolidation_qs)
+
+        # filter by publication document
+        if exclude != "publication_document":
+            publication_document_filter = self.cleaned_data.get('publication_document', [])
+            publication_document_qs = Q()
+            if 'has_publication_document' in publication_document_filter:
+                publication_document_qs |= Q(publication_document__isnull=False)
+            if 'no_publication_document' in publication_document_filter:
+                publication_document_qs |= Q(publication_document__isnull=True)
+
+            queryset = queryset.filter(publication_document_qs)
 
         # filter by points in time
         if exclude != "documents":

@@ -812,6 +812,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_principal(work_facets, qs)
         self.facet_stub(work_facets, qs)
         self.facet_tasks(work_facets, qs)
+        self.facet_publication_document(work_facets, qs)
         self.facet_primary(work_facets, qs)
         self.facet_commencement(work_facets, qs)
         self.facet_amendment(work_facets, qs)
@@ -1047,6 +1048,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             ),
         ]
         facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
+
+    def facet_publication_document(self, facets,  qs):
+        qs = self.form.filter_queryset(qs, exclude="publication_document")
+        counts = qs.aggregate(
+            has_publication_document=Count("pk", filter=Q(publication_document__isnull=False), distinct=True),
+            no_publication_document=Count("pk", filter=Q(publication_document__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Has publication document",
+                "has_publication_document",
+                counts.get("has_publication_document", 0),
+                "has_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+            FacetItem(
+                "No publication document",
+                "no_publication_document",
+                counts.get("no_publication_document", 0),
+                "no_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+        ]
+        facets.append(Facet("Publication document", "publication_document", "checkbox", items))
 
     def facet_repeal(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="repeal")

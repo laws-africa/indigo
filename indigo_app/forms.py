@@ -364,7 +364,7 @@ class WorkFilterForm(forms.Form):
     amendment = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended')])
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    
+
     commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
@@ -377,9 +377,10 @@ class WorkFilterForm(forms.Form):
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
-    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('no_open_tasks', 'Has no open tasks')])
+    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('has_unblocked_tasks', 'Has unblocked tasks'), ('has_only_blocked_tasks', 'Has only blocked tasks'), ('no_open_tasks', 'Has no open tasks')])
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])
-    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No Consolidation')])
+    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No consolidation')])
+    publication_document = forms.MultipleChoiceField(required=False, choices=[('has_publication_document', 'Has publication document'), ('no_publication_document', 'No publication document')])
     documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
     taxonomy_topic = forms.CharField()
 
@@ -439,9 +440,17 @@ class WorkFilterForm(forms.Form):
             tasks_filter = self.cleaned_data.get('tasks', [])
             tasks_qs = Q()
             if "has_open_tasks" in tasks_filter:
-                tasks_qs |= Q(tasks__state__in=Task.OPEN_STATES)
+                open_task_ids = queryset.filter(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=open_task_ids)
+            if "has_unblocked_tasks" in tasks_filter:
+                unblocked_task_ids = queryset.filter(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=unblocked_task_ids)
+            if "has_only_blocked_tasks" in tasks_filter:
+                only_blocked_task_ids = queryset.filter(tasks__state=Task.BLOCKED).exclude(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=only_blocked_task_ids)
             if "no_open_tasks" in tasks_filter:
-                tasks_qs |= ~Q(tasks__state__in=Task.OPEN_STATES)
+                no_open_task_ids = queryset.exclude(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
+                tasks_qs |= Q(id__in=no_open_task_ids)
 
             queryset = queryset.filter(tasks_qs)
 
@@ -455,10 +464,6 @@ class WorkFilterForm(forms.Form):
                 primary_qs |= Q(parent_work__isnull=False)
 
             queryset = queryset.filter(primary_qs)
-
-        # sort by
-        if self.cleaned_data.get('sortby'):
-            queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
 
         # doctype, subtype
         if exclude != "subtype":
@@ -511,18 +516,11 @@ class WorkFilterForm(forms.Form):
                 amendment_qs |= Q(amendments__date__isnull=True)
 
             queryset = queryset.filter(amendment_qs)
-        
+
         if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
             start_date = self.cleaned_data['amendment_date_start']
             end_date = self.cleaned_data['amendment_date_end']
             queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
-
-        # filter by work completeness
-        if self.cleaned_data.get('completeness'):
-            if self.cleaned_data['completeness'] == 'complete':
-                queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
-            elif self.cleaned_data['completeness'] == 'incomplete':
-                queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
 
         # filter by commencement status
         if exclude != "commencement":
@@ -555,6 +553,17 @@ class WorkFilterForm(forms.Form):
                 consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=True)
 
             queryset = queryset.filter(consolidation_qs)
+
+        # filter by publication document
+        if exclude != "publication_document":
+            publication_document_filter = self.cleaned_data.get('publication_document', [])
+            publication_document_qs = Q()
+            if 'has_publication_document' in publication_document_filter:
+                publication_document_qs |= Q(publication_document__isnull=False)
+            if 'no_publication_document' in publication_document_filter:
+                publication_document_qs |= Q(publication_document__isnull=True)
+
+            queryset = queryset.filter(publication_document_qs)
 
         # filter by points in time
         if exclude != "documents":
@@ -594,6 +603,10 @@ class WorkFilterForm(forms.Form):
             if topic:
                 topics = [topic] + [t for t in topic.get_descendants()]
                 queryset = queryset.filter(taxonomy_topics__in=topics)
+
+        # sort by
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data.get('sortby'))
 
         return queryset
 

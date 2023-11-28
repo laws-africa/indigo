@@ -812,6 +812,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_principal(work_facets, qs)
         self.facet_stub(work_facets, qs)
         self.facet_tasks(work_facets, qs)
+        self.facet_publication_document(work_facets, qs)
         self.facet_primary(work_facets, qs)
         self.facet_commencement(work_facets, qs)
         self.facet_amendment(work_facets, qs)
@@ -825,6 +826,11 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         return context
 
     def facet_subtype(self, facets, qs):
+        # count doctypes, subtypes in the current place first, so these are always shown as an option
+        counts_in_place = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
+        counts_subtype_in_place = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts_in_place.update(counts_subtype_in_place)
+
         qs = self.form.filter_queryset(qs, exclude="subtype")
         # count doctypes, subtypes by code
         counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
@@ -838,7 +844,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 c[0] in self.form.cleaned_data.get("subtype", [])
             )
             for c in self.form.fields["subtype"].choices
-            if counts.get(c[0])
+            if counts_in_place.get(c[0])
         ]
         facets.append(Facet("Type", "subtype", "checkbox", items))
 
@@ -890,11 +896,15 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="tasks")
         task_states = qs.annotate(
             has_open_states=Count(
-                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField()))
-        ).values('has_open_states')
+                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField())),
+            has_unblocked_states=Count(
+                Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
+            has_blocked_states=Count(
+                Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
+        ).values('has_open_states', 'has_unblocked_states', 'has_blocked_states')
 
-        # Organize the results into open_states and no_open_states
-        counts = {'open_states': 0, 'no_open_states': 0}
+        # Organize the results into totals per state
+        counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}
 
         for item in task_states:
             if item['has_open_states'] > 0:
@@ -902,12 +912,30 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             else:
                 counts['no_open_states'] += 1
 
+            # unblocked and only blocked tasks
+            if item['has_unblocked_states'] > 0:
+                counts['unblocked_states'] += 1
+            if item['has_blocked_states'] > 0 and not item['has_unblocked_states'] > 0:
+                counts['only_blocked_states'] += 1
+
         items = [
             FacetItem(
                 "Has open tasks",
                 "has_open_tasks",
                 counts['open_states'],
                 "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has unblocked tasks",
+                "has_unblocked_tasks",
+                counts['unblocked_states'],
+                "has_unblocked_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has only blocked tasks",
+                "has_only_blocked_tasks",
+                counts['only_blocked_states'],
+                "has_only_blocked_tasks" in self.form.cleaned_data.get("tasks", [])
             ),
             FacetItem(
                 "Has no open tasks",
@@ -1020,6 +1048,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             ),
         ]
         facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
+
+    def facet_publication_document(self, facets,  qs):
+        qs = self.form.filter_queryset(qs, exclude="publication_document")
+        counts = qs.aggregate(
+            has_publication_document=Count("pk", filter=Q(publication_document__isnull=False), distinct=True),
+            no_publication_document=Count("pk", filter=Q(publication_document__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Has publication document",
+                "has_publication_document",
+                counts.get("has_publication_document", 0),
+                "has_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+            FacetItem(
+                "No publication document",
+                "no_publication_document",
+                counts.get("no_publication_document", 0),
+                "no_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+        ]
+        facets.append(Facet("Publication document", "publication_document", "checkbox", items))
 
     def facet_repeal(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="repeal")

@@ -1,41 +1,35 @@
-{% load indigo_app humanize i18n %}
+{% load humanize i18n %}
 
-<div class="border bg-white mb-2 work-list-work">
-  <div class="d-flex p-2">
-    <div class="align-self-center">
-      <a class="text-muted fas fa-fw collapse-indicator collapsed" data-toggle="collapse"
-         href="#work-detail-{{ work.pk }}"
-         hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
-         hx-target="#work-detail-{{ work.pk }}"
-         hx-trigger="click once"
-      ></a>
-    </div>
-
+<div class="border bg-white mb-2">
+  <div class="d-flex p-2 pl-3" type="button" data-toggle="collapse" id="work-heading-{{ work.pk }}"
+       data-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
+       hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
+       hx-target="#work-detail-{{ work.pk }}"
+       hx-trigger="click once"
+  >
     <div class="flex-fill">
       <div class="d-flex">
-        <div class="col-8 pl-0">
+        <div class="col-9 pl-0">
           <div>
             <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
             {% include 'indigo_api/_work_info_badges.html' %}
           </div>
           <div class="text-muted">{{ work.frbr_uri }}</div>
         </div>
-
-        <div class="col-4">
+        <div class="col-3">
           <div>
-            Created
+            {% trans "Created" %}
             <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
-            by {% user_profile work.created_by_user %}
           </div>
           <div>
-            Updated
+            {% trans "Updated" %}
             <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
-            by {% user_profile work.updated_by_user %}
           </div>
         </div>
       </div>
-
     </div>
   </div>
-  <div class="collapse work-extra-detail" id="work-detail-{{ work.pk }}">Loading...</div>
+  <div class="collapse" id="work-detail-{{ work.pk }}" aria-labelledby="work-heading-{{ work.pk }}">
+    {% trans "Loading..." %}
+  </div>
 </div>

@@ -13,6 +13,9 @@
       <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="{% trans 'Filter...' %}"
              value="{{ form.q.value | default:'' }}">
     </div>
+    <div class="mr-2">
+      <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear all filters' %}</a>
+    </div>
 
     <!-- Sorting -->
     <div class="mr-2">

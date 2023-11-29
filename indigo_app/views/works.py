@@ -1069,3 +1069,49 @@ class EditWorkCommencingWorkView(WorkViewBase, DetailView):
         context["commencing_work"] = form.cleaned_data.get('commencing_work')
 
         return context
+
+
+class FindPublicationDocumentView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/work_publication_document_form.html'
+
+    class Form(forms.Form):
+        class Meta:
+            prefix = 'work'
+            # model = Work
+            fields = ('publication_date', 'publication_number', 'publication_name')
+
+    form_class = Form
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def find_possible_documents(self, publication_date, publication_number, publication_name):
+        finder = plugins.for_locale('publications', self.country.code, None, self.locality.code if self.locality else None)
+        if finder:
+            try:
+                params = {
+                    'date': publication_date,
+                    'number': publication_number,
+                    'publication': publication_name,
+                    'country': 'za',
+                    'locality': ''
+                }
+                return finder.find_documents(params)
+            except ValueError:
+                return []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.Form(self.request.POST)
+
+        if form.is_valid():
+            publication_date = form.cleaned_data['publication_date']
+            publication_number = form.cleaned_data['publication_number']
+            publication_name = form.cleaned_data['publication_name']
+
+            context["possible_documents"] = self.find_possible_documents(publication_date, publication_number, publication_name)
+
+
+
+
+

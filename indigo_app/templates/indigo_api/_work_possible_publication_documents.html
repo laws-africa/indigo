@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% if possible_documents %}
+<ul>
+  <li class="list-group-item list-group-item-light h6">{% trans 'Possible documents' %}</li>
+  {% for doc in possible_documents %}
+    <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center">
+      <a href="{{ url }}" target="_blank" rel="noreferrer noopener">{{ url }}</a>
+      <button type="button" class="btn btn-secondary ml-2">{% trans 'Attach document' %}</button>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}

@@ -710,7 +710,6 @@ class TaxonomyTopicTaskDetailView(AbstractAuthedIndigoView, DetailView):
         def fix_up(item):
             item["title"] = item["data"]["name"]
             item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
-            item["selected"] = item["data"]["slug"] == self.object.slug
             for kid in item.get("children", []):
                 fix_up(kid)
 

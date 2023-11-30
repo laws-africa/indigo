@@ -41,3 +41,13 @@
     </div>
   {% endif %}
 {% endwith %}
+
+<div class="mt-2">
+  <button
+    class="btn btn-outline-primary"
+    hx-get="{% url 'work_edit_modal' work.frbr_uri %}"
+    hx-target="#work-edit-modal"
+    data-toggle="modal"
+    data-target="#work-edit-modal"
+  >{% trans "Edit" %}</button>
+</div>

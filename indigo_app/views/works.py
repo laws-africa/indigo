@@ -173,6 +173,10 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class EditWorkModalView(EditWorkView):
+    template_name = "indigo_api/_work_form_modal.html"
+
+
 class AddWorkView(PlaceViewBase, CreateView):
     model = Work
     js_view = 'WorkDetailView'

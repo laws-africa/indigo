@@ -28,6 +28,10 @@
 
     <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
 
+    <div class="mr-2">
+      <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear all filters' %}</a>
+    </div>
+
     <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
   </div>
 

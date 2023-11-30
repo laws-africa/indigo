@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<ul>
+  <li class="list-group-item list-group-item-light h6">{% trans 'Attached publication document' %}</li>
+  <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center">
+    <a href="{{ attach_pubdoc_form.publication_document_trusted_url.value }}" target="_blank" rel="noreferrer noopener">{{ attach_pubdoc_form.name.value }}</a>
+    {{ attach_pubdoc_form.as_p }}
+    <button hx-post="{% url 'find_publication_document' work.frbr_uri %}?form={{ forloop.counter }}"
+            hx-target=".publication-document-wrapper"
+            type="button"
+            class="btn btn-secondary ml-2">{% trans 'Remove' %}</button>
+  </li>
+</ul>

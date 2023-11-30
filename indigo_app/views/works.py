@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.forms import formset_factory
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -1071,13 +1072,20 @@ class EditWorkCommencingWorkView(WorkViewBase, DetailView):
         return context
 
 
-class FindPublicationDocumentView(WorkViewBase, DetailView):
-    template_name = 'indigo_api/work_publication_document_form.html'
+class PubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
 
-    class Form(forms.Form):
+
+class FindPublicationDocumentView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/_work_possible_publication_documents.html'
+
+    class Form(forms.ModelForm):
         class Meta:
             prefix = 'work'
-            # model = Work
+            model = Work
             fields = ('publication_date', 'publication_number', 'publication_name')
 
     form_class = Form
@@ -1096,22 +1104,67 @@ class FindPublicationDocumentView(WorkViewBase, DetailView):
                     'country': 'za',
                     'locality': ''
                 }
-                return finder.find_documents(params)
-            except ValueError:
+                return finder.find_publications(params)
+            except (ValueError, ConnectionError):
                 return []
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.request.POST)
+        form = self.Form(self.request.POST, prefix="work", instance=self.work)
 
         if form.is_valid():
             publication_date = form.cleaned_data['publication_date']
             publication_number = form.cleaned_data['publication_number']
             publication_name = form.cleaned_data['publication_name']
+            possible_documents = self.find_possible_documents(publication_date, publication_number, publication_name)
+            if possible_documents:
+                PuDocFormset = formset_factory(PubDocForm, extra=0)
+                formset = PuDocFormset(prefix="pubdoc", initial=[
+                    {
+                        'name': doc.get('name'),
+                        'trusted_url': doc.get('url'),
+                        'size': doc.get('size'),
+                        'mimetype': doc.get('mimetype')
+                    }
+                    for doc in possible_documents
+                ])
+                context["possible_doc_formset"] = formset
 
-            context["possible_documents"] = self.find_possible_documents(publication_date, publication_number, publication_name)
+            return context
 
 
+class AttachPublicationDocumentView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/_work_attach_publication_document.html'
 
+    class Form(forms.ModelForm):
+        publication_document_trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+        publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+        publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
+        name = forms.CharField(required=False, widget=forms.HiddenInput())
+
+        class Meta:
+            prefix = 'work'
+            model = Work
+            fields = ('publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type', 'name')
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        form = self.request.GET.get('form')
+        context = super().get_context_data(**kwargs)
+        PuDocFormset = formset_factory(PubDocForm, extra=1)
+        formset = PuDocFormset(prefix="pubdoc", data=self.request.POST)
+        if formset.is_valid():
+            selected_form = formset.forms[int(form)]
+            # set initial data for the form
+            initial = {
+                'name': selected_form.cleaned_data['name'],
+                'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
+                'publication_document_size': selected_form.cleaned_data['size'],
+                'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
+            }
+            context["attach_pubdoc_form"] = self.Form(prefix="work", instance=self.work, initial=initial)
+        return context
 
 

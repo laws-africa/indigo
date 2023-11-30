@@ -1,35 +1,42 @@
 {% load humanize i18n %}
 
-<div class="border bg-white mb-2">
-  <div class="d-flex p-2 pl-3" type="button" data-toggle="collapse" id="work-heading-{{ work.pk }}"
-       data-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
-       hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
-       hx-target="#work-detail-{{ work.pk }}"
-       hx-trigger="click once"
-  >
-    <div class="flex-fill">
-      <div class="d-flex">
-        <div class="col-9 pl-0">
-          <div>
-            <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-            {% include 'indigo_api/_work_info_badges.html' %}
-          </div>
-          <div class="text-muted">{{ work.frbr_uri }}</div>
-        </div>
-        <div class="col-3">
-          <div>
-            {% trans "Created" %}
-            <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
-          </div>
-          <div>
-            {% trans "Updated" %}
-            <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+<div class="d-flex">
+  <div class="mr-2 mt-2">
+    <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
+  </div>
+  <div class="flex-fill">
+    <div class="border bg-white mb-2">
+      <div class="d-flex p-2 pl-3" type="button" data-toggle="collapse" id="work-heading-{{ work.pk }}"
+           data-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
+           hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
+           hx-target="#work-detail-{{ work.pk }}"
+           hx-trigger="click once"
+      >
+        <div class="flex-fill">
+          <div class="d-flex">
+            <div class="col-9 pl-0">
+              <div>
+                <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+                {% include 'indigo_api/_work_info_badges.html' %}
+              </div>
+              <div class="text-muted">{{ work.frbr_uri }}</div>
+            </div>
+            <div class="col-3">
+              <div>
+                {% trans "Created" %}
+                <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
+              </div>
+              <div>
+                {% trans "Updated" %}
+                <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="collapse" id="work-detail-{{ work.pk }}" aria-labelledby="work-heading-{{ work.pk }}">
+        {% trans "Loading..." %}
+      </div>
     </div>
-  </div>
-  <div class="collapse" id="work-detail-{{ work.pk }}" aria-labelledby="work-heading-{{ work.pk }}">
-    {% trans "Loading..." %}
   </div>
 </div>

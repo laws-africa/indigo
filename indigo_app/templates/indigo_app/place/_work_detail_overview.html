@@ -1,11 +1,11 @@
 {% load indigo i18n %}
 
-{% for entry in overview_data %}
-  <div class="d-flex mb-1">
-    <div class="col-2">
-      <b>{{ entry.key }}</b>
-    </div>
-    <div class="d-flex flex-column col-10">
+<dl class="row mb-0">
+  {% for entry in overview_data %}
+    <dt class="col-2">
+      {{ entry.key }}
+    </dt>
+    <dd class="col-10">
       <div>
         {% if entry.overridden %}{% include 'indigo_app/place/_overridden.html' %}{% endif %}
         {{ entry.value }}
@@ -18,17 +18,15 @@
           <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
         </div>
       {% endif %}
-    </div>
-  </div>
-{% endfor %}
+    </dd>
+  {% endfor %}
 
-{% with work.taxonomy_topics.all as topics %}
-  {% if topics %}
-    <div class="d-flex">
-      <div class="col-2">
-        <b>{% trans "Topics" %}</b>
-      </div>
-      <div class="d-flex flex-column col-10">
+  {% with work.taxonomy_topics.all as topics %}
+    {% if topics %}
+      <dt class="col-2">
+        {% trans "Topics" %}
+      </dt>
+      <dd class="col-10">
         {% for topic in topics %}
           <div>
             {% for item in topic.get_ancestors %}
@@ -37,7 +35,7 @@
             <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
           </div>
         {% endfor %}
-      </div>
-    </div>
-  {% endif %}
-{% endwith %}
+      </dd>
+    {% endif %}
+  {% endwith %}
+</dl>

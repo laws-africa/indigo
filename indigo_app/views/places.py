@@ -1166,7 +1166,6 @@ class WorkActionsView(PlaceViewBase, FormView):
         # get the union of all the work's taxonomy topics
         if form.cleaned_data.get('works'):
             context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
-            context["taxonomy_topic_ids"] = [t.pk for t in context["taxonomy_topics"]]
 
         if form.is_valid:
             context["works"] = form.cleaned_data.get("works", [])

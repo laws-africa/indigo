@@ -56,6 +56,7 @@ class IndigoApp {
       this.createComponents(e.target);
       this.createVueComponents(e.target);
       relativeTimestamps(e.target);
+      $('.selectpicker').selectpicker();
     });
   }
 

@@ -29,11 +29,11 @@
             <div class="form-group col-md-10">
               <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
               <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
-                      class="form-control min-vh-30" multiple>
+                      class="form-control selectpicker" multiple
+                      data-live-search="true" data-selected-text-format="count > 3">
                 {% for topic in form.fields.add_taxonomy_topics.queryset %}
-                  <option {% if topic.pk in taxonomy_topic_ids %}selected{% endif %} value="{{ topic.pk }}">
+                  <option value="{{ topic.pk }}">
                     {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
-                    {% if topic.pk in taxonomy_topic_ids %}(✓){% endif %}
                   </option>
                 {% endfor %}
               </select>

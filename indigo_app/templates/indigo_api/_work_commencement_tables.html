@@ -7,14 +7,15 @@
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>{% trans 'Work' %}</th>
-        <th>{% trans 'In full' %}</th>
-        <th>{% trans 'Note' %}</th>
         <th>{% trans 'Date' %}</th>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Note' %}</th>
+        <th>{% trans 'In full' %}</th>
       </tr>
       </thead>
       {% for item in commencements %}
         <tr>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
           <td>
             {% if item.commencing_work %}
               <a href="{% url 'work' frbr_uri=item.commencing_work.frbr_uri %}"
@@ -25,9 +26,8 @@
               —
             {% endif %}
           </td>
-          <td>{% if item.all_provisions %}✔{% else %}✕{% endif %}</td>
           <td>{{ item.note|default:"" }}</td>
-          <td>{{ item.date|date:"Y-m-d" }}</td>
+          <td>{% if item.all_provisions %}✓{% else %}✕{% endif %}</td>
         </tr>
       {% endfor %}
     </table>
@@ -43,23 +43,23 @@
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>{% trans 'Work' %}</th>
-        <th>{% trans 'In full' %}</th>
-        <th>{% trans 'Note' %}</th>
         <th>{% trans 'Date' %}</th>
+        <th>{% trans 'Work' %}</th>
+        <th>{% trans 'Note' %}</th>
+        <th>{% trans 'In full' %}</th>
       </tr>
       </thead>
       {% for item in commencements_made %}
         <tr>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
           <td>
             <a href="{% url 'work' frbr_uri=item.commenced_work.frbr_uri %}"
                data-popup-url="{% url 'work_popup' frbr_uri=item.commenced_work.frbr_uri %}"
             >{{ item.commenced_work.title }}</a>
             <span class="text-muted">· {{ item.commenced_work.frbr_uri }}</span>
           </td>
-          <td>{% if item.all_provisions %}✔{% else %}✕{% endif %}</td>
           <td>{{ item.note|default:"" }}</td>
-          <td>{{ item.date|date:"Y-m-d" }}</td>
+          <td>{% if item.all_provisions %}✓{% else %}✕{% endif %}</td>
         </tr>
       {% endfor %}
     </table>

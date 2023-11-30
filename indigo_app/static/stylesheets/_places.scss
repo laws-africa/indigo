@@ -18,3 +18,12 @@
     overflow-y: auto;
   }
 }
+
+.max-vh-60 {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.min-vh-30 {
+  min-height: 30vh;
+}

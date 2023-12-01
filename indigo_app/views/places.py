@@ -751,6 +751,10 @@ class PlaceWorksView(PlaceViewBase, ListView):
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + (self.request.POST or self.request.GET).urlencode()
         )
+        context['download_xsl_url'] = (
+            reverse('place_works', kwargs={'place': self.kwargs['place']}) +
+            '?' + (self.request.POST or self.request.GET).urlencode() + '&format=xlsx'
+        )
         return context
 
     def render_to_response(self, context, **response_kwargs):

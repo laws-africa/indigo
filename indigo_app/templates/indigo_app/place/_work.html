@@ -1,9 +1,11 @@
 {% load humanize i18n %}
 
 <div class="d-flex">
-  <div class="mr-2 mt-2">
-    <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
-  </div>
+  {% if perms.indigo_api.change_work %}
+    <div class="mr-2 mt-2">
+      <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
+    </div>
+  {% endif %}
   <div class="flex-fill">
     <div class="border bg-white mb-2">
       <div class="d-flex p-2 pl-3" type="button" data-toggle="collapse" id="work-heading-{{ work.pk }}"

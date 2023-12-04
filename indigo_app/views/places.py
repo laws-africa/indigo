@@ -1150,7 +1150,7 @@ class WorkActionsView(PlaceViewBase, FormView):
     template_name = "indigo_app/place/_works_actions.html"
 
     def form_valid(self, form):
-        if form.cleaned_data['save']:
+        if form.cleaned_data['save'] and self.request.user.has_perm('indigo_api.change_work'):
             form.save_changes()
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
@@ -1163,12 +1163,13 @@ class WorkActionsView(PlaceViewBase, FormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # get the union of all the work's taxonomy topics
-        if form.cleaned_data.get('works'):
-            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
+        if self.request.user.has_perm('indigo_api.change_work'):
+            # get the union of all the work's taxonomy topics
+            if form.cleaned_data.get('works'):
+                context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
 
-        if form.is_valid:
-            context["works"] = form.cleaned_data.get("works", [])
+            if form.is_valid:
+                context["works"] = form.cleaned_data.get("works", [])
 
         return context
 

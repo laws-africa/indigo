@@ -3,12 +3,14 @@
   height: 7px;
 }
 
-.work-list-facets {
-  max-height: 100vh;
+.work-list-filters {
   position: sticky;
   top: 0px;
-  overflow-y: auto;
+  z-index: 10;
+  background: white;
+}
 
+.work-list-facets {
   label {
     font-weight: normal;
   }

@@ -94,6 +94,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/parent$', works.EditWorkParentView.as_view(), name='work_edit_parent'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/find-publication$', works.FindPublicationDocumentView.as_view(), name='find_publication_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/attach-publication$', works.AttachPublicationDocumentView.as_view(), name='attach_publication_document'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/localities-options$', works.WorkLocalityOptionsView.as_view(), name='locality_options'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/commencing-work$', works.EditWorkCommencingWorkView.as_view(), name='work_edit_commencing_work'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/delete$', works.DeleteWorkView.as_view(), name='work_delete'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/$', works.WorkVersionsView.as_view(), name='work_versions'),

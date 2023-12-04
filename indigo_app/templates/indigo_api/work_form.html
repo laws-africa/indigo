@@ -435,18 +435,20 @@
         <div class="form-row">
           <div class="form-group col-4">
             <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
-            <select id="{{ form.country.id_for_label }}" class="form-control" name="{{ form.country.html_name }}">
+            <select
+                hx-trigger="change"
+                hx-target=".locality-options"
+                hx-swap="outerHTML"
+                hx-post="{% url 'locality_options' work.frbr_uri %}"
+                id="{{ form.country.id_for_label }}"
+                class="form-control" name="{{ form.country.html_name }}">
               {% for val, label in form.fields.country.choices %}
                 <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %} name="{{ form.country.html_name }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>
 
-          <div class="form-group col-4">
-            <label for="{{ form.locality.id_for_label }}">{{ form.locality.label }}</label>
-            <select id="{{ form.locality.id_for_label }}" class="form-control" name="{{ form.locality.html_name }}">
-            </select>
-          </div>
+        {% include 'indigo_api/_work_locality_options.html' %}
 
         </div>
 

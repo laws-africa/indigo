@@ -1,6 +1,6 @@
 <div class="card mb-3">
   <div class="card-body">
-    <div data-vue-component="TaxonomyTOC"></div>
+    <div data-vue-component="TaxonomyTOC" data-checkbox="taxonomy_topic" data-selected="{{ form.taxonomy_topic.value|join:' ' }}"></div>
     {{ taxonomy_toc|json_script:"taxonomy_toc" }}
   </div>
 </div>

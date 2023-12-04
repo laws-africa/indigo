@@ -382,7 +382,7 @@ class WorkFilterForm(forms.Form):
     consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No consolidation')])
     publication_document = forms.MultipleChoiceField(required=False, choices=[('has_publication_document', 'Has publication document'), ('no_publication_document', 'No publication document')])
     documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
-    taxonomy_topic = forms.CharField()
+    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
 
     advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start']
 
@@ -598,11 +598,9 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(status_qs)
 
         # filter by taxonomy topic
-        if self.cleaned_data.get('taxonomy_topic'):
-            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
-            if topic:
-                topics = [topic] + [t for t in topic.get_descendants()]
-                queryset = queryset.filter(taxonomy_topics__in=topics)
+        if exclude != "taxonomy_topic":
+            if self.cleaned_data.get('taxonomy_topic'):
+                queryset = queryset.filter(taxonomy_topics__in=self.cleaned_data['taxonomy_topic'])
 
         # sort by
         if self.cleaned_data.get('sortby'):

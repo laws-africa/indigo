@@ -5,7 +5,7 @@
   id="work-filter-form"
   hx-post="{% url 'place_works' place=place.place_code %}"
   hx-target="#work-list"
-  hx-trigger="submit, change from:#work-list target:.work-list-facet delay:1s, change from:[name=sortby]"
+  hx-trigger="submit, change from:#work-list target:.facet delay:1s, change from:[name=sortby]"
 >
   <div class="d-flex">
 
@@ -128,9 +128,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
-        {{ form.taxonomy_topic.as_hidden }}
 
         <!-- Reset filters -->
         <div class="text-right mt-3">

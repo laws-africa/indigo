@@ -802,7 +802,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
 
         qs = Work.objects.filter(country=self.country, locality=self.locality)
 
@@ -818,6 +818,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_amendment(work_facets, qs)
         self.facet_consolidation(work_facets, qs)
         self.facet_repeal(work_facets, qs)
+        self.facet_taxonomy(context['taxonomy_toc'], qs)
 
         context["document_facets"] = doc_facets = []
         self.facet_points_in_time(doc_facets, qs)
@@ -1143,6 +1144,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             ),
         ]
         facets.append(Facet("Point in time status", "status", "checkbox",  items))
+
+    def facet_taxonomy(self, taxonomy_tree, qs):
+        qs = self.form.filter_queryset(qs, exclude="taxonomy_topic")
+        # count works per taxonomy topic
+        counts = {
+            x["taxonomy_topics__slug"]: x["count"]
+            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("taxonomy_topics__slug")).order_by()
+        }
+
+        # fold the counts into the taxonomy tree
+        def decorate(item):
+            total = 0
+            for child in item.get('children', []):
+                total = total + decorate(child)
+            # count for this item
+            item['data']['count'] = counts.get(item["data"]["slug"])
+            # total of count for descendants
+            item['data']['total'] = total
+            return total + (item['data']['count'] or 0)
+
+        for item in taxonomy_tree:
+            decorate(item)
 
 
 class WorkActionsView(PlaceViewBase, FormView):

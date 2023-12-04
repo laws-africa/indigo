@@ -24,7 +24,7 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement, Workflow
+    ArbitraryExpressionDate, Commencement, Workflow, Locality
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
@@ -1165,6 +1165,42 @@ class AttachPublicationDocumentView(WorkViewBase, DetailView):
                 'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
             }
             context["attach_pubdoc_form"] = self.Form(prefix="work", instance=self.work, initial=initial)
+        return context
+
+
+class WorkLocalityOptionsView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/_work_locality_options.html'
+
+    class Form(forms.ModelForm):
+        class Meta:
+            prefix = 'work'
+            model = Work
+            fields = ('country',)
+
+        def get_country_localities(self):
+            localities = Locality.objects.filter(country=self.cleaned_data.get('country'))
+            return localities
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.Form(self.request.POST, prefix="work", instance=self.work)
+        if form.is_valid():
+            localities = form.get_country_localities()
+
+            class Form(forms.ModelForm):
+                class Meta:
+                    prefix = 'work'
+                    model = Work
+                    fields = ('locality',)
+
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.fields['locality'].queryset = localities
+
+            context["form"] = Form(prefix="work", instance=self.work)
         return context
 
 

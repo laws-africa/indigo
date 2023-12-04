@@ -97,6 +97,8 @@ class WorkForm(forms.ModelForm):
             for s in Subtype.objects.order_by('name')
         ]
 
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
+
     def property_fields(self):
         fields = [
             self[f'property_{prop}']

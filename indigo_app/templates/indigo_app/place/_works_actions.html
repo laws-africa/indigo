@@ -17,7 +17,7 @@
 
     <div class="modal fade" tabindex="-1" id="bulk-update-modal">
       <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content min-vh-60">
           <div class="modal-header">
             <h5 class="modal-title">
               {% blocktrans with works_length=works|length %}Update {{ works_length }} works{% endblocktrans %}
@@ -30,9 +30,9 @@
               <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
               <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
                       class="form-control selectpicker" multiple
-                      data-live-search="true" data-size="12" data-selected-text-format="count > 3">
+                      data-live-search="true" data-size="8" data-selected-text-format="count > 3">
                 {% for topic in form.fields.add_taxonomy_topics.queryset %}
-                  <option value="{{ topic.pk }}">
+                  <option value="{{ topic.pk }}" data-tokens="{{ topic.get_ancestors }}">
                     {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
                   </option>
                 {% endfor %}

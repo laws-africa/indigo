@@ -67,7 +67,7 @@ setup(
         'django-templated-email>=2.3.0',
         'django-treebeard>=4.5.1',
         'djangorestframework-xml>=1.3.0',
-        'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
+        'djangorestframework>=3.11.0,<3.15.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]
         'docpipe @ git+https://github.com/laws-africa/docpipe@5dee72f4a188a31c9077c86982d9663a330d9e49',
         'EbookLib>=0.15',

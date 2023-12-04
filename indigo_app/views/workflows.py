@@ -227,7 +227,7 @@ class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
         workflow.updated_by_user = self.request.user
         action.send(workflow.updated_by_user, verb='removed', action_object=task, target=workflow,
                     place_code=workflow.place.place_code)
-        messages.success(self.request, "Removed %s from this workflow." % task.title)
+        messages.success(self.request, f"Removed {task.title} from this workflow.")
 
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 

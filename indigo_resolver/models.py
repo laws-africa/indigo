@@ -45,7 +45,7 @@ class Authority(models.Model):
         return self.references.count
 
     def __str__(self):
-        return 'Authority<%s>' % self.name
+        return f'Authority<{self.name}>'
 
 
 class AuthorityReference(models.Model):
@@ -75,4 +75,4 @@ class AuthorityReference(models.Model):
         return domain
 
     def __str__(self):
-        return '%s – "%s"' % (self.frbr_uri, self.title)
+        return f'{self.frbr_uri} – {self.title}'

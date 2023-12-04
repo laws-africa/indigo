@@ -179,7 +179,7 @@ class DailyWorkMetrics(models.Model):
 
     @classmethod
     def update_daily_work_metrics(cls, date):
-        log.info('Updating aggregate daily work metrics for %s.' % date)
+        log.info(f'Updating aggregate daily work metrics for {date}.')
         cls.create_or_update(date)
         log.info('Daily work metrics updated')
 

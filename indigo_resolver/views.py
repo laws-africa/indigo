@@ -72,7 +72,7 @@ class ResolveView(TemplateView):
         kwargs['query'] = {
             'frbr_uri': self.frbr_uri,
             # TODO: more generic
-            'title': "%s %s of %s" % (self.frbr_uri.doctype.title(), self.frbr_uri.number, self.frbr_uri.date),
+            'title': f"{self.frbr_uri.doctype.title()} {self.frbr_uri.number} of {self.frbr_uri.date}",
             'type': self.frbr_uri.subtype or self.frbr_uri.doctype,
         }
         kwargs['references'] = self.references

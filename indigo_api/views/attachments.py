@@ -25,7 +25,7 @@ DOC_MIMETYPES = [
 
 def view_attachment(attachment):
     response = HttpResponse(attachment.file.read(), content_type=attachment.mime_type)
-    response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
+    response['Content-Disposition'] = f'inline; filename={attachment.filename}'
     response['Content-Length'] = str(attachment.size)
     return response
 
@@ -52,7 +52,7 @@ def view_attachment_as_pdf(attachment):
 
 def download_attachment(attachment):
     response = view_attachment(attachment)
-    response['Content-Disposition'] = 'attachment; filename=%s' % attachment.filename
+    response['Content-Disposition'] = f'attachment; filename={attachment.filename}'
     return response
 
 

@@ -15,7 +15,7 @@ badges.registry = badges._registry
 
 
 def perms_to_codes(perms):
-    return set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
+    return set(f'{p.content_type.app_label}.{p.codename}' for p in perms)
 
 
 class BaseBadge(Badge):
@@ -181,11 +181,11 @@ class CountryBadge(BaseBadge):
 
     @property
     def name(self):
-        return "Country: %s" % self.country.name
+        return f"Country: {self.country.name}"
 
     @property
     def description(self):
-        return "Can make changes to works for %s" % self.country.name
+        return f"Can make changes to works for {self.country.name}"
 
     @classmethod
     def badge_slug(cls, country):

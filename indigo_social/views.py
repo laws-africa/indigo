@@ -250,9 +250,9 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
 
         if badge.can_award(user):
             badge.possibly_award(user=self.user)
-            messages.success(self.request, '%s badge awarded to %s' % (badge.name, user_display(user)))
+            messages.success(self.request, f'{badge.name} badge awarded to {user_display(user)}')
         else:
-            messages.warning(self.request, '%s badge couldn\'t be awarded to %s' % (badge.name, user_display(user)))
+            messages.warning(self.request, f'{badge.name} badge couldn\'t be awarded to {user_display(user)}')
         return super(AwardBadgeView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -269,7 +269,7 @@ class UnawardBadgeView(AwardBadgeView):
         badge = form.actual_badge()
 
         badge.unaward(user)
-        messages.success(self.request, '%s badge remove from %s' % (badge.name, user_display(user)))
+        messages.success(self.request, f'{badge.name} badge remove from {user_display(user)}')
         return super(AwardBadgeView, self).form_valid(form)
 
 

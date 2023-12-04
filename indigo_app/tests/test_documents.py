@@ -70,7 +70,7 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertIn('In the beginning', doc.content)
 
         # check the attachment
-        response = self.client.get('/api/documents/%s/attachments' % doc.id)
+        response = self.client.get(f'/api/documents/{doc.id}/attachments')
         self.assertEqual(response.status_code, 200)
         results = response.data['results']
 
@@ -79,7 +79,7 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(results[0]['url'], 'http://testserver/api/documents/%s/attachments/%s' % (doc.id, results[0]['id']))
 
         # test media view
-        response = self.client.get('/api/documents/%s/media/%s' % (doc.id, fname))
+        response = self.client.get(f'/api/documents/{doc.id}/media/{fname}')
         self.assertEqual(response.status_code, 200)
 
     def test_create_from_html(self):

@@ -288,11 +288,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def get_datatable_csv(self, spreadsheet_id):
         try:
-            url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % spreadsheet_id
+            url = f'https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=csv'
             response = requests.get(url, timeout=5)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise ValidationError(_("Error talking to Google Sheets: %s") % str(e))
+            raise ValidationError(_(f"Error talking to Google Sheets: {str(e)}"))
 
         reader = csv.reader(io.StringIO(response.content.decode('utf-8')))
         rows = list(reader)

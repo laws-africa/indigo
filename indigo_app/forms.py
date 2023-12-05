@@ -87,6 +87,10 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+            if hasattr(self.instance, 'publication_document'):
+                self.fields['publication_document_size'].initial = self.instance.publication_document.size
+                self.fields['publication_document_mime_type'].initial = self.instance.publication_document.mime_type
+                self.fields['publication_document_trusted_url'].initial = self.instance.publication_document.trusted_url
 
         self.fields['frbr_doctype'].choices = [
             (y, x)

@@ -202,7 +202,8 @@
           <div class="form-group col">
             <label for="{{ form.publication_date.id_for_label }}" class="{% if not work.pk and not publication_date_optional %}required{% endif %}">{% trans 'Publication date' %}</label>
             <input
-                hx-target=".publication-document-wrapper"
+                hx-target=".possible-documents-wrapper"
+                hx-swap="outerHTML"
                 onchange="htmx.trigger(this, 'change');"
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-post="{% url 'find_publication_document' work.frbr_uri %}"
@@ -214,7 +215,8 @@
           <div class="form-group col">
             <label for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
             <input
-                hx-target=".publication-document-wrapper"
+                hx-target=".possible-documents-wrapper"
+                hx-swap="outerHTML"
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-post="{% url 'find_publication_document' work.frbr_uri %}"
                 type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
@@ -229,7 +231,8 @@
           <div class="form-group col">
             <label for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
             <input
-                hx-target=".publication-document-wrapper"
+                hx-target=".possible-documents-wrapper"
+                hx-swap="outerHTML"
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-post="{% url 'find_publication_document' work.frbr_uri %}"
                 type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
@@ -241,7 +244,10 @@
         {% block work-form-publication-file %}
         <div class="row">
           <div class="col-md-6">
-            <div class="publication-document-wrapper"></div>
+            {% include 'indigo_api/_work_possible_publication_documents.html' %}
+
+            {% include 'indigo_api/_work_publication_document.html' %}
+
           </div>
           <div class="col-md-6">
             <ul class="work-publication-links list-group">

@@ -1202,7 +1202,7 @@ class WorkActionsView(PlaceViewBase, FormView):
         return context
 
     def get_works(self, form):
-        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks", []))
+        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
         if not works:
             works = form.cleaned_data.get("works", [])
 

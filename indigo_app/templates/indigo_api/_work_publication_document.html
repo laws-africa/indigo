@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<div class="publication-document-wrapper">
+
+    {% if form.publication_document_trusted_url.value %}
+    <ul>
+      <li class="list-group-item list-group-item-light h6">
+        {% if form.delete_publication_document.value %}
+          {% trans 'Deleting publication document' %}
+        {% else %}
+          {% trans 'Attached publication document' %}
+        {% endif %}
+      </li>
+      <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center">
+        {% if form.delete_publication_document.value %}<s>{% endif %}
+          <a href="{{ form.publication_document_trusted_url.value }}" target="_blank" rel="noreferrer noopener">{{ form.publication_document_trusted_url.value }}</a>
+        {% if form.delete_publication_document.value %}</s>{% endif %}
+        <button hx-delete="{% url 'attach_publication_document' work.frbr_uri %}"
+                hx-target=".publication-document-wrapper"
+                hx-swap="outerHTML"
+                type="button"
+                class="btn btn-secondary ml-2">{% trans 'Remove' %}</button>
+      </li>
+    </ul>
+  {% endif %}
+
+    <input type="hidden" value="{{ form.delete_publication_document.value|default_if_none:'' }}" id="{{ form.delete_publication_document.id_for_label }}" name="{{ form.delete_publication_document.html_name }}">
+    <input type="hidden" value="{{ form.publication_document_mime_type.value|default_if_none:'' }}" id="{{ form.publication_document_mime_type.id_for_label }}" name="{{ form.publication_document_mime_type.html_name }}">
+    <input type="hidden" value="{{ form.publication_document_size.value|default_if_none:'' }}" id="{{ form.publication_document_size.id_for_label }}" name="{{ form.publication_document_size.html_name }}">
+    <input type="hidden" value="{{ form.publication_document_trusted_url.value|default_if_none:'' }}" id="{{ form.publication_document_trusted_url.id_for_label }}" name="{{ form.publication_document_trusted_url.html_name }}">
+</div>

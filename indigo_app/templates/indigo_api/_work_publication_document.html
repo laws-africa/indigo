@@ -7,18 +7,16 @@
       {% trans 'Publication document' %}
     </div>
     <div class="col-md-6 d-flex align-items-center">
-
       {% if form.delete_publication_document.value %}<s>{% endif %}
-      {% if work.publication_document.file %}
-        <a href="{{ work.publication_document.file.url }}">
-          {{ work.publication_document.file.name }}
+      <div>
+        <i class="fas fa-file text-muted"></i>
+        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
+           target="_blank" rel="noopener">
+          {{ work.publication_document.filename }}
         </a>
-      {% elif work.publication_document.trusted_url %}
-        <a href="{{ work.publication_document.trusted_url }}">
-          {{ work.publication_document.trusted_url }}
-        </a>
-        {% if form.delete_publication_document.value %}</s>{% endif %}
-      {% endif %}
+        <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+      </div>
+      {% if form.delete_publication_document.value %}</s>{% endif %}
     </div>
     <div class="col-md-3 d-flex align-items-center">
       {% if form.delete_publication_document.value %}

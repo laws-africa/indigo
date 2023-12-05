@@ -12,7 +12,7 @@
 
     <input type="hidden" name="save" value="1">
     {% for work in works %}
-      <input type="hidden" name="works" value="{{ work }}">
+      <input type="hidden" name="works" value="{{ work.pk }}">
     {% endfor %}
 
     <div class="modal fade" tabindex="-1" id="bulk-update-modal">

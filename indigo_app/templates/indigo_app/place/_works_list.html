@@ -41,9 +41,8 @@
       {% csrf_token %}
       {% if perms.indigo_api.change_work %}
         <div>
-          <input id="all-work-pks" type="hidden" name="all_work_pks" value="{{ work_pks }}">
-          <input id="all-works" type="checkbox" name="all_works" class="all-works-checkbox mr-2">
-          <label for="all-works" class="text-muted">{% trans "Select all works" %}</label>
+          <input id="all-work-pks" type="checkbox" name="all_work_pks" value="{{ work_pks }}" class="all-works-checkbox mr-2">
+          <label for="all-work-pks" class="text-muted">{% trans "Select all works" %}</label>
         </div>
       {% endif %}
 

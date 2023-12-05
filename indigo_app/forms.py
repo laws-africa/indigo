@@ -766,7 +766,6 @@ class ExplorerForm(forms.Form):
 class WorkBulkActionsForm(forms.Form):
     save = forms.BooleanField()
     all_work_pks = forms.CharField(required=False)
-    all_works = forms.BooleanField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
@@ -776,7 +775,8 @@ class WorkBulkActionsForm(forms.Form):
         required=False)
 
     def clean_all_work_pks(self):
-        return self.cleaned_data.get('all_work_pks').split(' ')
+        all_work_pks = self.cleaned_data.get('all_work_pks')
+        return all_work_pks.split(' ') if all_work_pks else []
 
     def save_changes(self):
         if self.cleaned_data.get('add_taxonomy_topics'):

@@ -1192,19 +1192,21 @@ class WorkActionsView(PlaceViewBase, FormView):
         context = super().get_context_data(**kwargs)
 
         if self.request.user.has_perm('indigo_api.change_work'):
+            works = self.get_works(form)
             # get the union of all the work's taxonomy topics
-            if form.cleaned_data.get('works'):
-                context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
-            if form.cleaned_data.get('all_works'):
-                context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__pk__in=form.cleaned_data["all_work_pks"]).distinct()
+            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
 
             if form.is_valid:
-                context["works"] = [w.pk for w in form.cleaned_data.get("works", [])]
-
-                if form.cleaned_data.get('all_works'):
-                    context["works"] = form.cleaned_data.get("all_work_pks", [])
+                context["works"] = works
 
         return context
+
+    def get_works(self, form):
+        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks", []))
+        if not works:
+            works = form.cleaned_data.get("works", [])
+
+        return works
 
 
 class WorkDetailView(PlaceViewBase, DetailView):

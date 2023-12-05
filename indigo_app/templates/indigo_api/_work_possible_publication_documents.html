@@ -3,6 +3,7 @@
 <div class="possible-documents-wrapper">
   {% if possible_doc_formset %}
     {{ possible_doc_formset.management_form }}
+    <div class="row">
       <ul>
         <li class="list-group-item list-group-item-light h6">{% trans 'Possible documents' %}</li>
         {% for pubdoc_form in possible_doc_formset %}
@@ -19,5 +20,6 @@
           </li>
         {% endfor %}
       </ul>
+    </div>
   {% endif %}
 </div>

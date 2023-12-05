@@ -1133,7 +1133,7 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
         publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
         publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
         delete_publication_document = forms.CharField(required=False, widget=forms.HiddenInput())
-        name = forms.CharField(required=False, widget=forms.HiddenInput())
+
 
         class Meta:
             prefix = 'work'
@@ -1143,7 +1143,6 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
                 'publication_document_size',
                 'publication_document_mime_type',
                 'delete_publication_document',
-                'name'
             )
 
     def post(self, request, *args, **kwargs):
@@ -1162,17 +1161,10 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
             if formset.is_valid():
                 selected_form = formset.forms[int(form)]
                 initial = {
-                    'name': selected_form.cleaned_data['name'],
                     'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
                     'publication_document_size': selected_form.cleaned_data['size'],
                     'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
-                }
-        else:
-            if hasattr(self.work, 'publication_document'):
-                initial = {
-                    'publication_document_trusted_url': self.work.publication_document.trusted_url,
-                    'publication_document_size': self.work.publication_document.size,
-                    'publication_document_mime_type': self.work.publication_document.mime_type,
+                    'delete_publication_document': 'on',
                 }
 
         if self.request.method == 'DELETE':

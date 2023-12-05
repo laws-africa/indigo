@@ -242,21 +242,11 @@
         {% endblock work-form-publication-details %}
 
         {% block work-form-publication-file %}
-        <div class="row">
-          <div class="col-md-6">
-            {% include 'indigo_api/_work_possible_publication_documents.html' %}
 
-            {% include 'indigo_api/_work_publication_document.html' %}
+        {% include 'indigo_api/_work_publication_document.html' %}
 
-          </div>
-          <div class="col-md-6">
-            <ul class="work-publication-links list-group">
-              <li class="list-group-item list-group-item-light publication-document-file">
-                <input type="file" id="{{ form.publication_document_file.id_for_label }}" name="{{ form.publication_document_file.html_name }}" accept=".pdf">
-              </li>
-            </ul>
-          </div>
-        </div>
+        {% include 'indigo_api/_work_possible_publication_documents.html' %}
+
         {% endblock work-form-publication-file %}
       </div>
     </div>

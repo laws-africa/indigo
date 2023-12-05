@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.forms import formset_factory
-from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
+from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -24,7 +24,7 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement, Workflow, Locality
+    ArbitraryExpressionDate, Commencement, Workflow, Country, Locality
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
@@ -1072,20 +1072,23 @@ class EditWorkCommencingWorkView(WorkViewBase, DetailView):
         return context
 
 
-class PubDocForm(forms.Form):
+class FindPubDocForm(forms.Form):
     name = forms.CharField(required=False, widget=forms.HiddenInput())
     trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
     size = forms.IntegerField(required=False, widget=forms.HiddenInput())
     mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
 
 
-class FindPublicationDocumentView(WorkViewBase, DetailView):
+class FindPublicationDocumentView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_possible_publication_documents.html'
 
-    class Form(forms.ModelForm):
+    class Form(forms.Form):
+        publication_date = forms.DateField(required=True)
+        publication_number = forms.CharField(required=True)
+        publication_name = forms.CharField(required=True)
+
         class Meta:
             prefix = 'work'
-            model = Work
             fields = ('publication_date', 'publication_number', 'publication_name')
 
         def find_possible_documents(self, country, locality):
@@ -1096,8 +1099,8 @@ class FindPublicationDocumentView(WorkViewBase, DetailView):
                         'date': self.cleaned_data.get('publication_date'),
                         'number': self.cleaned_data.get('publication_number'),
                         'publication': self.cleaned_data.get('publication_name'),
-                        'country': 'za',
-                        'locality': ''
+                        'country': country.code,
+                        'locality': locality.code if locality else ''
                     }
                     return finder.find_publications(params)
                 except (ValueError, ConnectionError):
@@ -1108,13 +1111,13 @@ class FindPublicationDocumentView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.request.POST, prefix="work", instance=self.work)
+        form = self.Form(self.request.POST, prefix="work")
 
         if form.is_valid():
             possible_documents = form.find_possible_documents(self.country, self.locality)
             if possible_documents:
-                PuDocFormset = formset_factory(PubDocForm, extra=0)
-                formset = PuDocFormset(prefix="pubdoc", initial=[
+                FindPubDocFormset = formset_factory(FindPubDocForm, extra=0)
+                formset = FindPubDocFormset(prefix="pubdoc", initial=[
                     {
                         'name': doc.get('name'),
                         'trusted_url': doc.get('url'),
@@ -1124,11 +1127,12 @@ class FindPublicationDocumentView(WorkViewBase, DetailView):
                     for doc in possible_documents
                 ])
                 context["possible_doc_formset"] = formset
+                context["frbr_uri"] = self.request.GET.get('frbr_uri')
 
-            return context
+        return context
 
 
-class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
+class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
     http_method_names = ['post', 'delete', 'get']
     template_name = 'indigo_api/_work_publication_document.html'
 
@@ -1138,7 +1142,6 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
         publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
         publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
         delete_publication_document = forms.CharField(required=False, widget=forms.HiddenInput())
-
 
         class Meta:
             prefix = 'work'
@@ -1159,13 +1162,18 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.request.GET.get('form')
+        form_id = self.request.GET.get('form')
+        frbr_uri = self.request.GET.get('frbr_uri')
+        if frbr_uri:
+            work = Work.objects.filter(frbr_uri=frbr_uri).first()
+            if work:
+                context["work"] = work
         initial = {}
-        if form:
-            PuDocFormset = formset_factory(PubDocForm)
-            formset = PuDocFormset(prefix="pubdoc", data=self.request.POST)
+        if form_id:
+            FindPubDocFormset = formset_factory(FindPubDocForm)
+            formset = FindPubDocFormset(prefix="pubdoc", data=self.request.POST)
             if formset.is_valid():
-                selected_form = formset.forms[int(form)]
+                selected_form = formset.forms[int(form_id)]
                 initial = {
                     'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
                     'publication_document_size': selected_form.cleaned_data['size'],
@@ -1176,29 +1184,31 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
         if self.request.method == 'DELETE':
             initial['delete_publication_document'] = 'on'
 
-        context["form"] = self.Form(prefix="work", instance=self.work, initial=initial)
+        context["form"] = self.Form(prefix="work", initial=initial)
         return context
 
 
-class WorkFormLocalityOptionsView(WorkViewBase, DetailView):
+class WorkFormLocalityView(PlaceViewBase, TemplateView):
+    http_method_names = ['post', 'delete', 'get']
     template_name = 'indigo_api/_work_locality_options.html'
 
-    class Form(forms.ModelForm):
+    class Form(forms.Form):
+        country = forms.ModelChoiceField(queryset=Country.objects, required=False)
+
         class Meta:
             prefix = 'work'
-            model = Work
             fields = ('country',)
 
         def get_country_localities(self):
             localities = Locality.objects.filter(country=self.cleaned_data.get('country'))
             return localities
 
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.request.POST, prefix="work", instance=self.work)
+        form = self.Form(self.request.POST, prefix="work")
         if form.is_valid():
             localities = form.get_country_localities()
 
@@ -1212,7 +1222,7 @@ class WorkFormLocalityOptionsView(WorkViewBase, DetailView):
                     super().__init__(*args, **kwargs)
                     self.fields['locality'].queryset = localities
 
-            context["form"] = Form(prefix="work", instance=self.work)
+            context["form"] = Form(prefix="work")
         return context
 
 

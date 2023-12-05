@@ -36,9 +36,16 @@
     <form
       hx-post="{% url 'place_works_actions' place=place.place_code %}"
       hx-target="#work-bulk-actions"
-      hx-trigger="change from:.work-checkbox"
+      hx-trigger="change from:.work-checkbox, change from:.all-works-checkbox"
     >
       {% csrf_token %}
+      {% if perms.indigo_api.change_work %}
+        <div>
+          <input id="all-work-pks" type="hidden" name="all_work_pks" value="{{ work_pks }}">
+          <input id="all-works" type="checkbox" name="all_works" class="all-works-checkbox mr-2">
+          <label for="all-works" class="text-muted">Select all works</label>
+        </div>
+      {% endif %}
 
       {% for work in works %}
         {% include 'indigo_app/place/_work.html' %}

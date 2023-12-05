@@ -1133,6 +1133,7 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
     template_name = 'indigo_api/_work_publication_document.html'
 
     class Form(forms.ModelForm):
+        publication_document_file = forms.FileField(required=False)
         publication_document_trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
         publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
         publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
@@ -1147,6 +1148,7 @@ class WorkFormPublicationDocumentView(WorkViewBase, DetailView):
                 'publication_document_size',
                 'publication_document_mime_type',
                 'delete_publication_document',
+                'publication_document_file',
             )
 
     def post(self, request, *args, **kwargs):

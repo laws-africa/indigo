@@ -1089,9 +1089,9 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_possible_publication_documents.html'
 
     class Form(forms.Form):
-        publication_date = forms.DateField(required=True)
-        publication_number = forms.CharField(required=True)
-        publication_name = forms.CharField(required=True)
+        publication_date = forms.DateField()
+        publication_number = forms.CharField(required=False)
+        publication_name = forms.CharField()
 
         class Meta:
             prefix = 'work'

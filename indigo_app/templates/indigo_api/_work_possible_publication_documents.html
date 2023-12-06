@@ -7,7 +7,7 @@
         {{ possible_doc_formset.management_form }}
         <ul class="list-unstyled">
           {% for pubdoc_form in possible_doc_formset %}
-            <li class="d-flex justify-content-between align-items-center">
+            <li class="d-flex justify-content-between align-items-center mb-2">
               <a href="{{ pubdoc_form.trusted_url.value }}" target="_blank" rel="noreferrer noopener">{{ pubdoc_form.name.value }}</a>
               {{ pubdoc_form.as_p }}
               <button

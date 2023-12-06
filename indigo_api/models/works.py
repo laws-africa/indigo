@@ -512,6 +512,10 @@ class Work(WorkMixin, models.Model):
     objects = WorkManager.from_queryset(WorkQuerySet)()
 
     @property
+    def approved(self):
+        return not self.work_in_progress
+
+    @property
     def locality_code(self):
         # Helper to get/set locality using the locality_code, used by the WorkSerializer.
         return self.locality.code

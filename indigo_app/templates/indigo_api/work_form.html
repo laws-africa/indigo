@@ -228,7 +228,7 @@
                   class="form-control" id="{{ form.publication_name.id_for_label }}"
                   name="{{ form.publication_name.html_name }}" list="publication_list"
                   value="{{ form.publication_name.value|default:'' }}">
-              <div class="form-text text-muted">{% trans 'Original publication, eg. nationdivl gazette.' %}</div>
+              <div class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</div>
               <datalist id="publication_list">
                 {% for pub in country.publication_set.all %}
                   <option value="{{ pub.name }}">

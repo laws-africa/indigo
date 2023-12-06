@@ -503,7 +503,7 @@ class Work(WorkMixin, models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    approved_at = models.DateTimeField(auto_now=True)
+    approved_at = models.DateTimeField(null=True)
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')

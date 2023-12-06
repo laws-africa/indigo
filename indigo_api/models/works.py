@@ -499,11 +499,15 @@ class Work(WorkMixin, models.Model):
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
     disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
 
+    work_in_progress = models.BooleanField(default=False, help_text="Work in progress, to be approved")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    approved_at = models.DateTimeField(auto_now=True)
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
 

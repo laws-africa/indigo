@@ -206,7 +206,7 @@
                 hx-swap="outerHTML"
                 onchange="htmx.trigger(this, 'change');"
                 hx-trigger="change, keyup delay:500ms changed"
-                hx-post="{% url 'find_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
+                hx-post="{% url 'find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                 type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
           </div>
@@ -218,7 +218,7 @@
                 hx-target=".possible-documents-wrapper"
                 hx-swap="outerHTML"
                 hx-trigger="change, keyup delay:500ms changed"
-                hx-post="{% url 'find_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
+                hx-post="{% url 'find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                 type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
             <p class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</p>
             <datalist id="publication_list">
@@ -234,7 +234,7 @@
                 hx-target=".possible-documents-wrapper"
                 hx-swap="outerHTML"
                 hx-trigger="change, keyup delay:500ms changed"
-                hx-post="{% url 'find_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
+                hx-post="{% url 'find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                 type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
             <p class="form-text text-muted">{% trans "The publication's sequence number, eg. gazette number." %}</p>
           </div>
@@ -471,64 +471,4 @@
       </form>
     {% endif %}
   {% endif %}
-
-  <script id="publication-document-template" type="text/x-handlebars-template">
-
-    <div class="card">
-      <div class="card-body bg-light">
-        <div class="media">
-          <div class="mr-2"><i class="fas fa-file fa-3x text-muted"></i></div>
-          <div class="media-body">
-            <div class="dropdown float-right">
-              <a href="#" class="dropdown-toggle text-dark btn" data-toggle="dropdown"></a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item delete-publication-document" href="#">{% trans 'Delete' %}</a>
-              </div>
-            </div>
-            <h6 class="my-0">
-              {% verbatim %}
-              {{#if url}}
-              <a href="{{ url }}" target="_blank" rel="noreferrer">{{ filename }}</a>
-              {{else}}
-              {{ filename }}
-              {{/if}}
-            </h6>
-            <div class="text-muted">{{ prettySize }} · {{ mime_type }}</div>
-            {{#if trusted_url}}
-            <div class="text-muted">{{ trusted_url }}</div>
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
-
-  {% endverbatim %}
-  </script>
-
-  <script id="work-repeal-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if repealed_by }}
-    <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
-    <span>{{ repealed_by.frbr_uri }}</span><br>
-    <a href="#" class="delete-repeal">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
-  {{else}}
-    <i class="text-muted">{% endverbatim %}{% trans 'Not repealed.' %}{% verbatim %}</i>
-  {{/if}}
-
-  {% endverbatim %}
-  </script>
-
-  <script id="commencing-work-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if commencing_work }}
-    <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
-    <span>{{ commencing_work.frbr_uri }}</span><br>
-    <a href="#" class="delete-commencing-work">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
-  {{/if}}
-
-  {% endverbatim %}
-  </script>
-
 {% endblock %}

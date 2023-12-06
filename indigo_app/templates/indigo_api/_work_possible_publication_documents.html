@@ -12,7 +12,7 @@
             {{ pubdoc_form.as_p }}
             <button
                 hx-target=".publication-document-wrapper"
-                hx-post="{% url 'attach_publication_document' place.code %}?form={{ forloop.counter0 }}&frbr_uri={{ frbr_uri }}"
+                hx-post="{% url 'attach_publication_document' place.place_code %}?form={{ forloop.counter0 }}&frbr_uri={{ frbr_uri }}"
                 type="button"
                 class="btn btn-secondary ml-2">
               {% trans 'Attach document' %}

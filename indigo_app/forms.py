@@ -374,6 +374,7 @@ class WorkFilterForm(forms.Form):
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
     stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
+    work_in_progress = forms.MultipleChoiceField(choices=[('work_in_progress', 'Work in progress'), ('approved', 'Approved')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
@@ -412,6 +413,17 @@ class WorkFilterForm(forms.Form):
 
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
+
+        # filter by work in progress
+        if exclude != "work_in_progress":
+            work_in_progress_filter = self.cleaned_data.get('work_in_progress', [])
+            work_in_progress_qs = Q()
+            if "work_in_progress" in work_in_progress_filter:
+                work_in_progress_qs |= Q(work_in_progress=True)
+            if "approved" in work_in_progress_filter:
+                work_in_progress_qs |= Q(work_in_progress=False)
+
+            queryset = queryset.filter(work_in_progress_qs)
 
         # filter by stub
         if exclude != "stub":

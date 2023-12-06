@@ -29,9 +29,9 @@
           <div class="modal-body max-vh-60">
 
             <div class="form-group col-md-4">
-              <label for="{{ form.change_status.id_for_label }}">{% trans "Change status" %}</label>
-              <select id="{{ form.change_status.id_for_label }}" name="{{ form.change_status.html_name }}" class="form-control">
-                {% for opt in form.change_status %}
+              <label for="{{ form.change_work_in_progress.id_for_label }}">{% trans "Change work in progress" %}</label>
+              <select id="{{ form.change_work_in_progress.id_for_label }}" name="{{ form.change_work_in_progress.html_name }}" class="form-control">
+                {% for opt in form.change_work_in_progress %}
                   {{ opt }}
                 {% endfor %}
               </select>

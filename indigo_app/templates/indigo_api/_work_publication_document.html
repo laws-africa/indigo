@@ -1,79 +1,64 @@
 {% load i18n %}
 
 <div class="publication-document-wrapper">
-  {% if work.publication_document %}
-    <div class="row py-4">
-      <div class="col-md-3 col-form-label">
-        {% trans 'Publication document' %}
-      </div>
-      <div class="col-md-6 d-flex align-items-center">
-        {% if form.delete_publication_document.value %}<s>{% endif %}
-        <div>
-          <i class="fas fa-file text-muted"></i>
-          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
-             target="_blank" rel="noopener">
-            {{ work.publication_document.filename }}
-          </a>
-          <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+  <div class="form-group row">
+    <label class="col-2">{% trans 'Publication document' %}</label>
+    <div class="col">
+      {% if work.publication_document %}
+        <div class="mb-2">
+          {% if form.delete_publication_document.value %}<s>{% endif %}
+            <i class="fas fa-file text-muted"></i>
+            <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
+               target="_blank" rel="noopener">
+              {{ work.publication_document.filename }}
+            </a>
+            <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+          {% if form.delete_publication_document.value %}</s>{% endif %}
         </div>
-        {% if form.delete_publication_document.value %}</s>{% endif %}
-      </div>
-      <div class="col-md-3 d-flex align-items-center">
-        {% if form.delete_publication_document.value %}
-          <button hx-get="{% url 'attach_publication_document' place.code  %}?frbr_uri={{ work.frbr_uri }}"
-                  hx-target=".publication-document-wrapper"
-                  hx-swap="outerHTML"
-                  type="button"
-                  class="btn btn-secondary ml-2">
-            {% trans 'Undo' %}
-            <i class="fas fa-undo"></i>
-          </button>
-        {% else %}
-          <button hx-delete="{% url 'attach_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
-                  hx-target=".publication-document-wrapper"
-                  hx-swap="outerHTML"
-                  type="button"
-                  class="btn btn-secondary ml-2">
-            {% trans 'Remove' %}
-            <i class="fas fa-trash"></i>
-          </button>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
 
-  <div class="row py-4">
-    <div class="col-md-3 col-form-label">
-      {% trans 'Upload publication document' %}
-    </div>
-    <div class="col-md-6">
-      <ul class="work-publication-links list-group">
-        <li class="list-group-item list-group-item-light publication-document-file">
-          <input
-              type="file" id="{{ form.publication_document_file.id_for_label }}"
-              name="{{ form.publication_document_file.html_name }}"
-              accept=".pdf">
-        </li>
-      </ul>
-    </div>
-  </div>
+        <div>
+          {% if form.delete_publication_document.value %}
+            <button hx-get="{% url 'attach_publication_document' place.place_code  %}?frbr_uri={{ work.frbr_uri }}"
+                    hx-target=".publication-document-wrapper"
+                    hx-swap="outerHTML"
+                    type="button"
+                    class="btn btn-outline-secondary">
+              {% trans 'Undo' %}
+            </button>
+          {% else %}
+            <button hx-delete="{% url 'attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                    hx-target=".publication-document-wrapper"
+                    hx-swap="outerHTML"
+                    type="button"
+                    class="btn btn-outline-danger">
+              {% trans 'Remove' %}
+            </button>
+          {% endif %}
+        </div>
+      {% else %}
+        <div>{% trans "None" %}</div>
+      {% endif %}
 
-  {% if form.publication_document_trusted_url.value %}
-    <div class="row py-4">
-      <div class="col-md-3 col-form-label">
-        {% trans 'Attaching document' %}
+      <div class="mt-3">
+        <label>
+          {% trans "Upload publication document" %}:
+        </label>
+        <input
+          class="ml-3"
+          type="file" id="{{ form.publication_document_file.id_for_label }}"
+          name="{{ form.publication_document_file.html_name }}"
+          accept=".pdf">
       </div>
-      <div class="col-md-6">
+
+      {% if form.publication_document_trusted_url.value %}
         <ul class="work-publication-links list-group">
           <li class="list-group-item list-group-item-light publication-document-file">
             <a href="">
               {{ form.publication_document_trusted_url.value|default_if_none:'' }}
             </a>
-
           </li>
         </ul>
-      </div>
-      <div class="col-md-3 d-flex align-items-center">
+
         <button hx-get="{% url 'attach_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
                 hx-target=".publication-document-wrapper"
                 hx-swap="outerHTML"
@@ -82,26 +67,20 @@
           {% trans 'Undo' %}
           <i class="fas fa-undo"></i>
         </button>
-      </div>
+      {% endif %}
     </div>
-  {% endif %}
-
-  <div>
-    <input type="hidden"
-           value="{{ form.delete_publication_document.value|default_if_none:'' }}"
-           id="{{ form.delete_publication_document.id_for_label }}"
-           name="{{ form.delete_publication_document.html_name }}">
-    <input type="hidden"
-           value="{{ form.publication_document_mime_type.value|default_if_none:'' }}"
-           id="{{ form.publication_document_mime_type.id_for_label }}"
-           name="{{ form.publication_document_mime_type.html_name }}">
-    <input type="hidden"
-           value="{{ form.publication_document_size.value|default_if_none:'' }}"
-           id="{{ form.publication_document_size.id_for_label }}"
-           name="{{ form.publication_document_size.html_name }}">
-    <input type="hidden"
-           value="{{ form.publication_document_trusted_url.value|default_if_none:'' }}"
-           id="{{ form.publication_document_trusted_url.id_for_label }}"
-           name="{{ form.publication_document_trusted_url.html_name }}">
   </div>
+
+  <input type="hidden"
+         value="{{ form.delete_publication_document.value|default_if_none:'' }}"
+         name="{{ form.delete_publication_document.html_name }}">
+  <input type="hidden"
+         value="{{ form.publication_document_mime_type.value|default_if_none:'' }}"
+         name="{{ form.publication_document_mime_type.html_name }}">
+  <input type="hidden"
+         value="{{ form.publication_document_size.value|default_if_none:'' }}"
+         name="{{ form.publication_document_size.html_name }}">
+  <input type="hidden"
+         value="{{ form.publication_document_trusted_url.value|default_if_none:'' }}"
+         name="{{ form.publication_document_trusted_url.html_name }}">
 </div>

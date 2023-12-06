@@ -42,7 +42,9 @@
       {% if perms.indigo_api.change_work %}
         <div>
           <input id="all-work-pks" type="checkbox" name="all_work_pks" value="{{ work_pks }}" class="all-works-checkbox mr-2">
-          <label for="all-work-pks" class="text-muted">{% trans "Select all works" %}</label>
+          <label for="all-work-pks" class="text-muted">
+            {% blocktrans with works_length=paginator.count %}Select all {{ works_length }} matching works{% endblocktrans %}
+          </label>
         </div>
       {% endif %}
 

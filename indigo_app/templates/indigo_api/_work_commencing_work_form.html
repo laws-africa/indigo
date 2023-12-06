@@ -13,11 +13,11 @@
     {% endif %}
 
     <div>
-      {% url 'work_edit_commencing_work' work.frbr_uri as edit_url %}
+      {% url 'work_edit_commencing_work' place.place_code as edit_url %}
       <button
         class="btn btn-outline-primary"
         type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=commencing_work"
+        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=work-commencing_work"
         hx-target="#work-commencing-work-modal"
         hx-trigger="click"
         data-toggle="modal"

@@ -1008,14 +1008,15 @@ class WorkPopupView(WorkViewBase, DetailView):
         return context
 
 
-class EditWorkPortionViewBase(WorkViewBase, DetailView):
+class EditWorkPortionViewBase(PlaceViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # update the object with the submitted form data, without saving the changes
-        context["form"] = form = self.Form(self.request.GET, instance=self.object)
+        work = Work()
+        context["form"] = form = self.Form(self.request.GET, instance=work, prefix="work")
         form.is_valid()
-        context["work"] = self.object
+        context["work"] = work
 
         return context
 
@@ -1051,22 +1052,27 @@ class EditWorkParentView(EditWorkPortionViewBase):
             fields = ('parent_work',)
 
 
-class EditWorkCommencingWorkView(WorkViewBase, DetailView):
+class EditWorkCommencingWorkView(PlaceViewBase, TemplateView):
     """Just the commencing work part of the work form to re-render the form when the user changes the commencing
      work through HTMX.
     """
     template_name = 'indigo_api/_work_commencing_work_form.html'
 
-    class Form(forms.Form):
+    class Form(forms.ModelForm):
         commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+        class Meta:
+            model = Work
+            prefix = 'work'
+            fields = ('commencing_work',)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         # update the object with the submitted form data, without saving the changes
-        context["form"] = form = self.Form(self.request.GET)
+        work = Work()
+        context["form"] = form = self.Form(self.request.GET, instance=work, prefix="work")
         form.is_valid()
-        context["work"] = self.object
+        context["work"] = work
         context["commencing_work"] = form.cleaned_data.get('commencing_work')
 
         return context

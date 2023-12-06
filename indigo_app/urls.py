@@ -75,10 +75,14 @@ urlpatterns = [
     path('places/<str:place>/works/new', works.AddWorkView.as_view(), name='new_work'),
     path('places/<str:place>/works/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
+
     # htmx partials for new and existing works
-    path('places/<str:place>/works/edit/find-publication', works.FindPublicationDocumentView.as_view(), name='find_publication_document'),
-    path('places/<str:place>/works/edit/locality', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
-    path('places/<str:place>/works/edit/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='attach_publication_document'),
+    path('places/<str:place>/work/form/find-publication', works.FindPublicationDocumentView.as_view(), name='find_publication_document'),
+    path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='attach_publication_document'),
+    path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_localities'),
+    path('places/<str:place>/work/form/repeal', works.EditWorkRepealView.as_view(), name='work_edit_repeal'),
+    path('places/<str:place>/work/form/parent', works.EditWorkParentView.as_view(), name='work_edit_parent'),
+    path('places/<str:place>/work/form/commencement', works.EditWorkCommencingWorkView.as_view(), name='work_edit_commencing_work'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),
@@ -94,10 +98,6 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/modal$', works.EditWorkModalView.as_view(), name='work_edit_modal'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/repeal$', works.EditWorkRepealView.as_view(), name='work_edit_repeal'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/parent$', works.EditWorkParentView.as_view(), name='work_edit_parent'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/edit/commencing-work$', works.EditWorkCommencingWorkView.as_view(), name='work_edit_commencing_work'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/delete$', works.DeleteWorkView.as_view(), name='work_delete'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/$', works.WorkVersionsView.as_view(), name='work_versions'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/tasks/$', works.WorkTasksView.as_view(), name='work_tasks'),

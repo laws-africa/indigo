@@ -5,27 +5,26 @@
     <label class="col-2">{% trans 'Publication document' %}</label>
     <div class="col">
       {% if work.publication_document %}
-        <div class="mb-2">
-          {% if form.delete_publication_document.value %}<s>{% endif %}
+        {% if not form.delete_publication_document.value %}
+          <div class="mb-2">
             <i class="fas fa-file text-muted"></i>
             <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
                target="_blank" rel="noopener">
               {{ work.publication_document.filename }}
             </a>
             <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-          {% if form.delete_publication_document.value %}</s>{% endif %}
-        </div>
+          </div>
+        {% endif %}
 
-        <div>
-          {% if form.delete_publication_document.value %}
-            <button hx-get="{% url 'work_form_attach_publication_document' place.place_code  %}?frbr_uri={{ work.frbr_uri }}"
-                    hx-target=".publication-document-wrapper"
-                    hx-swap="outerHTML"
-                    type="button"
-                    class="btn btn-outline-secondary">
-              {% trans 'Undo' %}
-            </button>
-          {% else %}
+        {% if form.publication_document_trusted_url.value %}
+          <div class="mb-2">
+            <a href="{{ form.publication_document_trusted_url.value }}"
+               target="_blank" rel="noopener"
+            >{{ form.publication_document_trusted_url.value }}</a>
+            <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+          </div>
+
+          <div class="mb-2">
             <button hx-delete="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                     hx-target=".publication-document-wrapper"
                     hx-swap="outerHTML"
@@ -33,13 +32,25 @@
                     class="btn btn-outline-danger">
               {% trans 'Remove' %}
             </button>
-          {% endif %}
-        </div>
+          </div>
+        {% endif %}
+
+        {% if not form.delete_publication_document.value %}
+          <div class="mb-2">
+            <button hx-delete="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                    hx-target=".publication-document-wrapper"
+                    hx-swap="outerHTML"
+                    type="button"
+                    class="btn btn-outline-danger">
+              {% trans 'Remove' %}
+            </button>
+          </div>
+        {% endif %}
       {% else %}
-        <div>{% trans "None" %}</div>
+        <div class="mb-2">{% trans "None" %}</div>
       {% endif %}
 
-      <div class="mt-3">
+      <div>
         <label>
           {% trans "Upload publication document" %}:
         </label>
@@ -49,25 +60,6 @@
           name="{{ form.publication_document_file.html_name }}"
           accept=".pdf">
       </div>
-
-      {% if form.publication_document_trusted_url.value %}
-        <ul class="work-publication-links list-group">
-          <li class="list-group-item list-group-item-light publication-document-file">
-            <a href="">
-              {{ form.publication_document_trusted_url.value|default_if_none:'' }}
-            </a>
-          </li>
-        </ul>
-
-        <button hx-get="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
-                hx-target=".publication-document-wrapper"
-                hx-swap="outerHTML"
-                type="button"
-                class="btn btn-secondary ml-2">
-          {% trans 'Undo' %}
-          <i class="fas fa-undo"></i>
-        </button>
-      {% endif %}
     </div>
   </div>
 

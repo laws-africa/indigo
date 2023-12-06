@@ -205,9 +205,7 @@
             <div class="col">
               <input
                   hx-target=".possible-documents-wrapper"
-                  hx-swap="outerHTML"
-                  onchange="htmx.trigger(this, 'change');"
-                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-trigger="load, change, keyup delay:500ms changed"
                   hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                   type="text" class="form-control"
                   data-provide="datepicker"
@@ -226,7 +224,6 @@
             <div class="col">
               <input
                   hx-target=".possible-documents-wrapper"
-                  hx-swap="outerHTML"
                   hx-trigger="change, keyup delay:500ms changed"
                   hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                   type="text"

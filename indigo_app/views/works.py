@@ -1056,7 +1056,7 @@ class EditWorkCommencingWorkView(PlaceViewBase, TemplateView):
     """Just the commencing work part of the work form to re-render the form when the user changes the commencing
      work through HTMX.
     """
-    template_name = 'indigo_api/_work_commencing_work_form.html'
+    template_name = 'indigo_api/_work_commencement_form.html'
 
     class Form(forms.ModelForm):
         commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)

@@ -18,7 +18,7 @@
 
         <div>
           {% if form.delete_publication_document.value %}
-            <button hx-get="{% url 'attach_publication_document' place.place_code  %}?frbr_uri={{ work.frbr_uri }}"
+            <button hx-get="{% url 'work_form_attach_publication_document' place.place_code  %}?frbr_uri={{ work.frbr_uri }}"
                     hx-target=".publication-document-wrapper"
                     hx-swap="outerHTML"
                     type="button"
@@ -26,7 +26,7 @@
               {% trans 'Undo' %}
             </button>
           {% else %}
-            <button hx-delete="{% url 'attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+            <button hx-delete="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                     hx-target=".publication-document-wrapper"
                     hx-swap="outerHTML"
                     type="button"
@@ -59,7 +59,7 @@
           </li>
         </ul>
 
-        <button hx-get="{% url 'attach_publication_document' place.code %}?frbr_uri={{ work.frbr_uri }}"
+        <button hx-get="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
                 hx-target=".publication-document-wrapper"
                 hx-swap="outerHTML"
                 type="button"

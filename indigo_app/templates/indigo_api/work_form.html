@@ -197,56 +197,69 @@
       <div class="card-body">
 
         {% block work-form-publication-details %}
-        <div class="form-row">
+          <div class="form-group row">
           {% block publication-date %}
-          <div class="form-group col">
-            <label for="{{ form.publication_date.id_for_label }}" class="{% if not work.pk and not publication_date_optional %}required{% endif %}">{% trans 'Publication date' %}</label>
-            <input
-                hx-target=".possible-documents-wrapper"
-                hx-swap="outerHTML"
-                onchange="htmx.trigger(this, 'change');"
-                hx-trigger="change, keyup delay:500ms changed"
-                hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
-                type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
-            <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
-          </div>
+            <label for="{{ form.publication_date.id_for_label }}"
+                   class="col-2 col-form-label {% if not work.pk and not publication_date_optional %}required{% endif %}"
+            >{% trans 'Publication date' %}</label>
+            <div class="col">
+              <input
+                  hx-target=".possible-documents-wrapper"
+                  hx-swap="outerHTML"
+                  onchange="htmx.trigger(this, 'change');"
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                  type="text" class="form-control"
+                  data-provide="datepicker"
+                  id="{{ form.publication_date.id_for_label }}"
+                  placeholder="yyyy-mm-dd"
+                  {% if not work.pk and not publication_date_optional %}required{% endif %}
+                  pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}"
+                  value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
+              <div class="form-text text-muted">{% trans 'Date when first published. '%}</div>
+            </div>
           {% endblock %}
-
-          <div class="form-group col">
-            <label for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
-            <input
-                hx-target=".possible-documents-wrapper"
-                hx-swap="outerHTML"
-                hx-trigger="change, keyup delay:500ms changed"
-                hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
-                type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
-            <p class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</p>
-            <datalist id="publication_list">
-              {% for pub in country.publication_set.all %}
-                <option value="{{ pub.name }}">
-              {% endfor %}
-            </datalist>
           </div>
 
-          <div class="form-group col">
-            <label for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
-            <input
+          <div class="form-group row">
+            <label class="col-2 col-form-label" for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
+            <div class="col">
+              <input
+                  hx-target=".possible-documents-wrapper"
+                  hx-swap="outerHTML"
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                  type="text"
+                  class="form-control" id="{{ form.publication_name.id_for_label }}"
+                  name="{{ form.publication_name.html_name }}" list="publication_list"
+                  value="{{ form.publication_name.value|default:'' }}">
+              <div class="form-text text-muted">{% trans 'Original publication, eg. nationdivl gazette.' %}</div>
+              <datalist id="publication_list">
+                {% for pub in country.publication_set.all %}
+                  <option value="{{ pub.name }}">
+                {% endfor %}
+              </datalist>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
+            <div class="col">
+              <input
                 hx-target=".possible-documents-wrapper"
-                hx-swap="outerHTML"
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
-                type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
-            <p class="form-text text-muted">{% trans "The publication's sequence number, eg. gazette number." %}</p>
+                type="text" class="form-control" id="{{ form.publication_number.id_for_label }}"
+                name="{{ form.publication_number.html_name }}"
+                value="{{ form.publication_number.value|default:'' }}">
+              <div class="form-text text-muted">{% trans "The publication's sequence numbediv, eg. gazette number." %}</div>
+            </div>
           </div>
-        </div>
         {% endblock work-form-publication-details %}
 
         {% block work-form-publication-file %}
-
-        {% include 'indigo_api/_work_publication_document.html' %}
-
-        {% include 'indigo_api/_work_possible_publication_documents.html' %}
-
+          {% include 'indigo_api/_work_publication_document.html' %}
+          <div class="possible-documents-wrapper"></div>
         {% endblock work-form-publication-file %}
       </div>
     </div>

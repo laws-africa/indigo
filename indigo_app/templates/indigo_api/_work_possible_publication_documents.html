@@ -1,25 +1,25 @@
 {% load i18n %}
 
-<div class="possible-documents-wrapper">
-  {% if possible_doc_formset %}
-    {{ possible_doc_formset.management_form }}
-    <div class="row">
-      <ul>
-        <li class="list-group-item list-group-item-light h6">{% trans 'Possible documents' %}</li>
-        {% for pubdoc_form in possible_doc_formset %}
-          <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center">
-            <a href="{{ pubdoc_form.trusted_url.value }}" target="_blank" rel="noreferrer noopener">{{ pubdoc_form.name.value }}</a>
-            {{ pubdoc_form.as_p }}
-            <button
-                hx-target=".publication-document-wrapper"
-                hx-post="{% url 'work_form_attach_publication_document' place.place_code %}?form={{ forloop.counter0 }}&frbr_uri={{ frbr_uri }}"
-                type="button"
-                class="btn btn-secondary ml-2">
-              {% trans 'Attach document' %}
-            </button>
-          </li>
-        {% endfor %}
-      </ul>
+{% if possible_doc_formset %}
+  <div class="form-group row">
+    <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Possible documents' %}</label>
+    <div class="col">
+        {{ possible_doc_formset.management_form }}
+        <ul class="list-unstyled">
+          {% for pubdoc_form in possible_doc_formset %}
+            <li class="d-flex justify-content-between align-items-center">
+              <a href="{{ pubdoc_form.trusted_url.value }}" target="_blank" rel="noreferrer noopener">{{ pubdoc_form.name.value }}</a>
+              {{ pubdoc_form.as_p }}
+              <button
+                  hx-target=".publication-document-wrapper"
+                  hx-post="{% url 'work_form_attach_publication_document' place.place_code %}?form={{ forloop.counter0 }}&frbr_uri={{ frbr_uri }}"
+                  type="button"
+                  class="btn btn-secondary ml-2">
+                {% trans 'Attach document' %}
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
     </div>
-  {% endif %}
-</div>
+  </div>
+{% endif %}

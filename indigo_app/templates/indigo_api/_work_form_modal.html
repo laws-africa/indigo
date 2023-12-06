@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-xl">
+  <div class="modal-content">
+    <div class="modal-header">
+      {% trans "Edit work" %}
+    </div>
+
+    <div class="modal-body">
+      form goes here
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+      <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" form="edit-work-form">
+    </div>
+  </div>
+</div>

@@ -745,6 +745,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context["works"]
+        context['work_pks'] = ' '.join(str(w.pk) for w in self.get_queryset())
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (
@@ -1191,14 +1192,21 @@ class WorkActionsView(PlaceViewBase, FormView):
         context = super().get_context_data(**kwargs)
 
         if self.request.user.has_perm('indigo_api.change_work'):
+            works = self.get_works(form)
             # get the union of all the work's taxonomy topics
-            if form.cleaned_data.get('works'):
-                context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
+            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
 
             if form.is_valid:
-                context["works"] = form.cleaned_data.get("works", [])
+                context["works"] = works
 
         return context
+
+    def get_works(self, form):
+        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
+        if not works:
+            works = form.cleaned_data.get("works", [])
+
+        return works
 
 
 class WorkDetailView(PlaceViewBase, DetailView):

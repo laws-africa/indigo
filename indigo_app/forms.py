@@ -1,7 +1,7 @@
 import json
 import re
 import urllib.parse
-from datetime import date
+from datetime import date, datetime
 from lxml import etree
 
 from django import forms
@@ -767,12 +767,14 @@ class WorkBulkActionsForm(forms.Form):
     save = forms.BooleanField()
     all_work_pks = forms.CharField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+    user = forms.ModelChoiceField(queryset=User.objects)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
     del_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
+    change_status = forms.ChoiceField(choices=[('', ''), ('approve', 'Approve'), ('un_approve', 'Un-approve')], required=False)
 
     def clean_all_work_pks(self):
         return self.cleaned_data.get('all_work_pks').split() or []
@@ -785,3 +787,21 @@ class WorkBulkActionsForm(forms.Form):
         if self.cleaned_data.get('del_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
+
+        if self.cleaned_data.get('change_status'):
+            change = self.cleaned_data['change_status']
+            user = self.cleaned_data['user']
+
+            if change == 'approve':
+                for work in self.cleaned_data['works']:
+                    work.work_in_progress = False
+                    work.approved_by_user = user
+                    work.approved_at = datetime.now()
+                    work.save_with_revision(user)
+
+            else:
+                for work in self.cleaned_data['works']:
+                    work.work_in_progress = True
+                    work.approved_by_user = None
+                    work.approved_at = None
+                    work.save_with_revision(user)

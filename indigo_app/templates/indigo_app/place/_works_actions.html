@@ -11,6 +11,7 @@
     {% csrf_token %}
 
     <input type="hidden" name="save" value="1">
+    <input type="hidden" name="user" value="{{ request.user.pk }}">
     {% for work in works %}
       <input type="hidden" name="works" value="{{ work.pk }}">
     {% endfor %}
@@ -26,6 +27,16 @@
           </div>
 
           <div class="modal-body max-vh-60">
+
+            <div class="form-group col-md-4">
+              <label for="{{ form.change_status.id_for_label }}">{% trans "Change status" %}</label>
+              <select id="{{ form.change_status.id_for_label }}" name="{{ form.change_status.html_name }}" class="form-control">
+                {% for opt in form.change_status %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
             <div class="form-group col-md-10">
               <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
               <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"

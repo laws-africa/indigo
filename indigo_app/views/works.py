@@ -1185,8 +1185,8 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
 
 
 class WorkFormLocalityView(PlaceViewBase, TemplateView):
-    http_method_names = ['post', 'delete', 'get']
-    template_name = 'indigo_api/_work_locality_options.html'
+    http_method_names = ['post']
+    template_name = 'indigo_api/_work_form_locality.html'
 
     class Form(forms.Form):
         country = forms.ModelChoiceField(queryset=Country.objects, required=False)

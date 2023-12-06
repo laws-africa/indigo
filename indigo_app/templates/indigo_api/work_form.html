@@ -435,7 +435,7 @@
                 hx-trigger="change"
                 hx-target=".locality-options"
                 hx-swap="outerHTML"
-                hx-post="{% url 'work_localities' place.code %}"
+                hx-post="{% url 'work_form_locality' country.code %}"
                 id="{{ form.country.id_for_label }}"
                 class="form-control" name="{{ form.country.html_name }}">
               {% for val, label in form.fields.country.choices %}
@@ -444,7 +444,7 @@
             </select>
           </div>
 
-        {% include 'indigo_api/_work_locality_options.html' %}
+        {% include 'indigo_api/_work_form_locality.html' %}
 
         </div>
 

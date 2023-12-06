@@ -1021,7 +1021,7 @@ class EditWorkPortionViewBase(PlaceViewBase, TemplateView):
         return context
 
 
-class EditWorkRepealView(EditWorkPortionViewBase):
+class EditWorkRepealView(PlaceViewBase, TemplateView):
     """Just the repeal part of the work form to re-render the form when the user changes the repeal status
     through HTMX.
     """
@@ -1030,15 +1030,20 @@ class EditWorkRepealView(EditWorkPortionViewBase):
     class Form(forms.ModelForm):
         class Meta:
             model = Work
+            prefix = 'work'
             fields = ('repealed_by', 'repealed_date')
 
-        def clean(self):
-            if self.cleaned_data.get('repealed_by'):
-                self.cleaned_data['repealed_date'] = (
-                    self.cleaned_data['repealed_by'].commencement_date
-                    or self.cleaned_data['repealed_by'].publication_date
-                )
-            return self.cleaned_data
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        work = Work()
+        form = self.Form(self.request.GET, instance=work, prefix="work")
+        form.is_valid()
+        work.repealed_date = (form.cleaned_data.get('repealed_by').commencement_date or
+                              form.cleaned_data.get('repealed_by').publication_date)
+        context["work"] = work
+        # use an unbound form to render updated fields
+        context["form"] = self.Form(instance=work, prefix="work")
+        return context
 
 
 class EditWorkParentView(EditWorkPortionViewBase):
@@ -1060,11 +1065,11 @@ class EditWorkCommencingWorkView(PlaceViewBase, TemplateView):
 
     class Form(forms.ModelForm):
         commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+
         class Meta:
             model = Work
             prefix = 'work'
             fields = ('commencing_work',)
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1218,6 +1223,7 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
         if form.is_valid():
             localities = form.get_country_localities()
 
+            # a new form class because we need to update the dropdown options within the __init__ method
             class Form(forms.ModelForm):
                 class Meta:
                     prefix = 'work'

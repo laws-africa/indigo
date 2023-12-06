@@ -253,7 +253,9 @@
         {% endblock work-form-publication-details %}
 
         {% block work-form-publication-file %}
-          {% include 'indigo_api/_work_publication_document.html' %}
+          <div class="publication-document-wrapper">
+            {% include 'indigo_api/_work_publication_document.html' %}
+          </div>
           <div class="possible-documents-wrapper"></div>
         {% endblock work-form-publication-file %}
       </div>

@@ -75,10 +75,10 @@ urlpatterns = [
     path('places/<str:place>/works/new', works.AddWorkView.as_view(), name='new_work'),
     path('places/<str:place>/works/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
-
-    path('places/<str:place>/find-publication', works.FindPublicationDocumentView.as_view(), name='find_publication_document'),
-    path('places/<str:place>/work-localities', works.WorkFormLocalityView.as_view(), name='work_localities'),
-    path('places/<str:place>/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='attach_publication_document'),
+    # htmx partials for new and existing works
+    path('places/<str:place>/works/edit/find-publication', works.FindPublicationDocumentView.as_view(), name='find_publication_document'),
+    path('places/<str:place>/works/edit/locality', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
+    path('places/<str:place>/works/edit/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='attach_publication_document'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

@@ -1032,14 +1032,17 @@ class EditWorkRepealView(PlaceViewBase, TemplateView):
             model = Work
             prefix = 'work'
             fields = ('repealed_by', 'repealed_date')
+            exclude = ('frbr_uri',)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         work = Work()
         form = self.Form(self.request.GET, instance=work, prefix="work")
         form.is_valid()
-        work.repealed_date = (form.cleaned_data.get('repealed_by').commencement_date or
-                              form.cleaned_data.get('repealed_by').publication_date)
+        if work.repealed_by:
+            work.repealed_date = (work.repealed_by.commencement_date or
+                                  work.repealed_by.publication_date)
         context["work"] = work
         # use an unbound form to render updated fields
         context["form"] = self.Form(instance=work, prefix="work")

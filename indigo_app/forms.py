@@ -119,10 +119,13 @@ class WorkForm(forms.ModelForm):
 
         # build up the FRBR URI from its constituent parts
         # TODO: this should really be done on the model itself, so that we can store and query the FRBR URI fields independently
-        frbr_uri = FrbrUri(
-            self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
-            cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
-        self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+        try:
+            frbr_uri = FrbrUri(
+                self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
+                cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
+            self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+        except (TypeError, ValueError) as e:
+            raise ValidationError({'frbr_uri': "Error building FRBR URI"})
 
         return self.cleaned_data
 

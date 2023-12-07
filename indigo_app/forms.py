@@ -779,7 +779,6 @@ class WorkBulkActionsForm(forms.Form):
     save = forms.BooleanField()
     all_work_pks = forms.CharField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
-    user = forms.ModelChoiceField(queryset=User.objects)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
@@ -791,7 +790,7 @@ class WorkBulkActionsForm(forms.Form):
     def clean_all_work_pks(self):
         return self.cleaned_data.get('all_work_pks').split() or []
 
-    def save_changes(self):
+    def save_changes(self, user):
         if self.cleaned_data.get('add_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
@@ -801,19 +800,20 @@ class WorkBulkActionsForm(forms.Form):
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
 
         if self.cleaned_data.get('change_work_in_progress'):
-            change = self.cleaned_data['change_work_in_progress']
-            user = self.cleaned_data['user']
-
-            if change == 'approved':
+            if self.cleaned_data['change_work_in_progress'] == 'approved':
                 for work in self.cleaned_data['works']:
-                    work.work_in_progress = False
-                    work.approved_by_user = user
-                    work.approved_at = datetime.now()
-                    work.save_with_revision(user)
+                    # only save if it's changed
+                    if work.work_in_progress:
+                        work.work_in_progress = False
+                        work.approved_by_user = user
+                        work.approved_at = datetime.now()
+                        work.save_with_revision(user)
 
             else:
                 for work in self.cleaned_data['works']:
-                    work.work_in_progress = True
-                    work.approved_by_user = None
-                    work.approved_at = None
-                    work.save_with_revision(user)
+                    # only save if it's changed
+                    if work.approved:
+                        work.work_in_progress = True
+                        work.approved_by_user = None
+                        work.approved_at = None
+                        work.save_with_revision(user)

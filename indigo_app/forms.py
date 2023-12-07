@@ -11,6 +11,7 @@ from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.forms import SelectMultiple
+from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -33,6 +34,8 @@ class WorkForm(forms.ModelForm):
         )
 
     # FRBR URI fields
+    # this will be filled in automatically during cleaning
+    frbr_uri = forms.CharField(required=False)
     # TODO: these should be choice fields and the options restricted to the place
     frbr_doctype = forms.ChoiceField()
     frbr_subtype = forms.ChoiceField(required=False)
@@ -97,6 +100,8 @@ class WorkForm(forms.ModelForm):
             for s in Subtype.objects.order_by('name')
         ]
 
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
+
     def property_fields(self):
         fields = [
             self[f'property_{prop}']
@@ -117,10 +122,13 @@ class WorkForm(forms.ModelForm):
 
         # build up the FRBR URI from its constituent parts
         # TODO: this should really be done on the model itself, so that we can store and query the FRBR URI fields independently
-        frbr_uri = FrbrUri(
-            self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
-            cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
-        self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+        try:
+            frbr_uri = FrbrUri(
+                self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
+                cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
+            self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+        except (TypeError, ValueError) as e:
+            raise ValidationError(_("Error building FRBR URI"))
 
         return self.cleaned_data
 
@@ -153,8 +161,9 @@ class WorkForm(forms.ModelForm):
         if self.cleaned_data['delete_publication_document']:
             if existing:
                 existing.delete()
+                existing = None
 
-        elif pub_doc_file:
+        if pub_doc_file:
             if existing:
                 # ensure any previously uploaded file is deleted
                 existing.delete()
@@ -845,3 +854,10 @@ class WorkChooserForm(forms.Form):
             qs = qs.filter(title__icontains=self.cleaned_data['q'])
 
         return qs
+
+
+class FindPubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())

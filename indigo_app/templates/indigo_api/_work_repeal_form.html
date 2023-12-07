@@ -13,11 +13,11 @@
     {% endif %}
 
     <div>
-      {% url 'work_edit_repeal' work.frbr_uri as edit_url %}
+      {% url 'work_form_repeal' place.place_code as edit_url %}
       <button
         class="btn btn-outline-primary"
         type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=repealed_by"
+        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
         hx-target="#work-repeal-modal"
         hx-trigger="click"
         data-toggle="modal"
@@ -39,9 +39,9 @@
   <div class="form-group row">
     <label class="col-2 col-form-label required">{% trans 'Repeal date' %}</label>
     <div class="col">
-      <input type="text" class="form-control" data-provide="datepicker"
+      <input type="date" class="form-control"
              id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}"
-             required placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d"
+             required
              value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
     </div>
   </div>

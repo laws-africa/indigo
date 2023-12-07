@@ -10,7 +10,8 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count
-from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
+from django.forms import formset_factory
+from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -23,13 +24,14 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement, Workflow
+    ArbitraryExpressionDate, Commencement, Workflow, Country, Locality
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
+from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
+    NewCommencementForm, FindPubDocForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1007,65 +1009,216 @@ class WorkPopupView(WorkViewBase, DetailView):
         return context
 
 
-class EditWorkPortionViewBase(WorkViewBase, DetailView):
+class PartialWorkFormView(PlaceViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # update the object with the submitted form data, without saving the changes
-        context["form"] = form = self.Form(self.request.GET, instance=self.object)
-        form.is_valid()
-        context["work"] = self.object
+        # update the work object with the submitted form data
+        context["work"] = work = Work(country=self.country, locality=self.locality, frbr_uri="/akn/za/act/2009/1")
+        form = self.update_work(work)
+
+        # use a fresh form based on the partially-updated work to re-render the template
+        context["form"] = self.refreshed_form(form, work)
 
         return context
 
+    def update_work(self, work):
+        # update the object with the submitted form data, without saving the changes
+        form = self.Form(self.request.GET, instance=work)
+        form.is_valid()
+        return form
 
-class EditWorkRepealView(EditWorkPortionViewBase):
+    def refreshed_form(self, form, work):
+        return self.Form(instance=work)
+
+
+class WorkFormRepealView(PartialWorkFormView):
     """Just the repeal part of the work form to re-render the form when the user changes the repeal status
     through HTMX.
     """
     template_name = 'indigo_api/_work_repeal_form.html'
 
     class Form(forms.ModelForm):
+        prefix = 'work'
+
         class Meta:
             model = Work
             fields = ('repealed_by', 'repealed_date')
+            exclude = ('frbr_uri',)
 
-        def clean(self):
-            if self.cleaned_data.get('repealed_by'):
-                self.cleaned_data['repealed_date'] = (
-                    self.cleaned_data['repealed_by'].commencement_date
-                    or self.cleaned_data['repealed_by'].publication_date
-                )
-            return self.cleaned_data
+    def update_work(self, work):
+        form = super().update_work(work)
+        if work.repealed_by:
+            work.repealed_date = (work.repealed_by.commencement_date or
+                                  work.repealed_by.publication_date)
+        return form
 
 
-class EditWorkParentView(EditWorkPortionViewBase):
+class WorkFormParentView(PartialWorkFormView):
     """Just the parent part of the work form to re-render the form when the user changes the parent work through HTMX.
     """
     template_name = 'indigo_api/_work_parent_form.html'
 
     class Form(forms.ModelForm):
+        prefix = 'work'
+
         class Meta:
             model = Work
             fields = ('parent_work',)
 
 
-class EditWorkCommencingWorkView(WorkViewBase, DetailView):
+class WorkFormCommencementView(PartialWorkFormView):
     """Just the commencing work part of the work form to re-render the form when the user changes the commencing
      work through HTMX.
     """
-    template_name = 'indigo_api/_work_commencing_work_form.html'
+    template_name = 'indigo_api/_work_commencement_form.html'
 
-    class Form(forms.Form):
+    class Form(forms.ModelForm):
         commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+        prefix = 'work'
+
+        class Meta:
+            model = Work
+            fields = ('commencing_work',)
+
+    def refreshed_form(self, form, work):
+        return self.Form(data={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["commencing_work"] = context["form"].data["commencing_work"]
+        return context
 
-        # update the object with the submitted form data, without saving the changes
-        context["form"] = form = self.Form(self.request.GET)
-        form.is_valid()
-        context["work"] = self.object
-        context["commencing_work"] = form.cleaned_data.get('commencing_work')
+
+class FindPublicationDocumentView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_work_possible_publication_documents.html'
+
+    class Form(forms.Form):
+        publication_date = forms.DateField()
+        publication_number = forms.CharField(required=False)
+        publication_name = forms.CharField()
+        prefix = 'work'
+
+        class Meta:
+            fields = ('publication_date', 'publication_number', 'publication_name')
+
+        def find_possible_documents(self, country, locality):
+            finder = plugins.for_locale('publications', country.code, None, locality.code if locality else None)
+            if finder:
+                try:
+                    params = {
+                        'date': self.cleaned_data.get('publication_date'),
+                        'number': self.cleaned_data.get('publication_number'),
+                        'publication': self.cleaned_data.get('publication_name'),
+                        'country': country.code,
+                        'locality': locality.code if locality else ''
+                    }
+                    return finder.find_publications(params)
+                except (ValueError, ConnectionError):
+                    return []
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.Form(self.request.POST)
+
+        if form.is_valid():
+            possible_documents = form.find_possible_documents(self.country, self.locality)
+            if possible_documents:
+                FindPubDocFormset = formset_factory(FindPubDocForm, extra=0)
+                formset = FindPubDocFormset(prefix="pubdoc", initial=[
+                    {
+                        'name': doc.get('name'),
+                        'trusted_url': doc.get('url'),
+                        'size': doc.get('size'),
+                        'mimetype': doc.get('mimetype')
+                    }
+                    for doc in possible_documents
+                ])
+                context["possible_doc_formset"] = formset
+                context["frbr_uri"] = self.request.GET.get('frbr_uri')
 
         return context
+
+
+class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
+    http_method_names = ['post', 'delete', 'get']
+    template_name = 'indigo_api/_work_publication_document.html'
+
+    class Form(forms.ModelForm):
+        publication_document_file = forms.FileField(required=False)
+        publication_document_trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+        publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+        publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
+        delete_publication_document = forms.CharField(required=False, widget=forms.HiddenInput())
+        prefix = 'work'
+
+        class Meta:
+            model = Work
+            fields = (
+                'publication_document_trusted_url',
+                'publication_document_size',
+                'publication_document_mime_type',
+                'delete_publication_document',
+                'publication_document_file',
+            )
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form_id = self.request.GET.get('form')
+        frbr_uri = self.request.GET.get('frbr_uri')
+        if frbr_uri:
+            work = Work.objects.filter(frbr_uri=frbr_uri).first()
+            if work:
+                context["work"] = work
+        initial = {}
+        if form_id:
+            FindPubDocFormset = formset_factory(FindPubDocForm)
+            formset = FindPubDocFormset(prefix="pubdoc", data=self.request.POST)
+            if formset.is_valid():
+                selected_form = formset.forms[int(form_id)]
+                initial = {
+                    'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
+                    'publication_document_size': selected_form.cleaned_data['size'],
+                    'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
+                    'delete_publication_document': 'on',
+                }
+
+        if self.request.method == 'DELETE':
+            initial['delete_publication_document'] = 'on'
+
+        context["form"] = self.Form(initial=initial)
+        return context
+
+
+class WorkFormLocalityView(PlaceViewBase, TemplateView):
+    http_method_names = ['post']
+    template_name = 'indigo_api/_work_form_locality.html'
+
+    class Form(forms.Form):
+        country = forms.ModelChoiceField(queryset=Country.objects)
+        locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
+        prefix = 'work'
+
+        class Meta:
+            fields = ('country', 'locality')
+
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = form = self.Form(self.request.POST)
+        if form.is_valid():
+            form.fields['locality'].queryset = Locality.objects.filter(country=form.cleaned_data['country'])
+        return context
+
+

@@ -197,78 +197,67 @@
       <div class="card-body">
 
         {% block work-form-publication-details %}
-        <div class="form-row">
+          <div class="form-group row">
           {% block publication-date %}
-          <div class="form-group col">
-            <label for="{{ form.publication_date.id_for_label }}" class="{% if not work.pk and not publication_date_optional %}required{% endif %}">{% trans 'Publication date' %}</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk and not publication_date_optional %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
-            <p class="form-text text-muted">{% trans 'Date when first published. '%}</p>
-          </div>
+            <label for="{{ form.publication_date.id_for_label }}"
+                   class="col-2 col-form-label {% if not work.pk and not publication_date_optional %}required{% endif %}"
+            >{% trans 'Publication date' %}</label>
+            <div class="col">
+              <input
+                  hx-target=".possible-documents-wrapper"
+                  hx-trigger="load, change, keyup delay:500ms changed"
+                  hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                  type="date" class="form-control"
+                  id="{{ form.publication_date.id_for_label }}"
+                  {% if not work.pk and not publication_date_optional %}required{% endif %}
+                  name="{{ form.publication_date.html_name }}"
+                  value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
+              <div class="form-text text-muted">{% trans 'Date when first published. '%}</div>
+            </div>
           {% endblock %}
-
-          <div class="form-group col">
-            <label for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
-            <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
-            <p class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</p>
-            <datalist id="publication_list">
-              {% for pub in country.publication_set.all %}
-                <option value="{{ pub.name }}">
-              {% endfor %}
-            </datalist>
           </div>
 
-          <div class="form-group col">
-            <label for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
-            <input type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
-            <p class="form-text text-muted">{% trans "The publication's sequence number, eg. gazette number." %}</p>
+          <div class="form-group row">
+            <label class="col-2 col-form-label" for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
+            <div class="col">
+              <input
+                  hx-target=".possible-documents-wrapper"
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                  type="text"
+                  class="form-control" id="{{ form.publication_name.id_for_label }}"
+                  name="{{ form.publication_name.html_name }}" list="publication_list"
+                  value="{{ form.publication_name.value|default:'' }}">
+              <div class="form-text text-muted">{% trans 'Original publication, eg. national gazette.' %}</div>
+              <datalist id="publication_list">
+                {% for pub in country.publication_set.all %}
+                  <option value="{{ pub.name }}">
+                {% endfor %}
+              </datalist>
+            </div>
           </div>
-        </div>
+
+          <div class="form-group row">
+            <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
+            <div class="col">
+              <input
+                hx-target=".possible-documents-wrapper"
+                hx-trigger="change, keyup delay:500ms changed"
+                hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                type="text" class="form-control" id="{{ form.publication_number.id_for_label }}"
+                name="{{ form.publication_number.html_name }}"
+                value="{{ form.publication_number.value|default:'' }}">
+              <div class="form-text text-muted">{% trans "The publication's sequence numbediv, eg. gazette number." %}</div>
+            </div>
+          </div>
         {% endblock work-form-publication-details %}
 
         {% block work-form-publication-file %}
-        <div class="form-group">
-          <label for="work_publication_document" class="mb-0">{% trans 'Official publication document' %}</label>
-          <p class="form-text text-muted mt-0">{% trans 'A copy of the official publication document, such as the gazette.' %}</p>
-
-          <input type="hidden" id="{{ form.delete_publication_document.id_for_label }}" name="{{ form.delete_publication_document.html_name }}">
-          <input type="hidden" id="{{ form.publication_document_mime_type.id_for_label }}" name="{{ form.publication_document_mime_type.html_name }}">
-          <input type="hidden" id="{{ form.publication_document_size.id_for_label }}" name="{{ form.publication_document_size.html_name }}">
-          <input type="hidden" id="{{ form.publication_document_trusted_url.id_for_label }}" name="{{ form.publication_document_trusted_url.html_name }}">
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="publication-document-wrapper"></div>
+          <div class="publication-document-wrapper">
+            {% include 'indigo_api/_work_publication_document.html' %}
           </div>
-
-          <div class="col-md-6">
-            <ul class="work-publication-links list-group">
-              <li class="list-group-item list-group-item-light publication-document-file">
-                <input type="file" id="{{ form.publication_document_file.id_for_label }}" name="{{ form.publication_document_file.html_name }}" accept=".pdf">
-              </li>
-            </ul>
-
-            <script id="publication-document-url-template" type="text/x-handlebars-template">
-            {% verbatim %}
-              {{#if publications}}
-                <li class="list-group-item bg-light h6">{% endverbatim %}{% trans 'Possible documents' %}{% verbatim %}</li>
-              {{/if}}
-              {{#each publications}}
-                <li class="list-group-item list-group-item-light d-flex justify-content-between align-items-center publication-url" data-size="{{ size }}" data-mime-type="{{ mime_type }}" data-url="{{ url }}">
-                  <a href="{{ url }}" target="_blank" rel="noreferrer noopener">{{ url }}</a>
-                  {{#if trustworthy}}
-                  <button type="button" class="btn btn-secondary attach-publication-url ml-2">
-                    {% endverbatim %}{% trans 'Attach document' %}{% verbatim %}
-                  </button>
-                  {{/if}}
-                </li>
-              {{/each}}
-            {% endverbatim %}
-            </script>
-          </div>
-        </div>
+          <div class="possible-documents-wrapper"></div>
         {% endblock work-form-publication-file %}
-
       </div>
     </div>
     {% endblock work-form-publication %}
@@ -301,10 +290,10 @@
             <div class="form-group row">
               <label class="col-2 col-form-label">{% trans 'Commencement date' %}</label>
               <div class="col">
-                <input type="text" class="form-control" data-provide="datepicker"
+                <input type="date" class="form-control"
                        id="{{ form.commencement_date.id_for_label }}"
-                       name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd"
-                       pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
+                       name="{{ form.commencement_date.html_name }}"
+                       value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
                 <div class="form-text text-muted">{% trans 'Date when most of the work comes into force.' %}</div>
 
                 {% if work.pk and work.commencement_date %}
@@ -331,7 +320,7 @@
             </div>
 
             <div id="work-form-commencing-work">
-              {% include 'indigo_api/_work_commencing_work_form.html' with commencing_work=work.commencing_work %}
+              {% include 'indigo_api/_work_commencement_form.html' with commencing_work=work.commencing_work %}
             </div>
 
             <div class="form-group row">
@@ -355,7 +344,9 @@
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.assent_date.id_for_label }}">{% trans 'Assent date' %}</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.assent_date.id_for_label }}" name="{{ form.assent_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
+            <input type="date" class="form-control" id="{{ form.assent_date.id_for_label }}"
+                   name="{{ form.assent_date.html_name }}"
+                   value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
             <div class="form-text text-muted">
               {% trans 'Date when approved by the responsible authority.' %}
             </div>
@@ -363,7 +354,9 @@
 
           <div class="form-group col-md-4">
             <label for="{{ form.as_at_date_override.id_for_label }}">{{ form.as_at_date_override.label }}</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date_override.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date_override.html_name }}" value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
+            <input type="date" class="form-control" id="{{ form.as_at_date_override.id_for_label }}"
+                   name="{{ form.as_at_date_override.html_name }}"
+                   value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
             <p class="form-text text-muted">
               {% blocktrans trimmed with name=place.name %}
                 Date up to which this work was last checked for updates. Only set this if it should be different from {{ name }}'s as-at date.
@@ -452,18 +445,20 @@
         <div class="form-row">
           <div class="form-group col-4">
             <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
-            <select id="{{ form.country.id_for_label }}" class="form-control" name="{{ form.country.html_name }}">
+            <select
+                hx-trigger="change"
+                hx-target=".locality-options"
+                hx-swap="outerHTML"
+                hx-post="{% url 'work_form_locality' country.code %}"
+                id="{{ form.country.id_for_label }}"
+                class="form-control" name="{{ form.country.html_name }}">
               {% for val, label in form.fields.country.choices %}
                 <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %} name="{{ form.country.html_name }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>
 
-          <div class="form-group col-4">
-            <label for="{{ form.locality.id_for_label }}">{{ form.locality.label }}</label>
-            <select id="{{ form.locality.id_for_label }}" class="form-control" name="{{ form.locality.html_name }}">
-            </select>
-          </div>
+        {% include 'indigo_api/_work_form_locality.html' %}
 
         </div>
 
@@ -490,64 +485,4 @@
       </form>
     {% endif %}
   {% endif %}
-
-  <script id="publication-document-template" type="text/x-handlebars-template">
-
-    <div class="card">
-      <div class="card-body bg-light">
-        <div class="media">
-          <div class="mr-2"><i class="fas fa-file fa-3x text-muted"></i></div>
-          <div class="media-body">
-            <div class="dropdown float-right">
-              <a href="#" class="dropdown-toggle text-dark btn" data-toggle="dropdown"></a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item delete-publication-document" href="#">{% trans 'Delete' %}</a>
-              </div>
-            </div>
-            <h6 class="my-0">
-              {% verbatim %}
-              {{#if url}}
-              <a href="{{ url }}" target="_blank" rel="noreferrer">{{ filename }}</a>
-              {{else}}
-              {{ filename }}
-              {{/if}}
-            </h6>
-            <div class="text-muted">{{ prettySize }} · {{ mime_type }}</div>
-            {{#if trusted_url}}
-            <div class="text-muted">{{ trusted_url }}</div>
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
-
-  {% endverbatim %}
-  </script>
-
-  <script id="work-repeal-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if repealed_by }}
-    <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
-    <span>{{ repealed_by.frbr_uri }}</span><br>
-    <a href="#" class="delete-repeal">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
-  {{else}}
-    <i class="text-muted">{% endverbatim %}{% trans 'Not repealed.' %}{% verbatim %}</i>
-  {{/if}}
-
-  {% endverbatim %}
-  </script>
-
-  <script id="commencing-work-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if commencing_work }}
-    <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
-    <span>{{ commencing_work.frbr_uri }}</span><br>
-    <a href="#" class="delete-commencing-work">{% endverbatim %}{% trans 'remove' %}{% verbatim %}</a>
-  {{/if}}
-
-  {% endverbatim %}
-  </script>
-
 {% endblock %}

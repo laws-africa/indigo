@@ -34,6 +34,8 @@ class WorkForm(forms.ModelForm):
         )
 
     # FRBR URI fields
+    # this will be filled in automatically during cleaning
+    frbr_uri = forms.CharField(required=False)
     # TODO: these should be choice fields and the options restricted to the place
     frbr_doctype = forms.ChoiceField()
     frbr_subtype = forms.ChoiceField(required=False)

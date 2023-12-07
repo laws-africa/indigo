@@ -454,7 +454,7 @@ class Work(WorkMixin, models.Model):
             ('bulk_export_work', 'Can export works in bulk'),
         )
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
+    frbr_uri = models.CharField(max_length=512, null=False, blank=True, unique=True, help_text="Used globally to identify this work")
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')

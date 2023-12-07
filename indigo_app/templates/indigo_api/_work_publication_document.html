@@ -8,7 +8,7 @@
         <a href="{{ form.publication_document_trusted_url.value }}"
            target="_blank" rel="noopener"
         >{{ form.publication_document_trusted_url.value }}</a>
-        <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+        <span class="text-muted">({{ form.publication_document_size.value|filesizeformat }})</span>
       </div>
       <div class="mb-2">
         <button hx-delete="{% url 'work_form_attach_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"

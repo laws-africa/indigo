@@ -11,6 +11,7 @@ from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.forms import SelectMultiple
+from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -125,7 +126,7 @@ class WorkForm(forms.ModelForm):
                 cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
             self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
         except (TypeError, ValueError) as e:
-            raise ValidationError({'frbr_uri': "Error building FRBR URI"})
+            raise ValidationError(_("Error building FRBR URI"))
 
         return self.cleaned_data
 

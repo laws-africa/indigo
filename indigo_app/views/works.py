@@ -216,7 +216,6 @@ class AddWorkView(PlaceViewBase, CreateView):
     def form_valid(self, form):
         form.instance.updated_by_user = self.request.user
         form.instance.created_by_user = self.request.user
-        form.instance.work_in_progress = True
 
         with reversion.create_revision():
             reversion.set_user(self.request.user)

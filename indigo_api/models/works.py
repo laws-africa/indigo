@@ -499,7 +499,7 @@ class Work(WorkMixin, models.Model):
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
     disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
 
-    work_in_progress = models.BooleanField(default=False, help_text="Work in progress, to be approved")
+    work_in_progress = models.BooleanField(default=True, help_text="Work in progress, to be approved")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

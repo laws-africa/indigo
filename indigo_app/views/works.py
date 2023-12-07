@@ -1008,59 +1008,65 @@ class WorkPopupView(WorkViewBase, DetailView):
         return context
 
 
-class EditWorkPortionViewBase(PlaceViewBase, TemplateView):
+class PartialWorkFormView(PlaceViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # update the object with the submitted form data, without saving the changes
-        work = Work()
-        context["form"] = form = self.Form(self.request.GET, instance=work, prefix="work")
-        form.is_valid()
-        context["work"] = work
+        # update the work object with the submitted form data
+        context["work"] = work = Work()
+        form = self.update_work(work)
+
+        # use a fresh form based on the partially-updated work to re-render the template
+        context["form"] = self.refreshed_form(form, work)
 
         return context
 
+    def update_work(self, work):
+        # update the object with the submitted form data, without saving the changes
+        form = self.Form(self.request.GET, instance=work)
+        form.is_valid()
+        return form
 
-class EditWorkRepealView(PlaceViewBase, TemplateView):
+    def refreshed_form(self, form, work):
+        return self.Form(instance=work)
+
+
+class WorkFormRepealView(PartialWorkFormView):
     """Just the repeal part of the work form to re-render the form when the user changes the repeal status
     through HTMX.
     """
     template_name = 'indigo_api/_work_repeal_form.html'
 
     class Form(forms.ModelForm):
+        prefix = 'work'
+
         class Meta:
             model = Work
-            prefix = 'work'
             fields = ('repealed_by', 'repealed_date')
             exclude = ('frbr_uri',)
 
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        work = Work()
-        form = self.Form(self.request.GET, instance=work, prefix="work")
-        form.is_valid()
+    def update_work(self, work):
+        form = super().update_work(work)
         if work.repealed_by:
             work.repealed_date = (work.repealed_by.commencement_date or
                                   work.repealed_by.publication_date)
-        context["work"] = work
-        # use an unbound form to render updated fields
-        context["form"] = self.Form(instance=work, prefix="work")
-        return context
+        return form
 
 
-class EditWorkParentView(EditWorkPortionViewBase):
+class WorkFormParentView(PartialWorkFormView):
     """Just the parent part of the work form to re-render the form when the user changes the parent work through HTMX.
     """
     template_name = 'indigo_api/_work_parent_form.html'
 
     class Form(forms.ModelForm):
+        prefix = 'work'
+
         class Meta:
             model = Work
             fields = ('parent_work',)
 
 
-class EditWorkCommencingWorkView(PlaceViewBase, TemplateView):
+class WorkFormCommencementView(PartialWorkFormView):
     """Just the commencing work part of the work form to re-render the form when the user changes the commencing
      work through HTMX.
     """
@@ -1068,21 +1074,18 @@ class EditWorkCommencingWorkView(PlaceViewBase, TemplateView):
 
     class Form(forms.ModelForm):
         commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+        prefix = 'work'
 
         class Meta:
             model = Work
-            prefix = 'work'
             fields = ('commencing_work',)
+
+    def refreshed_form(self, form, work):
+        return self.Form(data={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work, prefix="work")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # update the object with the submitted form data, without saving the changes
-        work = Work()
-        context["form"] = form = self.Form(self.request.GET, instance=work, prefix="work")
-        form.is_valid()
-        context["work"] = work
-        context["commencing_work"] = form.cleaned_data.get('commencing_work')
-
+        context["commencing_work"] = context["form"].data["commencing_work"]
         return context
 
 
@@ -1100,9 +1103,9 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
         publication_date = forms.DateField()
         publication_number = forms.CharField(required=False)
         publication_name = forms.CharField()
+        prefix = 'work'
 
         class Meta:
-            prefix = 'work'
             fields = ('publication_date', 'publication_number', 'publication_name')
 
         def find_possible_documents(self, country, locality):
@@ -1125,7 +1128,7 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.request.POST, prefix="work")
+        form = self.Form(self.request.POST)
 
         if form.is_valid():
             possible_documents = form.find_possible_documents(self.country, self.locality)
@@ -1156,9 +1159,9 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
         publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
         publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
         delete_publication_document = forms.CharField(required=False, widget=forms.HiddenInput())
+        prefix = 'work'
 
         class Meta:
-            prefix = 'work'
             model = Work
             fields = (
                 'publication_document_trusted_url',
@@ -1198,7 +1201,7 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
         if self.request.method == 'DELETE':
             initial['delete_publication_document'] = 'on'
 
-        context["form"] = self.Form(prefix="work", initial=initial)
+        context["form"] = self.Form(initial=initial)
         return context
 
 
@@ -1207,37 +1210,21 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_locality.html'
 
     class Form(forms.Form):
-        country = forms.ModelChoiceField(queryset=Country.objects, required=False)
+        country = forms.ModelChoiceField(queryset=Country.objects)
+        locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
+        prefix = 'work'
 
         class Meta:
-            prefix = 'work'
-            fields = ('country',)
-
-        def get_country_localities(self):
-            localities = Locality.objects.filter(country=self.cleaned_data.get('country'))
-            return localities
+            fields = ('country', 'locality')
 
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.request.POST, prefix="work")
+        context['form'] = form = self.Form(self.request.POST)
         if form.is_valid():
-            localities = form.get_country_localities()
-
-            # a new form class because we need to update the dropdown options within the __init__ method
-            class Form(forms.ModelForm):
-                class Meta:
-                    prefix = 'work'
-                    model = Work
-                    fields = ('locality',)
-
-                def __init__(self, *args, **kwargs):
-                    super().__init__(*args, **kwargs)
-                    self.fields['locality'].queryset = localities
-
-            context["form"] = Form(prefix="work")
+            form.fields['locality'].queryset = Locality.objects.filter(country=form.cleaned_data['country'])
         return context
 
 

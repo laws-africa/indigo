@@ -30,7 +30,8 @@ from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
+from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
+    NewCommencementForm, FindPubDocForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1013,7 +1014,7 @@ class PartialWorkFormView(PlaceViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
 
         # update the work object with the submitted form data
-        context["work"] = work = Work()
+        context["work"] = work = Work(country=self.country, locality=self.locality, frbr_uri="/akn/za/act/2009/1")
         form = self.update_work(work)
 
         # use a fresh form based on the partially-updated work to re-render the template
@@ -1087,13 +1088,6 @@ class WorkFormCommencementView(PartialWorkFormView):
         context = super().get_context_data(**kwargs)
         context["commencing_work"] = context["form"].data["commencing_work"]
         return context
-
-
-class FindPubDocForm(forms.Form):
-    name = forms.CharField(required=False, widget=forms.HiddenInput())
-    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
-    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
-    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
 
 
 class FindPublicationDocumentView(PlaceViewBase, TemplateView):

@@ -852,3 +852,10 @@ class WorkChooserForm(forms.Form):
             qs = qs.filter(title__icontains=self.cleaned_data['q'])
 
         return qs
+
+
+class FindPubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())

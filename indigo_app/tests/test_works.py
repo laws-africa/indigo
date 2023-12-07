@@ -394,6 +394,9 @@ class WorksWebTest(WebTest):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Date and Commencing Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/3'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2020'
+        form['work-frbr_number'] = '3'
         form['work-commenced'] = True
         form['work-commencement_date'] = '2020-02-11'
         form['work-commencing_work'] = 6

@@ -80,9 +80,9 @@ urlpatterns = [
     path('places/<str:place>/work/form/find-publication', works.FindPublicationDocumentView.as_view(), name='work_form_find_publication_document'),
     path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='work_form_attach_publication_document'),
     path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
-    path('places/<str:place>/work/form/repeal', works.EditWorkRepealView.as_view(), name='work_form_repeal'),
-    path('places/<str:place>/work/form/parent', works.EditWorkParentView.as_view(), name='work_form_parent'),
-    path('places/<str:place>/work/form/commencement', works.EditWorkCommencingWorkView.as_view(), name='work_form_commencement'),
+    path('places/<str:place>/work/form/repeal', works.WorkFormRepealView.as_view(), name='work_form_repeal'),
+    path('places/<str:place>/work/form/parent', works.WorkFormParentView.as_view(), name='work_form_parent'),
+    path('places/<str:place>/work/form/commencement', works.WorkFormCommencementView.as_view(), name='work_form_commencement'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

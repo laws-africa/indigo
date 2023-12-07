@@ -34,6 +34,8 @@ class WorkForm(forms.ModelForm):
         )
 
     # FRBR URI fields
+    # this will be filled in automatically during cleaning
+    frbr_uri = forms.CharField(required=False)
     # TODO: these should be choice fields and the options restricted to the place
     frbr_doctype = forms.ChoiceField()
     frbr_subtype = forms.ChoiceField(required=False)
@@ -852,3 +854,10 @@ class WorkChooserForm(forms.Form):
             qs = qs.filter(title__icontains=self.cleaned_data['q'])
 
         return qs
+
+
+class FindPubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())

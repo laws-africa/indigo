@@ -503,11 +503,11 @@ class Work(WorkMixin, models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    approved_at = models.DateTimeField(null=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
 

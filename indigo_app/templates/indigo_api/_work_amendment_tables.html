@@ -7,19 +7,19 @@
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>{% trans 'Work' %}</th>
         <th>{% trans 'Date' %}</th>
+        <th>{% trans 'Work' %}</th>
       </tr>
       </thead>
       {% for item in amendments %}
         <tr>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
           <td>
             <a href="{% url 'work' frbr_uri=item.amending_work.frbr_uri %}"
                data-popup-url="{% url 'work_popup' frbr_uri=item.amending_work.frbr_uri %}"
             >{{ item.amending_work.title }}</a>
             <span class="text-muted">· {{ item.amending_work.frbr_uri }}</span>
           </td>
-          <td>{{ item.date|date:"Y-m-d" }}</td>
         </tr>
       {% endfor %}
     </table>
@@ -35,19 +35,19 @@
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>{% trans 'Work' %}</th>
         <th>{% trans 'Date' %}</th>
+        <th>{% trans 'Work' %}</th>
       </tr>
       </thead>
       {% for item in amendments_made %}
         <tr>
+          <td>{{ item.date|date:"Y-m-d" }}</td>
           <td>
             <a href="{% url 'work' frbr_uri=item.amended_work.frbr_uri %}"
                data-popup-url="{% url 'work_popup' frbr_uri=item.amended_work.frbr_uri %}"
             >{{ item.amended_work.title }}</a>
             <span class="text-muted">· {{ item.amended_work.frbr_uri }}</span>
           </td>
-          <td>{{ item.date|date:"Y-m-d" }}</td>
         </tr>
       {% endfor %}
     </table>

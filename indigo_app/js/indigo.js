@@ -60,6 +60,7 @@ class IndigoApp {
       this.createComponents(e.target);
       this.createVueComponents(e.target);
       relativeTimestamps(e.target);
+      $('.selectpicker').selectpicker();
     });
   }
 
@@ -99,7 +100,7 @@ class IndigoApp {
 
     if (this.Vue.options.components[name]) {
       // create the component and attach it to the HTML element
-      const vue = createComponent(name, { el: element });
+      const vue = createComponent(name, { el: element, propsData: element.dataset });
       vue.$el.component = vue;
       this.components.push(vue);
     }

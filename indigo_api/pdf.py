@@ -63,6 +63,17 @@ def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False)
                                 encoding='utf-8', errors='backslashreplace')
         log.debug(f"Output from fop: {result.stdout}")
     except subprocess.CalledProcessError as e:
+        # print the end of each of our inputs for debugging
+        with open(xml) as f:
+            xml_end = f.read()[-256:]
+        log.error(f"\n\nEnd of XML: \n{xml_end}\n")
+        with open(xsl_fo) as f:
+            xsl_end = f.read()[-256:]
+        log.error(f"\n\nEnd of XSL: \n{xsl_end}\n")
+        with open(fop_config_file) as f:
+            fop_config_end = f.read()[-256:]
+        log.error(f"\n\nEnd of FOP config: \n{fop_config_end}\n")
+
         log.error(f"Error calling fop. Output: \n{e.output}", exc_info=e)
         # try to get a decent exception message from the FOP output
         # find the first line that starts with SEVERE: and take the next line

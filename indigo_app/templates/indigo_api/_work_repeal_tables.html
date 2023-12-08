@@ -6,18 +6,18 @@
   <table class="table table-sm">
     <thead>
     <tr>
-      <th>{% trans 'Work' %}</th>
       <th>{% trans 'Date' %}</th>
+      <th>{% trans 'Work' %}</th>
     </tr>
     </thead>
     <tr>
+      <td>{{ work.repealed_date|date:"Y-m-d" }}</td>
       <td>
         <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}"
            data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}"
         >{{ work.repealed_by.title }}</a>
         <span class="text-muted">· {{ work.repealed_by.frbr_uri }}</span>
       </td>
-      <td>{{ work.repealed_date|date:"Y-m-d" }}</td>
     </tr>
   </table>
 {% else %}
@@ -31,19 +31,19 @@
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>{% trans 'Work' %}</th>
         <th>{% trans 'Date' %}</th>
+        <th>{% trans 'Work' %}</th>
       </tr>
       </thead>
       {% for repealed_work in repeals_made %}
         <tr>
+          <td>{{ repealed_work.repealed_date|date:"Y-m-d" }}</td>
           <td>
             <a href="{% url 'work' frbr_uri=repealed_work.frbr_uri %}"
                data-popup-url="{% url 'work_popup' frbr_uri=repealed_work.frbr_uri %}"
             >{{ repealed_work.title }}</a>
             <span class="text-muted">· {{ repealed_work.frbr_uri }}</span>
           </td>
-          <td>{{ repealed_work.repealed_date|date:"Y-m-d" }}</td>
         </tr>
       {% endfor %}
     </table>

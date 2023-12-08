@@ -6,7 +6,7 @@
         {% for item in facet.items %}
           <div class="d-flex justify-content-between align-items-center">
             <div class="form-check flex-grow-1">
-              <input id="{{ facet.name }}_{{ forloop.counter0 }}" class="form-check-input work-list-facet"
+              <input id="{{ facet.name }}_{{ forloop.counter0 }}" class="form-check-input facet"
                      type="{{ facet.type }}" name="{{ facet.name }}" value="{{ item.value }}"
                      {% if item.selected %}checked{% endif %}
                      form="work-filter-form">

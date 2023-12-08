@@ -7,7 +7,7 @@
   <div class="container-fluid mt-3 mb-5">
 
     {% block content-header %}
-      <div class="d-flex mb-3">
+      <div class="d-flex mb-3 p-3 border work-list-filters">
         <div class="flex-grow-1">
           {% block filter-form %}
             {% include 'indigo_api/_work_filter_form.html' with form=form %}

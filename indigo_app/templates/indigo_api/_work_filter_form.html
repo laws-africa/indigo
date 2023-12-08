@@ -5,7 +5,7 @@
   id="work-filter-form"
   hx-post="{% url 'place_works' place=place.place_code %}"
   hx-target="#work-list"
-  hx-trigger="submit, change from:#work-list target:.work-list-facet delay:1s, change from:[name=sortby]"
+  hx-trigger="submit, change from:#work-list target:.facet delay:1s, change from:[name=sortby]"
 >
   <div class="d-flex">
 
@@ -27,6 +27,10 @@
     </div>
 
     <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
+
+    <div class="mr-2">
+      <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear all filters' %}</a>
+    </div>
 
     <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
   </div>
@@ -124,9 +128,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
-        {{ form.taxonomy_topic.as_hidden }}
 
         <!-- Reset filters -->
         <div class="text-right mt-3">

@@ -1,7 +1,7 @@
 {% load indigo_app humanize i18n %}
 
 {% for doc in documents %}
-  <div class="d-flex">
+  <div class="row">
     <div class="col-2">
       <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
     </div>

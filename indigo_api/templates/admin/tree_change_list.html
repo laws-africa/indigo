@@ -1,0 +1,11 @@
+{% extends 'admin/tree_change_list.html' %}
+{% load static i18n %}
+{% block result_list %}
+  <script defer src="{% static 'javascript/indigo-app.js' %}"></script>
+  <la-table-of-contents-controller
+    items="{{ tree_json }}"
+    title-filter-placeholder="{% trans "Search" %}"
+    collapse-all-btn-text="{% trans "Collapse all" %}"
+    expand-all-btn-text="{% trans "Expand all" %}"
+  ></la-table-of-contents-controller>
+{% endblock %}

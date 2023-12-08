@@ -746,11 +746,16 @@ class PlaceWorksView(PlaceViewBase, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context["works"]
+        context['work_pks'] = ' '.join(str(w.pk) for w in self.get_queryset())
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + (self.request.POST or self.request.GET).urlencode()
+        )
+        context['download_xsl_url'] = (
+            reverse('place_works', kwargs={'place': self.kwargs['place']}) +
+            '?' + (self.request.POST or self.request.GET).urlencode() + '&format=xlsx'
         )
         return context
 
@@ -803,7 +808,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
 
         qs = Work.objects.filter(country=self.country, locality=self.locality)
 
@@ -813,11 +818,13 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         self.facet_principal(work_facets, qs)
         self.facet_stub(work_facets, qs)
         self.facet_tasks(work_facets, qs)
+        self.facet_publication_document(work_facets, qs)
         self.facet_primary(work_facets, qs)
         self.facet_commencement(work_facets, qs)
         self.facet_amendment(work_facets, qs)
         self.facet_consolidation(work_facets, qs)
         self.facet_repeal(work_facets, qs)
+        self.facet_taxonomy(context['taxonomy_toc'], qs)
 
         context["document_facets"] = doc_facets = []
         self.facet_points_in_time(doc_facets, qs)
@@ -826,6 +833,11 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         return context
 
     def facet_subtype(self, facets, qs):
+        # count doctypes, subtypes in the current place first, so these are always shown as an option
+        counts_in_place = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
+        counts_subtype_in_place = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
+        counts_in_place.update(counts_subtype_in_place)
+
         qs = self.form.filter_queryset(qs, exclude="subtype")
         # count doctypes, subtypes by code
         counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
@@ -839,7 +851,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 c[0] in self.form.cleaned_data.get("subtype", [])
             )
             for c in self.form.fields["subtype"].choices
-            if counts.get(c[0])
+            if counts_in_place.get(c[0])
         ]
         facets.append(Facet("Type", "subtype", "checkbox", items))
 
@@ -891,11 +903,15 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = self.form.filter_queryset(qs, exclude="tasks")
         task_states = qs.annotate(
             has_open_states=Count(
-                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField()))
-        ).values('has_open_states')
+                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField())),
+            has_unblocked_states=Count(
+                Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
+            has_blocked_states=Count(
+                Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
+        ).values('has_open_states', 'has_unblocked_states', 'has_blocked_states')
 
-        # Organize the results into open_states and no_open_states
-        counts = {'open_states': 0, 'no_open_states': 0}
+        # Organize the results into totals per state
+        counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}
 
         for item in task_states:
             if item['has_open_states'] > 0:
@@ -903,12 +919,30 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             else:
                 counts['no_open_states'] += 1
 
+            # unblocked and only blocked tasks
+            if item['has_unblocked_states'] > 0:
+                counts['unblocked_states'] += 1
+            if item['has_blocked_states'] > 0 and not item['has_unblocked_states'] > 0:
+                counts['only_blocked_states'] += 1
+
         items = [
             FacetItem(
                 "Has open tasks",
                 "has_open_tasks",
                 counts['open_states'],
                 "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has unblocked tasks",
+                "has_unblocked_tasks",
+                counts['unblocked_states'],
+                "has_unblocked_tasks" in self.form.cleaned_data.get("tasks", [])
+            ),
+            FacetItem(
+                "Has only blocked tasks",
+                "has_only_blocked_tasks",
+                counts['only_blocked_states'],
+                "has_only_blocked_tasks" in self.form.cleaned_data.get("tasks", [])
             ),
             FacetItem(
                 "Has no open tasks",
@@ -1022,6 +1056,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
         facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
 
+    def facet_publication_document(self, facets,  qs):
+        qs = self.form.filter_queryset(qs, exclude="publication_document")
+        counts = qs.aggregate(
+            has_publication_document=Count("pk", filter=Q(publication_document__isnull=False), distinct=True),
+            no_publication_document=Count("pk", filter=Q(publication_document__isnull=True), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Has publication document",
+                "has_publication_document",
+                counts.get("has_publication_document", 0),
+                "has_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+            FacetItem(
+                "No publication document",
+                "no_publication_document",
+                counts.get("no_publication_document", 0),
+                "no_publication_document" in self.form.cleaned_data.get("publication_document", [])
+            ),
+        ]
+        facets.append(Facet("Publication document", "publication_document", "checkbox", items))
+
     def facet_repeal(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="repeal")
         counts = qs.aggregate(
@@ -1095,13 +1151,35 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         ]
         facets.append(Facet("Point in time status", "status", "checkbox",  items))
 
+    def facet_taxonomy(self, taxonomy_tree, qs):
+        qs = self.form.filter_queryset(qs, exclude="taxonomy_topic")
+        # count works per taxonomy topic
+        counts = {
+            x["taxonomy_topics__slug"]: x["count"]
+            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("taxonomy_topics__slug")).order_by()
+        }
+
+        # fold the counts into the taxonomy tree
+        def decorate(item):
+            total = 0
+            for child in item.get('children', []):
+                total = total + decorate(child)
+            # count for this item
+            item['data']['count'] = counts.get(item["data"]["slug"])
+            # total of count for descendants
+            item['data']['total'] = total
+            return total + (item['data']['count'] or 0)
+
+        for item in taxonomy_tree:
+            decorate(item)
+
 
 class WorkActionsView(PlaceViewBase, FormView):
     form_class = WorkBulkActionsForm
     template_name = "indigo_app/place/_works_actions.html"
 
     def form_valid(self, form):
-        if form.cleaned_data['save']:
+        if form.cleaned_data['save'] and self.request.user.has_perm('indigo_api.change_work'):
             form.save_changes()
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
@@ -1114,14 +1192,22 @@ class WorkActionsView(PlaceViewBase, FormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # get the union of all the work's taxonomy topics
-        if form.cleaned_data.get('works'):
-            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=form.cleaned_data["works"]).distinct()
+        if self.request.user.has_perm('indigo_api.change_work'):
+            works = self.get_works(form)
+            # get the union of all the work's taxonomy topics
+            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
 
-        if form.is_valid:
-            context["works"] = form.cleaned_data.get("works", [])
+            if form.is_valid:
+                context["works"] = works
 
         return context
+
+    def get_works(self, form):
+        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
+        if not works:
+            works = form.cleaned_data.get("works", [])
+
+        return works
 
 
 class WorkChooserView(PlaceViewBase, ListView):

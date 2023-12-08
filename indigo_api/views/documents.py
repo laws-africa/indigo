@@ -499,8 +499,10 @@ class DocumentDiffView(DocumentResourceView, APIView):
             local_html = local_doc.to_html()
             remote_html = remote_doc.to_html()
 
-        local_tree = lxml.html.fromstring((local_html or "<div></div>").encode('utf-8'))
-        remote_tree = lxml.html.fromstring(remote_html.encode('utf-8')) if remote_html else None
+        # we have to explicitly tell the HTML parser that we're dealing with utf-8
+        parser = lxml.html.HTMLParser(encoding='utf-8')
+        local_tree = lxml.html.fromstring((local_html or "<div></div>").encode('utf-8'), parser=parser)
+        remote_tree = lxml.html.fromstring(remote_html.encode('utf-8'), parser=parser) if remote_html else None
 
         diff = differ.diff_html(remote_tree, local_tree)
         n_changes = differ.count_differences(diff)

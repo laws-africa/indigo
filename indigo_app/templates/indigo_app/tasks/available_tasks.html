@@ -10,7 +10,7 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-body">
-          <div data-vue-component="TaxonomyTOC"></div>
+          <div data-vue-component="TaxonomyTOC" data-selected="{{ form.taxonomy_topic.value|default:'' }}"></div>
           {{ taxonomy_toc|json_script:"taxonomy_toc" }}
         </div>
       </div>

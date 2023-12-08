@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block view-id %}edit-work-view{% endblock %}
-{% block title %}{% trans 'Edit' %} – {{ block.super }}{% endblock %}
+{% block title %}{% if work.pk %}{% trans 'Edit' %}{% else %}{% trans 'New work' %}{% endif %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
   {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}

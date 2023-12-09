@@ -728,18 +728,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
             .filter(country=self.country, locality=self.locality) \
             .distinct() \
             .order_by('-created_at')
-
-        queryset = self.form.filter_queryset(queryset)
-
-        # prefetch and filter documents
-        # TODO
-        queryset = queryset.prefetch_related(Prefetch(
-            'document_set',
-            to_attr='filtered_docs',
-            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
-        ))
-
-        return queryset
+        return self.form.filter_queryset(queryset)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -74,22 +74,44 @@
     grammar: {
       name: 'bluebell',
       fragments: {
+        alinea: 'hier_element_block',
         article: 'hier_element_block',
-        attachment: 'attachment',
-        attachments: 'attachments',
+        book: 'hier_element_block',
         chapter: 'hier_element_block',
+        clause: 'hier_element_block',
         division: 'hier_element_block',
+        indent: 'hier_element_block',
+        level: 'hier_element_block',
+        list: 'hier_element_block',
         paragraph: 'hier_element_block',
         part: 'hier_element_block',
+        point: 'hier_element_block',
+        proviso: 'hier_element_block',
         rule: 'hier_element_block',
         section: 'hier_element_block',
+        subchapter: 'hier_element_block',
+        subclause: 'hier_element_block',
         subdivision: 'hier_element_block',
+        sublist: 'hier_element_block',
+        subparagraph: 'hier_element_block',
         subpart: 'hier_element_block',
+        subrule: 'hier_element_block',
+        subsection: 'hier_element_block',
+        subtitle: 'hier_element_block',
+        title: 'hier_element_block',
+        tome: 'hier_element_block',
+        transitional: 'hier_element_block',
+        attachment: 'attachment',
+        attachments: 'attachments',
+        item: 'block_list_item',
         debateSection: 'speech_container',
         speech: 'speech_group',
       },
-      // TODO: add .akn-attachments, .akn-component, .akn-components?
-      quickEditable: '.akn-article, .akn-attachment, .akn-chapter, .akn-division, .akn-paragraph, .akn-part, .akn-rule, .akn-section, .akn-subdivision, .akn-subpart, .akn-debateSection, .akn-speech',
+      quickEditable: '.akn-alinea, .akn-article, .akn-attachment, .akn-attachments, .akn-book, .akn-chapter,' +
+          ' .akn-clause, .akn-division, .akn-indent, .akn-item, .akn-level, .akn-list, .akn-paragraph, .akn-part,' +
+          ' .akn-point, .akn-proviso, .akn-rule, .akn-section, .akn-subchapter, .akn-subclause, .akn-subdivision,' +
+          ' .akn-sublist, .akn-subparagraph, .akn-subpart, .akn-subrule, .akn-subsection, .akn-subtitle, .akn-title,' +
+          ' .akn-tome, .akn-transitional, .akn-debateSection, .akn-speech',
     },
     // list of names of linter functions applicable to this location
     linters: [],
@@ -97,25 +119,42 @@
     annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
                  ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
                  ".akn-article, .akn-paragraph, .akn-subheading, .akn-item, table",
-    // TODO: include all / more AkomaNtoso30.hier_elements here?
     toc: {
       elements: {
         akomaNtoso: 1,
+        alinea: 1,
         article: 1,
         attachment: 1,
         attachments: 1,
+        book: 1,
         chapter: 1,
+        clause: 1,
         conclusions: 1,
         coverpage: 1,
         division: 1,
+        indent: 1,
+        level: 1,
+        list: 1,
         paragraph: 1,
         part: 1,
+        point: 1,
         preamble: 1,
         preface: 1,
+        proviso: 1,
         rule: 1,
         section: 1,
+        subchapter: 1,
+        subclause: 1,
         subdivision: 1,
+        sublist: 1,
+        subparagraph: 1,
         subpart: 1,
+        subrule: 1,
+        subsection: 1,
+        subtitle: 1,
+        title: 1,
+        tome: 1,
+        transitional: 1,
         debateSection: 1,
       },
       // elements we exclude from the TOC because they contain sub-documents or subflows
@@ -125,6 +164,7 @@
         quotedStructure: 1,
         subFlow: 1,
       },
+      // TODO: support translation for titles
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
         akomaNtoso  : function(i) { return "Entire document"; },
@@ -163,7 +203,13 @@
         },
         article      : function(i) {
           return "Art. " + i.num + (i.heading ? " – " + i.heading : '');
-          }
+        },
+        rule      : function(i) {
+          return "R. " + i.num + (i.heading ? " – " + i.heading : '');
+        },
+        title      : function(i) {
+          return "T. " + i.num + (i.heading ? " – " + i.heading : '');
+        },
       },
     },
   });

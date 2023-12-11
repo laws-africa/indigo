@@ -608,16 +608,6 @@ class WorkFilterForm(forms.Form):
 
         return queryset
 
-    def filter_document_queryset(self, queryset):
-        status = self.cleaned_data.get('status')
-
-        if status == ['draft']:
-            queryset = queryset.filter(draft=True)
-        elif status == ['published']:
-            queryset = queryset.filter(draft=False)
-
-        return queryset
-
 
 class WorkflowFilterForm(forms.Form):
     state = forms.ChoiceField(choices=[('open', 'open'), ('closed', 'closed')])

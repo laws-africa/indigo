@@ -6,15 +6,18 @@
 }
 
 .work-chooser-list {
-  tr {
-    cursor: pointer;
-  }
-
   td.frbr_uri {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 300px;
     overflow-x: hidden;
+  }
+
+  label {
+    margin-bottom: 0px;
+    cursor: pointer;
+    display: block;
+    font-weight: normal;
   }
 }
 

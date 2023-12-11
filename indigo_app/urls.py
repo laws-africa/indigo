@@ -26,6 +26,8 @@ urlpatterns = [
 
     path('places/<str:place>/works/facets', cache_page(30)(places.PlaceWorksFacetsView.as_view()), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
+    path('places/<str:place>/works/chooser', places.WorkChooserView.as_view(), name='place_work_chooser'),
+    path('places/<str:place>/works/chooser/list', cache_page(30)(places.WorkChooserListView.as_view()), name='place_work_chooser_list'),
     path('places/<str:place>/works/detail/<int:pk>', places.WorkDetailView.as_view(), name='place_works_work_detail'),
     path('places/<str:place>/works/detail/<int:pk>/documents', places.WorkDocumentsView.as_view(), name='place_works_work_documents'),
     path('places/<str:place>/works/detail/<int:pk>/commencements', places.WorkCommencementsView.as_view(), name='place_works_work_commencements'),
@@ -73,6 +75,14 @@ urlpatterns = [
     path('places/<str:place>/works/new', works.AddWorkView.as_view(), name='new_work'),
     path('places/<str:place>/works/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
+
+    # htmx partials for new and existing works
+    path('places/<str:place>/work/form/find-publication', works.FindPublicationDocumentView.as_view(), name='work_form_find_publication_document'),
+    path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='work_form_attach_publication_document'),
+    path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
+    path('places/<str:place>/work/form/repeal', works.WorkFormRepealView.as_view(), name='work_form_repeal'),
+    path('places/<str:place>/work/form/parent', works.WorkFormParentView.as_view(), name='work_form_parent'),
+    path('places/<str:place>/work/form/commencement', works.WorkFormCommencementView.as_view(), name='work_form_commencement'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

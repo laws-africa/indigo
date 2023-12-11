@@ -11,13 +11,15 @@ from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.forms import SelectMultiple
+from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
+from cobalt import FrbrUri
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
 
 
 class WorkForm(forms.ModelForm):
@@ -30,6 +32,18 @@ class WorkForm(forms.ModelForm):
             'stub', 'principal', 'taxonomies', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
         )
+
+    # FRBR URI fields
+    # this will be filled in automatically during cleaning
+    frbr_uri = forms.CharField(required=False)
+    # TODO: these should be choice fields and the options restricted to the place
+    frbr_doctype = forms.ChoiceField()
+    frbr_subtype = forms.ChoiceField(required=False)
+    frbr_actor = forms.CharField(required=False)
+    # TODO: clean and validate these
+    frbr_date = forms.CharField()
+    # TODO: clean this up
+    frbr_number = forms.CharField()
 
     # The user can provide either a file attachment, or a trusted
     # remote URL with supporting data. The form sorts out which fields
@@ -58,15 +72,35 @@ class WorkForm(forms.ModelForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commencement_note = forms.CharField(max_length=1024, required=False)
 
-    def __init__(self, place, *args, **kwargs):
+    def __init__(self, country, locality, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.place = place
+        self.country = country
+        self.locality = locality
+        self.place = locality or country
 
         for prop, label in self.place.settings.work_properties.items():
             key = f'property_{prop}'
             if self.instance:
                 self.initial[key] = self.instance.properties.get(prop)
             self.fields[key] = forms.CharField(label=label, required=False)
+
+        if self.instance:
+            self.fields['frbr_doctype'].initial = self.instance.doctype
+            self.fields['frbr_subtype'].initial = self.instance.subtype
+            self.fields['frbr_date'].initial = self.instance.date
+            self.fields['frbr_number'].initial = self.instance.number
+            self.fields['frbr_actor'].initial = self.instance.actor
+
+        self.fields['frbr_doctype'].choices = [
+            (y, x)
+            for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
+        ]
+        self.fields['frbr_subtype'].choices = [
+            (s.abbreviation, s.name)
+            for s in Subtype.objects.order_by('name')
+        ]
+
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
 
     def property_fields(self):
         fields = [
@@ -76,6 +110,27 @@ class WorkForm(forms.ModelForm):
         ]
         fields.sort(key=lambda f: f.label)
         return fields
+
+    def clean_frbr_number(self):
+        value = self.cleaned_data['frbr_number']
+        value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
+        value = re.sub(r'--+', '-', value)
+        return value
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # build up the FRBR URI from its constituent parts
+        # TODO: this should really be done on the model itself, so that we can store and query the FRBR URI fields independently
+        try:
+            frbr_uri = FrbrUri(
+                self.place.place_code, None, cleaned_data['frbr_doctype'], cleaned_data.get('frbr_subtype'),
+                cleaned_data.get('frbr_actor'), cleaned_data.get('frbr_date'), cleaned_data.get('frbr_number'))
+            self.cleaned_data['frbr_uri'] = frbr_uri.work_uri(work_component=False)
+        except (TypeError, ValueError) as e:
+            raise ValidationError(_("Error building FRBR URI"))
+
+        return self.cleaned_data
 
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
@@ -106,8 +161,9 @@ class WorkForm(forms.ModelForm):
         if self.cleaned_data['delete_publication_document']:
             if existing:
                 existing.delete()
+                existing = None
 
-        elif pub_doc_file:
+        if pub_doc_file:
             if existing:
                 # ensure any previously uploaded file is deleted
                 existing.delete()
@@ -775,3 +831,38 @@ class WorkBulkActionsForm(forms.Form):
         if self.cleaned_data.get('del_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
+
+
+class WorkChooserForm(forms.Form):
+    country = forms.ModelChoiceField(queryset=Country.objects)
+    locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
+    q = forms.CharField(required=False)
+
+    def clean_locality(self):
+        if self.cleaned_data.get('country'):
+            # update the queryset on the locality field for rendering
+            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
+            if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
+                return None
+        else:
+            return None
+        return self.cleaned_data['locality']
+
+    def filter_queryset(self, qs):
+        if self.cleaned_data['country']:
+            qs = qs.filter(country=self.cleaned_data['country'])
+
+        if self.cleaned_data['locality']:
+            qs = qs.filter(locality=self.cleaned_data['locality'])
+
+        if self.cleaned_data['q']:
+            qs = qs.filter(title__icontains=self.cleaned_data['q'])
+
+        return qs
+
+
+class FindPubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())

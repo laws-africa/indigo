@@ -1,4 +1,4 @@
-import * as vueComponents from './components';
+import { components, vueComponents } from './components';
 import {
   LaAkomaNtoso,
   LaGutter,
@@ -32,11 +32,15 @@ class IndigoApp {
     this.Vue = getVue();
     this.setupHtmx();
 
+    for (const [name, component] of Object.entries(components)) {
+      this.componentLibrary[name] = component;
+    }
+
     registerComponents(vueComponents);
     window.dispatchEvent(new Event('indigo.vue-components-registered'));
 
-    this.createComponents(document);
-    this.createVueComponents(document);
+    this.createComponents(document.body);
+    this.createVueComponents(document.body);
     window.dispatchEvent(new Event('indigo.components-created'));
   }
 
@@ -62,6 +66,10 @@ class IndigoApp {
 
   createComponents (root) {
     // create components
+    // check the root directly
+    if (root.getAttribute('data-component')) {
+      this.createComponent(root);
+    }
     for (const element of root.querySelectorAll('[data-component]')) {
       this.createComponent(element);
     }

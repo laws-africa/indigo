@@ -46,6 +46,7 @@
       </p>
     </div>
 
+    <div class="duplicate-wrapper"></div>
     {% block work-form-details %}
     <div class="card mb-3">
       <h5 class="card-header">{% trans 'Work identification' %}</h5>
@@ -61,7 +62,11 @@
         <div class="form-row">
           <div class="form-group col-4">
             <label for="{{ form.frbr_doctype.id_for_label }}" class="required">{% trans 'Work type' %}</label>
-            <select id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
+            <select
+                hx-trigger="change"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
               {% for opt in form.frbr_doctype %}
                 {{ opt }}
               {% endfor %}
@@ -70,7 +75,11 @@
 
           <div class="form-group col-4">
             <label for="{{ form.frbr_subtype.id_for_label }}">{% trans 'Work subtype' %}</label>
-            <select id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
+            <select
+                hx-trigger="change"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
               <option value="">{% trans '(none)' %}</option>
               {% for opt in form.frbr_subtype %}
                 {{ opt }}
@@ -80,28 +89,40 @@
 
           <div class="form-group col-4">
             <label for="{{ form.frbr_actor.id_for_label }}">{% trans 'Responsible organisation (actor)' %}</label>
-            <input type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
-                   name="{{ form.frbr_actor.html_name }}"
-                   value="{{ form.frbr_actor.value|default:'' }}">
-            <div class="form-text text-muted">{% trans 'Organisation that created this work. Not normally used for acts.' %}</div>
+            <input
+                hx-trigger="change, keyup delay:500ms changed"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
+                name="{{ form.frbr_actor.html_name }}"
+                value="{{ form.frbr_actor.value|default:'' }}">
+            <div class="form-text text-muted">{% trans 'Organisation that created this work. Not normally used for Acts.' %}</div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-3 mb-0">
             <label for="{{ form.frbr_date.id_for_label }}" class="required">{% trans 'Year (or date) of introduction' %}</label>
-            <input type="text" class="form-control" id="{{ form.frbr_date.id_for_label }}"
-                   required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)"
-                   name="{{ form.frbr_date.html_name }}"
-                   value="{{ form.frbr_date.value|default:'' }}">
+            <input
+                hx-trigger="change, keyup delay:500ms changed"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                type="text" class="form-control" id="{{ form.frbr_date.id_for_label }}"
+                required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)"
+                name="{{ form.frbr_date.html_name }}"
+                value="{{ form.frbr_date.value|default:'' }}">
           </div>
 
           <div class="form-group col-md-6 offset-md-3 mb-0">
             <label for="{{ form.frbr_number.id_for_label }}" class="required">{% trans 'Number within year' %}</label>
-            <input type="text" class="form-control" id="{{ form.frbr_number.id_for_label }}"
-                   name="{{ form.frbr_number.html_name }}"
-                   value="{{ form.frbr_number.value|default:'' }}"
-                   required pattern="[^\s]+">
+            <input
+                hx-trigger="change, keyup delay:500ms changed"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                type="text" class="form-control" id="{{ form.frbr_number.id_for_label }}"
+                required pattern="[^\s]+"
+                name="{{ form.frbr_number.html_name }}"
+                value="{{ form.frbr_number.value|default:'' }}">
             <div class="form-text text-muted">
               {% trans "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only." %}
             </div>
@@ -247,7 +268,7 @@
                 type="text" class="form-control" id="{{ form.publication_number.id_for_label }}"
                 name="{{ form.publication_number.html_name }}"
                 value="{{ form.publication_number.value|default:'' }}">
-              <div class="form-text text-muted">{% trans "The publication's sequence numbediv, eg. gazette number." %}</div>
+              <div class="form-text text-muted">{% trans "The publication's sequence number, eg. gazette number." %}</div>
             </div>
           </div>
         {% endblock work-form-publication-details %}

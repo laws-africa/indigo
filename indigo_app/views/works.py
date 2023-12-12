@@ -1090,6 +1090,49 @@ class WorkFormCommencementView(PartialWorkFormView):
         return context
 
 
+class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_work_possible_duplicates.html'
+
+    class Form(forms.Form):
+        frbr_doctype = forms.CharField()
+        frbr_subtype = forms.CharField(required=False)
+        frbr_actor = forms.CharField(required=False)
+        frbr_date = forms.CharField()
+        frbr_number = forms.CharField(required=False)
+        prefix = 'work'
+
+        def find_actual_duplicate(self, country, locality):
+            doctype = self.cleaned_data.get('frbr_doctype')
+            subtype = self.cleaned_data.get('frbr_subtype')
+            actor = self.cleaned_data.get('frbr_actor')
+            date = self.cleaned_data.get('frbr_date')
+            number = self.cleaned_data.get('frbr_number')
+            frbr_uri = FrbrUri(country.code, locality.code if locality else None, doctype, subtype, actor, date, number)
+            return Work.objects.filter(frbr_uri=frbr_uri.work_uri()).first()
+
+        def find_possible_duplicates(self, country, locality):
+            # TODO
+            return []
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.Form(self.request.POST)
+
+        if form.is_valid():
+            actual_duplicate = form.find_actual_duplicate(self.country, self.locality)
+            if actual_duplicate:
+                context["actual_duplicate"] = actual_duplicate
+            # TODO: find possible duplicates too, matching on title, cap number, or URI with a different actor, etc.
+            possible_duplicates = form.find_possible_duplicates(self.country, self.locality)
+            if possible_duplicates:
+                context["possible_duplicates"] = possible_duplicates
+
+        return context
+
+
 class FindPublicationDocumentView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_possible_publication_documents.html'
 

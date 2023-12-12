@@ -725,9 +725,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
     def get_queryset(self):
         queryset = Work.objects \
-            .select_related('parent_work', 'metrics') \
             .filter(country=self.country, locality=self.locality) \
-            .distinct() \
             .order_by('-created_at')
         return self.form.filter_queryset(queryset)
 

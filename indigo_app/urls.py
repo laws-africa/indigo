@@ -99,6 +99,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit-modal/$', works.EditWorkModalView.as_view(), name='work_edit_modal'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/edit-modal-success/$', works.EditWorkModalSuccessView.as_view(), name='work_edit_modal_success'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/delete$', works.DeleteWorkView.as_view(), name='work_delete'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/$', works.WorkVersionsView.as_view(), name='work_versions'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/tasks/$', works.WorkTasksView.as_view(), name='work_tasks'),

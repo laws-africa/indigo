@@ -17,7 +17,12 @@
     </div>
   {% endif %}
 
-  <form id="edit-work-form" method="POST" enctype="multipart/form-data" data-component="WorkForm"  {% if work.pk %}  action="{% url 'work_edit_modal' work.frbr_uri %} {% endif %}">
+  <form
+      id="edit-work-form"
+      method="POST"
+      enctype="multipart/form-data"
+      data-component="WorkForm"
+  >
     {% csrf_token %}
 
     <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">

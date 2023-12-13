@@ -179,7 +179,17 @@ class EditWorkModalView(EditWorkView):
     template_name = "indigo_api/_work_form_modal.html"
 
     def get_success_url(self):
-        return reverse("place_works", kwargs={"place": self.kwargs["place"]})
+        return reverse('work_edit_modal_success', kwargs={"frbr_uri": self.work.frbr_uri})
+
+class EditWorkModalSuccessView(WorkViewBase, DetailView):
+    template_name = "indigo_app/place/_work.html"
+
+    def get(self, *args, **kwargs):
+        resp = super().get(*args, **kwargs)
+        # element_id = f"work-heading-{self.work.id}"''
+        # resp.headers['HX-Trigger-After-Swap'] = '{"autoOpenWork":  "%s"}' % element_id
+        return resp
+
 
 
 class AddWorkView(PlaceViewBase, CreateView):

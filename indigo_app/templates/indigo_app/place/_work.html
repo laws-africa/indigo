@@ -1,6 +1,6 @@
 {% load humanize i18n %}
 
-<div class="d-flex">
+<div class="d-flex" id="work-item-wrapper-{{ work.pk }}">
   {% if perms.indigo_api.change_work %}
     <div class="mr-2 mt-2">
       <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">

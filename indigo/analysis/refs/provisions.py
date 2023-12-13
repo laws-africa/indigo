@@ -159,6 +159,7 @@ class ProvisionRefsResolver:
         "point": "point",
         "points": "point",
         "regulation": "section",
+        "regulations": "section",
         "section": "section",
         "sections": "section",
         "subparagraph": ["subparagraph", "paragraph"],

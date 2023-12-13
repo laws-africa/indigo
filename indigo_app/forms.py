@@ -90,6 +90,11 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+            self.fields['commencement_date'].initial = self.instance.commencement_date
+            self.fields['commencement_note'].initial = self.instance.commencement_note
+            if hasattr(self.instance.main_commencement, 'commencing_work'):
+                if self.instance.main_commencement.commencing_work:
+                    self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
         self.fields['frbr_doctype'].choices = [
             (y, x)

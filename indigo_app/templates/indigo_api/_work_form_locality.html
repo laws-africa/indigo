@@ -2,7 +2,11 @@
 
 <div class="form-group col-4 locality-options">
   <label for="{{ form.locality.id_for_label }}">{{ form.locality.label }}</label>
-  <select id="{{ form.locality.id_for_label }}" class="form-control" name="{{ form.locality.html_name }}">
+  <select
+      hx-trigger="change"
+      hx-target=".duplicate-wrapper"
+      hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+      id="{{ form.locality.id_for_label }}" name="{{ form.locality.html_name }}" class="form-control">
     {% for opt in form.locality %}
       {{ opt }}
     {% endfor %}

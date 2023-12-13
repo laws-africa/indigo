@@ -55,7 +55,14 @@
         <div class="form-row">
           <div class="form-group col-12">
             <label for="{{ form.title.id_for_label }}" class="required">{% trans 'Short title' %}</label>
-            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.html_name }}" autofocus placeholder="{% trans 'Title' %}" required value="{{ form.title.value|default:'' }}">
+            <input
+                hx-trigger="load, change, keyup delay:500ms changed"
+                hx-target=".duplicate-wrapper"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                type="text" class="form-control" id="{{ form.title.id_for_label }}"
+                name="{{ form.title.html_name }}"
+                value="{{ form.title.value|default:'' }}"
+                autofocus placeholder="{% trans 'Title' %}" required>
           </div>
         </div>
 
@@ -65,7 +72,7 @@
             <select
                 hx-trigger="change"
                 hx-target=".duplicate-wrapper"
-                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                 id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
               {% for opt in form.frbr_doctype %}
                 {{ opt }}
@@ -78,7 +85,7 @@
             <select
                 hx-trigger="change"
                 hx-target=".duplicate-wrapper"
-                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                 id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
               <option value="">{% trans '(none)' %}</option>
               {% for opt in form.frbr_subtype %}
@@ -92,7 +99,7 @@
             <input
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-target=".duplicate-wrapper"
-                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                 type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
                 name="{{ form.frbr_actor.html_name }}"
                 value="{{ form.frbr_actor.value|default:'' }}">
@@ -106,7 +113,7 @@
             <input
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-target=".duplicate-wrapper"
-                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                 type="text" class="form-control" id="{{ form.frbr_date.id_for_label }}"
                 required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)"
                 name="{{ form.frbr_date.html_name }}"
@@ -118,7 +125,7 @@
             <input
                 hx-trigger="change, keyup delay:500ms changed"
                 hx-target=".duplicate-wrapper"
-                hx-post="{% url 'work_form_find_duplicates' place.place_code %}"
+                hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                 type="text" class="form-control" id="{{ form.frbr_number.id_for_label }}"
                 required pattern="[^\s]+"
                 name="{{ form.frbr_number.html_name }}"
@@ -195,7 +202,14 @@
           {% for fld in form.property_fields %}
             <div class="form-group col-md-4">
               <label for="{{ fld.id_for_label }}">{{ fld.label }}</label>
-              <input type="text" class="form-control" value="{{ fld.value|default:'' }}" name="{{ fld.html_name }}" maxlength="1024">
+              <input
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  type="text" class="form-control" id="{{ fld.id_for_label }}"
+                  name="{{ fld.html_name }}"
+                  value="{{ fld.value|default:'' }}"
+                  maxlength="1024">
 
               {% if fld.errors %}
                 <div class="form-row mt-2 mb-4">

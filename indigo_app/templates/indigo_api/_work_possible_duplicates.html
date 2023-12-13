@@ -2,25 +2,35 @@
 
 {% if actual_duplicate %}
   <div class="alert alert-danger">
-    A work with this FRBR URI already exists. Edit it instead, or change the core fields on this work to avoid a clash.
-    <br>
-    <a href="{% url 'work_edit' frbr_uri=actual_duplicate.frbr_uri %}">
-      {{ actual_duplicate.title }} ({{ actual_duplicate.frbr_uri }})
-    </a>
+    <div>
+      {% trans 'A work with this FRBR URI already exists. Edit it instead, or change the core fields on this work to avoid a clash.' %}
+    </div>
+    <div>
+      <a href="{% url 'work_edit' frbr_uri=actual_duplicate.frbr_uri %}"
+         data-popup-url="{% url 'work_popup' frbr_uri=actual_duplicate.frbr_uri %}">
+        {{ actual_duplicate.title }} ({{ actual_duplicate.frbr_uri }})
+      </a>
+    </div>
   </div>
 {% endif %}
 
 {% if possible_duplicates %}
   <div class="alert alert-warning">
-    Possible duplicates:
-    <ul>
-      {% for possible_duplicate in possible_duplicates %}
-        <li>
-          <a href="{% url 'work_edit' frbr_uri=possible_duplicate.frbr_uri %}">
-            {{ possible_duplicate.title }} ({{ possible_duplicate.frbr_uri }})
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+    <div>
+      {% trans 'This work may be a duplicate. Edit one of the below instead?' %}
+    </div>
+    {% for match_type, works in possible_duplicates.items %}
+      {{ match_type }}
+      <ul>
+        {% for possible_duplicate in works %}
+          <li>
+            <a href="{% url 'work_edit' frbr_uri=possible_duplicate.frbr_uri %}"
+               data-popup-url="{% url 'work_popup' frbr_uri=possible_duplicate.frbr_uri %}">
+              {{ possible_duplicate.title }} ({{ possible_duplicate.frbr_uri }})
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
   </div>
 {% endif %}

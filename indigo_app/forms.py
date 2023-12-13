@@ -90,6 +90,7 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+            self.fields['commencement_date'].initial = self.instance.commencement_date
 
         self.fields['frbr_doctype'].choices = [
             (y, x)

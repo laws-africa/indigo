@@ -1082,11 +1082,11 @@ class WorkFormCommencementView(PartialWorkFormView):
             fields = ('commencing_work',)
 
     def refreshed_form(self, form, work):
-        return self.Form(data={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
+        return self.Form(initial={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["commencing_work"] = context["form"].data["commencing_work"]
+        context["commencing_work"] = context["form"].initial["commencing_work"]
         return context
 
 

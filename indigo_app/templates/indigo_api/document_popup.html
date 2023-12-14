@@ -4,9 +4,9 @@
   <h6>
     {{ document.title }}
     {% if document.draft %}
-      <span class="badge badge-warning">{% trans 'draft' %}</span>
+      <span class="badge text-bg-warning">{% trans 'draft' %}</span>
     {% else %}
-      <span class="badge badge-info">{% trans 'published' %}</span>
+      <span class="badge text-bg-info">{% trans 'published' %}</span>
     {% endif %}
     {% if document.work.numbered_title %}
       <p class="small mb-0">{{ document.work.numbered_title }}</p>

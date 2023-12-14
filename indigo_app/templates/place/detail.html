@@ -147,7 +147,7 @@
               {% if item.count %}
                 <div class="row mb-2">
                   <div class="col-4">
-                    <span class="badge badge-secondary">{{ item.title }}</span>
+                    <span class="badge text-bg-secondary">{{ item.title }}</span>
                   </div>
                   <div class="col-6">
                     <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -211,7 +211,7 @@
           <tr>
             <td>
               <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              {% if work.repealed_date %} <span class="badge text-bg-info">repealed</span> {% endif %}
               <span class="text-muted">· {{ work.frbr_uri }}</span>
             </td>
             <td class="text-nowrap">
@@ -247,7 +247,7 @@
           <tr>
             <td>
               <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-              {% if work.repealed_date %} <span class="badge badge-info">{% trans "repealed" %}</span> {% endif %}
+              {% if work.repealed_date %} <span class="badge text-bg-info">{% trans "repealed" %}</span> {% endif %}
               <span class="text-muted">· {{ work.frbr_uri }}</span>
             </td>
             <td class="text-nowrap">

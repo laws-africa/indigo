@@ -44,10 +44,10 @@
       <!-- Task title -->
       <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex me-1 {% endif %}">{{ task.title }}</a>
       {% if task.changes_requested %}
-        <span class="badge badge-secondary bg-pending_review ms-1 me-1">{% trans 'Changes requested' %}</span>
+        <span class="badge text-bg-secondary bg-pending_review ms-1 me-1">{% trans 'Changes requested' %}</span>
       {% endif %}
       {% for label in task.labels.all %}
-        <span class="badge badge-secondary me-1" title="{{ label.description }}">{{ label.title }}</span>
+        <span class="badge text-bg-secondary me-1" title="{{ label.description }}">{{ label.title }}</span>
       {% endfor %}
       {% endblock %}
     </td>

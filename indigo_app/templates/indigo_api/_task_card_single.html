@@ -59,7 +59,7 @@
           #{{ task.id }}
         {% endif %}
         {% if task.changes_requested %}
-          <span class="badge badge-secondary bg-pending_review ms-1">{% trans 'Changes requested' %}</span>
+          <span class="badge text-bg-secondary bg-pending_review ms-1">{% trans 'Changes requested' %}</span>
         {% endif %}
       </div>
       <div>
@@ -92,7 +92,7 @@
 
         <!-- task label -->
         {% for label in task.labels.all %}
-          <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
+          <span class="badge text-bg-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
         {% endfor %}
 
 

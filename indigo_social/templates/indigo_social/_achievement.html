@@ -5,7 +5,7 @@
     data-bs-toggle="tooltip" data-placement="right" data-html="true"
     title="<p>Awarded {{ award.awarded_at|timesince }} ago </p> <p>{{ award.description }} </p>"
   {% endif %}>
-  <div class="achievement-icon badge-{{ badge.nature }} badge-{{ badge.slug }} {{ badge.css_class }}" style="background-image: url({% static badge.image %});"></div>
+  <div class="achievement-icon text-bg-{{ badge.nature }} text-bg-{{ badge.slug }} {{ badge.css_class }}" style="background-image: url({% static badge.image %});"></div>
   {% if with_description %}
     <div class="achievement-description">{{ badge.name }}</div>
   {% endif %}

@@ -1,16 +1,25 @@
 import { DateTime } from 'luxon';
-
+import { Tooltip } from 'bootstrap';
 export function relativeTimestamps (root) {
   // show timestamps as relative times
-  for (const el of (root || document).querySelectorAll('.time-ago[data-timestamp]')) {
-    const ts = DateTime.fromISO(el.getAttribute('data-timestamp'));
+  const elements = (root || document).querySelectorAll('.time-ago[data-timestamp]');
 
-    console.log('hellow');
+  elements.forEach((el) => {
+    const ts = DateTime.fromISO(el.getAttribute('data-timestamp'));
     el.innerText = ts.toRelative();
+
     if (!el.getAttribute('title')) {
       el.setAttribute('title', ts.toLocaleString(DateTime.DATETIME_FULL));
+      el.dataset.bsToggle = 'tooltip'; // Add this line to set the tooltip toggle
+      el.dataset.bsPlacement = 'top'; // You can adjust the placement as needed
     }
-  }
+  });
+
+  // Initialize tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new Tooltip(tooltipTriggerEl);
+  });
 }
 
 function tickTock () {

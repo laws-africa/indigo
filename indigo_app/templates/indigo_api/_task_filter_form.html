@@ -3,7 +3,7 @@
 <form method="GET" id="task-filter-form" onchange="this.submit();">
   <div class="d-flex flex-row">
     <div class="d-flex row">
-      <div class="mr-2 mb-2">
+      <div class="me-2 mb-2">
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Task type' %}" name="{{ form.type.html_name }}"
                 data-style="btn-outline-success" data-actions-box="true" data-live-search="true" data-size="7">
           {% for opt in form.type %}
@@ -12,7 +12,7 @@
         </select>
       </div>
 
-      <div class="mr-2 mb-2">
+      <div class="me-2 mb-2">
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Labels' %}" name="{{ form.labels.name }}"
                 data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
           {% for label in form.fields.labels.queryset %}
@@ -21,7 +21,7 @@
         </select>
       </div>
 
-      <div class="mr-2 mb-2">
+      <div class="me-2 mb-2">
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Assigned to' %}" name="{{ form.assigned_to.name }}"
                 data-style="btn-outline-info" data-actions-box="true" data-live-search="true" data-size="7">
           {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
@@ -37,7 +37,7 @@
         </select>
       </div>
 
-      <div class="mr-2 mb-2">
+      <div class="me-2 mb-2">
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Submitted by' %}" name="{{ form.submitted_by.name }}"
                 data-style="btn-outline-warning" data-actions-box="true" data-live-search="true" data-size="7">
           {% if user.is_authenticated and user in form.fields.submitted_by.queryset %}
@@ -54,7 +54,7 @@
       </div>
 
       {% if status %}
-        <div class="mr-2 mb-2">
+        <div class="me-2 mb-2">
           <select class="narrow selectpicker notooltip" multiple title="{% trans 'Status' %}" name="{{ form.state.name }}" data-style="btn-outline-secondary">
             <option value="blocked" {% if 'blocked' in form.state.value %}selected{% endif %}>{% trans 'Blocked' %}</option>
             <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>{% trans 'Open' %}</option>
@@ -68,7 +68,7 @@
       {% endif %}
 
       {% if show_country %}
-        <div class="mr-2 mb-2">
+        <div class="me-2 mb-2">
           <select class="narrow selectpicker notooltip" multiple title="{% trans 'Country' %}" name="{{ form.country.name }}"
                   data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
             {% for country in form.fields.country.queryset %}
@@ -80,8 +80,8 @@
     </div>
 
     {% if format %}
-      <div class="ml-auto pr-3">
-        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <div class="ms-auto pr-3">
+        <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
           <label class="btn btn-outline-secondary {% if form.format.value == 'columns' %}active{% endif %}">
             <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="columns" {% if form.format.value == 'columns' %}checked {% endif %}><i class="fas fa-columns" title="{% trans 'Show tasks in columns' %}"></i>
           </label>

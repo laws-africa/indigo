@@ -14,7 +14,7 @@
             </form>
 
             {% if perms.indigo_api.add_arbitraryexpressiondate %}
-              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
               <div class="dropdown-menu">
                 <form method="POST" action="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">
                   {% csrf_token %}
@@ -56,8 +56,8 @@
             {% csrf_token %}
             <input type="hidden" name="expression_date" value="{{ entry.date|date:'Y-m-d' }}">
             <div class="btn-group">
-              <div class="dropdown mr-3">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="dropdown me-3">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fas fa-pencil-alt"></i>
                   {% if entry.initial %}
                     {% trans 'Create' %}

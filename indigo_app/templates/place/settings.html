@@ -11,7 +11,7 @@
       <h4 class="card-header">{% trans "Settings" %}</h4>
       <div class="card-body">
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.spreadsheet_url.id_for_label }}">{{ form.spreadsheet_url.label }}</label>
           <input type="url" class="form-control" name="{{ form.spreadsheet_url.name }}" id="{{ form.spreadsheet_url.id_for_label }}" value="{{ form.spreadsheet_url.value|default:'' }}">
           <p class="form-text text-muted">{% trans "URL of the Google Sheets spreadsheet with work metadata." %}</p>
@@ -24,8 +24,8 @@
           {% endif %}
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-4">
+        <div class="row">
+          <div class="mb-3 col-md-4">
             <label for="{{ form.as_at_date.id_for_label }}">{{ form.as_at_date.label }}</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date.html_name }}" value="{{ form.as_at_date.value|default_if_none:''|stringformat:'s' }}">
             <p class="form-text text-muted">{% trans "Date up to which all works have been consolidated." %}</p>
@@ -39,7 +39,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.styleguide_url.id_for_label }}">{{ form.styleguide_url.label }}</label>
           <input type="url" class="form-control" name="{{ form.styleguide_url.name }}" id="{{ form.styleguide_url.id_for_label }}" value="{{ form.styleguide_url.value|default:'' }}">
           <p class="form-text text-muted">{% blocktrans trimmed with place_name=place.name %}URL of the Style Guide documentation for {{ place_name }}.{% endblocktrans %}</p>
@@ -52,7 +52,7 @@
           {% endif %}
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.no_publication_document_text.id_for_label }}">{{ form.no_publication_document_text.label }}</label>
           <input type="text" class="form-control" name="{{ form.no_publication_document_text.html_name }}" id="{{ form.no_publication_document_text.id_for_label }}" value="{{ form.no_publication_document_text.value|default:'' }}">
           <p class="form-text text-muted">{% trans "The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work." %}</p>
@@ -65,7 +65,7 @@
           {% endif %}
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.consolidation_note.id_for_label }}">{{ form.consolidation_note.label }}</label>
           <input type="text" class="form-control" name="{{ form.consolidation_note.html_name }}" id="{{ form.consolidation_note.id_for_label }}" value="{{ form.consolidation_note.value|default:'' }}">
           <p class="form-text text-muted">{% trans "The text to display on a document's coverpage when it's part of a consolidation." %}</p>
@@ -78,8 +78,8 @@
           {% endif %}
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div class="row">
+          <div class="mb-3 col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.is_consolidation.id_for_label }}" name="{{ form.is_consolidation.html_name }}" value="on" {% if form.is_consolidation.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.is_consolidation.id_for_label }}">{{ form.is_consolidation.label }}</label>
@@ -94,8 +94,8 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div class="row">
+          <div class="mb-3 col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.uses_chapter.id_for_label }}" name="{{ form.uses_chapter.html_name }}" value="on" {% if form.uses_chapter.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.uses_chapter.id_for_label }}">{{ form.uses_chapter.label }}</label>
@@ -109,8 +109,8 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div class="row">
+          <div class="mb-3 col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.publication_date_optional.id_for_label }}" name="{{ form.publication_date_optional.html_name }}" value="on" {% if form.publication_date_optional.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.publication_date_optional.id_for_label }}">{{ form.publication_date_optional.label }}</label>
@@ -128,6 +128,6 @@
   </form>
 
     <div>
-      <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw mr-1"></i> {% blocktrans trimmed %}Download full legislation index for {{ place }}{% endblocktrans %}</a>
+      <a href="{% url 'works_index' place=place.place_code %}"><i class="fas fa-file-excel fa-fw me-1"></i> {% blocktrans trimmed %}Download full legislation index for {{ place }}{% endblocktrans %}</a>
     </div>
 {% endblock %}

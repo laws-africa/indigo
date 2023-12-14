@@ -2,14 +2,14 @@
 
 <div class="d-flex">
   {% if perms.indigo_api.change_work %}
-    <div class="mr-2 mt-2">
+    <div class="me-2 mt-2">
       <input type="checkbox" name="works" value="{{ work.pk }}" class="work-checkbox">
     </div>
   {% endif %}
   <div class="flex-fill">
     <div class="border bg-white mb-2">
-      <div class="d-flex p-2 pl-3" type="button" data-toggle="collapse" id="work-heading-{{ work.pk }}"
-           data-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
+      <div class="d-flex p-2 pl-3" type="button" data-bs-toggle="collapse" id="work-heading-{{ work.pk }}"
+           data-bs-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
            hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
            hx-target="#work-detail-{{ work.pk }}"
            hx-trigger="click once"

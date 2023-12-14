@@ -78,7 +78,7 @@
     <form method="post" action="{% url 'account_email' %}">
       {% csrf_token %}
 
-      <div class="form-group">
+      <div class="mb-3">
         <input type="text" class="form-control col-sm-6" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" placeholder="new-email@example.com">
         {% if form.email.errors %}
           <div class="text-danger">

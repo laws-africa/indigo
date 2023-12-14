@@ -14,8 +14,8 @@
           <div class="btn-toolbar">
             {% with country.localities.all as locs %}
             {% if locs %}
-            <div class="dropdown ml-2">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="dropdown ms-2">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% if locality %}{% trans "Change locality" %}{% else %}{% trans "Choose locality" %}{% endif %}
               </button>
               <div class="dropdown-menu">

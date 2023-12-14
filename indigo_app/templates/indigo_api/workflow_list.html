@@ -12,7 +12,7 @@
       <form method="GET" id="workflow-filter-form">
         <div class="d-flex">
 
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
             <label class="btn btn-outline-secondary {% if form.state.value == 'open' %}active{% endif %}">
               <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if form.state.value == 'open' %}checked {% endif %}>
               {% trans "Open" %}
@@ -23,7 +23,7 @@
             </label>
           </div>
 
-          <div class="ml-auto float-right">
+          <div class="ms-auto float-right">
             <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">{% trans "New project" %}</a>
           </div>
 
@@ -46,7 +46,7 @@
             <div class="mb-2">
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
               {% if workflow.priority %}
-                <span class="text-warning mr-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> {% trans "Priority" %}</span>
+                <span class="text-warning me-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> {% trans "Priority" %}</span>
               {% endif %}
             </div>
 
@@ -58,7 +58,7 @@
               <div class="text-muted">
                 {% trans "Due on" %} {{ workflow.due_date|date:"Y-m-d" }}
                 {% if workflow.overdue %}
-                  <i class="ml-3 fas fa-exclamation-triangle"></i> {% trans "Overdue" %}
+                  <i class="ms-3 fas fa-exclamation-triangle"></i> {% trans "Overdue" %}
                 {% endif %}
               </div>
             {% endif %}

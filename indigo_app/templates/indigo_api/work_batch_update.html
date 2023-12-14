@@ -14,11 +14,11 @@
 {% block topic %}{% endblock %}
 
 {% block columns %}
-  <div class="form-group">
+  <div class="mb-3">
     <label for="{{ form.update_columns.id_for_label }}">{% trans 'Choose columns to update' %}</label>
 
-    <div class="form-group">
-      <div class="form-row">
+    <div class="mb-3">
+      <div class="row">
         <div class="col-md-6">
           <select class="selectpicker form-control" multiple name="{{ form.update_columns.name }}" id="{{ form.update_columns.id_for_label }}" data-none-selected-text="{% trans '(Choose at least one column to update)' %}" data-live-search="true" required>
             {% for option in form.update_columns %}

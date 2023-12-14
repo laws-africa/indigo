@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="form-group row">
+<div class="mb-3 row">
   <label class="col-2">{% trans 'Publication document' %}</label>
   <div class="col">
     {% if form.publication_document_trusted_url.value %}
@@ -41,11 +41,11 @@
   </div>
 </div>
 
-<div class="form-group row">
+<div class="mb-3 row">
   <label class="col-2">{% trans "Upload publication document" %}:</label>
   <div class="col">
     <input
-        class="ml-3"
+        class="ms-3"
         type="file" id="{{ form.publication_document_file.id_for_label }}"
         name="{{ form.publication_document_file.html_name }}"
         accept=".pdf">

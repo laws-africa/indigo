@@ -24,7 +24,7 @@
     </div>
   {% endif %}
 
-  <div class="form-group">
+  <div class="mb-3">
     <label for="{{ form.login.id_for_label }}">{% trans 'Email address' %}</label>
     <input type="email" class="form-control" name="{{ form.login.name }}" id="{{ form.login.id_for_label }}" required autofocus placeholder="you@example.com">
     {% if form.login.errors %}
@@ -36,7 +36,7 @@
     {% endif %}
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label for="{{ form.password.id_for_label }}">{% trans 'Password' %}</label>
     <input type="password" class="form-control" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" required>
     <div><a href="{% url 'account_reset_password' %}">{% trans 'Forgot your password?' %}</a></div>

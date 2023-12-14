@@ -23,14 +23,14 @@
           <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="{{ INDIGO_ORGANISATION }}"></a>
           {% endblock %}
           {% block navbar-toggle %}
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse">
             <span class="navbar-toggler-icon"></span>
           </button>
           {% endblock %}
 
           {% block navbar-content %}
           <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <ul class="navbar-nav me-auto mt-2 mt-lg-0">
             {% block navbar-left %}
               {% if request.user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="/">{% trans "Home" %}</a></li>
@@ -38,7 +38,7 @@
               {% endif %}
               {% block navbar-help-menu %}
               <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{% trans "Help" %}</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{% trans "Help" %}</a>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="{% url 'help' %}" target="_blank"><i class="fas fa-question fa-fw"></i> {% trans "Documentation" %}</a>
                   <a class="dropdown-item" href="mailto:info@laws.africa" target="_blank"><i class="fas fa-envelope fa-fw"></i> {% trans "Feedback" %}</a>
@@ -58,7 +58,7 @@
               {% block navbar-user %}
                 {% if request.user.is_authenticated %}
                   <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle logged-in" data-bs-toggle="dropdown">
                       <i class="fas fa-user"></i>
                       <span class="username">
                         {% if request.user.is_authenticated %}{% user_display request.user %}{% endif %}

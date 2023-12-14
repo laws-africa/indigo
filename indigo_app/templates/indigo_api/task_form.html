@@ -25,7 +25,7 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="form-group">
+          <div class="mb-3">
             <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
             <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
             {% if form.title.errors %}
@@ -37,8 +37,8 @@
             {% endif %}
           </div>
 
-          <div class="form-row">
-            <div class="form-group col-sm-8">
+          <div class="row">
+            <div class="mb-3 col-sm-8">
               <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
               <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
               {% if form.description.errors %}
@@ -50,13 +50,13 @@
               {% endif %}
             </div>
 
-            <div class="form-group col-sm-4">
+            <div class="mb-3 col-sm-4">
 
               <label>{{ form.labels.label }}</label>
               {% for label in task_labels %}
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="{{ form.labels.auto_id }}-{{ forloop.counter }}" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
-                  <label for="{{ form.labels.auto_id }}-{{ forloop.counter }}" class="form-check-label ml-1 mt-1">
+                  <label for="{{ form.labels.auto_id }}-{{ forloop.counter }}" class="form-check-label ms-1 mt-1">
                     <span class="h5"><span class="badge badge-secondary">{{ label.title }}</span></span> – <span class="font-weight-normal">{{ label.description }}</span>
                   </label>
                 </div>
@@ -65,7 +65,7 @@
             </div>
           </div>
 
-          <div class="form-group form-row">
+          <div class="mb-3 row">
 
             <div class="col-md-6">
               <label for="{{ form.work.id_for_label }}">{% trans 'Work' %}</label>
@@ -74,7 +74,7 @@
               <script id="task-work-template" type="text/x-handlebars-template">
               {% verbatim %}
                 {{#if work}}
-                  <div class="float-right ml-2">
+                  <div class="float-right ms-2">
                     <button type="button" class="btn btn-outline-danger delete-work">{% endverbatim %}{% trans 'Remove' %}{% verbatim %}</button>
                     <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Change' %}{% verbatim %}</button>
                   </div>
@@ -101,7 +101,7 @@
           </div>
 
           {% if form.workflows|length %}
-            <div class="form-group">
+            <div class="mb-3">
               <label for="{{ form.workflows.id_for_label }}">{% trans 'Projects' %}</label>
               <div class="row">
                 <div class="col-md-6">
@@ -128,11 +128,11 @@
               {% endif %}
             {% endif %}
             {% if task.state == 'open' and block_task_permission %}
-              <button class="btn btn-danger float-left ml-2" type="submit" data-confirm="{% trans 'Are you sure you want to block this task?' %}" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">
+              <button class="btn btn-danger float-left ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to block this task?' %}" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">
                 {% trans 'Block task' %}
               </button>
             {% elif task.state == 'blocked' and unblock_task_permission %}
-              <button class="btn btn-primary float-left ml-2" type="submit" data-confirm="{% trans 'Are you sure you want to unblock this task?' %}" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">
+              <button class="btn btn-primary float-left ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to unblock this task?' %}" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">
                 {% trans 'Unblock task' %}
               </button>
             {% endif %}

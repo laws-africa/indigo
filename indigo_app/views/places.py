@@ -734,7 +734,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
         context['form'] = self.form
         works = context["works"]
         # using both .only("pk") makes the query much faster; values_list just gives us the pks
-        context['work_pks'] = list(self.get_queryset().only("pk").values_list("pk", flat=True))
+        work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
+        context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (

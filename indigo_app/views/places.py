@@ -725,9 +725,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
     def get_queryset(self):
         queryset = Work.objects \
-            .select_related('parent_work', 'metrics') \
             .filter(country=self.country, locality=self.locality) \
-            .distinct() \
             .order_by('-created_at')
         return self.form.filter_queryset(queryset)
 
@@ -735,7 +733,9 @@ class PlaceWorksView(PlaceViewBase, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context["works"]
-        context['work_pks'] = ' '.join(str(w.pk) for w in self.get_queryset())
+        # using both .only("pk") makes the query much faster; values_list just gives us the pks
+        work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
+        context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (

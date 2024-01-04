@@ -85,11 +85,17 @@ class WorkForm(forms.ModelForm):
             self.fields[key] = forms.CharField(label=label, required=False)
 
         if self.instance:
+            # self.fields['commencing_work'].initial = self.instance.commencing_work
             self.fields['frbr_doctype'].initial = self.instance.doctype
             self.fields['frbr_subtype'].initial = self.instance.subtype
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+            self.fields['commencement_date'].initial = self.instance.commencement_date
+            self.fields['commencement_note'].initial = self.instance.commencement_note
+            if hasattr(self.instance.main_commencement, 'commencing_work'):
+                if self.instance.main_commencement.commencing_work:
+                    self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
         self.fields['frbr_doctype'].choices = [
             (y, x)

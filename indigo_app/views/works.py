@@ -1082,11 +1082,70 @@ class WorkFormCommencementView(PartialWorkFormView):
             fields = ('commencing_work',)
 
     def refreshed_form(self, form, work):
-        return self.Form(data={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
+        return self.Form(initial={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["commencing_work"] = context["form"].data["commencing_work"]
+        context["commencing_work"] = context["form"].initial["commencing_work"]
+        return context
+
+
+class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_work_possible_duplicates.html'
+
+    class Form(WorkForm):
+        prefix = 'work'
+
+        class Meta:
+            model = Work
+            fields = ('title', 'frbr_uri', 'country', 'locality',)
+
+        def find_actual_duplicate(self, pk):
+            duplicate = Work.objects.filter(frbr_uri=self.instance.frbr_uri)
+            duplicate = duplicate.exclude(pk=pk) if pk else duplicate
+            return duplicate.first()
+
+        def find_possible_duplicates(self, pk):
+            # TODO: translations for keys
+            qs = Work.objects.filter(country=self.country, locality=self.locality)
+            qs = qs.exclude(pk=pk) if pk else qs
+            possible_duplicates = {}
+
+            # exact match on title
+            match_title = qs.filter(title=self.cleaned_data.get('title'))
+            if match_title:
+                possible_duplicates['Match on title'] = match_title
+
+            # match on date and number, e.g. BN 37 of 2002 and GN 37 of 2002
+            frbr_date = self.cleaned_data.get('frbr_date')
+            if frbr_date:
+                # also match e.g. 2002-01-01 and 2002
+                match_date = qs.filter(date__startswith=frbr_date[:4])
+                match_date_and_number = match_date.filter(number=self.cleaned_data.get('frbr_number'))
+                if match_date_and_number:
+                    possible_duplicates['Match on year and number'] = match_date_and_number
+
+            # match on Cap. number
+            # TODO: match on other work properties per place too
+            cap_number = self.cleaned_data.get('property_cap')
+            if cap_number:
+                match_cap_number = qs.filter(properties__contains={'cap': cap_number})
+                if match_cap_number:
+                    possible_duplicates['Match on Chapter number'] = match_cap_number
+
+            return possible_duplicates
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.Form(self.country, self.locality, self.request.POST)
+        form.full_clean()
+
+        context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
+        context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
+
         return context
 
 

@@ -77,6 +77,7 @@ urlpatterns = [
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
 
     # htmx partials for new and existing works
+    path('places/<str:place>/work/form/find-duplicate', works.FindPossibleDuplicatesView.as_view(), name='work_form_find_duplicates'),
     path('places/<str:place>/work/form/find-publication', works.FindPublicationDocumentView.as_view(), name='work_form_find_publication_document'),
     path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='work_form_attach_publication_document'),
     path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),

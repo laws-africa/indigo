@@ -51,6 +51,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>', tasks.TaskDetailView.as_view(), name='task_detail'),
     path('places/<str:place>/tasks/<int:pk>/edit', tasks.TaskEditView.as_view(), name='task_edit'),
     path('places/<str:place>/tasks/<int:pk>/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
+    path('places/<str:place>/tasks/<int:pk>/assign-to', tasks.TaskAssignToView.as_view(), name='assign_task_to'),
     path('places/<str:place>/tasks/<int:pk>/unassign', tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),
     path('places/<str:place>/tasks/<int:pk>/projects', tasks.TaskChangeWorkflowsView.as_view(), name='task_workflows'),
     path('places/<str:place>/tasks/<int:pk>/blocking-tasks', tasks.TaskChangeBlockingTasksView.as_view(), name='task_blocked_by'),

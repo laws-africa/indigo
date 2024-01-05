@@ -1,19 +1,19 @@
 {% load account i18n %}
 
-<div class="dropdown-menu">
-  {% if unassign %}
-    <button class="dropdown-item" type="submit" name="assigned_to" value="-1">{%  trans 'Unassign' %}</button>
-  {% endif %}
+{% if unassign %}
+  <button class="dropdown-item" type="submit" name="assigned_to" value="-1">{%  trans 'Unassign' %}</button>
+{% endif %}
 
-  {% for potential_assignee in potential_assignees %}
-    <button class="dropdown-item" type="submit" name="assigned_to"
-            {% if potential_assignee.too_many_tasks %}disabled{% endif %}
-            {% if task %}formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}"{% endif %}
-            value="{{ potential_assignee.id }}">
-      {% user_display potential_assignee %}
-      {% if potential_assignee.too_many_tasks %}
-        – {% trans 'too many tasks' %} ({{ potential_assignee.assigned_tasks_count }})
-      {% endif %}
-    </button>
-  {% endfor %}
-</div>
+{% for potential_assignee in potential_assignees %}
+  <button class="dropdown-item" type="submit" name="assigned_to"
+          {% if potential_assignee.too_many_tasks %}disabled{% endif %}
+          {% if task %}formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}"{% endif %}
+          value="{{ potential_assignee.id }}">
+    {% user_display potential_assignee %}
+    {% if potential_assignee.too_many_tasks %}
+      – {% trans 'too many tasks' %} ({{ potential_assignee.assigned_tasks_count }})
+    {% endif %}
+  </button>
+{% empty %}
+  <div class="dropdown-item text-muted">{% trans "No users available" %}</div>
+{% endfor %}

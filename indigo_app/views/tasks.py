@@ -94,8 +94,6 @@ class TaskListView(TaskViewBase, ListView):
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)
-
-        Task.decorate_potential_assignees(context['tasks'], self.country, self.request.user)
         Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
@@ -144,8 +142,6 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message([task], self)
-
-        Task.decorate_potential_assignees([task], self.country, self.request.user)
         Task.decorate_permissions([task], self.request.user)
 
         # add work to context
@@ -346,6 +342,19 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskAssignToView(SingleTaskViewBase, DetailView):
+    template_name = "indigo_api/_task_assign_to_menu.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        Task.decorate_potential_assignees([self.object], self.country, self.request.user)
+        context["potential_assignees"] = self.object.potential_assignees
+        context["show"] = True
+        # prevent the form from being changed
+        context["task"] = None
+        return context
 
 
 class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):

@@ -366,7 +366,7 @@ class TaskFilterForm(forms.Form):
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
     type = forms.MultipleChoiceField(choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects)
+    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):

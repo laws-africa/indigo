@@ -38,10 +38,10 @@
       const formData = this.$form.serialize() + '&unassign';
       $.post(this.$form.data('assignees-url'), formData)
         .then((resp) => {
-          const html = $.parseHTML(resp.trim())[0];
+          const html = $.parseHTML(resp.trim());
           const $menu = this.$form.find('.dropdown-menu');
           $menu.empty();
-          $menu.append(html.children);
+          $menu.append(html);
         });
     },
   });

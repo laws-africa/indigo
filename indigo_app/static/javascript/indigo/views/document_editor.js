@@ -750,7 +750,7 @@
     refPopup: function (e) {
       const element = e.target;
       const href = element.getAttribute('href');
-      if (!href.startsWith('#')) return;
+      if (!href || !href.startsWith('#')) return;
       const eId = href.substring(1);
 
       const target = this.documentContent.xpath(

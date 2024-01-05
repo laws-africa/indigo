@@ -2,6 +2,7 @@ from datetime import timedelta
 import logging
 
 import sentry_sdk
+from sentry_sdk.tracing import Transaction, TRANSACTION_SOURCE_TASK
 from background_task import background
 from background_task.tasks import DBTaskRunner, logger, tasks
 from background_task.models import Task
@@ -35,14 +36,13 @@ class PatchedDBTaskRunner(DBTaskRunner):
 
     def run_task(self, tasks, task):
         # wrap the task in a sentry transaction
-        with sentry_sdk.start_transaction(
-                op="queue.task", name=task.task_name
-        ) as transaction:
-            # Assume it fails if there is an exception. This is simpler than using a try/except block
-            # which sometimes doesn't play well with sentry's transaction context.
-            transaction.set_status("internal_error")
-            super().run_task(tasks, task)
+        with sentry_sdk.Hub.current.push_scope() as scope:
+            scope._name = "background_task"
+            scope.clear_breadcrumbs()
+            transaction = Transaction(op="queue.task", source=TRANSACTION_SOURCE_TASK, name=task.task_name)
             transaction.set_status("ok")
+            with sentry_sdk.start_transaction(transaction):
+                super().run_task(tasks, task)
 
 
 # use the patched runner

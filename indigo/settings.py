@@ -508,9 +508,10 @@ if not DEBUG and SENTRY_DSN:
 
     def exclude_static(event, hint):
         # don't set /static to Sentry, to avoid using up quota
-        url = urlparse(event["request"]["url"])
-        if url.path.startswith("/static/"):
-            return None
+        if "request" in event and event["request"].get("url"):
+            url = urlparse(event["request"]["url"])
+            if url.path.startswith("/static/"):
+                return None
         return event
 
     sentry_sdk.init(

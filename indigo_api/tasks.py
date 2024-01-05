@@ -38,12 +38,11 @@ class PatchedDBTaskRunner(DBTaskRunner):
         with sentry_sdk.start_transaction(
                 op="queue.task", name=task.task_name
         ) as transaction:
-            try:
-                super().run_task(tasks, task)
-                transaction.set_status("ok")
-            except Exception:
-                transaction.set_status("internal_error")
-                raise
+            # Assume it fails if there is an exception. This is simpler than using a try/except block
+            # which sometimes doesn't play well with sentry's transaction context.
+            transaction.set_status("internal_error")
+            super().run_task(tasks, task)
+            transaction.set_status("ok")
 
 
 # use the patched runner

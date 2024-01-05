@@ -36,9 +36,10 @@ class PatchedDBTaskRunner(DBTaskRunner):
 
     def run_task(self, tasks, task):
         # wrap the task in a sentry transaction
-        transaction = Transaction(op="queue.task", source=TRANSACTION_SOURCE_TASK, name=task.task_name)
-        transaction.set_status("ok")
-        with sentry_sdk.start_transaction(transaction):
+        with sentry_sdk.start_transaction(
+                op="queue.task", source=TRANSACTION_SOURCE_TASK, name=task.task_name
+        ) as transaction:
+            transaction.set_status("ok")
             super().run_task(tasks, task)
 
 

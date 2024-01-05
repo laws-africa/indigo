@@ -561,6 +561,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     def get_queryset(self):
         tasks = Task.objects \
             .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all())\
+            .select_related('document__language', 'document__language__language') \
             .defer('document__document_xml')\
             .order_by('-updated_at')
 

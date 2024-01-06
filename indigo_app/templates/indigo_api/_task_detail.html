@@ -201,7 +201,7 @@
         </div>
 
         {% if perms.indigo_api.change_task %}
-          <form method="POST">
+          <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
             {% csrf_token %}
             {% if task.assigned_to %}
               <button class="btn btn-outline-danger mb-3" type="submit"

@@ -462,6 +462,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['consolidation_date'] = self.work.as_at_date() or datetime.date.today()
+        context['existing_consolidation_at_default_date'] = ArbitraryExpressionDate.objects.filter(work=self.work, date=context['consolidation_date']).exists()
         return context
 
     def get_work_timeline(self, work):

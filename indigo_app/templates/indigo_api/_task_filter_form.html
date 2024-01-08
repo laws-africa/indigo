@@ -80,7 +80,7 @@
     </div>
 
     {% if format %}
-      <div class="ms-auto pr-3">
+      <div class="ms-auto pe-3">
         <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
           <label class="btn btn-outline-secondary {% if form.format.value == 'columns' %}active{% endif %}">
             <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="columns" {% if form.format.value == 'columns' %}checked {% endif %}><i class="fas fa-columns" title="{% trans 'Show tasks in columns' %}"></i>

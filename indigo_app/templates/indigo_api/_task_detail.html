@@ -252,7 +252,7 @@
             {% csrf_token %}
 
             <select class="selectpicker" multiple name="workflows"
-                    data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+                    data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
                     {% if not perms.indigo_api.change_task %}disabled{% endif %}
                     data-none-selected-text="{% trans 'Projects' %}" data-selected-text-format="static"
                     data-live-search="true" data-size="7">
@@ -281,7 +281,7 @@
           {% csrf_token %}
 
           <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
-                  data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+                  data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
                   {% if not perms.indigo_api.change_task or task.is_closed %}
                     disabled
                   {% endif %}

@@ -232,7 +232,7 @@
                     </td>
                     <td>
                       {% if row.taxonomies %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for taxonomy in row.taxonomies %}
                             <li>{{ taxonomy }}</li>
                           {% endfor %}
@@ -241,7 +241,7 @@
                     </td>
                     <td>
                       {% if row.taxonomy_topics %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for topic in row.taxonomy_topics %}
                             <li>{{ topic }}</li>
                           {% endfor %}
@@ -250,7 +250,7 @@
                     </td>
                     <td>
                       {% if row.tasks %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for task in row.tasks %}
                             <li>{{ task|capfirst }}</li>
                           {% endfor %}
@@ -259,7 +259,7 @@
                     </td>
                     <td>
                       {% if row.relationships %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for relationship in row.relationships %}
                             <li>{{ relationship }}</li>
                           {% endfor %}
@@ -268,7 +268,7 @@
                     </td>
                     <td>
                       {% if row.notes %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for note in row.notes %}
                             <li>{{ note }}</li>
                           {% endfor %}
@@ -362,7 +362,7 @@
                   </td>
                   <td>
                     {% if row.work.taxonomies.exists %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for t in row.work.taxonomies.all %}
                           <li>{{ t }}</li>
                         {% endfor %}
@@ -371,7 +371,7 @@
                   </td>
                   <td>
                     {% if row.work.tasks.exists %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for task in row.work.tasks.all %}
                           <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
                         {% endfor %}
@@ -380,7 +380,7 @@
                   </td>
                   <td>
                     {% if row.relationships %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for relationship in row.relationships %}
                           <li>{{ relationship }}</li>
                         {% endfor %}

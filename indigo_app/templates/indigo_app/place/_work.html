@@ -8,7 +8,7 @@
   {% endif %}
   <div class="flex-fill">
     <div class="border bg-white mb-2">
-      <div class="d-flex p-2 pl-3" type="button" data-bs-toggle="collapse" id="work-heading-{{ work.pk }}"
+      <div class="d-flex p-2 ps-3" type="button" data-bs-toggle="collapse" id="work-heading-{{ work.pk }}"
            data-bs-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
            hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
            hx-target="#work-detail-{{ work.pk }}"
@@ -16,9 +16,9 @@
       >
         <div class="flex-fill">
           <div class="d-flex">
-            <div class="col-9 pl-0">
+            <div class="col-9 ps-0">
               <div>
-                <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+                <a href="{% url 'work' frbr_uri=work.frbr_uri %}"><span>{{ work.title }}</span></a>
                 {% include 'indigo_api/_work_info_badges.html' %}
               </div>
               <div class="text-muted">{{ work.frbr_uri }}</div>
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <div class="collapse" id="work-detail-{{ work.pk }}" aria-labelledby="work-heading-{{ work.pk }}">
+      <div class="collapse px-3" id="work-detail-{{ work.pk }}" aria-labelledby="work-heading-{{ work.pk }}">
         <ul class="nav nav-underline">
           <li class="nav-item">
             <a class="nav-link active" href="#">

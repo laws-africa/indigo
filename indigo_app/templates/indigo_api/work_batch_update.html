@@ -85,7 +85,7 @@
                 </td>
                 <td>
                   {% if row.tasks %}
-                    <ul class="pl-0">
+                    <ul class="ps-0">
                       {% for task in row.tasks %}
                         <li>{{ task|capfirst }}</li>
                       {% endfor %}
@@ -94,7 +94,7 @@
                 </td>
                 <td>
                   {% if row.notes %}
-                    <ul class="pl-0">
+                    <ul class="ps-0">
                       {% for note in row.notes %}
                         <li>{{ note }}</li>
                       {% endfor %}
@@ -162,7 +162,7 @@
                 </td>
                 <td>
                   {% if row.open_tasks %}
-                    <ul class="pl-0">
+                    <ul class="ps-0">
                       {% for task in row.open_tasks %}
                         <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
                       {% endfor %}

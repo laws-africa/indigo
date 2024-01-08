@@ -3,7 +3,7 @@
 
 {% block work-content %}
 
-  <div class="float-right">
+  <div class="float-end">
     {% block work-buttons %}
       {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
         <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
@@ -222,7 +222,7 @@
         </div>
 
         {% if work.metrics.p_complete < 100 %}
-          <ul class="mb-0 mt-3 pl-4">
+          <ul class="mb-0 mt-3 ps-4">
             {% if not work.publication_document %}
               <li>{% trans 'Add a publication document.' %}</li>
             {% endif %}

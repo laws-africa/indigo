@@ -2,7 +2,7 @@
 
 <div class="form-group row">
   <label class="col-2 col-form-label">{% trans 'Primary work' %}</label>
-  <div class="col">
+  <div class="col-4">
     <input type="hidden" id="{{ form.parent_work.id_for_label }}" name="{{ form.parent_work.html_name }}" value="{{ form.parent_work.value|default:'' }}">
     {% if work.parent_work %}
       <div class="mb-2">
@@ -15,35 +15,34 @@
     <div>
       {% url 'work_form_parent' place.place_code as edit_url %}
       <button
-        class="btn btn-outline-primary"
-        type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-parent"|urlencode }}&field=work-parent_work"
-        hx-target="#work-parent-modal"
-        hx-trigger="click"
-        data-toggle="modal"
-        data-target="#work-parent-modal"
-      >{% trans 'Choose parent work' %}</button>
+          class="btn btn-outline-primary"
+          type="button"
+          hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-parent"|urlencode }}&field=work-parent_work"
+          hx-target="#work-parent-modal"
+          hx-trigger="click"
+          data-toggle="modal"
+          data-target="#work-parent-modal"
+      >{% trans 'Choose primary work' %}</button>
 
       {% if work.parent_work %}
         <button
-          class="btn btn-outline-danger ml-2"
-          hx-get="{{ edit_url }}"
-          hx-target="#work-form-parent"
+            class="btn btn-outline-danger ml-2"
+            hx-get="{{ edit_url }}"
+            hx-target="#work-form-parent"
         >Clear</button>
       {% endif %}
     </div>
   </div>
+  <div class="col-6 form-text text-muted">
+    {% trans 'The primary work for regulations is the Act in terms of which they were promulgated.' %}
+  </div>
 </div>
 
-<p class="form-text text-muted">
-  {% trans 'The primary work for regulations and notices is the primary Act.' %}
-</p>
-
 <div
-  id="work-parent-modal"
-  class="modal modal-blur fade"
-  style="display: none"
-  tabindex="-1"
+    id="work-parent-modal"
+    class="modal modal-blur fade"
+    style="display: none"
+    tabindex="-1"
 >
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">Loading...</div>

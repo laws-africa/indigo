@@ -32,7 +32,8 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
+    WorkChooserForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
@@ -724,28 +725,17 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
     def get_queryset(self):
         queryset = Work.objects \
-            .select_related('parent_work', 'metrics') \
             .filter(country=self.country, locality=self.locality) \
-            .distinct() \
             .order_by('-created_at')
-
-        queryset = self.form.filter_queryset(queryset)
-
-        # prefetch and filter documents
-        # TODO
-        queryset = queryset.prefetch_related(Prefetch(
-            'document_set',
-            to_attr='filtered_docs',
-            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
-        ))
-
-        return queryset
+        return self.form.filter_queryset(queryset)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context["works"]
-        context['work_pks'] = ' '.join(str(w.pk) for w in self.get_queryset())
+        # using both .only("pk") makes the query much faster; values_list just gives us the pks
+        work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
+        context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
         context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
         context['facets_url'] = (
@@ -1230,6 +1220,48 @@ class WorkActionsView(PlaceViewBase, FormView):
             works = form.cleaned_data.get("works", [])
 
         return works
+
+
+class WorkChooserView(PlaceViewBase, ListView):
+    """This renders the filter form and the first page of results for the work chooser modal.
+    HTMX reloads this view when filtering criteria are changed.
+    """
+    template_name = 'indigo_app/place/_work_chooser.html'
+    model = Work
+    paginate_by = 25
+
+    http_method_names = ['get', 'post']
+
+    def post(self, request, *args, **kwargs):
+        # treat POST as GET
+        return self.get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        data = (self.request.POST or self.request.GET).copy()
+        if 'country' not in data:
+            data['country'] = self.country.pk
+            if 'locality' not in data and self.locality:
+                data['locality'] = self.locality.pk
+        self.form = WorkChooserForm(data)
+        self.form.is_valid()
+
+        return self.form.filter_queryset(super().get_queryset())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form"] = self.form
+        # these are used when the final form is submitted
+        context["work_field"] = self.form.data.get('field', 'work')
+        context["hx_submit"] = self.form.data.get('submit')
+        context["hx_target"] = self.form.data.get('target')
+
+        return context
+
+
+class WorkChooserListView(WorkChooserView):
+    """This renders the list of results for the work chooser modal."""
+    template_name = 'indigo_app/place/_work_chooser_list.html'
 
 
 class WorkDetailView(PlaceViewBase, DetailView):

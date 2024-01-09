@@ -88,7 +88,7 @@
     <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}/" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
     <li class="breadcrumb-item">
-      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works/">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
+      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
     </li>
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">

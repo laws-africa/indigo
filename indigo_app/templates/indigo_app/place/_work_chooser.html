@@ -1,0 +1,85 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-xl" data-component="WorkChooser">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <form
+          id="work-chooser-filter-form"
+          hx-get="{% url 'place_work_chooser_list' place.place_code %}"
+          hx-trigger="keyup changed from:input delay:0.5s, submit"
+          hx-target=".work-list-table tbody"
+        >
+          <input type="hidden" name="field" value="{{ work_field }}">
+          <input type="hidden" name="submit" value="{{ hx_submit }}">
+          <input type="hidden" name="target" value="{{ hx_target }}">
+          <div class="row">
+
+            <div class="col-3">
+              <select
+                class="form-control" name="country" hx-post="{% url 'place_work_chooser' place.place_code %}"
+                hx-target="closest .modal-dialog"
+                hx-swap="outerHTML"
+              >
+                {% for opt in form.country %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-3">
+              <select
+                class="form-control" name="locality" hx-post="{% url 'place_work_chooser' place.place_code %}"
+                hx-target="closest .modal-dialog"
+                hx-swap="outerHTML"
+              >
+                {% for opt in form.locality %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-6">
+              <input type="text" name="q" class="form-control" value="{{ form.q.value|default_if_none:'' }}"
+                     placeholder="{% trans 'Search...'%}" autocomplete="off">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <form
+        id="work-chooser-form"
+        hx-get="{{ hx_submit }}"
+        hx-target="{{ hx_target }}"
+      >
+        <div class="work-chooser-list scrollable">
+          <table class="table table-sm table-hover work-list-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="year">{% trans 'Year' %}</th>
+                <th class="title">{% trans 'Title' %}</th>
+                <th class="frbr_uri">{% trans 'FRBR URI' %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% include 'indigo_app/place/_work_chooser_list.html' %}
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
+      <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">{% trans 'Cancel' %}</a>
+      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}" form="work-chooser-form">
+    </div>
+
+  </div>
+</div>

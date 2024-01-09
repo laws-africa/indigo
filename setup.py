@@ -47,7 +47,7 @@ setup(
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.10.0',
-        'django-allauth>=0.56.0',
+        'django-allauth>=0.58.2',
         'django-background-tasks>=1.2.5',
         'django-compressor>=3.1',
         'django-cors-headers>=3.11.0',
@@ -69,12 +69,12 @@ setup(
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]
-        'docpipe @ git+https://github.com/laws-africa/docpipe@5dee72f4a188a31c9077c86982d9663a330d9e49',
+        'docpipe @ git+https://github.com/laws-africa/docpipe@df85fdc539a7ff4a2e2d8aec934460c4fac13186',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
         'jsonpatch>=1.23',
-        'lxml>=3.4.1',
+        'lxml>=3.4.1,<5.0.0',
         'mammoth>=1.4.4',
         'natsort>=8.3',
         'requests>=2',

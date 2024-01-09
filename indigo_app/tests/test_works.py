@@ -364,6 +364,9 @@ class WorksWebTest(WebTest):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Title"
         form['work-frbr_uri'] = '/akn/za/act/2019/5'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2019'
+        form['work-frbr_number'] = '5'
         form['work-publication_date'] = '2019-02-01'
         form['work-publication_document_file'] = Upload('pub.pdf', b'data', 'application/pdf')
         response = form.submit()
@@ -391,6 +394,9 @@ class WorksWebTest(WebTest):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Date and Commencing Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/3'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2020'
+        form['work-frbr_number'] = '3'
         form['work-commenced'] = True
         form['work-commencement_date'] = '2020-02-11'
         form['work-commencing_work'] = 6
@@ -408,6 +414,9 @@ class WorksWebTest(WebTest):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Commencing Work but No Date"
         form['work-frbr_uri'] = '/akn/za/act/2020/4'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2020'
+        form['work-frbr_number'] = '4'
         form['work-commenced'] = True
         form['work-commencing_work'] = 6
         form.submit()
@@ -424,6 +433,9 @@ class WorksWebTest(WebTest):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Commenced Work Without Date or Commencing Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/5'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2020'
+        form['work-frbr_number'] = '5'
         form['work-commenced'] = True
         form.submit()
         work = Work.objects.get(frbr_uri='/akn/za/act/2020/5')
@@ -437,7 +449,9 @@ class WorksWebTest(WebTest):
     def test_create_uncommenced_work(self):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Uncommenced Work"
-        form['work-frbr_uri'] = '/akn/za/act/2020/6'
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_date'] = '2020'
+        form['work-frbr_number'] = '6'
         form.submit()
         work = Work.objects.get(frbr_uri='/akn/za/act/2020/6')
         self.assertFalse(work.commenced)
@@ -488,6 +502,8 @@ class WorksWebTest(WebTest):
     def test_create_non_act_work(self):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']
         form['work-title'] = "Title"
-        form['work-frbr_uri'] = '/akn/za/statement/deliberation/my-org/2018-02-02/123-45'
+        form['work-frbr_doctype'] = 'statement'
+        form['work-frbr_date'] = '2018-02-02'
+        form['work-frbr_number'] = '123-45'
         response = form.submit()
-        self.assertRedirects(response, '/works/akn/za/statement/deliberation/my-org/2018-02-02/123-45/', fetch_redirect_response=False)
+        self.assertRedirects(response, '/works/akn/za/statement/2018-02-02/123-45/', fetch_redirect_response=False)

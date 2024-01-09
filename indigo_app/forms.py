@@ -85,6 +85,7 @@ class WorkForm(forms.ModelForm):
             self.fields[key] = forms.CharField(label=label, required=False)
 
         if self.instance:
+            # self.fields['commencing_work'].initial = self.instance.commencing_work
             self.fields['frbr_doctype'].initial = self.instance.doctype
             self.fields['frbr_subtype'].initial = self.instance.subtype
             self.fields['frbr_date'].initial = self.instance.date
@@ -365,7 +366,7 @@ class TaskFilterForm(forms.Form):
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
     type = forms.MultipleChoiceField(choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects)
+    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     taxonomy_topic = forms.CharField()
 
     def __init__(self, country, *args, **kwargs):

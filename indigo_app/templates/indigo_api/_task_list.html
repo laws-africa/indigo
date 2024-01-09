@@ -70,11 +70,11 @@
           {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
         </a>
         <br>
-        <span class="text-muted text-nowrap">{{ task.document.frbr_uri }}</span>
+        <span class="text-muted">{{ task.document.frbr_uri }}</span>
       {% elif task.work and not hide_works %}
         <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
         <br>
-        <span class="text-muted text-nowrap">{{ task.work.frbr_uri }}</span>
+        <span class="text-muted">{{ task.work.frbr_uri }}</span>
       {% endif %}
       {% endblock %}
     </td>

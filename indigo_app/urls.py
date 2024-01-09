@@ -51,6 +51,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>', tasks.TaskDetailView.as_view(), name='task_detail'),
     path('places/<str:place>/tasks/<int:pk>/edit', tasks.TaskEditView.as_view(), name='task_edit'),
     path('places/<str:place>/tasks/<int:pk>/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
+    path('places/<str:place>/tasks/<int:pk>/assign-to', tasks.TaskAssignToView.as_view(), name='assign_task_to'),
     path('places/<str:place>/tasks/<int:pk>/unassign', tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),
     path('places/<str:place>/tasks/<int:pk>/projects', tasks.TaskChangeWorkflowsView.as_view(), name='task_workflows'),
     path('places/<str:place>/tasks/<int:pk>/blocking-tasks', tasks.TaskChangeBlockingTasksView.as_view(), name='task_blocked_by'),
@@ -77,6 +78,7 @@ urlpatterns = [
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
 
     # htmx partials for new and existing works
+    path('places/<str:place>/work/form/find-duplicate', works.FindPossibleDuplicatesView.as_view(), name='work_form_find_duplicates'),
     path('places/<str:place>/work/form/find-publication', works.FindPublicationDocumentView.as_view(), name='work_form_find_publication_document'),
     path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='work_form_attach_publication_document'),
     path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),

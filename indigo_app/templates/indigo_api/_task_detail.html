@@ -201,7 +201,7 @@
         </div>
 
         {% if perms.indigo_api.change_task %}
-          <form method="POST">
+          <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
             {% csrf_token %}
             {% if task.assigned_to %}
               <button class="btn btn-outline-danger mb-3" type="submit"
@@ -211,25 +211,16 @@
               </button>
             {% endif %}
 
-            {% if task.potential_assignees %}
-              <div class="dropdown">
-                <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
-                        id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                  {% trans 'Assign to' %}
-                </button>
-                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
-              </div>
-
-              {% for potential_assignee in task.potential_assignees %}
-                {% if potential_assignee == request.user and potential_assignee.too_many_tasks %}
-                  <div class="mb-3">
-                    <i class="fa fa-exclamation-circle text-warning"></i>
-                    {% trans 'Finish your other assigned tasks before assigning this task to yourself.' %}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
+                      data-bs-toggle="dropdown"
+                      hx-trigger="click once"
+                      hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
+                      hx-target="next .dropdown-menu">
+                {% trans 'Assign to' %}
+              </button>
+              <div class="dropdown-menu"><div class="dropdown-item">...</div></div>
+            </div>
           </form>
         {% endif %}
 

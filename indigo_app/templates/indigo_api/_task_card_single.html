@@ -112,29 +112,37 @@
               {% csrf_token %}
 
                 <div class="dropdown">
-                  <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button"
+                          data-bs-toggle="dropdown"
+                          hx-trigger="click once"
+                          hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
+                          hx-target="next .dropdown-menu"
+                          hx-swap="beforeend">
                     {% trans 'Reassign' %}
                   </button>
-                  <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
-                  <button class="dropdown-item mb-1" type="submit" data-confirm="{% trans 'Are you sure you want to unassign this task?' %}" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
-                    {% trans 'Unassign' %}
-                  </button>
-                  <div class="dropdown-divider"></div>
-                  {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
+                  <div class="dropdown-menu">
+                    <button class="dropdown-item mb-1" type="submit" data-confirm="{% trans 'Are you sure you want to unassign this task?' %}" formaction="{% url 'unassign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                      {% trans 'Unassign' %}
+                    </button>
+                    <div class="dropdown-divider"></div>
                   </div>
                 </div>
               </form>
             {% endif %}
           </div>
         {% elif task.state == 'open' or task.state == 'pending_review' %}
-          {% if perms.indigo_api.change_task and task.potential_assignees %}
+          {% if perms.indigo_api.change_task %}
             <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
             {% csrf_token %}
               <div class="dropdown">
-                <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-primary btn-sm mt-2 dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown"
+                        hx-trigger="click once"
+                        hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
+                        hx-target="next .dropdown-menu">
                   {% trans 'Assign to' %}
                 </button>
-                {% include 'indigo_api/_task_assign_to_menu.html' with potential_assignees=task.potential_assignees %}
+                <div class="dropdown-menu"><div class="dropdown-item">...</div></div>
               </div>
             </form>
           {% endif %}

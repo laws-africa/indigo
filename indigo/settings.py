@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 import logging
+from urllib.parse import urlparse
 
 from django.utils.translation import gettext_lazy as _
 import sentry_sdk
@@ -505,11 +506,20 @@ if not DEBUG and SENTRY_DSN:
         event_level=None,  # Don't send errors based on log messages
     )
 
+    def exclude_static(event, hint):
+        # don't set /static to Sentry, to avoid using up quota
+        if "request" in event and event["request"].get("url"):
+            url = urlparse(event["request"]["url"])
+            if url.path.startswith("/static/"):
+                return None
+        return event
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), sentry_logging],
         send_default_pii=True,
         traces_sample_rate=SENTRY_SAMPLE_RATE,
+        before_send_transaction=exclude_static,
         _experiments={
             "profiles_sample_rate": 1.0,
         },

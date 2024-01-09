@@ -2,7 +2,7 @@
 
 <form method="GET" id="task-filter-form" onchange="this.submit();">
   <div class="d-flex flex-row">
-    <div class="d-flex row">
+    <div class="d-flex flex-wrap">
       <div class="me-2 mb-2">
         <select class="narrow selectpicker notooltip" multiple title="{% trans 'Task type' %}" name="{{ form.type.html_name }}"
                 data-style="btn-outline-success" data-actions-box="true" data-live-search="true" data-size="7">

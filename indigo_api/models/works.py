@@ -2,7 +2,7 @@ from copy import deepcopy
 from actstream import action
 from datetime import datetime
 from django.db.models import JSONField
-from django.db import models
+from django.db import models, IntegrityError, transaction
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -649,11 +649,15 @@ class Work(WorkMixin, models.Model):
         return self.as_at_date_override or self.place.settings.as_at_date
 
     def approve(self, user, request=None):
-        self.work_in_progress = False
-        self.approved_by_user = user
-        self.approved_at = datetime.now()
-        self.save_with_revision(user)
-        work_approved.send(sender=self, request=request)
+        try:
+            with transaction.atomic():
+                self.work_in_progress = False
+                self.approved_by_user = user
+                self.approved_at = datetime.now()
+                self.save_with_revision(user)
+                work_approved.send(sender=self, request=request)
+        except IntegrityError:
+            pass
 
     def unapprove(self, user):
         self.work_in_progress = True

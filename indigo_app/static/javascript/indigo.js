@@ -72,10 +72,10 @@ function bootstrapIndigo(exports) {
   $.fn.datepicker.defaults.autoclose = true;
 
   // tooltips
-  // $('[title]:not(.notooltip)').tooltip({
-  //   container: 'body',
-  //   placement: 'auto',
-  // });
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [title]:not(.notooltip)'))
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 
   // stash the query string params, if any
   function getQueryParams(queryString) {

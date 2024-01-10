@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import { Tooltip } from 'bootstrap';
 export function relativeTimestamps (root) {
   // show timestamps as relative times
   const elements = (root || document).querySelectorAll('.time-ago[data-timestamp]');
@@ -9,16 +8,10 @@ export function relativeTimestamps (root) {
     el.innerText = ts.toRelative();
 
     if (!el.getAttribute('title')) {
-      el.setAttribute('title', ts.toLocaleString(DateTime.DATETIME_FULL));
-      el.dataset.bsToggle = 'tooltip'; // Add this line to set the tooltip toggle
-      el.dataset.bsPlacement = 'top'; // You can adjust the placement as needed
+      el.dataset.bsToggle = 'tooltip';
+      el.dataset.bsPlacement = 'top';
+      el.dataset.bsTitle = ts.toLocaleString(DateTime.DATETIME_FULL);
     }
-  });
-
-  // Initialize tooltips
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new Tooltip(tooltipTriggerEl);
   });
 }
 

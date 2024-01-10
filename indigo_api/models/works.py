@@ -1,5 +1,6 @@
 from copy import deepcopy
 from actstream import action
+from datetime import datetime
 from django.db.models import JSONField
 from django.db import models
 from django.db.models import signals, Q
@@ -16,6 +17,7 @@ from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
+from indigo_api.signals import work_approved, work_unapproved
 from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
 
 
@@ -645,6 +647,25 @@ class Work(WorkMixin, models.Model):
 
     def as_at_date(self):
         return self.as_at_date_override or self.place.settings.as_at_date
+
+    def approve(self, user, request=None):
+        self.work_in_progress = False
+        self.approved_by_user = user
+        self.approved_at = datetime.now()
+        self.save_with_revision(user)
+        work_approved.send(sender=self, request=request)
+
+    def unapprove(self, user):
+        self.work_in_progress = True
+        self.approved_by_user = None
+        self.approved_at = None
+        self.save_with_revision(user)
+        work_unapproved.send(sender=self)
+
+        # unpublish all documents
+        for document in self.document_set.published():
+            document.draft = True
+            document.save_with_revision(user, comment='This document was unpublished because its work was unapproved.')
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

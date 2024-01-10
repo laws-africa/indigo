@@ -83,10 +83,10 @@
       <div class="ms-auto pe-3">
         <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
           <label class="btn btn-outline-secondary {% if form.format.value == 'columns' %}active{% endif %}">
-            <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="columns" {% if form.format.value == 'columns' %}checked {% endif %}><i class="fas fa-columns" title="{% trans 'Show tasks in columns' %}"></i>
+            <input class="btn-check" type="radio" name="{{ form.format.name }}" autocomplete="off" value="columns" {% if form.format.value == 'columns' %}checked {% endif %}><i class="fas fa-columns" title="{% trans 'Show tasks in columns' %}"></i>
           </label>
           <label class="btn btn-outline-secondary {% if form.format.value == 'list' %}active{% endif %}">
-            <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="list" {% if form.format.value == 'list' %}checked {% endif %}><i class="fas fa-th-list" title="{% trans 'Show tasks in a list' %}"></i>
+            <input class="btn-check" type="radio" name="{{ form.format.name }}" autocomplete="off" value="list" {% if form.format.value == 'list' %}checked {% endif %}><i class="fas fa-th-list" title="{% trans 'Show tasks in a list' %}"></i>
           </label>
         </div>
       </div>

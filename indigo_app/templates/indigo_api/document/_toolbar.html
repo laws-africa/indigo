@@ -39,7 +39,7 @@
     <div class="btn-group btn-group-sm me-2">
       <button type="button" class="btn btn-outline-secondary show-structure" data-bs-toggle="buttons" title="Outline Akoma Ntoso Structure"><i class="fas fa-sitemap"></i> Structure</button>
       {% if perms.indigo_api.view_document_xml %}
-      <button type="button" class="btn btn-outline-secondary show-xms-editor" data-bs-toggle="buttons"><i class="fas fa-code"></i> Akoma Ntoso</button>
+      <button type="button" class="btn btn-outline-secondary show-xml-editor" data-bs-toggle="buttons"><i class="fas fa-code"></i> Akoma Ntoso</button>
       {% endif %}
       {% if place.settings.styleguide_url %}
         <a class="btn btn-outline-secondary ms-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>

@@ -137,13 +137,13 @@
                 <textarea id="id_comment" name="comment" class="form-control mb-3" maxlength="3000" rows="3"
                           cols="80" placeholder="Add a comment"></textarea>
 
-                <div class="text-right">
+                <div class="text-end">
                   <input class="btn btn-primary" type="submit" value="{% trans 'Add comment' %}" id="id_submit" disabled>
 
                   {% if task.state == 'pending_review' %}
                     {% if task.unsubmit_task_permission %}
                       <input
-                        class="btn btn-primary me-2 float-left"
+                        class="btn btn-primary me-2 float-start"
                         type="submit"
                         data-confirm="{% trans 'Are you sure you want to request changes to this task?' %}"
                         formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
@@ -152,10 +152,10 @@
                     {% endif %}
 
                     {% if task.customised.close_url %}
-                      <a class="btn btn-primary me-2 float-left" href="{{ task.customised.close_url }}">{% trans 'Review changes' %}</a>
+                      <a class="btn btn-primary me-2 float-start" href="{{ task.customised.close_url }}">{% trans 'Review changes' %}</a>
                     {% elif task.close_task_permission %}
                       <input
-                        class="btn btn-success me-2 float-left"
+                        class="btn btn-success me-2 float-start"
                         type="submit"
                         data-confirm="{% trans 'Are you sure you want to approve this task?' %}"
                         formaction="{% url 'close_task' place=place.place_code pk=task.pk %}"
@@ -165,7 +165,7 @@
 
                   {% elif task.state == 'cancelled' or task.state == 'done' %}
                     {% if task.reopen_task_permission %}
-                      <input class="btn btn-primary float-left me-2" type="submit"
+                      <input class="btn btn-primary float-start me-2" type="submit"
                              data-confirm="{% trans 'Are you sure you want to reopen this task?' %}"
                              formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}"
                              id="btn_reopen"
@@ -173,7 +173,7 @@
                     {% endif %}
 
                   {% elif task.state == 'open' and task.submit_task_permission %}
-                    <input class="btn btn-primary float-left me-2" type="submit"
+                    <input class="btn btn-primary float-start me-2" type="submit"
                            data-confirm="{% trans task.submission_message %}"
                            formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}"
                            id="btn_submit_for_review"

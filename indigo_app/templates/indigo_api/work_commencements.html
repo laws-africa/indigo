@@ -58,7 +58,7 @@
           <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
             {% csrf_token %}
 
-            <div class="float-right">
+            <div class="float-end">
               {% if perms.indigo_api.delete_commencement %}
                 <button class="btn btn-link text-danger me-2" type="submit" name="delete" data-confirm="{% trans 'Really delete this commencement?' %}">{% trans 'Delete' %}</button>
               {% endif %}
@@ -156,7 +156,7 @@
             </div>
           </form>
         </div>
-        <div class="card-footer text-right commencement-form-{{ commencement.id }} collapse">
+        <div class="card-footer text-end commencement-form-{{ commencement.id }} collapse">
           <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-bs-toggle="collapse" data-bs-target=".commencement-form-{{ commencement.id }}">{% trans 'Cancel' %}</button>
           <button class="btn btn-success" type="submit" form="commencement-{{ commencement.id }}">{% trans 'Save' %}</button>
         </div>

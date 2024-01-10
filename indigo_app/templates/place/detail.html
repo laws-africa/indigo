@@ -43,7 +43,7 @@
     <div class="col">
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+          <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
           <h5 class="mb-0">{% trans "Works" %} ({{ total_works }})</h5>
           <div>
             ({{ total_page_count }}
@@ -117,7 +117,7 @@
     <div class="col">
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">{% trans "Tasks" %} →</a>
+          <a class="float-end" href="{% url 'tasks' place=place.place_code %}">{% trans "Tasks" %} →</a>
           <h5 class="mb-0">{% trans "Current tasks" %} ({{ total_open_tasks }})</h5>
         </div>
         <div class="card-body">
@@ -166,7 +166,7 @@
 
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">{% trans "Metrics" %} →</a>
+          <a class="float-end" href="{% url 'place_metrics' place=place.place_code %}">{% trans "Metrics" %} →</a>
           <h5 class="mb-0">{% trans "Recent activity (30 days)" %}</h5>
         </div>
         <div class="card-body">
@@ -196,7 +196,7 @@
 
   <div class="card mt-4">
     <div class="card-header">
-      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+      <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
       <h5 class="mb-0">{% trans "Recently updated works" %}</h5>
     </div>
     <div class="card-body">
@@ -232,7 +232,7 @@
 
   <div class="card mt-4">
     <div class="card-header">
-      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+      <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
       <h5 class="mb-0">{% trans "Recently added works" %}</h5>
     </div>
     <div class="card-body">

@@ -76,7 +76,7 @@
           </div>
         </div>
 
-        <div class="card-footer text-right">
+        <div class="card-footer text-end">
           {% if workflow.pk %}
             <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}" class="btn btn-link">{% trans "Cancel" %}</a>
           {% endif %}

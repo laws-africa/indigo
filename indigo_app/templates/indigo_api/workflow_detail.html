@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="float-right">
+  <div class="float-end">
     {% if not workflow.closed %}
       <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#workflow-add-tasks-modal">{% trans 'Add tasks' %}</button>
     {% endif %}

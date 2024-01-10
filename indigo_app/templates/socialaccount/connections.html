@@ -28,7 +28,7 @@
           <tr>
             <td><i class="fab fa-fw fa-{{ account.get_brand.id }}"></i> {{ account.get_brand.name }}</td>
             <td>{{ account.account.extra_data.email|default:account }}</td>
-            <td class="text-right">
+            <td class="text-end">
               <form method="post" action="{% url 'socialaccount_connections' %}">
                 {% csrf_token %}
                 <input type="hidden" name="account" value="{{ base_account.id }}">

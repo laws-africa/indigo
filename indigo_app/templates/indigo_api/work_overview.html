@@ -20,7 +20,7 @@
 
   {% block country %}
   <div class="mb-3">
-    <div class="float-right">
+    <div class="float-end">
       {% if work.updated_by_user %}
         {% user_profile work.updated_by_user %}
       {% endif %}
@@ -237,7 +237,7 @@
 
   {% block points_in_time %}
   <div class="row mb-3 mt-5">
-    <div class="col text-right">
+    <div class="col text-end">
       <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">{% trans 'Manage points in time' %}</a>
     </div>
   </div>
@@ -269,7 +269,7 @@
               <ul class="list-unstyled mb-0">
                 {% for user in contributors %}
                   <li>
-                    <span class="float-right">
+                    <span class="float-end">
                       {% blocktrans trimmed count count=user.task_count %}
                         {{ user.task_count }} task
                       {% plural %}

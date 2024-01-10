@@ -74,7 +74,7 @@
               <script id="task-work-template" type="text/x-handlebars-template">
               {% verbatim %}
                 {{#if work}}
-                  <div class="float-right ms-2">
+                  <div class="float-end ms-2">
                     <button type="button" class="btn btn-outline-danger delete-work">{% endverbatim %}{% trans 'Remove' %}{% verbatim %}</button>
                     <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Change' %}{% verbatim %}</button>
                   </div>
@@ -117,22 +117,22 @@
 
         </div>
 
-        <div class="card-footer text-right">
+        <div class="card-footer text-end">
           <form method="POST">
           {% csrf_token %}
             {% if task.state == 'open' or task.state == 'pending_review' or task.state == 'blocked' %}
               {% if cancel_task_permission %}
-                <button class="btn btn-danger float-left" type="submit" data-confirm="{% trans 'Are you sure you want to cancel this task?' %}" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">
+                <button class="btn btn-danger float-start" type="submit" data-confirm="{% trans 'Are you sure you want to cancel this task?' %}" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">
                   {% trans 'Cancel task' %}
                 </button>
               {% endif %}
             {% endif %}
             {% if task.state == 'open' and block_task_permission %}
-              <button class="btn btn-danger float-left ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to block this task?' %}" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">
+              <button class="btn btn-danger float-start ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to block this task?' %}" formaction="{% url 'block_task' place=place.place_code pk=task.pk %}">
                 {% trans 'Block task' %}
               </button>
             {% elif task.state == 'blocked' and unblock_task_permission %}
-              <button class="btn btn-primary float-left ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to unblock this task?' %}" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">
+              <button class="btn btn-primary float-start ms-2" type="submit" data-confirm="{% trans 'Are you sure you want to unblock this task?' %}" formaction="{% url 'unblock_task' place=place.place_code pk=task.pk %}">
                 {% trans 'Unblock task' %}
               </button>
             {% endif %}

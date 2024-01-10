@@ -109,7 +109,7 @@
         <div class="card-footer">
           {% if perms.indigo_api.bulk_add_work %}
             <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Update works' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-end show-progress">{% trans 'Update works' %}</button>
           {% else %}
             <div class="alert alert-danger">{% trans "You don't have permission to update works." %}</div>
           {% endif %}
@@ -177,7 +177,7 @@
         <div class="card-footer">
           {% if perms.indigo_api.bulk_add_work %}
             <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-            <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Update works' %}</button>
+            <button type="submit" name="import" class="btn btn-success float-end show-progress">{% trans 'Update works' %}</button>
           {% else %}
             <div class="alert alert-danger">{% trans "You don't have permission to update works." %}</div>
           {% endif %}

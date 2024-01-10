@@ -28,7 +28,7 @@
     <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
 
     <div class="mb-3">
-      <div class="float-right">
+      <div class="float-end">
         {% if work.pk %}
           <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
         {% endif %}

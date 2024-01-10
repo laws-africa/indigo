@@ -5,7 +5,7 @@
     {% csrf_token %}
 
     {% if editable and perms.indigo_api.change_arbitraryexpressiondate %}
-      <div class="dropdown float-right">
+      <div class="dropdown float-end">
         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
           {% trans 'Options' %} <span class="caret"></span>
         </button>

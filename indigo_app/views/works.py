@@ -28,7 +28,7 @@ from indigo_api.models import Subtype, Work, Amendment, Document, Task, Publicat
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
-from indigo_api.signals import work_changed
+from indigo_api.signals import work_changed, work_approved, work_unapproved
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
     NewCommencementForm, FindPubDocForm
@@ -176,7 +176,6 @@ class EditWorkView(WorkViewBase, UpdateView):
 
 
 class ApproveWorkView(WorkViewBase, View):
-    # TODO: add signals
     permission_required = ('indigo_api.bulk_add_work',)
     http_method_names = ['post']
 
@@ -191,6 +190,7 @@ class ApproveWorkView(WorkViewBase, View):
         work.approved_by_user = user
         work.approved_at = datetime.datetime.now()
         work.save_with_revision(user)
+        work_approved.send(sender=work)
 
 
 class UnapproveWorkView(ApproveWorkView):
@@ -202,6 +202,11 @@ class UnapproveWorkView(ApproveWorkView):
         work.approved_by_user = None
         work.approved_at = None
         work.save_with_revision(user)
+        work_unapproved.send(sender=work)
+        # unpublish all documents
+        for document in Document.objects.undeleted().published().filter(work=work):
+            document.draft = True
+            document.save_with_revision(user, comment='This document was unpublished because its work was unapproved.')
 
 
 class EditWorkModalView(EditWorkView):

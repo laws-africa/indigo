@@ -1192,7 +1192,7 @@ class WorkActionsView(PlaceViewBase, FormView):
 
     def form_valid(self, form):
         if form.cleaned_data['save'] and self.request.user.has_perm('indigo_api.change_work'):
-            form.save_changes(self.request.user)
+            form.save_changes(self.request.user, self.request)
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
                 self.request.META.get('HTTP_REFERER')

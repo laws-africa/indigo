@@ -1,7 +1,7 @@
 import json
 import re
 import urllib.parse
-from datetime import date, datetime
+from datetime import date
 from lxml import etree
 
 from django import forms
@@ -841,7 +841,7 @@ class WorkBulkActionsForm(forms.Form):
     def clean_all_work_pks(self):
         return self.cleaned_data.get('all_work_pks').split() or []
 
-    def save_changes(self, user):
+    def save_changes(self, user, request):
         if self.cleaned_data.get('add_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
@@ -855,19 +855,13 @@ class WorkBulkActionsForm(forms.Form):
                 for work in self.cleaned_data['works']:
                     # only save if it's changed
                     if work.work_in_progress:
-                        work.work_in_progress = False
-                        work.approved_by_user = user
-                        work.approved_at = datetime.now()
-                        work.save_with_revision(user)
+                        work.approve(user, request)
 
             else:
                 for work in self.cleaned_data['works']:
                     # only save if it's changed
                     if work.approved:
-                        work.work_in_progress = True
-                        work.approved_by_user = None
-                        work.approved_at = None
-                        work.save_with_revision(user)
+                        work.unapprove(user)
 
 
 class WorkChooserForm(forms.Form):

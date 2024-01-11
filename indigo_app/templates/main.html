@@ -4,8 +4,8 @@
 {% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
 {% block page-content %}
-  <div id="progress-bar" style="display: none">
-    <div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" style="width: 100%; height: 5px;"></div>
+  <div id="progress-bar" class="progress" style="display: none">
+    <div class="progress-bar progress-bar-striped bg-primary progress-bar-animated" role="progressbar" style="width: 100%; height: 5px;"></div>
   </div>
   {% include "indigo_app/_offline.html" %}
   {% if MAINTENANCE_MODE %}

@@ -69,3 +69,7 @@
     overflow-y: auto;
   }
 }
+
+.bg-work-in-progress {
+  background-color: lighten($warning, 45%);
+}

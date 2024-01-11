@@ -12,7 +12,7 @@
             {% if work.work_in_progress %}
               <button type="submit" class="btn btn-success mr-1" formaction="{% url 'work_approve' frbr_uri=work.frbr_uri %}">{% trans 'Approve' %}</button>
             {% else %}
-              <button type="submit" class="btn btn-danger mr-1" formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">{% trans 'Unapprove' %}</button>
+              <button type="submit" class="btn btn-warning mr-1" formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">{% trans 'Unapprove' %}</button>
             {% endif %}
           </form>
         {% endif %}

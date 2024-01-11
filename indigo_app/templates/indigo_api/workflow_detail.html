@@ -120,9 +120,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{% trans "Choose tasks to add to this project" %}</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST" id="workflow-add-tasks-form">

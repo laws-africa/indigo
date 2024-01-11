@@ -109,6 +109,16 @@
                       {% endif %}
                     {% endwith %}
 
+                    {% if work.approved %}
+                      <dt>
+                        {% trans 'Approved' %}
+                      </dt>
+                      <dd>
+                        {% user_profile work.updated_by_user %}
+                        {{ work.approved_at|naturaltime }}
+                      </dd>
+                    {% endif %}
+
                     {% with work.taxonomy_topics.all as topics %}
                       {% if topics %}
                         <dt>{% trans 'Taxonomies' %}</dt>

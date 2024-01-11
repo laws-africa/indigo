@@ -655,6 +655,7 @@ class Work(WorkMixin, models.Model):
                 self.approved_by_user = user
                 self.approved_at = datetime.now()
                 self.save_with_revision(user)
+                action.send(user, verb='approved', action_object=self, place_code=self.place.place_code)
                 work_approved.send(sender=self, request=request)
         except IntegrityError:
             pass
@@ -664,6 +665,7 @@ class Work(WorkMixin, models.Model):
         self.approved_by_user = None
         self.approved_at = None
         self.save_with_revision(user)
+        action.send(user, verb='unapproved', action_object=self, place_code=self.place.place_code)
         work_unapproved.send(sender=self)
 
         # unpublish all documents

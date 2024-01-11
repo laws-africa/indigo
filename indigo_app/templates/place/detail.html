@@ -9,7 +9,7 @@
     {% if latest_completeness_stat %}
       <div class="col">
         <div class="d-flex">
-          <div class="p-relative mr-2" style="height: 50px; width: 150px;">
+          <div class="p-relative me-2" style="height: 50px; width: 150px;">
             <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
           </div>
 
@@ -17,7 +17,7 @@
             {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_completeness_stat.p_breadth_complete %}
           </div>
 
-          <div class="ml-2 mb-auto">
+          <div class="ms-2 mb-auto">
             <h3 class="mb-0">{{ latest_completeness_stat.p_breadth_complete }}%</h3>
             {% trans "Complete" %}
           </div>
@@ -43,7 +43,7 @@
     <div class="col">
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+          <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
           <h5 class="mb-0">{% trans "Works" %} ({{ total_works }})</h5>
           <div>
             ({{ total_page_count }}
@@ -117,7 +117,7 @@
     <div class="col">
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">{% trans "Tasks" %} →</a>
+          <a class="float-end" href="{% url 'tasks' place=place.place_code %}">{% trans "Tasks" %} →</a>
           <h5 class="mb-0">{% trans "Current tasks" %} ({{ total_open_tasks }})</h5>
         </div>
         <div class="card-body">
@@ -147,7 +147,7 @@
               {% if item.count %}
                 <div class="row mb-2">
                   <div class="col-4">
-                    <span class="badge badge-secondary">{{ item.title }}</span>
+                    <span class="badge text-bg-secondary">{{ item.title }}</span>
                   </div>
                   <div class="col-6">
                     <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -166,7 +166,7 @@
 
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">{% trans "Metrics" %} →</a>
+          <a class="float-end" href="{% url 'place_metrics' place=place.place_code %}">{% trans "Metrics" %} →</a>
           <h5 class="mb-0">{% trans "Recent activity (30 days)" %}</h5>
         </div>
         <div class="card-body">
@@ -196,7 +196,7 @@
 
   <div class="card mt-4">
     <div class="card-header">
-      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+      <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
       <h5 class="mb-0">{% trans "Recently updated works" %}</h5>
     </div>
     <div class="card-body">
@@ -211,7 +211,7 @@
           <tr>
             <td>
               <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              {% if work.repealed_date %} <span class="badge text-bg-info">repealed</span> {% endif %}
               <span class="text-muted">· {{ work.frbr_uri }}</span>
             </td>
             <td class="text-nowrap">
@@ -232,7 +232,7 @@
 
   <div class="card mt-4">
     <div class="card-header">
-      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
+      <a class="float-end" href="{% url 'place_works' place=place.place_code %}">{% trans "Works" %} →</a>
       <h5 class="mb-0">{% trans "Recently added works" %}</h5>
     </div>
     <div class="card-body">
@@ -247,7 +247,7 @@
           <tr>
             <td>
               <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-              {% if work.repealed_date %} <span class="badge badge-info">{% trans "repealed" %}</span> {% endif %}
+              {% if work.repealed_date %} <span class="badge text-bg-info">{% trans "repealed" %}</span> {% endif %}
               <span class="text-muted">· {{ work.frbr_uri }}</span>
             </td>
             <td class="text-nowrap">

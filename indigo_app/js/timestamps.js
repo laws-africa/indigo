@@ -1,16 +1,18 @@
 import { DateTime } from 'luxon';
-
 export function relativeTimestamps (root) {
   // show timestamps as relative times
-  for (const el of (root || document).querySelectorAll('.time-ago[data-timestamp]')) {
-    const ts = DateTime.fromISO(el.getAttribute('data-timestamp'));
+  const elements = (root || document).querySelectorAll('.time-ago[data-timestamp]');
 
+  elements.forEach((el) => {
+    const ts = DateTime.fromISO(el.getAttribute('data-timestamp'));
     el.innerText = ts.toRelative();
+
     if (!el.getAttribute('title')) {
-      el.setAttribute('title', ts.toLocaleString(DateTime.DATETIME_FULL));
-      $(el).tooltip();
+      el.dataset.bsToggle = 'tooltip';
+      el.dataset.bsPlacement = 'top';
+      el.dataset.bsTitle = ts.toLocaleString(DateTime.DATETIME_FULL);
     }
-  }
+  });
 }
 
 function tickTock () {

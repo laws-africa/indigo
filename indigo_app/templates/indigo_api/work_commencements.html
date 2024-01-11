@@ -36,7 +36,7 @@
           {% block new-commencement-card %}
             <div class="btn-group">
               <button class="btn btn-primary add-commencement"><i class="fas fa-plus"></i> {% trans 'Add commencement' %}</button>
-              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
               <div class="dropdown-menu">
                 <button class="dropdown-item" type="submit" form="new-commencement-form">{% trans 'Add without a commencing work' %}</button>
               </div>
@@ -58,12 +58,12 @@
           <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
             {% csrf_token %}
 
-            <div class="float-right">
+            <div class="float-end">
               {% if perms.indigo_api.delete_commencement %}
-                <button class="btn btn-link text-danger mr-2" type="submit" name="delete" data-confirm="{% trans 'Really delete this commencement?' %}">{% trans 'Delete' %}</button>
+                <button class="btn btn-link text-danger me-2" type="submit" name="delete" data-confirm="{% trans 'Really delete this commencement?' %}">{% trans 'Delete' %}</button>
               {% endif %}
               {% if perms.indigo_api.change_commencement %}
-                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-toggle="collapse">{% trans 'Edit' %}</a>
+                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-bs-toggle="collapse">{% trans 'Edit' %}</a>
               {% endif %}
             </div>
 
@@ -106,19 +106,19 @@
             </div>
 
             <div class="mb-3 collapse commencement-form commencement-form-{{ commencement.id }}">
-              <div class="form-row form-group">
+              <div class="row mb-3">
                 <div class="col-md-4 col-lg-3">
-                  <input type="text" class="form-control commencement-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
+                  <input type="text" class="form-control commencement-date me-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
                 </div>
               </div>
 
-              <div class="form-row form-group">
+              <div class="row mb-3">
                 <div class="col-md-6 col-lg-4">
-                  <input type="text" class="form-control mr-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
+                  <input type="text" class="form-control me-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main"
                          value="true" name="main"
@@ -128,7 +128,7 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <div class="form-check">
                   <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions"
                          value="true" name="all_provisions"
@@ -138,13 +138,13 @@
                 </div>
               </div>
 
-              <div class="form-group provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
+              <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
                 <div class="d-flex align-items-center justify-content-between">
                   <div>{% trans 'Provisions commenced' %}:</div>
                   <label class="d-flex align-items-center">
                     <input type="checkbox"
                            name="select-all"
-                           class="mr-2"
+                           class="me-2"
                     />
                     {% trans 'Select all provisions' %}
                   </label>
@@ -156,8 +156,8 @@
             </div>
           </form>
         </div>
-        <div class="card-footer text-right commencement-form-{{ commencement.id }} collapse">
-          <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-toggle="collapse" data-target=".commencement-form-{{ commencement.id }}">{% trans 'Cancel' %}</button>
+        <div class="card-footer text-end commencement-form-{{ commencement.id }} collapse">
+          <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-bs-toggle="collapse" data-bs-target=".commencement-form-{{ commencement.id }}">{% trans 'Cancel' %}</button>
           <button class="btn btn-success" type="submit" form="commencement-{{ commencement.id }}">{% trans 'Save' %}</button>
         </div>
       </li>
@@ -166,7 +166,7 @@
 
   {% if uncommenced_provisions_count %}
     <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">{% trans 'Uncommenced provisions' %} <span class="badge badge-warning">{{ uncommenced_provisions_count }}</span></h5>
+      <h5 id="uncommenced" class="card-header">{% trans 'Uncommenced provisions' %} <span class="badge text-bg-warning">{{ uncommenced_provisions_count }}</span></h5>
       <div class="card-body">
         <div class="treelist-wrapper">
           <ul>

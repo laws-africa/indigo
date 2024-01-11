@@ -28,7 +28,7 @@
     <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
 
     <div class="mb-3">
-      <div class="float-right">
+      <div class="float-end">
         {% if work.pk %}
           <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
         {% endif %}
@@ -52,8 +52,8 @@
       <h5 class="card-header">{% trans 'Work identification' %}</h5>
       <div class="card-body">
 
-        <div class="form-row">
-          <div class="form-group col-12">
+        <div class="row">
+          <div class="mb-3 col-12">
             <label for="{{ form.title.id_for_label }}" class="required">{% trans 'Short title' %}</label>
             <input
                 hx-trigger="load, change, keyup delay:500ms changed"
@@ -66,8 +66,8 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-4">
+        <div class="row">
+          <div class="mb-3 col-4">
             <label for="{{ form.frbr_doctype.id_for_label }}" class="required">{% trans 'Work type' %}</label>
             <select
                 hx-trigger="change"
@@ -80,7 +80,7 @@
             </select>
           </div>
 
-          <div class="form-group col-4">
+          <div class="mb-3 col-4">
             <label for="{{ form.frbr_subtype.id_for_label }}">{% trans 'Work subtype' %}</label>
             <select
                 hx-trigger="change"
@@ -94,7 +94,7 @@
             </select>
           </div>
 
-          <div class="form-group col-4">
+          <div class="mb-3 col-4">
             <label for="{{ form.frbr_actor.id_for_label }}">{% trans 'Responsible organisation (actor)' %}</label>
             <input
                 hx-trigger="change, keyup delay:500ms changed"
@@ -107,8 +107,8 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-3 mb-0">
+        <div class="row">
+          <div class="mb-3 col-md-3 mb-0">
             <label for="{{ form.frbr_date.id_for_label }}" class="required">{% trans 'Year (or date) of introduction' %}</label>
             <input
                 hx-trigger="change, keyup delay:500ms changed"
@@ -120,7 +120,7 @@
                 value="{{ form.frbr_date.value|default:'' }}">
           </div>
 
-          <div class="form-group col-md-6 offset-md-3 mb-0">
+          <div class="mb-3 col-md-6 offset-md-3 mb-0">
             <label for="{{ form.frbr_number.id_for_label }}" class="required">{% trans 'Number within year' %}</label>
             <input
                 hx-trigger="change, keyup delay:500ms changed"
@@ -142,8 +142,8 @@
       <h5 class="card-header">{% trans 'Classification' %}</h5>
       <div class="card-body">
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div class="row">
+          <div class="mb-3 col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.principal.id_for_label }}" name="{{ form.principal.html_name }}" value="on" {% if form.principal.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.principal.id_for_label }}">{% trans 'Principal work' %}</label>
@@ -153,15 +153,15 @@
             </div>
           </div>
 
-          <div class="form-group col-md-6">
+          <div class="mb-3 col-md-6">
             <div id="work-form-parent">
               {% include 'indigo_api/_work_parent_form.html' %}
             </div>
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+        <div class="row">
+          <div class="mb-3 col-md-6">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.stub.id_for_label }}">{% trans 'Stub – this work will have no content' %}</label>
@@ -171,7 +171,7 @@
             </div>
           </div>
 
-          <div class="form-group col-md-6">
+          <div class="mb-3 col-md-6">
             {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
             {% if topic_groups %}
               <label for="taxonomies">{% trans 'Taxonomy tags' %}</label>
@@ -187,7 +187,7 @@
             {% endif %}
           </div>
 
-          <div class="form-group col-md-6">
+          <div class="mb-3 col-md-6">
             <label for="taxonomy_topics">{% trans 'Taxonomy topics' %}</label>
             <select id="taxonomy_topics" name="work-taxonomy_topics" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">
               {% for topic in form.fields.taxonomy_topics.queryset %}
@@ -198,9 +198,9 @@
 
         </div>
 
-        <div class="form-row">
+        <div class="row">
           {% for fld in form.property_fields %}
-            <div class="form-group col-md-4">
+            <div class="mb-3 col-md-4">
               <label for="{{ fld.id_for_label }}">{{ fld.label }}</label>
               <input
                   hx-trigger="change, keyup delay:500ms changed"
@@ -212,7 +212,7 @@
                   maxlength="1024">
 
               {% if fld.errors %}
-                <div class="form-row mt-2 mb-4">
+                <div class="row mt-2 mb-4">
                   {% for error in fld.errors %}
                     <div class="text-danger">{{ error }}</div>
                   {% endfor %}
@@ -232,7 +232,7 @@
       <div class="card-body">
 
         {% block work-form-publication-details %}
-          <div class="form-group row">
+          <div class="mb-3 row">
           {% block publication-date %}
             <label for="{{ form.publication_date.id_for_label }}"
                    class="col-2 col-form-label {% if not work.pk and not publication_date_optional %}required{% endif %}"
@@ -252,7 +252,7 @@
           {% endblock %}
           </div>
 
-          <div class="form-group row">
+          <div class="mb-3 row">
             <label class="col-2 col-form-label" for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
             <div class="col">
               <input
@@ -272,7 +272,7 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div class="mb-3 row">
             <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
             <div class="col">
               <input
@@ -311,18 +311,18 @@
             {% endblocktrans %}
           </div>
         {% else %}
-          <div class="form-row">
-            <div class="form-group">
+          <div class="row">
+            <div class="mb-3">
               <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="{{ form.commenced.id_for_label }}" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
-                <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">
+                <label class="ms-2 me-2" for="{{ form.commenced.id_for_label }}">
                   {% trans 'Commenced – this work has come into force, or has a future commencement date'%}
                 </label>
               </div>
             </div>
           </div>
           <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
-            <div class="form-group row">
+            <div class="mb-3 row">
               <label class="col-2 col-form-label">{% trans 'Commencement date' %}</label>
               <div class="col">
                 <input type="date" class="form-control"
@@ -358,7 +358,7 @@
               {% include 'indigo_api/_work_commencement_form.html' with commencing_work=work.commencing_work %}
             </div>
 
-            <div class="form-group row">
+            <div class="mb-3 row">
               <label class="col-2 col-form-label">{% trans 'Commencement note' %}</label>
               <div class="col">
                 <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
@@ -376,8 +376,8 @@
     <div class="card mb-3" id="key-dates">
       <h5 class="card-header">{% trans 'Key dates' %}</h5>
       <div class="card-body">
-        <div class="form-row">
-          <div class="form-group col-md-4">
+        <div class="row">
+          <div class="mb-3 col-md-4">
             <label for="{{ form.assent_date.id_for_label }}">{% trans 'Assent date' %}</label>
             <input type="date" class="form-control" id="{{ form.assent_date.id_for_label }}"
                    name="{{ form.assent_date.html_name }}"
@@ -387,7 +387,7 @@
             </div>
           </div>
 
-          <div class="form-group col-md-4">
+          <div class="mb-3 col-md-4">
             <label for="{{ form.as_at_date_override.id_for_label }}">{{ form.as_at_date_override.label }}</label>
             <input type="date" class="form-control" id="{{ form.as_at_date_override.id_for_label }}"
                    name="{{ form.as_at_date_override.html_name }}"
@@ -412,8 +412,8 @@
     <div class="card mb-3" id="consolidation-note">
       <h5 class="card-header">{% trans 'Consolidation note' %}</h5>
       <div class="card-body">
-        <div class="form-row">
-          <div class="form-group col-md-4">
+        <div class="row">
+          <div class="mb-3 col-md-4">
             <label for="{{ form.consolidation_note_override.id_for_label }}">{{ form.consolidation_note_override.label }}</label>
             <input type="text" class="form-control" id="{{ form.consolidation_note_override.id_for_label }}" placeholder="{{ place.settings.consolidation_note|default:'' }}" name="{{ form.consolidation_note_override.html_name }}" value="{{ form.consolidation_note_override.value|default_if_none:'' }}">
             <p class="form-text text-muted">
@@ -436,8 +436,8 @@
     <div class="card mb-3" id="disclaimer">
       <h5 class="card-header">{% trans 'Disclaimer' %}</h5>
       <div class="card-body">
-        <div class="form-row">
-          <div class="form-group col-md-4">
+        <div class="row">
+          <div class="mb-3 col-md-4">
             <label for="{{ form.disclaimer.id_for_label }}">{{ form.disclaimer.label }}</label>
             <input type="text" class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}" value="{{ form.disclaimer.value|default:'' }}">
             <p class="form-text text-muted">
@@ -469,7 +469,7 @@
     {% endblock work-form-repeal %}
 
     {% block work-form-place %}
-    <button type="button" class="btn btn-primary mb-3" data-target="#place-form" data-toggle="collapse">
+    <button type="button" class="btn btn-primary mb-3" data-bs-target="#place-form" data-bs-toggle="collapse">
       {% trans 'Change country or locality' %}...
     </button>
 
@@ -477,8 +477,8 @@
       <h5 class="card-header">{% trans 'Country and locality (advanced)' %}</h5>
       <div class="card-body">
 
-        <div class="form-row">
-          <div class="form-group col-4">
+        <div class="row">
+          <div class="mb-3 col-4">
             <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
             <select
                 hx-trigger="change"

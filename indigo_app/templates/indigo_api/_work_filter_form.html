@@ -9,13 +9,13 @@
 >
   <div class="d-flex">
 
-    <div class="flex-grow-1 mr-2">
+    <div class="flex-grow-1 me-2">
       <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="{% trans 'Filter...' %}"
              value="{{ form.q.value | default:'' }}">
     </div>
 
     <!-- Sorting -->
-    <div class="mr-2">
+    <div class="me-2">
       <select class="form-control" name="sortby">
         <option value="-created_at" {% if form.sortby.value == '-created_at' %} selected {% endif %}>{% trans 'Most recently created' %}</option>
         <option value="created_at" {% if form.sortby.value == 'created_at' %} selected {% endif %}>{% trans 'Least recently created' %}</option>
@@ -26,10 +26,10 @@
       </select>
     </div>
 
-    <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
+    <a href="#advancedFilters" class="btn btn-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">{% trans 'Advanced...' %}</a>
 
-    <div class="mr-2">
-      <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear all filters' %}</a>
+    <div class="me-2">
+      <a href="{{ request.path }}" class="btn btn-outline-danger me-2">{% trans 'Clear all filters' %}</a>
     </div>
 
     <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
@@ -42,14 +42,14 @@
         <!-- Publication date range -->
         <div class="row mt-2">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label for="publication-daterange">{% trans 'Publication date range' %}</label>
-              <div class="form-row">
+              <div class="row">
                 <div class="col">
                   <div class="input-group input-daterange" id="publication-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
+                    <input type="text" class="form-control me-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
+                    <input type="text" class="form-control ms-1 me-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>
@@ -60,14 +60,14 @@
         <!-- Commenced date range -->
         <div class="row mt-2">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label for="commencement-daterange">{% trans 'Commencement date range' %}</label>
-              <div class="form-row">
+              <div class="row">
                 <div class="col">
                   <div class="input-group input-daterange" id="commencement-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
+                    <input type="text" class="form-control me-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
+                    <input type="text" class="form-control ms-1 me-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>
@@ -78,14 +78,14 @@
         <!-- Amendment date range -->
         <div class="row mt-2">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label for="amendment-daterange">{% trans 'Amendment date range' %}</label>
-              <div class="form-row">
+              <div class="row">
                 <div class="col">
                   <div class="input-group input-daterange" id="amendment-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
+                    <input type="text" class="form-control me-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
+                    <input type="text" class="form-control ms-1 me-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>
@@ -96,14 +96,14 @@
         <!-- Repealed date range -->
         <div class="row mt-2">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label for="repeal-daterange">{% trans 'Repeal date range' %}</label>
-              <div class="form-row">
+              <div class="row">
                 <div class="col">
                   <div class="input-group input-daterange" id="repeal-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
+                    <input type="text" class="form-control me-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
+                    <input type="text" class="form-control ms-1 me-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>
@@ -114,14 +114,14 @@
         <!-- Assent date range -->
         <div class="row mt-2">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label for="assent-daterange">{% trans 'Assent date range' %}</label>
-              <div class="form-row">
+              <div class="row">
                 <div class="col">
                   <div class="input-group input-daterange" id="assent-daterange">
-                    <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
+                    <input type="text" class="form-control me-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
                     <div class="input-group-addon"> and </div>
-                    <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
+                    <input type="text" class="form-control ms-1 me-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
                   </div>
                 </div>
               </div>
@@ -130,8 +130,8 @@
         </div>
 
         <!-- Reset filters -->
-        <div class="text-right mt-3">
-          <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">{% trans 'Clear filters' %}</a>
+        <div class="text-end mt-3">
+          <a href="{{ request.path }}" class="btn btn-outline-danger me-2">{% trans 'Clear filters' %}</a>
           <button type="submit" class="btn btn-primary">{% trans 'Apply filters' %}</button>
         </div>
 

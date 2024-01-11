@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="card">
@@ -35,7 +35,7 @@
 
       <div class="modal-footer">
         <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
-        <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">{% trans 'Cancel' %}</a>
+        <a href="#" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</a>
         <input type="submit" class="btn btn-primary choose-work" value="{% trans 'OK' %}">
       </div>
 
@@ -62,14 +62,14 @@
         <td>
           {{ title }}
           {{#if stub}}
-          <span class="badge badge-info">{% endverbatim %}{% trans 'stub' %}{% verbatim %}</span>
+          <span class="badge text-bg-info">{% endverbatim %}{% trans 'stub' %}{% verbatim %}</span>
           {{/if}}
           {{#unless commenced}}
-          <span class="badge badge-info">{% endverbatim %}{% trans 'not commenced' %}{% verbatim %}</span>
+          <span class="badge text-bg-info">{% endverbatim %}{% trans 'not commenced' %}{% verbatim %}</span>
           {{/unless}}
           {{#if commenced}}
           {{#unless commencement_date}}
-          <span class="badge badge-info">{% endverbatim %}{% trans 'commencement date unknown' %}{% verbatim %}</span>
+          <span class="badge text-bg-info">{% endverbatim %}{% trans 'commencement date unknown' %}{% verbatim %}</span>
           {{/unless}}
           {{/if}}
         </td>

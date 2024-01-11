@@ -2,7 +2,7 @@
 
 <div class="achievement"
   {% if award %}
-    data-toggle="tooltip" data-placement="right" data-html="true"
+    data-bs-toggle="tooltip" data-placement="right" data-html="true"
     title="<p>Awarded {{ award.awarded_at|timesince }} ago </p> <p>{{ award.description }} </p>"
   {% endif %}>
   <div class="achievement-icon badge-{{ badge.nature }} badge-{{ badge.slug }} {{ badge.css_class }}" style="background-image: url({% static badge.image %});"></div>

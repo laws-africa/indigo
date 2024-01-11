@@ -1,11 +1,11 @@
-<div class="btn-toolbar border-right mr-2 pr-2">
-  <div class="btn-group btn-group-sm mr-2">
-    <a class="btn btn-outline-secondary" href="#attachments-modal" data-toggle="modal"><i class="fas fa-paperclip"></i> Attachments</a>
+<div class="btn-toolbar border-right me-2 pe-2">
+  <div class="btn-group btn-group-sm me-2">
+    <a class="btn btn-outline-secondary" href="#attachments-modal" data-bs-toggle="modal"><i class="fas fa-paperclip"></i> Attachments</a>
     <button class="btn btn-outline-secondary show-revisions"><i class="fas fa-history"></i> Changes</button>
 
     {% if comparison_expressions %}
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-exchange-alt"></i> Compare to</button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-exchange-alt"></i> Compare to</button>
         <div class="dropdown-menu">
           {% for exp in comparison_expressions %}
             <button class="dropdown-item show-pit-comparison" data-id="{{ exp.id }}">
@@ -20,29 +20,29 @@
   </div>
 
   <div class="btn-group btn-group-sm document-analysis-menu">
-    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-magic"></i> Analysis</button>
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-magic"></i> Analysis</button>
     <div class="dropdown-menu">
-      <a class="dropdown-item" href="#defined-terms-modal" data-toggle="modal">Defined terms...</a>
-      <a class="dropdown-item" href="#references-modal" data-toggle="modal">References...</a>
-      <a class="dropdown-item" href="#italics-modal" data-toggle="modal">Italicised terms...</a>
+      <a class="dropdown-item" href="#defined-terms-modal" data-bs-toggle="modal">Defined terms...</a>
+      <a class="dropdown-item" href="#references-modal" data-bs-toggle="modal">References...</a>
+      <a class="dropdown-item" href="#italics-modal" data-bs-toggle="modal">Italicised terms...</a>
     </div>
   </div>
 </div>
 
 <div class="document-editor-toolbar">
   <div class="btn-toolbar general-buttons">
-    <div class="btn-group btn-group-sm mr-2">
+    <div class="btn-group btn-group-sm me-2">
       {% if request.user.is_authenticated %}
       <button type="button" class="btn btn-primary edit-text"><i class="fas fa-pencil-alt"></i> Edit</button>
       {% endif %}
     </div>
-    <div class="btn-group btn-group-sm mr-2">
-      <button type="button" class="btn btn-outline-secondary show-structure" data-toggle="buttons" title="Outline Akoma Ntoso Structure"><i class="fas fa-sitemap"></i> Structure</button>
+    <div class="btn-group btn-group-sm me-2">
+      <button type="button" class="btn btn-outline-secondary show-structure" data-bs-toggle="buttons" title="Outline Akoma Ntoso Structure"><i class="fas fa-sitemap"></i> Structure</button>
       {% if perms.indigo_api.view_document_xml %}
-      <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons"><i class="fas fa-code"></i> Akoma Ntoso</button>
+      <button type="button" class="btn btn-outline-secondary show-xml-editor" data-bs-toggle="buttons"><i class="fas fa-code"></i> Akoma Ntoso</button>
       {% endif %}
       {% if place.settings.styleguide_url %}
-        <a class="btn btn-outline-secondary ml-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
+        <a class="btn btn-outline-secondary ms-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
       {% endif %}
     </div>
   </div>
@@ -50,7 +50,7 @@
   <div class="btn-toolbar text-editor-buttons d-none">
     <div class="btn-group">
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Edit</button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Edit</button>
         <div class="dropdown-menu with-shortcuts">
           <a class="dropdown-item editor-action" data-action="actions.find" href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
           <a class="dropdown-item editor-action" data-action="editor.action.nextMatchFindAction" href="#">Find next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
@@ -59,14 +59,14 @@
         </div>
       </div>
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Insert</button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Insert</button>
         <div class="dropdown-menu">
           <a class="dropdown-item insert-image" href="#">Insert image...</a>
           <a class="dropdown-item editor-action" data-action="insert.table" href="#">Insert table</a>
           <a class="dropdown-item editor-action" data-action="insert.footnote" href="#">Insert footnote</a>
           <a class="dropdown-item editor-action" data-action="insert.schedule" href="#">Insert Schedule</a>
           <div class="dropdown-item dropdown-submenu">
-            <a class="dropdown-item" href="#" data-toggle="dropdown">Insert annotation</a>
+            <a class="dropdown-item" href="#" data-bs-toggle="dropdown">Insert annotation</a>
             <div class="dropdown-menu">
               <a class="dropdown-item insert-remark" data-verb="substitution" href="#">Substitution</a>
               <a class="dropdown-item insert-remark" data-verb="amendment" href="#">Amendment</a>
@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle mr-2" data-toggle="dropdown">Markup</button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle me-2" data-bs-toggle="dropdown">Markup</button>
         <div class="dropdown-menu">
           <a class="dropdown-item editor-action" data-action="format.bold" href="#">Bold</a>
           <a class="dropdown-item editor-action" data-action="format.italics" href="#">Italics</a>
@@ -93,26 +93,26 @@
     </div>
     <div class="btn-group btn-group-sm">
       <button class="btn btn-success save"><i class="fas fa-check"></i> Update</button>
-      <button class="btn btn-secondary mr-2 cancel" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
+      <button class="btn btn-secondary me-2 cancel" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
     </div>
     <div class="btn-group btn-group-sm">
-      <button class="btn btn-outline-secondary" data-target="#cheatsheet-modal" data-toggle="modal"><i class="fas fa-question-circle fa-fw"></i> Editor help...</button>
+      <button class="btn btn-outline-secondary" data-bs-target="#cheatsheet-modal" data-bs-toggle="modal"><i class="fas fa-question-circle fa-fw"></i> Editor help...</button>
       {% if place.settings.styleguide_url %}
-        <a class="btn btn-outline-secondary ml-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
+        <a class="btn btn-outline-secondary ms-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
       {% endif %}
     </div>
   </div>
 </div>
 
-<div class="btn-toolbar ml-auto">
-  <div class="btn-group btn-group-sm mr-2">
-    <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack mr-1"></i>Tasks</a>
+<div class="btn-toolbar ms-auto">
+  <div class="btn-group btn-group-sm me-2">
+    <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack me-1"></i>Tasks</a>
   </div>
 
   <div class="btn-group btn-group-sm">
-    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i> Settings</button>
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-cog"></i> Settings</button>
     <div class="dropdown-menu dropdown-menu-right">
-      <a class="dropdown-item" href="#properties-modal" data-toggle="modal">Properties...</a>
+      <a class="dropdown-item" href="#properties-modal" data-bs-toggle="modal">Properties...</a>
       <div class="dropdown-submenu">
         <a href="#" class="dropdown-item">Download as</a>
         <div class="dropdown-menu dropdown-menu-right">
@@ -138,14 +138,14 @@
     </div>
 
     <div class="btn-toolbar when-active">
-      <div class="btn-group btn-group-sm mr-2">
+      <div class="btn-group btn-group-sm me-2">
         <button class="btn btn-success save-edit-table"><i class="fas fa-check"></i> Update</button>
         <button class="btn btn-secondary cancel-edit-table" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
       </div>
 
-      <div class="btn-group mr-2">
+      <div class="btn-group me-2">
         <div class="btn-group btn-group-sm">
-          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-plus"></i> Insert
           </button>
           <div class="dropdown-menu">
@@ -158,7 +158,7 @@
         </div>
 
         <div class="btn-group btn-group-sm">
-          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-minus"></i> Delete <span class="caret"></span>
           </button>
           <div class="dropdown-menu">
@@ -168,7 +168,7 @@
         </div>
       </div>
 
-      <div class="btn-group btn-group-sm mr-2">
+      <div class="btn-group btn-group-sm me-2">
         <button type="button" class="btn btn-outline-secondary table-text-left"><i class="fas fa-align-left"></i></button>
         <button type="button" class="btn btn-outline-secondary table-text-center"><i class="fas fa-align-center"></i></button>
         <button type="button" class="btn btn-outline-secondary table-text-right"><i class="fas fa-align-right"></i></button>

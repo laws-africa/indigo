@@ -7,8 +7,8 @@
       <form method="POST">
         {% csrf_token %}
 
-        <div class="dropdown float-right">
-          <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"></button>
+        <div class="dropdown float-end">
+          <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
           <div class="dropdown-menu">
             {% if task.state == 'open' and task.submit_task_permission %}
               <button type="submit"
@@ -59,7 +59,7 @@
           #{{ task.id }}
         {% endif %}
         {% if task.changes_requested %}
-          <span class="badge badge-secondary bg-pending_review ml-1">{% trans 'Changes requested' %}</span>
+          <span class="badge text-bg-secondary bg-pending_review ms-1">{% trans 'Changes requested' %}</span>
         {% endif %}
       </div>
       <div>
@@ -92,7 +92,7 @@
 
         <!-- task label -->
         {% for label in task.labels.all %}
-          <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
+          <span class="badge text-bg-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
         {% endfor %}
 
 
@@ -113,7 +113,7 @@
 
                 <div class="dropdown">
                   <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button"
-                          data-toggle="dropdown"
+                          data-bs-toggle="dropdown"
                           hx-trigger="click once"
                           hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
                           hx-target="next .dropdown-menu"
@@ -136,7 +136,7 @@
             {% csrf_token %}
               <div class="dropdown">
                 <button class="btn btn-outline-primary btn-sm mt-2 dropdown-toggle" type="button"
-                        data-toggle="dropdown"
+                        data-bs-toggle="dropdown"
                         hx-trigger="click once"
                         hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
                         hx-target="next .dropdown-menu">

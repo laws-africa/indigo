@@ -49,7 +49,7 @@
               {% endif %}
               {% if emailaddress.primary %}– {% trans 'primary' %}{% endif %}
             </td>
-            <td class="text-right">
+            <td class="text-end">
               <form action="{% url 'account_email' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="email" value="{{ emailaddress.email }}">
@@ -78,7 +78,7 @@
     <form method="post" action="{% url 'account_email' %}">
       {% csrf_token %}
 
-      <div class="form-group">
+      <div class="mb-3">
         <input type="text" class="form-control col-sm-6" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" placeholder="new-email@example.com">
         {% if form.email.errors %}
           <div class="text-danger">

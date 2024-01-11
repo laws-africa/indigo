@@ -28,7 +28,7 @@
       <div class="flex-grow-1" id="work-bulk-actions"></div>
       {% if perms.indigo_api.bulk_export_work %}
         <div>
-          <a href="{{ download_xsl_url }}"><i class="fas fa-file-excel fa-fw mr-1"></i>{% trans "Download to Excel" %}</a>
+          <a href="{{ download_xsl_url }}"><i class="fas fa-file-excel fa-fw me-1"></i>{% trans "Download to Excel" %}</a>
         </div>
       {% endif %}
     </div>
@@ -41,7 +41,7 @@
       {% csrf_token %}
       {% if perms.indigo_api.change_work %}
         <div>
-          <input id="all-work-pks" type="checkbox" name="all_work_pks" value="{{ work_pks }}" class="all-works-checkbox mr-2">
+          <input id="all-work-pks" type="checkbox" name="all_work_pks" value="{{ work_pks }}" class="all-works-checkbox me-2">
           <label for="all-work-pks" class="text-muted">
             {% blocktrans with works_length=paginator.count %}Select all {{ works_length }} matching works{% endblocktrans %}
           </label>

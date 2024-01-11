@@ -298,6 +298,15 @@ class AttributeDiffer:
             'html_new': html.escape(x),
         } for x in old]
 
+        diff = {
+            'attr': attr,
+            'title': title,
+            'changes': diffs,
+            'type': 'list',
+            'old': old,
+            'new': new,
+        }
+
         # we're going to modify this
         old = list(old)
         remove_offset = 0
@@ -338,12 +347,7 @@ class AttributeDiffer:
                 # subsequent remove operations will need to be offset
                 remove_offset += 1
 
-        return {
-            'attr': attr,
-            'title': title,
-            'changes': diffs,
-            'type': 'list',
-        }
+        return diff
 
     def html_diff(self, old, new):
         """ Diff strings and return a left, right pair with HTML markup

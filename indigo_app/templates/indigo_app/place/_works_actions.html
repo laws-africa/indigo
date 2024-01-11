@@ -1,6 +1,8 @@
 {% load i18n %}
 
 {% if works %}
+  {% block actions %}
+    {% block action-bulk-update %}
   <div class="mx-3">
     <button class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#bulk-update-modal">
       {% blocktrans with works_length=works|length %}Update {{ works_length }} selected{% endblocktrans %}
@@ -64,4 +66,6 @@
       </div>
     </div>
   </form>
+    {% endblock %}
+  {% endblock %}
 {% endif %}

@@ -17,7 +17,7 @@
           </form>
         {% endif %}
         {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-          <a class="btn btn-outline-info mr-1" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
+          <a class="btn btn-success mr-1" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
           <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">{% trans 'Edit work' %}</a>
         {% endif %}
       </div>

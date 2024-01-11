@@ -65,41 +65,44 @@
         <div class="card-header">
           <form method="GET" id="task-filter-form" onchange="this.submit();">
             <div class="d-flex">
-
               <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
                 <label class="btn btn-outline-secondary {% if not form.state.value.0 %}active{% endif %}">
-                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="" {% if not form.state.value %}checked{% endif %}>
+                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="" {% if not form.state.value %}checked{% endif %} class="btn-check">
                   {% trans "Available tasks" %}
                 </label>
                 <label class="btn btn-outline-secondary {% if 'open' in form.state.value %}active{% endif %}">
-                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if 'open' in form.state.value %}checked{% endif %}>
+                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if 'open' in form.state.value %}checked{% endif %} class="btn-check">
                   <i class="fas fa-sm fa-fw task-icon-open"></i>
                   {% trans "Open" %}
                 </label>
                 <label class="btn btn-outline-secondary {% if 'pending_review' in form.state.value %}active{% endif %}">
-                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="pending_review" {% if 'pending_review' in form.state.value %}checked{% endif %}>
+                  <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="pending_review" {% if 'pending_review' in form.state.value %}checked{% endif %} class="btn-check">
                   <i class="fas fa-sm fa-fw task-icon-pending_review"></i>
                   {% trans "Pending review" %}
                 </label>
               </div>
-              <select class="form-control selectpicker notooltip col-2 ms-2"
-                      id="{{ form.type.id_for_label }}" name="{{ form.type.html_name }}"
-                      data-style="btn-outline-success" title="Task type"
-                      data-actions-box="true"
-                      data-live-search="true" data-size="7" multiple>
-                {% for opt in form.type %}
-                  {{ opt }}
-                {% endfor %}
-              </select>
-              <select class="form-control selectpicker notooltip col-2 ms-2"
-                      id="{{ form.country.id_for_label }}" name="{{ form.country.html_name }}"
-                      data-style="btn-outline-success" title="Country"
-                      data-actions-box="true"
-                      data-live-search="true" data-size="7" multiple>
-                {% for opt in form.country %}
-                  {{ opt }}
-                {% endfor %}
-              </select>
+              <div class="flex-grow-1 me-2">
+                <select class="form-control selectpicker notooltip col-2 ms-2"
+                        id="{{ form.type.id_for_label }}" name="{{ form.type.html_name }}"
+                        data-style="btn-outline-success" title="Task type"
+                        data-actions-box="true"
+                        data-live-search="true" data-size="7" multiple>
+                  {% for opt in form.type %}
+                    {{ opt }}
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="flex-grow-1">
+                <select class="form-control selectpicker notooltip col-2 ms-2"
+                        id="{{ form.country.id_for_label }}" name="{{ form.country.html_name }}"
+                        data-style="btn-outline-success" title="Country"
+                        data-actions-box="true"
+                        data-live-search="true" data-size="7" multiple>
+                  {% for opt in form.country %}
+                    {{ opt }}
+                  {% endfor %}
+                </select>
+              </div>
             </div>
           </form>
         </div>

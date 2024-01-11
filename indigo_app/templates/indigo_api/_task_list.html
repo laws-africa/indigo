@@ -25,11 +25,11 @@
     <td>
       {% block col-icon %}
       <div class="text-nowrap">
-        <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
+        <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-2"></i>
         <span class="text-muted">
           {% if perms.indigo_api.change_task and task.is_open and selectable%}
           <label class="mb-0 font-weight-normal c-pointer">
-            <input type="checkbox" name="tasks" value="{{ task.id }}" form="{{ form_id|default:'bulk-task-update-form' }}" class="mr-1">
+            <input type="checkbox" name="tasks" value="{{ task.id }}" form="{{ form_id|default:'bulk-task-update-form' }}" class="me-1">
             #{{ task.id }}
           </label>
           {% else %}
@@ -42,12 +42,12 @@
     <td>
       {% block col-title %}
       <!-- Task title -->
-      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mr-1 {% endif %}">{{ task.title }}</a>
+      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex me-1 {% endif %}">{{ task.title }}</a>
       {% if task.changes_requested %}
-        <span class="badge badge-secondary bg-pending_review ml-1 mr-1">{% trans 'Changes requested' %}</span>
+        <span class="badge text-bg-secondary bg-pending_review ms-1 me-1">{% trans 'Changes requested' %}</span>
       {% endif %}
       {% for label in task.labels.all %}
-        <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
+        <span class="badge text-bg-secondary me-1" title="{{ label.description }}">{{ label.title }}</span>
       {% endfor %}
       {% endblock %}
     </td>

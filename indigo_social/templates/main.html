@@ -4,7 +4,7 @@
 {% block navbar-user %}
   {% if request.user.is_authenticated %}
     <li class="nav-item dropdown">
-      <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
+      <a href="#" class="nav-link dropdown-toggle logged-in" data-bs-toggle="dropdown">
         <i class="fas fa-user"></i>
         <span class="username">
           {% if request.user.is_authenticated %}{% user_display request.user %}{% endif %}

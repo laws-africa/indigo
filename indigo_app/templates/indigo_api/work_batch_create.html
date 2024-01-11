@@ -30,7 +30,7 @@
     <div class="card mb-3">
       <div class="card-body">
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.spreadsheet_url.id_for_label }}">{% trans 'Google Sheets URL' %}</label>
           <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="{% trans 'The URL of the spreadsheet' %}" required value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
@@ -39,8 +39,8 @@
         </div>
 
         {% if form.fields.sheet_name.choices %}
-          <div class="form-group">
-            <div class="form-row">
+          <div class="mb-3">
+            <div class="row">
               <div class="col-md-6">
                 <label for="{{ form.sheet_name.id_for_label }}">{% trans 'Spreadsheet tab' %}</label>
                 <select class="selectpicker form-control" name="{{ form.sheet_name.name }}" id="{{ form.sheet_name.id_for_label }}" data-live-search="true">
@@ -59,12 +59,12 @@
           <p class="alert alert-info col-md-6">{% trans "Please note we are phasing out projects; rather choose a topic. You're welcome to choose a project as well during the transition." %}</p>
         {% endblock %}
 
-        <div class="form-group">
+        <div class="mb-3">
           <label for="{{ form.workflow.id_for_label }}">{% trans 'Choose a project for newly created tasks' %}</label>
 
           {% if form.fields.workflow.choices %}
-            <div class="form-group">
-              <div class="form-row">
+            <div class="mb-3">
+              <div class="row">
                 <div class="col-md-6">
                   <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project' %}">
                     {% for option in form.workflow %}
@@ -85,12 +85,12 @@
         </div>
 
         {% block topic %}
-          <div class="form-group">
+          <div class="mb-3">
             <label for="{{ form.taxonomy_topic.id_for_label }}">{% trans 'Choose a topic for newly created works' %}</label>
 
             {% if form.fields.taxonomy_topic.choices %}
-              <div class="form-group">
-                <div class="form-row">
+              <div class="mb-3">
+                <div class="row">
                   <div class="col-md-6">
                     <select class="selectpicker form-control" name="{{ form.taxonomy_topic.name }}" id="{{ form.taxonomy_topic.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project topic' %}" required>
                       {% for option in form.taxonomy_topic %}
@@ -232,7 +232,7 @@
                     </td>
                     <td>
                       {% if row.taxonomies %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for taxonomy in row.taxonomies %}
                             <li>{{ taxonomy }}</li>
                           {% endfor %}
@@ -241,7 +241,7 @@
                     </td>
                     <td>
                       {% if row.taxonomy_topics %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for topic in row.taxonomy_topics %}
                             <li>{{ topic }}</li>
                           {% endfor %}
@@ -250,7 +250,7 @@
                     </td>
                     <td>
                       {% if row.tasks %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for task in row.tasks %}
                             <li>{{ task|capfirst }}</li>
                           {% endfor %}
@@ -259,7 +259,7 @@
                     </td>
                     <td>
                       {% if row.relationships %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for relationship in row.relationships %}
                             <li>{{ relationship }}</li>
                           {% endfor %}
@@ -268,7 +268,7 @@
                     </td>
                     <td>
                       {% if row.notes %}
-                        <ul class="pl-0">
+                        <ul class="ps-0">
                           {% for note in row.notes %}
                             <li>{{ note }}</li>
                           {% endfor %}
@@ -283,7 +283,7 @@
             <div class="card-footer">
               {% if perms.indigo_api.add_work %}
                 <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-                <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
+                <button type="submit" name="import" class="btn btn-success float-end show-progress">{% trans 'Import works' %}</button>
               {% else %}
                 <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
               {% endif %}
@@ -362,7 +362,7 @@
                   </td>
                   <td>
                     {% if row.work.taxonomies.exists %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for t in row.work.taxonomies.all %}
                           <li>{{ t }}</li>
                         {% endfor %}
@@ -371,7 +371,7 @@
                   </td>
                   <td>
                     {% if row.work.tasks.exists %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for task in row.work.tasks.all %}
                           <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
                         {% endfor %}
@@ -380,7 +380,7 @@
                   </td>
                   <td>
                     {% if row.relationships %}
-                      <ul class="pl-0">
+                      <ul class="ps-0">
                         {% for relationship in row.relationships %}
                           <li>{{ relationship }}</li>
                         {% endfor %}
@@ -396,7 +396,7 @@
           <div class="card-footer">
             {% if perms.indigo_api.add_work %}
               <button type="submit" name="preview" class="btn btn-primary show-progress">{% trans 'Refresh preview' %}</button>
-              <button type="submit" name="import" class="btn btn-success float-right show-progress">{% trans 'Import works' %}</button>
+              <button type="submit" name="import" class="btn btn-success float-end show-progress">{% trans 'Import works' %}</button>
             {% else %}
               <div class="alert alert-danger">{% trans "You don't have permission to create works." %}</div>
             {% endif %}

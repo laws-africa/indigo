@@ -4,7 +4,7 @@
   <ul class="list-unstyled mb-0">
     {% for user in top_contributors %}
       <li class="mb-2">
-        <span class="float-right">
+        <span class="float-end">
           {% blocktrans trimmed count counter=user.task_count %}
             {{ counter }} task
           {% plural %}

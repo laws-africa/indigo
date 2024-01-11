@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="form-group row">
+<div class="mb-3 row">
   <label class="col-2 col-form-label">{% trans 'Primary work' %}</label>
   <div class="col-4">
     <input type="hidden" id="{{ form.parent_work.id_for_label }}" name="{{ form.parent_work.html_name }}" value="{{ form.parent_work.value|default:'' }}">
@@ -20,16 +20,16 @@
           hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-parent"|urlencode }}&field=work-parent_work"
           hx-target="#work-parent-modal"
           hx-trigger="click"
-          data-toggle="modal"
-          data-target="#work-parent-modal"
+          data-bs-toggle="modal"
+          data-bs-target="#work-parent-modal"
       >{% trans 'Choose primary work' %}</button>
 
       {% if work.parent_work %}
         <button
-            class="btn btn-outline-danger ml-2"
+            class="btn btn-outline-danger ms-2"
             hx-get="{{ edit_url }}"
             hx-target="#work-form-parent"
-        >Clear</button>
+        >{% trans 'Clear' %}</button>
       {% endif %}
     </div>
   </div>

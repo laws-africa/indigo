@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% if possible_doc_formset %}
-  <div class="form-group row">
+  <div class="mb-3 row">
     <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Possible documents' %}</label>
     <div class="col">
         {{ possible_doc_formset.management_form }}
@@ -14,7 +14,7 @@
                   hx-target=".publication-document-wrapper"
                   hx-post="{% url 'work_form_attach_publication_document' place.place_code %}?form={{ forloop.counter0 }}&frbr_uri={{ frbr_uri }}"
                   type="button"
-                  class="btn btn-secondary ml-2">
+                  class="btn btn-secondary ms-2">
                 {% trans 'Attach document' %}
               </button>
             </li>

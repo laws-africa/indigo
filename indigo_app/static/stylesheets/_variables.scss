@@ -2,6 +2,8 @@
 
 // Typography
 $font-size-base: .875rem;
+$link-decoration: none;
+$link-hover-decoration: underline;
 
 // Options
 $enable-rounded: false;
@@ -22,12 +24,7 @@ $card-cap-bg: $gray-100;
 $card-border-color: $gray-300;
 
 $white: #fff;
-$blue: #2d7ad4;
-$red: #f44336;
-$green: #439f78;
 $indigo: #305fa1;
-
-$primary: $blue;
 
 $spacer: $font-size-base;
 

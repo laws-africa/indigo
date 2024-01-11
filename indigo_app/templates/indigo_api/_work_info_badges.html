@@ -2,15 +2,15 @@
 
 {# TODO: add more? use icons instead / as well? #}
 {% if work.stub %}
-  <span class="badge badge-info">{% trans 'stub' %}</span>
+  <span class="badge text-bg-info">{% trans 'stub' %}</span>
 {% endif %}
 {% if work.repealed_date %}
-  <span class="badge badge-info">{% trans 'repealed' %}</span>
+  <span class="badge text-bg-info">{% trans 'repealed' %}</span>
 {% endif %}
 {% if not work.commenced %}
-  <span class="badge badge-info">{% trans 'not commenced' %}</span>
+  <span class="badge text-bg-info">{% trans 'not commenced' %}</span>
 {% elif not work.commencement_date %}
-  <span class="badge badge-info">{% trans 'commencement date unknown' %}</span>
+  <span class="badge text-bg-info">{% trans 'commencement date unknown' %}</span>
 {% endif %}
 {% if work.work_in_progress %}
   <span class="badge badge-warning">{% trans 'work in progress' %}</span>

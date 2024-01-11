@@ -22,7 +22,7 @@
               <div class="col-6">
                 <div class="mb-3 d-flex">
                   {% include 'indigo_social/_achievement.html' with badge=badge with_description=False %}
-                  <div class="ml-3">
+                  <div class="ms-3">
                     <h5 class="mt-0 mb-1"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
                     {{ badge.description }}
                   </div>

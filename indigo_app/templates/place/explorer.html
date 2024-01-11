@@ -13,7 +13,7 @@
       <div class="flex-grow-1">
         <input type="text" class="form-control text-monospace" name="{{ form.xpath.name }}" placeholder="xpath query" value="{{ form.xpath.value | default:'' }}" autofocus>
       </div>
-      <button type="submit" class="btn btn-primary ml-2">{% trans "Go" %}</button>
+      <button type="submit" class="btn btn-primary ms-2">{% trans "Go" %}</button>
     </div>
 
     <small class="form-text text-muted">
@@ -31,7 +31,7 @@
     {% endif %}
 
     <div>
-      <label class="mr-3">{% trans "Parent context" %}:</label>
+      <label class="me-3">{% trans "Parent context" %}:</label>
       {% for choice in form.parent %}
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="parent" id="{{ choice.id_for_label }}" value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}>
@@ -52,7 +52,7 @@
       </div>
     {% endif %}
 
-    <a href="#samples" data-toggle="collapse">{% trans "Examples" %}</a>
+    <a href="#samples" data-bs-toggle="collapse">{% trans "Examples" %}</a>
     <div class="collapse" id="samples">
       <ul>
         {% for descr, xpath, parent in samples %}
@@ -73,8 +73,8 @@
 
     <div id="accordion">
       {% for document, elements in doc_matches %}
-        <div class="card mb-3" id="heading-{{ forloop.counter }}" data-toggle="collapse"
-             data-target="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+        <div class="card mb-3" id="heading-{{ forloop.counter }}" data-bs-toggle="collapse"
+             data-bs-target="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
           <h5 class="card-header">
             <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
           </h5>

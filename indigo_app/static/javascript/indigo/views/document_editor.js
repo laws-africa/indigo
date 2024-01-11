@@ -625,7 +625,7 @@
     },
 
     toggleShowXMLEditor: function(e) {
-      var show = !$(e.currentTarget).hasClass('active');
+      var show = e.currentTarget.classList.toggle('active');
       this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
       this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
       if (show) {
@@ -636,7 +636,7 @@
     },
 
     toggleShowStructure: function(e) {
-      var show = !$(e.currentTarget).hasClass('active');
+      var show = e.currentTarget.classList.toggle('active');
       this.$el.find('#document-sheet la-akoma-ntoso').toggleClass('show-structure', show);
     },
 

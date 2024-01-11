@@ -649,13 +649,13 @@ class Work(WorkMixin, models.Model):
         return self.as_at_date_override or self.place.settings.as_at_date
 
     def approve(self, user, request=None):
+        self.work_in_progress = False
+        self.approved_by_user = user
+        self.approved_at = datetime.now()
+        self.save_with_revision(user)
+        action.send(user, verb='approved', action_object=self, place_code=self.place.place_code)
         try:
             with transaction.atomic():
-                self.work_in_progress = False
-                self.approved_by_user = user
-                self.approved_at = datetime.now()
-                self.save_with_revision(user)
-                action.send(user, verb='approved', action_object=self, place_code=self.place.place_code)
                 work_approved.send(sender=self.__class__, work=self, request=request)
         except IntegrityError:
             pass

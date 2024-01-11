@@ -11,18 +11,19 @@
 
   <h1 class="mb-3 mt-3">{% trans "Contributors" %}</h1>
 
-  <div class="card-columns">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for userprofile in object_list %}
-      <div class="card">
-        <div class="card-header">
-          <h4>{% user_profile userprofile.user %}</h4>
+    <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h4>{% user_profile userprofile.user %}</h4>
+          </div>
+          <div class="card-body">
+            {% if userprofile.bio %}{{ userprofile.bio|default:'' | linebreaks }}{% endif %}
+            <div class="text-muted">Joined {{ userprofile.user.date_joined|date:'Y-m-d' }}</div>
+          </div>
         </div>
-        <div class="card-body">
-          {% if userprofile.bio %}{{ userprofile.bio|default:'' | linebreaks }}{% endif %}
-          <div class="text-muted">Joined {{ userprofile.user.date_joined|date:'Y-m-d' }}</div>
-        </div>
-        </a>
-      </div>
+    </div>
     {% endfor %}
   </div>
 

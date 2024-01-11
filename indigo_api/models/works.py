@@ -666,7 +666,7 @@ class Work(WorkMixin, models.Model):
         self.approved_at = None
         self.save_with_revision(user)
         action.send(user, verb='unapproved', action_object=self, place_code=self.place.place_code)
-        work_unapproved.send(sender=self)
+        work_unapproved.send(sender=self.__class__, work=self)
 
         # unpublish all documents
         for document in self.document_set.published():

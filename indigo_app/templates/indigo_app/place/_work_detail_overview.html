@@ -39,16 +39,18 @@
     {% endif %}
   {% endwith %}
 
-{% comment %}
-  <div class="mt-2">
+  <div>
     <button
-        class="btn btn-outline-primary"
-        hx-get="{% url 'work_edit_modal' work.frbr_uri %}"
-        hx-target="#work-edit-modal"
-        data-bs-toggle="modal"
-        data-bs-target="#work-edit-modal"
-    >{% trans "Edit" %}</button>
+        hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+        hx-target="#offCanvasEditWorkForm"
+        hx-swap="innerHTML"
+        class="btn btn-outline-primary btn-sm"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasEditWork"
+        aria-controls="offcanvasEditWork">
+      <span>Edit</span>
+    </button>
   </div>
-{% endcomment %}
 
 </dl>

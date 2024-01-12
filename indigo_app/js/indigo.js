@@ -60,6 +60,7 @@ class IndigoApp {
       this.createComponents(e.target);
       this.createVueComponents(e.target);
       relativeTimestamps(e.target);
+      this.disableWith();
       $('.selectpicker').selectpicker();
     });
   }
@@ -104,6 +105,26 @@ class IndigoApp {
       vue.$el.component = vue;
       this.components.push(vue);
     }
+  }
+
+  /** When a form is submitted, find elements that have data-disabled-with and disable them
+   * and change their text to the value of data-disabled-with.
+   */
+  disableWith () {
+    document.addEventListener('submit', (e) => {
+      // we iterate over elements rather than use querySelector, because buttons may be outside the form
+      // and link to it with their form attribute.
+      for (const el of e.target.elements) {
+        if (el.hasAttribute('data-disable-with')) {
+          el.textContent = el.getAttribute('data-disable-with');
+          el.removeAttribute('data-disable-with');
+          // do this asynchronously, so that the form is submitted with the button value, if any
+          setTimeout(() => {
+            el.disabled = true;
+          }, 10);
+        }
+      }
+    });
   }
 }
 

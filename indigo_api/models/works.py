@@ -1,7 +1,8 @@
 from copy import deepcopy
 from actstream import action
+from datetime import datetime
 from django.db.models import JSONField
-from django.db import models
+from django.db import models, IntegrityError, transaction
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -16,6 +17,7 @@ from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
+from indigo_api.signals import work_approved, work_unapproved
 from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
 
 
@@ -499,13 +501,21 @@ class Work(WorkMixin, models.Model):
     consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
     disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
 
+    work_in_progress = models.BooleanField(default=True, help_text="Work in progress, to be approved")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
+
+    @property
+    def approved(self):
+        return not self.work_in_progress
 
     @property
     def locality_code(self):
@@ -637,6 +647,31 @@ class Work(WorkMixin, models.Model):
 
     def as_at_date(self):
         return self.as_at_date_override or self.place.settings.as_at_date
+
+    def approve(self, user, request=None):
+        self.work_in_progress = False
+        self.approved_by_user = user
+        self.approved_at = datetime.now()
+        self.save_with_revision(user)
+        action.send(user, verb='approved', action_object=self, place_code=self.place.place_code)
+        try:
+            with transaction.atomic():
+                work_approved.send(sender=self.__class__, work=self, request=request)
+        except IntegrityError:
+            pass
+
+    def unapprove(self, user):
+        self.work_in_progress = True
+        self.approved_by_user = None
+        self.approved_at = None
+        self.save_with_revision(user)
+        action.send(user, verb='unapproved', action_object=self, place_code=self.place.place_code)
+        work_unapproved.send(sender=self.__class__, work=self)
+
+        # unpublish all documents
+        for document in self.document_set.published():
+            document.draft = True
+            document.save_with_revision(user, comment='This document was unpublished because its work was unapproved.')
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

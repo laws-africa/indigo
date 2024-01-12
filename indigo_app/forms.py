@@ -85,7 +85,6 @@ class WorkForm(forms.ModelForm):
             self.fields[key] = forms.CharField(label=label, required=False)
 
         if self.instance:
-            # self.fields['commencing_work'].initial = self.instance.commencing_work
             self.fields['frbr_doctype'].initial = self.instance.doctype
             self.fields['frbr_subtype'].initial = self.instance.subtype
             self.fields['frbr_date'].initial = self.instance.date
@@ -436,6 +435,7 @@ class WorkFilterForm(forms.Form):
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
     stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
+    work_in_progress = forms.MultipleChoiceField(choices=[('work_in_progress', 'Work in progress'), ('approved', 'Approved')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
@@ -474,6 +474,17 @@ class WorkFilterForm(forms.Form):
 
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
+
+        # filter by work in progress
+        if exclude != "work_in_progress":
+            work_in_progress_filter = self.cleaned_data.get('work_in_progress', [])
+            work_in_progress_qs = Q()
+            if "work_in_progress" in work_in_progress_filter:
+                work_in_progress_qs |= Q(work_in_progress=True)
+            if "approved" in work_in_progress_filter:
+                work_in_progress_qs |= Q(work_in_progress=False)
+
+            queryset = queryset.filter(work_in_progress_qs)
 
         # filter by stub
         if exclude != "stub":
@@ -825,11 +836,12 @@ class WorkBulkActionsForm(forms.Form):
     del_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
+    change_work_in_progress = forms.ChoiceField(choices=[('', ''), ('approved', 'Approved'), ('work_in_progress', 'Work in progress')], required=False)
 
     def clean_all_work_pks(self):
         return self.cleaned_data.get('all_work_pks').split() or []
 
-    def save_changes(self):
+    def save_changes(self, user, request):
         if self.cleaned_data.get('add_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
@@ -837,6 +849,19 @@ class WorkBulkActionsForm(forms.Form):
         if self.cleaned_data.get('del_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
+
+        if self.cleaned_data.get('change_work_in_progress'):
+            if self.cleaned_data['change_work_in_progress'] == 'approved':
+                for work in self.cleaned_data['works']:
+                    # only save if it's changed
+                    if work.work_in_progress:
+                        work.approve(user, request)
+
+            else:
+                for work in self.cleaned_data['works']:
+                    # only save if it's changed
+                    if work.approved:
+                        work.unapprove(user)
 
 
 class WorkChooserForm(forms.Form):

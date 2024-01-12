@@ -28,7 +28,17 @@
           </div>
 
           <div class="modal-body max-vh-60">
-            <div class="mb-3 col-md-10">
+
+            <div class="col-md-4 mb-3">
+              <label for="{{ form.change_work_in_progress.id_for_label }}">{% trans "Change work in progress" %}</label>
+              <select id="{{ form.change_work_in_progress.id_for_label }}" name="{{ form.change_work_in_progress.html_name }}" class="form-control">
+                {% for opt in form.change_work_in_progress %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-10 mb-3">
               <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
               <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
                       class="form-control selectpicker" multiple

@@ -5,12 +5,12 @@
     {% csrf_token %}
 
     {% if perms.indigo_api.change_amendment %}
-      <div class="dropdown float-right">
-        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+      <div class="dropdown float-end">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
           {% trans 'Options' %} <span class="caret"></span>
         </button>
         <div class="dropdown-menu">
-          <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">{% trans 'Change date' %}</a>
+          <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-bs-toggle="collapse">{% trans 'Change date' %}</a>
           {% if amendment.can_delete %}
             <button class="dropdown-item" type="submit" name="delete" data-confirm="{% trans 'Really delete this amendment?' %}">{% trans 'Delete' %}</button>
           {% endif %}
@@ -21,9 +21,9 @@
     {% include 'indigo_api/timeline/_timeline_entry_event.html' %}
 
     <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">
-      <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
+      <input type="text" class="form-control amendment-date me-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
       <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
-      <a href="#amendment-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">{% trans 'Cancel' %}</a>
+      <a href="#amendment-form-{{ amendment.id }}" class="btn btn-link" data-bs-toggle="collapse">{% trans 'Cancel' %}</a>
     </div>
   </form>
 {% endwith %}

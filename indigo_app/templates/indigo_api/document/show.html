@@ -22,9 +22,9 @@
               {{ document.work.numbered_title }}:
             {% endif %}
             <span class="document-title">{{ document.title }}</span>
-            <span class="badge badge-info if-published">{% trans 'published' %}</span>
-            <span class="badge badge-warning if-draft">{% trans 'draft' %}</span>
-            <span class="badge badge-info if-repealed">{% trans 'repealed' %}</span>
+            <span class="badge text-bg-info if-published">{% trans 'published' %}</span>
+            <span class="badge text-bg-warning if-draft">{% trans 'draft' %}</span>
+            <span class="badge text-bg-info if-repealed">{% trans 'repealed' %}</span>
           </h5>
         </div>
 
@@ -40,7 +40,7 @@
                       <span class="if-published">{% trans 'Save &amp; publish' %}</span>
                       <span class="if-draft">{% trans 'Save draft' %}</span>
                     </button>
-                    <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+                    <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                     <div class="dropdown-menu dropdown-menu-right">
                       <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
                       <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Unpublish &amp; save' %}</a>
@@ -89,7 +89,7 @@
     </li>
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
+      <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
       <div class="dropdown-menu">
         {{#each expressions}}
           {{#each documents}}

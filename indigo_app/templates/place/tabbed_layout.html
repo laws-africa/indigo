@@ -14,8 +14,8 @@
           <div class="btn-toolbar">
             {% with country.localities.all as locs %}
             {% if locs %}
-            <div class="dropdown ml-2">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="dropdown ms-2">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% if locality %}{% trans "Change locality" %}{% else %}{% trans "Choose locality" %}{% endif %}
               </button>
               <div class="dropdown-menu">
@@ -41,10 +41,10 @@
           <i class="fas fa-fw fa-book"></i> {% trans "Works" %}
         </a>
         <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
-          <i class="fas fa-fw fa-thumbtack"></i> {% trans "Tasks" %} <span class="badge badge-light">{{ place.place_tasks.unclosed.count }}</span>
+          <i class="fas fa-fw fa-thumbtack"></i> {% trans "Tasks" %} <span class="badge text-bg-light">{{ place.place_tasks.unclosed.count }}</span>
         </a>
         <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
-          <i class="fas fa-fw fa-tasks"></i> {% trans "Projects" %} <span class="badge badge-light">{{ place.place_workflows.unclosed.count }}</span>
+          <i class="fas fa-fw fa-tasks"></i> {% trans "Projects" %} <span class="badge text-bg-light">{{ place.place_workflows.unclosed.count }}</span>
         </a>
         <a class="nav-item nav-link {% if view.tab == 'insights' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">
           <i class="fa fa-fw fa-chart-bar"></i> {% trans "Insights" %}

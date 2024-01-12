@@ -11,7 +11,7 @@
   {% if version.revision.comment %}
     <span class="text-muted">· {{ version.revision.comment }}</span>
   {% endif %}
-  · <a href="#changes-{{ version.id }}" data-toggle="collapse">{% trans 'Show changes' %}</a>
+  · <a href="#changes-{{ version.id }}" data-bs-toggle="collapse">{% trans 'Show changes' %}</a>
 </div>
 
 <div class="card mt-3 collapse" id="changes-{{ version.id }}">

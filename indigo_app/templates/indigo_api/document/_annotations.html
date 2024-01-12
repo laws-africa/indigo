@@ -3,8 +3,8 @@
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
 {{#unless permissions.readonly }}
-  <div class="float-right">
-    <a href="#" class="dropdown-toggle btn btn-sm" data-toggle="dropdown"></a>
+  <div class="float-end">
+    <a href="#" class="dropdown-toggle btn btn-sm" data-bs-toggle="dropdown"></a>
     <div class="dropdown-menu">
       {{#unless in_reply_to}}
         {{#if permissions.can_change }}
@@ -44,5 +44,5 @@
 <div id="new-annotation-template" style="display: none">
   <textarea class="form-control" placeholder="{% trans 'Comment' %}..."></textarea>
   <button class="btn btn-primary btn-sm save" disabled>{% trans 'Comment' %}</button>
-  <button class="btn btn-outline-secondary btn-sm float-right cancel">{% trans 'Cancel' %}</button>
+  <button class="btn btn-outline-secondary btn-sm float-end cancel">{% trans 'Cancel' %}</button>
 </div>

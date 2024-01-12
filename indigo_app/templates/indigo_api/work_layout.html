@@ -43,7 +43,7 @@
             </a>
             <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-thumbtack"></i> {% trans 'Tasks' %}
-              <span class="badge badge-light">{{ work.tasks.unclosed.count }}</span>
+              <span class="badge text-bg-light">{{ work.tasks.unclosed.count }}</span>
             </a>
             <a class="nav-item nav-link {% if view.tab == 'related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-sitemap"></i> {% trans 'Related works' %}

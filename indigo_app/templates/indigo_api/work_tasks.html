@@ -4,7 +4,7 @@
 {% block title %}{% trans 'Tasks' %} – {{block.super }}{% endblock %}
 
 {% block work-content %}
-  <div class="text-right mb-3">
+  <div class="text-end mb-3">
     <a href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}" class="btn btn-success">
       {% trans 'Create task' %}
     </a>

@@ -5,15 +5,15 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="float-right">
+  <div class="float-end">
     {% if not workflow.closed %}
-      <button class="btn btn-success mr-2" data-toggle="modal" data-target="#workflow-add-tasks-modal">{% trans 'Add tasks' %}</button>
+      <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#workflow-add-tasks-modal">{% trans 'Add tasks' %}</button>
     {% endif %}
     <a href="{% url 'workflow_edit' place=place.place_code pk=workflow.pk %}" class="btn btn-primary">{% trans 'Edit project' %}</a>
   </div>
 
   <div class="d-flex mb-3">
-    <div class="mr-3 text-center">
+    <div class="me-3 text-center">
       <i class="fas fa-fw fa-tasks workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"></i><br>
       <span class="text-muted">#{{ workflow.pk }}</span>
     </div>
@@ -24,12 +24,12 @@
       {% if workflow.priority or workflow.due_date %}
         <div class="text-muted">
           {% if workflow.priority %}
-            <span class="mr-3 text-warning"><i class="fas fa-exclamation-circle"></i> {% trans 'Priority' %}</span>
+            <span class="me-3 text-warning"><i class="fas fa-exclamation-circle"></i> {% trans 'Priority' %}</span>
           {% endif %}
           {% if workflow.due_date %}
             {% trans 'Due on' %} {{ workflow.due_date|date:"Y-m-d" }}
             {% if workflow.overdue %}
-              <i class="ml-3 fas fa-exclamation-triangle"></i> {% trans 'Overdue' %}
+              <i class="ms-3 fas fa-exclamation-triangle"></i> {% trans 'Overdue' %}
             {% endif %}
           {% endif %}
         </div>
@@ -87,7 +87,7 @@
     {% else %}
       <div class="card-body text-center">
         <p>{% trans "Add some tasks to this project to get going." %}</p>
-        <button class="btn btn-success" data-toggle="modal" data-target="#workflow-add-tasks-modal">{% trans "Add tasks" %}</button>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#workflow-add-tasks-modal">{% trans "Add tasks" %}</button>
       </div>
     {% endif %}
   </div>
@@ -120,9 +120,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{% trans "Choose tasks to add to this project" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST" id="workflow-add-tasks-form">
@@ -133,7 +131,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
           <button type="submit" class="btn btn-primary workflow-add-tasks-save">{% trans "Add tasks" %}</button>
         </div>
       </form>

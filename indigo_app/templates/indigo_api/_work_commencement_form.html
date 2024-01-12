@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="form-group row">
+<div class="mb-3 row">
   <label class="col-2 col-form-label">{% trans 'Commenced by' %}</label>
   <div class="col">
     <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
@@ -20,13 +20,13 @@
         hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=work-commencing_work"
         hx-target="#work-commencing-work-modal"
         hx-trigger="click"
-        data-toggle="modal"
-        data-target="#work-commencing-work-modal"
+        data-bs-toggle="modal"
+        data-bs-target="#work-commencing-work-modal"
       >{% trans 'Choose work' %}</button>
 
       {% if commencing_work %}
         <button
-          class="btn btn-outline-danger ml-2"
+          class="btn btn-outline-danger ms-2"
           hx-get="{{ edit_url }}"
           hx-target="#work-form-commencing-work"
         >Clear</button>

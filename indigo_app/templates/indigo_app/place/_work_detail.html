@@ -3,60 +3,60 @@
 <ul class="nav nav-underline">
   <li class="nav-item">
     <a class="nav-link {% if tab == "overview" %}active{% endif %}"
-       href="#work-{{ work.pk }}-overview" data-toggle="tab">
+       href="#work-{{ work.pk }}-overview" data-bs-toggle="tab">
       {% trans "Overview" %}
     </a>
   </li>
   {% if n_documents %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "documents" %}active{% endif %}"
-         href="#work-{{ work.pk }}-documents" data-toggle="tab"
+         href="#work-{{ work.pk }}-documents" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-documents"
          hx-get="{% url 'place_works_work_documents' place=place.place_code pk=work.pk %}"
-      >{% trans "Points in time" %} <span class="badge badge-light">{{ n_documents }}</span></a>
+      >{% trans "Points in time" %} <span class="badge text-bg-light">{{ n_documents }}</span></a>
     </li>
   {% endif %}
   {% if n_commencements or n_commencements_made %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
-         href="#work-{{ work.pk }}-commencements" data-toggle="tab"
+         href="#work-{{ work.pk }}-commencements" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
          hx-get="{% url 'place_works_work_commencements' place=place.place_code pk=work.pk %}"
-      >{% trans "Commencements" %} <span class="badge badge-light">{{ n_commencements|default:'–' }}/{{ n_commencements_made|default:'–' }}</span></a>
+      >{% trans "Commencements" %} <span class="badge text-bg-light">{{ n_commencements|default:'–' }}/{{ n_commencements_made|default:'–' }}</span></a>
     </li>
   {% endif %}
   {% if n_amendments or n_amendments_made %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "amendments" %}active{% endif %}"
-         href="#work-{{ work.pk }}-amendments" data-toggle="tab"
+         href="#work-{{ work.pk }}-amendments" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
          hx-get="{% url 'place_works_work_amendments' place=place.place_code pk=work.pk %}"
-      >{% trans "Amendments" %} <span class="badge badge-light">{{ n_amendments|default:'–' }}/{{ n_amendments_made|default:'–' }}</span></a>
+      >{% trans "Amendments" %} <span class="badge text-bg-light">{{ n_amendments|default:'–' }}/{{ n_amendments_made|default:'–' }}</span></a>
     </li>
   {% endif %}
   {% if n_repeals or n_repeals_made %}
     <li class="nav-item">
-      <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-toggle="tab"
+      <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-repeals"
          hx-get="{% url 'place_works_work_repeals' place=place.place_code pk=work.pk %}"
-      >{% trans "Repeals" %} <span class="badge badge-light">{{ n_repeals|default:'–' }}/{{ n_repeals_made|default:'–' }}</span></a>
+      >{% trans "Repeals" %} <span class="badge text-bg-light">{{ n_repeals|default:'–' }}/{{ n_repeals_made|default:'–' }}</span></a>
     </li>
   {% endif %}
   {% if n_primary_works or n_subsidiary_works %}
     <li class="nav-item">
-      <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-toggle="tab"
+      <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-subsidiary"
          hx-get="{% url 'place_works_work_subsidiary' place=place.place_code pk=work.pk %}"
-      >{% trans "Subsidiary" %} <span class="badge badge-light">{{ n_primary_works|default:'–' }}/{{ n_subsidiary_works|default:'–' }}</span></a>
+      >{% trans "Subsidiary" %} <span class="badge text-bg-light">{{ n_primary_works|default:'–' }}/{{ n_subsidiary_works|default:'–' }}</span></a>
     </li>
   {% endif %}
   {% if n_tasks %}
     <li class="nav-item">
       <a class="nav-link {% if tab == "tasks" %}active{% endif %}"
-         href="#work-{{ work.pk }}-tasks" data-toggle="tab"
+         href="#work-{{ work.pk }}-tasks" data-bs-toggle="tab"
          hx-trigger="click once" hx-target="#work-{{ work.pk }}-tasks"
          hx-get="{% url 'place_works_work_tasks' place=place.place_code pk=work.pk %}"
-      >{% trans "Tasks" %} <span class="badge badge-light">{{ n_tasks }}</span></a>
+      >{% trans "Tasks" %} <span class="badge text-bg-light">{{ n_tasks }}</span></a>
     </li>
   {% endif %}
 </ul>

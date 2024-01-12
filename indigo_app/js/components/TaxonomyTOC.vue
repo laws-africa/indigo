@@ -70,7 +70,7 @@ export default {
 
       if (tocItem.item.data.count !== undefined && !action.querySelector('.badge')) {
         const count = document.createElement('div');
-        count.className = 'badge bg-light';
+        count.className = 'badge text-bg-light';
         count.innerText = (tocItem.item.data.count || '0') + (tocItem.item.children ? `/${tocItem.item.data.total}` : '');
         action.appendChild(count);
       }

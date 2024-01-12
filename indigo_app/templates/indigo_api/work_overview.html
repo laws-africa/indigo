@@ -3,7 +3,7 @@
 
 {% block work-content %}
 
-  <div class="float-right">
+  <div class="float-end">
     {% block work-buttons %}
       {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
         <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
@@ -20,7 +20,7 @@
 
   {% block country %}
   <div class="mb-3">
-    <div class="float-right">
+    <div class="float-end">
       {% if work.updated_by_user %}
         {% user_profile work.updated_by_user %}
       {% endif %}
@@ -215,14 +215,14 @@
           <div>
             {% include 'indigo_metrics/_progress_ball.html' with size=70 progress=work.metrics.p_breadth_complete %}
           </div>
-          <div class="ml-2 mt-2">
+          <div class="ms-2 mt-2">
             <h3 class="mb-0">{{ work.metrics.p_breadth_complete|floatformat:0 }}%</h3>
             {% trans 'Complete' %}
           </div>
         </div>
 
         {% if work.metrics.p_complete < 100 %}
-          <ul class="mb-0 mt-3 pl-4">
+          <ul class="mb-0 mt-3 ps-4">
             {% if not work.publication_document %}
               <li>{% trans 'Add a publication document.' %}</li>
             {% endif %}
@@ -237,7 +237,7 @@
 
   {% block points_in_time %}
   <div class="row mb-3 mt-5">
-    <div class="col text-right">
+    <div class="col text-end">
       <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">{% trans 'Manage points in time' %}</a>
     </div>
   </div>
@@ -269,7 +269,7 @@
               <ul class="list-unstyled mb-0">
                 {% for user in contributors %}
                   <li>
-                    <span class="float-right">
+                    <span class="float-end">
                       {% blocktrans trimmed count count=user.task_count %}
                         {{ user.task_count }} task
                       {% plural %}

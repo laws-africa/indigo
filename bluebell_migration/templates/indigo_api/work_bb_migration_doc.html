@@ -12,7 +12,7 @@
   <div class="container-fluid pt-3 pb-5">
     <h4>
       {% if doc.deleted %}
-        #{{ doc.pk }} {{ doc.title }} <span class="badge badge-info">deleted</span>
+        #{{ doc.pk }} {{ doc.title }} <span class="badge text-bg-info">deleted</span>
       {% else %}
         <a href="{% url 'document' doc_id=doc.pk %}">#{{ doc.pk }} {{ doc.title }}</a>
       {% endif %}
@@ -29,7 +29,7 @@
 
       <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-          <a class="nav-link active" href="#stability" data-toggle="tab">
+          <a class="nav-link active" href="#stability" data-bs-toggle="tab">
             Stability check
             {% if stability_passed %}
               <i class="fa fa-check-circle text-success"></i>
@@ -40,7 +40,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#content-fingerprint" data-toggle="tab">
+          <a class="nav-link" href="#content-fingerprint" data-bs-toggle="tab">
             Content fingerprint check
             {% if content_fingerprint_passed %}
               <i class="fa fa-check-circle text-success"></i>
@@ -51,7 +51,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#validation" data-toggle="tab">
+          <a class="nav-link" href="#validation" data-bs-toggle="tab">
             Validation
             {% if validates %}
               <i class="fa fa-check-circle text-success"></i>
@@ -62,15 +62,15 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#migrated-xml" data-toggle="tab">Original vs migrated XML</a>
+          <a class="nav-link" href="#migrated-xml" data-bs-toggle="tab">Original vs migrated XML</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#migrated-unparsed" data-toggle="tab">Original vs migrated unparsed</a>
+          <a class="nav-link" href="#migrated-unparsed" data-bs-toggle="tab">Original vs migrated unparsed</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#migrated-quality" data-toggle="tab">Re-parsed XML vs migrated XML</a>
+          <a class="nav-link" href="#migrated-quality" data-bs-toggle="tab">Re-parsed XML vs migrated XML</a>
         </li>
       </ul>
 

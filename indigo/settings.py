@@ -284,7 +284,7 @@ PIPELINE = {
                 'bower_components/underscore/underscore-min.js',
                 'bower_components/backbone/backbone.js',
                 'bower_components/backbone.stickit/backbone.stickit.js',
-                'lib/bootstrap-4.3.1/dist/js/bootstrap.bundle.min.js',
+                'lib/bootstrap-5.3.2/dist/js/bootstrap.bundle.min.js',
                 'lib/bootstrap-select/js/bootstrap-select.min.js',
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',

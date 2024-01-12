@@ -37,7 +37,7 @@
   <hr>
 
   <div class="row">
-    <div class="col-md-2 col-sm-3 ml-auto mb-3">
+    <div class="col-md-2 col-sm-3 ms-auto mb-3">
       <form method="GET">
         <select name="days" class="form-control form-control-inline" onchange="this.form.submit();">
           {% for n, label in day_options %}
@@ -63,7 +63,7 @@
           <div>
             {% include 'indigo_metrics/_progress_ball.html' with size=100 progress=latest_stat.p_breadth_complete %}
           </div>
-          <div class="ml-3">
+          <div class="ms-3">
             <h3 class="mb-0">{{ latest_stat.p_breadth_complete }}%</h3>
             <h5>{% trans "Complete" %}</h5>
           </div>

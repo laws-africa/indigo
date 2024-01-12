@@ -3,9 +3,9 @@
 <div class="popup-content lh-compact">
   {% block user_popup %}
 
-  <div class="media mb-2">
+  <div class="d-flex mb-2">
     {% user_profile_photo_thumbnail user height=40 width=40 %}
-    <div class="media-body ml-2">
+    <div class="flex-grow-1 ms-2">
       <h6>
         {% if not user.first_name %}
           {{ user.username }}

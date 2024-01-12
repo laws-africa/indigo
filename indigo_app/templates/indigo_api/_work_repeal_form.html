@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="form-group row">
+<div class="mb-3 row">
   <label class="col-2 col-form-label">{% trans 'Repealed by' %}</label>
   <div class="col">
     <input type="hidden" id="{{ form.repealed_by.id_for_label }}" name="{{ form.repealed_by.html_name }}" value="{{ form.repealed_by.value|default:'' }}">
@@ -20,13 +20,13 @@
         hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
         hx-target="#work-repeal-modal"
         hx-trigger="click"
-        data-toggle="modal"
-        data-target="#work-repeal-modal"
+        data-bs-toggle="modal"
+        data-bs-target="#work-repeal-modal"
       >{% trans 'Choose repealing work' %}</button>
 
       {% if work.repealed_by %}
         <button
-          class="btn btn-outline-danger ml-2"
+          class="btn btn-outline-danger ms-2"
           hx-get="{{ edit_url }}"
           hx-target="#work-form-repeal"
         >Clear</button>
@@ -36,7 +36,7 @@
 </div>
 
 {% if work.repealed_by %}
-  <div class="form-group row">
+  <div class="mb-3 row">
     <label class="col-2 col-form-label required">{% trans 'Repeal date' %}</label>
     <div class="col">
       <input type="date" class="form-control"

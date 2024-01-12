@@ -6,16 +6,16 @@
 
       <div class="modal-header">
         <h5 class="modal-title">{% trans 'Italicised terms' %}</h5>
-        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#this-document-italics-terms">{% trans 'In this document' %}</a>
+            <a class="nav-link active" data-bs-toggle="tab" href="#this-document-italics-terms">{% trans 'In this document' %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#country-italics-terms">{% blocktrans %}In {{ country }}{% endblocktrans %}</a>
+            <a class="nav-link" data-bs-toggle="tab" href="#country-italics-terms">{% blocktrans %}In {{ country }}{% endblocktrans %}</a>
           </li>
         </ul>
         <div class="tab-content mt-3">
@@ -48,7 +48,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary remove-italics"><i class="fas fa-times"></i> {% trans 'Remove italics' %}</button>
         <button type="button" class="btn btn-outline-secondary mark-up-italics"><i class="fas fa-sync"></i> {% trans 'Mark up italics' %}</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Close' %}</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans 'Close' %}</button>
       </div>
 
     </div>

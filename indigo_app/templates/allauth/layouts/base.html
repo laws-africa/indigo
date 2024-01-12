@@ -6,18 +6,18 @@
 {% block standalone-content %}
 
   <div class="card allauth-box">
-    <div class="card-header text-right">
+    <div class="card-header text-end">
       <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
     </div>
     <div class="card-body">
       {% block content %}{% endblock %}
     </div>
     <div class="card-footer">
-      <div class="float-right text-right">
+      <div class="float-end text-end">
         <a href="{% url 'terms_of_use' %}">{% trans 'Terms of Use and Privacy Policy' %}</a>
       </div>
       {% if SUPPORT_EMAIL %}
-      <div class="float-left">
+      <div class="float-start">
         {% blocktrans with email=SUPPORT_EMAIL %}Need help? Please <a href="mailto:{{ email }}">email us</a>{% endblocktrans %}.
       </div>
       {% endif %}

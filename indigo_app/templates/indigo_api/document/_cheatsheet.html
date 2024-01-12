@@ -3,8 +3,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Editor help</h5>
-        <input type="text" class="ml-auto form-control search" style="width: 250px" placeholder="Search...">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <input type="text" class="ms-auto form-control search" style="width: 250px" placeholder="Search...">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="scrollable ace-xcode">
 
@@ -13,7 +13,7 @@
 
           {% block cheat-preface %}
           <div class="card">
-            <a href="#cheat-preface" data-toggle="collapse" class="card-header">Starting the Preface</a>
+            <a href="#cheat-preface" data-bs-toggle="collapse" class="card-header">Starting the Preface</a>
             <div id="cheat-preface" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Mark the start of the Preface, before the Preamble and body.</p>
@@ -28,7 +28,7 @@ This is the preface of the Act.</pre>
 
           {% block cheat-preamble %}
           <div class="card">
-            <a href="#cheat-preamble" data-toggle="collapse" class="card-header">Starting the Preamble</a>
+            <a href="#cheat-preamble" data-bs-toggle="collapse" class="card-header">Starting the Preamble</a>
             <div id="cheat-preamble" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Mark the start of the Preamble, after the Preface and before the body.</p>
@@ -43,7 +43,7 @@ This is the preamble of the Act.</pre>
 
           {% block cheat-longtitle %}
           <div class="card">
-            <a href="#cheat-longtitle" data-toggle="collapse" class="card-header">Markup the long title</a>
+            <a href="#cheat-longtitle" data-bs-toggle="collapse" class="card-header">Markup the long title</a>
             <div id="cheat-longtitle" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence "BE IT ENACTED..."</p>
@@ -66,7 +66,7 @@ This is the preamble of the Act.</pre>
 
           {% block cheat-body %}
           <div class="card">
-            <a href="#cheat-body" data-toggle="collapse" class="card-header">Starting the body of the document</a>
+            <a href="#cheat-body" data-bs-toggle="collapse" class="card-header">Starting the body of the document</a>
             <div id="cheat-body" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble.</p>
@@ -81,7 +81,7 @@ This is the body of the Act.</pre>
 
           {% block cheat-chapter %}
           <div class="card">
-            <a href="#cheat-chapter" data-toggle="collapse" class="card-header">Starting a new Chapter</a>
+            <a href="#cheat-chapter" data-bs-toggle="collapse" class="card-header">Starting a new Chapter</a>
             <div id="cheat-chapter" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start a Chapter with <code>Chapter</code> and a number. The title is optional.</p>
@@ -106,7 +106,7 @@ This is the body of the Chapter.</pre>
 
           {% block cheat-part %}
           <div class="card">
-            <a href="#cheat-part" data-toggle="collapse" class="card-header">Starting a new Part</a>
+            <a href="#cheat-part" data-bs-toggle="collapse" class="card-header">Starting a new Part</a>
             <div id="cheat-part" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start a Part with <code>Part</code> and a number. The title is optional.</p>
@@ -131,7 +131,7 @@ This is the body of the Part.</pre>
 
           {% block cheat-subpart %}
             <div class="card">
-              <a href="#cheat-subpart" data-toggle="collapse" class="card-header">Starting a new Subpart</a>
+              <a href="#cheat-subpart" data-bs-toggle="collapse" class="card-header">Starting a new Subpart</a>
               <div id="cheat-subpart" class="collapse" data-parent="#cheat-accordion">
                 <div class="card-body">
                   <p>A subpart is a grouping container, like a Part, but without "Part" in the generated heading.</p>
@@ -157,7 +157,7 @@ This is the body of the Subpart.</pre>
 
           {% block cheat-crossheading %}
           <div class="card">
-            <a href="#cheat-crossheading" data-toggle="collapse" class="card-header">Include a Crossheading</a>
+            <a href="#cheat-crossheading" data-bs-toggle="collapse" class="card-header">Include a Crossheading</a>
             <div id="cheat-crossheading" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.</p>
@@ -179,7 +179,7 @@ This is the body of the Subpart.</pre>
 
           {% block cheat-section %}
           <div class="card">
-            <a href="#cheat-section" data-toggle="collapse" class="card-header">Starting a Section</a>
+            <a href="#cheat-section" data-bs-toggle="collapse" class="card-header">Starting a Section</a>
             <div id="cheat-section" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.</p>
@@ -204,7 +204,7 @@ This is the body of the section.</pre>
 
           {% block cheat-subsection %}
           <div class="card">
-            <a href="#cheat-subsection" data-toggle="collapse" class="card-header">Starting a Subsection</a>
+            <a href="#cheat-subsection" data-bs-toggle="collapse" class="card-header">Starting a Subsection</a>
             <div id="cheat-subsection" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.</p>
@@ -226,7 +226,7 @@ This is the body of the section.</pre>
 
           {% block cheat-blocklist %}
           <div class="card">
-            <a href="#cheat-blocklist" data-toggle="collapse" class="card-header">Create a numbered list (a blocklist)</a>
+            <a href="#cheat-blocklist" data-bs-toggle="collapse" class="card-header">Create a numbered list (a blocklist)</a>
             <div id="cheat-blocklist" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).</p>
@@ -284,7 +284,7 @@ This is the body of the section.</pre>
 
           {% block cheat-special %}
           <div class="card">
-            <a href="#cheat-special" data-toggle="collapse" class="card-header">Insert a special character</a>
+            <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">Insert a special character</a>
             <div id="cheat-special" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.</p>
@@ -295,7 +295,7 @@ This is the body of the section.</pre>
 
           {% block cheat-italics %}
           <div class="card">
-            <a href="#cheat-italics" data-toggle="collapse" class="card-header">Make text italics</a>
+            <a href="#cheat-italics" data-bs-toggle="collapse" class="card-header">Make text italics</a>
             <div id="cheat-italics" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Display a word or a sentence as italics using <code>//word//</code>. Do this for Latin, foreign and other special terms.</p>
@@ -318,7 +318,7 @@ This is the body of the section.</pre>
 
           {% block cheat-bold %}
           <div class="card">
-            <a href="#cheat-bold" data-toggle="collapse" class="card-header">Make text bold</a>
+            <a href="#cheat-bold" data-bs-toggle="collapse" class="card-header">Make text bold</a>
             <div id="cheat-bold" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms.</p>
@@ -340,7 +340,7 @@ This is the body of the section.</pre>
 
           {% block cheat-underline %}
             <div class="card">
-              <a href="#cheat-underline" data-toggle="collapse" class="card-header">Underline text</a>
+              <a href="#cheat-underline" data-bs-toggle="collapse" class="card-header">Underline text</a>
               <div id="cheat-underline" class="collapse" data-parent="#cheat-accordion">
                 <div class="card-body">
                   <p>Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.</p>
@@ -362,7 +362,7 @@ This is the body of the section.</pre>
 
           {% block cheat-weblink %}
           <div class="card">
-            <a href="#cheat-weblink" data-toggle="collapse" class="card-header">Add a link to a webpage</a>
+            <a href="#cheat-weblink" data-bs-toggle="collapse" class="card-header">Add a link to a webpage</a>
             <div id="cheat-weblink" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Link to a webpage using <code>[link text](http://example.com/the-link)</code>.</p>
@@ -384,7 +384,7 @@ This is the body of the section.</pre>
 
           {% block cheat-aknlink %}
           <div class="card">
-            <a href="#cheat-aknlink" data-toggle="collapse" class="card-header">Add a link to an Act or Work</a>
+            <a href="#cheat-aknlink" data-bs-toggle="collapse" class="card-header">Add a link to an Act or Work</a>
             <div id="cheat-aknlink" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Link to another Act or Work using <code>[link text](frbr-uri)</code>, where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>.</p>
@@ -406,7 +406,7 @@ This is the body of the section.</pre>
 
           {% block cheat-image %}
           <div class="card">
-            <a href="#cheat-image" data-toggle="collapse" class="card-header">Insert an image</a>
+            <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">Insert an image</a>
             <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>
@@ -431,7 +431,7 @@ This is the body of the section.</pre>
 
           {% block cheat-remark %}
           <div class="card">
-            <a href="#cheat-remark" data-toggle="collapse" class="card-header">Add an editorial remark</a>
+            <a href="#cheat-remark" data-bs-toggle="collapse" class="card-header">Add an editorial remark</a>
             <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.</p>
@@ -455,7 +455,7 @@ This is the body of the section.</pre>
 
           {% block cheat-escape %}
           <div class="card">
-            <a href="#cheat-escape" data-toggle="collapse" class="card-header">Ignore text that looks like a chapter, part or section but isn't</a>
+            <a href="#cheat-escape" data-bs-toggle="collapse" class="card-header">Ignore text that looks like a chapter, part or section but isn't</a>
             <div id="cheat-escape" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>
@@ -484,7 +484,7 @@ This is the body of the section.</pre>
 
           {% block cheat-schedule %}
           <div class="card">
-            <a href="#cheat-schedule" data-toggle="collapse" class="card-header">Starting a Schedule</a>
+            <a href="#cheat-schedule" data-bs-toggle="collapse" class="card-header">Starting a Schedule</a>
             <div id="cheat-schedule" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Start a schedule using <code>SCHEDULE</code>.</p>
@@ -538,7 +538,7 @@ This is the body of the first schedule.</pre>
 
           {% block cheat-table %}
           <div class="card">
-            <a href="#cheat-table" data-toggle="collapse" class="card-header">Insert a table</a>
+            <a href="#cheat-table" data-bs-toggle="collapse" class="card-header">Insert a table</a>
             <div id="cheat-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.</p>
@@ -597,7 +597,7 @@ This is the body of the first schedule.</pre>
 
           {% block cheat-convert-table %}
           <div class="card">
-            <a href="#cheat-convert-table" data-toggle="collapse" class="card-header">Convert lines of text into a table</a>
+            <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">Convert lines of text into a table</a>
             <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.</p>
@@ -634,7 +634,7 @@ Line 3</pre>
 
           {% block cheat-paste-table %}
           <div class="card">
-            <a href="#cheat-paste-table" data-toggle="collapse" class="card-header">Paste a table</a>
+            <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">Paste a table</a>
             <div id="cheat-paste-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode.</p>
@@ -651,10 +651,10 @@ Line 3</pre>
       </div>
       <div class="modal-footer">
         {% if place.settings.styleguide_url %}
-          <a class="btn btn-outline-secondary mr-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-question-circle fa-fw"></i> {{ work.country.name }} Style Guide</a>
+          <a class="btn btn-outline-secondary me-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-question-circle fa-fw"></i> {{ work.country.name }} Style Guide</a>
         {% endif %}
-        <a class="btn btn-outline-secondary mr-2" href="{% url 'help' %}" target="_blank">Full editor documentation</a>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <a class="btn btn-outline-secondary me-2" href="{% url 'help' %}" target="_blank">Full editor documentation</a>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

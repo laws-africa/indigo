@@ -2,80 +2,83 @@
 
 {% if works %}
   {% block actions %}
-    {% block action-bulk-update %}
-  <div class="mx-3">
-    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#bulk-update-modal">
-      {% blocktrans with works_length=works|length %}Update {{ works_length }} selected{% endblocktrans %}
-    </button>
-  </div>
+    <div class="btn-toolbar mx-3">
+      {% block actions-toolbar %}
+        <div class="me-2">
+          {% block action-bulk-update %}
+            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#bulk-update-modal">
+              {% blocktrans with works_length=works|length %}Update {{ works_length }} selected...{% endblocktrans %}
+            </button>
+            <form method="post" action="{% url 'place_works_actions' place=place.place_code %}">
+              {% csrf_token %}
 
-  <form method="post" action="{% url 'place_works_actions' place=place.place_code %}">
-    {% csrf_token %}
-
-    <input type="hidden" name="save" value="1">
-    {% for work in works %}
-      <input type="hidden" name="works" value="{{ work.pk }}">
-    {% endfor %}
-
-    <div class="modal fade" tabindex="-1" id="bulk-update-modal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content min-vh-60">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              {% blocktrans with works_length=works|length %}Update {{ works_length }} works{% endblocktrans %}
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-
-          <div class="modal-body max-vh-60">
-
-            <div class="col-md-4 mb-3">
-              <label for="{{ form.change_work_in_progress.id_for_label }}">{% trans "Change work in progress" %}</label>
-              <select id="{{ form.change_work_in_progress.id_for_label }}" name="{{ form.change_work_in_progress.html_name }}" class="form-control">
-                {% for opt in form.change_work_in_progress %}
-                  {{ opt }}
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="col-md-10 mb-3">
-              <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
-              <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
-                      class="form-control selectpicker" multiple
-                      data-live-search="true" data-size="8" data-selected-text-format="count > 3">
-                {% for topic in form.fields.add_taxonomy_topics.queryset %}
-                  <option value="{{ topic.pk }}" data-tokens="{{ topic.get_ancestors }}">
-                    {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label>{% trans "Remove taxonomy topics" %}</label>
-
-              {% for topic in taxonomy_topics %}
-                <div>
-                  <input type="checkbox" name="del_taxonomy_topics" value="{{ topic.pk }}" id="del_taxonomy_topics_{{ forloop.counter }}">
-                  <label for="del_taxonomy_topics_{{ forloop.counter }}">
-                    {% for item in topic.get_ancestors %}
-                      {{ item }} &rsaquo;
-                    {% endfor %}
-                    {{ topic }}
-                  </label>
-                </div>
+              <input type="hidden" name="save" value="1">
+              {% for work in works %}
+                <input type="hidden" name="works" value="{{ work.pk }}">
               {% endfor %}
-            </div>
-          </div>
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-            <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
-          </div>
+              <div class="modal fade" tabindex="-1" id="bulk-update-modal">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content min-vh-60">
+                    <div class="modal-header">
+                      <h5 class="modal-title">
+                        {% blocktrans with works_length=works|length %}Update {{ works_length }} works{% endblocktrans %}
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body max-vh-60">
+
+                      <div class="col-md-4 mb-3">
+                        <label for="{{ form.change_work_in_progress.id_for_label }}">{% trans "Change work in progress" %}</label>
+                        <select id="{{ form.change_work_in_progress.id_for_label }}" name="{{ form.change_work_in_progress.html_name }}" class="form-control">
+                          {% for opt in form.change_work_in_progress %}
+                            {{ opt }}
+                          {% endfor %}
+                        </select>
+                      </div>
+
+                      <div class="col-md-10 mb-3">
+                        <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
+                        <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
+                                class="form-control selectpicker" multiple
+                                data-live-search="true" data-size="8" data-selected-text-format="count > 3">
+                          {% for topic in form.fields.add_taxonomy_topics.queryset %}
+                            <option value="{{ topic.pk }}" data-tokens="{{ topic.get_ancestors }}">
+                              {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
+                            </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label>{% trans "Remove taxonomy topics" %}</label>
+
+                        {% for topic in taxonomy_topics %}
+                          <div>
+                            <input type="checkbox" name="del_taxonomy_topics" value="{{ topic.pk }}" id="del_taxonomy_topics_{{ forloop.counter }}">
+                            <label for="del_taxonomy_topics_{{ forloop.counter }}">
+                              {% for item in topic.get_ancestors %}
+                                {{ item }} &rsaquo;
+                              {% endfor %}
+                              {{ topic }}
+                            </label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                      <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          {% endblock %}
         </div>
-      </div>
+      {% endblock actions-toolbar %}
     </div>
-  </form>
-    {% endblock %}
-  {% endblock %}
+  {% endblock actions %}
 {% endif %}

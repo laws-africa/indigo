@@ -15,21 +15,21 @@
     <div>
       {% url 'work_form_repeal' place.place_code as edit_url %}
       <button
-        class="btn btn-outline-primary"
-        type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
-        hx-target="#work-repeal-modal"
-        hx-trigger="click"
-        data-bs-toggle="modal"
-        data-bs-target="#work-repeal-modal"
+          class="btn btn-outline-primary"
+          type="button"
+          hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
+          hx-target="#work-repeal-modal"
+          hx-trigger="click"
+          data-bs-toggle="modal"
+          data-bs-target="#work-repeal-modal"
       >{% trans 'Choose repealing work' %}</button>
 
       {% if work.repealed_by %}
         <button
-          class="btn btn-outline-danger ms-2"
-          hx-get="{{ edit_url }}"
-          hx-target="#work-form-repeal"
-        >Clear</button>
+            class="btn btn-outline-danger ms-2"
+            hx-get="{{ edit_url }}"
+            hx-target="#work-form-repeal"
+        >{% trans 'Clear' %}</button>
       {% endif %}
     </div>
   </div>
@@ -38,20 +38,23 @@
 {% if work.repealed_by %}
   <div class="mb-3 row">
     <label class="col-2 col-form-label required">{% trans 'Repeal date' %}</label>
-    <div class="col">
+    <div class="col-4">
       <input type="date" class="form-control"
              id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}"
              required
              value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
     </div>
+    <div class="col-6 form-text text-muted">
+      {% trans 'The default date of repeal is the date of commencement of the selected repealing work.' %}
+    </div>
   </div>
 {% endif %}
 
 <div
-  id="work-repeal-modal"
-  class="modal modal-blur fade"
-  style="display: none"
-  tabindex="-1"
+    id="work-repeal-modal"
+    class="modal modal-blur fade"
+    style="display: none"
+    tabindex="-1"
 >
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">Loading...</div>

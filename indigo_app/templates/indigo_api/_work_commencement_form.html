@@ -2,7 +2,7 @@
 
 <div class="mb-3 row">
   <label class="col-2 col-form-label">{% trans 'Commenced by' %}</label>
-  <div class="col">
+  <div class="col-4">
     <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
     {% if commencing_work %}
       <div class="mb-2">
@@ -15,33 +15,32 @@
     <div>
       {% url 'work_form_commencement' place.place_code as edit_url %}
       <button
-        class="btn btn-outline-primary"
-        type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=work-commencing_work"
-        hx-target="#work-commencing-work-modal"
-        hx-trigger="click"
-        data-bs-toggle="modal"
-        data-bs-target="#work-commencing-work-modal"
-      >{% trans 'Choose work' %}</button>
+          class="btn btn-outline-primary"
+          type="button"
+          hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work"|urlencode }}&field=work-commencing_work"
+          hx-target="#work-commencing-work-modal"
+          hx-trigger="click"
+          data-bs-toggle="modal"
+          data-bs-target="#work-commencing-work-modal"
+      >{% trans 'Choose commencing work' %}</button>
 
       {% if commencing_work %}
         <button
-          class="btn btn-outline-danger ms-2"
-          hx-get="{{ edit_url }}"
-          hx-target="#work-form-commencing-work"
-        >Clear</button>
+            class="btn btn-outline-danger ms-2"
+            hx-get="{{ edit_url }}"
+            hx-target="#work-form-commencing-work"
+        >{% trans 'Clear' %}</button>
       {% endif %}
     </div>
-
-    <div class="form-text text-muted">{% trans 'The work that gives the commencement date of this work.' %}</div>
   </div>
+  <div class="col-6 form-text text-muted">{% trans 'The work that brings this work into force.' %}</div>
 </div>
 
 <div
-  id="work-commencing-work-modal"
-  class="modal modal-blur fade"
-  style="display: none"
-  tabindex="-1"
+    id="work-commencing-work-modal"
+    class="modal modal-blur fade"
+    style="display: none"
+    tabindex="-1"
 >
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">Loading...</div>

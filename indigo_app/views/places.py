@@ -804,6 +804,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         # build facets
         context["work_facets"] = work_facets = []
         self.facet_subtype(work_facets, qs)
+        self.facet_work_in_progress(work_facets, qs)
         self.facet_principal(work_facets, qs)
         self.facet_stub(work_facets, qs)
         self.facet_tasks(work_facets, qs)
@@ -887,6 +888,28 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
             ),
         ]
         facets.append(Facet("Stubs", "stub", "checkbox", items))
+
+    def facet_work_in_progress(self, facets, qs):
+        qs = self.form.filter_queryset(qs, exclude="work_in_progress")
+        counts = qs.aggregate(
+            work_in_progress_counts=Count("pk", filter=Q(work_in_progress=True), distinct=True),
+            approved_counts=Count("pk", filter=Q(work_in_progress=False), distinct=True),
+        )
+        items = [
+            FacetItem(
+                "Work in progress",
+                "work_in_progress",
+                counts.get("work_in_progress_counts", 0),
+                "work_in_progress" in self.form.cleaned_data.get("work_in_progress", [])
+            ),
+            FacetItem(
+                "Approved",
+                "approved",
+                counts.get("approved_counts", 0),
+                "approved" in self.form.cleaned_data.get("work_in_progress", [])
+            ),
+        ]
+        facets.append(Facet("Work in progress", "work_in_progress", "checkbox", items))
 
     def facet_tasks(self, facets, qs):
         qs = self.form.filter_queryset(qs, exclude="tasks")
@@ -1169,7 +1192,7 @@ class WorkActionsView(PlaceViewBase, FormView):
 
     def form_valid(self, form):
         if form.cleaned_data['save'] and self.request.user.has_perm('indigo_api.change_work'):
-            form.save_changes()
+            form.save_changes(self.request.user, self.request)
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
                 self.request.META.get('HTTP_REFERER')

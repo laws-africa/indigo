@@ -175,6 +175,28 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class ApproveWorkView(WorkViewBase, View):
+    permission_required = ('indigo_api.bulk_add_work',)
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        self.change_work_in_progress()
+        return redirect(reverse('work', kwargs={'frbr_uri': self.work.frbr_uri}))
+
+    def change_work_in_progress(self):
+        work = self.get_object()
+        user = self.request.user
+        work.approve(user, self.request)
+
+
+class UnapproveWorkView(ApproveWorkView):
+
+    def change_work_in_progress(self):
+        work = self.get_object()
+        user = self.request.user
+        work.unapprove(user)
+
+
 class EditWorkModalView(EditWorkView):
     template_name = "indigo_api/_work_form_modal.html"
 

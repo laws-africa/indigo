@@ -97,7 +97,9 @@ class AttributeDifferTestCase(TestCase):
         self.differ = AttributeDiffer()
 
     def test_diff_lists_deleted(self):
-        diffs = self.differ.diff_lists('test', 'Test', ['1', '2', '3'], ['1', '3'])
+        old_list = ['1', '2', '3']
+        new_list = ['1', '3']
+        diffs = self.differ.diff_lists('test', 'Test', old_list, new_list)
         self.assertEqual({
             'attr': 'test',
             'title': 'Test',
@@ -113,11 +115,15 @@ class AttributeDifferTestCase(TestCase):
             }, {
                 'html_new': '3',
                 'html_old': '3'
-            }]},
-            diffs)
+            }],
+            'old': old_list,
+            'new': new_list
+        }, diffs)
 
     def test_diff_lists_empty(self):
-        diffs = self.differ.diff_lists('test', 'Test', ['1', '2', '3'], [])
+        old_list = ['1', '2', '3']
+        new_list = []
+        diffs = self.differ.diff_lists('test', 'Test', old_list, new_list)
         self.assertEqual({
             'attr': 'test',
             'title': 'Test',
@@ -137,11 +143,15 @@ class AttributeDifferTestCase(TestCase):
                 'html_old': '<del>3</del>',
                 'new': None,
                 'old': '3'
-            }]},
-            diffs)
+            }],
+            'old': old_list,
+            'new': new_list
+        }, diffs)
 
     def test_diff_lists_added(self):
-        diffs = self.differ.diff_lists('test', 'Test', ['1', '3'], ['1', '2', '3'])
+        old_list = ['1', '3']
+        new_list = ['1', '2', '3']
+        diffs = self.differ.diff_lists('test', 'Test', old_list, new_list)
         self.assertEqual({
             'attr': 'test',
             'title': 'Test',
@@ -157,22 +167,26 @@ class AttributeDifferTestCase(TestCase):
             }, {
                 'html_new': '3',
                 'html_old': '3'
-            }]},
-            diffs)
+            }],
+            'old': old_list,
+            'new': new_list
+        }, diffs)
 
     def test_diff_list_item_inserted(self):
-        diffs = self.differ.diff_lists(
-            'test', 'Test',
-            ['2020-03-18: No commencing work: section 1, section 2, section 3, section 4, section 5, section 6, section 7, section 8, section 9, section 10, section 11, section 12, Chapter 1, section 1, section ...',
-             '2020-03-26: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 1, section 1A; Chapter 2, section 11A, section 11B, section 11C, section 11D, section 11E, section 11F, sec...',
-             '2020-04-02: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 3, section 11H, section 11I',
-             '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J, section 11K'],
-            ['2020-03-18: No commencing work: section 1–12, Chapter 1, section 1(a), 1(b), section 2, section 3–7, section 8(1), 8(2), 8(3), 8(4), 8(5), section 9, section 10(1), 10(2), 10(3), 10(4), 10(5), 10(6...',
-             '2020-03-25: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 1, section 1(a), 1(b), 1(c), section 1A; Chapter 2, section 11A, section 11B(1)(a)(i), 11B(1)(a)(ii), 11B(1...',
-             '2020-03-26: Disaster Management Act: Regulations relating to COVID-19: Amendment: no provisions',
-             '2020-04-02: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 3, section 11H, section 11I',
-             '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J–11K']
-        )
+        old_list = [
+            '2020-03-18: No commencing work: section 1, section 2, section 3, section 4, section 5, section 6, section 7, section 8, section 9, section 10, section 11, section 12, Chapter 1, section 1, section ...',
+            '2020-03-26: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 1, section 1A; Chapter 2, section 11A, section 11B, section 11C, section 11D, section 11E, section 11F, sec...',
+            '2020-04-02: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 3, section 11H, section 11I',
+            '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J, section 11K'
+        ]
+        new_list = [
+            '2020-03-18: No commencing work: section 1–12, Chapter 1, section 1(a), 1(b), section 2, section 3–7, section 8(1), 8(2), 8(3), 8(4), 8(5), section 9, section 10(1), 10(2), 10(3), 10(4), 10(5), 10(6...',
+            '2020-03-25: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 1, section 1(a), 1(b), 1(c), section 1A; Chapter 2, section 11A, section 11B(1)(a)(i), 11B(1)(a)(ii), 11B(1...',
+            '2020-03-26: Disaster Management Act: Regulations relating to COVID-19: Amendment: no provisions',
+            '2020-04-02: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 3, section 11H, section 11I',
+            '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J–11K'
+        ]
+        diffs = self.differ.diff_lists('test', 'Test', old_list, new_list)
 
         self.assertEqual({
             'attr': 'test',
@@ -201,5 +215,7 @@ class AttributeDifferTestCase(TestCase):
                 'html_old': '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J<del>, section </del>11K',
                 'html_new': '2020-04-16: Disaster Management Act: Regulations relating to COVID-19: Amendment: Chapter 2, section 11CA; Chapter 4, section 11J<ins>–</ins>11K'
             }],
-            'type': 'list'
+            'type': 'list',
+            'old': old_list,
+            'new': new_list,
         }, diffs)

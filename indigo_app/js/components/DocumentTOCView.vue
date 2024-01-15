@@ -4,7 +4,7 @@
         ref="la-toc-controller"
         :items.prop="roots"
         :title-filter="titleQuery"
-        expand-all-btn-classes="btn btn-primary btn-sm mr-1"
+        expand-all-btn-classes="btn btn-primary btn-sm me-1"
         collapse-all-btn-classes="btn btn-primary btn-sm mr-1"
         title-filter-input-classes="form-control form-control-sm"
         title-filter-clear-btn-classes="btn btn-sm btn-secondary"

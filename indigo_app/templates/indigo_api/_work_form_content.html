@@ -23,7 +23,7 @@
       method="POST"
       enctype="multipart/form-data"
       data-component="WorkForm"
-      {% if "HTTP_HX_REQUEST" in request.META %}
+      {% if request.htmx %}
       hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
       hx-target="#offCanvasEditWorkForm"
       {% endif %}
@@ -33,7 +33,7 @@
 
     <div class="mb-3">
       <div class="float-end">
-        {% if work.pk and 'HTTP_HX_REQUEST' not in request.META %}
+        {% if work.pk and not request.htmx %}
           <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
         {% endif %}
         {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}

@@ -84,3 +84,20 @@
     <div class="tab-pane" id="work-{{ work.pk }}-tasks"></div>
   {% endif %}
 </div>
+
+{% if perms.indigo_api.change_work %}
+  <div class="border-top p-2 bg-light">
+    <button
+        id="edit_work_button"
+        hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+        hx-target="#offCanvasEditWorkForm"
+        hx-swap="innerHTML"
+        class="btn btn-outline-primary btn-sm"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasEditWork"
+        aria-controls="offcanvasEditWork">
+      <span>{% trans 'Edit' %}</span>
+    </button>
+  </div>
+{% endif %}

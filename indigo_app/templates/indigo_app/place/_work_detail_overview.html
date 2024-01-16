@@ -39,21 +39,4 @@
     {% endif %}
   {% endwith %}
 
-  {% if perms.indigo_api.add_work %}
-    <div>
-      <button
-          id="edit_work_button"
-          hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-          hx-target="#offCanvasEditWorkForm"
-          hx-swap="innerHTML"
-          class="btn btn-outline-primary btn-sm"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasEditWork"
-          aria-controls="offcanvasEditWork">
-        <span>{% trans 'Edit' %}</span>
-      </button>
-    </div>
-  {% endif %}
-
 </dl>

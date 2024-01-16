@@ -1,0 +1,498 @@
+{% load i18n %}
+
+{% block work-content %}
+  {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
+  {% else %}
+    <div class="alert alert-danger">{% trans "You don't have permission to create or change a work." %}</div>
+  {% endif %}
+
+  {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+      <p>{% trans "There were some errors in the information you entered. Please correct the following:" %}</p>
+      {{ form.non_field_errors }}
+      <ul>
+        {% for field in form %}
+          {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form
+      id="edit-work-form"
+      method="POST"
+      enctype="multipart/form-data"
+      data-component="WorkForm"
+      {% if request.htmx %}
+      hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+      hx-target="#offCanvasEditWorkForm"
+      {% endif %}
+  >
+    {% csrf_token %}
+    <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
+
+    <div class="mb-3">
+      <div class="float-end">
+        {% if work.pk and not request.htmx %}
+          <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
+        {% endif %}
+        {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
+          <button class="btn btn-success save" type="submit">{% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}</button>
+        {% endif %}
+      </div>
+      <h3 class="work-title">{{ work.title }}</h3>
+      <h4 class="text-muted work-frbr-uri">{{ work.frbr_uri }}</h4>
+      <p>
+        {{ country.name }} · {{ country.code }}
+        {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
+      </p>
+    </div>
+
+    <div class="duplicate-wrapper"></div>
+
+    {% block work-form-details %}
+      <div class="card mb-3">
+        <div class="card-body">
+
+          <div class="row mb-3">
+            <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label required">{% trans 'Short title' %}</label>
+            <div class="col">
+              <input
+                  hx-trigger="load, change, keyup delay:500ms changed"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  type="text" class="form-control" id="{{ form.title.id_for_label }}"
+                  name="{{ form.title.html_name }}"
+                  value="{{ form.title.value|default:'' }}"
+                  autofocus placeholder="{% trans 'Title' %}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ form.frbr_doctype.id_for_label }}" class="col-2 col-form-label required">{% trans 'Work type' %}</label>
+            <div class="col-4">
+              <select
+                  hx-trigger="change"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  id="{{ form.frbr_doctype.id_for_label }}" name="{{ form.frbr_doctype.html_name }}" class="form-control">
+                {% for opt in form.frbr_doctype %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ form.frbr_subtype.id_for_label }}" class="col-2 col-form-label">{% trans 'Work subtype' %}</label>
+            <div class="col-4">
+              <select
+                  hx-trigger="change"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  id="{{ form.frbr_subtype.id_for_label }}" name="{{ form.frbr_subtype.html_name }}" class="form-control">
+                <option value="">{% trans '(none)' %}</option>
+                {% for opt in form.frbr_subtype %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ form.frbr_date.id_for_label }}" class="col-2 col-form-label required">{% trans 'Year (or date) of introduction' %}</label>
+            <div class="col-4">
+              <input
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  type="text" class="form-control" id="{{ form.frbr_date.id_for_label }}"
+                  required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)"
+                  name="{{ form.frbr_date.html_name }}"
+                  value="{{ form.frbr_date.value|default:'' }}">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ form.frbr_number.id_for_label }}" class="col-2 col-form-label required">{% trans 'Number within year' %}</label>
+            <div class="col-4">
+              <input
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  type="text" class="form-control" id="{{ form.frbr_number.id_for_label }}"
+                  required pattern="[^\s]+"
+                  name="{{ form.frbr_number.html_name }}"
+                  value="{{ form.frbr_number.value|default:'' }}">
+            </div>
+            <div class="col-6 form-text text-muted">
+              {% trans "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only." %}
+            </div>
+          </div>
+
+          {% for fld in form.property_fields %}
+            <div class="row mb-3">
+              <label for="{{ fld.id_for_label }}" class="col-2 col-form-label">{{ fld.label }}</label>
+              <div class="col-4">
+                <input
+                    hx-trigger="change, keyup delay:500ms changed"
+                    hx-target=".duplicate-wrapper"
+                    hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                    type="text" class="form-control" id="{{ fld.id_for_label }}"
+                    name="{{ fld.html_name }}"
+                    value="{{ fld.value|default:'' }}"
+                    maxlength="1024">
+              </div>
+              {% if fld.errors %}
+                <div class="col-6">
+                  {% for error in fld.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="form-group row">
+            <label for="{{ form.frbr_actor.id_for_label }}" class="col-2 col-form-label">{% trans 'Responsible organisation (actor)' %}</label>
+            <div class="col-4">
+              <input
+                  hx-trigger="change, keyup delay:500ms changed"
+                  hx-target=".duplicate-wrapper"
+                  hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
+                  type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
+                  name="{{ form.frbr_actor.html_name }}"
+                  value="{{ form.frbr_actor.value|default:'' }}">
+            </div>
+            <div class="col-6 form-text text-muted">{% trans 'Organisation that created this work. Not normally used for national legislation.' %}</div>
+          </div>
+
+          <hr>
+
+          <div class="row mb-3">
+            <label for="{{ form.principal.id_for_label }}" class="col-2 col-form-label">{% trans 'Principal work' %}</label>
+            <div class="col-4 mt-1">
+              <input type="checkbox" class="form-check-input" id="{{ form.principal.id_for_label }}" name="{{ form.principal.html_name }}" value="on" {% if form.principal.value %}checked{% endif %}>
+            </div>
+            <div class="col-6 form-text text-muted">{% trans 'Principal works are not simply repeals, amendments or commencements, and should have full text content.' %}</div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ form.stub.id_for_label }}" class="col-2 col-form-label">{% trans 'Stub' %}</label>
+            <div class="col-4 mt-1">
+              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
+            </div>
+            <div class="col-6 form-text text-muted">
+              {% trans "Check this option for commencing or amending works, or other works for which content won't be marked up." %}
+            </div>
+          </div>
+
+          <hr>
+
+          <div id="work-form-parent">
+            {% include 'indigo_api/_work_parent_form.html' %}
+          </div>
+
+          <hr>
+
+          <div class="row mb-3">
+            <label for="taxonomy_topics" class="col-2 col-form-label">{% trans 'Taxonomy topics' %}</label>
+            <div class="col-4">
+              <select id="taxonomy_topics" name="work-taxonomy_topics" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">
+                {% for topic in form.fields.taxonomy_topics.queryset %}
+                  <option {% if topic.pk in form.taxonomy_topics.value %}selected{% endif %} value="{{ topic.pk }}">{% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="row mb-3">
+            <label for="{{ form.assent_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Assent date' %}</label>
+            <div class="col-4">
+              <input type="date" class="form-control" id="{{ form.assent_date.id_for_label }}"
+                     name="{{ form.assent_date.html_name }}"
+                     value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endblock work-form-details %}
+
+    {% block work-form-publication %}
+      <div class="card mb-3" id="publication">
+        <div class="card-body">
+          {% block work-form-publication-details %}
+
+            <div class="row mb-3">
+              {% block publication-date %}
+                <label for="{{ form.publication_date.id_for_label }}"
+                       class="col-2 col-form-label {% if not work.pk and not publication_date_optional %}required{% endif %}"
+                >{% trans 'Publication date' %}</label>
+                <div class="col-4">
+                  <input
+                      hx-target=".possible-documents-wrapper"
+                      hx-trigger="load, change, keyup delay:500ms changed"
+                      hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                      type="date" class="form-control"
+                      id="{{ form.publication_date.id_for_label }}"
+                      {% if not work.pk and not publication_date_optional %}required{% endif %}
+                      name="{{ form.publication_date.html_name }}"
+                      value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
+                </div>
+              {% endblock %}
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-2 col-form-label" for="{{ form.publication_name.id_for_label }}">{% trans 'Publication name' %}</label>
+              <div class="col-4">
+                <input
+                    hx-target=".possible-documents-wrapper"
+                    hx-trigger="change, keyup delay:500ms changed"
+                    hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                    type="text"
+                    class="form-control" id="{{ form.publication_name.id_for_label }}"
+                    name="{{ form.publication_name.html_name }}" list="publication_list"
+                    value="{{ form.publication_name.value|default:'' }}">
+                <datalist id="publication_list">
+                  {% for pub in country.publication_set.all %}
+                    <option value="{{ pub.name }}">
+                  {% endfor %}
+                </datalist>
+              </div>
+              <div class="col-6 form-text text-muted">{% trans 'Usually the Government Gazette.' %}</div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-2 col-form-label" for="{{ form.publication_number.id_for_label }}">{% trans 'Publication number' %}</label>
+              <div class="col-4">
+                <input
+                    hx-target=".possible-documents-wrapper"
+                    hx-trigger="change, keyup delay:500ms changed"
+                    hx-post="{% url 'work_form_find_publication_document' place.place_code %}?frbr_uri={{ work.frbr_uri }}"
+                    type="text" class="form-control" id="{{ form.publication_number.id_for_label }}"
+                    name="{{ form.publication_number.html_name }}"
+                    value="{{ form.publication_number.value|default:'' }}">
+              </div>
+              <div class="col-6 form-text text-muted">{% trans "Usually the gazette number." %}</div>
+            </div>
+
+          {% endblock work-form-publication-details %}
+
+          {% block work-form-publication-file %}
+            <div class="publication-document-wrapper">
+              {% include 'indigo_api/_work_publication_document.html' %}
+            </div>
+            <div class="possible-documents-wrapper"></div>
+          {% endblock work-form-publication-file %}
+        </div>
+      </div>
+    {% endblock work-form-publication %}
+
+    {% block work-form-commencement %}
+      <div class="card mb-3" id="commencement">
+        <div class="card-body">
+          {% if work.pk and work.commencements.count > 1 %}
+            <div class="mb-3">
+              <input type="hidden" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
+              {% url 'work_commencements' frbr_uri=work.frbr_uri as comm_url %}
+              {% blocktrans trimmed %}
+                This work has mixed commencements, <a href="{{ comm_url }}">edit them in the Commencements page</a>.
+              {% endblocktrans %}
+            </div>
+          {% else %}
+
+            <div class="form-group row">
+              <label for="{{ form.commenced.id_for_label }}" class="col-2 col-form-label">{% trans 'Commenced'%}</label>
+              <div class="col-4 mt-1">
+                <input type="checkbox" class="form-check-input" id="{{ form.commenced.id_for_label }}" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
+              </div>
+              <div class="col-6 form-text text-muted">{% trans 'Check if this work has come into force, or has a future commencement date.' %}</div>
+            </div>
+
+            <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
+
+              <div class="form-group row">
+                <label for="{{ form.commencement_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Commencement date' %}</label>
+                <div class="col-4">
+                  <input type="date" class="form-control"
+                         id="{{ form.commencement_date.id_for_label }}"
+                         name="{{ form.commencement_date.html_name }}"
+                         value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
+                </div>
+                <div class="col-6">
+                  {% if work.pk and work.commencement_date %}
+                    {% if work.amendments_made.exists or work.repealed_works.exists %}
+                      <div class="alert alert-warning">
+                        {% url 'work_related' work.frbr_uri as work_url %}
+                        {% blocktrans trimmed %}
+                          If you change this commencement date, you may also have to manually change the dates for related <a href="{{ work_url }}">amendments and repeals</a> made by this work.
+                        {% endblocktrans %}
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                  <p class="form-text text-muted">{% trans 'Date when most (or all) of the work comes into force.' %}</p>
+                  <p class="form-text text-muted">{% trans 'Leave this blank when a work has come into force, but the exact commencement date is unknown or open to interpretation.' %}</p>
+                </div>
+              </div>
+
+              <div id="work-form-commencing-work">
+                {% include 'indigo_api/_work_commencement_form.html' with commencing_work=work.commencing_work %}
+              </div>
+
+              <div class="form-group row">
+                <label for="{{ form.commencement_note.id_for_label }}" class="col-2 col-form-label">{% trans 'Commencement note' %}</label>
+                <div class="col-4">
+                  <input type="text" class="form-control" id="{{ form.commencement_note.id_for_label }}" name="{{ form.commencement_note.html_name }}" placeholder="See section 1." value="{{ form.commencement_note.value|default:'' }}">
+                </div>
+                <div class="col-6 form-text text-muted">
+                  {% trans "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context." %}
+                </div>
+              </div>
+
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endblock work-form-commencement %}
+
+    {% block work-form-repeal %}
+      <div class="card mb-3" id="repeal">
+        <div class="card-body">
+          <div id="work-form-repeal">
+            {% include 'indigo_api/_work_repeal_form.html' %}
+          </div>
+        </div>
+      </div>
+    {% endblock work-form-repeal %}
+
+    <div class="card mb-3">
+      <div class="card-body">
+
+        <div class="row mb-3">
+          <label for="{{ form.as_at_date_override.id_for_label }}" class="col-2 col-form-label">{{ form.as_at_date_override.label }}</label>
+          <div class="col-4">
+            <input type="date" class="form-control" id="{{ form.as_at_date_override.id_for_label }}"
+                   name="{{ form.as_at_date_override.html_name }}"
+                   value="{{ form.as_at_date_override.value|default_if_none:''|stringformat:'s' }}">
+          </div>
+          <div class="col-6 form-text text-muted">
+            {% blocktrans trimmed with name=place.name %}
+              Date up to which this work was last checked for updates. Only set this if it should be different from {{ name }}'s as-at date
+            {% endblocktrans %}{% if place.settings.as_at_date %}: {{ place.settings.as_at_date|date:'Y-m-d' }}{% endif %}.
+          </div>
+          {% if form.as_at_date_override.errors %}
+            <div class="text-danger">
+              {% for error in form.as_at_date_override.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <hr>
+
+        <div class="form-group row">
+          <label for="{{ form.consolidation_note_override.id_for_label }}" class="col-2 col-form-label">{{ form.consolidation_note_override.label }}</label>
+          <div class="col">
+            <input type="text" class="form-control" id="{{ form.consolidation_note_override.id_for_label }}" placeholder="{{ place.settings.consolidation_note|default:'' }}" name="{{ form.consolidation_note_override.html_name }}" value="{{ form.consolidation_note_override.value|default_if_none:'' }}">
+            <p class="form-text text-muted">
+              {% blocktrans trimmed with name=place.name %}
+                Consolidation note that applies to just this work. Overrides a consolidation note in {{ name }} if set.
+              {% endblocktrans %}
+            </p>
+          </div>
+        </div>
+        {% if form.consolidation_note_override.errors %}
+          <div class="text-danger">
+            {% for error in form.consolidation_note_override.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="row mb-3">
+          <label for="{{ form.disclaimer.id_for_label }}" class="col-2 col-form-label">{{ form.disclaimer.label }}</label>
+          <div class="col">
+            <input type="text" class="form-control" id="{{ form.disclaimer.id_for_label }}" name="{{ form.disclaimer.html_name }}" value="{{ form.disclaimer.value|default:'' }}">
+            <p class="form-text text-muted">
+              {% trans 'Disclaimer for this work; it will be shown on all expressions.' %}
+            </p>
+          </div>
+          {% if form.disclaimer.errors %}
+            <div class="text-danger">
+              {% for error in form.disclaimer.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    {% block work-form-place %}
+      <button type="button" class="btn btn-primary mb-3" data-bs-target="#place-form" data-bs-toggle="collapse">
+        {% trans 'Change country or locality' %}...
+      </button>
+
+      <div class="card mb-3 collapse" id="place-form">
+        <h5 class="card-header">{% trans 'Country and locality (advanced)' %}</h5>
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-4 mb-3">
+              <label for="{{ form.country.id_for_label }}" class="required">{{ form.country.label }}</label>
+              <select
+                  hx-trigger="change"
+                  hx-target=".locality-options"
+                  hx-swap="outerHTML"
+                  hx-post="{% url 'work_form_locality' country.code %}"
+                  id="{{ form.country.id_for_label }}"
+                  class="form-control" name="{{ form.country.html_name }}">
+                {% for opt in form.country %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+
+            {% include 'indigo_api/_work_form_locality.html' %}
+
+          </div>
+
+        </div>
+      </div>
+    {% endblock work-form-place %}
+  </form>
+
+  {% if work.pk %}
+    {% if not work.can_delete %}
+      <p>
+        {% url 'work_amendments' work.frbr_uri as amendments_url %}
+        {% url 'work_related' work.frbr_uri as related_url %}
+        {% blocktrans trimmed %}
+          This work cannot be deleted while <a href="{{ amendments_url }}">linked documents</a> and <a href="{{ related_url }}">related works</a> exist.
+        {% endblocktrans %}
+      </p>
+    {% elif perms.indigo_api.delete_work %}
+      <form method="POST" action="{% url 'work_delete' frbr_uri=work.frbr_uri %}">
+        {% csrf_token %}
+        <button class="btn btn-danger delete pull-left" type="submit" data-confirm="{% trans 'Are you sure you want to delete this work?' %}">
+          {% trans 'Delete' %}
+        </button>
+      </form>
+    {% endif %}
+  {% endif %}
+
+  <script>
+    function refreshWorkItem(e) {
+        htmx.trigger("#work-list-item-{{ work.pk }}", "hx_refresh_work_list_item");
+        document.removeEventListener('hide.bs.offcanvas', refreshWorkItem);
+    }
+    document.addEventListener('hide.bs.offcanvas', refreshWorkItem);
+  </script>
+
+{% endblock %}

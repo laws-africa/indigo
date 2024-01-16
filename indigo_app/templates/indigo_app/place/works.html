@@ -33,11 +33,7 @@
       {% include 'indigo_app/place/_works_list.html' %}
     </div>
 
-    <div class="modal fade" tabindex="-1" id="work-edit-modal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">Loading...</div>
-      </div>
-    </div>
+    {% include 'indigo_api/_work_form_offcanvas.html' %}
 
   </div>
 {% endblock %}

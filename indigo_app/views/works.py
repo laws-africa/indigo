@@ -201,6 +201,17 @@ class EditWorkModalView(EditWorkView):
     template_name = "indigo_api/_work_form_modal.html"
 
 
+class EditWorkOffCanvasView(EditWorkView):
+    template_name = "indigo_api/_work_form_content.html"
+
+    def get_success_url(self):
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
+
+
+class WorkListItemPartialView(WorkViewBase, TemplateView):
+    template_name = "indigo_app/place/_work.html"
+
+
 class AddWorkView(PlaceViewBase, CreateView):
     model = Work
     js_view = 'WorkDetailView'

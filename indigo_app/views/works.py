@@ -181,7 +181,10 @@ class ApproveWorkView(WorkViewBase, View):
 
     def post(self, request, *args, **kwargs):
         self.change_work_in_progress()
-        return redirect(reverse('work', kwargs={'frbr_uri': self.work.frbr_uri}))
+        url = reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
+        if request.htmx:
+            url = reverse('work_list_item', kwargs={'frbr_uri': self.work.frbr_uri})
+        return redirect(url)
 
     def change_work_in_progress(self):
         work = self.get_object()

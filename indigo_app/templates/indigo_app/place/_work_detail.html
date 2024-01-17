@@ -89,7 +89,6 @@
   <div class="border-top p-2 {% if work.work_in_progress %}bg-work-in-progress-light{% else %}bg-light{% endif %}">
     {% if perms.indigo_api.change_work %}
       <button
-          id="edit_work_button"
           hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
           hx-target="#offCanvasEditWorkForm"
           hx-swap="innerHTML"

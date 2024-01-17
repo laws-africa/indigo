@@ -1,0 +1,44 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-dialog-scrollable modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {% blocktrans with works_length=approved_works|length %}Unapprove {{ works_length }} works{% endblocktrans %}
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body max-vh-60">
+      <form
+          method="POST"
+          action="{% url 'place_works_unapprove' place.place_code %}"
+          id="bulk-unapprove-form"
+      >
+        {% csrf_token %}
+        {% for work in approved_works %}
+          <input type="hidden" name="approved_works" value="{{ work.pk }}">
+        {% endfor %}
+        <div class="alert alert-warning mb-3">
+          <ul>
+            {% for work in approved_works %}
+              <li><a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button
+          type="submit"
+          class="btn btn-warning"
+          name="unapprove"
+          value="1"
+          form="bulk-unapprove-form"
+          data-disable-with="{% blocktrans %}Unapproving...{% endblocktrans %}"
+      >{% trans "Unapprove" %}</button>
+    </div>
+  </div>
+</div>

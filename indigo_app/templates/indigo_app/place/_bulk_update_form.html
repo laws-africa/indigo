@@ -1,0 +1,65 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-lg">
+  <div class="modal-content min-vh-60">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {% blocktrans with works_length=works|length %}Update {{ works_length }} works{% endblocktrans %}
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body max-vh-60">
+      <form
+          method="POST"
+          action="{% url 'place_works_update' place.place_code %}"
+          id="bulk-update-form"
+      >
+        {% csrf_token %}
+        {% for work in works %}
+          <input type="hidden" name="works" value="{{ work.pk }}">
+        {% endfor %}
+
+        <div class="col-md-10 mb-3">
+          <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
+          <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
+                  class="form-control selectpicker" multiple
+                  data-live-search="true" data-size="8" data-selected-text-format="count > 3">
+            {% for topic in form.fields.add_taxonomy_topics.queryset %}
+              <option value="{{ topic.pk }}" data-tokens="{{ topic.get_ancestors }}">
+                {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>{% trans "Remove taxonomy topics" %}</label>
+          {% for topic in taxonomy_topics %}
+            <div>
+              <input type="checkbox" name="del_taxonomy_topics" value="{{ topic.pk }}" id="del_taxonomy_topics_{{ forloop.counter }}">
+              <label for="del_taxonomy_topics_{{ forloop.counter }}">
+                {% for item in topic.get_ancestors %}
+                  {{ item }} &rsaquo;
+                {% endfor %}
+                {{ topic }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button
+          type="submit"
+          class="btn btn-success"
+          name="save"
+          value="1"
+          form="bulk-update-form"
+          data-disable-with="{% blocktrans %}Updating...{% endblocktrans %}"
+      >{% trans "Save changes" %}</button>
+    </div>
+  </div>
+</div>

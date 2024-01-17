@@ -1,21 +1,18 @@
+import json
 import logging
-from collections import defaultdict, Counter
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import timedelta, date
-from itertools import chain, groupby
-import json
+from itertools import groupby
 from typing import List
-
-from lxml import etree
 
 from actstream import action
 from actstream.models import Action
-from django.contrib.auth.models import User
-from django.db import connection
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Case, When, Value, Q
-from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict
+from django.contrib.auth.models import User
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Case, When, Value
+from django.db.models import Q
+from django.db.models.functions import Extract
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -23,20 +20,17 @@ from django.utils.translation import ugettext as _
 from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
-from django.db.models import Q
+from lxml import etree
 
-from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
+from indigo_api.models import Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
 from indigo_api.timeline import describe_publication_event
-from indigo_api.views.documents import DocumentViewSet
-from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
-
-from .base import AbstractAuthedIndigoView, PlaceViewBase
-
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
-    WorkChooserForm
+    WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
 from indigo_app.xlsx_exporter import XlsxExporter
+from indigo_metrics.models import DailyWorkMetrics, DailyPlaceMetrics
 from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
+from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 log = logging.getLogger(__name__)
 
@@ -1191,8 +1185,37 @@ class WorkActionsView(PlaceViewBase, FormView):
     template_name = "indigo_app/place/_works_actions.html"
 
     def form_valid(self, form):
-        if form.cleaned_data['save'] and self.request.user.has_perm('indigo_api.change_work'):
-            form.save_changes(self.request.user, self.request)
+        # this form just gets the works and gives the context to the actions toolbar
+        return self.form_invalid(form)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.request.user.has_perm('indigo_api.bulk_add_work'):
+            works = self.get_works(form)
+
+            if form.is_valid:
+                context["works"] = works
+                context["works_in_progress"] = works.filter(work_in_progress=True) if works else []
+                context["approved_works"] = works.filter(work_in_progress=False) if works else []
+
+        return context
+
+    def get_works(self, form):
+        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
+        if not works:
+            works = form.cleaned_data.get("works", [])
+
+        return works
+
+
+class WorkBulkUpdateView(PlaceViewBase, FormView):
+    form_class = WorkBulkUpdateForm
+    template_name = "indigo_app/place/_bulk_update_form.html"
+
+    def form_valid(self, form):
+        if form.cleaned_data['save']:
+            form.save_changes()
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
             return redirect(
                 self.request.META.get('HTTP_REFERER')
@@ -1203,23 +1226,49 @@ class WorkActionsView(PlaceViewBase, FormView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        if self.request.user.has_perm('indigo_api.change_work'):
-            works = self.get_works(form)
-            # get the union of all the work's taxonomy topics
-            context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
-
-            if form.is_valid:
-                context["works"] = works
+        works = form.cleaned_data.get("works")
+        # get the union of all the work's taxonomy topics
+        context["works"] = works
+        context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
 
         return context
 
-    def get_works(self, form):
-        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
-        if not works:
-            works = form.cleaned_data.get("works", [])
 
-        return works
+class WorkBulkApproveView(PlaceViewBase, FormView):
+    form_class = WorkBulkApproveForm
+    template_name = "indigo_app/place/_bulk_approve_form.html"
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # TODO: sorting
+        context["works_in_progress"] = form.cleaned_data.get("works_in_progress").order_by("-created_at")
+        return context
+
+    def form_valid(self, form):
+        if form.cleaned_data.get("approve"):
+            for work in form.cleaned_data["works_in_progress"]:
+                work.approve(self.request.user, self.request)
+            messages.success(self.request, f"Approved {form.cleaned_data['works_in_progress'].count()} works.")
+            return redirect(self.request.headers["Referer"])
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class WorkBulkUnapproveView(PlaceViewBase, FormView):
+    form_class = WorkBulkUnapproveForm
+    template_name = "indigo_app/place/_bulk_unapprove_form.html"
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["approved_works"] = form.cleaned_data.get("approved_works").order_by("-created_at")
+        return context
+
+    def form_valid(self, form):
+        if form.cleaned_data.get("unapprove"):
+            for work in form.cleaned_data["approved_works"]:
+                work.unapprove(self.request.user)
+            messages.success(self.request, f"Unapproved {form.cleaned_data['approved_works'].count()} works.")
+            return redirect(self.request.headers["Referer"])
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class WorkChooserView(PlaceViewBase, ListView):

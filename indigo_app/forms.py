@@ -827,21 +827,24 @@ class ExplorerForm(forms.Form):
 
 
 class WorkBulkActionsForm(forms.Form):
-    save = forms.BooleanField()
     all_work_pks = forms.CharField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+
+    def clean_all_work_pks(self):
+        return self.cleaned_data.get('all_work_pks').split() or []
+
+
+class WorkBulkUpdateForm(forms.Form):
+    save = forms.BooleanField(required=False)
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
     del_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
         required=False)
-    change_work_in_progress = forms.ChoiceField(choices=[('', ''), ('approved', 'Approved'), ('work_in_progress', 'Work in progress')], required=False)
 
-    def clean_all_work_pks(self):
-        return self.cleaned_data.get('all_work_pks').split() or []
-
-    def save_changes(self, user, request):
+    def save_changes(self):
         if self.cleaned_data.get('add_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.add(*self.cleaned_data['add_taxonomy_topics'])
@@ -850,18 +853,15 @@ class WorkBulkActionsForm(forms.Form):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
 
-        if self.cleaned_data.get('change_work_in_progress'):
-            if self.cleaned_data['change_work_in_progress'] == 'approved':
-                for work in self.cleaned_data['works']:
-                    # only save if it's changed
-                    if work.work_in_progress:
-                        work.approve(user, request)
 
-            else:
-                for work in self.cleaned_data['works']:
-                    # only save if it's changed
-                    if work.approved:
-                        work.unapprove(user)
+class WorkBulkApproveForm(forms.Form):
+    works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    approve = forms.BooleanField(required=False)
+
+
+class WorkBulkUnapproveForm(forms.Form):
+    approved_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    unapprove = forms.BooleanField(required=False)
 
 
 class WorkChooserForm(forms.Form):

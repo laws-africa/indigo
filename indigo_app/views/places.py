@@ -1190,23 +1190,16 @@ class WorkActionsView(PlaceViewBase, FormView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-
         if self.request.user.has_perm('indigo_api.bulk_add_work'):
             works = self.get_works(form)
-
-            if form.is_valid:
-                context["works"] = works
-                context["works_in_progress"] = works.filter(work_in_progress=True) if works else []
-                context["approved_works"] = works.filter(work_in_progress=False) if works else []
-
+            context["works"] = works
+            context["works_in_progress"] = works.filter(work_in_progress=True) if works else []
+            context["approved_works"] = works.filter(work_in_progress=False) if works else []
         return context
 
     def get_works(self, form):
         works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
-        if not works:
-            works = form.cleaned_data.get("works", [])
-
-        return works
+        return works or form.cleaned_data.get("works", [])
 
 
 class WorkBulkUpdateView(PlaceViewBase, FormView):
@@ -1217,20 +1210,15 @@ class WorkBulkUpdateView(PlaceViewBase, FormView):
         if form.cleaned_data['save']:
             form.save_changes()
             messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
-            return redirect(
-                self.request.META.get('HTTP_REFERER')
-                or reverse('place_works', kwargs={'place': self.kwargs['place']})
-            )
-        else:
-            return self.form_invalid(form)
+            return redirect(self.request.headers["Referer"])
+        return self.form_invalid(form)
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
         works = form.cleaned_data.get("works")
-        # get the union of all the work's taxonomy topics
         context["works"] = works
+        # get the union of all the works' taxonomy topics
         context["taxonomy_topics"] = TaxonomyTopic.objects.filter(works__in=works).distinct()
-
         return context
 
 
@@ -1240,7 +1228,6 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        # TODO: sorting
         context["works_in_progress"] = form.cleaned_data.get("works_in_progress").order_by("-created_at")
         return context
 
@@ -1250,7 +1237,7 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
                 work.approve(self.request.user, self.request)
             messages.success(self.request, f"Approved {form.cleaned_data['works_in_progress'].count()} works.")
             return redirect(self.request.headers["Referer"])
-        return self.render_to_response(self.get_context_data(form=form))
+        return self.form_invalid(form)
 
 
 class WorkBulkUnapproveView(PlaceViewBase, FormView):
@@ -1268,7 +1255,7 @@ class WorkBulkUnapproveView(PlaceViewBase, FormView):
                 work.unapprove(self.request.user)
             messages.success(self.request, f"Unapproved {form.cleaned_data['approved_works'].count()} works.")
             return redirect(self.request.headers["Referer"])
-        return self.render_to_response(self.get_context_data(form=form))
+        return self.form_invalid(form)
 
 
 class WorkChooserView(PlaceViewBase, ListView):

@@ -1,11 +1,13 @@
-{% if messages %}
-  <div class="toast-holder">
-    {% for message in messages %}
-    <div class="toast alert {{ message.tags }} alert-dismissible fade show" role="alert">
-      <i class="toast-icon fas"></i>
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
-    </div>
-    {% endfor %}
-  </div>
-{% endif %}
+  <div style="z-index: 1070"  hx-swap-oob="afterbegin" id="toast">
+  {% if messages %}
+      <div class=" toast-holder">
+        {% for message in messages %}
+        <div class="toast alert {{ message.tags }} alert-dismissible fade show" role="alert">
+          <i class="toast-icon fas"></i>
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+</div>

@@ -74,6 +74,10 @@
   background-color: lighten($warning, 45%);
 }
 
+.bg-work-in-progress-light {
+  background-color: lighten($warning, 42%);
+}
+
 .modal-backdrop {
   z-index: 1030;
 }

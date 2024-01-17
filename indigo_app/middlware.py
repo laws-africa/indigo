@@ -28,4 +28,4 @@ class HtmxMessagesMiddleware:
         response.write(
             render_to_string("_messages.html", {"messages": messages}, request=request)
         )
-        return respo
+        return response

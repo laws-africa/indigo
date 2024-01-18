@@ -1,4 +1,5 @@
 import { components, vueComponents } from './components';
+import { Toast } from 'bootstrap';
 import {
   LaAkomaNtoso,
   LaGutter,
@@ -63,6 +64,30 @@ class IndigoApp {
       this.disableWith();
       $('.selectpicker').selectpicker();
     });
+    document.body.addEventListener('hx-messages', (e) => {
+      e.detail.value.forEach(this.createToast);
+    });
+  }
+
+  createToast (message) {
+    // Clone the template
+    const element = htmx.find('[data-toast-template]').cloneNode(true);
+
+    // Remove the data-toast-template attribute
+    delete element.dataset.toastTemplate;
+
+    // Set the CSS class
+    element.className += ' ' + message.tags;
+
+    // Set the text
+    htmx.find(element, '[data-toast-body]').innerText = message.message;
+
+    // Add the new element to the container
+    htmx.find('[data-toast-container]').appendChild(element);
+
+    // Show the toast using Bootstrap's API
+    const toast = new Toast(element, { delay: 5000 });
+    toast.show();
   }
 
   createComponents (root) {

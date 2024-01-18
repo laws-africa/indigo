@@ -1,5 +1,4 @@
 import { components, vueComponents } from './components';
-import { Toast } from 'bootstrap';
 import {
   LaAkomaNtoso,
   LaGutter,
@@ -86,7 +85,8 @@ class IndigoApp {
     htmx.find('[data-toast-container]').appendChild(element);
 
     // Show the toast using Bootstrap's API
-    const toast = new Toast(element, { delay: 5000 });
+    // @ts-ignore
+    const toast = new window.bootstrap.Toast(element, { delay: 5000 });
     toast.show();
   }
 

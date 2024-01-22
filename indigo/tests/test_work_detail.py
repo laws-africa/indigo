@@ -51,3 +51,11 @@ class BaseWorkDetailTestCase(TestCase):
             frbr_uri="/akn/za/act/gn/1999/32"
         )
         self.assertIsNone(plugin.work_numbered_title(work))
+
+    def test_numbered_title_non_act(self):
+        work = Work.objects.create(
+            country=self.country,
+            title="test",
+            frbr_uri="/akn/za/bill/1999/32"
+        )
+        self.assertEqual('Bill 32 of 1999', self.plugin.work_numbered_title(work))

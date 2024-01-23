@@ -679,7 +679,7 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data.get('sortby'))
 
-        return queryset
+        return queryset.distinct()
 
 
 class WorkflowFilterForm(forms.Form):

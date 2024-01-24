@@ -62,4 +62,4 @@ class BaseWorkDetail(LocaleBasedMatcher):
                 return _(subtype.name)
             return _(uri.subtype.upper())
 
-        return _('Act')
+        return _(uri.doctype.title())

@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm
+    NewCommencementForm, FindPubDocForm, UpdateRepealMadeForm, DeleteRepealMadeForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1089,6 +1089,86 @@ class WorkFormRepealView(PartialWorkFormView):
             work.repealed_date = (work.repealed_by.commencement_date or
                                   work.repealed_by.publication_date)
         return form
+
+
+class WorkFormRepealMadeUpdateView(WorkViewBase, FormView):
+    template_name = 'indigo_api/_work_form_repeal_made_form.html'
+    http_method_names = ['get', 'post']
+    form_class = UpdateRepealMadeForm
+    prefix = 'repeal-made'
+    repealing_work = None
+    repealed_work = None
+
+    def get_initial(self):
+        # TODO: this doesn't do what I hoped
+        return {
+            'repeal_date': self.repealed_work.repealed_date,
+        }
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # TODO: set initial repeal_date
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['repealed_work'] = self.repealed_work
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
+        kwargs['repealed_work'] = self.repealed_work
+        resp = super().get(request, *args, **kwargs)
+        return resp
+
+    def post(self, request, *args, **kwargs):
+        self.repealing_work = Work.objects.get(frbr_uri=kwargs.get('frbr_uri'))
+        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
+        form = self.get_form()
+        if form.is_valid():
+            # TODO: update date instead
+            if form.cleaned_data.get('deleted'):
+                self.repealed_work.repealed_by = None
+                self.repealed_work.repealed_date = None
+                self.repealed_work.save_with_revision(self.request.user, comment=f"Removed repeal by {self.repealing_work.frbr_uri}.")
+
+        url = reverse('work_form_repeal_made_update',
+                      kwargs={'frbr_uri': self.work.frbr_uri, 'repealed_work_id': self.repealed_work.pk})
+        return redirect(url)
+
+
+class WorkFormRepealMadeDeleteView(WorkViewBase, FormView):
+    template_name = 'indigo_api/_work_form_repeal_made_form.html'
+    http_method_names = ['get', 'post']
+    form_class = DeleteRepealMadeForm
+    prefix = 'repeal-made'
+    repealing_work = None
+    repealed_work = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['repealed_work'] = self.repealed_work
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
+        kwargs['repealed_work'] = self.repealed_work
+        resp = super().get(request, *args, **kwargs)
+        return resp
+
+    def post(self, request, *args, **kwargs):
+        self.repealing_work = Work.objects.get(frbr_uri=kwargs.get('frbr_uri'))
+        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
+        form = self.get_form()
+        if form.is_valid():
+            if form.cleaned_data.get('deleted'):
+                self.repealed_work.repealed_by = None
+                self.repealed_work.repealed_date = None
+                self.repealed_work.save_with_revision(self.request.user, comment=f"Removed repeal by {self.repealing_work.frbr_uri}.")
+
+        url = reverse('work_form_repeal_made_delete',
+                      kwargs={'frbr_uri': self.work.frbr_uri, 'repealed_work_id': self.repealed_work.pk})
+        return redirect(url)
 
 
 class WorkFormParentView(PartialWorkFormView):

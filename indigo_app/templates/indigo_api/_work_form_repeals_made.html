@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div class="mb-3 row">
+  <label class="col-2 col-form-label">{% trans 'Repeals made' %}</label>
+  <div class="col">
+    <div class="mt-2">
+      {% for repealed_work in work.repealed_works.all %}
+        {% if forloop.counter > 1 %}<hr>{% endif %}
+        <div id="repeal-made-{{ repealed_work.pk }}">
+          {% include 'indigo_api/_work_form_repeal_made_form.html' %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

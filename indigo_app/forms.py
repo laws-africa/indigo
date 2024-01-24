@@ -11,6 +11,7 @@ from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.forms import SelectMultiple
+# from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -22,6 +23,12 @@ from indigo_api.models import Document, Country, Language, Work, PublicationDocu
     VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
 
 
+# RepealedWorksFormset = inlineformset_factory(Work, Work,
+#                                              fk_name='repealed_by',
+#                                              fields=('repealed_by', 'repealed_date'),
+#                                              extra=1)
+# 
+# 
 class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
@@ -72,6 +79,10 @@ class WorkForm(forms.ModelForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commencement_note = forms.CharField(max_length=1024, required=False)
 
+    repeals_made = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    # TODO: each repeal made can have its own date, so no point in having one field here
+    repeals_made_date = forms.DateField(required=False)
+
     def __init__(self, country, locality, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
@@ -106,6 +117,7 @@ class WorkForm(forms.ModelForm):
         ]
 
         self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
+        # self.fields['repeals_made'].queryset = Work.objects.filter(country=self.country, locality=self.locality)
 
     def property_fields(self):
         fields = [
@@ -142,6 +154,7 @@ class WorkForm(forms.ModelForm):
         self.save_properties()
         self.save_publication_document()
         self.save_commencement()
+        self.save_repeals_made()
         return work
 
     def save_properties(self):
@@ -220,6 +233,29 @@ class WorkForm(forms.ModelForm):
             # this is safe because we know there are no other commencement objects
             commencement.main = True
             commencement.save()
+
+    def save_repeals_made(self):
+        # TODO: use the right date, etc etc.
+        work = self.instance
+        repealed_works = self.cleaned_data['repeals_made']
+        repealed_date = work.commencement_date or work.publication_date or date.today()
+        for repealed_work in repealed_works:
+            repealed_work.repealed_by = work
+            repealed_work.repealed_date = repealed_date
+            repealed_work.save_with_revision(work.updated_by_user)
+
+
+class UpdateRepealMadeForm(forms.Form):
+    # TODO: include repealing and repealed works in the form rather than getting them from the URL / kwargs?
+    # repealing_work = forms.ModelChoiceField(queryset=Work.objects)
+    # repealed_work = forms.ModelChoiceField(queryset=Work.objects)
+    # TODO: fold 'delete' into the Update form?
+    # deleted = forms.BooleanField(required=False)
+    repeal_date = forms.DateField()
+
+
+class DeleteRepealMadeForm(forms.Form):
+    deleted = forms.BooleanField()
 
 
 class DocumentForm(forms.ModelForm):

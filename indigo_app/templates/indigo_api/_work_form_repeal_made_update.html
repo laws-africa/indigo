@@ -1,0 +1,56 @@
+{% load i18n %}
+
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {% trans 'Edit repeal made' %}
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+      {# TODO: get a separate mini form working here? or abandon this path? #}
+{#      <form#}
+{#          method="POST"#}
+{#          action="{% url 'work_form_repeal_made_update' frbr_uri=work.frbr_uri repealed_work_id=repealed_work.pk %}"#}
+{#          id="edit-repeal-made-form-{{ repealed_work.pk }}"#}
+{#      >#}
+{#        {% csrf_token %}#}
+{#        <input type="hidden" name="repealing_work" value="{{ work.pk }}">#}
+{#        <input type="hidden" name="repealed_work" value="{{ repealed_work.pk }}">#}
+{#        <input type="date" class="form-control"#}
+{#               name="repeal-made-repeal_date"#}
+{#               required#}
+{#               value="{{ form.repeal_date.value }}">#}
+
+      <div class="col-md-10 mb-3">
+        <label for="{{ form.repeal_date.id_for_label }}" class="col-form-label required">
+          {% trans 'Repeal date' %}
+        </label>
+        <div class="col-4">
+          <input type="date" class="form-control"
+                 id="{{ form.repeal_date.id_for_label }}"
+                 name="repeal-made-repeal_date"
+                 required
+                 value="{{ form.repeal_date.value|date:"Y-m-d"|default:'' }}">
+        </div>
+      </div>
+      {# TODO: add a Delete checkbox as part of the form #}
+
+{#      </form>#}
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button
+          type="button"
+          class="btn btn-success"
+          name="save"
+          value="1"
+{#          form="edit-repeal-made-form-{{ repealed_work.pk }}"#}
+          data-disable-with="{% trans 'Updating...' %}"
+      >{% trans "Save" %}</button>
+    </div>
+  </div>
+</div>

@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, UpdateRepealMadeForm, DeleteRepealMadeForm
+    NewCommencementForm, FindPubDocForm, RepealMadeForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -129,7 +129,26 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs['locality'] = self.locality
         return kwargs
 
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # repeals made
+        RepealMadeFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        repeals_made_forms = RepealMadeFormSet(prefix='repeals_made', initial=[{
+            "work_frbr_uri": repealed_work.frbr_uri,
+            "date": repealed_work.repealed_date,
+            "title": repealed_work.title,
+        } for repealed_work in self.work.repealed_works.all()])
+        context['repeals_made_forms'] = repeals_made_forms
+
+        return context
+
+
     def form_valid(self, form):
+        # flag for signals and messages
+        work_updated = False
+
         # save as a revision
         self.work.updated_by_user = self.request.user
 
@@ -165,7 +184,27 @@ class EditWorkView(WorkViewBase, UpdateView):
                     task.locality = self.work.locality
                     task.save()
 
-            # signals
+            work_updated = True
+
+        # update repeals made
+        repeals_made_formset = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        repeal_made_forms = repeals_made_formset(self.request.POST, prefix='repeals_made')
+
+        for repeal_form in repeal_made_forms:
+            if repeal_form.is_valid() and repeal_form.has_changed():
+                work_updated = True
+                work = Work.objects.get(frbr_uri=repeal_form.cleaned_data['work_frbr_uri'])
+                if repeal_form.cleaned_data.get('DELETE'):
+                    work.repealed_by = None
+                    work.repealed_date = None
+                    work.save()
+                else:
+                    work.repealed_by = self.work
+                    work.repealed_date = repeal_form.cleaned_data['date']
+                    work.save()
+
+        # signals
+        if work_updated:
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, "Work updated.")
 
@@ -1091,86 +1130,6 @@ class WorkFormRepealView(PartialWorkFormView):
         return form
 
 
-class WorkFormRepealMadeUpdateView(WorkViewBase, FormView):
-    template_name = 'indigo_api/_work_form_repeal_made_form.html'
-    http_method_names = ['get', 'post']
-    form_class = UpdateRepealMadeForm
-    prefix = 'repeal-made'
-    repealing_work = None
-    repealed_work = None
-
-    def get_initial(self):
-        # TODO: this doesn't do what I hoped
-        return {
-            'repeal_date': self.repealed_work.repealed_date,
-        }
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        # TODO: set initial repeal_date
-        return form
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['repealed_work'] = self.repealed_work
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
-        kwargs['repealed_work'] = self.repealed_work
-        resp = super().get(request, *args, **kwargs)
-        return resp
-
-    def post(self, request, *args, **kwargs):
-        self.repealing_work = Work.objects.get(frbr_uri=kwargs.get('frbr_uri'))
-        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
-        form = self.get_form()
-        if form.is_valid():
-            # TODO: update date instead
-            if form.cleaned_data.get('deleted'):
-                self.repealed_work.repealed_by = None
-                self.repealed_work.repealed_date = None
-                self.repealed_work.save_with_revision(self.request.user, comment=f"Removed repeal by {self.repealing_work.frbr_uri}.")
-
-        url = reverse('work_form_repeal_made_update',
-                      kwargs={'frbr_uri': self.work.frbr_uri, 'repealed_work_id': self.repealed_work.pk})
-        return redirect(url)
-
-
-class WorkFormRepealMadeDeleteView(WorkViewBase, FormView):
-    template_name = 'indigo_api/_work_form_repeal_made_form.html'
-    http_method_names = ['get', 'post']
-    form_class = DeleteRepealMadeForm
-    prefix = 'repeal-made'
-    repealing_work = None
-    repealed_work = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['repealed_work'] = self.repealed_work
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
-        kwargs['repealed_work'] = self.repealed_work
-        resp = super().get(request, *args, **kwargs)
-        return resp
-
-    def post(self, request, *args, **kwargs):
-        self.repealing_work = Work.objects.get(frbr_uri=kwargs.get('frbr_uri'))
-        self.repealed_work = Work.objects.get(pk=kwargs.get('repealed_work_id'))
-        form = self.get_form()
-        if form.is_valid():
-            if form.cleaned_data.get('deleted'):
-                self.repealed_work.repealed_by = None
-                self.repealed_work.repealed_date = None
-                self.repealed_work.save_with_revision(self.request.user, comment=f"Removed repeal by {self.repealing_work.frbr_uri}.")
-
-        url = reverse('work_form_repeal_made_delete',
-                      kwargs={'frbr_uri': self.work.frbr_uri, 'repealed_work_id': self.repealed_work.pk})
-        return redirect(url)
-
-
 class WorkFormParentView(PartialWorkFormView):
     """Just the parent part of the work form to re-render the form when the user changes the parent work through HTMX.
     """
@@ -1395,6 +1354,43 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
         context['form'] = form = self.Form(self.request.POST)
         if form.is_valid():
             form.fields['locality'].queryset = Locality.objects.filter(country=form.cleaned_data['country'])
+        return context
+
+
+class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
+    form_class = RepealMadeForm
+    template_name = 'indigo_api/_work_form_repeals_made_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        RepealMadeFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        formset = RepealMadeFormSet(self.request.POST, prefix="repeals_made")
+        initial = []
+        if formset.is_valid():
+            for form in formset.forms:
+                if form.is_valid():
+                    initial.append({
+                        'work_frbr_uri': form.cleaned_data['work_frbr_uri'],
+                        'date': form.cleaned_data['date'],
+                        'title': form.cleaned_data['title'],
+                    })
+
+            repeal_made = self.request.POST.get('repealed_work')
+            if repeal_made:
+                repealed_work = Work.objects.filter(pk=repeal_made).first()
+                if repealed_work:
+                    initial.append({
+                         'work_frbr_uri': repealed_work.frbr_uri,
+                         'date': repealed_work.repealed_date,
+                         'title': repealed_work.title,
+                    })
+
+        repeals_made_forms = RepealMadeFormSet(prefix='repeals_made', initial=initial)
+        context['repeals_made_forms'] = repeals_made_forms
         return context
 
 

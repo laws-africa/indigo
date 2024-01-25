@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{{ repeals_made_forms.management_form }}
+{% for form in repeals_made_forms.forms %}
+  {% if forloop.counter > 1 %}<hr>{% endif %}
+  <div class="row align-items-center">
+    <div class="col">
+      <a href="{% url 'work' form.work_frbr_uri.value %}" target="_blank">{{ form.title.value }}</a>
+      <br>
+      <span>{{ form.work_frbr_uri.value }}</span>
+      <input type="hidden"
+             name="{{ form.work_frbr_uri.html_name}}"
+             value="{{ form.work_frbr_uri.value }}" />
+      <input type="hidden"
+             name="{{ form.title.html_name}}"
+             value="{{ form.title.value }}" />
+    </div>
+    <div class="col">
+        <label class="form-label" for="{{ form.date.id_for_label }}">Date</label>
+        <input class="form-control"
+               id="{{ form.date.id_for_label }}"
+               type="{{ form.date.field.widget.input_type }}"
+               value="{{ form.date.value|date:"Y-m-d" }}"
+               name="{{ form.date.html_name }}" />
+    </div>
+    <div class="col">
+      <label for="{{ form.DELETE.id_for_label }}" class="form-check-label">Delete</label>
+      <input class="form-check-input"
+             id="{{ form.DELETE.id_for_label }}"
+             type="{{ form.DELETE.field.widget.input_type }}"
+             name="{{ form.DELETE.html_name }}" />
+    </div>
+  </div>
+{% endfor %}
+

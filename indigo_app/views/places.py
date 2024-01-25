@@ -1291,6 +1291,8 @@ class WorkChooserView(PlaceViewBase, ListView):
         context["work_field"] = self.form.data.get('field', 'work')
         context["hx_submit"] = self.form.data.get('submit')
         context["hx_target"] = self.form.data.get('target')
+        context["hx_include"] = self.form.data.get('include', "")
+        context["hx_method"] = self.form.data.get("method", "hx-get")
 
         return context
 

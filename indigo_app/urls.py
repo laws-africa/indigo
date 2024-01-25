@@ -86,12 +86,9 @@ urlpatterns = [
     path('places/<str:place>/work/form/attach-publication', works.WorkFormPublicationDocumentView.as_view(), name='work_form_attach_publication_document'),
     path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
     path('places/<str:place>/work/form/repeal', works.WorkFormRepealView.as_view(), name='work_form_repeal'),
+    path('places/<str:place>/work/form/repeals-made', works.WorkFormRepealsMadeView.as_view(), name='work_form_repeals_made'),
     path('places/<str:place>/work/form/parent', works.WorkFormParentView.as_view(), name='work_form_parent'),
     path('places/<str:place>/work/form/commencement', works.WorkFormCommencementView.as_view(), name='work_form_commencement'),
-
-    # htmx partials (?) for existing works only
-    re_path(r'^works(?P<frbr_uri>/\S+?)/repeals_made/update/(?P<repealed_work_id>\d+)$', works.WorkFormRepealMadeUpdateView.as_view(), name='work_form_repeal_made_update'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/repeals_made/delete/(?P<repealed_work_id>\d+)$', works.WorkFormRepealMadeDeleteView.as_view(), name='work_form_repeal_made_delete'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

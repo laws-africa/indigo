@@ -1226,16 +1226,45 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
     form_class = WorkBulkApproveForm
     template_name = "indigo_app/place/_bulk_approve_form.html"
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            # use the refreshed form, which includes the amendment task description fields
+            # (form_invalid calls get_context_data, where we also refresh the form)
+            form = self.refreshed_form(form)
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        else:
+            return self.form_invalid(form)
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["works_in_progress"] = form.cleaned_data.get("works_in_progress").order_by("-created_at")
+        # use a fresh form that will include the amendment task description fields
+        context["form"] = self.refreshed_form(form)
+
+        context["works_in_progress"] = works_in_progress = form.cleaned_data.get("works_in_progress").order_by("-created_at")
+        context["import_task_works"] = works_in_progress.filter(principal=True)
+        context["gazette_task_works"] = [w for w in works_in_progress if not w.has_publication_document()]
+        amendment_task_works = [w for w in works_in_progress if w.amendments.exists()]
+        context["amendments_per_work"] = {w: w.amendments.all() for w in amendment_task_works}
         return context
+
+    def refreshed_form(self, form):
+        form.is_valid()
+        return self.form_class(self.request.POST, form=form)
 
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):
-            for work in form.cleaned_data["works_in_progress"]:
-                work.approve(self.request.user, self.request)
+            form.save_changes(self.request)
             messages.success(self.request, f"Approved {form.cleaned_data['works_in_progress'].count()} works.")
+            if form.cleaned_data.get('import_task_works'):
+                messages.success(self.request, f"Created {form.cleaned_data['import_task_works'].count()} Import tasks.")
+            if form.cleaned_data.get('gazette_task_works'):
+                messages.success(self.request, f"Created {form.cleaned_data['gazette_task_works'].count()} Gazette tasks.")
+            if form.cleaned_data.get('amendment_task_amendments'):
+                messages.success(self.request, f"Created {form.cleaned_data['amendment_task_amendments'].count()} Amendment tasks.")
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

@@ -2,6 +2,8 @@ import json
 import re
 import urllib.parse
 from datetime import date
+from functools import cached_property
+
 from lxml import etree
 
 from django import forms
@@ -10,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
-from django.forms import SelectMultiple
+from django.forms import SelectMultiple, formset_factory
 from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -96,6 +98,14 @@ class WorkForm(forms.ModelForm):
                 if self.instance.main_commencement.commencing_work:
                     self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
+            # repeal formset
+            self.RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+            self.repeals_made_initial_data = [{
+                'repealed_work': repealed_work,
+                'repealed_date': repealed_work.repealed_date,
+                } for repealed_work in self.instance.repealed_works.all()]
+            self.repeals_made_formset = self.RepealMadeBaseFormSet(prefix='repeals_made', initial=self.repeals_made_initial_data)
+
         self.fields['frbr_doctype'].choices = [
             (y, x)
             for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
@@ -115,6 +125,16 @@ class WorkForm(forms.ModelForm):
         ]
         fields.sort(key=lambda f: f.label)
         return fields
+
+    def is_valid(self):
+        repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made")
+        if not repeals_made_formset.is_valid():
+            return False
+        return super().is_valid()
+
+    def has_changed(self):
+        repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made", initial=self.repeals_made_initial_data)
+        return super().has_changed() or repeals_made_formset.has_changed()
 
     def clean_frbr_number(self):
         value = self.cleaned_data['frbr_number']
@@ -142,6 +162,7 @@ class WorkForm(forms.ModelForm):
         self.save_properties()
         self.save_publication_document()
         self.save_commencement()
+        self.save_repeals()
         return work
 
     def save_properties(self):
@@ -153,6 +174,21 @@ class WorkForm(forms.ModelForm):
                 # a work property has been removed
                 del self.instance.properties[prop]
         self.instance.save()
+
+    def save_repeals(self):
+        RepealMadeBaseFormset = forms.formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        repeal_made_formset = RepealMadeBaseFormset(self.data, prefix='repeals_made', initial=self.repeals_made_initial_data)
+        for repeal_form in repeal_made_formset:
+            if repeal_form.is_valid() and repeal_form.has_changed():
+                work = repeal_form.cleaned_data['repealed_work']
+                if repeal_form.cleaned_data.get('DELETE'):
+                    work.repealed_by = None
+                    work.repealed_date = None
+                    work.save()
+                else:
+                    work.repealed_by = self.instance
+                    work.repealed_date = repeal_form.cleaned_data['repealed_date']
+                    work.save()
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -900,7 +936,9 @@ class FindPubDocForm(forms.Form):
 
 
 class RepealMadeForm(forms.Form):
-    work_frbr_uri = forms.CharField()
-    date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    title = forms.CharField(required=False)
+    repealed_work = forms.ModelChoiceField(queryset=Work.objects)
+    repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
+    @cached_property
+    def repealed_work_obj(self):
+        return Work.objects.filter(pk=self['repealed_work'].value()).first()

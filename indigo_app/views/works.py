@@ -129,26 +129,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs['locality'] = self.locality
         return kwargs
 
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # repeals made
-        RepealMadeFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
-        repeals_made_forms = RepealMadeFormSet(prefix='repeals_made', initial=[{
-            "work_frbr_uri": repealed_work.frbr_uri,
-            "date": repealed_work.repealed_date,
-            "title": repealed_work.title,
-        } for repealed_work in self.work.repealed_works.all()])
-        context['repeals_made_forms'] = repeals_made_forms
-
-        return context
-
-
     def form_valid(self, form):
-        # flag for signals and messages
-        work_updated = False
-
         # save as a revision
         self.work.updated_by_user = self.request.user
 
@@ -184,29 +165,8 @@ class EditWorkView(WorkViewBase, UpdateView):
                     task.locality = self.work.locality
                     task.save()
 
-            work_updated = True
-
-        # update repeals made
-        repeals_made_formset = formset_factory(RepealMadeForm, extra=0, can_delete=True)
-        repeal_made_forms = repeals_made_formset(self.request.POST, prefix='repeals_made')
-
-        for repeal_form in repeal_made_forms:
-            if repeal_form.is_valid() and repeal_form.has_changed():
-                work_updated = True
-                work = Work.objects.get(frbr_uri=repeal_form.cleaned_data['work_frbr_uri'])
-                if repeal_form.cleaned_data.get('DELETE'):
-                    work.repealed_by = None
-                    work.repealed_date = None
-                    work.save()
-                else:
-                    work.repealed_by = self.work
-                    work.repealed_date = repeal_form.cleaned_data['date']
-                    work.save()
-
-        # signals
-        if work_updated:
-            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, "Work updated.")
+                work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+                messages.success(self.request, "Work updated.")
 
         return resp
 
@@ -1364,33 +1324,40 @@ class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
 
+    def delete(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        RepealMadeFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
-        formset = RepealMadeFormSet(self.request.POST, prefix="repeals_made")
+        RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made")
         initial = []
         if formset.is_valid():
             for form in formset.forms:
                 if form.is_valid():
+                    delete = form.cleaned_data['DELETE']
+                    if self.request.GET.get('delete'):
+                        if not delete and int(self.request.GET.get('delete')) == form.cleaned_data['repealed_work'].pk:
+                            delete = True
+
                     initial.append({
-                        'work_frbr_uri': form.cleaned_data['work_frbr_uri'],
-                        'date': form.cleaned_data['date'],
-                        'title': form.cleaned_data['title'],
+                        'repealed_work': form.cleaned_data['repealed_work'],
+                        'repealed_date': form.cleaned_data['repealed_date'],
+                        'DELETE': delete,
                     })
 
-            repeal_made = self.request.POST.get('repealed_work')
+            repeal_made = self.request.POST.get('repeal_made')
             if repeal_made:
                 repealed_work = Work.objects.filter(pk=repeal_made).first()
                 if repealed_work:
                     initial.append({
-                         'work_frbr_uri': repealed_work.frbr_uri,
-                         'date': repealed_work.repealed_date,
-                         'title': repealed_work.title,
+                         'repealed_work': repealed_work,
+                         'repealed_date': repealed_work.repealed_date,
                     })
 
-        repeals_made_forms = RepealMadeFormSet(prefix='repeals_made', initial=initial)
-        context['repeals_made_forms'] = repeals_made_forms
+        context["form"] = {
+           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial)
+        }
         return context
 
 

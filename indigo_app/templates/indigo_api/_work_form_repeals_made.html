@@ -14,7 +14,7 @@
         <button
             class="btn btn-outline-primary"
             type="button"
-            hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ repeals_made_url|urlencode }}&target={{ "#work-form-repeals-made-formset"|urlencode }}&field=repealed_work&include={{ "#work-form-repeals-made"|urlencode }}&method=hx-post"
+            hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ repeals_made_url|urlencode }}&target={{ "#work-form-repeals-made-formset"|urlencode }}&field=repeal_made&include={{ "#work-form-repeals-made"|urlencode }}&method=hx-post"
             hx-target="#work-repeals-made-modal"
             hx-trigger="click"
             data-bs-toggle="modal"

@@ -1,35 +1,34 @@
 {% load i18n %}
 
-{{ repeals_made_forms.management_form }}
-{% for form in repeals_made_forms.forms %}
-  {% if forloop.counter > 1 %}<hr>{% endif %}
-  <div class="row align-items-center">
-    <div class="col">
-      <a href="{% url 'work' form.work_frbr_uri.value %}" target="_blank">{{ form.title.value }}</a>
-      <br>
-      <span>{{ form.work_frbr_uri.value }}</span>
-      <input type="hidden"
-             name="{{ form.work_frbr_uri.html_name}}"
-             value="{{ form.work_frbr_uri.value }}" />
-      <input type="hidden"
-             name="{{ form.title.html_name}}"
-             value="{{ form.title.value }}" />
-    </div>
-    <div class="col">
-        <label class="form-label" for="{{ form.date.id_for_label }}">Date</label>
+{{ form.repeals_made_formset.management_form }}
+{% for form in form.repeals_made_formset %}
+  <div class="{% if form.DELETE.value  %}d-none{% endif %}">
+    {% if forloop.counter > 1 %}<hr>{% endif %}
+    <div class="row align-items-center ">
+      <div class="col">
+        <a href="{% url 'work' form.repealed_work_obj.frbr_uri %}" target="_blank">{{ form.repealed_work_obj.title }}</a>
+        <br />
+        <span>{{ form.repealed_work_obj.frbr_uri }}</span>
+          {{ form.repealed_work.as_hidden }}
+          {{ form.DELETE.as_hidden }}
+      </div>
+      <div class="col">
+        <label class="form-label" for="{{ form.repealed_date.id_for_label }}">Date</label>
         <input class="form-control"
-               id="{{ form.date.id_for_label }}"
-               type="{{ form.date.field.widget.input_type }}"
-               value="{{ form.date.value|date:"Y-m-d" }}"
-               name="{{ form.date.html_name }}" />
-    </div>
-    <div class="col">
-      <label for="{{ form.DELETE.id_for_label }}" class="form-check-label">Delete</label>
-      <input class="form-check-input"
-             id="{{ form.DELETE.id_for_label }}"
-             type="{{ form.DELETE.field.widget.input_type }}"
-             name="{{ form.DELETE.html_name }}" />
+               id="{{ form.repealed_date.id_for_label }}"
+               type="{{ form.repealed_date.field.widget.input_type }}"
+               value="{{ form.repealed_date.value|date:"Y-m-d" }}"
+               name="{{ form.repealed_date.html_name }}" />
+      </div>
+      <div class="col">
+            <button hx-post="{% url 'work_form_repeals_made' place.place_code %}?delete={{ form.repealed_work_obj.pk }}"
+                    hx-target="#work-form-repeals-made-formset"
+                    hx-include="#work-form-repeals-made-formset"
+                    type="button"
+                    class="btn btn-outline-danger">
+              {% trans 'Remove' %}
+            </button>
+      </div>
     </div>
   </div>
 {% endfor %}
-

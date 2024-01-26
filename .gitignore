@@ -1,6 +1,5 @@
 env
 venv
-.venv
 .idea/
 *.pyc
 .webassets-cache

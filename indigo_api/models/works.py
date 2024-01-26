@@ -905,7 +905,7 @@ def on_subtype_saved(sender, instance, **kwargs):
     Subtype._cache = {}
 
 
-class WorkAliases(models.Model):
+class WorkAlias(models.Model):
     alias = models.CharField(null=False, blank=False, max_length=255, help_text="Alias e.g. Penal Code, etc")
     work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, related_name="aliases")
 

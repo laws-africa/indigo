@@ -17,7 +17,7 @@ from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement, WorkAliases
+    PublicationDocument, Task, VocabularyTopic, Commencement, WorkAlias
 from indigo_metrics.models import DocumentEditActivity
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
@@ -569,9 +569,9 @@ class CommencementSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-class WorkAliasesSerializer(serializers.ModelSerializer):
+class WorkAliasSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WorkAliases
+        model = WorkAlias
         fields = ("alias",)
 
 
@@ -590,7 +590,7 @@ class WorkSerializer(serializers.ModelSerializer):
     taxonomies = serializers.SerializerMethodField()
     taxonomy_topics = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
-    aliases = WorkAliasesSerializer(many=True, read_only=True)
+    aliases = WorkAliasSerializer(many=True, read_only=True)
     """ URL of document amendments. """
 
     class Meta:

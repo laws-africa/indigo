@@ -906,7 +906,7 @@ def on_subtype_saved(sender, instance, **kwargs):
 
 
 class WorkAliases(models.Model):
-    alias = models.CharField(null=True, blank=True, max_length=255, help_text="Alias e.g. Penal Code, etc")
+    alias = models.CharField(null=False, blank=False, max_length=255, help_text="Alias e.g. Penal Code, etc")
     work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, related_name="aliases")
 
     def __str__(self):

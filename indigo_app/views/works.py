@@ -165,8 +165,9 @@ class EditWorkView(WorkViewBase, UpdateView):
                     task.locality = self.work.locality
                     task.save()
 
-                work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-                messages.success(self.request, "Work updated.")
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+            messages.success(self.request, "Work updated.")
 
         return resp
 
@@ -1322,9 +1323,6 @@ class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_repeals_made_form.html'
 
     def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

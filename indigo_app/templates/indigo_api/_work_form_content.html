@@ -24,8 +24,12 @@
       enctype="multipart/form-data"
       data-component="WorkForm"
       {% if request.htmx %}
-      hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-      hx-target="#offCanvasEditWorkForm"
+        {% if work.pk %}
+          hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+        {% else %}
+          hx-post="{% url 'new_work_offcanvas' place.place_code %}"
+        {% endif %}
+        hx-target="#offCanvasEditWorkForm"
       {% endif %}
   >
     {% csrf_token %}

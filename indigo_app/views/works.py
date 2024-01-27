@@ -264,6 +264,13 @@ class AddWorkView(PlaceViewBase, CreateView):
         return reverse('work', kwargs={'frbr_uri': self.object.frbr_uri})
 
 
+class AddWorkOffCanvasView(AddWorkView):
+    template_name = "indigo_api/_work_form_content.html"
+
+    def get_success_url(self):
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri})
+
+
 class DeleteWorkView(WorkViewBase, DeleteView):
     permission_required = ('indigo_api.delete_work',)
 

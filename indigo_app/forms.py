@@ -127,14 +127,17 @@ class WorkForm(forms.ModelForm):
         return fields
 
     def is_valid(self):
-        repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made")
-        if not repeals_made_formset.is_valid():
-            return False
+        if self.instance.pk:
+            repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made")
+            if not repeals_made_formset.is_valid():
+                return False
         return super().is_valid()
 
     def has_changed(self):
-        repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made", initial=self.repeals_made_initial_data)
-        return super().has_changed() or repeals_made_formset.has_changed()
+        if self.instance.pk:
+            repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made", initial=self.repeals_made_initial_data)
+            return super().has_changed() or repeals_made_formset.has_changed()
+        return super().has_changed()
 
     def clean_frbr_number(self):
         value = self.cleaned_data['frbr_number']

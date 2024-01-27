@@ -98,17 +98,17 @@
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasEditWork"
             aria-controls="offcanvasEditWork">
-          <span>{% trans 'Edit' %}</span>
+          {% trans 'Edit' %}
         </button>
       {% endif %}
       {% if perms.indigo_api.bulk_add_work %}
         {% if work.work_in_progress %}
           <button type="button" class="btn btn-success btn-sm" hx-post="{% url 'work_approve' frbr_uri=work.frbr_uri %}">
-            <span>{% trans 'Approve' %}</span>
+            {% trans 'Approve' %}
           </button>
         {% else %}
           <button type="button" class="btn btn-warning btn-sm" hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">
-            <span>{% trans 'Unapprove' %}</span>
+            {% trans 'Unapprove' %}
           </button>
         {% endif %}
       {% endif %}

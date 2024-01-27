@@ -217,23 +217,24 @@ class WorkListItemPartialView(WorkViewBase, TemplateView):
 
 class AddWorkView(PlaceViewBase, CreateView):
     model = Work
-    js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
-    is_create = True
 
     def get_form_kwargs(self):
-        kwargs = super(AddWorkView, self).get_form_kwargs()
-
-        work = Work()
-        work.country = self.country
-        work.locality = self.locality
-        kwargs['instance'] = work
+        kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
-
         return kwargs
+
+    def get_initial(self):
+        # allow pre-population of fields by passing in request params
+        initial = dict(self.request.GET)
+        initial.update({
+            'country': self.country,
+            'locality': self.locality,
+        })
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(AddWorkView, self).get_context_data(**kwargs)
@@ -245,14 +246,13 @@ class AddWorkView(PlaceViewBase, CreateView):
         if self.country.publication_set.count() == 1:
             work['publication_name'] = self.country.publication_set.first().name
         context['work_json'] = json.dumps(work)
-
-        context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['doctypes'] = self.doctypes()
         context['publication_date_optional'] = self.place.settings.publication_date_optional
 
         return context
 
     def form_valid(self, form):
+        form.instance.country = self.country
+        form.instance.locality = self.locality
         form.instance.updated_by_user = self.request.user
         form.instance.created_by_user = self.request.user
 
@@ -1177,11 +1177,12 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.country, self.locality, self.request.POST)
-        form.full_clean()
 
-        context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
-        context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
+        if self.request.GET.get('pk'):
+            form = self.Form(self.country, self.locality, self.request.POST)
+            form.full_clean()
+            context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
+            context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
 
         return context
 

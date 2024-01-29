@@ -100,11 +100,20 @@ class WorkForm(forms.ModelForm):
 
             # repeal formset
             self.RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
-            self.repeals_made_initial_data = [{
-                'repealed_work': repealed_work,
-                'repealed_date': repealed_work.repealed_date,
+            repeals_made_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "repeals_made",
+                "initial": [{
+                    "repealed_work": repealed_work,
+                    "repealed_date": repealed_work.repealed_date,
                 } for repealed_work in self.instance.repealed_works.all()]
-            self.repeals_made_formset = self.RepealMadeBaseFormSet(prefix='repeals_made', initial=self.repeals_made_initial_data)
+            }
+            if self.is_bound:
+                repeals_made_formset_kwargs["data"] = self.data
+
+            self.repeals_made_formset = self.RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -128,15 +137,13 @@ class WorkForm(forms.ModelForm):
 
     def is_valid(self):
         if self.instance.pk:
-            repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made")
-            if not repeals_made_formset.is_valid():
+            if not self.repeals_made_formset.is_valid():
                 return False
         return super().is_valid()
 
     def has_changed(self):
         if self.instance.pk:
-            repeals_made_formset = self.RepealMadeBaseFormSet(self.data, prefix="repeals_made", initial=self.repeals_made_initial_data)
-            return super().has_changed() or repeals_made_formset.has_changed()
+            return super().has_changed() or self.repeals_made_formset.has_changed()
         return super().has_changed()
 
     def clean_frbr_number(self):
@@ -179,19 +186,9 @@ class WorkForm(forms.ModelForm):
         self.instance.save()
 
     def save_repeals(self):
-        RepealMadeBaseFormset = forms.formset_factory(RepealMadeForm, extra=0, can_delete=True)
-        repeal_made_formset = RepealMadeBaseFormset(self.data, prefix='repeals_made', initial=self.repeals_made_initial_data)
-        for repeal_form in repeal_made_formset:
+        for repeal_form in self.repeals_made_formset:
             if repeal_form.is_valid() and repeal_form.has_changed():
-                work = repeal_form.cleaned_data['repealed_work']
-                if repeal_form.cleaned_data.get('DELETE'):
-                    work.repealed_by = None
-                    work.repealed_date = None
-                    work.save()
-                else:
-                    work.repealed_by = self.instance
-                    work.repealed_date = repeal_form.cleaned_data['repealed_date']
-                    work.save()
+                repeal_form.save()
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -942,6 +939,24 @@ class RepealMadeForm(forms.Form):
     repealed_work = forms.ModelChoiceField(queryset=Work.objects)
     repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
     @cached_property
     def repealed_work_obj(self):
         return Work.objects.filter(pk=self['repealed_work'].value()).first()
+
+    def is_repealed_work_saved(self):
+        return self.repealed_work_obj.repealed_by == self.work
+
+    def save(self):
+        work = self.cleaned_data['repealed_work']
+        if self.cleaned_data.get('DELETE'):
+            work.repealed_by = None
+            work.repealed_date = None
+            work.save()
+        else:
+            work.repealed_by = self.work
+            work.repealed_date = self.cleaned_data['repealed_date']
+            work.save()

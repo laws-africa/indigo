@@ -15,16 +15,17 @@
         {% endif %}
       </div>
       <div class="col">
-        <label class="form-label" for="{{ form.repealed_date.id_for_label }}">Date</label>
+        <label class="form-label" for="{{ form.repealed_date.id_for_label }}">{{ form.repealed_date.label }}</label>
         <input class="form-control"
                id="{{ form.repealed_date.id_for_label }}"
                type="{{ form.repealed_date.field.widget.input_type }}"
                value="{{ form.repealed_date.value|date:"Y-m-d" }}"
-               name="{{ form.repealed_date.html_name }}" />
+               name="{{ form.repealed_date.html_name }}"
+               required />
       </div>
       <div class="col">
         {% if not form.DELETE.value %}
-          <button hx-post="{% url 'work_form_repeals_made' place.place_code %}"
+          <button hx-post="{% url 'work_form_repeals_made' work.frbr_uri %}"
                   hx-target="#work-form-repeals-made-formset"
                   hx-include="#work-form-repeals-made-formset"
                   type="button"

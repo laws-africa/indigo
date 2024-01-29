@@ -1318,7 +1318,7 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
         return context
 
 
-class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
+class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
     form_class = RepealMadeForm
     template_name = 'indigo_api/_work_form_repeals_made_form.html'
 
@@ -1328,21 +1328,20 @@ class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
-        formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made")
+        formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made", form_kwargs={"work": self.work})
         initial = []
         if formset.is_valid():
             for form in formset.forms:
-                if form.is_valid():
-                    delete = form.cleaned_data['DELETE']
-                    if self.request.GET.get('delete'):
-                        if not delete and int(self.request.GET.get('delete')) == form.cleaned_data['repealed_work'].pk:
-                            delete = True
-
-                    initial.append({
-                        'repealed_work': form.cleaned_data['repealed_work'],
-                        'repealed_date': form.cleaned_data['repealed_date'],
-                        'DELETE': delete,
-                    })
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    # when deleting, if the repealed work is not saved skip
+                    if not form.is_repealed_work_saved():
+                        continue
+                initial.append({
+                    'repealed_work': form.cleaned_data['repealed_work'],
+                    'repealed_date': form.cleaned_data['repealed_date'],
+                    'DELETE': delete,
+                })
 
             repeal_made = self.request.POST.get('repeal_made')
             if repeal_made:
@@ -1354,8 +1353,9 @@ class WorkFormRepealsMadeView(PlaceViewBase, TemplateView):
                     })
 
         context["form"] = {
-           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial)
+           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial, form_kwargs={"work": self.work}),
         }
+        context["work"] = self.work
         return context
 
 

@@ -9,7 +9,7 @@
     </div>
 
     <div class="mt-3 row">
-      {% url 'work_form_repeals_made' place.place_code as repeals_made_url %}
+      {% url 'work_form_repeals_made' work.frbr_uri as repeals_made_url %}
       <div class="col">
         <button
             class="btn btn-outline-primary"

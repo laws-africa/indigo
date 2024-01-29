@@ -1334,7 +1334,7 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
             for form in formset.forms:
                 delete = form.cleaned_data.get('DELETE')
                 if delete:
-                    # when deleting, if the repealed work is not saved skip
+                    # when deleting, if the repealed work is not saved, skip it
                     if not form.is_repealed_work_saved():
                         continue
                 initial.append({

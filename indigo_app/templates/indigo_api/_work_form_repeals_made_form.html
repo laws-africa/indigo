@@ -9,8 +9,10 @@
         <a href="{% url 'work' form.repealed_work_obj.frbr_uri %}" target="_blank">{{ form.repealed_work_obj.title }}</a>
         <br />
         <span>{{ form.repealed_work_obj.frbr_uri }}</span>
-          {{ form.repealed_work.as_hidden }}
+        {{ form.repealed_work.as_hidden }}
+        {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}
+        {% endif %}
       </div>
       <div class="col">
         <label class="form-label" for="{{ form.repealed_date.id_for_label }}">Date</label>
@@ -21,13 +23,17 @@
                name="{{ form.repealed_date.html_name }}" />
       </div>
       <div class="col">
-            <button hx-post="{% url 'work_form_repeals_made' place.place_code %}?delete={{ form.repealed_work_obj.pk }}"
-                    hx-target="#work-form-repeals-made-formset"
-                    hx-include="#work-form-repeals-made-formset"
-                    type="button"
-                    class="btn btn-outline-danger">
-              {% trans 'Remove' %}
-            </button>
+        {% if not form.DELETE.value %}
+          <button hx-post="{% url 'work_form_repeals_made' place.place_code %}"
+                  hx-target="#work-form-repeals-made-formset"
+                  hx-include="#work-form-repeals-made-formset"
+                  type="button"
+                  name="{{ form.DELETE.html_name }}"
+                  value="1"
+                  class="btn btn-outline-danger">
+            {% trans 'Remove' %}
+          </button>
+        {% endif %}
       </div>
     </div>
   </div>

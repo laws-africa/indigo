@@ -137,8 +137,7 @@ class WorkForm(forms.ModelForm):
 
     def is_valid(self):
         if self.instance.pk:
-            if not self.repeals_made_formset.is_valid():
-                return False
+            return super.is_valid() and self.repeals_made_formset.is_valid()
         return super().is_valid()
 
     def has_changed(self):

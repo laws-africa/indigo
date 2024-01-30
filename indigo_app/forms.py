@@ -869,10 +869,10 @@ class WorkBulkApproveForm(forms.Form):
     approve = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
-        form = kwargs.pop('form', None)
         super().__init__(*args, **kwargs)
-        if form is not None:
-            self.add_amendment_task_description_fields(form.cleaned_data.get('works_in_progress', []))
+        if self.is_valid():
+            self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.full_clean()
 
     def add_amendment_task_description_fields(self, works_in_progress):
         for work in works_in_progress:

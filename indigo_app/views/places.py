@@ -1226,34 +1226,14 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
     form_class = WorkBulkApproveForm
     template_name = "indigo_app/place/_bulk_approve_form.html"
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            # use the refreshed form, which includes the amendment task description fields
-            # (form_invalid calls get_context_data, where we also refresh the form)
-            form = self.refreshed_form(form)
-            if form.is_valid():
-                return self.form_valid(form)
-            else:
-                return self.form_invalid(form)
-        else:
-            return self.form_invalid(form)
-
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        # use a fresh form that will include the amendment task description fields
-        context["form"] = self.refreshed_form(form)
-
         context["works_in_progress"] = works_in_progress = form.cleaned_data.get("works_in_progress").order_by("-created_at")
         context["import_task_works"] = works_in_progress.filter(principal=True)
         context["gazette_task_works"] = [w for w in works_in_progress if not w.has_publication_document()]
         amendment_task_works = [w for w in works_in_progress if w.amendments.exists()]
         context["amendments_per_work"] = {w: w.amendments.all() for w in amendment_task_works}
         return context
-
-    def refreshed_form(self, form):
-        form.is_valid()
-        return self.form_class(self.request.POST, form=form)
 
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):

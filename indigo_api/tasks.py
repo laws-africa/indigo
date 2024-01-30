@@ -1,3 +1,5 @@
+import os
+import socket
 from datetime import timedelta
 import logging
 
@@ -18,6 +20,10 @@ class PatchedDBTaskRunner(DBTaskRunner):
     """Patch DBTaskRunner to be more efficient when pulling tasks from the database. This can be dropped once
     https://github.com/arteria/django-background-tasks/pull/244/files is merged into django-background-task.
     """
+    def __init__(self):
+        super().__init__()
+        # ensure hostname is included in worker name because pid is not unique across docker containers
+        self.worker_name = f"{socket.gethostname()}-{os.getpid()}"
 
     def get_task_to_run(self, tasks, queue=None):
         try:

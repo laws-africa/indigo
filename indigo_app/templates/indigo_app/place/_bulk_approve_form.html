@@ -4,7 +4,11 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">
-        {% blocktrans with works_length=works_in_progress|length %}Approve {{ works_length }} works in progress{% endblocktrans %}
+        {% if works_in_progress|length > 1 %}
+          {% blocktrans with works_length=works_in_progress|length %}Approve {{ works_length }} works in progress{% endblocktrans %}
+        {% elif works_in_progress|length == 1 %}
+          {% trans "Approve 1 work in progress" %}
+        {% endif %}
       </h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
     </div>

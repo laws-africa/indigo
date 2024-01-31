@@ -89,6 +89,8 @@ urlpatterns = [
     path('places/<str:place>/work/form/parent', works.WorkFormParentView.as_view(), name='work_form_parent'),
     path('places/<str:place>/work/form/commencement', works.WorkFormCommencementView.as_view(), name='work_form_commencement'),
 
+    re_path(r'^works(?P<frbr_uri>/\S+?)/form/repeals-made$', works.WorkFormRepealsMadeView.as_view(), name='work_form_repeals_made'),
+
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<commencement_id>\d+)$', works.WorkCommencementUpdateView.as_view(), name='work_commencement_detail'),

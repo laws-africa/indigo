@@ -1,0 +1,41 @@
+{% load i18n %}
+
+{{ form.repeals_made_formset.management_form }}
+{% for form in form.repeals_made_formset %}
+  <div class="{% if form.DELETE.value  %}d-none{% endif %}">
+    {% if forloop.counter > 1 %}<hr>{% endif %}
+    <div class="row align-items-center ">
+      <div class="col">
+        <a href="{% url 'work' form.repealed_work_obj.frbr_uri %}" target="_blank">{{ form.repealed_work_obj.title }}</a>
+        <br />
+        <span>{{ form.repealed_work_obj.frbr_uri }}</span>
+        {{ form.repealed_work.as_hidden }}
+        {% if form.DELETE.value %}
+          {{ form.DELETE.as_hidden }}
+        {% endif %}
+      </div>
+      <div class="col">
+        <label class="form-label" for="{{ form.repealed_date.id_for_label }}">{{ form.repealed_date.label }}</label>
+        <input class="form-control"
+               id="{{ form.repealed_date.id_for_label }}"
+               type="{{ form.repealed_date.field.widget.input_type }}"
+               value="{{ form.repealed_date.value|date:"Y-m-d" }}"
+               name="{{ form.repealed_date.html_name }}"
+               required />
+      </div>
+      <div class="col">
+        {% if not form.DELETE.value %}
+          <button hx-post="{% url 'work_form_repeals_made' work.frbr_uri %}"
+                  hx-target="#work-form-repeals-made-formset"
+                  hx-include="#work-form-repeals-made-formset"
+                  type="button"
+                  name="{{ form.DELETE.html_name }}"
+                  value="1"
+                  class="btn btn-outline-danger">
+            {% trans 'Remove' %}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

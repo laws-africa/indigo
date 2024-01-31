@@ -103,7 +103,6 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/approve$', works.ApproveWorkView.as_view(), name='work_approve'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/unapprove$', works.UnapproveWorkView.as_view(), name='work_unapprove'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit-offcanvas$', works.EditWorkOffCanvasView.as_view(), name='work_edit_offcanvas'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/list-item$', works.WorkListItemPartialView.as_view(), name='work_list_item'),

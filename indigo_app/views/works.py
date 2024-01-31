@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeForm
+    NewCommencementForm, FindPubDocForm, RepealMadeForm, AmendmentsBaseFormSet
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1358,4 +1358,43 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
         context["work"] = self.work
         return context
 
+
+class WorkFormAmendmentsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_amendments_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        formset = AmendmentsBaseFormSet(self.request.POST, prefix="amendments", form_kwargs={"work": self.work})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                initial.append({
+                    "amended_work": self.work,
+                    "amending_work": form.cleaned_data["amending_work"],
+                    "date": form.cleaned_data["date"],
+                    "created_by_user": form.cleaned_data["created_by_user"] or self.request.user,
+                    "updated_by_user": form.cleaned_data["updated_by_user"] or self.request.user,
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            #
+            amendment = self.request.POST.get("amendment")
+            if amendment:
+                amending_work = Work.objects.filter(pk=amendment).first()
+                if amending_work:
+                    # if not self.work.amendments.filter(amending_work=amending_work).exists():
+                    initial.append({
+                        "amended_work": self.work,
+                        "amending_work": amending_work,
+                        "created_by_user": self.request.user,
+                        "updated_by_user": self.request.user,
+                    })
+
+
+        context_data['form'] = {
+            'amendments_formset': AmendmentsBaseFormSet(prefix="amendments",initial=initial, form_kwargs={"work": self.work}),
+        }
+        return context_data
 

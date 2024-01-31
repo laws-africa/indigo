@@ -21,7 +21,7 @@ from cobalt import FrbrUri
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality, Amendment
 
 
 class WorkForm(forms.ModelForm):
@@ -115,6 +115,26 @@ class WorkForm(forms.ModelForm):
 
             self.repeals_made_formset = self.RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
 
+            self.AmendmentsBaseFormSet = formset_factory(AmendmentForm, extra=0, can_delete=True)
+
+            amendments_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "amendments",
+                "initial": [{
+                    "amending_work": amendment.amending_work,
+                    "date": amendment.date,
+                    "created_by_user": amendment.created_by_user,
+                    "updated_by_user": amendment.updated_by_user,
+                }
+                   for amendment in Amendment.objects.filter(amended_work=self.instance)],
+            }
+            if self.is_bound:
+                amendments_formset_kwargs["data"] = self.data
+
+            self.amendments_formset = self.AmendmentsBaseFormSet(**amendments_formset_kwargs)
+
         self.fields['frbr_doctype'].choices = [
             (y, x)
             for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
@@ -172,6 +192,7 @@ class WorkForm(forms.ModelForm):
         self.save_publication_document()
         self.save_commencement()
         self.save_repeals()
+        self.save_amendments()
         return work
 
     def save_properties(self):
@@ -188,6 +209,11 @@ class WorkForm(forms.ModelForm):
         for repeal_form in self.repeals_made_formset:
             if repeal_form.is_valid() and repeal_form.has_changed():
                 repeal_form.save()
+
+    def save_amendments(self):
+        for amendment_form in self.amendments_formset:
+            if amendment_form.is_valid() and amendment_form.has_changed():
+                amendment_form.save()
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -959,3 +985,42 @@ class RepealMadeForm(forms.Form):
             work.repealed_by = self.work
             work.repealed_date = self.cleaned_data['repealed_date']
             work.save()
+
+
+
+
+class AmendmentForm(forms.Form):
+    amending_work = forms.ModelChoiceField(queryset=Work.objects, required=True)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    updated_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
+    created_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
+
+
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
+    @cached_property
+    def amending_work_obj(self):
+        return Work.objects.filter(pk=self['amending_work'].value()).first()
+
+    def save(self):
+        if self.cleaned_data.get('DELETE'):
+            Amendment.objects.filter(amended_work=self.work, amending_work=self.cleaned_data['amending_work']).delete()
+        else:
+            Amendment.objects.update_or_create(
+                amended_work=self.work,
+                amending_work=self.cleaned_data['amending_work'],
+                defaults={
+                    "date": self.cleaned_data["date"],
+                    "created_by_user": self.cleaned_data["created_by_user"],
+                    "updated_by_user": self.cleaned_data["updated_by_user"],
+                }
+            )
+
+
+AmendmentsBaseFormSet = formset_factory(
+    AmendmentForm,
+    extra=0,
+    can_delete=True,
+)

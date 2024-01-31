@@ -1,0 +1,43 @@
+{% load i18n %}
+
+{{ form.amendments_formset.management_form }}
+{% for form in form.amendments_formset %}
+  <div class="{% if form.DELETE.value  %}d-none{% endif %}">
+    {% if forloop.counter > 1 %}<hr>{% endif %}
+    <div class="row align-items-center ">
+      <div class="col">
+        <a href="{% url 'work' form.amending_work_obj.frbr_uri %}" target="_blank">{{ form.amending_work_obj.title }}</a>
+        <br />
+        <span>{{ form.amending_work_obj.frbr_uri }}</span>
+        {{ form.amending_work.as_hidden }}
+        {{ form.created_by_user.as_hidden }}
+        {{ form.updated_by_user.as_hidden }}
+        {% if form.DELETE.value %}
+          {{ form.DELETE.as_hidden }}
+        {% endif %}
+      </div>
+      <div class="col">
+        <label class="form-label" for="{{ form.date.id_for_label }}">{{ form.date.label }}</label>
+        <input class="form-control"
+               id="{{ form.date.id_for_label }}"
+               type="{{ form.date.field.widget.input_type }}"
+               value="{{ form.date.value|date:"Y-m-d" }}"
+               name="{{ form.date.html_name }}"
+               required />
+      </div>
+      <div class="col">
+        {% if not form.DELETE.value %}
+          <button hx-post="{% url 'work_form_amendments' work.frbr_uri %}"
+                  hx-target="#work-form-amendments-formset"
+                  hx-include="#work-form-amendments-formset"
+                  type="button"
+                  name="{{ form.DELETE.html_name }}"
+                  value="1"
+                  class="btn btn-outline-danger">
+            {% trans 'Remove' %}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

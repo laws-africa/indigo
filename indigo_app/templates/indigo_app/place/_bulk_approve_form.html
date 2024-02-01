@@ -37,15 +37,7 @@
             {% for work in works_in_progress %}
               <li>
                 <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                {% if work in import_task_works %}
-                  <span class="badge text-bg-info">{% trans 'Import' %}</span>
-                {% endif %}
-                {% if work in gazette_task_works %}
-                  <span class="badge text-bg-info">{% trans 'Gazette' %}</span>
-                {% endif %}
-                {% if work in amendments_per_work %}
-                  <span class="badge text-bg-info">{% trans 'Amendment' %}</span>
-                {% endif %}
+                {% include 'indigo_api/_work_info_badges.html' %}
               </li>
             {% endfor %}
           </ul>

@@ -1381,7 +1381,6 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                     "updated_by_user": form.cleaned_data["updated_by_user"] or self.request.user,
                     "DELETE": form.cleaned_data["DELETE"],
                 })
-            #
             amendment = self.request.POST.get("amendment")
             if amendment:
                 amending_work = Work.objects.filter(pk=amendment).first()

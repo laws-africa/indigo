@@ -1243,8 +1243,11 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
                 messages.success(self.request, f"Created {form.cleaned_data['import_task_works'].count()} Import tasks.")
             if form.cleaned_data.get('gazette_task_works'):
                 messages.success(self.request, f"Created {form.cleaned_data['gazette_task_works'].count()} Gazette tasks.")
-            if form.cleaned_data.get('amendment_task_amendments'):
-                messages.success(self.request, f"Created {form.cleaned_data['amendment_task_amendments'].count()} Amendment tasks.")
+            if form.cleaned_data.get('amendment_task_works'):
+                amendments_count = 0
+                for work in form.cleaned_data['amendment_task_works']:
+                    amendments_count += work.amendments.count()
+                messages.success(self.request, f"Created {amendments_count} Amendment tasks.")
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

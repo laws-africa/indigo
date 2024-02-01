@@ -863,7 +863,6 @@ class WorkBulkApproveForm(forms.Form):
     update_gazette_tasks = forms.ChoiceField(choices=[('', ''), ('block', 'Block'), ('cancel', 'Cancel')], required=False)
     gazette_task_description = forms.CharField(required=False)
     amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    amendment_task_amendments = forms.ModelMultipleChoiceField(queryset=Amendment.objects, required=False)
     update_amendment_tasks = forms.ChoiceField(choices=[('', ''), ('block', 'Block'), ('cancel', 'Cancel')], required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)

@@ -29,11 +29,8 @@
         {% for work in gazette_task_works %}
           <input type="hidden" name="gazette_task_works" value="{{ work.pk }}">
         {% endfor %}
-        {% for work, amendments in amendments_per_work.items %}
+        {% for work in amendments_per_work %}
           <input type="hidden" name="amendment_task_works" value="{{ work.pk }}">
-          {% for amendment in amendments %}
-            <input type="hidden" name="amendment_task_amendments" value="{{ amendment.pk }}">
-          {% endfor %}
         {% endfor %}
         <div class="alert alert-warning">
           <ul>

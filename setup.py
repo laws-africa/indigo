@@ -41,7 +41,8 @@ setup(
     python_requires='~=3.7',
     install_requires=[
         'django>=3.2,<4',
-        'boto3>=1.7,<1.34',     # python 3.7 no longer supported
+        'boto3>=1.7',
+        'urllib3<2',  # botocore doesn't play well with urllib3 2.0+ see https://github.com/boto/botocore/issues/2926
         'bluebell-akn>=2.3.0',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',

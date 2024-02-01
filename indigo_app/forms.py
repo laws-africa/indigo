@@ -157,12 +157,20 @@ class WorkForm(forms.ModelForm):
 
     def is_valid(self):
         if self.instance.pk:
-            return super().is_valid() and self.repeals_made_formset.is_valid()
+            return (
+                    super().is_valid() and
+                    self.repeals_made_formset.is_valid() and
+                    self.amendments_formset.is_valid()
+            )
         return super().is_valid()
 
     def has_changed(self):
         if self.instance.pk:
-            return super().has_changed() or self.repeals_made_formset.has_changed()
+            return (
+                    super().has_changed() or
+                    self.repeals_made_formset.has_changed() or
+                    self.amendments_formset.has_changed()
+            )
         return super().has_changed()
 
     def clean_frbr_number(self):

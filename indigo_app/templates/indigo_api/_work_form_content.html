@@ -369,6 +369,18 @@
       </div>
     {% endblock work-form-repeal %}
 
+    {% block work-form-repeals-made %}
+      {% if work.pk %}
+        <div class="card mb-3" id="repeals-made">
+          <div class="card-body">
+            <div id="work-form-repeals-made">
+              {% include 'indigo_api/_work_form_repeals_made.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-repeals-made %}
+
     <div class="card mb-3">
       <div class="card-body">
 

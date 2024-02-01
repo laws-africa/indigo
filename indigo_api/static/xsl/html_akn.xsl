@@ -112,13 +112,16 @@
         <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
         <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'zho'"><xsl:text>第</xsl:text></xsl:when>
         <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
         <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:title">
-      <!-- TODO: add translations; use choose (see chapter) -->
-      <xsl:text>Title </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Titre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Title </xsl:text></xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:tome">
       <!-- TODO: add translations; use choose (see chapter) -->
@@ -169,6 +172,7 @@
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$lang = 'zho'"><xsl:text>第</xsl:text></xsl:when>
         <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>

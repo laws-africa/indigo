@@ -92,7 +92,7 @@
 
       this.collection.fetch({reset: true});
 
-      this.$('.btn.create-work').attr('href', create_work_url + '/works/new/');
+      this.$('.btn.create-work').attr('href', create_work_url + '/works/new');
     },
 
     filterBySearch: function(e) {

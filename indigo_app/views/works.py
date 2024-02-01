@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm
+    NewCommencementForm, FindPubDocForm, RepealMadeForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1301,6 +1301,47 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
         context['form'] = form = self.Form(self.request.POST)
         if form.is_valid():
             form.fields['locality'].queryset = Locality.objects.filter(country=form.cleaned_data['country'])
+        return context
+
+
+class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
+    form_class = RepealMadeForm
+    template_name = 'indigo_api/_work_form_repeals_made_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+        formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made", form_kwargs={"work": self.work})
+        initial = []
+        if formset.is_valid():
+            for form in formset.forms:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    # when deleting, if the repealed work is not saved, skip it
+                    if not form.is_repealed_work_saved():
+                        continue
+                initial.append({
+                    'repealed_work': form.cleaned_data['repealed_work'],
+                    'repealed_date': form.cleaned_data['repealed_date'],
+                    'DELETE': delete,
+                })
+
+            repeal_made = self.request.POST.get('repeal_made')
+            if repeal_made:
+                repealed_work = Work.objects.filter(pk=repeal_made).first()
+                if repealed_work:
+                    initial.append({
+                         'repealed_work': repealed_work,
+                         'repealed_date': repealed_work.repealed_date,
+                    })
+
+        context["form"] = {
+           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial, form_kwargs={"work": self.work}),
+        }
+        context["work"] = self.work
         return context
 
 

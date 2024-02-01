@@ -54,8 +54,9 @@
 
       <form
         id="work-chooser-form"
-        hx-get="{{ hx_submit }}"
+        {{ hx_method }}="{{ hx_submit }}"
         hx-target="{{ hx_target }}"
+        hx-include="{{ hx_include }}"
       >
         <div class="work-chooser-list scrollable">
           <table class="table table-sm table-hover work-list-table">

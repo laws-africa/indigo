@@ -122,7 +122,12 @@
               </button>
             </form>
           {% else %}
-            <button type="button" class="btn btn-warning btn-sm" hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">
+            <button
+                class="btn btn-warning btn-sm"
+                type="button"
+                data-confirm="Unapprove this work? Any documents will be unpublished."
+                hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
+            >
               <span>{% trans 'Unapprove' %}</span>
             </button>
           {% endif %}

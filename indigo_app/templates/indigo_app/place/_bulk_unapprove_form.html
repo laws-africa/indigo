@@ -20,6 +20,7 @@
           <input type="hidden" name="approved_works" value="{{ work.pk }}">
         {% endfor %}
         <div class="alert alert-warning mb-3">
+          <p>Any documents will be unpublished.</p>
           <ul>
             {% for work in approved_works %}
               <li><a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a></li>

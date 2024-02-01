@@ -28,7 +28,14 @@
           {% else %}
             <form method="POST">
               {% csrf_token %}
-              <button type="submit" class="btn btn-warning me-1" formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">{% trans 'Unapprove' %}</button>
+              <button
+                  class="btn btn-warning me-1"
+                  type="submit"
+                  data-confirm="Unapprove this work? Any documents will be unpublished."
+                  formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
+              >
+                {% trans 'Unapprove' %}
+              </button>
             </form>
           {% endif %}
         {% endif %}

@@ -41,7 +41,7 @@ setup(
     python_requires='~=3.7',
     install_requires=[
         'django>=3.2,<4',
-        'boto3>=1.7',
+        'boto3>=1.7,<1.34',     # python 3.7 no longer supported
         'bluebell-akn>=2.3.0',
         'cssutils>=2.3.0',
         'django-ckeditor>=5.8',

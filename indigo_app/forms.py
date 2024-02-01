@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
-from django.forms import SelectMultiple
+from django.forms import SelectMultiple, RadioSelect
 from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -857,13 +857,16 @@ class WorkBulkUpdateForm(forms.Form):
 class WorkBulkApproveForm(forms.Form):
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     import_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_import_tasks = forms.ChoiceField(choices=[('', ''), ('block', 'Block'), ('cancel', 'Cancel')], required=False)
+    update_import_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
+                                            widget=RadioSelect, required=False)
     import_task_description = forms.CharField(required=False)
     gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_gazette_tasks = forms.ChoiceField(choices=[('', ''), ('block', 'Block'), ('cancel', 'Cancel')], required=False)
+    update_gazette_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
+                                             widget=RadioSelect, required=False)
     gazette_task_description = forms.CharField(required=False)
     amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_amendment_tasks = forms.ChoiceField(choices=[('', ''), ('block', 'Block'), ('cancel', 'Cancel')], required=False)
+    update_amendment_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
+                                               widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
 

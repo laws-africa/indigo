@@ -506,11 +506,15 @@
   {% endif %}
 
   <script>
-    function refreshWorkItem(e) {
+    (function () {
+      function refresh(e) {
         htmx.trigger("#work-list-item-{{ work.pk }}", "hx_refresh_work_list_item");
-        document.removeEventListener('hide.bs.offcanvas', refreshWorkItem);
-    }
-    document.addEventListener('hide.bs.offcanvas', refreshWorkItem);
+      }
+
+      document.addEventListener('hide.bs.offcanvas', () => {
+        document.removeEventListener('hide.bs.offcanvas', refresh);
+      });
+    })();
   </script>
 
 {% endblock %}

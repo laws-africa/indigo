@@ -175,6 +175,22 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class EditWorkOffCanvasView(EditWorkView):
+    template_name = "indigo_api/_work_form_content.html"
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        # when a work is created off-canvas, it redirects to this view, which doesn't give it a chance to tell
+        # the browser to refresh the work list. Instead, AddWorkOffCanvasView sets a query param to tell us to
+        # trigger the refresh.
+        if self.request.GET.get('hx-trigger'):
+            resp.headers['HX-Trigger'] = "hx_refresh_work_list"
+        return resp
+
+    def get_success_url(self):
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
+
+
 class ApproveWorkView(WorkViewBase, View):
     permission_required = ('indigo_api.bulk_add_work',)
     http_method_names = ['post']
@@ -193,22 +209,10 @@ class ApproveWorkView(WorkViewBase, View):
 
 
 class UnapproveWorkView(ApproveWorkView):
-
     def change_work_in_progress(self):
         work = self.get_object()
         user = self.request.user
         work.unapprove(user)
-
-
-class EditWorkModalView(EditWorkView):
-    template_name = "indigo_api/_work_form_modal.html"
-
-
-class EditWorkOffCanvasView(EditWorkView):
-    template_name = "indigo_api/_work_form_content.html"
-
-    def get_success_url(self):
-        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class WorkListItemPartialView(WorkViewBase, TemplateView):
@@ -268,7 +272,7 @@ class AddWorkOffCanvasView(AddWorkView):
     template_name = "indigo_api/_work_form_content.html"
 
     def get_success_url(self):
-        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri})
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri}) + "?hx-trigger=hx_refresh_work_list"
 
 
 class DeleteWorkView(WorkViewBase, DeleteView):

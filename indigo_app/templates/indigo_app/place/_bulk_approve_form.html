@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="modal-dialog modal-dialog-scrollable modal-lg">
+<div class="modal-dialog modal-dialog-scrollable modal-xl">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">
@@ -13,7 +13,7 @@
       <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
     </div>
 
-    <div class="modal-body max-vh-60">
+    <div class="modal-body max-vh-80">
       <form
           method="POST"
           action="{% url 'place_works_approve' place.place_code %}"

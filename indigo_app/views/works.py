@@ -1331,23 +1331,30 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
         if formset.is_valid():
             for form in formset.forms:
                 delete = form.cleaned_data.get('DELETE')
-                if delete:
-                    # when deleting, if the repealed work is not saved, skip it
-                    if not form.is_repealed_work_saved():
-                        continue
+                if delete and not form.is_repealed_work_saved():
+                    continue
+
+                # if repeal exists update the user only if the repealed date has changed
+                user = form.cleaned_data['updated_by_user']
+                if form.is_repealed_work_saved() and form.cleaned_data['repealed_date'] != form.repealed_work_obj.repealed_date:
+                    user = self.request.user
+
                 initial.append({
                     'repealed_work': form.cleaned_data['repealed_work'],
                     'repealed_date': form.cleaned_data['repealed_date'],
+                    'updated_by_user': user,
                     'DELETE': delete,
                 })
 
             repeal_made = self.request.POST.get('repeal_made')
             if repeal_made:
                 repealed_work = Work.objects.filter(pk=repeal_made).first()
-                if repealed_work:
+                if repealed_work and repealed_work.repealed_by != self.work and not any(
+                        [True for i in initial if i["repealed_work"] == repealed_work]):
                     initial.append({
-                         'repealed_work': repealed_work,
-                         'repealed_date': repealed_work.repealed_date,
+                        'repealed_work': repealed_work,
+                        'repealed_date': repealed_work.repealed_date or self.work.commencement_date,
+                        'updated_by_user': self.request.user,
                     })
 
         context["form"] = {
@@ -1385,12 +1392,17 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             if amendment:
                 amending_work = Work.objects.filter(pk=amendment).first()
                 if amending_work:
-                    initial.append({
-                        "amended_work": self.work,
-                        "amending_work": amending_work,
-                        "created_by_user": self.request.user,
-                        "updated_by_user": self.request.user,
-                    })
+                    # add amendment only if it does not exist and is not in the initial data
+                    if not Amendment.objects.filter(amended_work=self.work, amending_work=amending_work).exists() and not any(
+                            [True for i in initial if i["amending_work"] == amending_work]):
+
+                        initial.append({
+                            "amended_work": self.work,
+                            "amending_work": amending_work,
+                            "date": amending_work.commencement_date,
+                            "created_by_user": self.request.user,
+                            "updated_by_user": self.request.user,
+                        })
 
         context_data['form'] = {
             'amendments_formset': AmendmentsBaseFormSet(prefix="amendments",initial=initial, form_kwargs={"work": self.work}),

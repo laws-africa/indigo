@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="modal-dialog modal-xl" data-component="WorkChooser">
+<div class="modal-dialog modal-xl" id="work-chooser-modal-{{ work_field }}">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">{% trans 'Choose a work' %}</h5>
@@ -10,7 +10,7 @@
     <div class="card">
       <div class="card-header">
         <form
-          id="work-chooser-filter-form"
+          id="work-chooser-filter-form-{{ work_field }}"
           hx-get="{% url 'place_work_chooser_list' place.place_code %}"
           hx-trigger="keyup changed from:input delay:0.5s, submit"
           hx-target=".work-list-table tbody"
@@ -53,7 +53,7 @@
       </div>
 
       <form
-        id="work-chooser-form"
+        id="work-chooser-form-{{ work_field }}"
         {{ hx_method }}="{{ hx_submit }}"
         hx-target="{{ hx_target }}"
         hx-include="{{ hx_include }}"
@@ -79,8 +79,12 @@
     <div class="modal-footer">
       <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
       <a href="#" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</a>
-      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}" form="work-chooser-form" formnovalidate>
+      <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}" form="work-chooser-form-{{ work_field }}" formnovalidate>
     </div>
-
   </div>
 </div>
+<script>
+    document.querySelector('#work-chooser-form-{{ work_field }}').addEventListener('submit', () => {
+        $(document.querySelector('#work-chooser-modal-{{ work_field }}').parentElement).modal('hide');
+    });
+</script>

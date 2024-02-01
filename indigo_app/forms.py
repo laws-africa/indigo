@@ -108,6 +108,7 @@ class WorkForm(forms.ModelForm):
                 "initial": [{
                     "repealed_work": repealed_work,
                     "repealed_date": repealed_work.repealed_date,
+                    "updated_by_user": repealed_work.updated_by_user,
                 } for repealed_work in self.instance.repealed_works.all()]
             }
             if self.is_bound:
@@ -971,6 +972,7 @@ class FindPubDocForm(forms.Form):
 class RepealMadeForm(forms.Form):
     repealed_work = forms.ModelChoiceField(queryset=Work.objects)
     repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    updated_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
 
     def __init__(self, work, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -986,13 +988,14 @@ class RepealMadeForm(forms.Form):
     def save(self):
         work = self.cleaned_data['repealed_work']
         if self.cleaned_data.get('DELETE'):
-            work.repealed_by = None
-            work.repealed_date = None
-            work.save()
+            if work.repealed_by == self.work:
+                work.repealed_by = None
+                work.repealed_date = None
+                work.save_with_revision(user=self.cleaned_data['updated_by_user'])
         else:
             work.repealed_by = self.work
             work.repealed_date = self.cleaned_data['repealed_date']
-            work.save()
+            work.save_with_revision(user=self.cleaned_data['updated_by_user'])
 
 
 RepealMadeBaseFormSet = formset_factory(
@@ -1003,8 +1006,8 @@ RepealMadeBaseFormSet = formset_factory(
 
 
 class AmendmentForm(forms.Form):
-    amending_work = forms.ModelChoiceField(queryset=Work.objects, required=True)
-    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    amending_work = forms.ModelChoiceField(queryset=Work.objects)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     updated_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
     created_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
 

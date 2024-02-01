@@ -987,6 +987,11 @@ class RepealMadeForm(forms.Form):
             work.save()
 
 
+RepealMadeBaseFormSet = formset_factory(
+    RepealMadeForm,
+    extra=0,
+    can_delete=True,
+)
 
 
 class AmendmentForm(forms.Form):
@@ -994,7 +999,6 @@ class AmendmentForm(forms.Form):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     updated_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
     created_by_user = forms.ModelChoiceField(queryset=User.objects, required=False)
-
 
     def __init__(self, work, *args, **kwargs):
         super().__init__(*args, **kwargs)

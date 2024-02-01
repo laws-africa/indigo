@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeForm, AmendmentsBaseFormSet
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1319,7 +1319,6 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
 
 
 class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
-    form_class = RepealMadeForm
     template_name = 'indigo_api/_work_form_repeals_made_form.html'
 
     def post(self, request, *args, **kwargs):
@@ -1327,7 +1326,6 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
         formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made", form_kwargs={"work": self.work})
         initial = []
         if formset.is_valid():
@@ -1371,6 +1369,10 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         initial = []
         if formset.is_valid():
             for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not Amendment.objects.filter(amended_work=self.work, amending_work=form.cleaned_data["amending_work"]).exists():
+                        continue
                 initial.append({
                     "amended_work": self.work,
                     "amending_work": form.cleaned_data["amending_work"],
@@ -1384,14 +1386,12 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             if amendment:
                 amending_work = Work.objects.filter(pk=amendment).first()
                 if amending_work:
-                    # if not self.work.amendments.filter(amending_work=amending_work).exists():
                     initial.append({
                         "amended_work": self.work,
                         "amending_work": amending_work,
                         "created_by_user": self.request.user,
                         "updated_by_user": self.request.user,
                     })
-
 
         context_data['form'] = {
             'amendments_formset': AmendmentsBaseFormSet(prefix="amendments",initial=initial, form_kwargs={"work": self.work}),

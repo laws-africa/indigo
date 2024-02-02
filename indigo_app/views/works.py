@@ -233,6 +233,7 @@ class AddWorkView(PlaceViewBase, CreateView):
         kwargs['instance'] = work
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
+        kwargs['user'] = self.request.user
 
         return kwargs
 

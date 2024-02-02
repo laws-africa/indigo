@@ -6,15 +6,20 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template name="heading-keyword">
-    <!-- TODO: more translations -->
     <xsl:if test="self::akn:article">
       <xsl:choose>
+        <xsl:when test="$language='afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+        <xsl:when test="$language='fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$language='por'"><xsl:text>Artigo </xsl:text></xsl:when>
+        <xsl:when test="$language='spa'"><xsl:text>Artículo </xsl:text></xsl:when>
+        <xsl:when test="$language='sqi'"><xsl:text>Neni </xsl:text></xsl:when>
         <xsl:when test="$language='swa'">
           <xsl:text>Ibara </xsl:text>
           <xsl:if test="akn:num">
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$language='zho'"><xsl:text>第</xsl:text></xsl:when>
         <xsl:otherwise>
           <xsl:text>Article </xsl:text>
         </xsl:otherwise>
@@ -28,12 +33,27 @@
     </xsl:if>
     <xsl:if test="self::akn:chapter">
       <xsl:choose>
+        <xsl:when test="$language='afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
+        <xsl:when test="$language='cat'"><xsl:text>Capítol </xsl:text></xsl:when>
+        <xsl:when test="$language='fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+        <xsl:when test="$language='ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$language='nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
+        <xsl:when test="$language='por'"><xsl:text>Capítulo </xsl:text></xsl:when>
+        <xsl:when test="$language='sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+        <xsl:when test="$language='spa'"><xsl:text>Capitulo </xsl:text></xsl:when>
+        <xsl:when test="$language='ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
         <xsl:when test="$language='swa'">
           <xsl:text>Sura </xsl:text>
           <xsl:if test="akn:num">
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$language='tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
+        <xsl:when test="$language='tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
+        <xsl:when test="$language='ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
+        <xsl:when test="$language='xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$language='zho'"><xsl:text>第</xsl:text></xsl:when>
+        <xsl:when test="$language='zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
         <xsl:otherwise>
           <xsl:text>Chapter </xsl:text>
         </xsl:otherwise>
@@ -41,19 +61,39 @@
     </xsl:if>
     <xsl:if test="self::akn:part">
       <xsl:choose>
+        <xsl:when test="$language='afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$language='fra'"><xsl:text>Partie </xsl:text></xsl:when>
+        <xsl:when test="$language='ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
+        <xsl:when test="$language='nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
+        <xsl:when test="$language='por'"><xsl:text>Parte </xsl:text></xsl:when>
+        <xsl:when test="$language='sot'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$language='sqi'"><xsl:text>Pjesa </xsl:text></xsl:when>
+        <xsl:when test="$language='ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
         <xsl:when test="$language='swa'">
           <xsl:text>Sehemu </xsl:text>
           <xsl:if test="akn:num">
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$language='tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$language='tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
+        <xsl:when test="$language='ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
+        <xsl:when test="$language='xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
+        <xsl:when test="$language='zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
         <xsl:otherwise>
           <xsl:text>Part </xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:if test="self::akn:title">
-      <xsl:text>Title </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$language='fra'"><xsl:text>Titre </xsl:text></xsl:when>
+        <xsl:when test="$language='spa'"><xsl:text>Titulo </xsl:text></xsl:when>
+        <xsl:when test="$language='sqi'"><xsl:text>Kreu </xsl:text></xsl:when>
+        <xsl:otherwise>
+          <xsl:text>Title </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::akn:tome">
       <xsl:text>Tome </xsl:text>

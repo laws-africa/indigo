@@ -890,18 +890,16 @@ class WorkBulkUpdateForm(forms.Form):
 
 
 class WorkBulkApproveForm(forms.Form):
+    TASK_CHOICES = [('', 'Create tasks'), ('block', 'Create and block tasks'), ('cancel', 'Create and cancel tasks')]
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     import_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_import_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
-                                            widget=RadioSelect, required=False)
+    update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     import_task_description = forms.CharField(required=False)
     gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_gazette_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
-                                             widget=RadioSelect, required=False)
+    update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     gazette_task_description = forms.CharField(required=False)
     amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_amendment_tasks = forms.ChoiceField(choices=[('', 'Leave open'), ('block', 'Block'), ('cancel', 'Cancel')],
-                                               widget=RadioSelect, required=False)
+    update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
 

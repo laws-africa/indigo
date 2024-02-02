@@ -44,13 +44,10 @@
         </div>
         {% if import_task_works %}
           <div class="card mb-3">
-            <div class="card-header">
-              {% trans "Import tasks to be created" %}
-            </div>
+            <h5 class="card-header">
+              {% trans "Import tasks will be created" %}
+            </h5>
             <div class="card-body">
-              <p>
-                {% trans "The following works will have Import tasks created. You can edit the task description for all tasks, and block or cancel all tasks." %}
-              </p>
               <ul>
                 {% for work in import_task_works %}
                   <li>
@@ -65,7 +62,6 @@
                 >{{ description_default }}</textarea>
               </div>
               <div class="mt-3">
-                <label for="{{ form.update_import_tasks.id_for_label }}">{% trans "Block or cancel all Import tasks" %}</label>
                 {% for opt in form.update_import_tasks %}
                   <div>
                     {{ opt }}
@@ -77,13 +73,10 @@
         {% endif %}
         {% if gazette_task_works %}
           <div class="card mb-3">
-            <div class="card-header">
-              {% trans "Gazette tasks to be created" %}
-            </div>
+            <h5 class="card-header">
+              {% trans "Gazette tasks will be created" %}
+            </h5>
             <div class="card-body">
-              <p>
-                {% trans "The following works will have Gazette tasks created. You can edit the task description for all tasks, and block or cancel all tasks." %}
-              </p>
               <ul>
                 {% for work in gazette_task_works %}
                   <li>
@@ -98,7 +91,6 @@
                 >{{ description_default }}</textarea>
               </div>
               <div class="mt-3">
-                <label for="{{ form.update_gazette_tasks.id_for_label }}">{% trans "Block or cancel all Gazette tasks" %}</label>
                 {% for opt in form.update_gazette_tasks %}
                   <div>
                     {{ opt }}
@@ -110,13 +102,10 @@
         {% endif %}
         {% if amendments_per_work %}
           <div class="card">
-            <div class="card-header">
-              {% trans "Amendment tasks to be created" %}
-            </div>
+            <h5 class="card-header">
+              {% trans "Amendment tasks will be created" %}
+            </h5>
             <div class="card-body">
-              <p>
-                {% trans "The following works will have Amendment tasks created. You can edit each task description, and block or cancel all tasks." %}
-              </p>
               <ul>
                 {% for work in amendments_per_work %}
                   <li>
@@ -130,10 +119,14 @@
                     <hr>
                     <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                     {% for amendment in amendments %}
-                      <div class="mt-2">
-                        <label for="amendment_task_description_id_{{ amendment.pk }}">{% trans "Task description" %}</label>
+                      <div class="mt-3">
+                        <label for="amendment_task_description_id_{{ amendment.pk }}">
+                          {% blocktrans with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
+                            Task description: {{ title }} ({{ numbered_title }}) – {{ date }}
+                          {% endblocktrans %}
+                        </label>
                         {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-Apply the amendments made by {{title}} {{ numbered_title }} on {{ date }}.
+Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
                         <textarea id="amendment_task_description_id_{{ amendment.pk }}" name="amendment_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
@@ -144,7 +137,6 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 {% endfor %}
               </div>
               <div class="mt-3">
-                <label for="{{ form.update_gazette_tasks.id_for_label }}">{% trans "Block or cancel all Amendment tasks" %}</label>
                 {% for opt in form.update_amendment_tasks %}
                   <div>
                     {{ opt }}

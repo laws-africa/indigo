@@ -15,25 +15,13 @@
             class="btn btn-outline-primary"
             type="button"
             hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ amendments_url|urlencode }}&target={{ "#work-form-amendments-formset"|urlencode }}&field=amendment&include={{ "#work-form-amendments"|urlencode }}&method=hx-post"
-            hx-target="#work-amendments-modal"
+            hx-target="#work-chooser-modal"
             hx-trigger="click"
             data-bs-toggle="modal"
-            hx-swap="innerHTML"
-            data-bs-target="#work-amendments-modal"
+            data-bs-target="#work-chooser-modal"
         >{% trans 'Add amendment' %}</button>
       </div>
     </div>
 
-  </div>
-</div>
-
-<div
-    id="work-amendments-modal"
-    class="modal modal-blur fade"
-    style="display: none"
-    tabindex="-1"
->
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">Loading...</div>
   </div>
 </div>

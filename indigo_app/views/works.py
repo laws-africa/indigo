@@ -127,6 +127,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
+        kwargs['user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
@@ -1177,7 +1178,7 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.Form(self.country, self.locality, self.request.POST)
+        form = self.Form(self.country, self.locality, self.request.user, self.request.POST)
         form.full_clean()
 
         context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
@@ -1334,15 +1335,9 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
                 if delete and not form.is_repealed_work_saved():
                     continue
 
-                # if repeal exists update the user only if the repealed date has changed
-                user = form.cleaned_data['updated_by_user']
-                if form.is_repealed_work_saved() and form.cleaned_data['repealed_date'] != form.repealed_work_obj.repealed_date:
-                    user = self.request.user
-
                 initial.append({
                     'repealed_work': form.cleaned_data['repealed_work'],
                     'repealed_date': form.cleaned_data['repealed_date'],
-                    'updated_by_user': user,
                     'DELETE': delete,
                 })
 
@@ -1354,11 +1349,14 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
                     initial.append({
                         'repealed_work': repealed_work,
                         'repealed_date': repealed_work.repealed_date or self.work.commencement_date,
-                        'updated_by_user': self.request.user,
                     })
 
         context["form"] = {
-           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial, form_kwargs={"work": self.work}),
+           'repeals_made_formset': RepealMadeBaseFormSet(
+               prefix='repeals_made',
+               initial=initial,
+               form_kwargs={"work": self.work}
+           ),
         }
         context["work"] = self.work
         return context
@@ -1378,14 +1376,15 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             for form in formset:
                 delete = form.cleaned_data.get('DELETE')
                 if delete:
-                    if not Amendment.objects.filter(amended_work=self.work, amending_work=form.cleaned_data["amending_work"]).exists():
+                    if not Amendment.objects.filter(
+                            amended_work=self.work,
+                            amending_work=form.cleaned_data["amending_work"]
+                    ).exists():
                         continue
                 initial.append({
                     "amended_work": self.work,
                     "amending_work": form.cleaned_data["amending_work"],
                     "date": form.cleaned_data["date"],
-                    "created_by_user": form.cleaned_data["created_by_user"] or self.request.user,
-                    "updated_by_user": form.cleaned_data["updated_by_user"] or self.request.user,
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             amendment = self.request.POST.get("amendment")
@@ -1400,12 +1399,14 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                             "amended_work": self.work,
                             "amending_work": amending_work,
                             "date": amending_work.commencement_date,
-                            "created_by_user": self.request.user,
-                            "updated_by_user": self.request.user,
                         })
 
         context_data['form'] = {
-            'amendments_formset': AmendmentsBaseFormSet(prefix="amendments",initial=initial, form_kwargs={"work": self.work}),
+            'amendments_formset': AmendmentsBaseFormSet(
+                prefix="amendments",
+                initial=initial,
+                form_kwargs={"work": self.work}
+            ),
         }
         return context_data
 

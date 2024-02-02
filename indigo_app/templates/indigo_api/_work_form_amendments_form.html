@@ -10,8 +10,6 @@
         <br />
         <span>{{ form.amending_work_obj.frbr_uri }}</span>
         {{ form.amending_work.as_hidden }}
-        {{ form.created_by_user.as_hidden }}
-        {{ form.updated_by_user.as_hidden }}
         {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}
         {% endif %}

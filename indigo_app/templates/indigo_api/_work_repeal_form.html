@@ -18,10 +18,10 @@
           class="btn btn-outline-primary"
           type="button"
           hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
-          hx-target="#work-repeal-modal"
+          hx-target="#work-chooser-modal"
           hx-trigger="click"
           data-bs-toggle="modal"
-          data-bs-target="#work-repeal-modal"
+          data-bs-target="#work-chooser-modal"
       >{% trans 'Choose repealing work' %}</button>
 
       {% if work.repealed_by %}
@@ -49,14 +49,3 @@
     </div>
   </div>
 {% endif %}
-
-<div
-    id="work-repeal-modal"
-    class="modal modal-blur fade"
-    style="display: none"
-    tabindex="-1"
->
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">Loading...</div>
-  </div>
-</div>

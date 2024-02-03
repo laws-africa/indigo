@@ -191,124 +191,168 @@
       </div>
 
       <div class="col-3">
-        <h6>{% trans 'Assigned to' %}</h6>
-        <div class="mb-2">
-          {% if task.assigned_to %}
-            {% user_profile task.assigned_to %}
-          {% else %}
-            <em>{% trans 'Unassigned' %}</em>
-          {% endif %}
+        <div class="card mb-3">
+          <h6 class="card-header">{% trans 'Assigned to' %}</h6>
+          <div class="card-body">
+            <div class="mb-2">
+              {% if task.assigned_to %}
+                {% user_profile task.assigned_to %}
+              {% else %}
+                <em>{% trans 'Unassigned' %}</em>
+              {% endif %}
+            </div>
+
+            {% if perms.indigo_api.change_task %}
+              <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
+                {% csrf_token %}
+                {% if task.assigned_to %}
+                  <button class="btn btn-outline-danger mb-3" type="submit"
+                          data-confirm="{% trans 'Are you sure you want to unassign this task?' %}"
+                          formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">
+                    {% trans 'Unassign' %}
+                  </button>
+                {% endif %}
+
+                <div class="dropdown">
+                  <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
+                          data-bs-toggle="dropdown"
+                          hx-trigger="click once"
+                          hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
+                          hx-target="next .dropdown-menu">
+                    {% trans 'Assign to' %}
+                  </button>
+                  <div class="dropdown-menu"><div class="dropdown-item">...</div></div>
+                </div>
+              </form>
+            {% endif %}
+          </div>
         </div>
 
-        {% if perms.indigo_api.change_task %}
-          <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
-            {% csrf_token %}
-            {% if task.assigned_to %}
-              <button class="btn btn-outline-danger mb-3" type="submit"
-                      data-confirm="{% trans 'Are you sure you want to unassign this task?' %}"
-                      formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">
-                {% trans 'Unassign' %}
-              </button>
-            {% endif %}
-
-            <div class="dropdown">
-              <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
-                      data-bs-toggle="dropdown"
-                      hx-trigger="click once"
-                      hx-get="{% url 'assign_task_to' place=place.place_code pk=task.pk %}"
-                      hx-target="next .dropdown-menu">
-                {% trans 'Assign to' %}
-              </button>
-              <div class="dropdown-menu"><div class="dropdown-item">...</div></div>
-            </div>
-          </form>
-        {% endif %}
-
-        <h6>{% trans 'Labels' %}</h6>
-        <ul class="list-unstyled">
-          {% with task.labels.all as labels %}
-            {% if labels %}
-              {% for label in labels %}
-                <li><span class="badge text-bg-secondary"
-                          title="{{ label.description }}">{{ label.title }}</span></li>
-              {% endfor %}
-            {% else %}
-              <li><em>{% trans 'None' %}</em></li>
-            {% endif %}
-          {% endwith %}
-        </ul>
-        {% with task.workflows.all as workflows %}
-          <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
-                id="task-workflow-form" onchange="this.submit();">
-            {% csrf_token %}
-
-            <select class="selectpicker" multiple name="workflows"
-                    data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
-                    {% if not perms.indigo_api.change_task %}disabled{% endif %}
-                    data-none-selected-text="{% trans 'Projects' %}" data-selected-text-format="static"
-                    data-live-search="true" data-size="7">
-
-              {% for workflow in possible_workflows|dictsort:'title' %}
-                <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>
-                  #{{ workflow.pk }} – {{ workflow.title }}</option>
+        <div class="card mb-3">
+          <h6 class="card-header">{% trans 'Labels' %}</h6>
+          <div class="card-body">
+            <select
+                class="selectpicker" multiple
+                hx-trigger="change"
+                hx-post="{% url 'task_labels' place=place.place_code pk=task.pk %}"
+                hx-target="#task-labels-list"
+                name="labels"
+                data-style="btn-link ps-0 text-dark"
+                {% if not perms.indigo_api.change_task %}disabled{% endif %}
+                data-none-selected-text="{% trans 'Choose labels' %}"
+                data-selected-text-format="static"
+                data-size="7"
+            >
+              {% for label in possible_labels %}
+                <option value="{{ label.id }}" {% if label in task.labels.all %}selected{% endif %}>
+                  {{ label.title }}
+                </option>
               {% endfor %}
             </select>
-          </form>
-          <ul class="list-unstyled mb-2">
-            {% if workflows %}
-              {% for workflow in workflows|dictsort:'title' %}
-                <li>
-                  <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }}
-                    – {{ workflow.title }}</a></li>
-              {% endfor %}
-            {% else %}
-              <li><em>{% trans 'None' %}</em></li>
-            {% endif %}
-          </ul>
-        {% endwith %}
-
-        <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
-              id="task-blocked_by-form">
-          {% csrf_token %}
-
-          <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
-                  data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
-                  {% if not perms.indigo_api.change_task or task.is_closed %}
-                    disabled
+            <div id="task-labels-list">
+              <ul class="list-unstyled">
+                {% with task.labels.all as labels %}
+                  {% if labels %}
+                    {% for label in labels %}
+                      <li><span class="badge text-bg-secondary"
+                                title="{{ label.description }}">{{ label.title }}</span></li>
+                    {% endfor %}
+                  {% else %}
+                    <li><em>{% trans 'None' %}</em></li>
                   {% endif %}
-                  data-none-selected-text="{% trans 'Blocked by' %}" data-selected-text-format="static"
-                  data-live-search="true" data-size="7">
+                {% endwith %}
+              </ul>
+            </div>
+          </div>
+        </div>
 
-            {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
-              <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
-                #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
-            {% endfor %}
-          </select>
-        </form>
-        {% if blocked_by %}
-          <ul class="list-unstyled mb-2">
-            {% for blocking_task in blocked_by|dictsort:'pk' %}
-              <li>
-                <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
-                  – {{ blocking_task.title }}</a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+        <div class="card mb-3">
+          <h6 class="card-header">{% trans 'Projects' %}</h6>
+          <div class="card-body">
+            {% with task.workflows.all as workflows %}
+              <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
+                    id="task-workflow-form" onchange="this.submit();">
+                {% csrf_token %}
 
-        {% with task.blocking.all as blocking %}
-          {% if blocking %}
-            <div class="mt-3">
-              <i class="fas fa-exclamation-triangle text-warning"></i>
-              {% trans 'This task is blocking these tasks:' %}
-              <ul class="mb-2">
-                {% for blocked_task in blocking|dictsort:'pk' %}
+                <select class="selectpicker" multiple name="workflows"
+                        data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
+                        {% if not perms.indigo_api.change_task %}disabled{% endif %}
+                        data-none-selected-text="{% trans 'Choose projects' %}" data-selected-text-format="static"
+                        data-live-search="true" data-size="7">
+
+                  {% for workflow in possible_workflows|dictsort:'title' %}
+                    <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>
+                      #{{ workflow.pk }} – {{ workflow.title }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+              <ul class="list-unstyled mb-2">
+                {% if workflows %}
+                  {% for workflow in workflows|dictsort:'title' %}
+                    <li>
+                      <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }}
+                        – {{ workflow.title }}</a></li>
+                  {% endfor %}
+                {% else %}
+                  <li><em>{% trans 'None' %}</em></li>
+                {% endif %}
+              </ul>
+            {% endwith %}
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <h6 class="card-header">{% trans 'Blocked by' %}</h6>
+          <div class="card-body">
+            <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
+                  id="task-blocked_by-form">
+              {% csrf_token %}
+
+              <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
+                      data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
+                  {% if not perms.indigo_api.change_task or task.is_closed %}
+                      disabled
+                  {% endif %}
+                      data-none-selected-text="{% trans 'Choose tasks' %}" data-selected-text-format="static"
+                      data-live-search="true" data-size="7">
+
+                {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
+                  <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
+                    #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
+                {% endfor %}
+              </select>
+            </form>
+            {% if blocked_by %}
+              <ul class="list-unstyled mb-2">
+                {% for blocking_task in blocked_by|dictsort:'pk' %}
                   <li>
-                    <a href="{% url 'task_detail' place=place.place_code pk=blocked_task.pk %}">#{{ blocked_task.pk }}
-                      – {{ blocked_task.title }}</a>
+                    <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
+                      – {{ blocking_task.title }}</a>
                   </li>
                 {% endfor %}
               </ul>
+            {% endif %}
+          </div>
+        </div>
+
+        {% with task.blocking.all as blocking %}
+          {% if blocking %}
+            <div class="card mb-3">
+              <h6 class="card-header">{% trans "Blocking" %} <i class="fas fa-exclamation-triangle text-warning"></i></h6>
+              <div class="card-body">
+                <div>
+
+                  {% trans 'This task is blocking these tasks:' %}
+                  <ul class="mb-2">
+                    {% for blocked_task in blocking|dictsort:'pk' %}
+                      <li>
+                        <a href="{% url 'task_detail' place=place.place_code pk=blocked_task.pk %}">#{{ blocked_task.pk }}
+                          – {{ blocked_task.title }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
             </div>
           {% endif %}
         {% endwith %}

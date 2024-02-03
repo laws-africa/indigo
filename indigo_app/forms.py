@@ -393,6 +393,10 @@ class TaskForm(forms.ModelForm):
             filter(country=self.country, locality=self.locality, closed=False).order_by('title')
 
 
+class TaskEditLabelsForm(forms.Form):
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
+
+
 class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))

@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime
 
 from django import template
 from django.conf import settings
@@ -72,3 +73,17 @@ def document_commencement_description(document):
             has_uncommenced_provisions=document_has_uncommenced_provisions)
 
     return commencement_description
+
+
+@register.filter
+def format_input_date(value):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        # If it's a string, attempt to convert it to a datetime object
+        try:
+            value = datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            return value  # If conversion fails, return the original value
+
+    return value.strftime('%Y-%m-%d')

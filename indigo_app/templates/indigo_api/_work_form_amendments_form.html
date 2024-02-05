@@ -1,6 +1,17 @@
-{% load i18n %}
+{% load indigo i18n %}
 
 {{ form.amendments_formset.management_form }}
+
+{% if form.amendments_formset.non_form_errors %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for error in form.amendments_formset.non_form_errors %}
+        {{ error }}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
 {% for form in form.amendments_formset %}
   <div class="{% if form.DELETE.value  %}d-none{% endif %}">
     {% if forloop.counter > 1 %}<hr>{% endif %}
@@ -9,6 +20,7 @@
         <a href="{% url 'work' form.amending_work_obj.frbr_uri %}" target="_blank">{{ form.amending_work_obj.title }}</a>
         <br />
         <span>{{ form.amending_work_obj.frbr_uri }}</span>
+        {{ form.id.as_hidden }}
         {{ form.amending_work.as_hidden }}
         {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}
@@ -19,7 +31,7 @@
         <input class="form-control"
                id="{{ form.date.id_for_label }}"
                type="{{ form.date.field.widget.input_type }}"
-               value="{{ form.date.value|date:"Y-m-d" }}"
+               value="{{ form.date.value|format_input_date }}"
                name="{{ form.date.html_name }}"
                required />
       </div>

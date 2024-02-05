@@ -1377,30 +1377,29 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             for form in formset:
                 delete = form.cleaned_data.get('DELETE')
                 if delete:
-                    if not Amendment.objects.filter(
-                            amended_work=self.work,
-                            amending_work=form.cleaned_data["amending_work"]
-                    ).exists():
+                    if not form.cleaned_data.get('id'):
                         continue
                 initial.append({
-                    "amended_work": self.work,
                     "amending_work": form.cleaned_data["amending_work"],
                     "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             amendment = self.request.POST.get("amendment")
             if amendment:
                 amending_work = Work.objects.filter(pk=amendment).first()
                 if amending_work:
-                    # add amendment only if it does not exist and is not in the initial data
-                    if not Amendment.objects.filter(amended_work=self.work, amending_work=amending_work).exists() and not any(
-                            [True for i in initial if i["amending_work"] == amending_work]):
+                    initial.append({
+                        "amending_work": amending_work,
+                        "date": amending_work.commencement_date,
+                    })
 
-                        initial.append({
-                            "amended_work": self.work,
-                            "amending_work": amending_work,
-                            "date": amending_work.commencement_date,
-                        })
+        else:
+            context_data['form'] = {
+                'amendments_formset': formset
+            }
+
+            return context_data
 
         context_data['form'] = {
             'amendments_formset': AmendmentsBaseFormSet(

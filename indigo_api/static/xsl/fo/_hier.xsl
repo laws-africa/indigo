@@ -11,6 +11,16 @@
         <xsl:when test="$language='afr'"><xsl:text>Artikel </xsl:text></xsl:when>
         <xsl:when test="$language='ell'"><xsl:text>Άρθρο </xsl:text></xsl:when>
         <xsl:when test="$language='fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$language='kor'">
+          <xsl:choose>
+            <xsl:when test="akn:num">
+              <xsl:text>제</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>조</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
         <xsl:when test="$language='por'"><xsl:text>Artigo </xsl:text></xsl:when>
         <xsl:when test="$language='spa'"><xsl:text>Artículo </xsl:text></xsl:when>
         <xsl:when test="$language='sqi'"><xsl:text>Neni </xsl:text></xsl:when>
@@ -38,6 +48,16 @@
         <xsl:when test="$language='cat'"><xsl:text>Capítol </xsl:text></xsl:when>
         <xsl:when test="$language='ell'"><xsl:text>Κeφaλaιo </xsl:text></xsl:when>
         <xsl:when test="$language='fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+        <xsl:when test="$language='kor'">
+          <xsl:choose>
+            <xsl:when test="akn:num">
+              <xsl:text>제</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>장</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
         <xsl:when test="$language='ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
         <xsl:when test="$language='nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
         <xsl:when test="$language='por'"><xsl:text>Capítulo </xsl:text></xsl:when>

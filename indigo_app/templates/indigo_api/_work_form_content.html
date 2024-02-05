@@ -381,7 +381,7 @@
 
     {% block work-form-amendments %}
       {% if work.pk %}
-        <div class="card mb-3" id="repeals-made">
+        <div class="card mb-3">
           <div class="card-body">
             <div id="work-form-amendments">
               {% include 'indigo_api/_work_form_amendments.html' %}
@@ -393,7 +393,7 @@
 
 
     {% block work-form-repeal %}
-      <div class="card mb-3" id="repeal">
+      <div class="card mb-3">
         <div class="card-body">
           <div id="work-form-repeal">
             {% include 'indigo_api/_work_repeal_form.html' %}
@@ -404,7 +404,7 @@
 
     {% block work-form-repeals-made %}
       {% if work.pk %}
-        <div class="card mb-3" id="repeals-made">
+        <div class="card mb-3">
           <div class="card-body">
             <div id="work-form-repeals-made">
               {% include 'indigo_api/_work_form_repeals_made.html' %}

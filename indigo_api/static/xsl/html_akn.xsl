@@ -97,7 +97,18 @@
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
         <xsl:when test="$lang = 'cat'"><xsl:text>Capítol </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ell'"><xsl:text>Κeφaλaιo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'kor'">
+          <xsl:choose>
+            <xsl:when test="a:num">
+              <xsl:text>제</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>장</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
         <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
@@ -168,7 +179,18 @@
     <xsl:if test="self::a:article">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ell'"><xsl:text>Άρθρο </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'kor'">
+          <xsl:choose>
+            <xsl:when test="a:num">
+              <xsl:text>제</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>조</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'spa'"><xsl:text>Artículo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sqi'"><xsl:text>Neni </xsl:text></xsl:when>
@@ -189,6 +211,7 @@
     <xsl:if test="self::a:part">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
         <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>

@@ -107,6 +107,7 @@ class Task(models.Model):
     locality = models.ForeignKey('indigo_api.Locality', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     work = models.ForeignKey('indigo_api.Work', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     document = models.ForeignKey('indigo_api.Document', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    timeline_date = models.DateField(null=True, blank=True, help_text="A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied.")
 
     state = FSMField(default=OPEN)
 

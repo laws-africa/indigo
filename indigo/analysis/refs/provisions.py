@@ -278,6 +278,7 @@ class ProvisionRefsResolver:
         # prefix with namespace
         names = [f'{{{ns}}}{n}' for n in names]
         dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
+        not_outside_of = None if not_outside_of is None else [f'{{{ns}}}{n}' for n in not_outside_of]
 
         # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
         for elem in bfs_upward_search(root, names, dead_ends, not_outside_of):
@@ -673,7 +674,7 @@ def bfs_upward_search(root, names, dead_ends, not_outside_of=None):
         frontier.extend(child for child in node.iterchildren() if child not in visited and child.tag not in dead_ends)
 
         # If queue is empty (i.e., leaf node), move upwards
-        if not frontier and node.getparent() is not None and (
-                not_outside_of is None or node.getparent().tag in not_outside_of):
-            parent = node.getparent()
+        parent = node.getparent()
+        if not frontier and parent is not None and (
+                not_outside_of is None or node.tag not in not_outside_of):
             frontier.append(parent)

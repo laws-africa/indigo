@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
-from django.forms import SelectMultiple, formset_factory
+from django.forms import SelectMultiple, RadioSelect, formset_factory
 from django.utils.translation import gettext as _
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -21,7 +21,7 @@ from cobalt import FrbrUri
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
+    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality, Amendment
 
 
 class WorkForm(forms.ModelForm):
@@ -898,8 +898,94 @@ class WorkBulkUpdateForm(forms.Form):
 
 
 class WorkBulkApproveForm(forms.Form):
+    TASK_CHOICES = [('', 'Create tasks'), ('block', 'Create and block tasks'), ('cancel', 'Create and cancel tasks')]
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    import_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    import_task_description = forms.CharField(required=False)
+    gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    gazette_task_description = forms.CharField(required=False)
+    amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.is_valid():
+            self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.full_clean()
+
+    def add_amendment_task_description_fields(self, works_in_progress):
+        for work in works_in_progress:
+            for amendment in work.amendments.all():
+                self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
+
+    def save_changes(self, request):
+        for work in self.cleaned_data["works_in_progress"]:
+            work.approve(request.user, request)
+
+        # import tasks
+        if self.cleaned_data.get('import_task_works'):
+            # TODO: add the appropriate timeline date for Import tasks too?
+            import_tasks = [self.get_or_create_task(work=work, task_type='import-content', description=self.cleaned_data['import_task_description'], user=request.user) for work in self.cleaned_data['import_task_works']]
+            if self.cleaned_data.get('update_import_tasks'):
+                self.block_or_cancel_tasks(import_tasks, self.cleaned_data['update_import_tasks'], request.user)
+
+        # gazette tasks
+        if self.cleaned_data.get('gazette_task_works'):
+            gazette_tasks = [self.get_or_create_task(work=work, task_type='link-gazette', description=self.cleaned_data['gazette_task_description'], user=request.user) for work in self.cleaned_data['gazette_task_works']]
+            if self.cleaned_data.get('update_gazette_tasks'):
+                self.block_or_cancel_tasks(gazette_tasks, self.cleaned_data['update_gazette_tasks'], request.user)
+
+        # amendment tasks
+        if self.cleaned_data.get('amendment_task_works'):
+            amendment_tasks = []
+            for work in self.cleaned_data['amendment_task_works']:
+                for amendment in work.amendments.all():
+                    amendment_tasks.append(self.get_or_create_task(
+                        work=work, task_type='apply-amendment',
+                        description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
+                        user=request.user, timeline_date=amendment.date))
+            if self.cleaned_data.get('update_amendment_tasks'):
+                self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_tasks'], request.user)
+
+    def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
+        task_titles = {
+            'import-content': _('Import content'),
+            'link-gazette': _('Link Gazette'),
+            'apply-amendment': _('Apply amendment'),
+        }
+        task_title = task_titles[task_type]
+
+        task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date).first()
+        if not task:
+            task = Task(country=work.country, locality=work.locality, work=work,
+                        code=task_type, timeline_date=timeline_date, created_by_user=user)
+
+        task.title = task_title
+        task.description = description
+        task.updated_by_user = user
+        task.save()
+
+        # reopen or unblock tasks: they'll be blocked or cancelled again if needed as chosen in the form
+        # TODO: only leave closed tasks as done if they should be:
+        #  Gazette tasks never (we've already checked),
+        #  Import / Amendment tasks only if there's a published document at the timeline date
+        if task.state == Task.CANCELLED:
+            task.reopen(user)
+        elif task.state == Task.BLOCKED and not task.blocked_by.exists():
+            task.unblock(user)
+
+        return task
+
+    def block_or_cancel_tasks(self, tasks, block_or_cancel, user):
+        for task in tasks:
+            if block_or_cancel == 'block':
+                task.block(user)
+            elif block_or_cancel == 'cancel':
+                task.cancel(user)
 
 
 class WorkBulkUnapproveForm(forms.Form):

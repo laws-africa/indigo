@@ -149,8 +149,8 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
             context['work'] = task.work
             context['work_json'] = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
-        # include labels
-        context['possible_labels'] = TaskLabel.objects.all()
+        # include labels form
+        context['labels_form'] = TaskEditLabelsForm(instance=task)
 
         return context
 
@@ -290,18 +290,12 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         return context
 
 
-class TaskEditLabelsView(SingleTaskViewBase, FormView, SingleObjectMixin):
+class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
     form_class = TaskEditLabelsForm
     template_name = 'indigo_api/_task_labels.html'
-    object = None
-
-    def get_context_data(self, **kwargs):
-        self.object = self.get_object()
-        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        task = self.get_object()
-        task.labels.set(form.cleaned_data['labels'])
+        form.save()
         return self.form_invalid(form)
 
 

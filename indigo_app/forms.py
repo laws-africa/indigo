@@ -393,7 +393,11 @@ class TaskForm(forms.ModelForm):
             filter(country=self.country, locality=self.locality, closed=False).order_by('title')
 
 
-class TaskEditLabelsForm(forms.Form):
+class TaskEditLabelsForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ('labels',)
+
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
 
 

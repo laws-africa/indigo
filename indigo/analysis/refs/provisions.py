@@ -227,7 +227,7 @@ class ProvisionRefsResolver:
         names = self.element_names[main_ref.name.lower()]
         if not isinstance(names, list):
             names = [names]
-        not_outside_of = self.major_hier_elements if any(x in self.minor_hier_elements for x in names) else None
+        not_outside_of = self.major_hier_elements if any(x in self.minor_hier_elements for x in names) else []
         ref.element = self.find_numbered_hier_element(local_root, names, ref.text, not_outside_of)
 
         if ref.element is not None:
@@ -264,7 +264,7 @@ class ProvisionRefsResolver:
             if ref.child:
                 self.resolve_ref(ref.child, [ref.element])
 
-    def find_numbered_hier_element(self, root: Element, names: Optional[List[str]], num: str, not_outside_of: Optional[List[str]] = None) -> Element:
+    def find_numbered_hier_element(self, root: Element, names: Optional[List[str]], num: str, not_outside_of: Optional[List[str]]=None) -> Element:
         """Find an heir element with the given number. Looks for elements with the given names, or any hier element
         if names is None. If not_outside_of is not None, then we'll look above the root element, but not go outside of
         the elements in not_outside_of (if any).
@@ -655,7 +655,7 @@ class ProvisionRefsFinderAFR(BaseProvisionRefsFinder):
     locale = (None, 'afr', None)
 
 
-def bfs_upward_search(root, names, dead_ends, not_outside_of=None):
+def bfs_upward_search(root, names, dead_ends, not_outside_of):
     """ Do a breadth-first search for tag_name elements, starting at root and not descending into elements named in
     dead_ends. If nothing matches, go up to the parent node (if not_outside_of is not None) and search from there. """
     # keep track of nodes we have seen, so we don't search back down into a node when we're going up a level
@@ -675,6 +675,5 @@ def bfs_upward_search(root, names, dead_ends, not_outside_of=None):
 
         # If queue is empty (i.e., leaf node), move upwards
         parent = node.getparent()
-        if not frontier and parent is not None and (
-                not_outside_of is None or node.tag not in not_outside_of):
+        if not frontier and parent is not None and not_outside_of is not None and node.tag not in not_outside_of:
             frontier.append(parent)

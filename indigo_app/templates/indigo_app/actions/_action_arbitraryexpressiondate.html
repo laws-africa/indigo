@@ -6,8 +6,6 @@
   {% trans 'on the work' %}
   <a href="{% url 'work' frbr_uri=arb_expression_date.work.frbr_uri %}">{{ arb_expression_date.work.title }}</a>
 
-  {% if not ignore_place %}
-    {% trans 'in' %}
-    <a href="{% url 'place' place=arb_expression_date.work.place.place_code %}">{{ arb_expression_date.work.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=arb_expression_date.work.place %}
+
 {% endwith %}

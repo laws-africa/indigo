@@ -9,8 +9,6 @@
     <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
   {% endif %}
 
-  {% if not ignore_place %}
-    {% trans 'in' %}
-    <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=document.work.place %}
+
 {% endwith %}

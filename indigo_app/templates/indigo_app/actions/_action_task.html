@@ -55,7 +55,6 @@
     {% trans 'for review' %}
   {% endif %}
 
-  {% if not ignore_place %}
-    {% trans 'in' %} <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=task.place %}
+
 {% endwith %}

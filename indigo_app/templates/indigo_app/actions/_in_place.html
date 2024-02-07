@@ -1,0 +1,6 @@
+{% load i18n %}
+
+{% if not ignore_place %}
+  {% trans "in" %}
+  <a href="{% url 'place' place=place.place_code %}">{{ place }}</a>
+{% endif %}

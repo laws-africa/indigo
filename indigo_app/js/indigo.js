@@ -55,7 +55,14 @@ class IndigoApp {
     document.body.addEventListener('htmx:afterRequest', (e) => {
       window.Indigo.progressView.pop();
     });
+    // htmx:load is fired both when the page loads (weird) and when new content is loaded. We only care about the latter
+    // case. See https://github.com/bigskysoftware/htmx/issues/1500
+    const htmxHelper = { firstLoad: true };
     document.body.addEventListener('htmx:load', (e) => {
+      if (htmxHelper.firstLoad) {
+        htmxHelper.firstLoad = false;
+        return;
+      }
       // mount components on new elements
       this.createComponents(e.target);
       this.createVueComponents(e.target);
@@ -104,7 +111,7 @@ class IndigoApp {
   createComponent (element) {
     const name = element.getAttribute('data-component');
 
-    if (this.componentLibrary[name]) {
+    if (this.componentLibrary[name] && !element.component) {
       // create the component and attach it to the HTML element
       this.components.push(element.component = new this.componentLibrary[name](element));
     }
@@ -124,7 +131,7 @@ class IndigoApp {
   createVueComponent (element) {
     const name = element.getAttribute('data-vue-component');
 
-    if (this.Vue.options.components[name]) {
+    if (this.Vue.options.components[name] && !element.component) {
       // create the component and attach it to the HTML element
       const vue = createComponent(name, { el: element, propsData: element.dataset });
       vue.$el.component = vue;

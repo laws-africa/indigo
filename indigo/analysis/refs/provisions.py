@@ -1,7 +1,7 @@
 import dataclasses
 import re
 from dataclasses import dataclass
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Optional
 import logging
 from collections import deque
 
@@ -193,6 +193,22 @@ class ProvisionRefsResolver:
         "subafdelings": "subsection"
     }
 
+    # don't look outside of these elements when resolving references to minor_hier_elements
+    # that aren't otherwise scoped.
+    # ref: https://github.com/laws-africa/indigo-lawsafrica/issues/1067
+    major_hier_elements = [
+        "article",
+        "book",
+        "chapter",
+        "division",
+        "part",
+        "rule",
+        "section",
+        "title",
+        "tome",
+    ]
+    minor_hier_elements = list(set(AkomaNtoso30.hier_elements) - set(major_hier_elements))
+
     def resolve_references_str(self, text: str, root: Element):
         """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
         refs = parse_provision_refs(text).references
@@ -211,7 +227,8 @@ class ProvisionRefsResolver:
         names = self.element_names[main_ref.name.lower()]
         if not isinstance(names, list):
             names = [names]
-        ref.element = self.find_numbered_hier_element(local_root, names, ref.text, True)
+        not_outside_of = self.major_hier_elements if any(x in self.minor_hier_elements for x in names) else []
+        ref.element = self.find_numbered_hier_element(local_root, names, ref.text, not_outside_of)
 
         if ref.element is not None:
             ref.eId = ref.element.get('eId')
@@ -247,9 +264,10 @@ class ProvisionRefsResolver:
             if ref.child:
                 self.resolve_ref(ref.child, [ref.element])
 
-    def find_numbered_hier_element(self, root: Element, names: Union[List[str], None], num: str, above_root: bool = False) -> Element:
+    def find_numbered_hier_element(self, root: Element, names: Optional[List[str]], num: str, not_outside_of: Optional[List[str]]=None) -> Element:
         """Find an heir element with the given number. Looks for elements with the given names, or any hier element
-        if names is None. If above_root is True, then we'll look above the root element if nothing inside matches.
+        if names is None. If not_outside_of is not None, then we'll look above the root element, but not go outside of
+        the elements in not_outside_of (if any).
         """
         names = names or AkomaNtoso30.hier_elements
         ns = root.nsmap.get(None)
@@ -260,9 +278,10 @@ class ProvisionRefsResolver:
         # prefix with namespace
         names = [f'{{{ns}}}{n}' for n in names]
         dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
+        not_outside_of = None if not_outside_of is None else [f'{{{ns}}}{n}' for n in not_outside_of]
 
         # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
-        for elem in bfs_upward_search(root, names, dead_ends, above_root):
+        for elem in bfs_upward_search(root, names, dead_ends, not_outside_of):
             # ignore matches to the root element, which avoids things like section (1)(a)(a) matching the same (a) twice
             if elem == root:
                 continue
@@ -636,9 +655,9 @@ class ProvisionRefsFinderAFR(BaseProvisionRefsFinder):
     locale = (None, 'afr', None)
 
 
-def bfs_upward_search(root, names, dead_ends, above_root):
+def bfs_upward_search(root, names, dead_ends, not_outside_of):
     """ Do a breadth-first search for tag_name elements, starting at root and not descending into elements named in
-    dead_ends. If nothing matches, go up to the parent node (if above_root is True) and search from there. """
+    dead_ends. If nothing matches, go up to the parent node (if not_outside_of is not None) and search from there. """
     # keep track of nodes we have seen, so we don't search back down into a node when we're going up a level
     visited = set()
     # the frontier is the set of nodes that we need to check
@@ -655,6 +674,6 @@ def bfs_upward_search(root, names, dead_ends, above_root):
         frontier.extend(child for child in node.iterchildren() if child not in visited and child.tag not in dead_ends)
 
         # If queue is empty (i.e., leaf node), move upwards
-        if not frontier and node.getparent() is not None and above_root:
-            parent = node.getparent()
+        parent = node.getparent()
+        if not frontier and parent is not None and not_outside_of is not None and node.tag not in not_outside_of:
             frontier.append(parent)

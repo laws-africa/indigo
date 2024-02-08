@@ -1065,6 +1065,5 @@ class AmendmentsBaseFormSet(AmendmentsFormSet):
             amending_work = form.cleaned_data.get('amending_work')
             date = form.cleaned_data.get('date')
             if (amending_work, date) in seen:
-                print(seen)
                 raise ValidationError("Amending work and date must be unique together.")
             seen.add((amending_work, date))

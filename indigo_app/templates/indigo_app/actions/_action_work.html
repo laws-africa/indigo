@@ -3,7 +3,6 @@
 {% with action.action_object as work %}
   {% trans 'the work' %} <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
 
-  {% if not ignore_place %}
-    {% trans 'in' %} <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=work.place %}
+
 {% endwith %}

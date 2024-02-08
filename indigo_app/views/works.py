@@ -192,10 +192,7 @@ class EditWorkOffCanvasView(EditWorkView):
         return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class ApproveWorkView(WorkViewBase, View):
-    permission_required = ('indigo_api.bulk_add_work',)
-    http_method_names = ['post']
-
+class UnapproveWorkView(WorkViewBase, View):
     def post(self, request, *args, **kwargs):
         work = self.get_object()
         work.unapprove(self.request.user)
@@ -203,18 +200,6 @@ class ApproveWorkView(WorkViewBase, View):
         if request.htmx:
             url = reverse('work_list_item', kwargs={'frbr_uri': self.work.frbr_uri})
         return redirect(url)
-
-    def change_work_in_progress(self):
-        work = self.get_object()
-        user = self.request.user
-        work.approve(user, self.request)
-
-
-class UnapproveWorkView(ApproveWorkView):
-    def change_work_in_progress(self):
-        work = self.get_object()
-        user = self.request.user
-        work.unapprove(user)
 
 
 class WorkListItemPartialView(WorkViewBase, TemplateView):

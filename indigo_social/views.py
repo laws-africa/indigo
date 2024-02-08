@@ -112,6 +112,7 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserProfileForm
     check_country_perms = False
+    use_indigo_perm_required = False
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileEditView, self).get_context_data(**kwargs)

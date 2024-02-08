@@ -33,7 +33,10 @@ def retrieve_social_profile_photo(user_profile, url):
 
 class UserProfile(models.Model):
     class Meta:
-        permissions = (('audit_user_activity', 'Can audit user activity'),)
+        permissions = (
+            ('audit_user_activity', 'Can audit user activity'),
+            ('use_indigo', 'Can use the Indigo application in general'),
+        )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True, default='', help_text="A short bio")

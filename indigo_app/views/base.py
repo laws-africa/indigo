@@ -3,6 +3,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
+from django.shortcuts import redirect
 
 from indigo_api.authz import is_maintenance_mode
 from indigo_api.models import Country
@@ -39,6 +40,8 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     authentication_required = True
     permission_required = ()
     must_accept_terms = True
+    # this is a special permission that is required to use the site at all, except basic account pages
+    use_indigo_perm_required = True
 
     def dispatch(self, request, *args, **kwargs):
         if is_maintenance_mode(request):
@@ -47,6 +50,10 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
         if self.requires_authentication():
             if not request.user.is_authenticated:
                 return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+
+            # force users who can't use the site to go to the account edit page
+            if self.use_indigo_perm_required and not self.request.user.has_perm('indigo_social.use_indigo'):
+                return redirect('edit_account')
 
         if request.user.is_authenticated and self.must_accept_terms and not request.user.editor.accepted_terms:
             # user must accept terms

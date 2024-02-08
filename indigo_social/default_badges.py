@@ -28,6 +28,8 @@ class ContributorBadge(PermissionBadge):
     group_name = name + ' Badge'
     description = 'Can view work details'
     permissions = (
+        # a contributor can use the platform
+        'indigo_social.use_indigo',
         'indigo_api.view_annotation', 'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
         'indigo_api.view_work', 'indigo_api.view_document', 'indigo_api.view_commencement',
         'indigo_api.view_task', 'indigo_api.add_task',

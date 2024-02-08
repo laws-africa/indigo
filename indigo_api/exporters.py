@@ -29,6 +29,8 @@ log = logging.getLogger(__name__)
 class HTMLExporter:
     """ Export (render) AKN documents as as HTML.
     """
+    base_xsl_html_dir = os.path.join(os.path.dirname(__file__), 'static', 'xsl', 'html')
+
     def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None, media_resolver_use_akn_prefix=False):
         self.template_name = template_name
         self.standalone = standalone
@@ -125,6 +127,25 @@ class HTMLExporter:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
         return best
 
+    def update_base_xsl_dir(self, xslt):
+        # """ In the XSL FO, replace __INDIGO_API_XSL_DIR__ with the full path to indigo_api/static/xsl/fo.
+        #     This will ensure that the base stylesheets are always available for import.
+        # """
+        # with open(xsl_fo, 'r+') as f:
+        #     out = re.sub('__INDIGO_API_XSL_DIR__', self.base_xsl_fo_dir, f.read())
+        #     f.truncate(0)
+        #     f.seek(0)
+        #     f.write(out)
+        # 
+        """ In the XSL, replace __INDIGO_API_XSL_DIR__ with the full path to indigo_api/static/xsl/html.
+            This will ensure that the base stylesheets are always available for import.
+        """
+        with open(xslt, 'r+') as f:
+            out = re.sub('__INDIGO_API_XSL_DIR__', self.base_xsl_html_dir, f.read())
+            f.truncate(0)
+            f.seek(0)
+            f.write(out)
+
     def _xml_renderer(self, document):
         params = {
             'resolverUrl': self.resolver,
@@ -136,7 +157,10 @@ class HTMLExporter:
             'locality': (document.work.locality.code if document.work.locality else ''),
         }
 
-        return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
+        xslt = self.find_xslt(document)
+        self.update_base_xsl_dir(xslt)
+
+        return XSLTRenderer(xslt_params=params, xslt_filename=xslt)
 
 
 @plugins.register('pdf-exporter')

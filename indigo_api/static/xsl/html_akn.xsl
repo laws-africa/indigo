@@ -133,7 +133,7 @@
     <xsl:if test="self::a:title">
       <xsl:choose>
         <xsl:when test="$lang = 'fra'"><xsl:text>Titre </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'spa'"><xsl:text>Titulo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'spa'"><xsl:text>Título </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sqi'"><xsl:text>Kreu </xsl:text></xsl:when>
         <xsl:otherwise><xsl:text>Title </xsl:text></xsl:otherwise>
       </xsl:choose>

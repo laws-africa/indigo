@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<div class="mb-3 row">
+  <label class="col-2 col-form-label">{% trans 'Amendments' %}</label>
+  <div class="col">
+
+    <div id="work-form-amendments-formset">
+      {% include 'indigo_api/_work_form_amendments_form.html' %}
+    </div>
+
+    <div class="mt-3 row">
+      {% url 'work_form_amendments' work.frbr_uri as amendments_url %}
+      <div class="col">
+        <button
+            class="btn btn-outline-primary"
+            type="button"
+            hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ amendments_url|urlencode }}&target={{ "#work-form-amendments-formset"|urlencode }}&field=amendment&include={{ "#work-form-amendments"|urlencode }}&method=hx-post"
+            hx-target="#work-chooser-modal"
+            hx-trigger="click"
+            data-bs-toggle="modal"
+            data-bs-target="#work-chooser-modal"
+        >{% trans 'Add amendment' %}</button>
+      </div>
+    </div>
+
+  </div>
+</div>

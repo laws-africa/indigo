@@ -74,11 +74,12 @@ class WorkForm(forms.ModelForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commencement_note = forms.CharField(max_length=1024, required=False)
 
-    def __init__(self, country, locality, *args, **kwargs):
+    def __init__(self, country, locality, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
         self.locality = locality
         self.place = locality or country
+        self.user = user
 
         for prop, label in self.place.settings.work_properties.items():
             key = f'property_{prop}'
@@ -99,7 +100,7 @@ class WorkForm(forms.ModelForm):
                     self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
             # repeal formset
-            self.RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
+            self.RepealMadeBaseFormSet = RepealMadeBaseFormSet
             repeals_made_formset_kwargs = {
                 "form_kwargs": {
                     "work": self.instance,
@@ -114,6 +115,25 @@ class WorkForm(forms.ModelForm):
                 repeals_made_formset_kwargs["data"] = self.data
 
             self.repeals_made_formset = self.RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
+
+            self.AmendmentsBaseFormSet = AmendmentsBaseFormSet
+
+            amendments_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "amendments",
+                "initial": [{
+                    "amending_work": amendment.amending_work,
+                    "date": amendment.date,
+                    "id": amendment.id,
+                }
+                   for amendment in Amendment.objects.filter(amended_work=self.instance)],
+            }
+            if self.is_bound:
+                amendments_formset_kwargs["data"] = self.data
+
+            self.amendments_formset = self.AmendmentsBaseFormSet(**amendments_formset_kwargs)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -137,12 +157,20 @@ class WorkForm(forms.ModelForm):
 
     def is_valid(self):
         if self.instance.pk:
-            return super().is_valid() and self.repeals_made_formset.is_valid()
+            return (
+                    super().is_valid() and
+                    self.repeals_made_formset.is_valid() and
+                    self.amendments_formset.is_valid()
+            )
         return super().is_valid()
 
     def has_changed(self):
         if self.instance.pk:
-            return super().has_changed() or self.repeals_made_formset.has_changed()
+            return (
+                    super().has_changed() or
+                    self.repeals_made_formset.has_changed() or
+                    self.amendments_formset.has_changed()
+            )
         return super().has_changed()
 
     def clean_frbr_number(self):
@@ -172,6 +200,7 @@ class WorkForm(forms.ModelForm):
         self.save_publication_document()
         self.save_commencement()
         self.save_repeals()
+        self.save_amendments()
         return work
 
     def save_properties(self):
@@ -187,7 +216,12 @@ class WorkForm(forms.ModelForm):
     def save_repeals(self):
         for repeal_form in self.repeals_made_formset:
             if repeal_form.is_valid() and repeal_form.has_changed():
-                repeal_form.save()
+                repeal_form.save(self.user)
+
+    def save_amendments(self):
+        for amendment_form in self.amendments_formset:
+            if amendment_form.is_valid() and amendment_form.has_changed():
+                amendment_form.save(self.user)
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -1035,13 +1069,87 @@ class RepealMadeForm(forms.Form):
     def is_repealed_work_saved(self):
         return self.repealed_work_obj.repealed_by == self.work
 
-    def save(self):
+    def save(self, user):
         work = self.cleaned_data['repealed_work']
         if self.cleaned_data.get('DELETE'):
-            work.repealed_by = None
-            work.repealed_date = None
-            work.save()
+            if work.repealed_by == self.work:
+                work.repealed_by = None
+                work.repealed_date = None
+                work.save_with_revision(user=user)
         else:
             work.repealed_by = self.work
             work.repealed_date = self.cleaned_data['repealed_date']
-            work.save()
+            work.save_with_revision(user=user)
+
+
+RepealMadeFormSet = formset_factory(
+    RepealMadeForm,
+    extra=0,
+    can_delete=True,
+)
+
+
+class RepealMadeBaseFormSet(RepealMadeFormSet):
+    pass
+
+
+class AmendmentForm(forms.ModelForm):
+    amending_work = forms.ModelChoiceField(queryset=Work.objects)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Amendment
+        fields = ('amending_work', 'date', 'id')
+
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
+    @cached_property
+    def amending_work_obj(self):
+        return Work.objects.filter(pk=self['amending_work'].value()).first()
+
+    def save(self, user, *args, **kwargs):
+        amendment = Amendment.objects.filter(pk=self.cleaned_data['id']).first()
+
+        if self.cleaned_data.get('DELETE') and amendment:
+            amendment.delete()
+        else:
+            if amendment:
+                amendment.updated_by_user = user
+                amendment.date = self.cleaned_data["date"]
+                amendment.save()
+            else:
+                Amendment.objects.create(
+                    amended_work=self.work,
+                    amending_work=self.cleaned_data['amending_work'],
+                    date=self.cleaned_data["date"],
+                    created_by_user=user,
+                    updated_by_user=user,
+                )
+
+
+AmendmentsFormSet = formset_factory(
+    AmendmentForm,
+    extra=0,
+    can_delete=True,
+)
+
+
+class AmendmentsBaseFormSet(AmendmentsFormSet):
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        # check if amending work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            amending_work = form.cleaned_data.get('amending_work')
+            date = form.cleaned_data.get('date')
+            if (amending_work, date) in seen:
+                raise ValidationError("Amending work and date must be unique together.")
+            seen.add((amending_work, date))

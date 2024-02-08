@@ -25,7 +25,7 @@
           <div class="d-flex">
             <div class="col-9 ps-0">
               <div>
-                <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+                <a href="{% url 'work' frbr_uri=work.frbr_uri %}"><span>{{ work.title }}</span></a>
                 {% include 'indigo_api/_work_info_badges.html' %}
               </div>
               <div class="text-muted">{{ work.frbr_uri }}</div>

@@ -15,24 +15,13 @@
             class="btn btn-outline-primary"
             type="button"
             hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ repeals_made_url|urlencode }}&target={{ "#work-form-repeals-made-formset"|urlencode }}&field=repeal_made&include={{ "#work-form-repeals-made"|urlencode }}&method=hx-post"
-            hx-target="#work-repeals-made-modal"
+            hx-target="#work-chooser-modal"
             hx-trigger="click"
             data-bs-toggle="modal"
-            data-bs-target="#work-repeals-made-modal"
+            data-bs-target="#work-chooser-modal"
         >{% trans 'Add repealed work' %}</button>
       </div>
     </div>
 
-  </div>
-</div>
-
-<div
-    id="work-repeals-made-modal"
-    class="modal modal-blur fade"
-    style="display: none"
-    tabindex="-1"
->
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">Loading...</div>
   </div>
 </div>

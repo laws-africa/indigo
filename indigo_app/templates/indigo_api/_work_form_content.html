@@ -17,6 +17,26 @@
       </ul>
     </div>
   {% endif %}
+  {% if form.amendments_formset.non_form_errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for error in form.amendments_formset.non_form_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div
+      id="work-chooser-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">Loading...</div>
+    </div>
+  </div>
 
   <form
       id="edit-work-form"
@@ -363,8 +383,21 @@
       </div>
     {% endblock work-form-commencement %}
 
+    {% block work-form-amendments %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-amendments">
+              {% include 'indigo_api/_work_form_amendments.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-amendments %}
+
+
     {% block work-form-repeal %}
-      <div class="card mb-3" id="repeal">
+      <div class="card mb-3">
         <div class="card-body">
           <div id="work-form-repeal">
             {% include 'indigo_api/_work_repeal_form.html' %}
@@ -375,7 +408,7 @@
 
     {% block work-form-repeals-made %}
       {% if work.pk %}
-        <div class="card mb-3" id="repeals-made">
+        <div class="card mb-3">
           <div class="card-body">
             <div id="work-form-repeals-made">
               {% include 'indigo_api/_work_form_repeals_made.html' %}

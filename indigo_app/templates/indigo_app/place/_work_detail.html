@@ -86,31 +86,47 @@
 </div>
 
 {% if perms.indigo_api.change_work or perms.indigo_api.bulk_add_work %}
-  <div class="border-top p-2 {% if work.work_in_progress %}bg-work-in-progress-light{% else %}bg-light{% endif %}">
+  <div class="border-top p-2 d-flex flex-row {% if work.work_in_progress %}bg-work-in-progress-light{% else %}bg-light{% endif %}">
     {% block work-actions %}
       {% if perms.indigo_api.change_work %}
-        <button
-            hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-            hx-target="#offCanvasEditWorkForm"
-            hx-swap="innerHTML"
-            class="btn btn-outline-primary btn-sm"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasEditWork"
-            aria-controls="offcanvasEditWork">
-          {% trans 'Edit' %}
-        </button>
+        <div>
+          <button
+              hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+              hx-target="#offCanvasEditWorkForm"
+              hx-swap="innerHTML"
+              class="btn btn-outline-primary btn-sm"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasEditWork"
+              aria-controls="offcanvasEditWork"
+          >{% trans 'Edit' %}</button>
+        </div>
       {% endif %}
       {% if perms.indigo_api.bulk_add_work %}
-        {% if work.work_in_progress %}
-          <button type="button" class="btn btn-success btn-sm" hx-post="{% url 'work_approve' frbr_uri=work.frbr_uri %}">
-            {% trans 'Approve' %}
-          </button>
-        {% else %}
-          <button type="button" class="btn btn-warning btn-sm" hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">
-            {% trans 'Unapprove' %}
-          </button>
-        {% endif %}
+        <div class="ms-2 me-2">
+          {% if work.work_in_progress %}
+            <form
+                hx-post="{% url 'place_works_approve' place.place_code %}"
+                hx-target="#work-approve-modal"
+                hx-swap="innerHTML"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+              <button
+                  class="btn btn-success btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#work-approve-modal"
+              >{% trans 'Approve' %}</button>
+            </form>
+          {% else %}
+            <button
+                class="btn btn-warning btn-sm"
+                type="button"
+                data-confirm="Unapprove this work? Any documents will be unpublished."
+                hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
+            >{% trans 'Unapprove' %}</button>
+          {% endif %}
+        </div>
       {% endif %}
     {% endblock %}
   </div>

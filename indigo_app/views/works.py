@@ -31,7 +31,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeForm
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -127,6 +127,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
+        kwargs['user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
@@ -196,7 +197,8 @@ class ApproveWorkView(WorkViewBase, View):
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
-        self.change_work_in_progress()
+        work = self.get_object()
+        work.unapprove(self.request.user)
         url = reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
         if request.htmx:
             url = reverse('work_list_item', kwargs={'frbr_uri': self.work.frbr_uri})
@@ -229,6 +231,7 @@ class AddWorkView(PlaceViewBase, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
+        kwargs['user'] = self.request.user
         return kwargs
 
     def get_initial(self):
@@ -1188,12 +1191,10 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        if self.request.GET.get('pk'):
-            form = self.Form(self.country, self.locality, self.request.POST)
-            form.full_clean()
-            context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
-            context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
+        form = self.Form(self.country, self.locality, self.request.user, self.request.POST)
+        form.full_clean()
+        context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
+        context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
 
         return context
 
@@ -1331,7 +1332,6 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
 
 
 class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
-    form_class = RepealMadeForm
     template_name = 'indigo_api/_work_form_repeals_made_form.html'
 
     def post(self, request, *args, **kwargs):
@@ -1339,16 +1339,14 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        RepealMadeBaseFormSet = formset_factory(RepealMadeForm, extra=0, can_delete=True)
         formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made", form_kwargs={"work": self.work})
         initial = []
         if formset.is_valid():
             for form in formset.forms:
                 delete = form.cleaned_data.get('DELETE')
-                if delete:
-                    # when deleting, if the repealed work is not saved, skip it
-                    if not form.is_repealed_work_saved():
-                        continue
+                if delete and not form.is_repealed_work_saved():
+                    continue
+
                 initial.append({
                     'repealed_work': form.cleaned_data['repealed_work'],
                     'repealed_date': form.cleaned_data['repealed_date'],
@@ -1358,16 +1356,68 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
             repeal_made = self.request.POST.get('repeal_made')
             if repeal_made:
                 repealed_work = Work.objects.filter(pk=repeal_made).first()
-                if repealed_work:
+                if repealed_work and repealed_work.repealed_by != self.work and not any(
+                        [True for i in initial if i["repealed_work"] == repealed_work]):
                     initial.append({
-                         'repealed_work': repealed_work,
-                         'repealed_date': repealed_work.repealed_date,
+                        'repealed_work': repealed_work,
+                        'repealed_date': repealed_work.repealed_date or self.work.commencement_date,
                     })
 
         context["form"] = {
-           'repeals_made_formset': RepealMadeBaseFormSet(prefix='repeals_made', initial=initial, form_kwargs={"work": self.work}),
+           'repeals_made_formset': RepealMadeBaseFormSet(
+               prefix='repeals_made',
+               initial=initial,
+               form_kwargs={"work": self.work}
+           ),
         }
         context["work"] = self.work
         return context
 
+
+class WorkFormAmendmentsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_amendments_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        formset = AmendmentsBaseFormSet(self.request.POST, prefix="amendments", form_kwargs={"work": self.work})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not form.cleaned_data.get('id'):
+                        continue
+                initial.append({
+                    "amending_work": form.cleaned_data["amending_work"],
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            amendment = self.request.POST.get("amendment")
+            if amendment:
+                amending_work = Work.objects.filter(pk=amendment).first()
+                if amending_work:
+                    initial.append({
+                        "amending_work": amending_work,
+                        "date": amending_work.commencement_date,
+                    })
+
+        else:
+            context_data['form'] = {
+                'amendments_formset': formset
+            }
+
+            return context_data
+
+        context_data['form'] = {
+            'amendments_formset': AmendmentsBaseFormSet(
+                prefix="amendments",
+                initial=initial,
+                form_kwargs={"work": self.work}
+            ),
+        }
+        return context_data
 

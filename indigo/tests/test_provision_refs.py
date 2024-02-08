@@ -147,6 +147,38 @@ class ProvisionRefsResolverTestCase(TestCase):
             ),
         ], self.resolver.resolve_references_str("paragraph (a), subsection (1)", root))
 
+    def test_not_outside_of(self):
+        self.doc = AkomaNtosoDocument(document_fixture(xml="""
+        <article eId="art_44">
+          <num>44</num>
+          <heading>Termination of arbitral proceedings</heading>
+          <content>
+            <p eId="art_44__p_1">The arbitral proceedings are terminated by the pronouncement of the decisions in substance or by an order of the arbitral tribunal in accordance with paragraph <ref href="#chp_II__sec_5__subsec_2">2</ref> of this Article.</p>
+          </content>
+        </article>
+        <article eid="art_45">
+          <num>45</num>
+          <subsection eId="art_45__subsec_2">
+            <num>2</num>
+            <content>
+              <p>subsection 2 which can be mistaken for paragraph 2</p>
+            </content>
+          </subsection>
+          <paragraph eId="art_45__para_2">
+            <num>2</num>
+            <content>
+              <p>paragraph 2</p>
+            </content>
+          </paragraph>
+        </article>
+        """)).root
+        root = self.doc.xpath('.//*[@eId="art_44__p_1"]')[0]
+        self.assertEqual([
+            MainProvisionRef(
+                "Paragraph",
+                ProvisionRef("2", 10, 11, None))
+        ], self.resolver.resolve_references_str("Paragraph 2", root))
+
 
 class ProvisionRefsMatcherTestCase(TestCase):
     maxDiff = None

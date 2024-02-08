@@ -7,14 +7,37 @@
     {% block work-buttons %}
       <div class="d-flex">
         {% if perms.indigo_api.bulk_add_work %}
-          <form method="POST">
-            {% csrf_token %}
-            {% if work.work_in_progress %}
-              <button type="submit" class="btn btn-success me-1" formaction="{% url 'work_approve' frbr_uri=work.frbr_uri %}">{% trans 'Approve' %}</button>
-            {% else %}
-              <button type="submit" class="btn btn-warning me-1" formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">{% trans 'Unapprove' %}</button>
-            {% endif %}
-          </form>
+          {% if work.work_in_progress %}
+            <form
+                hx-post="{% url 'place_works_approve' place.place_code %}"
+                hx-target="#work-approve-modal"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+              <button
+                  class="btn btn-success me-1"
+                  data-bs-toggle="modal"
+                  data-bs-target="#work-approve-modal"
+              >
+                {% trans 'Approve' %}
+              </button>
+            </form>
+            <div class="modal fade" tabindex="-1" id="work-approve-modal">
+              {% include 'indigo_app/place/_bulk_approve_form.html' %}
+            </div>
+          {% else %}
+            <form method="POST">
+              {% csrf_token %}
+              <button
+                  class="btn btn-warning me-1"
+                  type="submit"
+                  data-confirm="Unapprove this work? Any documents will be unpublished."
+                  formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
+              >
+                {% trans 'Unapprove' %}
+              </button>
+            </form>
+          {% endif %}
         {% endif %}
         {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
           <a class="btn btn-success me-1" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>

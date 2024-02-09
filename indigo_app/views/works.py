@@ -176,8 +176,23 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class UnapproveWorkView(WorkViewBase, View):
+class EditWorkOffCanvasView(EditWorkView):
+    template_name = "indigo_api/_work_form_content.html"
 
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        # when a work is created off-canvas, it redirects to this view, which doesn't give it a chance to tell
+        # the browser to refresh the work list. Instead, AddWorkOffCanvasView sets a query param to tell us to
+        # trigger the refresh.
+        if self.request.GET.get('hx-trigger'):
+            resp.headers['HX-Trigger'] = "hx_refresh_work_list"
+        return resp
+
+    def get_success_url(self):
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
+
+
+class UnapproveWorkView(WorkViewBase, View):
     def post(self, request, *args, **kwargs):
         work = self.get_object()
         work.unapprove(self.request.user)
@@ -187,41 +202,31 @@ class UnapproveWorkView(WorkViewBase, View):
         return redirect(url)
 
 
-class EditWorkModalView(EditWorkView):
-    template_name = "indigo_api/_work_form_modal.html"
-
-
-class EditWorkOffCanvasView(EditWorkView):
-    template_name = "indigo_api/_work_form_content.html"
-
-    def get_success_url(self):
-        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
-
-
 class WorkListItemPartialView(WorkViewBase, TemplateView):
     template_name = "indigo_app/place/_work.html"
 
 
 class AddWorkView(PlaceViewBase, CreateView):
     model = Work
-    js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
-    is_create = True
 
     def get_form_kwargs(self):
-        kwargs = super(AddWorkView, self).get_form_kwargs()
-
-        work = Work()
-        work.country = self.country
-        work.locality = self.locality
-        kwargs['instance'] = work
+        kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
         kwargs['user'] = self.request.user
-
         return kwargs
+
+    def get_initial(self):
+        # allow pre-population of fields by passing in request params
+        initial = dict(self.request.GET)
+        initial.update({
+            'country': self.country,
+            'locality': self.locality,
+        })
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(AddWorkView, self).get_context_data(**kwargs)
@@ -233,14 +238,13 @@ class AddWorkView(PlaceViewBase, CreateView):
         if self.country.publication_set.count() == 1:
             work['publication_name'] = self.country.publication_set.first().name
         context['work_json'] = json.dumps(work)
-
-        context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['doctypes'] = self.doctypes()
         context['publication_date_optional'] = self.place.settings.publication_date_optional
 
         return context
 
     def form_valid(self, form):
+        form.instance.country = self.country
+        form.instance.locality = self.locality
         form.instance.updated_by_user = self.request.user
         form.instance.created_by_user = self.request.user
 
@@ -250,6 +254,13 @@ class AddWorkView(PlaceViewBase, CreateView):
 
     def get_success_url(self):
         return reverse('work', kwargs={'frbr_uri': self.object.frbr_uri})
+
+
+class AddWorkOffCanvasView(AddWorkView):
+    template_name = "indigo_api/_work_form_content.html"
+
+    def get_success_url(self):
+        return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri}) + "?hx-trigger=hx_refresh_work_list"
 
 
 class DeleteWorkView(WorkViewBase, DeleteView):
@@ -1167,7 +1178,6 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
         form = self.Form(self.country, self.locality, self.request.user, self.request.POST)
         form.full_clean()
-
         context["actual_duplicate"] = form.find_actual_duplicate(self.request.GET.get('pk'))
         context["possible_duplicates"] = form.find_possible_duplicates(self.request.GET.get('pk'))
 

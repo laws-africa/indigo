@@ -1,42 +1,47 @@
 {% load indigo i18n %}
 
 <dl class="row mb-0">
-  {% for entry in overview_data %}
-    <dt class="col-2">
-      {{ entry.key }}
-    </dt>
-    <dd class="col-10">
-      <div>
-        {% if entry.overridden %}{% include 'indigo_app/place/_overridden.html' %}{% endif %}
-        {{ entry.value }}
-      </div>
-      {% if entry.key == "Publication" and work.publication_document %}
-        <div>
-          <i class="fas fa-file text-muted" title="{% trans "Publication document" %}"></i>
-          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
-             target="_blank" rel="noopener">{{ work.publication_document.filename }}</a>
-          <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-        </div>
-      {% endif %}
-    </dd>
-  {% endfor %}
-
-  {% with work.taxonomy_topics.all as topics %}
-    {% if topics %}
-      <dt class="col-2">
-        {% trans "Topics" %}
-      </dt>
-      <dd class="col-10">
-        {% for topic in topics %}
+  {% block overview-list %}
+    {% block overview-data %}
+      {% for entry in overview_data %}
+        <dt class="col-2">
+          {{ entry.key }}
+        </dt>
+        <dd class="col-10">
           <div>
-            {% for item in topic.get_ancestors %}
-              <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
-            {% endfor %}
-            <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+            {% if entry.overridden %}{% include 'indigo_app/place/_overridden.html' %}{% endif %}
+            {{ entry.value }}
           </div>
-        {% endfor %}
-      </dd>
-    {% endif %}
-  {% endwith %}
+          {% if entry.key == "Publication" and work.publication_document %}
+            <div>
+              <i class="fas fa-file text-muted" title="{% trans "Publication document" %}"></i>
+              <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
+                 target="_blank" rel="noopener">{{ work.publication_document.filename }}</a>
+              <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+            </div>
+          {% endif %}
+        </dd>
+      {% endfor %}
+    {% endblock %}
 
+    {% block overview-taxonomies  %}
+      {% with work.taxonomy_topics.all as topics %}
+        {% if topics %}
+          <dt class="col-2">
+            {% trans "Topics" %}
+          </dt>
+          <dd class="col-10">
+            {% for topic in topics %}
+              <div>
+                {% for item in topic.get_ancestors %}
+                  <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
+                {% endfor %}
+                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
+              </div>
+            {% endfor %}
+          </dd>
+        {% endif %}
+      {% endwith %}
+    {% endblock %}
+  {% endblock %}
 </dl>

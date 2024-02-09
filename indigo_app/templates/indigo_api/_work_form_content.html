@@ -44,8 +44,12 @@
       enctype="multipart/form-data"
       data-component="WorkForm"
       {% if request.htmx %}
-      hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-      hx-target="#offCanvasEditWorkForm"
+        {% if work.pk %}
+          hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+        {% else %}
+          hx-post="{% url 'new_work_offcanvas' place.place_code %}"
+        {% endif %}
+        hx-target="#offCanvasEditWorkForm"
       {% endif %}
   >
     {% csrf_token %}
@@ -535,11 +539,15 @@
   {% endif %}
 
   <script>
-    function refreshWorkItem(e) {
+    (function () {
+      function refresh(e) {
         htmx.trigger("#work-list-item-{{ work.pk }}", "hx_refresh_work_list_item");
-        document.removeEventListener('hide.bs.offcanvas', refreshWorkItem);
-    }
-    document.addEventListener('hide.bs.offcanvas', refreshWorkItem);
+      }
+
+      document.addEventListener('hide.bs.offcanvas', () => {
+        document.removeEventListener('hide.bs.offcanvas', refresh);
+      });
+    })();
   </script>
 
 {% endblock %}

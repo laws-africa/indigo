@@ -78,6 +78,7 @@ urlpatterns = [
 
     path('places/<str:place>/works/new', works.AddWorkView.as_view(), name='new_work'),
     path('places/<str:place>/works/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),
+    path('places/<str:place>/works/new-offcanvas', works.AddWorkOffCanvasView.as_view(), name='new_work_offcanvas'),
     path('places/<str:place>/works/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
 
     # htmx partials for new and existing works

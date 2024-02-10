@@ -5,7 +5,7 @@ grammar ProvisionRefs
   # The main reference is the "section 32" or "chapter 4", and form the root used by
   # the subsequent references.
 
-  root        <- references (to_and_or references)* target? .* %root
+  root        <- references (to_and_or references)* target? tail %root
 
                  # section 32
                  # section (a)
@@ -63,6 +63,12 @@ grammar ProvisionRefs
 
                  # thereof
   thereof     <- comma? WS* (thereof_en / thereof_af) %thereof
+
+                 # this is simply all text after the reference, which could be none. This is required because
+                 # the grammar expects to match the entire input, but we don't care about anything beyond the end
+                 # of the reference.
+                 # NB: we override the implementation of this method in the parser!
+  tail        <- .*
 
   # --------
   # terminals

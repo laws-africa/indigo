@@ -13,7 +13,7 @@ from django.db.models import Q, Count
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.forms import SelectMultiple, RadioSelect, formset_factory
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy as _l
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -506,7 +506,13 @@ class WorkFilterForm(forms.Form):
     stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
     work_in_progress = forms.MultipleChoiceField(choices=[('work_in_progress', 'Work in progress'), ('approved', 'Approved')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
+    sortby = forms.ChoiceField(choices=[
+        ('-created_at', _l('Created at (newest first)')), ('created_at', _l('Created at (oldest first)')),
+        ('-updated_at', _l('Updated at (newest first)')), ('updated_at', _l('Updated at (oldest first)')),
+        ('title', _l('Title (A-Z)')), ('-title', _l('Title (Z-A)')),
+        ('date', _l('Date (oldest first)')), ('-date', _l('Date (newest first)')),
+        ('number', _l('Number (ascending)')), ('-number', _l('Number (descending)')),
+    ])
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
     tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('has_unblocked_tasks', 'Has unblocked tasks'), ('has_only_blocked_tasks', 'Has only blocked tasks'), ('no_open_tasks', 'Has no open tasks')])
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])

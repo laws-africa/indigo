@@ -13,7 +13,7 @@ from docpipe.matchers import CitationMatcher, ExtractedCitation
 from docpipe.xmlutils import wrap_text
 from indigo.plugins import LocaleBasedMatcher, plugins
 from cobalt.schemas import AkomaNtoso30
-from indigo.analysis.refs.provision_refs import parse, ParseError
+from indigo.analysis.refs.provision_refs import ParseError, Parser, TreeNode
 from indigo.xmlutils import closest
 
 log = logging.getLogger(__name__)
@@ -68,6 +68,19 @@ class ParseResult:
 
 
 def parse_provision_refs(text):
+    class CustomParser(Parser):
+        """This is a custom parser that overrides the method that reads the tail of the text.
+        The parent parser's implementation reads character by character and creates a new TreeNode for each character.
+        We don't ever use this part of the parsed text, and it matches .* (i.e. anything), so in this implementation
+        we simply return a single TreeNode for the entire tail, which is much faster.
+
+        On a test input, this reduced parse time from 1.5sec to 0.003 sec!
+        """
+        def _read_tail(self):
+            node = TreeNode(self._input[self._offset:self._input_size], self._offset, [])
+            self._offset = self._input_size
+            return node
+
     class Actions:
         def root(self, input, start, end, elements):
             refs = elements[0]
@@ -138,7 +151,8 @@ def parse_provision_refs(text):
         def thereof(self, input, start, end, elements):
             return "thereof"
 
-    return parse(text, Actions())
+    parser = CustomParser(text, Actions(), None)
+    return parser.parse()
 
 
 class ProvisionRefsResolver:

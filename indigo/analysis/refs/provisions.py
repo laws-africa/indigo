@@ -359,7 +359,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                 # parse the text into a list of refs using our grammar
                 parses.append((candidate, self.parse_refs(s)))
             except ParseError as e:
-                log.info(f"Failed to parse refs for: {s}", exc_info=e)
+                log.debug(f"Failed to parse refs for: {s}", exc_info=e)
 
         # store matches for debugging purposes
         for _, pr in parses:

@@ -3,18 +3,6 @@
 <dl class="row mb-0">
   {% block overview-list %}
     {% block overview-data %}
-      {% if work.commenced %}
-        <dt class="col-2">{% trans "Commenced" %}</dt>
-        <dd class="col-10">
-          {{ work.commencement_date|date:"Y-m-d" }}
-        </dd>
-      {% endif %}
-      {% if work.repealed_date %}
-        <dt class="col-2">{% trans "Repealed" %}</dt>
-        <dd class="col-10">
-          {{ work.repealed_date|date:"Y-m-d" }}
-        </dd>
-      {% endif %}
       {% for entry in overview_data %}
         <dt class="col-2">
           {{ entry.key }}

@@ -383,17 +383,29 @@
       </div>
     {% endblock work-form-commencement %}
 
-    {% block work-form-amendments %}
+    {% block work-form-amended_by %}
       {% if work.pk %}
         <div class="card mb-3">
           <div class="card-body">
-            <div id="work-form-amendments">
-              {% include 'indigo_api/_work_form_amendments.html' %}
+            <div id="work-form-amended_by">
+              {% include 'indigo_api/_work_form_amended_by.html' %}
             </div>
           </div>
         </div>
       {% endif %}
-    {% endblock work-form-amendments %}
+    {% endblock work-form-amended_by %}
+
+    {% block work-form-amendments_made %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-amendments_made">
+              {% include 'indigo_api/_work_form_amendments_made.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-amendments_made %}
 
 
     {% block work-form-repeal %}

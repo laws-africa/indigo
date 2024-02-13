@@ -1366,8 +1366,24 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+
+        amended_by = self.request.POST.get("amended_by")
+        amendments_made = self.request.POST.get("amendments_made")
+        deleting = self.request.GET.get("delete")
+        amendment_work_id = None
+        prefix = None
+
+        if amended_by:
+            amendment_work_id = amended_by
+            prefix = "amended_by"
+        elif amendments_made:
+            amendment_work_id = amendments_made
+            prefix = "amendments_made"
+        elif deleting:
+            prefix = deleting
+
         context_data = super().get_context_data(**kwargs)
-        formset = AmendmentsBaseFormSet(self.request.POST, prefix="amendments", form_kwargs={"work": self.work})
+        formset = AmendmentsBaseFormSet(self.request.POST, prefix=prefix, form_kwargs={"work": self.work})
         initial = []
         if formset.is_valid():
             for form in formset:
@@ -1376,33 +1392,39 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                     if not form.cleaned_data.get('id'):
                         continue
                 initial.append({
+                    "amended_work": form.cleaned_data["amended_work"],
                     "amending_work": form.cleaned_data["amending_work"],
                     "date": form.cleaned_data["date"],
                     "id": form.cleaned_data["id"],
                     "DELETE": form.cleaned_data["DELETE"],
                 })
-            amendment = self.request.POST.get("amendment")
-            if amendment:
-                amending_work = Work.objects.filter(pk=amendment).first()
-                if amending_work:
-                    initial.append({
-                        "amending_work": amending_work,
-                        "date": amending_work.commencement_date,
-                    })
+            if amendment_work_id:
+                work = Work.objects.filter(pk=amendment_work_id).first()
+                if work:
+                    if prefix == "amended_by":
+                        initial.append({
+                            "amended_work": self.work,
+                            "amending_work": work,
+                            "date": work.commencement_date,
+                        })
+                    elif prefix == "amendments_made":
+                        initial.append({
+                            "amended_work": work,
+                            "amending_work": self.work,
+                            "date": work.commencement_date,
+                        })
 
         else:
-            context_data['form'] = {
-                'amendments_formset': formset
-            }
+            context_data['formset'] = formset
+            context_data["prefix"] = prefix
 
             return context_data
 
-        context_data['form'] = {
-            'amendments_formset': AmendmentsBaseFormSet(
-                prefix="amendments",
+        context_data['formset'] = AmendmentsBaseFormSet(
+                prefix=prefix,
                 initial=initial,
                 form_kwargs={"work": self.work}
-            ),
-        }
+            )
+        context_data["prefix"] = prefix
         return context_data
 

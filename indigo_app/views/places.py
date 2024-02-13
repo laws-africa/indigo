@@ -35,6 +35,57 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
+@dataclass
+class OverviewDataEntry:
+    key: str
+    value: str
+    overridden: bool = False
+
+
+def get_work_overview_data(work):
+    """ Return overview data for the work as a list of OverviewDataEntry objects"""
+    def format_date(date_obj):
+        return date_obj.strftime("%Y-%m-%d")
+
+    overview_data = []
+
+    publication = describe_publication_event(work, friendly_date=False,
+                                             placeholder=hasattr(work, 'publication_document'))
+    if publication:
+        overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
+
+    if work.assent_date:
+        overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
+
+    if work.commencement_date:
+        overview_data.append(OverviewDataEntry(_("Commenced"), format_date(work.commencement_date)))
+
+    if work.repealed_date:
+        overview_data.append(OverviewDataEntry(_("Repealed"), format_date(work.repealed_date)))
+
+    # properties, e.g. Chapter number
+    for prop in work.labeled_properties():
+        overview_data.append(OverviewDataEntry(_(prop["label"]), prop["value"]))
+
+    as_at_date = work.as_at_date()
+    if as_at_date:
+        overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
+                                               overridden=work.as_at_date_override))
+
+    for consolidation in work.arbitrary_expression_dates.all():
+        overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
+
+    consolidation_note = work.consolidation_note()
+    if consolidation_note:
+        overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
+                                               overridden=work.consolidation_note_override))
+
+    if work.disclaimer:
+        overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
+
+    return overview_data
+
+
 class PlaceMetricsHelper:
     def add_activity_metrics(self, places, metrics, since):
         # fold metrics into countries
@@ -772,13 +823,6 @@ class Facet:
     items: List[FacetItem] = field(default_factory=list)
 
 
-@dataclass
-class OverviewDataEntry:
-    key: str
-    value: str
-    overridden: bool = False
-
-
 class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
 
@@ -1323,7 +1367,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         work = self.object
 
-        context["overview_data"] = self.get_overview_data()
+        context["overview_data"] = get_work_overview_data(self.object)
         context["tab"] = "overview"
 
         # count documents
@@ -1349,45 +1393,6 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["n_tasks"] = work.tasks.filter(state__in=Task.OPEN_STATES).count()
 
         return context
-
-    def get_overview_data(self):
-        """ Return overview data for the work as a list of OverviewDataEntry objects"""
-        # TODO: are the translations being done correctly here?
-        # TODO: turn this into a form; overview_data will fall away
-        def format_date(date_obj):
-            return date_obj.strftime("%Y-%m-%d")
-
-        work = self.object
-
-        # properties, e.g. Chapter number
-        overview_data = [
-            OverviewDataEntry(_(prop["label"]), prop["value"]) for prop in work.labeled_properties()
-        ]
-
-        publication = describe_publication_event(work, friendly_date=False, placeholder=hasattr(work, 'publication_document'))
-        if publication:
-            overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
-
-        if work.assent_date:
-            overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
-
-        as_at_date = work.as_at_date()
-        if as_at_date:
-            overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
-                                                   overridden=work.as_at_date_override))
-
-        for consolidation in work.arbitrary_expression_dates.all():
-            overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
-
-        consolidation_note = work.consolidation_note()
-        if consolidation_note:
-            overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
-                                                   overridden=work.consolidation_note_override))
-
-        if work.disclaimer:
-            overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
-
-        return overview_data
 
 
 class WorkDocumentsView(PlaceViewBase, DetailView):

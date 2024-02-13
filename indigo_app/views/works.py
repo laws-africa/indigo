@@ -30,6 +30,7 @@ from indigo_api.timeline import get_timeline
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
+from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
     NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet
 from indigo_metrics.models import WorkMetrics
@@ -287,12 +288,9 @@ class WorkOverviewView(WorkViewBase, DetailView):
     tab = 'overview'
 
     def get_context_data(self, **kwargs):
-        context = super(WorkOverviewView, self).get_context_data(**kwargs)
-        work_tasks = Task.objects.filter(work=self.work)
-
-        context['active_tasks'] = work_tasks.exclude(state=Task.DONE)\
-            .exclude(state=Task.CANCELLED)\
-            .order_by('-created_at')
+        context = super().get_context_data(**kwargs)
+        context['overview_data'] = get_work_overview_data(self.work)
+        context['active_tasks'] = self.work.tasks.filter(state__in=Task.OPEN_STATES).order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['contributors'] = self.get_top_contributors()
 

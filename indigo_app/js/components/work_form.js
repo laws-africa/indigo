@@ -1,9 +1,12 @@
 export default class WorkForm {
   constructor (root) {
     this.root = root;
-    this.root.querySelector('#id_work-commenced').addEventListener('change', (e) => {
-      this.toggleCommenced(e.target.checked);
-    });
+
+    if (this.root.querySelector('#id_work-commenced')) {
+      this.root.querySelector('#id_work-commenced').addEventListener('change', (e) => {
+        this.toggleCommenced(e.target.checked);
+      });
+    }
   }
 
   toggleCommenced (commenced) {

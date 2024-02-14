@@ -1151,12 +1151,16 @@ class AmendmentForm(forms.ModelForm):
     def save(self, user, *args, **kwargs):
         amendment = Amendment.objects.filter(pk=self.cleaned_data['id']).first()
 
-        if self.cleaned_data.get('DELETE') and amendment:
-            amendment.delete()
+        if self.cleaned_data.get('DELETE'):
+            if amendment:
+                amendment.delete()
+            return
         else:
             if amendment:
-                amendment.updated_by_user = user
+                amendment.amending_work = self.cleaned_data['amending_work']
+                amendment.amended_work = self.cleaned_data['amended_work']
                 amendment.date = self.cleaned_data["date"]
+                amendment.updated_by_user = user
                 amendment.save()
             else:
                 Amendment.objects.create(

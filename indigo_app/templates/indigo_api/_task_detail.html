@@ -32,9 +32,12 @@
             <h5>
               {{ task.title }}
               {% if task.changes_requested %}
-              <span class="badge text-bg-secondary bg-pending_review ms-2">{% trans 'Changes requested' %}</span>
+                <span class="badge text-bg-secondary bg-pending_review ms-2">{% trans 'Changes requested' %}</span>
               {% endif %}
             </h5>
+            {% if task_type %}
+              <h6 class="badge text-bg-secondary">{{ task_type }}</h6>
+            {% endif %}
 
             {% if task.document %}
             <div class="mb-2">

@@ -149,6 +149,9 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
             context['work'] = task.work
             context['work_json'] = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
+        if task.code:
+            context['task_type'] = dict(Task.CODES)[task.code]
+
         return context
 
     def get_template_names(self):

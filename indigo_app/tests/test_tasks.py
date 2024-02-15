@@ -18,7 +18,6 @@ class TasksTest(WebTest):
         form['title'] = "test title"
         form['description'] = "test description"
         form['labels'] = ["1"]
-        form['workflows'] = ['1']
         response = form.submit().follow()
 
         task = Task.objects.get(pk=response.context['task'].id)
@@ -33,7 +32,6 @@ class TasksTest(WebTest):
         form['title'] = "test title"
         form['description'] = "test description"
         form['labels'] = ["1"]
-        form['workflows'] = ['1']
         response = form.submit().follow()
 
         task = Task.objects.get(pk=response.context['task'].id)

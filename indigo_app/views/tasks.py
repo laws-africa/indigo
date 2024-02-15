@@ -268,30 +268,25 @@ class TaskFormWorkView(PlaceViewBase, TemplateView):
         return context
 
 
-class TaskFormTitleView(PlaceViewBase, TemplateView):
+class PartialTaskFormView(PlaceViewBase, TemplateView):
+    template_name = None
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = TaskForm(self.country, self.locality, self.request.POST)
+        context["form"] = form
+        return context
+
+
+class TaskFormTitleView(PartialTaskFormView):
     template_name = 'indigo_api/_task_title_form.html'
 
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = TaskForm(self.country, self.locality, self.request.POST)
-        context["form"] = form
-        return context
-
-
-class TaskFormTimelineDateView(PlaceViewBase, TemplateView):
+class TaskFormTimelineDateView(PartialTaskFormView):
     template_name = 'indigo_api/_task_timeline_date_form.html'
-
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = TaskForm(self.country, self.locality, self.request.POST)
-        context["form"] = form
-        return context
 
 
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):

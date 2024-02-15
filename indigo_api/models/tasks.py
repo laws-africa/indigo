@@ -86,6 +86,12 @@ class Task(models.Model):
         ('review-work-expression', __('Sign-off')),
     ]
 
+    MAIN_CODES = [
+        ('import-content', __('Import content')),
+        ('apply-amendment', __('Apply amendment')),
+        ('link-gazette', __('Link gazette')),
+    ]
+
     class Meta:
         permissions = (
             ('submit_task', 'Can submit an open task for review'),

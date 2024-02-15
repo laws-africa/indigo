@@ -23,8 +23,9 @@ class TaskForm(forms.ModelForm):
         self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
         task = self.instance
         if task and task.work:
-            self.fields['document'].queryset = task.work.expressions()
-            self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in self.fields['document'].queryset]
+            # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
+            document_queryset = task.work.expressions()
+            self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in document_queryset]
 
 
 class TaskFilterForm(forms.Form):

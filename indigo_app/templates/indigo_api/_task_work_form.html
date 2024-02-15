@@ -2,7 +2,7 @@
 
 <div class="mb-3 row">
   <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{% trans 'Work' %}</label>
-  <div class="col-4">
+  <div class="col-10">
     <input type="hidden" id="{{ form.work.id_for_label }}" name="{{ form.work.html_name }}" value="{{ form.work.value|default:'' }}">
     {% if task.work %}
       <div class="mb-2">
@@ -43,5 +43,6 @@
         {% endfor %}
       </select>
     </div>
+    <div class="col-6 form-text text-muted">{% trans "The timeline date will be overwritten by the document's, if one is chosen." %}</div>
   </div>
 {% endif %}

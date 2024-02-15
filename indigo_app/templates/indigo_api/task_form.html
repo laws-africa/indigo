@@ -38,12 +38,13 @@
           <div class="mb-3 row">
             <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{% trans 'Type' %}</label>
             <div class="col-4">
-              <select class="selectpicker col-12" id="{{ form.code.id_for_label }}" name="{{ form.code.html_name }}">
+              <select class="selectpicker col-12" id="{{ form.code.id_for_label }}" name="{{ form.code.html_name }}" autofocus>
                 {% for opt in form.code %}
                   {{ opt }}
                 {% endfor %}
               </select>
             </div>
+            <div class="col-6 form-text text-muted">{% trans "The title will be overwritten by the type, if one is chosen." %}</div>
             {% if form.code.errors %}
               <div class="text-danger">
                 {% for error in form.code.errors %}
@@ -52,10 +53,14 @@
               </div>
             {% endif %}
           </div>
+          <div id="task-work">
+            {% include 'indigo_api/_task_work_form.html' %}
+          </div>
+          <hr>
           <div class="mb-3 row">
             <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label">{% trans 'Title' %}</label>
             <div class="col-4">
-              <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
+              <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" placeholder="{% trans 'A short description of this task' %}">
             </div>
             {% if form.title.errors %}
               <div class="text-danger">
@@ -80,6 +85,7 @@
               </div>
             {% endif %}
           </div>
+          <hr>
           <div class="mb-3 row">
             <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{% trans 'Description' %}</label>
             <div class="col-8">
@@ -109,9 +115,6 @@
                 {% endfor %}
               </div>
             {% endif %}
-          </div>
-          <div id="task-work">
-            {% include 'indigo_api/_task_work_form.html' %}
           </div>
         </div>
 

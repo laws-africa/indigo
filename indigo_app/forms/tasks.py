@@ -2,6 +2,7 @@ import urllib.parse
 
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
@@ -10,8 +11,9 @@ from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('title', 'description', 'work', 'document', 'timeline_date', 'code', 'labels')
+        fields = ('code', 'title', 'description', 'work', 'document', 'timeline_date', 'labels')
 
+    title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
     timeline_date = forms.DateField(required=False)
     code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
@@ -26,6 +28,19 @@ class TaskForm(forms.ModelForm):
             # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
             document_queryset = task.work.expressions()
             self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        # whether title is blank or not, override it with the code if there is one
+        code = self.cleaned_data.get('code')
+        if code:
+            title = dict(Task.MAIN_CODES)[code]
+
+        # title can't be blank if there's no code though (borrowed this from validate on the base Field class)
+        if not title:
+            raise ValidationError(self.fields['title'].error_messages['required'], code='required')
+
+        return title
 
 
 class TaskFilterForm(forms.Form):

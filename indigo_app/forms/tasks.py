@@ -13,6 +13,7 @@ class TaskForm(forms.ModelForm):
         fields = ('title', 'description', 'work', 'document', 'timeline_date', 'code', 'labels')
 
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
+    timeline_date = forms.DateField(required=False)
     code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
 
     def __init__(self, country, locality, *args, **kwargs):

@@ -66,21 +66,8 @@
           <div id="task-work">
             {% include 'indigo_api/_task_work_form.html' %}
           </div>
-          <hr>
-          <div class="mb-3 row">
-            <label for="{{ form.timeline_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Timeline date' %}</label>
-            <div class="col-4">
-              <input type="date" class="form-control" id="{{ form.timeline_date.id_for_label }}"
-                     name="{{ form.timeline_date.html_name }}"
-                     value="{{ form.timeline_date.value|date:"Y-m-d"|default:'' }}">
-            </div>
-            {% if form.timeline_date.errors %}
-              <div class="text-danger">
-                {% for error in form.timeline_date.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
+          <div id="task-timeline-date">
+            {% include 'indigo_api/_task_timeline_date_form.html' %}
           </div>
           <hr>
           <div class="mb-3 row">

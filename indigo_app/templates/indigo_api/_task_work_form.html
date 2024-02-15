@@ -37,12 +37,19 @@
   <div class="mb-3 row">
     <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>
     <div class="col-4">
-      <select class="selectpicker col-12" id="{{ form.document.id_for_label }}" name="{{ form.document.html_name }}">
+      <select
+          hx-post="{% url 'task_form_timeline_date' place=place.place_code %}"
+          hx-target="#task-timeline-date"
+          hx-trigger="change"
+          class="selectpicker col-12"
+          id="{{ form.document.id_for_label }}"
+          name="{{ form.document.html_name }}"
+      >
         {% for opt in form.document %}
           {{ opt }}
         {% endfor %}
       </select>
     </div>
-    <div class="col-6 form-text text-muted">{% trans "The timeline date will be overwritten by the document's, if one is chosen." %}</div>
+    <div class="col-6 form-text text-muted">{% trans "Choose a document, or enter a date (optional)." %}</div>
   </div>
 {% endif %}

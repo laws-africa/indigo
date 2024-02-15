@@ -1,0 +1,34 @@
+{% load i18n %}
+
+<div class="mb-3 row">
+  <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{% trans 'Work' %}</label>
+  <div class="col-4">
+    <input type="hidden" id="{{ form.work.id_for_label }}" name="{{ form.work.html_name }}" value="{{ form.work.value|default:'' }}">
+    {% if task.work %}
+      <div class="mb-2">
+        <a href="{% url 'work' task.work.frbr_uri %}">{{ task.work.title }}</a>
+        <br>
+        <span class="text-muted">{{ task.work.frbr_uri }}</span>
+      </div>
+    {% endif %}
+    <div>
+      {% url 'task_form_work' place.place_code as edit_url %}
+      <button
+          class="btn btn-outline-primary"
+          type="button"
+          hx-get="{% url 'task_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#task-work"|urlencode }}"
+          hx-target="#work-chooser-modal"
+          hx-trigger="click"
+          data-bs-toggle="modal"
+          data-bs-target="#work-chooser-modal"
+      >{% if task.work %}{% trans 'Change work' %}{% else %}{% trans 'Choose work' %}{% endif %}</button>
+      {% if task.work %}
+        <button
+            class="btn btn-outline-danger ms-2"
+            hx-get="{{ edit_url }}"
+            hx-target="#task-work"
+        >{% trans 'Clear' %}</button>
+      {% endif %}
+    </div>
+  </div>
+</div>

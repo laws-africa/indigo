@@ -10,6 +10,17 @@
     <div class="alert alert-danger">{% trans "You don't have permission to create a task." %}</div>
   {% endif %}
 
+  <div
+      id="work-chooser-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">Loading...</div>
+    </div>
+  </div>
+
   <form method="POST" action="" id="task-form">
     {% csrf_token %}
 
@@ -101,26 +112,8 @@
             {% endif %}
           </div>
           {# TODO: use htmx for work, document #}
-          <div class="mb-3 row">
-            <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{% trans 'Work' %}</label>
-            <input type="hidden" id="{{ form.work.id_for_label }}" name="{{ form.work.html_name }}" value="{{ form.work.value|default:'' }}">
-            <div class="col-4">
-              <div class="work-details"></div>
-              <script id="task-work-template" type="text/x-handlebars-template">
-              {% verbatim %}
-                {{#if work}}
-                  <div class="float-end ms-2">
-                    <button type="button" class="btn btn-outline-danger delete-work">{% endverbatim %}{% trans 'Remove' %}{% verbatim %}</button>
-                    <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Change' %}{% verbatim %}</button>
-                  </div>
-                  <a href="/works{{ work.frbr_uri }}">{{ work.title }}</a><br>
-                  <span class="text-muted">{{ work.frbr_uri }}</span>
-                {{else}}
-                  <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Choose work' %}{% verbatim %}</button>
-                {{/if}}
-              {% endverbatim %}
-              </script>
-            </div>
+          <div id="task-work">
+            {% include 'indigo_api/_task_work_form.html' %}
           </div>
           <div class="mb-3 row document-details">
             <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>

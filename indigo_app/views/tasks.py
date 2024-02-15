@@ -6,6 +6,7 @@ import math
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 
+from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Subquery, OuterRef, Count, IntegerField
@@ -27,6 +28,7 @@ from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
+from indigo_app.views.places import WorkChooserView
 
 
 class TaskViewBase(PlaceViewBase):
@@ -103,15 +105,13 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
 
     def get_context_data(self, **kwargs):
-        context = super(TaskDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         task = self.object
 
         # merge actions and comments
         actions = task.action_object_actions.all()
         task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = list(Comment.objects\
-            .filter(content_type=task_content_type, object_pk=task.id)\
-            .select_related('user'))
+        comments = list(Comment.objects.filter(content_type=task_content_type, object_pk=task.id).select_related('user'))
 
         # get the annotation for the particular task
         try:
@@ -171,7 +171,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     model = Task
 
     def get_form_kwargs(self):
-        kwargs = super(TaskCreateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         task = Task()
         task.country = self.country
@@ -267,6 +267,32 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         if has_transition_perm(task.unblock, user):
             context['unblock_task_permission'] = True
 
+        return context
+
+
+class TaskWorkChooserView(WorkChooserView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["disable_country"] = True
+        context["disable_locality"] = True
+        return context
+
+
+class TaskFormWorkView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_task_work_form.html'
+
+    class Form(forms.ModelForm):
+        class Meta:
+            model = Task
+            fields = ('work',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = Task(country=self.country, locality=self.locality)
+        form = self.Form(self.request.GET, instance=task)
+        form.is_valid()
+        context['task'] = task
+        context['form'] = form
         return context
 
 

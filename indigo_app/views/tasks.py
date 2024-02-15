@@ -167,15 +167,6 @@ class TaskCreateView(TaskViewBase, CreateView):
     form_class = TaskForm
     model = Task
 
-    def form_valid(self, form):
-        response_object = super(TaskCreateView, self).form_valid(form)
-        task = self.object
-        task.workflows.set(form.cleaned_data.get('workflows'))
-        for workflow in task.workflows.all():
-            action.send(self.request.user, verb='added', action_object=task, target=workflow,
-                        place_code=task.place.place_code)
-        return response_object
-
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
 
@@ -239,27 +230,16 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         task.updated_by_user = self.request.user
 
         # action signals
-        # first, was something changed other than workflows?
         if form.changed_data:
-            action.send(self.request.user, verb='updated', action_object=task,
-                        place_code=task.place.place_code)
+            action.send(self.request.user, verb='updated', action_object=task, place_code=task.place.place_code)
 
-        new_workflows = form.cleaned_data.get('workflows')
-        self.record_workflow_actions(task, new_workflows)
-        task.workflows.set(new_workflows)
-
-        return super(TaskEditView, self).form_valid(form)
-
-    def get_form(self, form_class=None):
-        form = super(TaskEditView, self).get_form(form_class)
-        form.initial['workflows'] = self.object.workflows.all()
-        return form
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
-        context = super(TaskEditView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         work = None
         task = self.object

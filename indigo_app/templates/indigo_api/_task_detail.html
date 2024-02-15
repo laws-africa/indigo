@@ -35,13 +35,6 @@
                 <span class="badge text-bg-secondary bg-pending_review ms-2">{% trans 'Changes requested' %}</span>
               {% endif %}
             </h5>
-            {% if task_type or task.timeline_date %}
-              <h6 class="text-muted">
-                {{ task_type }}
-                {% if task_type and task.timeline_date %} – {% endif %}
-                {{ task.timeline_date|date:"Y-m-d" }}
-              </h6>
-            {% endif %}
 
             {% if task.document %}
             <div class="mb-2">

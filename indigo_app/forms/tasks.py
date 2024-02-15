@@ -11,7 +11,7 @@ from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('code', 'title', 'description', 'work', 'document', 'timeline_date', 'labels')
+        fields = ('code', 'description', 'work', 'document', 'timeline_date', 'labels', 'title')
 
     title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
@@ -29,12 +29,27 @@ class TaskForm(forms.ModelForm):
             document_queryset = task.work.expressions()
             self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
 
+    def clean_timeline_date(self):
+        timeline_date = self.cleaned_data['timeline_date']
+        # whether timeline_date is blank or not, override it with the document's if there is one
+        document = self.cleaned_data.get('document')
+        if document:
+            timeline_date = document.expression_date
+
+        return timeline_date
+
     def clean_title(self):
         title = self.cleaned_data['title']
         # whether title is blank or not, override it with the code if there is one
         code = self.cleaned_data.get('code')
         if code:
             title = dict(Task.MAIN_CODES)[code]
+
+        # tack on the timeline date if there is one
+        if title:
+            timeline_date = self.cleaned_data.get('timeline_date')
+            if timeline_date:
+                title += f' – {timeline_date}'
 
         # title can't be blank if there's no code though (borrowed this from validate on the base Field class)
         if not title:

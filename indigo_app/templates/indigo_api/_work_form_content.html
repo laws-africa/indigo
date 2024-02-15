@@ -17,10 +17,20 @@
       </ul>
     </div>
   {% endif %}
-  {% if form.amendments_formset.non_form_errors %}
+  {% if form.amended_by_formset.non_form_errors %}
     <div class="alert alert-danger">
       <ul>
-        {% for error in form.amendments_formset.non_form_errors %}
+        {% for error in form.amended_by_formset.non_form_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if form.amendments_made_formset.non_form_errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for error in form.amendments_made_formset.non_form_errors %}
           <li>{{ error }}</li>
         {% endfor %}
       </ul>
@@ -383,17 +393,29 @@
       </div>
     {% endblock work-form-commencement %}
 
-    {% block work-form-amendments %}
+    {% block work-form-amended_by %}
       {% if work.pk %}
         <div class="card mb-3">
           <div class="card-body">
-            <div id="work-form-amendments">
-              {% include 'indigo_api/_work_form_amendments.html' %}
+            <div id="work-form-amended_by">
+              {% include 'indigo_api/_work_form_amended_by.html' %}
             </div>
           </div>
         </div>
       {% endif %}
-    {% endblock work-form-amendments %}
+    {% endblock work-form-amended_by %}
+
+    {% block work-form-amendments_made %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-amendments_made">
+              {% include 'indigo_api/_work_form_amendments_made.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-amendments_made %}
 
 
     {% block work-form-repeal %}
@@ -542,11 +564,10 @@
     (function () {
       function refresh(e) {
         htmx.trigger("#work-list-item-{{ work.pk }}", "hx_refresh_work_list_item");
+          document.removeEventListener('hide.bs.offcanvas', refresh);
       }
 
-      document.addEventListener('hide.bs.offcanvas', () => {
-        document.removeEventListener('hide.bs.offcanvas', refresh);
-      });
+      document.addEventListener('hide.bs.offcanvas', refresh);
     })();
   </script>
 

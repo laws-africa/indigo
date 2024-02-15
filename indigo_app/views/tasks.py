@@ -164,9 +164,6 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions
     permission_required = ('indigo_api.add_task',)
-
-    js_view = 'TaskEditView'
-
     context_object_name = 'task'
     form_class = TaskForm
     model = Task
@@ -191,7 +188,6 @@ class TaskCreateView(TaskViewBase, CreateView):
         kwargs['instance'] = task
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
-
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
@@ -206,7 +202,6 @@ class TaskCreateView(TaskViewBase, CreateView):
 class TaskEditView(SingleTaskViewBase, UpdateView):
     # permissions
     permission_required = ('indigo_api.change_task',)
-
     context_object_name = 'task'
     form_class = TaskForm
 
@@ -231,30 +226,11 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        work = None
         task = self.object
         user = self.request.user
-        if task.work:
-            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
-        context['work_json'] = work
-
-        document = None
-        if task.document:
-            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
-        context['document_json'] = document
-
-        context['task_labels'] = TaskLabel.objects.all()
-
-        if has_transition_perm(task.cancel, user):
-            context['cancel_task_permission'] = True
-
-        if has_transition_perm(task.block, user):
-            context['block_task_permission'] = True
-
-        if has_transition_perm(task.unblock, user):
-            context['unblock_task_permission'] = True
-
+        context['cancel_task_permission'] = has_transition_perm(task.cancel, user)
+        context['block_task_permission'] = has_transition_perm(task.block, user)
+        context['unblock_task_permission'] = has_transition_perm(task.unblock, user)
         return context
 
 

@@ -2,7 +2,6 @@
 {% load humanize indigo_app i18n %}
 
 {% block title %}{% if task.pk %}{{ task.title }}{% else %}{% trans 'New task' %}{% endif %} {{ block.super }}{% endblock %}
-{% block view-id %}edit-task-view{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
@@ -148,21 +147,4 @@
     </div>
   </form>
 
-{% include 'indigo_api/_work_chooser_modal.html' %}
-
-{% endblock %}
-
-
-{% block js %}
-  {{ block.super }}
-
-  <script type="text/javascript">
-  window.Indigo.countries = {{ indigo_countries_json|safe }};
-  {% if work_json %}
-  window.Indigo.Preloads.work = {{ work_json|safe }};
-  {% endif %}
-  {% if document_json %}
-  window.Indigo.Preloads.document = {{ document_json|safe }};
-  {% endif %}
-  </script>
 {% endblock %}

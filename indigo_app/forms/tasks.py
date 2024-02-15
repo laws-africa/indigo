@@ -25,7 +25,7 @@ class TaskForm(forms.ModelForm):
         if task and task.work:
             # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
             document_queryset = task.work.expressions()
-            self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in document_queryset]
+            self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
 
 
 class TaskFilterForm(forms.Form):

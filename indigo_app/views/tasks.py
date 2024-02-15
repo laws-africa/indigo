@@ -256,7 +256,7 @@ class TaskFormWorkView(PlaceViewBase, TemplateView):
             work = self.cleaned_data.get('work')
             if work:
                 self.fields['document'].queryset = work.expressions()
-                self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in self.fields['document'].queryset]
+                self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · {document.language.code} – {document.title}') for document in self.fields['document'].queryset]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

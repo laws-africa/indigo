@@ -1,27 +1,34 @@
 {% load indigo i18n %}
 
-{{ form.amendments_formset.management_form }}
+{{ formset.management_form }}
 
-{% if form.amendments_formset.non_form_errors %}
+{% if formset.non_form_errors %}
   <div class="alert alert-danger">
     <ul>
-      {% for error in form.amendments_formset.non_form_errors %}
+      {% for error in formset.non_form_errors %}
         {{ error }}
       {% endfor %}
     </ul>
   </div>
 {% endif %}
 
-{% for form in form.amendments_formset %}
+{% for form in formset %}
   <div class="{% if form.DELETE.value  %}d-none{% endif %}">
     {% if forloop.counter > 1 %}<hr>{% endif %}
     <div class="row align-items-center ">
       <div class="col">
+      {% if form.amending_work_obj == work %}
+        <a href="{% url 'work' form.amended_work_obj.frbr_uri %}" target="_blank">{{ form.amended_work_obj.title }}</a>
+        <br />
+        <span>{{ form.amended_work_obj.frbr_uri }}</span>
+      {% elif form.amended_work_obj == work %}
         <a href="{% url 'work' form.amending_work_obj.frbr_uri %}" target="_blank">{{ form.amending_work_obj.title }}</a>
         <br />
         <span>{{ form.amending_work_obj.frbr_uri }}</span>
+      {% endif %}
         {{ form.id.as_hidden }}
         {{ form.amending_work.as_hidden }}
+        {{ form.amended_work.as_hidden }}
         {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}
         {% endif %}
@@ -37,9 +44,9 @@
       </div>
       <div class="col">
         {% if not form.DELETE.value %}
-          <button hx-post="{% url 'work_form_amendments' work.frbr_uri %}"
-                  hx-target="#work-form-amendments-formset"
-                  hx-include="#work-form-amendments-formset"
+          <button hx-post="{% url 'work_form_amendments' work.frbr_uri %}?delete={{ prefix }}"
+                  hx-target="#work-form-{{ prefix }}-formset"
+                  hx-include="#work-form-{{ prefix }}-formset"
                   type="button"
                   name="{{ form.DELETE.html_name }}"
                   value="1"

@@ -111,20 +111,8 @@
               </div>
             {% endif %}
           </div>
-          {# TODO: use htmx for work, document #}
           <div id="task-work">
             {% include 'indigo_api/_task_work_form.html' %}
-          </div>
-          <div class="mb-3 row document-details">
-            <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>
-            <div class="col-4">
-              <select name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" class="form-control">
-                <option value="">{% trans '(none)' %}</option>
-                {% if form.document.value %}
-                  <option selected value="{{ form.document.value }}">{{ form.document.expression_date|date:'Y-m-d' }}</option>
-                {% endif %}
-              </select>
-            </div>
           </div>
         </div>
 

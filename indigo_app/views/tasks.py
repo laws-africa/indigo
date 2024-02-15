@@ -14,6 +14,7 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import gettext as _
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -194,21 +195,8 @@ class TaskCreateView(TaskViewBase, CreateView):
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TaskCreateView, self).get_context_data(**kwargs)
-        task = context['form'].instance
-
-        work = None
-        if task.work:
-            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
-        context['work_json'] = work
-
-        document = None
-        if task.document:
-            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
-        context['document_json'] = document
-
-        context['task_labels'] = TaskLabel.objects.all()
-
+        context = super().get_context_data(**kwargs)
+        context['task'] = context['form'].instance
         return context
 
     def get_success_url(self):
@@ -284,15 +272,23 @@ class TaskFormWorkView(PlaceViewBase, TemplateView):
     class Form(forms.ModelForm):
         class Meta:
             model = Task
-            fields = ('work',)
+            fields = ('work', 'document')
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.full_clean()
+            work = self.cleaned_data.get('work')
+            if work:
+                self.fields['document'].queryset = work.expressions()
+                self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in self.fields['document'].queryset]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         task = Task(country=self.country, locality=self.locality)
         form = self.Form(self.request.GET, instance=task)
         form.is_valid()
-        context['task'] = task
         context['form'] = form
+        context['task'] = form.instance
         return context
 
 

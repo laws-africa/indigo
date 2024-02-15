@@ -21,6 +21,10 @@ class TaskForm(forms.ModelForm):
         self.country = country
         self.locality = locality
         self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
+        task = self.instance
+        if task and task.work:
+            self.fields['document'].queryset = task.work.expressions()
+            self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} – {document.title}') for document in self.fields['document'].queryset]
 
 
 class TaskFilterForm(forms.Form):

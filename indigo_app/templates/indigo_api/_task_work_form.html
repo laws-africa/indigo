@@ -32,3 +32,16 @@
     </div>
   </div>
 </div>
+
+{% if task.work and task.work.expressions %}
+  <div class="mb-3 row">
+    <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>
+    <div class="col-4">
+      <select class="selectpicker col-12" id="{{ form.document.id_for_label }}" name="{{ form.document.html_name }}">
+        {% for opt in form.document %}
+          {{ opt }}
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+{% endif %}

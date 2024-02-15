@@ -51,6 +51,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/new', tasks.TaskCreateView.as_view(), name='create_task'),
     path('places/<str:place>/tasks/work-chooser', tasks.TaskWorkChooserView.as_view(), name='task_work_chooser'),
     path('places/<str:place>/tasks/form/work', tasks.TaskFormWorkView.as_view(), name='task_form_work'),
+    path('places/<str:place>/tasks/form/title', tasks.TaskFormTitleView.as_view(), name='task_form_title'),
     path('places/<str:place>/tasks/update', tasks.TaskBulkUpdateView.as_view(), name='bulk_task_update'),
     path('places/<str:place>/tasks/assignees', tasks.TaskAssigneesView.as_view(), name='task_assignees_menu'),
     path('places/<str:place>/tasks/<int:pk>', tasks.TaskDetailView.as_view(), name='task_detail'),

@@ -268,6 +268,19 @@ class TaskFormWorkView(PlaceViewBase, TemplateView):
         return context
 
 
+class TaskFormTitleView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_task_title_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = TaskForm(self.country, self.locality, self.request.POST)
+        context["form"] = form
+        return context
+
+
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)

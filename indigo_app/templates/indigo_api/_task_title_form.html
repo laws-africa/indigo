@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if not form.code.value %}
+  <div class="mb-3 row">
+    <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label">{% trans 'Title' %}</label>
+    <div class="col-4">
+      <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required placeholder="{% trans 'A short description of this task' %}">
+    </div>
+    {% if form.title.errors %}
+      <div class="text-danger">
+        {% for error in form.title.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

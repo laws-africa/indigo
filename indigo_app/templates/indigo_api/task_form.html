@@ -38,7 +38,14 @@
           <div class="mb-3 row">
             <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{% trans 'Type' %}</label>
             <div class="col-4">
-              <select class="selectpicker col-12" id="{{ form.code.id_for_label }}" name="{{ form.code.html_name }}" autofocus>
+              <select
+                  hx-post="{% url 'task_form_title' place=place.place_code %}"
+                  hx-target="#task-title"
+                  hx-trigger="change"
+                  class="selectpicker col-12"
+                  id="{{ form.code.id_for_label }}"
+                  name="{{ form.code.html_name }}"
+              >
                 {% for opt in form.code %}
                   {{ opt }}
                 {% endfor %}
@@ -57,18 +64,8 @@
             {% include 'indigo_api/_task_work_form.html' %}
           </div>
           <hr>
-          <div class="mb-3 row">
-            <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label">{% trans 'Title' %}</label>
-            <div class="col-4">
-              <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" placeholder="{% trans 'A short description of this task' %}">
-            </div>
-            {% if form.title.errors %}
-              <div class="text-danger">
-                {% for error in form.title.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
+          <div id="task-title">
+            {% include 'indigo_api/_task_title_form.html' %}
           </div>
           <div class="mb-3 row">
             <label for="{{ form.timeline_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Timeline date' %}</label>

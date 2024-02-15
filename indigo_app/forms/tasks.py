@@ -2,25 +2,24 @@ import urllib.parse
 
 from django import forms
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 
-from indigo_api.models import Task, TaskLabel, Workflow, Country, TaxonomyTopic
+from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
 
 
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
+        fields = ('title', 'description', 'work', 'document', 'timeline_date', 'code', 'labels')
 
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple,
-                                            required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, required=False)
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
+    code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
 
     def __init__(self, country, locality, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
         self.locality = locality
-        self.fields['workflows'].queryset = self.fields['workflows'].queryset.\
-            filter(country=self.country, locality=self.locality, closed=False).order_by('title')
+        self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
 
 
 class TaskFilterForm(forms.Form):

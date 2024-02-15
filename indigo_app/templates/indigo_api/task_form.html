@@ -51,7 +51,7 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="col-6 form-text text-muted">{% trans "The title will be overwritten by the type, if one is chosen." %}</div>
+            <div class="col-6 form-text text-muted">{% trans "Choose a type, or enter a title." %}</div>
             {% if form.code.errors %}
               <div class="text-danger">
                 {% for error in form.code.errors %}
@@ -60,13 +60,13 @@
               </div>
             {% endif %}
           </div>
+          <div id="task-title">
+            {% include 'indigo_api/_task_title_form.html' %}
+          </div>
           <div id="task-work">
             {% include 'indigo_api/_task_work_form.html' %}
           </div>
           <hr>
-          <div id="task-title">
-            {% include 'indigo_api/_task_title_form.html' %}
-          </div>
           <div class="mb-3 row">
             <label for="{{ form.timeline_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Timeline date' %}</label>
             <div class="col-4">

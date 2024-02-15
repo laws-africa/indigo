@@ -26,6 +26,23 @@
         <div class="card-body">
 
           <div class="mb-3 row">
+            <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{% trans 'Type' %}</label>
+            <div class="col-4">
+              <select class="selectpicker col-12" id="{{ form.code.id_for_label }}" name="{{ form.code.html_name }}">
+                {% for opt in form.code %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            {% if form.code.errors %}
+              <div class="text-danger">
+                {% for error in form.code.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3 row">
             <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label">{% trans 'Title' %}</label>
             <div class="col-4">
               <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">

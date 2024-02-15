@@ -25,9 +25,11 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
+          <div class="mb-3 row">
+            <label for="{{ form.title.id_for_label }}" class="col-2 col-form-label">{% trans 'Title' %}</label>
+            <div class="col-4">
+              <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
+            </div>
             {% if form.title.errors %}
               <div class="text-danger">
                 {% for error in form.title.errors %}
@@ -36,40 +38,41 @@
               </div>
             {% endif %}
           </div>
-
-          <div class="row">
-            <div class="mb-3 col-sm-8">
-              <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
-              {% if form.description.errors %}
-                <div class="text-danger">
-                  {% for error in form.description.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-
-            <div class="mb-3 col-sm-4">
-
-              <label>{{ form.labels.label }}</label>
-              {% for label in task_labels %}
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="{{ form.labels.auto_id }}-{{ forloop.counter }}" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
-                  <label for="{{ form.labels.auto_id }}-{{ forloop.counter }}" class="form-check-label ms-1 mt-1">
-                    <span class="h5"><span class="badge text-bg-secondary">{{ label.title }}</span></span> – <span class="font-weight-normal">{{ label.description }}</span>
-                  </label>
-                </div>
-              {% endfor %}
-
-            </div>
-          </div>
-
           <div class="mb-3 row">
-
-            <div class="col-md-6">
-              <label for="{{ form.work.id_for_label }}">{% trans 'Work' %}</label>
-              <input type="hidden" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
+            <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{% trans 'Description' %}</label>
+            <div class="col-8">
+              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
+            </div>
+            {% if form.description.errors %}
+              <div class="text-danger">
+                {% for error in form.description.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3 row">
+            <label for="{{ form.labels.id_for_label }}" class="col-2 col-form-label">{% trans 'Labels' %}</label>
+            <div class="col-4">
+              <select class="selectpicker col-12" multiple id="{{ form.labels.id_for_label }}" name="{{ form.labels.html_name }}">
+                {% for opt in form.labels %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            {% if form.labels.errors %}
+              <div class="text-danger">
+                {% for error in form.labels.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          {# TODO: use htmx for work, document #}
+          <div class="mb-3 row">
+            <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{% trans 'Work' %}</label>
+            <input type="hidden" id="{{ form.work.id_for_label }}" name="{{ form.work.html_name }}" value="{{ form.work.value|default:'' }}">
+            <div class="col-4">
               <div class="work-details"></div>
               <script id="task-work-template" type="text/x-handlebars-template">
               {% verbatim %}
@@ -86,10 +89,10 @@
               {% endverbatim %}
               </script>
             </div>
-
-            <div class="col-md-6 document-details">
-              <label for="{{ form.document.id_for_label }}">{% trans 'Point in time' %}</label>
-
+          </div>
+          <div class="mb-3 row document-details">
+            <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>
+            <div class="col-4">
               <select name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" class="form-control">
                 <option value="">{% trans '(none)' %}</option>
                 {% if form.document.value %}

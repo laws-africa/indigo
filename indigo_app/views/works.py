@@ -178,7 +178,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
 
 class EditWorkOffCanvasView(EditWorkView):
-    template_name = "indigo_api/_work_form_content.html"
+    template_name = "indigo_api/_work_form_offcanvas_body.html"
 
     def render_to_response(self, context, **response_kwargs):
         resp = super().render_to_response(context, **response_kwargs)
@@ -258,7 +258,7 @@ class AddWorkView(PlaceViewBase, CreateView):
 
 
 class AddWorkOffCanvasView(AddWorkView):
-    template_name = "indigo_api/_work_form_content.html"
+    template_name = "indigo_api/_work_form_offcanvas_body.html"
 
     def get_success_url(self):
         return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri}) + "?hx-trigger=hx_refresh_work_list"

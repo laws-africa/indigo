@@ -38,10 +38,10 @@
   {% endif %}
 
   <div
-      id="work-chooser-modal"
-      class="modal modal-blur fade"
-      style="display: none"
-      tabindex="-1"
+    id="work-chooser-modal"
+    class="modal modal-blur fade"
+    style="display: none"
+    tabindex="-1"
   >
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">Loading...</div>
@@ -49,18 +49,18 @@
   </div>
 
   <form
-      id="edit-work-form"
-      method="POST"
-      enctype="multipart/form-data"
-      data-component="WorkForm"
-      {% if request.htmx %}
-        {% if work.pk %}
-          hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-        {% else %}
-          hx-post="{% url 'new_work_offcanvas' place.place_code %}"
-        {% endif %}
-        hx-target="#offCanvasEditWorkForm"
+    id="edit-work-form"
+    method="POST"
+    enctype="multipart/form-data"
+    data-component="WorkForm"
+    {% if request.htmx %}
+      {% if work.pk %}
+        hx-post="{% url 'work_edit_offcanvas' work.frbr_uri %}"
+      {% else %}
+        hx-post="{% url 'new_work_offcanvas' place.place_code %}"
       {% endif %}
+      hx-target="#offCanvasEditWork"
+    {% endif %}
   >
     {% csrf_token %}
     <input type="hidden" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
@@ -73,14 +73,6 @@
           {{ country.name }} · {{ country.code }}
           {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
         </div>
-      </div>
-      <div class="d-flex">
-        {% if work.pk and not request.htmx %}
-          <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
-        {% endif %}
-        {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
-          <button class="btn btn-success save align-self-start" type="submit">{% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}</button>
-        {% endif %}
       </div>
     </div>
 

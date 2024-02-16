@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="offcanvas-header border-bottom" id="offCanvasWorkForm">
+  {% if form %}
+    <button
+      class="btn btn-success save"
+      type="submit"
+      form="edit-work-form"
+    >
+      {% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}
+    </button>
+  {% endif %}
+  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="offcanvas-body">
+  {% if form %}
+    {% include 'indigo_api/_work_form_content.html' %}
+  {% endif %}
+</div>

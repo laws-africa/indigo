@@ -65,18 +65,21 @@ class Task(models.Model):
         'unblock': 'unblocked',
     }
 
-    CODES = [
+    MAIN_CODES = [
+        ('import-content', __('Import content')),
         ('apply-amendment', __('Apply amendment')),
+        ('link-gazette', __('Link gazette')),
+    ]
+
+    CODES = MAIN_CODES + [
         ('check-update-primary', __('Check / update primary work')),
         ('check-update-repeal', __('Check / update repeal')),
         ('commences-on-date-missing', __("'Commences on' date missing")),
-        ('import-content', __('Import content')),
         ('link-amendment-active', __('Link amendment (active)')),
         ('link-amendment-passive', __('Link amendment (passive)')),
         ('link-amendment-pending-commencement', __('Link amendment (pending commencement)')),
         ('link-commencement-active', __('Link commencement (active)')),
         ('link-commencement-passive', __('Link commencement (passive)')),
-        ('link-gazette', __('Link gazette')),
         ('link-primary-work', __('Link primary work')),
         ('link-repeal', __('Link repeal')),
         ('no-repeal-match', __('Link repeal (not found)')),
@@ -84,12 +87,6 @@ class Task(models.Model):
         ('link-subleg', __('Link subleg')),
         ('link-taxonomy', __('Link taxonomy')),
         ('review-work-expression', __('Sign-off')),
-    ]
-
-    MAIN_CODES = [
-        ('import-content', __('Import content')),
-        ('apply-amendment', __('Apply amendment')),
-        ('link-gazette', __('Link gazette')),
     ]
 
     class Meta:

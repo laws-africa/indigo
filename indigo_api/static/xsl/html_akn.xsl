@@ -211,6 +211,7 @@
     <xsl:if test="self::a:part">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>

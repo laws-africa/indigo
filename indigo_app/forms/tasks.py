@@ -45,12 +45,6 @@ class TaskForm(forms.ModelForm):
         if code:
             title = dict(Task.MAIN_CODES)[code]
 
-        # tack on the timeline date if there is one
-        if title:
-            timeline_date = self.cleaned_data.get('timeline_date')
-            if timeline_date:
-                title += f' – {timeline_date}'
-
         # title can't be blank if there's no code though (borrowed this from validate on the base Field class)
         if not title:
             raise ValidationError(self.fields['title'].error_messages['required'], code='required')

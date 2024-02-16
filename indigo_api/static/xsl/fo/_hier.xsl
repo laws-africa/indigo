@@ -84,6 +84,7 @@
     <xsl:if test="self::akn:part">
       <xsl:choose>
         <xsl:when test="$language='afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$language='deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
         <xsl:when test="$language='ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$language='fra'"><xsl:text>Partie </xsl:text></xsl:when>
         <xsl:when test="$language='ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>

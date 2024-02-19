@@ -16,6 +16,16 @@ from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, S
     Commencement, Workflow, Task, Country
 
 
+class FormAsUrlMixin:
+    """Adds a helper method to serialise the submitted form data (uncleaned) as a URL query string. This is useful for
+    pagination links.
+    """
+    def data_as_url(self):
+        # only keep keeps that were cleaned
+        data = [(k, v) for k, v in self.data.lists() if k in self.cleaned_data]
+        return urllib.parse.urlencode(data, True, encoding='utf-8')
+
+
 class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
@@ -481,7 +491,7 @@ class CommencementForm(forms.ModelForm):
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
 
-class WorkFilterForm(forms.Form):
+class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
@@ -530,9 +540,6 @@ class WorkFilterForm(forms.Form):
                     settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?

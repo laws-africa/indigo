@@ -83,6 +83,10 @@ def get_work_overview_data(work):
     if work.disclaimer:
         overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
 
+    if work.principal:
+        overview_data.append(OverviewDataEntry(_("Principal"), _(
+            "Principal works are not simply repeals, amendments or commencements, and should have full text content.")))
+
     return overview_data
 
 

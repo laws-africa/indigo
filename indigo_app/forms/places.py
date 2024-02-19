@@ -1,5 +1,4 @@
 import re
-import urllib.parse
 
 from django import forms
 from django.contrib.auth.models import User
@@ -9,6 +8,7 @@ from django.core.validators import URLValidator
 from lxml import etree
 
 from indigo_api.models import Country, PlaceSettings
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class PlaceSettingsForm(forms.ModelForm):
@@ -47,7 +47,7 @@ class CountryAdminForm(forms.ModelForm):
         return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))
 
 
-class ExplorerForm(forms.Form):
+class ExplorerForm(forms.Form, FormAsUrlMixin):
     xpath = forms.CharField(required=True)
     parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
     localities = forms.BooleanField(required=False)
@@ -62,6 +62,3 @@ class ExplorerForm(forms.Form):
             raise ValidationError(str(e))
 
         return value
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')

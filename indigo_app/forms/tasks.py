@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class TaskForm(forms.ModelForm):
@@ -52,7 +53,7 @@ class TaskForm(forms.ModelForm):
         return title
 
 
-class TaskFilterForm(forms.Form):
+class TaskFilterForm(forms.Form, FormAsUrlMixin):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
@@ -102,9 +103,6 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(work__taxonomy_topics__in=topics)
 
         return queryset
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
 
 class BulkTaskUpdateForm(forms.Form):

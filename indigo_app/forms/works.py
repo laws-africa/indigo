@@ -1,5 +1,4 @@
 import re
-import urllib.parse
 from datetime import date
 from functools import cached_property
 
@@ -14,6 +13,7 @@ from django.utils.translation import gettext as _, gettext_lazy as _l
 from cobalt import FrbrUri
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
     Commencement, Workflow, Task, Country
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class WorkForm(forms.ModelForm):
@@ -481,7 +481,7 @@ class CommencementForm(forms.ModelForm):
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
 
-class WorkFilterForm(forms.Form):
+class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
@@ -530,9 +530,6 @@ class WorkFilterForm(forms.Form):
                     settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?

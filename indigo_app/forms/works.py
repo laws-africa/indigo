@@ -1,5 +1,4 @@
 import re
-import urllib.parse
 from datetime import date
 from functools import cached_property
 
@@ -14,16 +13,7 @@ from django.utils.translation import gettext as _, gettext_lazy as _l
 from cobalt import FrbrUri
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
     Commencement, Workflow, Task, Country
-
-
-class FormAsUrlMixin:
-    """Adds a helper method to serialise the submitted form data (uncleaned) as a URL query string. This is useful for
-    pagination links.
-    """
-    def data_as_url(self):
-        # only keep keeps that were cleaned
-        data = [(k, v) for k, v in self.data.lists() if k in self.cleaned_data]
-        return urllib.parse.urlencode(data, True, encoding='utf-8')
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class WorkForm(forms.ModelForm):

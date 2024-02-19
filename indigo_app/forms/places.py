@@ -1,5 +1,4 @@
 import re
-import urllib.parse
 
 from django import forms
 from django.contrib.auth.models import User
@@ -9,7 +8,7 @@ from django.core.validators import URLValidator
 from lxml import etree
 
 from indigo_api.models import Country, PlaceSettings
-from indigo_app.forms import FormAsUrlMixin
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class PlaceSettingsForm(forms.ModelForm):

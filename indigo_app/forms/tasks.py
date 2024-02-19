@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
-from indigo_app.forms import FormAsUrlMixin
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class TaskForm(forms.ModelForm):

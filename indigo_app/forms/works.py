@@ -146,6 +146,28 @@ class WorkForm(forms.ModelForm):
 
             self.amendments_made_formset = self.AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
 
+            self.CommencementsMadeBaseFormset = CommencementsMadeBaseFormset
+
+            commencements_made_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "commencements_made",
+                "initial": [{
+                    "commenced_work": commencement.commenced_work,
+                    "commencing_work": self.instance,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in Commencement.objects.filter(commencing_work=self.instance)],
+            }
+
+            if self.is_bound:
+                commencements_made_formset_kwargs["data"] = self.data
+
+            self.commencements_made_formset = self.CommencementsMadeBaseFormset(**commencements_made_formset_kwargs)
+
         self.fields['frbr_doctype'].choices = [
             (y, x)
             for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
@@ -172,7 +194,8 @@ class WorkForm(forms.ModelForm):
                     super().is_valid() and
                     self.repeals_made_formset.is_valid() and
                     self.amended_by_formset.is_valid() and
-                    self.amendments_made_formset.is_valid()
+                    self.amendments_made_formset.is_valid() and
+                    self.commencements_made_formset.is_valid()
             )
         return super().is_valid()
 
@@ -182,7 +205,8 @@ class WorkForm(forms.ModelForm):
                     super().has_changed() or
                     self.repeals_made_formset.has_changed() or
                     self.amended_by_formset.has_changed() or
-                    self.amendments_made_formset.has_changed()
+                    self.amendments_made_formset.has_changed() or
+                    self.commencements_made_formset.has_changed()
             )
         return super().has_changed()
 
@@ -215,6 +239,7 @@ class WorkForm(forms.ModelForm):
         self.save_repeals()
         self.save_amended_by()
         self.save_amendments_made()
+        self.save_commencements_made()
         return work
 
     def save_properties(self):
@@ -241,6 +266,9 @@ class WorkForm(forms.ModelForm):
         for form in self.amendments_made_formset:
             if form.is_valid() and form.has_changed():
                 form.save(self.user)
+
+    def save_commencements_made(self):
+        self.commencements_made_formset.save(self.user, self.instance)
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -479,6 +507,111 @@ class CommencementForm(forms.ModelForm):
         super().clean()
         if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
+
+class CommencementsPartialForm(forms.Form):
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    commenced_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    note = forms.CharField(required=False, widget=forms.TextInput)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    # class Meta:
+    #     model = Commencement
+    #     fields = ('commencing_work', 'commenced_work', 'date', 'id', 'note',)
+
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
+    @cached_property
+    def commencing_work_obj(self):
+        return Work.objects.filter(pk=self['commencing_work'].value()).first()
+
+    @cached_property
+    def commenced_work_obj(self):
+        return Work.objects.filter(pk=self['commenced_work'].value()).first()
+
+    def save(self, user, *args, **kwargs):
+        commencement = Commencement.objects.filter(pk=self.cleaned_data['id']).first()
+
+        if self.cleaned_data.get('DELETE'):
+            if commencement:
+                commencement.delete()
+            return
+        else:
+            if commencement:
+                commencement.commencing_work = self.cleaned_data['commencing_work']
+                commencement.commenced_work = self.cleaned_data['commenced_work']
+                commencement.date = self.cleaned_data["date"]
+                commencement.note = self.cleaned_data["note"]
+                commencement.updated_by_user = user
+                commencement.save()
+            else:
+                Commencement.objects.create(
+                    commencing_work=self.cleaned_data['commencing_work'],
+                    commenced_work=self.cleaned_data['commenced_work'],
+                    date=self.cleaned_data["date"],
+                    note=self.cleaned_data["note"],
+                    created_by_user=user,
+                    updated_by_user=user,
+                )
+
+CommencementsFormset = formset_factory(
+    CommencementsPartialForm,
+    extra=0,
+    can_delete=True,
+)
+
+class CommencementsMadeBaseFormset(CommencementsFormset):
+
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            amending_work = form.cleaned_data.get('commencing_work')
+            amended_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (amending_work, amended_work, date) in seen:
+                raise ValidationError("Commenced work and date must be unique together.")
+            seen.add((amending_work, amended_work, date))
+
+    def save(self, user, work, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            for form in self.forms:
+                form.save(user)
+
+            commenced_counts = Commencement.objects.filter(commencing_work=work).values(
+                "commenced_work").annotate(num_commencements=Count("id")).order_by()
+            multiple_commencements = commenced_counts.filter(num_commencements__gt=1).values_list(
+                "commenced_work", flat=True)
+            single_commencements = commenced_counts.filter(num_commencements=1).values_list("commenced_work",
+                                                                                            flat=True)
+
+            for commencement in multiple_commencements:
+                commencements = Commencement.objects.filter(commencing_work=work,
+                                                            commenced_work=commencement).order_by("date")
+                # update all commencements first
+                for c in commencements:
+                    c.main = False
+                    c.all_provisions = False
+                    c.save()
+
+                # update the first commencement to be the main one
+                first = commencements.first()
+                first.main = True
+                first.save()
+
+            for commencement in single_commencements:
+                c = Commencement.objects.filter(commencing_work=work, commenced_work=commencement).first()
+                c.main = True
+                c.all_provisions = True
+                c.save()
 
 
 class WorkFilterForm(forms.Form, FormAsUrlMixin):

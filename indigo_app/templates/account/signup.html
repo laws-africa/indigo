@@ -1,12 +1,12 @@
 {% extends "allauth/layouts/base.html" %}
-{% load account socialaccount %}
+{% load account socialaccount i18n %}
 
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<h1>Sign Up</h1>
+<h1>{% trans "Sign Up" %}</h1>
 
-<p>Already have an account? Then please <a href="{{ login_url }}">log in</a>.</p>
+<p>{% blocktrans trimmed %}Do you already have an account? Then please <a href="{{ login_url }}">log in</a>.{% endblocktrans %}</p>
 
 {% if form.signup_enabled %}
   <form method="POST" action="{% url 'account_signup' %}">
@@ -48,7 +48,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="{{ form.email.id_for_label }}">Email address</label>
+      <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
       <input type="email" class="form-control" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.data|default:'' }}" required placeholder="you@example.com">
       {% if form.email.errors %}
         <div class="text-danger">
@@ -76,7 +76,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="{{ form.password1.id_for_label }}">Password</label>
+      <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
       <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" required>
       {% if form.password1.errors %}
         <div class="text-danger">
@@ -88,7 +88,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="{{ form.password2.id_for_label }}">Password (again)</label>
+      <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
       <input type="password" class="form-control" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" required>
       {% if form.password2.errors %}
         <div class="text-danger">
@@ -103,7 +103,9 @@
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="{{ form.accepted_terms.id_for_label }}" required name="{{ form.accepted_terms.name }}">
         <label class="form-check-label" for="{{ form.accepted_terms.id_for_label }}">
+          {% blocktrans trimmed %}
           I have read and accept the <a href="{% url 'terms_of_use' %}" target="_blank">Terms of Use</a>.
+          {% endblocktrans %}
         </label>
         {% if form.accepted_terms.errors %}
           <div class="text-danger">
@@ -126,14 +128,14 @@
       {% endif %}
     </div>
 
-    <button class="btn btn-success btn-block mb-3" type="submit">Sign up</button>
+    <button class="btn btn-success btn-block mb-3" type="submit">{% trans "Sign up" %}</button>
 
     <div class="text-center">
-      <a href="{{ login_url }}">Log in</a>
+      <a href="{{ login_url }}">{% trans "Log in" %}</a>
     </div>
   </form>
 {% else %}
-  <p class="alert alert-warning">Creating new accounts is currently not allowed.</p>
+  <p class="alert alert-warning">{% trans "Creating new accounts is currently not allowed." %}</p>
 {% endif %}
 
 {% endblock %}

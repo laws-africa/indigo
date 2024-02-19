@@ -88,10 +88,13 @@ urlpatterns = [
     path('places/<str:place>/work/form/localities', works.WorkFormLocalityView.as_view(), name='work_form_locality'),
     path('places/<str:place>/work/form/repeal', works.WorkFormRepealView.as_view(), name='work_form_repeal'),
     path('places/<str:place>/work/form/parent', works.WorkFormParentView.as_view(), name='work_form_parent'),
+
+    # TODO: REMOVE THIS
     path('places/<str:place>/work/form/commencement', works.WorkFormCommencementView.as_view(), name='work_form_commencement'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/form/repeals-made$', works.WorkFormRepealsMadeView.as_view(), name='work_form_repeals_made'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/form/amendments$', works.WorkFormAmendmentsView.as_view(), name='work_form_amendments'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/form/commencements$', works.WorkFormCommencementsView.as_view(), name='work_form_commencements'),
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),

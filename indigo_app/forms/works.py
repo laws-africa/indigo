@@ -823,6 +823,8 @@ class WorkBulkApproveForm(forms.Form):
     gazette_task_description = forms.CharField(required=False)
     amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    amendment_made_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_amendment_made_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
 
@@ -830,12 +832,18 @@ class WorkBulkApproveForm(forms.Form):
         super().__init__(*args, **kwargs)
         if self.is_valid():
             self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.add_amendment_made_task_description_fields(self.cleaned_data.get('works_in_progress', []))
             self.full_clean()
 
     def add_amendment_task_description_fields(self, works_in_progress):
         for work in works_in_progress:
             for amendment in work.amendments.all():
                 self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
+
+    def add_amendment_made_task_description_fields(self, works_in_progress):
+        for work in works_in_progress:
+            for amendment in work.amendments_made.all():
+                self.fields[f'amendment_made_task_description_{amendment.pk}'] = forms.CharField()
 
     def save_changes(self, request):
         for work in self.cleaned_data["works_in_progress"]:
@@ -865,6 +873,18 @@ class WorkBulkApproveForm(forms.Form):
                         user=request.user, timeline_date=amendment.date))
             if self.cleaned_data.get('update_amendment_tasks'):
                 self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_tasks'], request.user)
+
+        # amendment made tasks
+        if self.cleaned_data.get('amendment_made_task_works'):
+            amendment_tasks = []
+            for work in self.cleaned_data['amendment_made_task_works']:
+                for amendment in work.amendments_made.all():
+                    amendment_tasks.append(self.get_or_create_task(
+                        work=amendment.amended_work, task_type='apply-amendment',
+                        description=self.cleaned_data[f'amendment_made_task_description_{amendment.pk}'],
+                        user=request.user, timeline_date=amendment.date))
+            if self.cleaned_data.get('update_amendment_made_tasks'):
+                self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_made_tasks'], request.user)
 
     def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
         task_titles = {

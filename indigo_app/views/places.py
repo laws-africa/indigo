@@ -1275,8 +1275,8 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
         context["works_in_progress"] = works_in_progress = form.cleaned_data.get("works_in_progress").order_by("-created_at")
         context["import_task_works"] = works_in_progress.filter(principal=True)
         context["gazette_task_works"] = [w for w in works_in_progress if not w.has_publication_document()]
-        amendment_task_works = [w for w in works_in_progress if w.amendments.exists()]
-        context["amendments_per_work"] = {w: w.amendments.all() for w in amendment_task_works}
+        context["amendments_per_work"] = {w: w.amendments.all() for w in works_in_progress if w.amendments.exists()}
+        context["amendments_made_per_work"] = {w: w.amendments_made.all() for w in works_in_progress if w.amendments_made.exists()}
         return context
 
     def form_valid(self, form):
@@ -1291,6 +1291,8 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
                 amendments_count = 0
                 for work in form.cleaned_data['amendment_task_works']:
                     amendments_count += work.amendments.count()
+                for work in form.cleaned_data['amendment_made_task_works']:
+                    amendments_count += work.amendments_made.count()
                 messages.success(self.request, f"Created {amendments_count} Amendment tasks.")
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)

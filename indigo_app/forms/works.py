@@ -586,12 +586,9 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
             for form in self.forms:
                 form.save(user)
 
-            commenced_counts = Commencement.objects.filter(commencing_work=work).values(
-                "commenced_work").annotate(num_commencements=Count("id")).order_by()
-            multiple_commencements = commenced_counts.filter(num_commencements__gt=1).values_list(
-                "commenced_work", flat=True)
-            single_commencements = commenced_counts.filter(num_commencements=1).values_list("commenced_work",
-                                                                                            flat=True)
+            commenced_counts = Commencement.objects.filter(commencing_work=work).values("commenced_work").annotate(num_commencements=Count("id")).order_by()
+            multiple_commencements = commenced_counts.filter(num_commencements__gt=1).values_list("commenced_work", flat=True)
+            single_commencements = commenced_counts.filter(num_commencements=1).values_list("commenced_work", flat=True)
 
             for commencement in multiple_commencements:
                 commencements = Commencement.objects.filter(commencing_work=work,

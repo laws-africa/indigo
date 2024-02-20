@@ -29,11 +29,8 @@
         {% for work in gazette_task_works %}
           <input type="hidden" name="gazette_task_works" value="{{ work.pk }}">
         {% endfor %}
-        {% for work in amendments_per_work %}
-          <input type="hidden" name="amendment_task_works" value="{{ work.pk }}">
-        {% endfor %}
-        {% for work in amendments_made_per_work %}
-          <input type="hidden" name="amendment_made_task_works" value="{{ work.pk }}">
+        {% for amendment in amendments %}
+          <input type="hidden" name="amendments" value="{{ amendment.pk }}">
         {% endfor %}
         <div class="alert alert-warning">
           <ul>
@@ -141,61 +138,6 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
               </div>
               <div class="mt-3">
                 {% for opt in form.update_amendment_tasks %}
-                  <div>
-                    {{ opt }}
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-        {% if amendments_made_per_work %}
-          <div class="card">
-            <h5 class="card-header">
-              {% trans "Amendment tasks will be created on amended works" %}
-            </h5>
-            <div class="card-body">
-              <ul>
-                {% for work, amendments in amendments_made_per_work.items %}
-                  <li>
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                  </li>
-                  <ul>
-                    {% trans "Amends" %}
-                    {% for amendment in amendments %}
-                      <li>
-                        <a target="_blank" href="{% url 'work' amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                {% endfor %}
-              </ul>
-              <div>
-                {% for work, amendments in amendments_made_per_work.items %}
-                  <div class="mt-4">
-                    <hr>
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                    {% for amendment in amendments %}
-                      <div class="mt-3"><a target="_blank" href="{% url 'work' amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a></div>
-                      <div class="mt-1">
-                        <label for="amendment_made_task_description_{{ amendment.pk }}">
-                          {% blocktrans with title=work.title numbered_title=work.numbered_title date=amendment.date|date:"Y-m-d" %}
-                            Task description: {{ title }} ({{ numbered_title }}) – {{ date }}
-                          {% endblocktrans %}
-                        </label>
-                        {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
-
-The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
-                        <textarea id="amendment_made_task_description_{{ amendment.pk }}" name="amendment_made_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
-                        >{{ description_default }}</textarea>
-                      </div>
-                    {% endfor %}
-                  </div>
-                {% endfor %}
-              </div>
-              <div class="mt-3">
-                {% for opt in form.update_amendment_made_tasks %}
                   <div>
                     {{ opt }}
                   </div>

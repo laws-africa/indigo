@@ -1,9 +1,11 @@
+{% load i18n %}
+
 <div class="modal fade" tabindex="-1" role="dialog" id="cheatsheet-modal">
   <div class="modal-dialog modal-lg cheatsheet" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editor help</h5>
-        <input type="text" class="ms-auto form-control search" style="width: 250px" placeholder="Search...">
+        <h5 class="modal-title">{% trans "Editor help" %}</h5>
+        <input type="text" class="ms-auto form-control search" style="width: 250px" placeholder="{% trans 'Search...' %}">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="scrollable ace-xcode">
@@ -13,10 +15,10 @@
 
           {% block cheat-preface %}
           <div class="card">
-            <a href="#cheat-preface" data-bs-toggle="collapse" class="card-header">Starting the Preface</a>
+            <a href="#cheat-preface" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preface" %}</a>
             <div id="cheat-preface" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Mark the start of the Preface, before the Preamble and body.</p>
+                <p>{% trans "Mark the start of the Preface, before the Preamble and body." %}</p>
 
                 <pre class="editor-snippet"><span class="ace_constant ace_language">PREFACE</span>
 
@@ -28,10 +30,10 @@ This is the preface of the Act.</pre>
 
           {% block cheat-preamble %}
           <div class="card">
-            <a href="#cheat-preamble" data-bs-toggle="collapse" class="card-header">Starting the Preamble</a>
+            <a href="#cheat-preamble" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preamble" %}</a>
             <div id="cheat-preamble" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Mark the start of the Preamble, after the Preface and before the body.</p>
+                <p>{% trans "Mark the start of the Preamble, after the Preface and before the body." %}</p>
 
                 <pre class="editor-snippet"><span class="ace_constant ace_language">PREAMBLE</span>
 
@@ -43,10 +45,14 @@ This is the preamble of the Act.</pre>
 
           {% block cheat-longtitle %}
           <div class="card">
-            <a href="#cheat-longtitle" data-bs-toggle="collapse" class="card-header">Markup the long title</a>
+            <a href="#cheat-longtitle" data-bs-toggle="collapse" class="card-header">{% trans "Markup the long title" %}</a>
             <div id="cheat-longtitle" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence "BE IT ENACTED..."</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -66,10 +72,14 @@ This is the preamble of the Act.</pre>
 
           {% block cheat-body %}
           <div class="card">
-            <a href="#cheat-body" data-bs-toggle="collapse" class="card-header">Starting the body of the document</a>
+            <a href="#cheat-body" data-bs-toggle="collapse" class="card-header">{% trans "Starting the body of the document" %}</a>
             <div id="cheat-body" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble.
+                  {% endblocktrans %}
+                </p>
 
                 <pre class="editor-snippet"><span class="ace_constant ace_language">BODY</span>
 
@@ -81,10 +91,14 @@ This is the body of the Act.</pre>
 
           {% block cheat-chapter %}
           <div class="card">
-            <a href="#cheat-chapter" data-bs-toggle="collapse" class="card-header">Starting a new Chapter</a>
+            <a href="#cheat-chapter" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Chapter" %}</a>
             <div id="cheat-chapter" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start a Chapter with <code>Chapter</code> and a number. The title is optional.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start a Chapter with <code>Chapter</code> and a number. The title is optional.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -106,10 +120,14 @@ This is the body of the Chapter.</pre>
 
           {% block cheat-part %}
           <div class="card">
-            <a href="#cheat-part" data-bs-toggle="collapse" class="card-header">Starting a new Part</a>
+            <a href="#cheat-part" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Part" %}</a>
             <div id="cheat-part" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start a Part with <code>Part</code> and a number. The title is optional.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start a Part with <code>Part</code> and a number. The title is optional.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -131,11 +149,19 @@ This is the body of the Part.</pre>
 
           {% block cheat-subpart %}
             <div class="card">
-              <a href="#cheat-subpart" data-bs-toggle="collapse" class="card-header">Starting a new Subpart</a>
+              <a href="#cheat-subpart" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Subpart" %}</a>
               <div id="cheat-subpart" class="collapse" data-parent="#cheat-accordion">
                 <div class="card-body">
-                  <p>A subpart is a grouping container, like a Part, but without "Part" in the generated heading.</p>
-                  <p>Start a subpart with <code>SUBPART</code> and a number. The title is optional.</p>
+                  <p>
+                    {% blocktrans trimmed %}
+                      A subpart is a grouping container, like a Part, but without "Part" in the generated heading.
+                    {% endblocktrans %}
+                  </p>
+                  <p>
+                    {% blocktrans trimmed %}
+                      Start a subpart with <code>SUBPART</code> and a number. The title is optional.
+                    {% endblocktrans %}
+                  </p>
 
                   <div class="row">
                     <div class="col">
@@ -157,10 +183,14 @@ This is the body of the Subpart.</pre>
 
           {% block cheat-crossheading %}
           <div class="card">
-            <a href="#cheat-crossheading" data-bs-toggle="collapse" class="card-header">Include a Crossheading</a>
+            <a href="#cheat-crossheading" data-bs-toggle="collapse" class="card-header">{% trans "Include a Crossheading" %}</a>
             <div id="cheat-crossheading" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -179,10 +209,14 @@ This is the body of the Subpart.</pre>
 
           {% block cheat-section %}
           <div class="card">
-            <a href="#cheat-section" data-bs-toggle="collapse" class="card-header">Starting a Section</a>
+            <a href="#cheat-section" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Section" %}</a>
             <div id="cheat-section" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -204,10 +238,14 @@ This is the body of the section.</pre>
 
           {% block cheat-subsection %}
           <div class="card">
-            <a href="#cheat-subsection" data-bs-toggle="collapse" class="card-header">Starting a Subsection</a>
+            <a href="#cheat-subsection" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Subsection" %}</a>
             <div id="cheat-subsection" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -226,10 +264,14 @@ This is the body of the section.</pre>
 
           {% block cheat-blocklist %}
           <div class="card">
-            <a href="#cheat-blocklist" data-bs-toggle="collapse" class="card-header">Create a numbered list (a blocklist)</a>
+            <a href="#cheat-blocklist" data-bs-toggle="collapse" class="card-header">{% trans "Create a numbered list (a blocklist)" %}</a>
             <div id="cheat-blocklist" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -284,10 +326,14 @@ This is the body of the section.</pre>
 
           {% block cheat-special %}
           <div class="card">
-            <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">Insert a special character</a>
+            <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">{% trans "Insert a special character" %}</a>
             <div id="cheat-special" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.
+                  {% endblocktrans %}
+                </p>
               </div>
             </div>
           </div>
@@ -295,11 +341,19 @@ This is the body of the section.</pre>
 
           {% block cheat-italics %}
           <div class="card">
-            <a href="#cheat-italics" data-bs-toggle="collapse" class="card-header">Make text italics</a>
+            <a href="#cheat-italics" data-bs-toggle="collapse" class="card-header">{% trans "Make text italics" %}</a>
             <div id="cheat-italics" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Display a word or a sentence as italics using <code>//word//</code>. Do this for Latin, foreign and other special terms.</p>
-                <p>For editorial remarks, use <code>[[remark]]</code> instead.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Display a word or a sentence as italics using <code>//word//</code>. Do this for Latin, foreign and other special terms.
+                  {% endblocktrans %}
+                </p>
+                <p>
+                  {% blocktrans trimmed %}
+                    For editorial remarks, use <code>[[remark]]</code> instead.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -318,10 +372,14 @@ This is the body of the section.</pre>
 
           {% block cheat-bold %}
           <div class="card">
-            <a href="#cheat-bold" data-bs-toggle="collapse" class="card-header">Make text bold</a>
+            <a href="#cheat-bold" data-bs-toggle="collapse" class="card-header">{% trans "Make text bold" %}</a>
             <div id="cheat-bold" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -340,10 +398,14 @@ This is the body of the section.</pre>
 
           {% block cheat-underline %}
             <div class="card">
-              <a href="#cheat-underline" data-bs-toggle="collapse" class="card-header">Underline text</a>
+              <a href="#cheat-underline" data-bs-toggle="collapse" class="card-header">{% trans "Underline text" %}</a>
               <div id="cheat-underline" class="collapse" data-parent="#cheat-accordion">
                 <div class="card-body">
-                  <p>Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.</p>
+                  <p>
+                    {% blocktrans trimmed %}
+                      Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.
+                    {% endblocktrans %}
+                  </p>
 
                   <div class="row">
                     <div class="col">
@@ -362,10 +424,14 @@ This is the body of the section.</pre>
 
           {% block cheat-weblink %}
           <div class="card">
-            <a href="#cheat-weblink" data-bs-toggle="collapse" class="card-header">Add a link to a webpage</a>
+            <a href="#cheat-weblink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to a webpage" %}</a>
             <div id="cheat-weblink" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Link to a webpage using <code>[link text](http://example.com/the-link)</code>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Link to a webpage using <code>[link text](http://example.com/the-link)</code>.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -384,10 +450,14 @@ This is the body of the section.</pre>
 
           {% block cheat-aknlink %}
           <div class="card">
-            <a href="#cheat-aknlink" data-bs-toggle="collapse" class="card-header">Add a link to an Act or Work</a>
+            <a href="#cheat-aknlink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to an Act or Work" %}</a>
             <div id="cheat-aknlink" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Link to another Act or Work using <code>[link text](frbr-uri)</code>, where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Link to another Act or Work using <code>[link text](frbr-uri)</code>, where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -406,12 +476,14 @@ This is the body of the section.</pre>
 
           {% block cheat-image %}
           <div class="card">
-            <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">Insert an image</a>
+            <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">{% trans "Insert an image" %}</a>
             <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>
-                  Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
-                  Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
+                  {% blocktrans trimmed %}
+                    Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
+                    Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
+                  {% endblocktrans %}
                 </p>
 
                 <div class="row">
@@ -431,10 +503,14 @@ This is the body of the section.</pre>
 
           {% block cheat-remark %}
           <div class="card">
-            <a href="#cheat-remark" data-bs-toggle="collapse" class="card-header">Add an editorial remark</a>
+            <a href="#cheat-remark" data-bs-toggle="collapse" class="card-header">{% trans "Add an editorial remark" %}</a>
             <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row">
                   <div class="col">
@@ -455,12 +531,14 @@ This is the body of the section.</pre>
 
           {% block cheat-escape %}
           <div class="card">
-            <a href="#cheat-escape" data-bs-toggle="collapse" class="card-header">Ignore text that looks like a chapter, part or section but isn't</a>
+            <a href="#cheat-escape" data-bs-toggle="collapse" class="card-header">{% trans "Ignore text that looks like a chapter, part or section but isn't" %}</a>
             <div id="cheat-escape" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
                 <p>
-                  You can tell the system to ignore text that looks like a chapter, part, section or any other special
-                  words, by putting a backslash <code>\</code> just before it.
+                  {% blocktrans trimmed %}
+                    You can tell the system to ignore text that looks like a chapter, part, section or any other special
+                    words, by putting a backslash <code>\</code> just before it.
+                  {% endblocktrans %}
                 </p>
 
                 <div class="row">
@@ -484,10 +562,14 @@ This is the body of the section.</pre>
 
           {% block cheat-schedule %}
           <div class="card">
-            <a href="#cheat-schedule" data-bs-toggle="collapse" class="card-header">Starting a Schedule</a>
+            <a href="#cheat-schedule" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Schedule" %}</a>
             <div id="cheat-schedule" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Start a schedule using <code>SCHEDULE</code>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Start a schedule using <code>SCHEDULE</code>.
+                  {% endblocktrans %}
+                </p>
 
                 <div class="row mb-4">
                   <div class="col">
@@ -538,15 +620,21 @@ This is the body of the first schedule.</pre>
 
           {% block cheat-table %}
           <div class="card">
-            <a href="#cheat-table" data-bs-toggle="collapse" class="card-header">Insert a table</a>
+            <a href="#cheat-table" data-bs-toggle="collapse" class="card-header">{% trans "Insert a table" %}</a>
             <div id="cheat-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.</p>
+                <p>
+                  {% blocktrans trimmed %}
+                    Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.
+                  {% endblocktrans %}
+                </p>
                 <ul>
-                  <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
-                  <li>Use <code>|-</code> to separate rows.</li>
-                  <li>Use <code>|</code> to start a cell on a row.</li>
-                  <li>Use <code>!</code> to start a heading cell on a row.</li>
+                  {% blocktrans trimmed %}
+                    <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
+                    <li>Use <code>|-</code> to separate rows.</li>
+                    <li>Use <code>|</code> to start a cell on a row.</li>
+                    <li>Use <code>!</code> to start a heading cell on a row.</li>
+                  {% endblocktrans %}
                 </ul>
 
                 <div class="row">
@@ -597,10 +685,12 @@ This is the body of the first schedule.</pre>
 
           {% block cheat-convert-table %}
           <div class="card">
-            <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">Convert lines of text into a table</a>
+            <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">{% trans "Convert lines of text into a table" %}</a>
             <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.</p>
+                {% blocktrans trimmed %}
+                  Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.
+                {% endblocktrans %}
 
                 <div class="row">
                   <div class="col">
@@ -634,10 +724,12 @@ Line 3</pre>
 
           {% block cheat-paste-table %}
           <div class="card">
-            <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">Paste a table</a>
+            <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">{% trans "Paste a table" %}</a>
             <div id="cheat-paste-table" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode.</p>
+                {% blocktrans trimmed %}
+                  Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode.
+                {% endblocktrans %}
               </div>
             </div>
           </div>
@@ -651,10 +743,13 @@ Line 3</pre>
       </div>
       <div class="modal-footer">
         {% if place.settings.styleguide_url %}
-          <a class="btn btn-outline-secondary me-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-question-circle fa-fw"></i> {{ work.country.name }} Style Guide</a>
+          <a class="btn btn-outline-secondary me-2" href="{{ place.settings.styleguide_url }}" target="_blank">
+            <i class="fas fa-question-circle fa-fw"></i>
+            {% blocktrans with country=work.country.name %}{{ country }} Style Guide{% endblocktrans %}
+          </a>
         {% endif %}
-        <a class="btn btn-outline-secondary me-2" href="{% url 'help' %}" target="_blank">Full editor documentation</a>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        <a class="btn btn-outline-secondary me-2" href="{% url 'help' %}" target="_blank">{% trans "Full editor documentation" %}</a>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans "Close" %}</button>
       </div>
     </div>
   </div>

@@ -13,268 +13,301 @@
         <div class="accordion" id="cheat-accordion">
           {% block cards %}
 
-          {% block cheat-preface %}
-          <div class="card">
-            <a href="#cheat-preface" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preface" %}</a>
-            <div id="cheat-preface" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>{% trans "Mark the start of the Preface, before the Preamble and body." %}</p>
+            {% block cheat-preface %}
+              <div class="card">
+                <a href="#cheat-preface" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preface" %}</a>
+                <div id="cheat-preface" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>{% trans "Mark the start of the Preface, before the Preamble and body." %}</p>
 
-                <pre class="editor-snippet"><span class="ace_constant ace_language">PREFACE</span>
+                    <pre class="editor-snippet"><span class="ace_constant ace_language">PREFACE</span>
 
 This is the preface of the Act.</pre>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-preamble %}
-          <div class="card">
-            <a href="#cheat-preamble" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preamble" %}</a>
-            <div id="cheat-preamble" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>{% trans "Mark the start of the Preamble, after the Preface and before the body." %}</p>
-
-                <pre class="editor-snippet"><span class="ace_constant ace_language">PREAMBLE</span>
-
-This is the preamble of the Act.</pre>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-longtitle %}
-          <div class="card">
-            <a href="#cheat-longtitle" data-bs-toggle="collapse" class="card-header">{% trans "Markup the long title" %}</a>
-            <div id="cheat-longtitle" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">LONGTITLE</span> <span class="ace_entity ace_name ace_tag">To establish ...</span></pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <div class="akn-longTitle mb-0">To establish ...</div>
-                    </la-akoma-ntoso>
                   </div>
                 </div>
-
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-body %}
-          <div class="card">
-            <a href="#cheat-body" data-bs-toggle="collapse" class="card-header">{% trans "Starting the body of the document" %}</a>
-            <div id="cheat-body" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-preamble %}
+              <div class="card">
+                <a href="#cheat-preamble" data-bs-toggle="collapse" class="card-header">{% trans "Starting the Preamble" %}</a>
+                <div id="cheat-preamble" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>{% trans "Mark the start of the Preamble, after the Preface and before the body." %}</p>
 
-                <pre class="editor-snippet"><span class="ace_constant ace_language">BODY</span>
+                    <pre class="editor-snippet"><span class="ace_constant ace_language">PREAMBLE</span>
+
+This is the preamble of the Act.</pre>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-longtitle %}
+              <div class="card">
+                <a href="#cheat-longtitle" data-bs-toggle="collapse" class="card-header">{% trans "Markup the long title" %}</a>
+                <div id="cheat-longtitle" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet"><span class="ace_constant ace_language">LONGTITLE</span> <span class="ace_entity ace_name ace_tag">To establish ...</span></pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <div class="akn-longTitle mb-0">To establish ...</div>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-body %}
+              <div class="card">
+                <a href="#cheat-body" data-bs-toggle="collapse" class="card-header">{% trans "Starting the body of the document" %}</a>
+                <div id="cheat-body" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble.
+                      {% endblocktrans %}
+                    </p>
+
+                    <pre class="editor-snippet"><span class="ace_constant ace_language">BODY</span>
 
 This is the body of the Act.</pre>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-chapter %}
-          <div class="card">
-            <a href="#cheat-chapter" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Chapter" %}</a>
-            <div id="cheat-chapter" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start a Chapter with <code>Chapter</code> and a number. The title is optional.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-chapter %}
+              <div class="card">
+                <a href="#cheat-chapter" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Chapter" %}</a>
+                <div id="cheat-chapter" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a Chapter with <code>CHAPTER</code> and a number. The title is optional.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language">Chapter</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
 
 This is the body of the Chapter.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <h2>Chapter 2<br>Interpretation</h2>
-                      <span class="akn-p mb-0">This is the body of the Chapter.</span>
-                    </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h2>Chapter 2<br>Interpretation</h2>
+                          <span class="akn-p mb-0">This is the body of the Chapter.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-part %}
-          <div class="card">
-            <a href="#cheat-part" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Part" %}</a>
-            <div id="cheat-part" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start a Part with <code>Part</code> and a number. The title is optional.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-part %}
+              <div class="card">
+                <a href="#cheat-part" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Part" %}</a>
+                <div id="cheat-part" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a Part with <code>Part</code> and a number. The title is optional.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language">Part</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
 
 This is the body of the Part.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <h2>Part 2 – Interpretation</h2>
-                      <span class="akn-p mb-0">This is the body of the Part.</span>
-                    </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h2>Part 2 – Interpretation</h2>
+                          <span class="akn-p mb-0">This is the body of the Part.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-subpart %}
-            <div class="card">
-              <a href="#cheat-subpart" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Subpart" %}</a>
-              <div id="cheat-subpart" class="collapse" data-parent="#cheat-accordion">
-                <div class="card-body">
-                  <p>
-                    {% blocktrans trimmed %}
-                      A subpart is a grouping container, like a Part, but without "Part" in the generated heading.
-                    {% endblocktrans %}
-                  </p>
-                  <p>
-                    {% blocktrans trimmed %}
-                      Start a subpart with <code>SUBPART</code> and a number. The title is optional.
-                    {% endblocktrans %}
-                  </p>
+            {% block cheat-subpart %}
+              <div class="card">
+                <a href="#cheat-subpart" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Subpart" %}</a>
+                <div id="cheat-subpart" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        A subpart is a grouping container, like a Part, but without "Part" in the generated heading.
+                      {% endblocktrans %}
+                    </p>
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a subpart with <code>SUBPART</code> and a number. The title is optional.
+                      {% endblocktrans %}
+                    </p>
 
-                  <div class="row">
-                    <div class="col">
+                    <div class="row">
+                      <div class="col">
                   <pre class="editor-snippet"><span class="ace_constant ace_language">SUBPART</span> <span class="ace_constant ace_numeric">A</span> <span class="ace_entity ace_name ace_tag">- Party and costs</span>
 
 This is the body of the Subpart.</pre>
-                    </div>
-                    <div class="col">
-                      <la-akoma-ntoso class="akoma-ntoso-snippet">
-                        <h2>A – Party and costs</h2>
-                        <span class="akn-p mb-0">This is the body of the Subpart.</span>
-                      </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h2>A – Party and costs</h2>
+                          <span class="akn-p mb-0">This is the body of the Subpart.</span>
+                        </la-akoma-ntoso>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-crossheading %}
-          <div class="card">
-            <a href="#cheat-crossheading" data-bs-toggle="collapse" class="card-header">{% trans "Include a Crossheading" %}</a>
-            <div id="cheat-crossheading" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-crossheading %}
+              <div class="card">
+                <a href="#cheat-crossheading" data-bs-toggle="collapse" class="card-header">{% trans "Include a Crossheading" %}</a>
+                <div id="cheat-crossheading" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">CROSSHEADING</span> <span class="ace_entity ace_name ace_tag">E. Control under a Scheme</span></pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-heading mb-0">E. Control under a Scheme</span>
-                    </la-akoma-ntoso>
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet"><span class="ace_constant ace_language">CROSSHEADING</span> <span class="ace_entity ace_name ace_tag">E. Control under a Scheme</span></pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-heading mb-0">E. Control under a Scheme</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-section %}
-          <div class="card">
-            <a href="#cheat-section" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Section" %}</a>
-            <div id="cheat-section" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-section %}
+              <div class="card">
+                <a href="#cheat-section" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Section" %}</a>
+                <div id="cheat-section" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_numeric">2.</span> <span class="ace_entity ace_name ace_tag">Definitions</span>
 
 This is the body of the section.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <h3>2. Definitions</h3>
-                      <span class="akn-p mb-0">This is the body of the section.</span>
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-subsection %}
-          <div class="card">
-            <a href="#cheat-subsection" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Subsection" %}</a>
-            <div id="cheat-subsection" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_numeric">(2)</span> The content of subsection 2.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <div class="akn-subsection"><span class="akn-num">(2)</span><span class="akn-content"><span class="akn-p">The content of subsection 2.</span></span></div>
-                    </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h3>2. Definitions</h3>
+                          <span class="akn-p mb-0">This is the body of the section.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-blocklist %}
-          <div class="card">
-            <a href="#cheat-blocklist" data-bs-toggle="collapse" class="card-header">{% trans "Create a numbered list (a blocklist)" %}</a>
-            <div id="cheat-blocklist" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-subsection %}
+              <div class="card">
+                <a href="#cheat-subsection" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Subsection" %}</a>
+                <div id="cheat-subsection" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet"><span class="ace_constant ace_numeric">(2)</span> The content of subsection 2.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <div class="akn-subsection"><span class="akn-num">(2)</span><span class="akn-content"><span class="akn-p">The content of subsection 2.</span></span></div>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-para %}
+              <div class="card">
+                <a href="#cheat-para" data-bs-toggle="collapse" class="card-header">{% trans "Add a numbered paragraph" %}</a>
+                <div id="cheat-para" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+              <pre class="editor-snippet"><span class="ace_constant ace_language">PARA</span> <span class="ace_constant ace_numeric">2.</span>
+
+  The content of paragraph 2.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                    <span class="akn-paragraph">
+                      <span class="akn-num">2.</span>
+                      <span class="akn-content mb-0">
+                        <span class="akn-p mb-0">The content of paragraph 2.</span>
+                      </span>
+                    </span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-blocklist %}
+              <div class="card">
+                <a href="#cheat-blocklist" data-bs-toggle="collapse" class="card-header">{% trans "Create a numbered list (a blocklist)" %}</a>
+                <div id="cheat-blocklist" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet">The following items are a blocklist:
 
 <span class="ace_constant ace_numeric">(a)</span> first item
@@ -286,9 +319,9 @@ This is the body of the section.</pre>
     <span class="ace_constant ace_numeric">(ii)</span> nested item (b)(ii)
 
 <span class="ace_constant ace_numeric">(c)</span> third item</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
 
                       <span class="akn-blockList">
                         <span class="akn-listIntroduction">The following items are a blocklist:</span>
@@ -316,329 +349,353 @@ This is the body of the section.</pre>
                         </span>
                       </span>
 
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-special %}
-          <div class="card">
-            <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">{% trans "Insert a special character" %}</a>
-            <div id="cheat-special" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.
-                  {% endblocktrans %}
-                </p>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-italics %}
-          <div class="card">
-            <a href="#cheat-italics" data-bs-toggle="collapse" class="card-header">{% trans "Make text italics" %}</a>
-            <div id="cheat-italics" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Display a word or a sentence as italics using <code>//word//</code>. Do this for Latin, foreign and other special terms.
-                  {% endblocktrans %}
-                </p>
-                <p>
-                  {% blocktrans trimmed %}
-                    For editorial remarks, use <code>[[remark]]</code> instead.
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet">The situation is same, //ceteris paribus//.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p mb-0">The situation is the same, <i>ceteris paribus</i>.</span>
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-bold %}
-          <div class="card">
-            <a href="#cheat-bold" data-bs-toggle="collapse" class="card-header">{% trans "Make text bold" %}</a>
-            <div id="cheat-bold" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms.
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet">The situation called for **bold terms**.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p mb-0">The situation called for <b>bold terms</b>.</span>
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
-
-          {% block cheat-underline %}
-            <div class="card">
-              <a href="#cheat-underline" data-bs-toggle="collapse" class="card-header">{% trans "Underline text" %}</a>
-              <div id="cheat-underline" class="collapse" data-parent="#cheat-accordion">
-                <div class="card-body">
-                  <p>
-                    {% blocktrans trimmed %}
-                      Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.
-                    {% endblocktrans %}
-                  </p>
-
-                  <div class="row">
-                    <div class="col">
-                      <pre class="editor-snippet">The situation called for __underlined text__.</pre>
-                    </div>
-                    <div class="col">
-                      <la-akoma-ntoso class="akoma-ntoso-snippet">
-                        <span class="akn-p mb-0">The situation called for <u>underlined text</u>.</span>
-                      </la-akoma-ntoso>
+                        </la-akoma-ntoso>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-weblink %}
-          <div class="card">
-            <a href="#cheat-weblink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to a webpage" %}</a>
-            <div id="cheat-weblink" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Link to a webpage using <code>[link text](http://example.com/the-link)</code>.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-article %}
+              <div class="card">
+                <a href="#cheat-article" data-bs-toggle="collapse" class="card-header">{% trans "Starting a new Article" %}</a>
+                <div id="cheat-article" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet">Indigo is created by <span class="ace_markup ace_underline ace_link">[Laws.Africa](https://www.laws.africa/)</span>.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p mb-0">Indigo is created by <a href="https://www.laws.africa/" target="_blank">Laws.Africa</a>.</span>
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endblock %}
+                    <div class="row">
+                      <div class="col">
+              <pre class="editor-snippet"><span class="ace_constant ace_language">ART</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
 
-          {% block cheat-aknlink %}
-          <div class="card">
-            <a href="#cheat-aknlink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to an Act or Work" %}</a>
-            <div id="cheat-aknlink" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Link to another Act or Work using <code>[link text](frbr-uri)</code>, where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>.
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet">Repealed by <span class="ace_markup ace_underline ace_link">[Act 5 of 2009](/za/act/2009/5)</span>.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p mb-0">Repealed by <a href="#">Act 5 of 2009</a>.</span>
-                    </la-akoma-ntoso>
+  The content of Article 2.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h3>Article 2 – Interpretation</h3>
+                          <span class="akn-p mb-0">The content of Article 2.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-image %}
-          <div class="card">
-            <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">{% trans "Insert an image" %}</a>
-            <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
-                    Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
-                  {% endblocktrans %}
-                </p>
-
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_other ace_image">![Logo](/static/images/logo.png)</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p mb-0"><img src="/static/images/logo.png" alt="Logo"></span>
-                    </la-akoma-ntoso>
+            {% block cheat-special %}
+              <div class="card">
+                <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">{% trans "Insert a special character" %}</a>
+                <div id="cheat-special" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.
+                      {% endblocktrans %}
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-remark %}
-          <div class="card">
-            <a href="#cheat-remark" data-bs-toggle="collapse" class="card-header">{% trans "Add an editorial remark" %}</a>
-            <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-italics %}
+              <div class="card">
+                <a href="#cheat-italics" data-bs-toggle="collapse" class="card-header">{% trans "Make text italics" %}</a>
+                <div id="cheat-italics" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms.
+                      {% endblocktrans %}
+                    </p>
+                    <p>
+                      {% blocktrans trimmed %}For editorial remarks, use {% endblocktrans %}<code>{% verbatim %}{{*[remark]}}{% endverbatim %}</code>.
+                    </p>
 
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_comment ace_line ace_remark">[[An editorial remark]]</span></pre>
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">The situation is the same, //ceteris paribus//.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0">The situation is the same, <i>ceteris paribus</i>.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-bold %}
+              <div class="card">
+                <a href="#cheat-bold" data-bs-toggle="collapse" class="card-header">{% trans "Make text bold" %}</a>
+                <div id="cheat-bold" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms.
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">The situation called for **bold terms**.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0">The situation called for <b>bold terms</b>.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-underline %}
+              <div class="card">
+                <a href="#cheat-underline" data-bs-toggle="collapse" class="card-header">{% trans "Underline text" %}</a>
+                <div id="cheat-underline" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings.
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">The situation called for __underlined text__.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0">The situation called for <u>underlined text</u>.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-weblink %}
+              <div class="card">
+                <a href="#cheat-weblink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to a webpage" %}</a>
+                <div id="cheat-weblink" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}Link to a webpage using{% endblocktrans %} {% verbatim %}<code>{{>http://example.com/the-link link text}}</code>{% endverbatim %}.
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">Indigo is created by {% verbatim %}<span class="ace_markup ace_underline ace_link">{{>https://laws.africa/ Laws.Africa}}</span>{% endverbatim %}.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0">Indigo is created by <a href="https://laws.africa/" target="_blank">Laws.Africa</a>.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-aknlink %}
+              <div class="card">
+                <a href="#cheat-aknlink" data-bs-toggle="collapse" class="card-header">{% trans "Add a link to another Act or work" %}</a>
+                <div id="cheat-aknlink" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}Link to another Act or work using{% endblocktrans %} {% verbatim %}<code>{{>frbr-uri link text}}</code>{% endverbatim %},
+                      {% blocktrans trimmed %}where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>.{% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">Repealed by {% verbatim %}<span class="ace_markup ace_underline ace_link">{{>/akn/za/act/2009/5 Act 5 of 2009}}</span>{% endverbatim %}.</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0">Repealed by <a href="#">Act 5 of 2009</a>.</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-image %}
+              <div class="card">
+                <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">{% trans "Insert an image" %}</a>
+                <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
+                        Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet"><span class="ace_constant ace_other ace_image">![Logo](/static/images/logo.png)</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p mb-0"><img src="/static/images/logo.png" alt="Logo"></span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endblock %}
+
+            {% block cheat-remark %}
+              <div class="card">
+                <a href="#cheat-remark" data-bs-toggle="collapse" class="card-header">{% trans "Add an editorial remark" %}</a>
+                <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.
+                      {% endblocktrans %}
+                    </p>
+
+                    <div class="row">
+                      <div class="col">
+                        <pre class="editor-snippet">{% verbatim %}<span class="ace_comment ace_line ace_remark">{{*[An editorial remark]}}</span>{% endverbatim %}</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
                       <span class="akn-p mb-0">
                         <span class="akn-remark" data-status="editorial">[An editorial remark]</span>
                       </span>
-                    </la-akoma-ntoso>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-escape %}
-          <div class="card">
-            <a href="#cheat-escape" data-bs-toggle="collapse" class="card-header">{% trans "Ignore text that looks like a chapter, part or section but isn't" %}</a>
-            <div id="cheat-escape" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    You can tell the system to ignore text that looks like a chapter, part, section or any other special
-                    words, by putting a backslash <code>\</code> just before it.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-escape %}
+              <div class="card">
+                <a href="#cheat-escape" data-bs-toggle="collapse" class="card-header">{% trans "Ignore text that looks like a chapter, part or section but isn't" %}</a>
+                <div id="cheat-escape" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        You can tell the system to ignore text that looks like a chapter, part, section or any other special
+                        words, by putting a backslash <code>\</code> just before it.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row">
-                  <div class="col">
-                    <pre class="editor-snippet">\1. An item that isn't a section
-\(a) text that isn't a list item
-\Chapter that isn't a chapter</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <span class="akn-p">1. An item that isn't a section</span>
-                      <span class="akn-p">(a) text that isn't a list item</span>
-                      <span class="akn-p mb-0">Chapter that isn't a chapter</span>
-                    </la-akoma-ntoso>
+                    <div class="row">
+                      <div class="col">
+              <pre class="editor-snippet">\SEC 1. An item that isn't a section
+\PARA (a) text that isn't a paragraph
+\CHAP that isn't a chapter</pre>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <span class="akn-p">SEC 1. An item that isn't a section</span>
+                          <span class="akn-p">PARA (a) text that isn't a paragraph</span>
+                          <span class="akn-p mb-0">CHAP that isn't a chapter</span>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-schedule %}
-          <div class="card">
-            <a href="#cheat-schedule" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Schedule" %}</a>
-            <div id="cheat-schedule" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Start a schedule using <code>SCHEDULE</code>.
-                  {% endblocktrans %}
-                </p>
+            {% block cheat-schedule %}
+              <div class="card">
+                <a href="#cheat-schedule" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Schedule" %}</a>
+                <div id="cheat-schedule" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Start a schedule using <code>SCHEDULE</code>.
+                      {% endblocktrans %}
+                    </p>
 
-                <div class="row mb-4">
-                  <div class="col">
+                    <div class="row mb-4">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
 <span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">Schedule heading</span>
 
 This is the body of the schedule.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <h2>Schedule heading</h2>
-                      <div class="akn-paragraph akn--no-indent">
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h2>Schedule heading</h2>
+                          <div class="akn-paragraph akn--no-indent">
                         <span class="akn-content">
                           <span class="akn-p mb-0">This is the body of the schedule.</span>
                         </span>
+                          </div>
+                        </la-akoma-ntoso>
                       </div>
-                    </la-akoma-ntoso>
-                  </div>
-                </div>
+                    </div>
 
-                <p>Include a subheading with <code>SUBHEADING</code> below <code>HEADING</code>.</p>
+                    <p>Include a subheading with <code>SUBHEADING</code> below <code>HEADING</code>.</p>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
 <span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">First schedule </span>
 <span class="ace_constant ace_language">SUBHEADING </span><span class="ace_entity ace_name ace_tag">Laws to be repealed</span>
 
 This is the body of the first schedule.</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <h2>First Schedule</h2>
-                      <h2>Laws to be repealed</h2>
-                      <div class="akn-paragraph akn--no-indent">
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <h2>First Schedule</h2>
+                          <h2>Laws to be repealed</h2>
+                          <div class="akn-paragraph akn--no-indent">
                         <span class="akn-content">
                           <span class="akn-p mb-0">This is the body of the first schedule.</span>
                         </span>
+                          </div>
+                        </la-akoma-ntoso>
                       </div>
-                    </la-akoma-ntoso>
+                    </div>
+
                   </div>
                 </div>
-
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-table %}
-          <div class="card">
-            <a href="#cheat-table" data-bs-toggle="collapse" class="card-header">{% trans "Insert a table" %}</a>
-            <div id="cheat-table" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                <p>
-                  {% blocktrans trimmed %}
-                    Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.
-                  {% endblocktrans %}
-                </p>
-                <ul>
-                  {% blocktrans trimmed %}
-                    <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
-                    <li>Use <code>|-</code> to separate rows.</li>
-                    <li>Use <code>|</code> to start a cell on a row.</li>
-                    <li>Use <code>!</code> to start a heading cell on a row.</li>
-                  {% endblocktrans %}
-                </ul>
+            {% block cheat-table %}
+              <div class="card">
+                <a href="#cheat-table" data-bs-toggle="collapse" class="card-header">{% trans "Insert a table" %}</a>
+                <div id="cheat-table" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    <p>
+                      {% blocktrans trimmed %}
+                        Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.
+                      {% endblocktrans %}
+                    </p>
+                    <ul>
+                      {% blocktrans trimmed %}
+                        <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
+                        <li>Use <code>|-</code> to separate rows.</li>
+                        <li>Use <code>|</code> to start a cell on a row.</li>
+                        <li>Use <code>!</code> to start a heading cell on a row.</li>
+                      {% endblocktrans %}
+                    </ul>
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language ace_table">{|
 |-
 ! header 1
@@ -653,87 +710,87 @@ This is the body of the first schedule.</pre>
 | row 2, cell 2
 | row 2, cell 3
 |}</span></pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <table class="mb-0">
-                        <tbody><tr>
-                        <th><span class="akn-p">header 1</span></th>
-                        <th><span class="akn-p">header 2</span></th>
-                        <th><span class="akn-p">header 3</span></th>
-                        </tr>
-                        <tr>
-                        <td><span class="akn-p">row 1, cell 1</span></td>
-                        <td><span class="akn-p">row 1, cell 2</span></td>
-                        <td><span class="akn-p">row 1, cell 3</span></td>
-                        </tr>
-                        <tr>
-                        <td><span class="akn-p">row 2, cell 1</span></td>
-                        <td><span class="akn-p">row 2, cell 2</span></td>
-                        <td><span class="akn-p">row 2, cell 3</span></td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <table class="mb-0">
+                            <tbody><tr>
+                              <th><span class="akn-p">header 1</span></th>
+                              <th><span class="akn-p">header 2</span></th>
+                              <th><span class="akn-p">header 3</span></th>
+                            </tr>
+                            <tr>
+                              <td><span class="akn-p">row 1, cell 1</span></td>
+                              <td><span class="akn-p">row 1, cell 2</span></td>
+                              <td><span class="akn-p">row 1, cell 3</span></td>
+                            </tr>
+                            <tr>
+                              <td><span class="akn-p">row 2, cell 1</span></td>
+                              <td><span class="akn-p">row 2, cell 2</span></td>
+                              <td><span class="akn-p">row 2, cell 3</span></td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-convert-table %}
-          <div class="card">
-            <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">{% trans "Convert lines of text into a table" %}</a>
-            <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                {% blocktrans trimmed %}
-                  Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.
-                {% endblocktrans %}
+            {% block cheat-convert-table %}
+              <div class="card">
+                <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">{% trans "Convert lines of text into a table" %}</a>
+                <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    {% blocktrans trimmed %}
+                      Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.
+                    {% endblocktrans %}
 
-                <div class="row">
-                  <div class="col">
+                    <div class="row">
+                      <div class="col">
                     <pre class="editor-snippet">Line 1
 Line 2
 Line 3</pre>
-                  </div>
-                  <div class="col">
-                    <la-akoma-ntoso class="akoma-ntoso-snippet">
-                      <table class="mb-0">
-                        <tbody><tr>
-                        <tr>
-                        <td><span class="akn-p">Line 1</span></td>
-                        </tr>
-                        <tr>
-                        <td><span class="akn-p">Line 2</span></td>
-                        </tr>
-                        <tr>
-                        <td><span class="akn-p">Line 3</span></td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </la-akoma-ntoso>
+                      </div>
+                      <div class="col">
+                        <la-akoma-ntoso class="akoma-ntoso-snippet">
+                          <table class="mb-0">
+                            <tbody><tr>
+                            <tr>
+                              <td><span class="akn-p">Line 1</span></td>
+                            </tr>
+                            <tr>
+                              <td><span class="akn-p">Line 2</span></td>
+                            </tr>
+                            <tr>
+                              <td><span class="akn-p">Line 3</span></td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </la-akoma-ntoso>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
-          {% block cheat-paste-table %}
-          <div class="card">
-            <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">{% trans "Paste a table" %}</a>
-            <div id="cheat-paste-table" class="collapse" data-parent="#cheat-accordion">
-              <div class="card-body">
-                {% blocktrans trimmed %}
-                  Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode.
-                {% endblocktrans %}
+            {% block cheat-paste-table %}
+              <div class="card">
+                <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">{% trans "Paste a table" %}</a>
+                <div id="cheat-paste-table" class="collapse" data-parent="#cheat-accordion">
+                  <div class="card-body">
+                    {% blocktrans trimmed %}
+                      Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode.
+                    {% endblocktrans %}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {% endblock %}
+            {% endblock %}
 
           {% endblock %}
 

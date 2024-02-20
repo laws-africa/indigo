@@ -30,9 +30,9 @@
           </div>
           <div class="flex-grow-1">
             <h5>
-              {{ task.title }}
+              {{ task.title }}{% if task.timeline_date %} – {{ task.timeline_date|date:"Y-m-d" }}{% endif %}
               {% if task.changes_requested %}
-              <span class="badge text-bg-secondary bg-pending_review ms-2">{% trans 'Changes requested' %}</span>
+                <span class="badge text-bg-secondary bg-pending_review ms-2">{% trans 'Changes requested' %}</span>
               {% endif %}
             </h5>
 

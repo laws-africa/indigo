@@ -8,7 +8,6 @@
     <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
   {% endif %}
 
-  {% if not ignore_place %}
-    {% trans 'in' %} <a href="{% url 'place' place=workflow.place.place_code %}">{{ workflow.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=workflow.place %}
+
 {% endwith %}

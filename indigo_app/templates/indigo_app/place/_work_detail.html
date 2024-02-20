@@ -92,15 +92,13 @@
         <div>
           <button
               hx-get="{% url 'work_edit_offcanvas' work.frbr_uri %}"
-              hx-target="#offCanvasEditWorkForm"
+              hx-target="#offCanvasEditWork"
               hx-swap="innerHTML"
               class="btn btn-outline-primary btn-sm"
               type="button"
               data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvasEditWork"
-              aria-controls="offcanvasEditWork">
-            <span>{% trans 'Edit' %}</span>
-          </button>
+              data-bs-target="#offCanvasEditWork"
+          >{% trans 'Edit' %}</button>
         </div>
       {% endif %}
       {% if perms.indigo_api.bulk_add_work %}
@@ -117,9 +115,7 @@
                   class="btn btn-success btn-sm"
                   data-bs-toggle="modal"
                   data-bs-target="#work-approve-modal"
-              >
-                {% trans 'Approve' %}
-              </button>
+              >{% trans 'Approve' %}</button>
             </form>
           {% else %}
             <button
@@ -127,9 +123,7 @@
                 type="button"
                 data-confirm="Unapprove this work? Any documents will be unpublished."
                 hx-post="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
-            >
-              <span>{% trans 'Unapprove' %}</span>
-            </button>
+            >{% trans 'Unapprove' %}</button>
           {% endif %}
         </div>
       {% endif %}

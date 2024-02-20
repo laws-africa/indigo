@@ -1,32 +1,33 @@
-import json
-from itertools import chain
 import datetime
+import json
 import math
+from itertools import chain
 
+from actstream import action
+from allauth.account.utils import user_display
+from django import forms
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-
-from django.core.exceptions import PermissionDenied
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery, OuterRef, Count, IntegerField
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import gettext as _
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
-from django.views.generic.edit import BaseFormView, FormView
-from allauth.account.utils import user_display
-from actstream import action
 from django_fsm import has_transition_perm
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
-from indigo_api.serializers import WorkSerializer, DocumentSerializer
-
-from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
+from indigo_api.serializers import WorkSerializer
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
+from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
+from indigo_app.views.places import WorkChooserView
 
 
 class TaskViewBase(PlaceViewBase):
@@ -103,15 +104,13 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
 
     def get_context_data(self, **kwargs):
-        context = super(TaskDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         task = self.object
 
         # merge actions and comments
         actions = task.action_object_actions.all()
         task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = list(Comment.objects\
-            .filter(content_type=task_content_type, object_pk=task.id)\
-            .select_related('user'))
+        comments = list(Comment.objects.filter(content_type=task_content_type, object_pk=task.id).select_related('user'))
 
         # get the annotation for the particular task
         try:
@@ -160,27 +159,24 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         return super().get_template_names()
 
 
+class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
+    form_class = TaskEditLabelsForm
+    template_name = 'indigo_api/_task_labels.html'
+
+    def form_valid(self, form):
+        form.save()
+        return self.form_invalid(form)
+
+
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions
     permission_required = ('indigo_api.add_task',)
-
-    js_view = 'TaskEditView'
-
     context_object_name = 'task'
     form_class = TaskForm
     model = Task
 
-    def form_valid(self, form):
-        response_object = super(TaskCreateView, self).form_valid(form)
-        task = self.object
-        task.workflows.set(form.cleaned_data.get('workflows'))
-        for workflow in task.workflows.all():
-            action.send(self.request.user, verb='added', action_object=task, target=workflow,
-                        place_code=task.place.place_code)
-        return response_object
-
     def get_form_kwargs(self):
-        kwargs = super(TaskCreateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         task = Task()
         task.country = self.country
@@ -199,25 +195,11 @@ class TaskCreateView(TaskViewBase, CreateView):
         kwargs['instance'] = task
         kwargs['country'] = self.country
         kwargs['locality'] = self.locality
-
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TaskCreateView, self).get_context_data(**kwargs)
-        task = context['form'].instance
-
-        work = None
-        if task.work:
-            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
-        context['work_json'] = work
-
-        document = None
-        if task.document:
-            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
-        context['document_json'] = document
-
-        context['task_labels'] = TaskLabel.objects.all()
-
+        context = super().get_context_data(**kwargs)
+        context['task'] = context['form'].instance
         return context
 
     def get_success_url(self):
@@ -227,7 +209,6 @@ class TaskCreateView(TaskViewBase, CreateView):
 class TaskEditView(SingleTaskViewBase, UpdateView):
     # permissions
     permission_required = ('indigo_api.change_task',)
-
     context_object_name = 'task'
     form_class = TaskForm
 
@@ -242,61 +223,77 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         task.updated_by_user = self.request.user
 
         # action signals
-        # first, was something changed other than workflows?
         if form.changed_data:
-            action.send(self.request.user, verb='updated', action_object=task,
-                        place_code=task.place.place_code)
+            action.send(self.request.user, verb='updated', action_object=task, place_code=task.place.place_code)
 
-        new_workflows = form.cleaned_data.get('workflows')
-        self.record_workflow_actions(task, new_workflows)
-        task.workflows.set(new_workflows)
-
-        return super(TaskEditView, self).form_valid(form)
-
-    def get_form(self, form_class=None):
-        form = super(TaskEditView, self).get_form(form_class)
-        form.initial['workflows'] = self.object.workflows.all()
-        return form
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
-        context = super(TaskEditView, self).get_context_data(**kwargs)
-
-        work = None
+        context = super().get_context_data(**kwargs)
         task = self.object
         user = self.request.user
-        if task.work:
-            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
-        context['work_json'] = work
-
-        document = None
-        if task.document:
-            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
-        context['document_json'] = document
-
-        context['task_labels'] = TaskLabel.objects.all()
-
-        if has_transition_perm(task.cancel, user):
-            context['cancel_task_permission'] = True
-
-        if has_transition_perm(task.block, user):
-            context['block_task_permission'] = True
-
-        if has_transition_perm(task.unblock, user):
-            context['unblock_task_permission'] = True
-
+        context['cancel_task_permission'] = has_transition_perm(task.cancel, user)
+        context['block_task_permission'] = has_transition_perm(task.block, user)
+        context['unblock_task_permission'] = has_transition_perm(task.unblock, user)
         return context
 
 
-class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
-    form_class = TaskEditLabelsForm
-    template_name = 'indigo_api/_task_labels.html'
+class TaskWorkChooserView(WorkChooserView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["disable_country"] = True
+        context["disable_locality"] = True
+        return context
 
-    def form_valid(self, form):
-        form.save()
-        return self.form_invalid(form)
+
+class TaskFormWorkView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_task_work_form.html'
+
+    class Form(forms.ModelForm):
+        class Meta:
+            model = Task
+            fields = ('work', 'document')
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.full_clean()
+            work = self.cleaned_data.get('work')
+            if work:
+                self.fields['document'].queryset = work.expressions()
+                self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · {document.language.code} – {document.title}') for document in self.fields['document'].queryset]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = Task(country=self.country, locality=self.locality)
+        form = self.Form(self.request.GET, instance=task)
+        form.is_valid()
+        context['form'] = form
+        context['task'] = form.instance
+        return context
+
+
+class PartialTaskFormView(PlaceViewBase, TemplateView):
+    template_name = None
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = TaskForm(self.country, self.locality, self.request.POST)
+        context["form"] = form
+        return context
+
+
+class TaskFormTitleView(PartialTaskFormView):
+    template_name = 'indigo_api/_task_title_form.html'
+
+
+class TaskFormTimelineDateView(PartialTaskFormView):
+    template_name = 'indigo_api/_task_timeline_date_form.html'
 
 
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):

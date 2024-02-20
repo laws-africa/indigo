@@ -20,6 +20,7 @@ class TreeNode1(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode1, self).__init__(text, offset, elements)
         self.references = elements[0]
+        self.tail = elements[3]
 
 
 class TreeNode2(TreeNode):
@@ -208,27 +209,7 @@ class Grammar(object):
                 if address6 is not FAILURE:
                     elements0.append(address6)
                     address7 = FAILURE
-                    index5, elements3, address8 = self._offset, [], None
-                    while True:
-                        if self._offset < self._input_size:
-                            address8 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
-                            self._offset = self._offset + 1
-                        else:
-                            address8 = FAILURE
-                            if self._offset > self._failure:
-                                self._failure = self._offset
-                                self._expected = []
-                            if self._offset == self._failure:
-                                self._expected.append(('ProvisionRefs::root', '<any char>'))
-                        if address8 is not FAILURE:
-                            elements3.append(address8)
-                        else:
-                            break
-                    if len(elements3) >= 0:
-                        address7 = TreeNode(self._input[index5:self._offset], index5, elements3)
-                        self._offset = self._offset
-                    else:
-                        address7 = FAILURE
+                    address7 = self._read_tail()
                     if address7 is not FAILURE:
                         elements0.append(address7)
                     else:
@@ -1262,6 +1243,36 @@ class Grammar(object):
             address0 = self._actions.thereof(self._input, index1, self._offset, elements0)
             self._offset = self._offset
         self._cache['thereof'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_tail(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['tail'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1, elements0, address1 = self._offset, [], None
+        while True:
+            if self._offset < self._input_size:
+                address1 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+                self._offset = self._offset + 1
+            else:
+                address1 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('ProvisionRefs::tail', '<any char>'))
+            if address1 is not FAILURE:
+                elements0.append(address1)
+            else:
+                break
+        if len(elements0) >= 0:
+            address0 = TreeNode(self._input[index1:self._offset], index1, elements0)
+            self._offset = self._offset
+        else:
+            address0 = FAILURE
+        self._cache['tail'][index0] = (address0, self._offset)
         return address0
 
     def _read_unit_en(self):

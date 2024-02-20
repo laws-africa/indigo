@@ -84,6 +84,7 @@
     <xsl:if test="self::akn:part">
       <xsl:choose>
         <xsl:when test="$language='afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$language='deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
         <xsl:when test="$language='ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$language='fra'"><xsl:text>Partie </xsl:text></xsl:when>
         <xsl:when test="$language='ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
@@ -111,7 +112,7 @@
     <xsl:if test="self::akn:title">
       <xsl:choose>
         <xsl:when test="$language='fra'"><xsl:text>Titre </xsl:text></xsl:when>
-        <xsl:when test="$language='spa'"><xsl:text>Titulo </xsl:text></xsl:when>
+        <xsl:when test="$language='spa'"><xsl:text>Título </xsl:text></xsl:when>
         <xsl:when test="$language='sqi'"><xsl:text>Kreu </xsl:text></xsl:when>
         <xsl:otherwise>
           <xsl:text>Title </xsl:text>

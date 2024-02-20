@@ -7,13 +7,18 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.models import Q, Count
-from django.forms import SelectMultiple, RadioSelect, formset_factory
+from django.forms import SelectMultiple, RadioSelect, formset_factory, inlineformset_factory
 from django.utils.translation import gettext as _, gettext_lazy as _l
 
 from cobalt import FrbrUri
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country
+    Commencement, Workflow, Task, Country, WorkAlias
 from indigo_app.forms.mixins import FormAsUrlMixin
+
+
+class WorkAliasForm(forms.ModelForm):
+    def save(self, user, *args, **kwargs):
+        return super().save(*args, **kwargs)
 
 
 class WorkForm(forms.ModelForm):
@@ -72,6 +77,7 @@ class WorkForm(forms.ModelForm):
         self.locality = locality
         self.place = locality or country
         self.user = user
+        self.formsets = []
 
         for prop, label in self.place.settings.work_properties.items():
             key = f'property_{prop}'
@@ -80,6 +86,7 @@ class WorkForm(forms.ModelForm):
             self.fields[key] = forms.CharField(label=label, required=False)
 
         if self.instance:
+            self.create_formsets()
             self.fields['frbr_doctype'].initial = self.instance.doctype
             self.fields['frbr_subtype'].initial = self.instance.subtype
             self.fields['frbr_date'].initial = self.instance.date
@@ -90,61 +97,6 @@ class WorkForm(forms.ModelForm):
             if hasattr(self.instance.main_commencement, 'commencing_work'):
                 if self.instance.main_commencement.commencing_work:
                     self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
-
-            # repeal formset
-            self.RepealMadeBaseFormSet = RepealMadeBaseFormSet
-            repeals_made_formset_kwargs = {
-                "form_kwargs": {
-                    "work": self.instance,
-                },
-                "prefix": "repeals_made",
-                "initial": [{
-                    "repealed_work": repealed_work,
-                    "repealed_date": repealed_work.repealed_date,
-                } for repealed_work in self.instance.repealed_works.all()]
-            }
-            if self.is_bound:
-                repeals_made_formset_kwargs["data"] = self.data
-
-            self.repeals_made_formset = self.RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
-
-            self.AmendmentsBaseFormSet = AmendmentsBaseFormSet
-
-            amended_by_formset_kwargs = {
-                "form_kwargs": {
-                    "work": self.instance,
-                },
-                "prefix": "amended_by",
-                "initial": [{
-                    "amended_work": self.instance,
-                    "amending_work": amendment.amending_work,
-                    "date": amendment.date,
-                    "id": amendment.id,
-                }
-                   for amendment in Amendment.objects.filter(amended_work=self.instance)],
-            }
-            if self.is_bound:
-                amended_by_formset_kwargs["data"] = self.data
-
-            self.amended_by_formset = self.AmendmentsBaseFormSet(**amended_by_formset_kwargs)
-
-            amendments_made_formset_kwargs = {
-                "form_kwargs": {
-                    "work": self.instance,
-                },
-                "prefix": "amendments_made",
-                "initial": [{
-                    "amended_work": amendment.amended_work,
-                    "amending_work": self.instance,
-                    "date": amendment.date,
-                    "id": amendment.id,
-                }
-                    for amendment in Amendment.objects.filter(amending_work=self.instance)],
-            }
-            if self.is_bound:
-                amendments_made_formset_kwargs["data"] = self.data
-
-            self.amendments_made_formset = self.AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -157,6 +109,66 @@ class WorkForm(forms.ModelForm):
 
         self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
 
+    def create_formsets(self):
+        # repeal formset
+        repeals_made_formset_kwargs = {
+            "form_kwargs": {
+                "work": self.instance,
+            },
+            "prefix": "repeals_made",
+            "initial": [{
+                "repealed_work": repealed_work,
+                "repealed_date": repealed_work.repealed_date,
+            } for repealed_work in self.instance.repealed_works.all()]
+        }
+        if self.is_bound:
+            repeals_made_formset_kwargs["data"] = self.data
+        self.repeals_made_formset = RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
+        self.formsets.append(self.repeals_made_formset)
+
+        amended_by_formset_kwargs = {
+            "form_kwargs": {
+                "work": self.instance,
+            },
+            "prefix": "amended_by",
+            "initial": [{
+                "amended_work": self.instance,
+                "amending_work": amendment.amending_work,
+                "date": amendment.date,
+                "id": amendment.id,
+            }
+                for amendment in Amendment.objects.filter(amended_work=self.instance)],
+        }
+        if self.is_bound:
+            amended_by_formset_kwargs["data"] = self.data
+        self.amended_by_formset = AmendmentsBaseFormSet(**amended_by_formset_kwargs)
+        self.formsets.append(self.amended_by_formset)
+
+        amendments_made_formset_kwargs = {
+            "form_kwargs": {
+                "work": self.instance,
+            },
+            "prefix": "amendments_made",
+            "initial": [{
+                "amended_work": amendment.amended_work,
+                "amending_work": self.instance,
+                "date": amendment.date,
+                "id": amendment.id,
+            }
+                for amendment in Amendment.objects.filter(amending_work=self.instance)],
+        }
+        if self.is_bound:
+            amendments_made_formset_kwargs["data"] = self.data
+        self.amendments_made_formset = AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
+        self.formsets.append(self.amendments_made_formset)
+
+        # TODO: without an instance?
+        AliasesFormSet = inlineformset_factory(Work, WorkAlias, WorkAliasForm, fields=('alias',), extra=1)
+        self.aliases_formset = AliasesFormSet(
+            instance=self.instance, data=self.data if self.is_bound else None,
+        )
+        self.formsets.append(self.aliases_formset)
+
     def property_fields(self):
         fields = [
             self[f'property_{prop}']
@@ -167,24 +179,12 @@ class WorkForm(forms.ModelForm):
         return fields
 
     def is_valid(self):
-        if self.instance.pk:
-            return (
-                    super().is_valid() and
-                    self.repeals_made_formset.is_valid() and
-                    self.amended_by_formset.is_valid() and
-                    self.amendments_made_formset.is_valid()
-            )
-        return super().is_valid()
+        # all returns True if formsets is empty
+        return super().is_valid() and all(formset.is_valid() for formset in self.formsets)
 
     def has_changed(self):
-        if self.instance.pk:
-            return (
-                    super().has_changed() or
-                    self.repeals_made_formset.has_changed() or
-                    self.amended_by_formset.has_changed() or
-                    self.amendments_made_formset.has_changed()
-            )
-        return super().has_changed()
+        # any returns False if formsets is empty
+        return super().has_changed() or any(formset.has_changed() for formset in self.formsets)
 
     def clean_frbr_number(self):
         value = self.cleaned_data['frbr_number']
@@ -212,9 +212,7 @@ class WorkForm(forms.ModelForm):
         self.save_properties()
         self.save_publication_document()
         self.save_commencement()
-        self.save_repeals()
-        self.save_amended_by()
-        self.save_amendments_made()
+        self.save_formsets()
         return work
 
     def save_properties(self):
@@ -227,20 +225,14 @@ class WorkForm(forms.ModelForm):
                 del self.instance.properties[prop]
         self.instance.save()
 
-    def save_repeals(self):
-        for repeal_form in self.repeals_made_formset:
-            if repeal_form.is_valid() and repeal_form.has_changed():
-                repeal_form.save(self.user)
-
-    def save_amended_by(self):
-        for form in self.amended_by_formset:
-            if form.is_valid() and form.has_changed():
-                form.save(self.user)
-
-    def save_amendments_made(self):
-        for form in self.amendments_made_formset:
-            if form.is_valid() and form.has_changed():
-                form.save(self.user)
+    def save_formsets(self):
+        for formset in self.formsets:
+            to_delete = formset.deleted_forms
+            for form in formset:
+                if form in to_delete:
+                    form.instance.delete()
+                elif form.is_valid() and form.has_changed():
+                    form.save(self.user)
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']

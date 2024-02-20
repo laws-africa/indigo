@@ -569,11 +569,6 @@ class CommencementSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-class WorkAliasSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WorkAlias
-        fields = ("alias",)
-
 
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
@@ -590,7 +585,6 @@ class WorkSerializer(serializers.ModelSerializer):
     taxonomies = serializers.SerializerMethodField()
     taxonomy_topics = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
-    aliases = WorkAliasSerializer(many=True, read_only=True)
     """ URL of document amendments. """
 
     class Meta:
@@ -613,9 +607,6 @@ class WorkSerializer(serializers.ModelSerializer):
 
             # taxonomies
             'taxonomies', 'taxonomy_topics',
-
-            # aliases
-            'aliases'
         )
         read_only_fields = fields
 

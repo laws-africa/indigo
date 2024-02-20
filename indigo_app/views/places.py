@@ -35,6 +35,61 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
+@dataclass
+class OverviewDataEntry:
+    key: str
+    value: str
+    overridden: bool = False
+
+
+def get_work_overview_data(work):
+    """ Return overview data for the work as a list of OverviewDataEntry objects"""
+    def format_date(date_obj):
+        return date_obj.strftime("%Y-%m-%d")
+
+    overview_data = []
+
+    publication = describe_publication_event(work, friendly_date=False,
+                                             placeholder=hasattr(work, 'publication_document'))
+    if publication:
+        overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
+
+    if work.assent_date:
+        overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
+
+    if work.commencement_date:
+        overview_data.append(OverviewDataEntry(_("Commenced"), format_date(work.commencement_date)))
+
+    if work.repealed_date:
+        overview_data.append(OverviewDataEntry(_("Repealed"), format_date(work.repealed_date)))
+
+    # properties, e.g. Chapter number
+    for prop in work.labeled_properties():
+        overview_data.append(OverviewDataEntry(_(prop["label"]), prop["value"]))
+
+    as_at_date = work.as_at_date()
+    if as_at_date:
+        overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
+                                               overridden=work.as_at_date_override))
+
+    for consolidation in work.arbitrary_expression_dates.all():
+        overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
+
+    consolidation_note = work.consolidation_note()
+    if consolidation_note:
+        overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
+                                               overridden=work.consolidation_note_override))
+
+    if work.disclaimer:
+        overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
+
+    if work.principal:
+        overview_data.append(OverviewDataEntry(_("Principal"), _(
+            "Principal works are not simply repeals, amendments or commencements, and should have full text content.")))
+
+    return overview_data
+
+
 class PlaceMetricsHelper:
     def add_activity_metrics(self, places, metrics, since):
         # fold metrics into countries
@@ -772,13 +827,6 @@ class Facet:
     items: List[FacetItem] = field(default_factory=list)
 
 
-@dataclass
-class OverviewDataEntry:
-    key: str
-    value: str
-    overridden: bool = False
-
-
 class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
 
@@ -1228,14 +1276,26 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["works_in_progress"] = form.cleaned_data.get("works_in_progress").order_by("-created_at")
+        context["works_in_progress"] = works_in_progress = form.cleaned_data.get("works_in_progress").order_by("-created_at")
+        context["import_task_works"] = works_in_progress.filter(principal=True)
+        context["gazette_task_works"] = [w for w in works_in_progress if not w.has_publication_document()]
+        amendment_task_works = [w for w in works_in_progress if w.amendments.exists()]
+        context["amendments_per_work"] = {w: w.amendments.all() for w in amendment_task_works}
         return context
 
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):
-            for work in form.cleaned_data["works_in_progress"]:
-                work.approve(self.request.user, self.request)
+            form.save_changes(self.request)
             messages.success(self.request, f"Approved {form.cleaned_data['works_in_progress'].count()} works.")
+            if form.cleaned_data.get('import_task_works'):
+                messages.success(self.request, f"Created {form.cleaned_data['import_task_works'].count()} Import tasks.")
+            if form.cleaned_data.get('gazette_task_works'):
+                messages.success(self.request, f"Created {form.cleaned_data['gazette_task_works'].count()} Gazette tasks.")
+            if form.cleaned_data.get('amendment_task_works'):
+                amendments_count = 0
+                for work in form.cleaned_data['amendment_task_works']:
+                    amendments_count += work.amendments.count()
+                messages.success(self.request, f"Created {amendments_count} Amendment tasks.")
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 
@@ -1291,6 +1351,8 @@ class WorkChooserView(PlaceViewBase, ListView):
         context["work_field"] = self.form.data.get('field', 'work')
         context["hx_submit"] = self.form.data.get('submit')
         context["hx_target"] = self.form.data.get('target')
+        context["hx_include"] = self.form.data.get('include', "")
+        context["hx_method"] = self.form.data.get("method", "hx-get")
 
         return context
 
@@ -1309,7 +1371,7 @@ class WorkDetailView(PlaceViewBase, DetailView):
 
         work = self.object
 
-        context["overview_data"] = self.get_overview_data()
+        context["overview_data"] = get_work_overview_data(self.object)
         context["tab"] = "overview"
 
         # count documents
@@ -1335,45 +1397,6 @@ class WorkDetailView(PlaceViewBase, DetailView):
         context["n_tasks"] = work.tasks.filter(state__in=Task.OPEN_STATES).count()
 
         return context
-
-    def get_overview_data(self):
-        """ Return overview data for the work as a list of OverviewDataEntry objects"""
-        # TODO: are the translations being done correctly here?
-        # TODO: turn this into a form; overview_data will fall away
-        def format_date(date_obj):
-            return date_obj.strftime("%Y-%m-%d")
-
-        work = self.object
-
-        # properties, e.g. Chapter number
-        overview_data = [
-            OverviewDataEntry(_(prop["label"]), prop["value"]) for prop in work.labeled_properties()
-        ]
-
-        publication = describe_publication_event(work, friendly_date=False, placeholder=hasattr(work, 'publication_document'))
-        if publication:
-            overview_data.append(OverviewDataEntry(_("Publication"), _(publication.description)))
-
-        if work.assent_date:
-            overview_data.append(OverviewDataEntry(_("Assent date"), format_date(work.assent_date)))
-
-        as_at_date = work.as_at_date()
-        if as_at_date:
-            overview_data.append(OverviewDataEntry(_("As-at date"), format_date(as_at_date),
-                                                   overridden=work.as_at_date_override))
-
-        for consolidation in work.arbitrary_expression_dates.all():
-            overview_data.append(OverviewDataEntry(_("Consolidation date"), format_date(consolidation.date)))
-
-        consolidation_note = work.consolidation_note()
-        if consolidation_note:
-            overview_data.append(OverviewDataEntry(_("Consolidation note"), _(consolidation_note),
-                                                   overridden=work.consolidation_note_override))
-
-        if work.disclaimer:
-            overview_data.append(OverviewDataEntry(_("Disclaimer"), _(work.disclaimer)))
-
-        return overview_data
 
 
 class WorkDocumentsView(PlaceViewBase, DetailView):

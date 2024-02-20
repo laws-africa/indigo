@@ -18,7 +18,7 @@
     },
 
     refresh: function() {
-      this.changedElements = $(this.el.getAttribute('data-target')).find('ins, del, .ins, .del');
+      this.changedElements = $(this.el.getAttribute('data-bs-target')).find('ins, del, .ins, .del');
       this.currentElementIndex = -1;
     },
 

@@ -33,7 +33,10 @@
       {% include 'indigo_app/place/_works_list.html' %}
     </div>
 
-    {% include 'indigo_api/_work_form_offcanvas.html' %}
+    {% include 'indigo_api/_work_form_offcanvas.html' with form=None %}
 
+    <div class="modal fade" tabindex="-1" id="work-approve-modal">
+      {% include 'indigo_app/place/_bulk_approve_form.html' %}
+    </div>
   </div>
 {% endblock %}

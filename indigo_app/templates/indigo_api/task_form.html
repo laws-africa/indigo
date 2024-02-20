@@ -2,13 +2,23 @@
 {% load humanize indigo_app i18n %}
 
 {% block title %}{% if task.pk %}{{ task.title }}{% else %}{% trans 'New task' %}{% endif %} {{ block.super }}{% endblock %}
-{% block view-id %}edit-task-view{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
   {% else %}
     <div class="alert alert-danger">{% trans "You don't have permission to create a task." %}</div>
   {% endif %}
+
+  <div
+      id="work-chooser-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">Loading...</div>
+    </div>
+  </div>
 
   <form method="POST" action="" id="task-form">
     {% csrf_token %}
@@ -25,96 +35,70 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="{% trans 'A short description of this task' %}">
-            {% if form.title.errors %}
+          <div class="mb-3 row">
+            <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{% trans 'Type' %}</label>
+            <div class="col-4">
+              <select
+                  hx-post="{% url 'task_form_title' place=place.place_code %}"
+                  hx-target="#task-title"
+                  hx-trigger="change"
+                  class="selectpicker col-12"
+                  id="{{ form.code.id_for_label }}"
+                  name="{{ form.code.html_name }}"
+              >
+                {% for opt in form.code %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-6 form-text text-muted">{% trans "Choose a type, or enter a title." %}</div>
+            {% if form.code.errors %}
               <div class="text-danger">
-                {% for error in form.title.errors %}
+                {% for error in form.code.errors %}
                   <p>{{ error }}</p>
                 {% endfor %}
               </div>
             {% endif %}
           </div>
-
-          <div class="row">
-            <div class="mb-3 col-sm-8">
-              <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
-              {% if form.description.errors %}
-                <div class="text-danger">
-                  {% for error in form.description.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-
-            <div class="mb-3 col-sm-4">
-
-              <label>{{ form.labels.label }}</label>
-              {% for label in task_labels %}
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="{{ form.labels.auto_id }}-{{ forloop.counter }}" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
-                  <label for="{{ form.labels.auto_id }}-{{ forloop.counter }}" class="form-check-label ms-1 mt-1">
-                    <span class="h5"><span class="badge text-bg-secondary">{{ label.title }}</span></span> – <span class="font-weight-normal">{{ label.description }}</span>
-                  </label>
-                </div>
-              {% endfor %}
-
-            </div>
+          <div id="task-title">
+            {% include 'indigo_api/_task_title_form.html' %}
           </div>
-
+          <div id="task-work">
+            {% include 'indigo_api/_task_work_form.html' %}
+          </div>
+          <div id="task-timeline-date">
+            {% include 'indigo_api/_task_timeline_date_form.html' %}
+          </div>
           <div class="mb-3 row">
-
-            <div class="col-md-6">
-              <label for="{{ form.work.id_for_label }}">{% trans 'Work' %}</label>
-              <input type="hidden" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
-              <div class="work-details"></div>
-              <script id="task-work-template" type="text/x-handlebars-template">
-              {% verbatim %}
-                {{#if work}}
-                  <div class="float-end ms-2">
-                    <button type="button" class="btn btn-outline-danger delete-work">{% endverbatim %}{% trans 'Remove' %}{% verbatim %}</button>
-                    <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Change' %}{% verbatim %}</button>
-                  </div>
-                  <a href="/works{{ work.frbr_uri }}">{{ work.title }}</a><br>
-                  <span class="text-muted">{{ work.frbr_uri }}</span>
-                {{else}}
-                  <button type="button" class="btn btn-outline-primary change-work">{% endverbatim %}{% trans 'Choose work' %}{% verbatim %}</button>
-                {{/if}}
-              {% endverbatim %}
-              </script>
+            <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{% trans 'Description' %}</label>
+            <div class="col-8">
+              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
             </div>
-
-            <div class="col-md-6 document-details">
-              <label for="{{ form.document.id_for_label }}">{% trans 'Point in time' %}</label>
-
-              <select name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" class="form-control">
-                <option value="">{% trans '(none)' %}</option>
-                {% if form.document.value %}
-                  <option selected value="{{ form.document.value }}">{{ form.document.expression_date|date:'Y-m-d' }}</option>
-                {% endif %}
+            {% if form.description.errors %}
+              <div class="text-danger">
+                {% for error in form.description.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3 row">
+            <label for="{{ form.labels.id_for_label }}" class="col-2 col-form-label">{% trans 'Labels' %}</label>
+            <div class="col-4">
+              <select class="selectpicker col-12" multiple id="{{ form.labels.id_for_label }}" name="{{ form.labels.html_name }}">
+                {% for opt in form.labels %}
+                  {{ opt }}
+                {% endfor %}
               </select>
             </div>
-
-          </div>
-
-          {% if form.workflows|length %}
-            <div class="mb-3">
-              <label for="{{ form.workflows.id_for_label }}">{% trans 'Projects' %}</label>
-              <div class="row">
-                <div class="col-md-6">
-                  <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
-                    {% for option in form.workflows %}
-                      {{ option }}
-                    {% endfor %}
-                  </select>
-                </div>
+            {% if form.labels.errors %}
+              <div class="text-danger">
+                {% for error in form.labels.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
               </div>
-            </div>
-          {% endif %}
-
+            {% endif %}
+          </div>
         </div>
 
         <div class="card-footer text-end">
@@ -149,21 +133,4 @@
     </div>
   </form>
 
-{% include 'indigo_api/_work_chooser_modal.html' %}
-
-{% endblock %}
-
-
-{% block js %}
-  {{ block.super }}
-
-  <script type="text/javascript">
-  window.Indigo.countries = {{ indigo_countries_json|safe }};
-  {% if work_json %}
-  window.Indigo.Preloads.work = {{ work_json|safe }};
-  {% endif %}
-  {% if document_json %}
-  window.Indigo.Preloads.document = {{ document_json|safe }};
-  {% endif %}
-  </script>
 {% endblock %}

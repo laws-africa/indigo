@@ -7,14 +7,37 @@
     {% block work-buttons %}
       <div class="d-flex">
         {% if perms.indigo_api.bulk_add_work %}
-          <form method="POST">
-            {% csrf_token %}
-            {% if work.work_in_progress %}
-              <button type="submit" class="btn btn-success me-1" formaction="{% url 'work_approve' frbr_uri=work.frbr_uri %}">{% trans 'Approve' %}</button>
-            {% else %}
-              <button type="submit" class="btn btn-warning me-1" formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}">{% trans 'Unapprove' %}</button>
-            {% endif %}
-          </form>
+          {% if work.work_in_progress %}
+            <form
+                hx-post="{% url 'place_works_approve' place.place_code %}"
+                hx-target="#work-approve-modal"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+              <button
+                  class="btn btn-success me-1"
+                  data-bs-toggle="modal"
+                  data-bs-target="#work-approve-modal"
+              >
+                {% trans 'Approve' %}
+              </button>
+            </form>
+            <div class="modal fade" tabindex="-1" id="work-approve-modal">
+              {% include 'indigo_app/place/_bulk_approve_form.html' %}
+            </div>
+          {% else %}
+            <form method="POST">
+              {% csrf_token %}
+              <button
+                  class="btn btn-warning me-1"
+                  type="submit"
+                  data-confirm="Unapprove this work? Any documents will be unpublished."
+                  formaction="{% url 'work_unapprove' frbr_uri=work.frbr_uri %}"
+              >
+                {% trans 'Unapprove' %}
+              </button>
+            </form>
+          {% endif %}
         {% endif %}
         {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
           <a class="btn btn-success me-1" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">{% trans 'Create task' %}</a>
@@ -53,176 +76,43 @@
       {% block primary-info %}
         <div class="card">
           <div class="card-body">
-
             {% block primary-info-detail %}
+              {% include 'indigo_app/place/_work_detail_overview.html' %}
               <div class="row">
-                <div class="col-sm-6">
-                  <dl class="mb-0">
-                    <dt>{% trans 'Promulgation' %}</dt>
-                    <dd>
-                      {% publication_document_description work internal=True as publication_document_description %}
-                      {% if publication_document_description %}
-                        {{ publication_document_description }}
+                {% if work.parent_work %}
+                  <dt class="col-2">{% trans 'Primary work' %}</dt>
+                  <dd class="col-10">
+                    <div>
+                      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+                    </div>
+                  </dd>
+                {% endif %}
+                {% with work.child_works.all as kids %}
+                  {% if kids|length > 0 %}
+                    <dt class="col-2">{% trans 'Subsidiary works' %}</dt>
+                    <dd class="col-10">
+                      {% if kids|length > 5 %}
+                        <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#subsidiary">
+                          {% blocktrans with kids|length as n_kids %}{{ n_kids }} subsidiary works{% endblocktrans %}
+                        </a>
                       {% else %}
-                        <i>{% trans '(unknown)' %}</i>
-                      {% endif %}
-                      {% if work.publication_document %}
-                        <div>
-                          <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-                        </div>
-                      {% endif %}
-                    </dd>
-
-                    <dt>{% trans 'Commencement' %}</dt>
-                    <dd>
-                      {% with work.commencement_description_internal as commencement_description %}
-                        {% if commencement_description.subtype == 'multiple' %}
-                          <a href={% url 'work_commencements' frbr_uri=work.frbr_uri %}>
-                            {{ commencement_description.description }}
-                          </a>
-                        {% else %}
-                          {{ commencement_description.description }}
-                          {% if commencement_description.by_work %}
-                            <a href="{% url 'work' frbr_uri=commencement_description.by_frbr_uri %}"
-                               data-popup-url="{% url 'work_popup' frbr_uri=commencement_description.by_frbr_uri %}">
-                              {{ commencement_description.by_title }}
-                            </a>
-                          {% endif %}
-                          {% if commencement_description.note %}
-                            <p>{{ commencement_description.note }}</p>
-                          {% endif %}
-                        {% endif %}
-                      {% endwith %}
-                    </dd>
-
-                    {% with work.as_at_date as as_at_date %}
-                      {% if as_at_date %}
-                        <dt>
-                          {% trans 'Up to date as at' %}
-                          {% if work.as_at_date_override %}
-                            {% include 'indigo_app/place/_overridden.html' %}
-                          {% endif %}
-                        </dt>
-                        <dd>
-                          {{ work.as_at_date|date:'Y-m-d' }}
-                        </dd>
-                      {% endif %}
-                    {% endwith %}
-
-                    {% if work.approved %}
-                      <dt>
-                        {% trans 'Approved' %}
-                      </dt>
-                      <dd>
-                        {% user_profile work.updated_by_user %}
-                        {{ work.approved_at|naturaltime }}
-                      </dd>
-                    {% endif %}
-
-                    {% with work.taxonomy_topics.all as topics %}
-                      {% if topics %}
-                        <dt>{% trans 'Taxonomies' %}</dt>
-                        <dd>
-                          {% for topic in topics %}
-                            <div>
-                              {% for item in topic.get_ancestors %}
-                                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
-                              {% endfor %}
-                              <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.slug }}">{{ topic }}</a>
-                            </div>
+                        <ul class="list-unstyled mb-0">
+                          {% for kid in kids %}
+                            <li><a href="{% url 'work' frbr_uri=kid.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=kid.frbr_uri %}">{{ kid.title }}</a></li>
                           {% endfor %}
-                        </dd>
-                      {% endif %}
-                    {% endwith %}
-                  </dl>
-                </div>
-
-                <div class="col-sm-6">
-                  <dl class="mb-0">
-                    <dt>{% trans 'Assent' %}</dt>
-                    <dd>
-                      {% if work.assent_date %}
-                        {% trans 'Assented to on' %} {{ work.assent_date|date:"Y-m-d" }}
-                      {% else %}
-                        <i>{% trans '(unknown)' %}</i>
+                        </ul>
                       {% endif %}
                     </dd>
-
-                    <dt>{% trans 'Repeal' %}</dt>
-                    <dd>
-                      {% if work.repealed_date %}
-                        {% trans 'Repealed on' %} {{ work.repealed_date|date:"Y-m-d" }}
-                        {% if work.repealed_by %}
-                          {% trans 'by' %} <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
-                        {% endif %}
-                      {% else %}
-                        <i>{% trans '(not repealed)' %}</i>
-                      {% endif %}
-                    </dd>
-
-                    {% if work.principal %}
-                      <dt>{% trans 'Principal work' %}</dt>
-                      <dd>{% trans 'Principal works are not simply repeals, amendments or commencements, and should have full text content.' %}</dd>
-                    {% endif %}
-
-                    {% if work.parent_work %}
-                      <dt>{% trans 'Primary work' %}</dt>
-                      <dd>
-                        <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-                      </dd>
-                    {% endif %}
-
-                    {% with work.child_works.all as kids %}
-                      {% if kids|length > 0 %}
-                        <dt>{% trans 'Subsidiary works' %}</dt>
-                        <dd>
-                          {% if kids|length > 3 %}
-                            <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
-                          {% else %}
-                            <ul class="list-unstyled">
-                            {% for kid in kids %}
-                              <li><a href="{% url 'work' frbr_uri=kid.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=kid.frbr_uri %}">{{ kid.title }}</a></li>
-                            {% endfor %}
-                            </ul>
-                          {% endif %}
-                        </dd>
-                      {% endif %}
-                    {% endwith %}
-
-                    {% if work.consolidation_note %}
-                      <dt>
-                        {% trans 'Consolidation note' %}
-                        {% if work.consolidation_note_override %}
-                          {% include 'indigo_app/place/_overridden.html' %}
-                        {% endif %}
-                      </dt>
-                      <dd>
-                        {{ work.consolidation_note }}
-                      </dd>
-                    {% endif %}
-
-                    {% if work.disclaimer %}
-                      <dt>
-                        {% trans 'Disclaimer' %}
-                      </dt>
-                      <dd>
-                        {{ work.disclaimer }}
-                      </dd>
-                    {% endif %}
-                  </dl>
-                </div>
+                  {% endif %}
+                {% endwith %}
+                {% if work.approved %}
+                  <dt class="col-2">{% trans 'Approved' %}</dt>
+                  <dd class="col-10">
+                    {% user_profile work.updated_by_user %}
+                    {{ work.approved_at|naturaltime }}
+                  </dd>
+                {% endif %}
               </div>
-
-              {% if work.properties %}
-                <div class="row">
-                  {% for prop in work.labeled_properties %}
-                    <dl class="col-sm-6 mb-0">
-                      <dt>{{ prop.label }}</dt>
-                      <dd>{{ prop.value }}</dd>
-                    </dl>
-                  {% endfor %}
-                </div>
-              {% endif %}
             {% endblock %}
           </div>
         </div>

@@ -6,6 +6,23 @@
 
 {% block work-content %}
 
+  <div class="d-flex">
+    <div class="ms-auto">
+      {% if work.pk and not request.htmx %}
+        <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">{% trans 'Cancel' %}</a>
+      {% endif %}
+      {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
+        <button
+          class="btn btn-success save"
+          type="submit"
+          form="edit-work-form"
+        >
+          {% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
   {% include "indigo_api/_work_form_content.html" %}
 
 {% endblock %}

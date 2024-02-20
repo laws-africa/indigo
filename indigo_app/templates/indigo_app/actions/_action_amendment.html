@@ -6,8 +6,6 @@
   {% trans "by the work" %}
   <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
 
-  {% if not ignore_place %}
-    {% trans "in" %}
-    <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
-  {% endif %}
+  {% include 'indigo_app/actions/_in_place.html' with place=amendment.amended_work.place %}
+
 {% endwith %}

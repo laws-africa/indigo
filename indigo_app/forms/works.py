@@ -1,25 +1,19 @@
-import json
 import re
-import urllib.parse
 from datetime import date
-from lxml import etree
+from functools import cached_property
 
 from django import forms
-from django.contrib.postgres.forms import SimpleArrayField
-from django.core.exceptions import ValidationError
-from django.db.models import Q, Count
-from django.core.validators import URLValidator
 from django.conf import settings
-from django.forms import SelectMultiple
-from django.utils.translation import gettext as _
-from captcha.fields import ReCaptchaField
-from allauth.account.forms import SignupForm
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+from django.db.models import Q, Count
+from django.forms import SelectMultiple, RadioSelect, formset_factory
+from django.utils.translation import gettext as _, gettext_lazy as _l
 
 from cobalt import FrbrUri
-from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
-    Workflow, \
-    VocabularyTopic, Commencement, PlaceSettings, TaxonomyTopic, Locality
+from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
+    Commencement, Workflow, Task, Country
+from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class WorkForm(forms.ModelForm):
@@ -72,11 +66,12 @@ class WorkForm(forms.ModelForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commencement_note = forms.CharField(max_length=1024, required=False)
 
-    def __init__(self, country, locality, *args, **kwargs):
+    def __init__(self, country, locality, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
         self.locality = locality
         self.place = locality or country
+        self.user = user
 
         for prop, label in self.place.settings.work_properties.items():
             key = f'property_{prop}'
@@ -95,6 +90,61 @@ class WorkForm(forms.ModelForm):
             if hasattr(self.instance.main_commencement, 'commencing_work'):
                 if self.instance.main_commencement.commencing_work:
                     self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
+
+            # repeal formset
+            self.RepealMadeBaseFormSet = RepealMadeBaseFormSet
+            repeals_made_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "repeals_made",
+                "initial": [{
+                    "repealed_work": repealed_work,
+                    "repealed_date": repealed_work.repealed_date,
+                } for repealed_work in self.instance.repealed_works.all()]
+            }
+            if self.is_bound:
+                repeals_made_formset_kwargs["data"] = self.data
+
+            self.repeals_made_formset = self.RepealMadeBaseFormSet(**repeals_made_formset_kwargs)
+
+            self.AmendmentsBaseFormSet = AmendmentsBaseFormSet
+
+            amended_by_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "amended_by",
+                "initial": [{
+                    "amended_work": self.instance,
+                    "amending_work": amendment.amending_work,
+                    "date": amendment.date,
+                    "id": amendment.id,
+                }
+                   for amendment in Amendment.objects.filter(amended_work=self.instance)],
+            }
+            if self.is_bound:
+                amended_by_formset_kwargs["data"] = self.data
+
+            self.amended_by_formset = self.AmendmentsBaseFormSet(**amended_by_formset_kwargs)
+
+            amendments_made_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "amendments_made",
+                "initial": [{
+                    "amended_work": amendment.amended_work,
+                    "amending_work": self.instance,
+                    "date": amendment.date,
+                    "id": amendment.id,
+                }
+                    for amendment in Amendment.objects.filter(amending_work=self.instance)],
+            }
+            if self.is_bound:
+                amendments_made_formset_kwargs["data"] = self.data
+
+            self.amendments_made_formset = self.AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -115,6 +165,26 @@ class WorkForm(forms.ModelForm):
         ]
         fields.sort(key=lambda f: f.label)
         return fields
+
+    def is_valid(self):
+        if self.instance.pk:
+            return (
+                    super().is_valid() and
+                    self.repeals_made_formset.is_valid() and
+                    self.amended_by_formset.is_valid() and
+                    self.amendments_made_formset.is_valid()
+            )
+        return super().is_valid()
+
+    def has_changed(self):
+        if self.instance.pk:
+            return (
+                    super().has_changed() or
+                    self.repeals_made_formset.has_changed() or
+                    self.amended_by_formset.has_changed() or
+                    self.amendments_made_formset.has_changed()
+            )
+        return super().has_changed()
 
     def clean_frbr_number(self):
         value = self.cleaned_data['frbr_number']
@@ -138,10 +208,13 @@ class WorkForm(forms.ModelForm):
         return self.cleaned_data
 
     def save(self, commit=True):
-        work = super(WorkForm, self).save(commit)
+        work = super().save(commit)
         self.save_properties()
         self.save_publication_document()
         self.save_commencement()
+        self.save_repeals()
+        self.save_amended_by()
+        self.save_amendments_made()
         return work
 
     def save_properties(self):
@@ -153,6 +226,21 @@ class WorkForm(forms.ModelForm):
                 # a work property has been removed
                 del self.instance.properties[prop]
         self.instance.save()
+
+    def save_repeals(self):
+        for repeal_form in self.repeals_made_formset:
+            if repeal_form.is_valid() and repeal_form.has_changed():
+                repeal_form.save(self.user)
+
+    def save_amended_by(self):
+        for form in self.amended_by_formset:
+            if form.is_valid() and form.has_changed():
+                form.save(self.user)
+
+    def save_amendments_made(self):
+        for form in self.amendments_made_formset:
+            if form.is_valid() and form.has_changed():
+                form.save(self.user)
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -222,198 +310,178 @@ class WorkForm(forms.ModelForm):
             commencement.save()
 
 
-class DocumentForm(forms.ModelForm):
-    class Meta:
-        model = Document
-        exclude = ('document_xml', 'created_at', 'updated_at', 'created_by_user', 'updated_by_user',)
-
-
-class UserEditorForm(forms.ModelForm):
-    first_name = forms.CharField(label='First name')
-    last_name = forms.CharField(label='Last name')
-    language = forms.ChoiceField(label='Language', choices=settings.LANGUAGES)
+class AmendmentForm(forms.ModelForm):
+    amending_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    amended_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
-        model = Editor
-        fields = ('country', 'language')
+        model = Amendment
+        fields = ('amending_work', 'amended_work', 'date', 'id')
 
-    def save(self, commit=True):
-        super(UserEditorForm, self).save()
-        self.instance.user.first_name = self.cleaned_data['first_name']
-        self.instance.user.last_name = self.cleaned_data['last_name']
-        self.instance.user.save()
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
+    @cached_property
+    def amending_work_obj(self):
+        return Work.objects.filter(pk=self['amending_work'].value()).first()
+
+    @cached_property
+    def amended_work_obj(self):
+        return Work.objects.filter(pk=self['amended_work'].value()).first()
+
+    def save(self, user, *args, **kwargs):
+        amendment = Amendment.objects.filter(pk=self.cleaned_data['id']).first()
+
+        if self.cleaned_data.get('DELETE'):
+            if amendment:
+                amendment.delete()
+            return
+        else:
+            if amendment:
+                amendment.amending_work = self.cleaned_data['amending_work']
+                amendment.amended_work = self.cleaned_data['amended_work']
+                amendment.date = self.cleaned_data["date"]
+                amendment.updated_by_user = user
+                amendment.save()
+            else:
+                Amendment.objects.create(
+                    amended_work=self.cleaned_data['amended_work'],
+                    amending_work=self.cleaned_data['amending_work'],
+                    date=self.cleaned_data["date"],
+                    created_by_user=user,
+                    updated_by_user=user,
+                )
 
 
-class UserSignupForm(SignupForm):
-    first_name = forms.CharField(required=True, max_length=30, label='First name')
-    last_name = forms.CharField(required=True, max_length=30, label='Last name')
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
-    captcha = ReCaptchaField()
-    accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
-        'required': 'Please accept the Terms of Use.',
-    })
-    signup_enabled = settings.ACCOUNT_SIGNUP_ENABLED
+AmendmentsFormSet = formset_factory(
+    AmendmentForm,
+    extra=0,
+    can_delete=True,
+)
+
+
+class AmendmentsBaseFormSet(AmendmentsFormSet):
 
     def clean(self):
-        if not self.signup_enabled:
-            raise forms.ValidationError("Creating new accounts is currently not allowed.")
-        return super(UserSignupForm, self).clean()
-
-    def save(self, request):
-        user = super(UserSignupForm, self).save(request)
-        user.editor.accepted_terms = True
-        user.editor.country = self.cleaned_data['country']
-        user.editor.save()
-        return user
-
-
-class BatchCreateWorkForm(forms.Form):
-    spreadsheet_url = forms.URLField(required=True, validators=[
-        URLValidator(
-            schemes=['https'],
-            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
-            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
-    ])
-    sheet_name = forms.ChoiceField(required=False, choices=[])
-    workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
-    taxonomy_topic = forms.ModelChoiceField(queryset=TaxonomyTopic.objects.filter(slug__startswith='projects-', depth__gte=3), empty_label='Choose a topic')
-    block_import_tasks = forms.BooleanField(initial=False, required=False)
-    cancel_import_tasks = forms.BooleanField(initial=False, required=False)
-    block_gazette_tasks = forms.BooleanField(initial=False, required=False)
-    cancel_gazette_tasks = forms.BooleanField(initial=False, required=False)
-    block_amendment_tasks = forms.BooleanField(initial=False, required=False)
-    cancel_amendment_tasks = forms.BooleanField(initial=False, required=False)
-    tasks = forms.MultipleChoiceField(
-        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
+        super().clean()
+        if any(self.errors):
+            return
+        # check if amending work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            amending_work = form.cleaned_data.get('amending_work')
+            amended_work = form.cleaned_data.get('amended_work')
+            date = form.cleaned_data.get('date')
+            if (amending_work, amended_work, date) in seen:
+                raise ValidationError("Amending work and date must be unique together.")
+            seen.add((amending_work, amended_work, date))
 
 
-class ColumnSelectWidget(SelectMultiple):
-    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
-    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
-    unavailable_fields = [
-        'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
-        'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
-        'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
-        'primary_work', 'subleg', 'taxonomy', 'taxonomy_topic'
-    ]
+class RepealMadeForm(forms.Form):
+    repealed_work = forms.ModelChoiceField(queryset=Work.objects)
+    repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
-    def create_option(self, *args, **kwargs):
-        option = super().create_option(*args, **kwargs)
-
-        option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
-        if option['value'] in self.core_fields:
-            option['label'] = f'Core field: {option["label"]}'
-        if option['value'] in self.unavailable_fields:
-            option['label'] = f'Unavailable: {option["label"]}'
-
-        return option
-
-
-class BatchUpdateWorkForm(BatchCreateWorkForm):
-    update_columns = forms.MultipleChoiceField()
-    taxonomy_topic = None
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, work, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from indigo.bulk_creator import RowValidationFormBase
-        row_validation_form = RowValidationFormBase
-        fields = list(row_validation_form.base_fields)
-        fields.remove('row_number')
-        self.fields['update_columns'].widget = ColumnSelectWidget()
-        # TODO: include place's extra properties
-        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields])
-        self.fields['update_columns'].choices.sort(key=lambda x: x[1])
+        self.work = work
+
+    @cached_property
+    def repealed_work_obj(self):
+        return Work.objects.filter(pk=self['repealed_work'].value()).first()
+
+    def is_repealed_work_saved(self):
+        return self.repealed_work_obj.repealed_by == self.work
+
+    def save(self, user):
+        work = self.cleaned_data['repealed_work']
+        if self.cleaned_data.get('DELETE'):
+            if work.repealed_by == self.work:
+                work.repealed_by = None
+                work.repealed_date = None
+                work.save_with_revision(user=user)
+        else:
+            work.repealed_by = self.work
+            work.repealed_date = self.cleaned_data['repealed_date']
+            work.save_with_revision(user=user)
 
 
-class ImportDocumentForm(forms.Form):
-    file = forms.FileField()
-    language = forms.ModelChoiceField(Language.objects)
-    expression_date = forms.DateField()
-    page_nums = forms.CharField(required=False)
-    # options as JSON data
-    options = forms.CharField(required=False)
-
-    def clean_options(self):
-        val = self.cleaned_data['options']
-        try:
-            return json.loads(val or '{}')
-        except ValueError:
-            raise forms.ValidationError("Invalid json data")
+RepealMadeFormSet = formset_factory(
+    RepealMadeForm,
+    extra=0,
+    can_delete=True,
+)
 
 
-class TaskForm(forms.ModelForm):
+class RepealMadeBaseFormSet(RepealMadeFormSet):
+    pass
+
+
+class FindPubDocForm(forms.Form):
+    name = forms.CharField(required=False, widget=forms.HiddenInput())
+    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
+
+
+class NewCommencementForm(forms.ModelForm):
+    commencing_work = forms.ModelChoiceField(Work.objects, required=False)
+
     class Meta:
-        model = Task
-        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
+        model = Commencement
+        fields = ('date', 'commencing_work')
 
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple,
-                                            required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, required=False)
+    def clean(self):
+        super().clean()
+        if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
+            # create one for now
+            self.cleaned_data['date'] = date.today()
 
-    def __init__(self, country, locality, *args, **kwargs):
+
+class CommencementForm(forms.ModelForm):
+    provisions = forms.MultipleChoiceField(required=False)
+
+    class Meta:
+        model = Commencement
+        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
+
+    def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.country = country
-        self.locality = locality
-        self.fields['workflows'].queryset = self.fields['workflows'].queryset.\
-            filter(country=self.country, locality=self.locality, closed=False).order_by('title')
+        self.work = work
+        self.provisions = provisions
+        self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
+
+    def clean_main(self):
+        if self.cleaned_data['main']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work, main=True)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A main commencement already exists.")
+        return self.cleaned_data['main']
+
+    def clean_all_provisions(self):
+        if self.cleaned_data['all_provisions']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A commencement for all provisions must be the only commencement.")
+        return self.cleaned_data['all_provisions']
+
+    def clean(self):
+        super().clean()
+        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+            raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
 
-class TaskFilterForm(forms.Form):
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
-    format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
-    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
-    submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
-    type = forms.MultipleChoiceField(choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
-    taxonomy_topic = forms.CharField()
-
-    def __init__(self, country, *args, **kwargs):
-        self.country = country
-        super(TaskFilterForm, self).__init__(*args, **kwargs)
-        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
-        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
-
-    def filter_queryset(self, queryset):
-        if self.cleaned_data.get('country'):
-            queryset = queryset.filter(country__in=self.cleaned_data['country'])
-
-        if self.cleaned_data.get('type'):
-            queryset = queryset.filter(code__in=self.cleaned_data['type'])
-
-        if self.cleaned_data.get('labels'):
-            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
-
-        if self.cleaned_data.get('state'):
-            if 'assigned' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
-                if 'open' not in self.cleaned_data['state']:
-                    queryset = queryset.exclude(state='open', assigned_to=None)
-            elif 'pending_review' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
-                           queryset.filter(state='pending_review')
-            else:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
-
-        if self.cleaned_data.get('assigned_to'):
-            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
-
-        if self.cleaned_data.get('submitted_by'):
-            queryset = queryset.filter(state__in=['pending_review', 'closed'])\
-                .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
-
-        if self.cleaned_data.get('taxonomy_topic'):
-            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
-            topics = [topic] + [t for t in topic.get_descendants()]
-            queryset = queryset.filter(work__taxonomy_topics__in=topics)
-
-        return queryset
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
-
-
-class WorkFilterForm(forms.Form):
+class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
@@ -437,7 +505,13 @@ class WorkFilterForm(forms.Form):
     stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
     work_in_progress = forms.MultipleChoiceField(choices=[('work_in_progress', 'Work in progress'), ('approved', 'Approved')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    sortby = forms.ChoiceField(choices=[('-created_at', '-created_at'), ('created_at', 'created_at'), ('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title')])
+    sortby = forms.ChoiceField(choices=[
+        ('-created_at', _l('Created at (newest first)')), ('created_at', _l('Created at (oldest first)')),
+        ('-updated_at', _l('Updated at (newest first)')), ('updated_at', _l('Updated at (oldest first)')),
+        ('title', _l('Title (A-Z)')), ('-title', _l('Title (Z-A)')),
+        ('date', _l('Date (oldest first)')), ('-date', _l('Date (newest first)')),
+        ('number', _l('Number (ascending)')), ('-number', _l('Number (descending)')),
+    ])
     principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
     tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('has_unblocked_tasks', 'Has unblocked tasks'), ('has_only_blocked_tasks', 'Has only blocked tasks'), ('no_open_tasks', 'Has no open tasks')])
     primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])
@@ -450,15 +524,12 @@ class WorkFilterForm(forms.Form):
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
-        super(WorkFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         doctypes = [(d[1].lower(), d[0]) for d in
                     settings.INDIGO['DOCTYPES'] +
                     settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
@@ -682,148 +753,32 @@ class WorkFilterForm(forms.Form):
         return queryset.distinct()
 
 
-class WorkflowFilterForm(forms.Form):
-    state = forms.ChoiceField(choices=[('open', 'open'), ('closed', 'closed')])
+class WorkChooserForm(forms.Form):
+    country = forms.ModelChoiceField(queryset=Country.objects)
+    locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
+    q = forms.CharField(required=False)
 
-    def filter_queryset(self, queryset):
-        if self.cleaned_data.get('state') == 'open':
-            queryset = queryset.filter(closed=False)
-        elif self.cleaned_data.get('state') == 'closed':
-            queryset = queryset.filter(closed=True)
+    def clean_locality(self):
+        if self.cleaned_data.get('country'):
+            # update the queryset on the locality field for rendering
+            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
+            if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
+                return None
+        else:
+            return None
+        return self.cleaned_data['locality']
 
-        return queryset
+    def filter_queryset(self, qs):
+        if self.cleaned_data['country']:
+            qs = qs.filter(country=self.cleaned_data['country'])
 
+        if self.cleaned_data['locality']:
+            qs = qs.filter(locality=self.cleaned_data['locality'])
 
-class BulkTaskUpdateForm(forms.Form):
-    tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
-    unassign = False
+        if self.cleaned_data['q']:
+            qs = qs.filter(title__icontains=self.cleaned_data['q'])
 
-    def __init__(self, country, *args, **kwargs):
-        self.country = country
-        super(BulkTaskUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
-
-    def clean_assigned_to(self):
-        user = self.cleaned_data['assigned_to']
-        if user and self.country not in user.editor.permitted_countries.all():
-            raise forms.ValidationError("That user doesn't have appropriate permissions for {}".format(self.country.name))
-        return user
-
-    def clean(self):
-        if self.data.get('assigned_to') == '-1':
-            del self.errors['assigned_to']
-            self.cleaned_data['assigned_to'] = None
-            self.unassign = True
-
-
-class CountryAdminForm(forms.ModelForm):
-    italics_terms = SimpleArrayField(forms.CharField(max_length=1024, required=False), delimiter='\n', required=False, widget=forms.Textarea)
-
-    class Meta:
-        model = Country
-        exclude = []
-
-    def clean_italics_terms(self):
-        # strip blanks and duplications
-        return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))
-
-
-class CommencementForm(forms.ModelForm):
-    provisions = forms.MultipleChoiceField(required=False)
-
-    class Meta:
-        model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
-
-    def __init__(self, work, provisions, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.work = work
-        self.provisions = provisions
-        self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
-
-    def clean_main(self):
-        if self.cleaned_data['main']:
-            # there can be only one!
-            qs = Commencement.objects.filter(commenced_work=self.work, main=True)
-            if self.instance:
-                qs = qs.exclude(pk=self.instance.pk)
-            if qs.exists():
-                raise ValidationError("A main commencement already exists.")
-        return self.cleaned_data['main']
-
-    def clean_all_provisions(self):
-        if self.cleaned_data['all_provisions']:
-            # there can be only one!
-            qs = Commencement.objects.filter(commenced_work=self.work)
-            if self.instance:
-                qs = qs.exclude(pk=self.instance.pk)
-            if qs.exists():
-                raise ValidationError("A commencement for all provisions must be the only commencement.")
-        return self.cleaned_data['all_provisions']
-
-    def clean(self):
-        super().clean()
-        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
-            raise ValidationError("Cannot specify all provisions, and a list of provisions.")
-
-
-class NewCommencementForm(forms.ModelForm):
-    commencing_work = forms.ModelChoiceField(Work.objects, required=False)
-
-    class Meta:
-        model = Commencement
-        fields = ('date', 'commencing_work')
-
-    def clean(self):
-        super().clean()
-        if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
-            # create one for now
-            self.cleaned_data['date'] = date.today()
-
-
-class PlaceSettingsForm(forms.ModelForm):
-    class Meta:
-        model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'no_publication_document_text',
-                  'consolidation_note', 'is_consolidation', 'uses_chapter', 'publication_date_optional')
-
-    spreadsheet_url = forms.URLField(required=False, validators=[
-        URLValidator(
-            schemes=['https'],
-            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/[\w#=]*',
-            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
-    ])
-
-    def clean_spreadsheet_url(self):
-        url = self.cleaned_data.get('spreadsheet_url')
-        return re.sub('/[\w#=]*$', '/', url)
-
-
-class PlaceUsersForm(forms.Form):
-    # make choices a lambda so that it's evaluated at runtime, not import time
-    choices = lambda: [(u.id, (u.get_full_name() or u.username)) for u in User.objects.filter(badges_earned__slug='editor')]
-    users = forms.MultipleChoiceField(choices=choices, label="Users with edit permissions", required=False, widget=forms.CheckboxSelectMultiple)
-
-
-class ExplorerForm(forms.Form):
-    xpath = forms.CharField(required=True)
-    parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
-    localities = forms.BooleanField(required=False)
-    global_search = forms.BooleanField(required=False)
-
-    def clean_xpath(self):
-        value = self.cleaned_data['xpath']
-
-        try:
-            etree.XPath(value)
-        except etree.XPathError as e:
-            raise ValidationError(str(e))
-
-        return value
-
-    def data_as_url(self):
-        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
+        return qs
 
 
 class WorkBulkActionsForm(forms.Form):
@@ -855,8 +810,94 @@ class WorkBulkUpdateForm(forms.Form):
 
 
 class WorkBulkApproveForm(forms.Form):
+    TASK_CHOICES = [('', 'Create tasks'), ('block', 'Create and block tasks'), ('cancel', 'Create and cancel tasks')]
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    import_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    import_task_description = forms.CharField(required=False)
+    gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    gazette_task_description = forms.CharField(required=False)
+    amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.is_valid():
+            self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.full_clean()
+
+    def add_amendment_task_description_fields(self, works_in_progress):
+        for work in works_in_progress:
+            for amendment in work.amendments.all():
+                self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
+
+    def save_changes(self, request):
+        for work in self.cleaned_data["works_in_progress"]:
+            work.approve(request.user, request)
+
+        # import tasks
+        if self.cleaned_data.get('import_task_works'):
+            # TODO: add the appropriate timeline date for Import tasks too?
+            import_tasks = [self.get_or_create_task(work=work, task_type='import-content', description=self.cleaned_data['import_task_description'], user=request.user) for work in self.cleaned_data['import_task_works']]
+            if self.cleaned_data.get('update_import_tasks'):
+                self.block_or_cancel_tasks(import_tasks, self.cleaned_data['update_import_tasks'], request.user)
+
+        # gazette tasks
+        if self.cleaned_data.get('gazette_task_works'):
+            gazette_tasks = [self.get_or_create_task(work=work, task_type='link-gazette', description=self.cleaned_data['gazette_task_description'], user=request.user) for work in self.cleaned_data['gazette_task_works']]
+            if self.cleaned_data.get('update_gazette_tasks'):
+                self.block_or_cancel_tasks(gazette_tasks, self.cleaned_data['update_gazette_tasks'], request.user)
+
+        # amendment tasks
+        if self.cleaned_data.get('amendment_task_works'):
+            amendment_tasks = []
+            for work in self.cleaned_data['amendment_task_works']:
+                for amendment in work.amendments.all():
+                    amendment_tasks.append(self.get_or_create_task(
+                        work=work, task_type='apply-amendment',
+                        description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
+                        user=request.user, timeline_date=amendment.date))
+            if self.cleaned_data.get('update_amendment_tasks'):
+                self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_tasks'], request.user)
+
+    def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
+        task_titles = {
+            'import-content': _('Import content'),
+            'link-gazette': _('Link Gazette'),
+            'apply-amendment': _('Apply amendment'),
+        }
+        task_title = task_titles[task_type]
+
+        task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date).first()
+        if not task:
+            task = Task(country=work.country, locality=work.locality, work=work,
+                        code=task_type, timeline_date=timeline_date, created_by_user=user)
+
+        task.title = task_title
+        task.description = description
+        task.updated_by_user = user
+        task.save()
+
+        # reopen or unblock tasks: they'll be blocked or cancelled again if needed as chosen in the form
+        # TODO: only leave closed tasks as done if they should be:
+        #  Gazette tasks never (we've already checked),
+        #  Import / Amendment tasks only if there's a published document at the timeline date
+        if task.state == Task.CANCELLED:
+            task.reopen(user)
+        elif task.state == Task.BLOCKED and not task.blocked_by.exists():
+            task.unblock(user)
+
+        return task
+
+    def block_or_cancel_tasks(self, tasks, block_or_cancel, user):
+        for task in tasks:
+            if block_or_cancel == 'block':
+                task.block(user)
+            elif block_or_cancel == 'cancel':
+                task.cancel(user)
 
 
 class WorkBulkUnapproveForm(forms.Form):
@@ -864,36 +905,59 @@ class WorkBulkUnapproveForm(forms.Form):
     unapprove = forms.BooleanField(required=False)
 
 
-class WorkChooserForm(forms.Form):
-    country = forms.ModelChoiceField(queryset=Country.objects)
-    locality = forms.ModelChoiceField(queryset=Locality.objects, required=False)
-    q = forms.CharField(required=False)
-
-    def clean_locality(self):
-        if self.cleaned_data.get('country'):
-            # update the queryset on the locality field for rendering
-            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
-            if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
-                return None
-        else:
-            return None
-        return self.cleaned_data['locality']
-
-    def filter_queryset(self, qs):
-        if self.cleaned_data['country']:
-            qs = qs.filter(country=self.cleaned_data['country'])
-
-        if self.cleaned_data['locality']:
-            qs = qs.filter(locality=self.cleaned_data['locality'])
-
-        if self.cleaned_data['q']:
-            qs = qs.filter(title__icontains=self.cleaned_data['q'])
-
-        return qs
+class BatchCreateWorkForm(forms.Form):
+    spreadsheet_url = forms.URLField(required=True, validators=[
+        URLValidator(
+            schemes=['https'],
+            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
+            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
+    ])
+    sheet_name = forms.ChoiceField(required=False, choices=[])
+    workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
+    taxonomy_topic = forms.ModelChoiceField(queryset=TaxonomyTopic.objects.filter(slug__startswith='projects-', depth__gte=3), empty_label='Choose a topic')
+    block_import_tasks = forms.BooleanField(initial=False, required=False)
+    cancel_import_tasks = forms.BooleanField(initial=False, required=False)
+    block_gazette_tasks = forms.BooleanField(initial=False, required=False)
+    cancel_gazette_tasks = forms.BooleanField(initial=False, required=False)
+    block_amendment_tasks = forms.BooleanField(initial=False, required=False)
+    cancel_amendment_tasks = forms.BooleanField(initial=False, required=False)
+    tasks = forms.MultipleChoiceField(
+        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
 
 
-class FindPubDocForm(forms.Form):
-    name = forms.CharField(required=False, widget=forms.HiddenInput())
-    trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
-    size = forms.IntegerField(required=False, widget=forms.HiddenInput())
-    mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
+class ColumnSelectWidget(SelectMultiple):
+    # TODO: get these core fields from somewhere else? cobalt / FRBR URI fields?
+    core_fields = ['actor', 'country', 'locality', 'doctype', 'subtype', 'number', 'year']
+    unavailable_fields = [
+        'commenced_by', 'commenced_on_date', 'commences', 'commences_on_date',
+        'amended_by', 'amended_on_date', 'amends', 'amends_on_date',
+        'repealed_by', 'repealed_on_date', 'repeals', 'repeals_on_date',
+        'primary_work', 'subleg', 'taxonomy', 'taxonomy_topic'
+    ]
+
+    def create_option(self, *args, **kwargs):
+        option = super().create_option(*args, **kwargs)
+
+        option['attrs']['disabled'] = option['value'] in self.core_fields + self.unavailable_fields
+        if option['value'] in self.core_fields:
+            option['label'] = f'Core field: {option["label"]}'
+        if option['value'] in self.unavailable_fields:
+            option['label'] = f'Unavailable: {option["label"]}'
+
+        return option
+
+
+class BatchUpdateWorkForm(BatchCreateWorkForm):
+    update_columns = forms.MultipleChoiceField()
+    taxonomy_topic = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from indigo.bulk_creator import RowValidationFormBase
+        row_validation_form = RowValidationFormBase
+        fields = list(row_validation_form.base_fields)
+        fields.remove('row_number')
+        self.fields['update_columns'].widget = ColumnSelectWidget()
+        # TODO: include place's extra properties
+        self.fields['update_columns'].choices = ([(x, re.sub('_', ' ', x).capitalize()) for x in fields])
+        self.fields['update_columns'].choices.sort(key=lambda x: x[1])

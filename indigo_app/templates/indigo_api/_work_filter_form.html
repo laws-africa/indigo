@@ -17,12 +17,9 @@
     <!-- Sorting -->
     <div class="me-2">
       <select class="form-control" name="sortby">
-        <option value="-created_at" {% if form.sortby.value == '-created_at' %} selected {% endif %}>{% trans 'Most recently created' %}</option>
-        <option value="created_at" {% if form.sortby.value == 'created_at' %} selected {% endif %}>{% trans 'Least recently created' %}</option>
-        <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>{% trans 'Most recently updated' %}</option>
-        <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>{% trans 'Least recently updated' %}</option>
-        <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>{% trans 'Title (A-Z)' %}</option>
-        <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>{% trans 'Title (Z-A)' %}</option>
+        {% for opt in form.sortby %}
+          {{ opt }}
+        {% endfor %}
       </select>
     </div>
 

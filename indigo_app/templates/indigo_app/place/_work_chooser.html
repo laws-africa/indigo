@@ -22,6 +22,7 @@
 
             <div class="col-3">
               <select
+                {% if disable_country %}disabled{% endif %}
                 class="form-control" name="country" hx-post="{% url 'place_work_chooser' place.place_code %}"
                 hx-target="closest .modal-dialog"
                 hx-swap="outerHTML"
@@ -34,6 +35,7 @@
 
             <div class="col-3">
               <select
+                {% if disable_locality %}disabled{% endif %}
                 class="form-control" name="locality" hx-post="{% url 'place_work_chooser' place.place_code %}"
                 hx-target="closest .modal-dialog"
                 hx-swap="outerHTML"
@@ -54,8 +56,9 @@
 
       <form
         id="work-chooser-form"
-        hx-get="{{ hx_submit }}"
+        {{ hx_method }}="{{ hx_submit }}"
         hx-target="{{ hx_target }}"
+        hx-include="{{ hx_include }}"
       >
         <div class="work-chooser-list scrollable">
           <table class="table table-sm table-hover work-list-table">

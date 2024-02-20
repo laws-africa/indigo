@@ -673,6 +673,9 @@ class Work(WorkMixin, models.Model):
             document.draft = True
             document.save_with_revision(user, comment='This document was unpublished because its work was unapproved.')
 
+    def has_publication_document(self):
+        return PublicationDocument.objects.filter(work=self).exists()
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

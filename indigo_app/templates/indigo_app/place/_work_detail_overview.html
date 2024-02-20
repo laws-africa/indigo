@@ -24,6 +24,21 @@
       {% endfor %}
     {% endblock %}
 
+    {% block overview-aliases  %}
+      {% with work.aliases.all as aliases %}
+        {% if aliases %}
+          <dt class="col-2">
+            {% trans "Aliases" %}
+          </dt>
+          <dd class="col-10">
+            {% for alias in aliases %}
+              <div>{{ alias }}</div>
+            {% endfor %}
+          </dd>
+        {% endif %}
+      {% endwith %}
+    {% endblock %}
+
     {% block overview-taxonomies  %}
       {% with work.taxonomy_topics.all as topics %}
         {% if topics %}

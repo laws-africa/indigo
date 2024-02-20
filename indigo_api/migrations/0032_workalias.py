@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0030_backfill_work_in_progress'),
+        ('indigo_api', '0031_task_timeline_date'),
     ]
 
     operations = [

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-19 12:44+0200\n"
+"POT-Creation-Date: 2024-02-20 14:48+0200\n"
 "PO-Revision-Date: 2023-05-02 15:21\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 141\n"
 
-#: forms/tasks.py:19 forms/tasks.py:30
+#: forms/tasks.py:20 forms/tasks.py:31
 #: templates/indigo_api/_task_detail.html:236
 #: templates/indigo_api/_task_detail.html:265
 #: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:259
@@ -28,15 +28,15 @@ msgstr ""
 msgid "Error building FRBR URI"
 msgstr ""
 
-#: forms/works.py:871
+#: forms/works.py:868
 msgid "Import content"
 msgstr ""
 
-#: forms/works.py:872
+#: forms/works.py:869
 msgid "Link Gazette"
 msgstr ""
 
-#: forms/works.py:873
+#: forms/works.py:870
 msgid "Apply amendment"
 msgstr ""
 
@@ -591,6 +591,7 @@ msgid "Choose a work"
 msgstr ""
 
 #: templates/indigo_api/_work_chooser_modal.html:28
+#: templates/indigo_api/document/_cheatsheet.html:8
 #: templates/indigo_app/place/_work_chooser.html:51
 msgid "Search..."
 msgstr ""
@@ -826,7 +827,7 @@ msgstr ""
 msgid "Principal work"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:205
+#: templates/indigo_api/_work_form_content.html:205 views/places.py:88
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
 msgstr ""
 
@@ -1076,6 +1077,7 @@ msgid "Attachments"
 msgstr ""
 
 #: templates/indigo_api/document/_attachments.html:16
+#: templates/indigo_api/document/_cheatsheet.html:809
 #: templates/indigo_api/document/_defined_terms.html:24
 #: templates/indigo_api/document/_italics_terms.html:51
 #: templates/indigo_api/document/_properties.html:61
@@ -1087,6 +1089,245 @@ msgstr ""
 #: templates/indigo_api/document/_attachments.html:54
 #: templates/indigo_api/work_import_document.html:56
 msgid "Choose a file"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:7
+msgid "Editor help"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:18
+msgid "Starting the Preface"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:21
+msgid "Mark the start of the Preface, before the Preamble and body."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:33
+msgid "Starting the Preamble"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:36
+msgid "Mark the start of the Preamble, after the Preface and before the body."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:48
+msgid "Markup the long title"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:52
+msgid "Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:75
+msgid "Starting the body of the document"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:79
+msgid "Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:94
+msgid "Starting a new Chapter"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:98
+msgid "Start a Chapter with <code>CHAPTER</code> and a number. The title is optional."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:123
+msgid "Starting a new Part"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:127
+msgid "Start a Part with <code>Part</code> and a number. The title is optional."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:152
+msgid "Starting a new Subpart"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:156
+msgid "A subpart is a grouping container, like a Part, but without \"Part\" in the generated heading."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:161
+msgid "Start a subpart with <code>SUBPART</code> and a number. The title is optional."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:186
+msgid "Include a Crossheading"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:190
+msgid "Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:212
+msgid "Starting a Section"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:216
+msgid "Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:241
+msgid "Starting a Subsection"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:245
+msgid "Start a numbered subsection with the subsection number in brackets. Subsections do not have titles."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:267
+msgid "Add a numbered paragraph"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:271
+msgid "Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:300
+msgid "Create a numbered list (a blocklist)"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:304
+msgid "Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB)."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:362
+msgid "Starting a new Article"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:366
+msgid "Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:391
+msgid "Insert a special character"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:395
+msgid "See guidance on using special characters in the <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:406
+msgid "Make text italics"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:410
+msgid "Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:415
+msgid "For editorial remarks, use"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:435
+msgid "Make text bold"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:439
+msgid "Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:461
+msgid "Underline text"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:465
+msgid "Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:487
+msgid "Add a link to a webpage"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:491
+msgid "Link to a webpage using"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:511
+msgid "Add a link to another Act or work"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:515
+msgid "Link to another Act or work using"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:516
+msgid "where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:536
+msgid "Insert an image"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:540
+msgid "Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>. Click <i>Attachments <span class=\"fa fa-paperclip\"></span></i> to see images you can insert, or upload new ones."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:563
+msgid "Add an editorial remark"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:567
+msgid "Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:591
+msgid "Ignore text that looks like a chapter, part or section but isn't"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:595
+msgid "You can tell the system to ignore text that looks like a chapter, part, section or any other special words, by putting a backslash <code>\\</code> just before it."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:622
+msgid "Starting a Schedule"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:626
+msgid "Start a schedule using <code>SCHEDULE</code>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:680
+msgid "Insert a table"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:684
+msgid "Insert a table using <a href=\"https://en.wikipedia.org/wiki/Help:Table/Manual_tables\" target=\"_blank\">Wikimedia table syntax</a>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:689
+msgid "<li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li> <li>Use <code>|-</code> to separate rows.</li> <li>Use <code>|</code> to start a cell on a row.</li> <li>Use <code>!</code> to start a heading cell on a row.</li>"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:745
+msgid "Convert lines of text into a table"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:748
+msgid "Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:784
+msgid "Paste a table"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:787
+msgid "Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode."
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:805
+#: templates/indigo_api/document/_toolbar.html:49
+#: templates/indigo_api/document/_toolbar.html:108
+#, python-format
+msgid "%(country)s Style Guide"
+msgstr ""
+
+#: templates/indigo_api/document/_cheatsheet.html:808
+msgid "Full editor documentation"
 msgstr ""
 
 #: templates/indigo_api/document/_defined_terms.html:7
@@ -1271,12 +1512,6 @@ msgstr ""
 
 #: templates/indigo_api/document/_toolbar.html:44
 msgid "Akoma Ntoso"
-msgstr ""
-
-#: templates/indigo_api/document/_toolbar.html:49
-#: templates/indigo_api/document/_toolbar.html:108
-#, python-format
-msgid "%(country)s Style Guide"
 msgstr ""
 
 #: templates/indigo_api/document/_toolbar.html:60
@@ -2976,6 +3211,10 @@ msgstr ""
 
 #: views/places.py:84
 msgid "Disclaimer"
+msgstr ""
+
+#: views/places.py:87
+msgid "Principal"
 msgstr ""
 
 #~ msgid "Not commenced"

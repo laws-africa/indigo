@@ -53,6 +53,14 @@ class TaskForm(forms.ModelForm):
         return title
 
 
+class TaskEditLabelsForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ('labels',)
+
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
+
+
 class TaskFilterForm(forms.Form, FormAsUrlMixin):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))

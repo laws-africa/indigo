@@ -69,6 +69,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>/close', tasks.TaskChangeStateView.as_view(change='close'), name='close_task'),
     path('places/<str:place>/tasks/<int:pk>/block', tasks.TaskChangeStateView.as_view(change='block'), name='block_task'),
     path('places/<str:place>/tasks/<int:pk>/unblock', tasks.TaskChangeStateView.as_view(change='unblock'), name='unblock_task'),
+    path('places/<str:place>/tasks/<int:pk>/edit-labels', tasks.TaskEditLabelsView.as_view(), name='task_labels'),
 
     path('places/<str:place>/projects', workflows.WorkflowListView.as_view(), name='workflows'),
     path('places/<str:place>/projects/new', workflows.WorkflowCreateView.as_view(), name='workflow_create'),

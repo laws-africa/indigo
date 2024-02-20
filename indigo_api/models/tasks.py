@@ -224,7 +224,7 @@ class Task(models.Model):
     @classmethod
     def decorate_permissions(cls, tasks, user):
         for task in tasks:
-            task.change_task_permission = user.has_perm('indigo_api.change_task')
+            task.change_task_permission = user.has_perm('indigo_api.change_task') and user.editor.has_country_permission(task.country)
             task.submit_task_permission = has_transition_perm(task.submit, user)
             task.reopen_task_permission = has_transition_perm(task.reopen, user)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)

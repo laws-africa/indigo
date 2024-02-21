@@ -1,0 +1,40 @@
+{% load i18n indigo_app comments %}
+
+<ul class="activity-list pt-3">
+  {% get_comment_list for work as comment_list %}
+  {% for comment in comment_list %}
+    <li class="activity-item card">
+      <div class="card-header">
+        {% user_profile comment.user %} {% trans 'commented' %}
+        <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>:
+      </div>
+      <div class="card-body">
+        {{ comment.comment|urlize|linebreaksbr }}
+      </div>
+    </li>
+  {% endfor %}
+
+  <li class="activity-item card">
+    {% get_comment_form for work as comment_form %}
+    <form
+      hx-post="{% comment_form_target %}"
+      hx-target="#work-comment-list"
+    >
+      <div class="card-body">
+        {% csrf_token %}
+        {{ comment_form.honeypot.as_hidden }}
+        {{ comment_form.content_type }}
+        {{ comment_form.object_pk }}
+        {{ comment_form.timestamp }}
+        {{ comment_form.security_hash }}
+        <input type="hidden" name="next" value="{% url 'work_comments' work.frbr_uri %}">
+
+        <textarea name="comment" class="form-control" maxlength="3000" rows="3"
+                  cols="80" placeholder="{% trans "Add a comment" %}" required></textarea>
+      </div>
+      <div class="card-footer d-flex">
+        <input class="btn btn-primary ms-auto" type="submit" value="{% trans 'Add comment' %}">
+      </div>
+    </form>
+  </li>
+</ul>

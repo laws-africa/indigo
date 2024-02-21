@@ -121,6 +121,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/(?P<version_id>\d+)/restore$', works.RestoreWorkVersionView.as_view(), name='work_restore_version'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/media/publication/(?P<filename>.+)$', works.WorkPublicationDocumentView.as_view(), name='work_publication_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/$', works.WorkOverviewView.as_view(), name='work'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/comments$', works.WorkCommentsView.as_view(), name='work_comments'),
 
     path('documents/<int:doc_id>/', documents.DocumentDetailView.as_view(), name='document'),
     path('documents/<int:doc_id>/popup', documents.DocumentPopupView.as_view(), name='document_popup'),

@@ -171,6 +171,12 @@
   </div>
   {% endblock %}
 
+  {% block comments %}
+    <div id="work-comment-list">
+      {% include 'indigo_api/_work_comments.html' %}
+    </div>
+  {% endblock %}
+
   {% block contributors %}
     {% if contributors %}
       <div class="row">

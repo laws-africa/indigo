@@ -691,52 +691,38 @@ ITEMS
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.
+                        Insert a table by clicking <i>Insert, Insert table</i> in the menu.
                       {% endblocktrans %}
                     </p>
-                    <ul>
+                    <p>
                       {% blocktrans trimmed %}
-                        <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
-                        <li>Use <code>|-</code> to separate rows.</li>
-                        <li>Use <code>|</code> to start a cell on a row.</li>
-                        <li>Use <code>!</code> to start a heading cell on a row.</li>
+                        See guidance on working with tables in the <a href="https://docs.laws.africa/how-tos/tables" target="_blank">Editor Guide</a>.
                       {% endblocktrans %}
-                    </ul>
-
+                    </p>
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet">{|
-|-
-! header 1
-! header 2
-! header 3
-|-
-| row 1, cell 1
-| row 1, cell 2
-| row 1, cell 3
-|-
-| row 2, cell 1
-| row 2, cell 2
-| row 2, cell 3
-|}</pre>
+                    <pre class="editor-snippet">TABLE
+  TR
+    TH
+      Heading 1
+    TH
+      Heading 2
+  TR
+    TC
+      Content 1
+    TC
+      Content 2</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
                           <table class="mb-0">
                             <tbody><tr>
-                              <th><span class="akn-p">header 1</span></th>
-                              <th><span class="akn-p">header 2</span></th>
-                              <th><span class="akn-p">header 3</span></th>
+                              <th><span class="akn-p">Heading 1</span></th>
+                              <th><span class="akn-p">Heading 2</span></th>
                             </tr>
                             <tr>
-                              <td><span class="akn-p">row 1, cell 1</span></td>
-                              <td><span class="akn-p">row 1, cell 2</span></td>
-                              <td><span class="akn-p">row 1, cell 3</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">row 2, cell 1</span></td>
-                              <td><span class="akn-p">row 2, cell 2</span></td>
-                              <td><span class="akn-p">row 2, cell 3</span></td>
+                              <td><span class="akn-p">Content 1</span></td>
+                              <td><span class="akn-p">Content 2</span></td>
                             </tr>
                             </tbody>
                           </table>

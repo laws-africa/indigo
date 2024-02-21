@@ -122,7 +122,7 @@ class WorkForm(forms.ModelForm):
         )
         self.formsets.append(self.aliases_formset)
 
-        if self.instance:
+        if self.instance.pk:
             # repeal formset
             repeals_made_formset_kwargs = {
                 "form_kwargs": {

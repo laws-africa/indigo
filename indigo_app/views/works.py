@@ -1364,7 +1364,6 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         amended_by = self.request.POST.get("amended_by")
         amendments_made = self.request.POST.get("amendments_made")
         deleting = self.request.GET.get("delete")

@@ -32,7 +32,7 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, WorkAliasesFormSet
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1425,4 +1425,3 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             )
         context_data["prefix"] = prefix
         return context_data
-

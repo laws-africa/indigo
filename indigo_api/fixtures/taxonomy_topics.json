@@ -3,6 +3,7 @@
     "model": "indigo_api.taxonomytopic",
     "pk": 1,
     "fields": {
+      "public": true,
       "path": "0001",
       "depth": 1,
       "numchild": 1,
@@ -14,11 +15,36 @@
     "model": "indigo_api.taxonomytopic",
     "pk": 2,
     "fields": {
+      "public": true,
       "path": "00010002",
       "depth": 2,
       "numchild": 0,
       "name": "Money and Business",
       "slug": "lawsafrica-subject-areas-money-and-business"
+    }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 3,
+    "fields": {
+      "public": false,
+      "path": "0002",
+      "depth": 1,
+      "numchild": 1,
+      "name": "Internal Topic",
+      "slug": "internal-topic"
+    }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 4,
+    "fields": {
+      "public": true,
+      "path": "00020002",
+      "depth": 2,
+      "numchild": 0,
+      "name": "I'm private",
+      "slug": "internal-topic-im-private"
     }
   }
 ]

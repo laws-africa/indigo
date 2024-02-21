@@ -629,7 +629,7 @@ class WorkSerializer(serializers.ModelSerializer):
         return taxonomies
 
     def get_taxonomy_topics(self, instance):
-        return [t.slug for t in instance.taxonomy_topics.all()]
+        return [t.slug for t in instance.public_taxonomy_topics()]
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):

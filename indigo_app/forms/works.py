@@ -478,7 +478,8 @@ class CommencementForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+        # all_provisions may have been nuked during clean
+        if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
 

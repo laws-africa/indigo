@@ -22,7 +22,7 @@
 
                     <pre class="editor-snippet">PREFACE
 
-This is the preface of the Act.</pre>
+  This is the preface of the Act.</pre>
                   </div>
                 </div>
               </div>
@@ -37,7 +37,7 @@ This is the preface of the Act.</pre>
 
                     <pre class="editor-snippet">PREAMBLE
 
-This is the preamble of the Act.</pre>
+  This is the preamble of the Act.</pre>
                   </div>
                 </div>
               </div>
@@ -50,7 +50,7 @@ This is the preamble of the Act.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'
+                        Indicate the long title of the work using <code>LONGTITLE</code>.
                       {% endblocktrans %}
                     </p>
 
@@ -96,7 +96,7 @@ This is the body of the Act.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a Chapter with <code>CHAPTER</code> and a number. The title is optional.
+                        Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -104,7 +104,7 @@ This is the body of the Act.</pre>
                       <div class="col">
                     <pre class="editor-snippet">CHAPTER 2 - Interpretation
 
-This is the body of the Chapter.</pre>
+  This is the body of the Chapter.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -125,7 +125,7 @@ This is the body of the Chapter.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a Part with <code>Part</code> and a number. The title is optional.
+                        Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -133,7 +133,7 @@ This is the body of the Chapter.</pre>
                       <div class="col">
                     <pre class="editor-snippet">PART 2 - Interpretation
 
-This is the body of the Part.</pre>
+  This is the body of the Part.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -159,7 +159,7 @@ This is the body of the Part.</pre>
                     </p>
                     <p>
                       {% blocktrans trimmed %}
-                        Start a subpart with <code>SUBPART</code> and a number. The title is optional.
+                        Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -167,7 +167,7 @@ This is the body of the Part.</pre>
                       <div class="col">
                   <pre class="editor-snippet">SUBPART A - Party and costs
 
-This is the body of the Subpart.</pre>
+  This is the body of the Subpart.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -188,17 +188,17 @@ This is the body of the Subpart.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.
+                        Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">CROSSHEADING E. Control under a Scheme</pre>
+                        <pre class="editor-snippet">CROSSHEADING Control under a Scheme</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
-                          <span class="akn-heading mb-0">E. Control under a Scheme</span>
+                          <span class="akn-heading mb-0">Control under a Scheme</span>
                         </la-akoma-ntoso>
                       </div>
                     </div>
@@ -214,7 +214,7 @@ This is the body of the Subpart.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered section with <code>SEC</code> and a number. The title is optional.
+                        Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -222,7 +222,7 @@ This is the body of the Subpart.</pre>
                       <div class="col">
                     <pre class="editor-snippet">SEC 2. - Definitions
 
-This is the body of the section.</pre>
+  This is the body of the section.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -243,7 +243,7 @@ This is the body of the section.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered subsection with <code>SUBSEC</code> and the subsection number in brackets. A title is optional.
+                        Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 

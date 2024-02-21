@@ -165,8 +165,9 @@
   {% endblock %}
 
   {% block comments %}
+    <h5>{% trans "Comments" %}</h5>
     <div id="work-comment-list">
-      {% include 'indigo_api/_work_comments.html' %}
+      {% include 'indigo_api/_work_comments.html' with post_to_id="work-comment-list" %}
     </div>
   {% endblock %}
 

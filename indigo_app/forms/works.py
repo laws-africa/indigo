@@ -591,24 +591,38 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
             single_commencements = commenced_counts.filter(num_commencements=1).values_list("commenced_work", flat=True)
 
             for commencement in multiple_commencements:
-                commencements = Commencement.objects.filter(commencing_work=work,
-                                                            commenced_work=commencement).order_by("date")
+                commencements = Commencement.objects.filter(commencing_work=work, commenced_work=commencement).order_by("date")
+                all_commencements = Commencement.objects.filter(commenced_work=commencement)
+
                 # update all commencements first
-                for c in commencements:
-                    c.main = False
+                for c in all_commencements:
                     c.all_provisions = False
                     c.save()
 
-                # update the first commencement to be the main one
-                first = commencements.first()
-                first.main = True
-                first.save()
+                has_main_commencement = all_commencements.filter(main=True).exists()
+                if not has_main_commencement:
+                    # update the first commencement to be the main one
+                    first = commencements.first()
+                    first.main = True
+                    first.save()
 
             for commencement in single_commencements:
+                existing_commencements = Commencement.objects.filter(commenced_work=commencement).exclude(commencing_work=work)
                 c = Commencement.objects.filter(commencing_work=work, commenced_work=commencement).first()
-                c.main = True
-                c.all_provisions = True
-                c.save()
+
+                if not existing_commencements:
+                    c.main = True
+                    c.all_provisions = True
+                    c.save()
+                else:
+                    for existing in existing_commencements:
+                        existing.all_provisions = False
+                        existing.save()
+                    has_main_commencement = existing_commencements.filter(main=True).exists()
+                    if not has_main_commencement:
+                        # update the first commencement to be the main one
+                        c.main = True
+                        c.save()
 
 
 class WorkFilterForm(forms.Form, FormAsUrlMixin):

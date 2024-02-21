@@ -1435,16 +1435,12 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
 
-        commenced_by = self.request.POST.get("commenced_by")
         commencement_made = self.request.POST.get("commencements_made")
         deleting = self.request.GET.get("delete")
         commencement_work_id = None
         prefix = None
 
-        if commenced_by:
-            commencement_work_id = commenced_by
-            prefix = "commenced_by"
-        elif commencement_made:
+        if commencement_made:
             commencement_work_id = commencement_made
             prefix = "commencements_made"
         elif deleting:
@@ -1470,13 +1466,7 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             if commencement_work_id:
                 work = Work.objects.filter(pk=commencement_work_id).first()
                 if work:
-                    if prefix == "commenced_by":
-                        initial.append({
-                            "commenced_work": self.work,
-                            "commencing_work": work,
-                            "date": work.commencement_date,
-                        })
-                    elif prefix == "commencements_made":
+                    if prefix == "commencements_made":
                         initial.append({
                             "commenced_work": work,
                             "commencing_work": self.work,

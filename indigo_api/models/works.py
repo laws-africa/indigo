@@ -153,7 +153,7 @@ class TaxonomyTopic(MP_Node):
     @classmethod
     def get_public_root_nodes(cls):
         root_nodes = cls.get_root_nodes()
-        return root_nodes.exclude(public=False)
+        return root_nodes.filter(public=True)
 
 
 class WorkMixin(object):

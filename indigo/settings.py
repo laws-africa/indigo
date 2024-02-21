@@ -391,7 +391,7 @@ ACCOUNT_FORMS = {
 }
 ACCOUNT_SIGNUP_ENABLED = True
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = '/places/'
+LOGIN_REDIRECT_URL = '/places'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Google recaptcha

@@ -99,6 +99,7 @@ class TaxonomyTopic(MP_Node):
     name = models.CharField(max_length=512, null=False, blank=False)
     slug = models.SlugField(max_length=4096, null=False, unique=True, blank=False)
     description = models.TextField(null=True, blank=True)
+    public = models.BooleanField(default=True)
     node_order_by = ['name']
 
     class Meta:
@@ -148,6 +149,11 @@ class TaxonomyTopic(MP_Node):
                 "children": [],
             }] + tree
         return tree
+
+    @classmethod
+    def get_public_root_nodes(cls):
+        root_nodes = cls.get_root_nodes()
+        return root_nodes.filter(public=True)
 
 
 class WorkMixin(object):
@@ -675,6 +681,10 @@ class Work(WorkMixin, models.Model):
 
     def has_publication_document(self):
         return PublicationDocument.objects.filter(work=self).exists()
+
+    def public_taxonomy_topics(self):
+        # TODO: make this less expensive?
+        return [t for t in self.taxonomy_topics.all() if t.get_root().public]
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

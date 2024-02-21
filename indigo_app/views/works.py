@@ -323,6 +323,11 @@ class WorkOverviewView(WorkViewBase, DetailView):
         return sorted(users.values(), key=lambda u: -u.task_count)
 
 
+class WorkCommentsView(WorkViewBase, DetailView):
+    """HTMX view to render updated work comments"""
+    template_name = 'indigo_api/_work_comments.html'
+
+
 class WorkCommencementsView(WorkViewBase, DetailView):
     template_name_suffix = '_commencements'
     tab = 'commencements'

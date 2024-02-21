@@ -1,6 +1,7 @@
 import re
 from datetime import date
 from functools import cached_property
+from itertools import chain
 
 from django import forms
 from django.conf import settings
@@ -505,7 +506,8 @@ class CommencementForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+        # all_provisions may have been nuked during clean
+        if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
 class CommencementsPartialForm(forms.Form):
@@ -962,7 +964,7 @@ class WorkBulkApproveForm(forms.Form):
     gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     gazette_task_description = forms.CharField(required=False)
-    amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    amendments = forms.ModelMultipleChoiceField(queryset=Amendment.objects, required=False)
     update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
@@ -970,13 +972,18 @@ class WorkBulkApproveForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.is_valid():
-            self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.add_amendment_task_description_fields(self.get_amendments())
             self.full_clean()
 
-    def add_amendment_task_description_fields(self, works_in_progress):
-        for work in works_in_progress:
-            for amendment in work.amendments.all():
-                self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
+    def get_amendments(self):
+        works_in_progress = self.cleaned_data.get('works_in_progress', [])
+        all_amendments = [w.amendments.all() for w in works_in_progress if w.amendments.exists()] + \
+                         [w.amendments_made.all() for w in works_in_progress if w.amendments_made.exists()]
+        return set(chain(*all_amendments))
+
+    def add_amendment_task_description_fields(self, amendments):
+        for amendment in amendments:
+            self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
 
     def save_changes(self, request):
         for work in self.cleaned_data["works_in_progress"]:
@@ -996,14 +1003,13 @@ class WorkBulkApproveForm(forms.Form):
                 self.block_or_cancel_tasks(gazette_tasks, self.cleaned_data['update_gazette_tasks'], request.user)
 
         # amendment tasks
-        if self.cleaned_data.get('amendment_task_works'):
+        if self.cleaned_data.get('amendments'):
             amendment_tasks = []
-            for work in self.cleaned_data['amendment_task_works']:
-                for amendment in work.amendments.all():
-                    amendment_tasks.append(self.get_or_create_task(
-                        work=work, task_type='apply-amendment',
-                        description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
-                        user=request.user, timeline_date=amendment.date))
+            for amendment in self.cleaned_data['amendments']:
+                amendment_tasks.append(self.get_or_create_task(
+                    work=amendment.amended_work, task_type='apply-amendment',
+                    description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
+                    user=request.user, timeline_date=amendment.date))
             if self.cleaned_data.get('update_amendment_tasks'):
                 self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_tasks'], request.user)
 

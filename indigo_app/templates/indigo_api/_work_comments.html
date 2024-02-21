@@ -1,18 +1,8 @@
 {% load i18n indigo_app comments %}
 
+<h5>{% trans "Comments" %}</h5>
 <ul class="activity-list pt-3">
-  {% get_comment_list for work as comment_list %}
-  {% for comment in comment_list %}
-    <li class="activity-item card">
-      <div class="card-header">
-        {% user_profile comment.user %} {% trans 'commented' %}
-        <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>:
-      </div>
-      <div class="card-body">
-        {{ comment.comment|urlize|linebreaksbr }}
-      </div>
-    </li>
-  {% endfor %}
+  {% include 'indigo_api/_work_comments_list.html' %}
 
   <li class="activity-item card">
     {% get_comment_form for work as comment_form %}

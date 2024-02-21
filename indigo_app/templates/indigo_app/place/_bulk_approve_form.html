@@ -29,8 +29,8 @@
         {% for work in gazette_task_works %}
           <input type="hidden" name="gazette_task_works" value="{{ work.pk }}">
         {% endfor %}
-        {% for work in amendments_per_work %}
-          <input type="hidden" name="amendment_task_works" value="{{ work.pk }}">
+        {% for amendment in amendments %}
+          <input type="hidden" name="amendments" value="{{ amendment.pk }}">
         {% endfor %}
         <div class="alert alert-warning">
           <ul>
@@ -106,23 +106,15 @@
               {% trans "Amendment tasks will be created" %}
             </h5>
             <div class="card-body">
-              <ul>
-                {% for work in amendments_per_work %}
-                  <li>
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-              <div>
-                {% for work, amendments in amendments_per_work.items %}
-                  <div class="mt-4">
-                    <hr>
+              {% for work, amendments in amendments_per_work.items %}
+                <div class="mb-3 list-group">
+                  <div class="list-group-item">
                     <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                     {% for amendment in amendments %}
                       <div class="mt-3">
                         <label for="amendment_task_description_id_{{ amendment.pk }}">
-                          {% blocktrans with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-                            Task description: {{ title }} ({{ numbered_title }}) – {{ date }}
+                          {% blocktrans with amended_title=amendment.amended_work.title amended_numbered_title=amendment.amended_work.numbered_title amending_title=amendment.amending_work.title amending_numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
+                            Task description: {{ amended_title }} ({{ amended_numbered_title }}) amended by {{ amending_title }} ({{ amending_numbered_title }}) – {{ date }}
                           {% endblocktrans %}
                         </label>
                         {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
@@ -134,8 +126,8 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                       </div>
                     {% endfor %}
                   </div>
-                {% endfor %}
-              </div>
+                </div>
+              {% endfor %}
               <div class="mt-3">
                 {% for opt in form.update_amendment_tasks %}
                   <div>

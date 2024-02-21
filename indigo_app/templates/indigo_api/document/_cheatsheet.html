@@ -735,45 +735,6 @@ ITEMS
               </div>
             {% endblock %}
 
-            {% block cheat-convert-table %}
-              <div class="card">
-                <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">{% trans "Convert lines of text into a table" %}</a>
-                <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
-                  <div class="card-body">
-                    {% blocktrans trimmed %}
-                      Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.
-                    {% endblocktrans %}
-
-                    <div class="row">
-                      <div class="col">
-                    <pre class="editor-snippet">Line 1
-Line 2
-Line 3</pre>
-                      </div>
-                      <div class="col">
-                        <la-akoma-ntoso class="akoma-ntoso-snippet">
-                          <table class="mb-0">
-                            <tbody><tr>
-                            <tr>
-                              <td><span class="akn-p">Line 1</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">Line 2</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">Line 3</span></td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </la-akoma-ntoso>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            {% endblock %}
-
             {% block cheat-paste-table %}
               <div class="card">
                 <a href="#cheat-paste-table" data-bs-toggle="collapse" class="card-header">{% trans "Paste a table" %}</a>

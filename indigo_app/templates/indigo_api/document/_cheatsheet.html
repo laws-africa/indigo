@@ -547,8 +547,8 @@ ITEMS
                   <div class="card-body">
                     <!-- TODO: add alt text markup -->
                     <p>
-                      {% blocktrans trimmed %}
-                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use {% verbatim %}<code>{{IMG media/image.png}}</code>{% endverbatim %}.
+                      {% blocktrans trimmed with markup="{{IMG media/image.png}}" %}
+                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>{{ markup }}</code>.
                         Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
                       {% endblocktrans %}
                     </p>
@@ -575,8 +575,8 @@ ITEMS
                 <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
                   <div class="card-body">
                     <p>
-                      {% blocktrans trimmed %}
-                        Add an editorial remark, text that isn't part of the original document, using {% verbatim %}<code>{{*[remark]}}</code>{% endverbatim %}.
+                      {% blocktrans trimmed with markup="{{*[remark]}}" %}
+                        Add an editorial remark, text that isn't part of the original document, using <code>{{ markup }}</code>.
                       {% endblocktrans %}
                     </p>
 

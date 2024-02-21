@@ -304,7 +304,7 @@ This is the body of the Act.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).
+                        Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again.
                       {% endblocktrans %}
                     </p>
 
@@ -312,15 +312,22 @@ This is the body of the Act.</pre>
                       <div class="col">
                     <pre class="editor-snippet">The following items are a blocklist:
 
-(a) first item
+ITEMS
+  ITEM (a)
+    first item
 
-(b) second item
+  ITEM (b)
+    ITEMS
+      second item
 
-    (i) nested item (b)(i)
+      ITEM (i)
+        nested item (b)(i)
 
-    (ii) nested item (b)(ii)
+      ITEM (ii)
+        nested item (b)(ii)
 
-(c) third item</pre>
+  ITEM (c)
+    third item</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">

@@ -545,16 +545,18 @@ ITEMS
                 <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">{% trans "Insert an image" %}</a>
                 <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
                   <div class="card-body">
+                    <!-- TODO: add alt text markup -->
                     <p>
                       {% blocktrans trimmed %}
-                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
+                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use {% verbatim %}<code>{{IMG media/image.png}}</code>{% endverbatim %}.
                         Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">![Logo](/static/images/logo.png)</pre>
+                        <!-- TODO: add alt text markup -->
+                        <pre class="editor-snippet">{% verbatim %}{{IMG media/logo.png}}{% endverbatim %}</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">

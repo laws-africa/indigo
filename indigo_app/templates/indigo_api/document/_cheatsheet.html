@@ -20,7 +20,7 @@
                   <div class="card-body">
                     <p>{% trans "Mark the start of the Preface, before the Preamble and body." %}</p>
 
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">PREFACE</span>
+                    <pre class="editor-snippet">PREFACE
 
 This is the preface of the Act.</pre>
                   </div>
@@ -35,7 +35,7 @@ This is the preface of the Act.</pre>
                   <div class="card-body">
                     <p>{% trans "Mark the start of the Preamble, after the Preface and before the body." %}</p>
 
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">PREAMBLE</span>
+                    <pre class="editor-snippet">PREAMBLE
 
 This is the preamble of the Act.</pre>
                   </div>
@@ -56,7 +56,7 @@ This is the preamble of the Act.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet"><span class="ace_constant ace_language">LONGTITLE</span> <span class="ace_entity ace_name ace_tag">To establish ...</span></pre>
+                        <pre class="editor-snippet">LONGTITLE To establish ...</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -81,7 +81,7 @@ This is the preamble of the Act.</pre>
                       {% endblocktrans %}
                     </p>
 
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">BODY</span>
+                    <pre class="editor-snippet">BODY
 
 This is the body of the Act.</pre>
                   </div>
@@ -102,7 +102,7 @@ This is the body of the Act.</pre>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">Chapter</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
+                    <pre class="editor-snippet">CHAPTER 2 - Interpretation
 
 This is the body of the Chapter.</pre>
                       </div>
@@ -131,7 +131,7 @@ This is the body of the Chapter.</pre>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">Part</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
+                    <pre class="editor-snippet">PART 2 - Interpretation
 
 This is the body of the Part.</pre>
                       </div>
@@ -165,7 +165,7 @@ This is the body of the Part.</pre>
 
                     <div class="row">
                       <div class="col">
-                  <pre class="editor-snippet"><span class="ace_constant ace_language">SUBPART</span> <span class="ace_constant ace_numeric">A</span> <span class="ace_entity ace_name ace_tag">- Party and costs</span>
+                  <pre class="editor-snippet">SUBPART A - Party and costs
 
 This is the body of the Subpart.</pre>
                       </div>
@@ -194,7 +194,7 @@ This is the body of the Subpart.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet"><span class="ace_constant ace_language">CROSSHEADING</span> <span class="ace_entity ace_name ace_tag">E. Control under a Scheme</span></pre>
+                        <pre class="editor-snippet">CROSSHEADING E. Control under a Scheme</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -214,13 +214,13 @@ This is the body of the Subpart.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered section with the number and an optional title. The title should start with a capital letter and then be all in lowercase.
+                        Start a numbered section with <code>SEC</code> and a number. The title is optional.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_numeric">2.</span> <span class="ace_entity ace_name ace_tag">Definitions</span>
+                    <pre class="editor-snippet">SEC 2. - Definitions
 
 This is the body of the section.</pre>
                       </div>
@@ -243,13 +243,15 @@ This is the body of the section.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered subsection with the subsection number in brackets. Subsections do not have titles.
+                        Start a numbered subsection with <code>SUBSEC</code> and the subsection number in brackets. A title is optional.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet"><span class="ace_constant ace_numeric">(2)</span> The content of subsection 2.</pre>
+                        <pre class="editor-snippet">SUBSEC (2)
+
+  The content of subsection 2.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -275,7 +277,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-              <pre class="editor-snippet"><span class="ace_constant ace_language">PARA</span> <span class="ace_constant ace_numeric">2.</span>
+              <pre class="editor-snippet">PARA 2.
 
   The content of paragraph 2.</pre>
                       </div>
@@ -310,15 +312,15 @@ This is the body of the section.</pre>
                       <div class="col">
                     <pre class="editor-snippet">The following items are a blocklist:
 
-<span class="ace_constant ace_numeric">(a)</span> first item
+(a) first item
 
-<span class="ace_constant ace_numeric">(b)</span> second item
+(b) second item
 
-    <span class="ace_constant ace_numeric">(i)</span> nested item (b)(i)
+    (i) nested item (b)(i)
 
-    <span class="ace_constant ace_numeric">(ii)</span> nested item (b)(ii)
+    (ii) nested item (b)(ii)
 
-<span class="ace_constant ace_numeric">(c)</span> third item</pre>
+(c) third item</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -370,7 +372,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-              <pre class="editor-snippet"><span class="ace_constant ace_language">ART</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
+              <pre class="editor-snippet">ART 2 - Interpretation
 
   The content of Article 2.</pre>
                       </div>
@@ -412,7 +414,7 @@ This is the body of the section.</pre>
                       {% endblocktrans %}
                     </p>
                     <p>
-                      {% blocktrans trimmed %}For editorial remarks, use {% endblocktrans %}<code>{% verbatim %}{{*[remark]}}{% endverbatim %}</code>.
+                      {% blocktrans trimmed %}For editorial remarks, use{% endblocktrans %} <code>{% verbatim %}{{*[remark]}}{% endverbatim %}</code>.
                     </p>
 
                     <div class="row">
@@ -493,7 +495,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">Indigo is created by {% verbatim %}<span class="ace_markup ace_underline ace_link">{{>https://laws.africa/ Laws.Africa}}</span>{% endverbatim %}.</pre>
+                        <pre class="editor-snippet">Indigo is created by {% verbatim %}{{>https://laws.africa/ Laws.Africa}}{% endverbatim %}.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -518,7 +520,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">Repealed by {% verbatim %}<span class="ace_markup ace_underline ace_link">{{>/akn/za/act/2009/5 Act 5 of 2009}}</span>{% endverbatim %}.</pre>
+                        <pre class="editor-snippet">Repealed by {% verbatim %}{{>/akn/za/act/2009/5 Act 5 of 2009}}{% endverbatim %}.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -545,7 +547,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet"><span class="ace_constant ace_other ace_image">![Logo](/static/images/logo.png)</pre>
+                        <pre class="editor-snippet">![Logo](/static/images/logo.png)</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -571,7 +573,7 @@ This is the body of the section.</pre>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">{% verbatim %}<span class="ace_comment ace_line ace_remark">{{*[An editorial remark]}}</span>{% endverbatim %}</pre>
+                        <pre class="editor-snippet">{% verbatim %}{{*[An editorial remark]}}{% endverbatim %}</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -624,14 +626,13 @@ This is the body of the section.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a schedule using <code>SCHEDULE</code>.
+                        Start a schedule using <code>SCHEDULE</code> and an optional number and title.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row mb-4">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
-<span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">Schedule heading</span>
+                    <pre class="editor-snippet">SCHEDULE - Schedule heading
 
 This is the body of the schedule.</pre>
                       </div>
@@ -647,15 +648,14 @@ This is the body of the schedule.</pre>
                       </div>
                     </div>
 
-                    <p>Include a subheading with <code>SUBHEADING</code> below <code>HEADING</code>.</p>
+                    <p>Include a subheading with <code>SUBHEADING</code> below <code>SCHEDULE</code>.</p>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
-<span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">First schedule </span>
-<span class="ace_constant ace_language">SUBHEADING </span><span class="ace_entity ace_name ace_tag">Laws to be repealed</span>
+                    <pre class="editor-snippet">SCHEDULE - First schedule
+  SUBHEADING Laws to be repealed
 
-This is the body of the first schedule.</pre>
+  This is the body of the first schedule.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -696,7 +696,7 @@ This is the body of the first schedule.</pre>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language ace_table">{|
+                    <pre class="editor-snippet">{|
 |-
 ! header 1
 ! header 2
@@ -709,7 +709,7 @@ This is the body of the first schedule.</pre>
 | row 2, cell 1
 | row 2, cell 2
 | row 2, cell 3
-|}</span></pre>
+|}</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">

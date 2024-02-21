@@ -38,6 +38,7 @@ urlpatterns = [
     path('places/<str:place>/works/detail/<int:pk>/repeals', places.WorkRepealsView.as_view(), name='place_works_work_repeals'),
     path('places/<str:place>/works/detail/<int:pk>/subsidiary', places.WorkSubsidiaryView.as_view(), name='place_works_work_subsidiary'),
     path('places/<str:place>/works/detail/<int:pk>/tasks', places.WorkTasksView.as_view(), name='place_works_work_tasks'),
+    path('places/<str:place>/works/detail/<int:pk>/comments', places.WorkCommentsView.as_view(), name='place_works_work_comments'),
 
     path('places/<str:place>/activity', places.PlaceActivityView.as_view(), name='place_activity'),
     path('places/<str:place>/metrics', places.PlaceMetricsView.as_view(), name='place_metrics'),

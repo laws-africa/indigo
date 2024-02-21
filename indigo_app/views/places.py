@@ -1444,3 +1444,13 @@ class WorkTasksView(PlaceViewBase, DetailView):
         context['task_groups'] = Task.task_columns(['blocked', 'open', 'assigned', 'pending_review'], tasks)
 
         return context
+
+
+class WorkCommentsView(PlaceViewBase, DetailView):
+    template_name = 'indigo_api/_work_comments.html'
+    model = Work
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_to_id'] = f"work-{self.object.pk}-comments"
+        return context

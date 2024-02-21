@@ -38,6 +38,7 @@ urlpatterns = [
     path('places/<str:place>/works/detail/<int:pk>/repeals', places.WorkRepealsView.as_view(), name='place_works_work_repeals'),
     path('places/<str:place>/works/detail/<int:pk>/subsidiary', places.WorkSubsidiaryView.as_view(), name='place_works_work_subsidiary'),
     path('places/<str:place>/works/detail/<int:pk>/tasks', places.WorkTasksView.as_view(), name='place_works_work_tasks'),
+    path('places/<str:place>/works/detail/<int:pk>/comments', places.WorkCommentsView.as_view(), name='place_works_work_comments'),
 
     path('places/<str:place>/activity', places.PlaceActivityView.as_view(), name='place_activity'),
     path('places/<str:place>/metrics', places.PlaceMetricsView.as_view(), name='place_metrics'),
@@ -121,6 +122,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/revisions/(?P<version_id>\d+)/restore$', works.RestoreWorkVersionView.as_view(), name='work_restore_version'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/media/publication/(?P<filename>.+)$', works.WorkPublicationDocumentView.as_view(), name='work_publication_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/$', works.WorkOverviewView.as_view(), name='work'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/comments$', works.WorkCommentsView.as_view(), name='work_comments'),
 
     path('documents/<int:doc_id>/', documents.DocumentDetailView.as_view(), name='document'),
     path('documents/<int:doc_id>/popup', documents.DocumentPopupView.as_view(), name='document_popup'),

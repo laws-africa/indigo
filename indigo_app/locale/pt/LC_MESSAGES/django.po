@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-22 09:01+0200\n"
-"PO-Revision-Date: 2024-02-22 07:11\n"
+"PO-Revision-Date: 2024-02-22 08:12\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -1107,220 +1107,220 @@ msgstr "Iniciando o Preâmbulo"
 
 #: templates/indigo_api/document/_cheatsheet.html:36
 msgid "Mark the start of the Preamble, after the Preface and before the body."
-msgstr ""
+msgstr "Marque o início do Preâmbulo, depois do Prefácio e antes do corpo."
 
 #: templates/indigo_api/document/_cheatsheet.html:48
 msgid "Markup the long title"
-msgstr ""
+msgstr "Marque o título longo"
 
 #: templates/indigo_api/document/_cheatsheet.html:52
 msgid "Indicate the long title of the work using <code>LONGTITLE</code>."
-msgstr ""
+msgstr "Indique o título longo do trabalho usando <code>LONGTITLE</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:75
 msgid "Starting the body of the document"
-msgstr ""
+msgstr "Iniciando o corpo do documento"
 
 #: templates/indigo_api/document/_cheatsheet.html:79
 msgid "Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble."
-msgstr ""
+msgstr "Inicie o corpo do documento com <code>BODY</code>. Isso vem depois do Prefácio e do Preâmbulo."
 
 #: templates/indigo_api/document/_cheatsheet.html:94
 msgid "Starting a new Chapter"
-msgstr ""
+msgstr "Iniciando um novo capítulo"
 
 #: templates/indigo_api/document/_cheatsheet.html:98
 msgid "Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece um capítulo com <code>CAPÍTULO</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:123
 msgid "Starting a new Part"
-msgstr ""
+msgstr "Iniciando uma nova peça"
 
 #: templates/indigo_api/document/_cheatsheet.html:127
 msgid "Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece uma parte com <code>PART</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:152
 msgid "Starting a new Subpart"
-msgstr ""
+msgstr "Iniciando uma nova subparte"
 
 #: templates/indigo_api/document/_cheatsheet.html:156
 msgid "A subpart is a grouping container, like a Part, but without \"Part\" in the generated heading."
-msgstr ""
+msgstr "Uma subparte é um contêiner de agrupamento, como uma Parte, mas sem \"Parte\" no cabeçalho gerado."
 
 #: templates/indigo_api/document/_cheatsheet.html:161
 msgid "Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece uma subparte com <code>SUBPART</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:186
 msgid "Include a Crossheading"
-msgstr ""
+msgstr "Incluir um cruzamento"
 
 #: templates/indigo_api/document/_cheatsheet.html:190
 msgid "Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart."
-msgstr ""
+msgstr "Use <code>CROSSHEADING</code> para incluir um título que não seja um capítulo, parte ou subparte."
 
 #: templates/indigo_api/document/_cheatsheet.html:212
 msgid "Starting a Section"
-msgstr ""
+msgstr "Iniciando uma seção"
 
 #: templates/indigo_api/document/_cheatsheet.html:216
 msgid "Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece uma seção numerada com <code>SEC</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:241
 msgid "Starting a Subsection"
-msgstr ""
+msgstr "Iniciando uma subseção"
 
 #: templates/indigo_api/document/_cheatsheet.html:245
 msgid "Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece uma subseção numerada com <code>SUBSEC</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:269
 msgid "Add a numbered paragraph"
-msgstr ""
+msgstr "Adicione um parágrafo numerado"
 
 #: templates/indigo_api/document/_cheatsheet.html:273
 msgid "Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece um parágrafo com <code>PARA</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:302
 msgid "Create a numbered list (a blocklist)"
-msgstr ""
+msgstr "Crie uma lista numerada (uma lista de bloqueio)"
 
 #: templates/indigo_api/document/_cheatsheet.html:306
 msgid "Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again."
-msgstr ""
+msgstr "Comece uma lista numerada com <code>ITEMS</code>. Use <code>ITEM</code> e um número para cada item da lista e recue-os em <code>ITEMS</code>. Recue as listas aninhadas sob o item relevante, começando com <code>ITEMS</code> novamente."
 
 #: templates/indigo_api/document/_cheatsheet.html:371
 msgid "Starting a new Article"
-msgstr ""
+msgstr "Iniciando um novo artigo"
 
 #: templates/indigo_api/document/_cheatsheet.html:375
 msgid "Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Comece um artigo com <code>ART</code> e um número, seguido por <code> - </code> e o título. O número e o título são opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:400
 msgid "Insert a special character"
-msgstr ""
+msgstr "Insira um caractere especial"
 
 #: templates/indigo_api/document/_cheatsheet.html:404
 msgid "See guidance on using special characters in the <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
-msgstr ""
+msgstr "Consulte orientações sobre o uso de caracteres especiais no <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
 
 #: templates/indigo_api/document/_cheatsheet.html:415
 msgid "Make text italics"
-msgstr ""
+msgstr "Coloque o texto em itálico"
 
 #: templates/indigo_api/document/_cheatsheet.html:419
 msgid "Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms."
-msgstr ""
+msgstr "Exiba uma palavra ou frase em itálico usando <code>//word//</code>. Faça isso para termos que não sejam de inglês e outros termos especiais."
 
 #: templates/indigo_api/document/_cheatsheet.html:424
 msgid "For editorial remarks, use"
-msgstr ""
+msgstr "Para comentários editoriais, use"
 
 #: templates/indigo_api/document/_cheatsheet.html:444
 msgid "Make text bold"
-msgstr ""
+msgstr "Deixe o texto em negrito"
 
 #: templates/indigo_api/document/_cheatsheet.html:448
 msgid "Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms."
-msgstr ""
+msgstr "Exiba uma palavra ou frase em negrito usando <code>**word**</code>. Não use para títulos ou termos definidos."
 
 #: templates/indigo_api/document/_cheatsheet.html:470
 msgid "Underline text"
-msgstr ""
+msgstr "Sublinhar texto"
 
 #: templates/indigo_api/document/_cheatsheet.html:474
 msgid "Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings."
-msgstr ""
+msgstr "Sublinhe uma palavra ou frase usando dois sublinhados em cada lado: <code>__word__</code>. Não use para títulos."
 
 #: templates/indigo_api/document/_cheatsheet.html:496
 msgid "Add a link to a webpage"
-msgstr ""
+msgstr "Adicionar um link para uma página da web"
 
 #: templates/indigo_api/document/_cheatsheet.html:500
 msgid "Link to a webpage using"
-msgstr ""
+msgstr "Link para uma página da web usando"
 
 #: templates/indigo_api/document/_cheatsheet.html:520
 msgid "Add a link to another Act or work"
-msgstr ""
+msgstr "Adicione um link para outro ato ou obra"
 
 #: templates/indigo_api/document/_cheatsheet.html:524
 msgid "Link to another Act or work using"
-msgstr ""
+msgstr "Link para outro ato ou trabalho usando"
 
 #: templates/indigo_api/document/_cheatsheet.html:525
 msgid "where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>."
-msgstr ""
+msgstr "onde <code>frbr-uri</code> é o URI FRBR do trabalho ao qual você deseja vincular, como <code>/akn/za/act/1998/2</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:545
 msgid "Insert an image"
-msgstr ""
+msgstr "Insira uma imagem"
 
 #: templates/indigo_api/document/_cheatsheet.html:550
 #, python-format
 msgid "Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>%(markup)s</code>. Click <i>Attachments <span class=\"fa fa-paperclip\"></span></i> to see images you can insert, or upload new ones."
-msgstr ""
+msgstr "Insira uma imagem clicando em <i>Inserir, Inserir imagem...</i> no menu ou use <code>%(markup)s</code>. Clique em <i>Anexos <span class=\"fa fa-paperclip\"></span></i> para ver imagens que você pode inserir ou fazer upload de novas."
 
 #: templates/indigo_api/document/_cheatsheet.html:574
 msgid "Add an editorial remark"
-msgstr ""
+msgstr "Adicione uma observação editorial"
 
 #: templates/indigo_api/document/_cheatsheet.html:578
 #, python-format
 msgid "Add an editorial remark, text that isn't part of the original document, using <code>%(markup)s</code>."
-msgstr ""
+msgstr "Adicione uma observação editorial, texto que não faz parte do documento original, usando <code>%(markup)s</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:602
 msgid "Ignore text that looks like a chapter, part or section but isn't"
-msgstr ""
+msgstr "Ignore o texto que parece um capítulo, parte ou seção, mas não é"
 
 #: templates/indigo_api/document/_cheatsheet.html:606
 msgid "You can tell the system to ignore text that looks like a chapter, part, section or any other special words, by putting a backslash <code>\\</code> just before it."
-msgstr ""
+msgstr "Você pode dizer ao sistema para ignorar o texto que se parece com um capítulo, parte, seção ou qualquer outra palavra especial, colocando uma barra invertida <code>\\</code> logo antes dele."
 
 #: templates/indigo_api/document/_cheatsheet.html:633
 msgid "Starting a Schedule"
-msgstr ""
+msgstr "Iniciando um cronograma"
 
 #: templates/indigo_api/document/_cheatsheet.html:637
 msgid "Start a schedule using <code>SCHEDULE</code> and an optional number and title."
-msgstr ""
+msgstr "Inicie uma programação usando <code>SCHEDULE</code> e um número e título opcionais."
 
 #: templates/indigo_api/document/_cheatsheet.html:689
 msgid "Insert a table"
-msgstr ""
+msgstr "Inserir uma tabela"
 
 #: templates/indigo_api/document/_cheatsheet.html:693
 msgid "Insert a table by clicking <i>Insert, Insert table</i> in the menu."
-msgstr ""
+msgstr "Insira uma tabela clicando em <i>Inserir, Inserir tabela</i> no menu."
 
 #: templates/indigo_api/document/_cheatsheet.html:698
 msgid "See guidance on working with tables in the <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Editor Guide</a>."
-msgstr ""
+msgstr "Consulte orientações sobre como trabalhar com tabelas no <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Editor Guide</a>."
 
 #: templates/indigo_api/document/_cheatsheet.html:740
 msgid "Paste a table"
-msgstr ""
+msgstr "Cole uma tabela"
 
 #: templates/indigo_api/document/_cheatsheet.html:743
 msgid "Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode."
-msgstr ""
+msgstr "Cole uma tabela de um PDF ou MS Word copiando-a da fonte e colando-a no editor quando estiver no modo de edição."
 
 #: templates/indigo_api/document/_cheatsheet.html:761
 #: templates/indigo_api/document/_toolbar.html:49
 #: templates/indigo_api/document/_toolbar.html:108
 #, python-format
 msgid "%(country)s Style Guide"
-msgstr ""
+msgstr "%(country)s Guia de estilo"
 
 #: templates/indigo_api/document/_cheatsheet.html:764
 msgid "Full editor documentation"
-msgstr ""
+msgstr "Documentação completa do editor"
 
 #: templates/indigo_api/document/_defined_terms.html:7
 msgid "Defined Terms"
@@ -1468,88 +1468,88 @@ msgstr "Mudanças"
 
 #: templates/indigo_api/document/_toolbar.html:10
 msgid "Compare to"
-msgstr ""
+msgstr "Comparado a"
 
 #: templates/indigo_api/document/_toolbar.html:15
 msgid "current point in time"
-msgstr ""
+msgstr "ponto atual no tempo"
 
 #: templates/indigo_api/document/_toolbar.html:21
 msgid "Show source"
-msgstr ""
+msgstr "Mostrar fonte"
 
 #: templates/indigo_api/document/_toolbar.html:25
 msgid "Analysis"
-msgstr ""
+msgstr "Análise"
 
 #: templates/indigo_api/document/_toolbar.html:27
 msgid "Defined terms..."
-msgstr ""
+msgstr "Termos definidos..."
 
 #: templates/indigo_api/document/_toolbar.html:28
 msgid "References..."
-msgstr ""
+msgstr "Referências..."
 
 #: templates/indigo_api/document/_toolbar.html:29
 msgid "Italicised terms..."
-msgstr ""
+msgstr "Termos em itálico..."
 
 #: templates/indigo_api/document/_toolbar.html:42
 msgid "Outline Akoma Ntoso Structure"
-msgstr ""
+msgstr "Esboço da estrutura de Akoma Ntoso"
 
 #: templates/indigo_api/document/_toolbar.html:42
 msgid "Structure"
-msgstr ""
+msgstr "Estrutura"
 
 #: templates/indigo_api/document/_toolbar.html:44
 msgid "Akoma Ntoso"
-msgstr ""
+msgstr "Akoma Ntoso"
 
 #: templates/indigo_api/document/_toolbar.html:60
 msgid "Find..."
-msgstr ""
+msgstr "Encontrar..."
 
 #: templates/indigo_api/document/_toolbar.html:61
 msgid "Find next"
-msgstr ""
+msgstr "Encontre o próximo"
 
 #: templates/indigo_api/document/_toolbar.html:62
 msgid "Find previous"
-msgstr ""
+msgstr "Encontrar anterior"
 
 #: templates/indigo_api/document/_toolbar.html:63
 msgid "Find and replace..."
-msgstr ""
+msgstr "Localizar e substituir..."
 
 #: templates/indigo_api/document/_toolbar.html:67
 #: templates/indigo_api/document/_toolbar.html:156
 msgid "Insert"
-msgstr ""
+msgstr "Inserir"
 
 #: templates/indigo_api/document/_toolbar.html:69
 msgid "Insert image..."
-msgstr ""
+msgstr "Inserir Imagem..."
 
 #: templates/indigo_api/document/_toolbar.html:70
 msgid "Insert table"
-msgstr ""
+msgstr "Insira a tabela"
 
 #: templates/indigo_api/document/_toolbar.html:71
 msgid "Insert footnote"
-msgstr ""
+msgstr "Inserir nota de rodapé"
 
 #: templates/indigo_api/document/_toolbar.html:72
 msgid "Insert Schedule"
-msgstr ""
+msgstr "Inserir cronograma"
 
 #: templates/indigo_api/document/_toolbar.html:74
 msgid "Insert annotation"
-msgstr ""
+msgstr "Inserir anotação"
 
 #: templates/indigo_api/document/_toolbar.html:76
 msgid "Substitution"
-msgstr ""
+msgstr "Substituição"
 
 #: templates/indigo_api/document/_toolbar.html:77
 #: templates/indigo_api/work_related.html:25
@@ -1558,15 +1558,15 @@ msgstr "Emenda"
 
 #: templates/indigo_api/document/_toolbar.html:78
 msgid "Insertion"
-msgstr ""
+msgstr "Inserção"
 
 #: templates/indigo_api/document/_toolbar.html:79
 msgid "Addition"
-msgstr ""
+msgstr "Adição"
 
 #: templates/indigo_api/document/_toolbar.html:80
 msgid "Deletion"
-msgstr ""
+msgstr "Eliminação"
 
 #: templates/indigo_api/document/_toolbar.html:81
 #: templates/indigo_api/work_related.html:32
@@ -1575,44 +1575,44 @@ msgstr "Revogação"
 
 #: templates/indigo_api/document/_toolbar.html:82
 msgid "Other"
-msgstr ""
+msgstr "Outro"
 
 #: templates/indigo_api/document/_toolbar.html:88
 msgid "Markup"
-msgstr ""
+msgstr "Marcação"
 
 #: templates/indigo_api/document/_toolbar.html:90
 msgid "Bold"
-msgstr ""
+msgstr "Audacioso"
 
 #: templates/indigo_api/document/_toolbar.html:91
 msgid "Italics"
-msgstr ""
+msgstr "Itálico"
 
 #: templates/indigo_api/document/_toolbar.html:92
 msgid "Underline"
-msgstr ""
+msgstr "Sublinhado"
 
 #: templates/indigo_api/document/_toolbar.html:93
 msgid "Superscript"
-msgstr ""
+msgstr "Sobrescrito"
 
 #: templates/indigo_api/document/_toolbar.html:94
 msgid "Subscript"
-msgstr ""
+msgstr "Subscrito"
 
 #: templates/indigo_api/document/_toolbar.html:95
 msgid "Remark"
-msgstr ""
+msgstr "Observação"
 
 #: templates/indigo_api/document/_toolbar.html:100
 #: templates/indigo_api/document/_toolbar.html:149
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: templates/indigo_api/document/_toolbar.html:104
 msgid "Editor help..."
-msgstr ""
+msgstr "Ajuda do editor..."
 
 #: templates/indigo_api/document/_toolbar.html:116
 #: templates/indigo_api/task_list.html:4
@@ -1635,47 +1635,47 @@ msgstr "Configurações"
 
 #: templates/indigo_api/document/_toolbar.html:122
 msgid "Properties..."
-msgstr ""
+msgstr "Propriedades..."
 
 #: templates/indigo_api/document/_toolbar.html:124
 msgid "Download as"
-msgstr ""
+msgstr "Baixar como"
 
 #: templates/indigo_api/document/_toolbar.html:143
 msgid "Edit table"
-msgstr ""
+msgstr "Editar tabela"
 
 #: templates/indigo_api/document/_toolbar.html:159
 msgid "Insert row above"
-msgstr ""
+msgstr "Inserir linha acima"
 
 #: templates/indigo_api/document/_toolbar.html:160
 msgid "Insert row below"
-msgstr ""
+msgstr "Inserir linha abaixo"
 
 #: templates/indigo_api/document/_toolbar.html:162
 msgid "Insert column left"
-msgstr ""
+msgstr "Inserir coluna à esquerda"
 
 #: templates/indigo_api/document/_toolbar.html:163
 msgid "Insert column right"
-msgstr ""
+msgstr "Inserir coluna à direita"
 
 #: templates/indigo_api/document/_toolbar.html:172
 msgid "Delete row"
-msgstr ""
+msgstr "Excluir linha"
 
 #: templates/indigo_api/document/_toolbar.html:173
 msgid "Delete column"
-msgstr ""
+msgstr "Excluir coluna"
 
 #: templates/indigo_api/document/_toolbar.html:183
 msgid "Merge cells"
-msgstr ""
+msgstr "Mesclar células"
 
 #: templates/indigo_api/document/_toolbar.html:184
 msgid "Heading"
-msgstr ""
+msgstr "Cabeçalho"
 
 #: templates/indigo_api/document/show.html:25
 #: templates/indigo_api/document_popup.html:9
@@ -1740,11 +1740,11 @@ msgstr "Tipo"
 
 #: templates/indigo_api/task_form.html:54
 msgid "Choose a type, or enter a title."
-msgstr ""
+msgstr "Escolha um tipo ou insira um título."
 
 #: templates/indigo_api/task_form.html:73
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: templates/indigo_api/task_form.html:109
 msgid "Are you sure you want to cancel this task?"
@@ -1795,7 +1795,7 @@ msgstr "Realmente excluir essa consolidação?"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:21
 msgid "Consolidation already exists at"
-msgstr ""
+msgstr "A consolidação já existe em"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:27
 msgid "Add consolidation date"
@@ -1850,7 +1850,7 @@ msgstr "A primeira planilha (mais à esquerda) será importada."
 
 #: templates/indigo_api/work_batch_create.html:59
 msgid "Please note we are phasing out projects; rather choose a topic. You're welcome to choose a project as well during the transition."
-msgstr ""
+msgstr "Observe que estamos eliminando projetos; em vez disso, escolha um tópico. Você também pode escolher um projeto durante a transição."
 
 #: templates/indigo_api/work_batch_create.html:63
 msgid "Choose a project for newly created tasks"
@@ -1870,15 +1870,15 @@ msgstr "Criar um novo projeto"
 
 #: templates/indigo_api/work_batch_create.html:89
 msgid "Choose a topic for newly created works"
-msgstr ""
+msgstr "Escolha um tópico para trabalhos recém-criados"
 
 #: templates/indigo_api/work_batch_create.html:95
 msgid "Choose a project topic"
-msgstr ""
+msgstr "Escolha um tema de projeto"
 
 #: templates/indigo_api/work_batch_create.html:107
 msgid "There are no project topics"
-msgstr ""
+msgstr "Não há tópicos de projeto"
 
 #: templates/indigo_api/work_batch_create.html:114
 msgid "Block ALL 'Import content' tasks on creation"
@@ -2038,7 +2038,7 @@ msgstr "Atualize um lote de trabalhos do Planilhas Google"
 
 #: templates/indigo_api/work_batch_update.html:12
 msgid "Please note we are phasing out projects, and no project needs to be chosen for new tasks on existing works. Instead, tasks are now grouped according to their work's topic. You're welcome to choose a project during the transition."
-msgstr ""
+msgstr "Observe que estamos eliminando projetos e nenhum projeto precisa ser escolhido para novas tarefas em obras existentes. Em vez disso, as tarefas agora são agrupadas de acordo com o tema do seu trabalho. Você pode escolher um projeto durante a transição."
 
 #: templates/indigo_api/work_batch_update.html:18
 msgid "Choose columns to update"
@@ -2172,7 +2172,7 @@ msgstr "Este trabalho não começou"
 
 #: templates/indigo_api/work_form.html:5
 msgid "New work"
-msgstr ""
+msgstr "Novo trabalho"
 
 #: templates/indigo_api/work_import_document.html:4
 msgid "Import"
@@ -2239,7 +2239,7 @@ msgstr "Trabalhos relacionados"
 #: templates/indigo_app/place/_bulk_unapprove_form.html:42
 #: templates/indigo_app/place/_work_detail.html:126
 msgid "Unapprove"
-msgstr ""
+msgstr "Reprovar"
 
 #: templates/indigo_api/work_overview.html:44
 msgid "Edit work"
@@ -2256,11 +2256,11 @@ msgstr "mudanças recentes"
 #: templates/indigo_api/work_overview.html:96
 #, python-format
 msgid "%(n_kids)s subsidiary works"
-msgstr ""
+msgstr "%(n_kids)s obras subsidiárias"
 
 #: templates/indigo_api/work_overview.html:109
 msgid "Approved"
-msgstr ""
+msgstr "Aprovado"
 
 #: templates/indigo_api/work_overview.html:124
 msgid "Core Details"
@@ -2537,7 +2537,7 @@ msgstr "em"
 #: templates/indigo_app/maintenance.html:8
 #, python-format
 msgid "%(org)s is undergoing maintenance. We'll be back soon."
-msgstr ""
+msgstr "%(org)s está em manutenção. Voltaremos em breve."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
@@ -2547,81 +2547,89 @@ msgid "\n"
 msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "\n"
+"          Aprovar %(works_length)s trabalho em andamento\n"
+"        "
+msgstr[1] "\n"
+"          Aprovar %(works_length)s trabalhos em andamento\n"
+"        "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:48
 msgid "Import tasks will be created"
-msgstr ""
+msgstr "As tarefas de importação serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:59
 #: templates/indigo_app/place/_bulk_approve_form.html:88
 msgid "Task description"
-msgstr ""
+msgstr "Descrição da tarefa"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:60
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Importe o conteúdo deste trabalho na data apropriada — geralmente a data de publicação ou consolidação."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:77
 msgid "Gazette tasks will be created"
-msgstr ""
+msgstr "As tarefas da Gazeta serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:89
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Encontre e linke a Gazeta (documento de publicação original) deste trabalho."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:106
 msgid "Amendment tasks will be created"
-msgstr ""
+msgstr "Tarefas de alteração serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:124
 #, python-format
 msgid "\n"
 "                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
 "                          "
-msgstr ""
+msgstr "\n"
+"                            Descrição da tarefa: %(title)s (%(numbered_title)s) – %(date)s\n"
+"                          "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:128
 #, python-format
 msgid "\n"
 "Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
+msgstr "\n"
+"Aplicar as alterações feitas por %(title)s (%(numbered_title)s) em %(date)s.\n\n"
+"A alteração já foi vinculada, então comece na Etapa 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:160
 msgid "Approving..."
-msgstr ""
+msgstr "Aprovando..."
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:7
 #, python-format
 msgid "Unapprove %(works_length)s works"
-msgstr ""
+msgstr "Desaprovar %(works_length)s funciona"
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:41
 msgid "Unapproving..."
-msgstr ""
+msgstr "Não aprovando..."
 
 #: templates/indigo_app/place/_bulk_update_form.html:7
 #, python-format
 msgid "Update %(works_length)s works"
-msgstr ""
+msgstr "Atualização %(works_length)s funciona"
 
 #: templates/indigo_app/place/_bulk_update_form.html:24
 msgid "Add taxonomy topics"
-msgstr ""
+msgstr "Adicionar tópicos de taxonomia"
 
 #: templates/indigo_app/place/_bulk_update_form.html:37
 msgid "Remove taxonomy topics"
-msgstr ""
+msgstr "Remover tópicos de taxonomia"
 
 #: templates/indigo_app/place/_bulk_update_form.html:61
 msgid "Updating..."
-msgstr ""
+msgstr "Atualizando..."
 
 #: templates/indigo_app/place/_bulk_update_form.html:62
 msgid "Save changes"
-msgstr ""
+msgstr "Salvar alterações"
 
 #: templates/indigo_app/place/_overridden.html:3
 msgid "Overridden"
@@ -2629,11 +2637,11 @@ msgstr "Substituído"
 
 #: templates/indigo_app/place/_work.html:35
 msgid "Created"
-msgstr ""
+msgstr "Criada"
 
 #: templates/indigo_app/place/_work_detail.html:34
 msgid "Amendments"
-msgstr ""
+msgstr "Emendas"
 
 #: templates/indigo_app/place/_work_detail.html:42
 msgid "Repeals"
@@ -2649,17 +2657,17 @@ msgstr "Disciplinas"
 #: templates/indigo_app/place/_works_actions.html:22
 #, python-format
 msgid "Update %(works_length)s selected..."
-msgstr ""
+msgstr "Atualizar %(works_length)s selecionado..."
 
 #: templates/indigo_app/place/_works_actions.html:47
 #, python-format
 msgid "Approve %(works_length)s selected..."
-msgstr ""
+msgstr "Aprovar %(works_length)s selecionado..."
 
 #: templates/indigo_app/place/_works_actions.html:73
 #, python-format
 msgid "Unapprove %(works_length)s selected..."
-msgstr ""
+msgstr "Desaprovar %(works_length)s selecionado..."
 
 #: templates/indigo_app/place/_works_list.html:17
 #, python-format
@@ -2682,7 +2690,7 @@ msgstr "Baixar para Excel"
 #: templates/indigo_app/place/_works_list.html:46
 #, python-format
 msgid "Select all %(works_length)s matching works"
-msgstr ""
+msgstr "Selecione todos os trabalhos correspondentes %(works_length)s"
 
 #: templates/indigo_app/place/works.html:19
 msgid "Add new work"
@@ -3188,15 +3196,15 @@ msgstr "Publicação"
 
 #: views/places.py:64
 msgid "Repealed"
-msgstr ""
+msgstr "Revogado"
 
 #: views/places.py:72
 msgid "As-at date"
-msgstr ""
+msgstr "Data atual"
 
 #: views/places.py:76
 msgid "Consolidation date"
-msgstr ""
+msgstr "Data de consolidação"
 
 #: views/places.py:80
 msgid "Consolidation note"
@@ -3208,5 +3216,5 @@ msgstr "Isenção de responsabilidade"
 
 #: views/places.py:87
 msgid "Principal"
-msgstr ""
+msgstr "Diretor"
 

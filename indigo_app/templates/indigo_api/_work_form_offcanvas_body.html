@@ -3,14 +3,14 @@
 <div class="offcanvas-header border-bottom" id="offCanvasWorkForm">
   {% if form %}
     <button
-      class="btn btn-success save"
+      class="btn btn-success save ms-auto me-3"
       type="submit"
       form="edit-work-form"
     >
       {% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}
     </button>
   {% endif %}
-  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas" aria-label="Close">{% trans "Close" %}</button>
 </div>
 <div class="offcanvas-body">
   {% if form %}

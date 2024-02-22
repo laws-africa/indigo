@@ -111,6 +111,7 @@ class WorkForm(forms.ModelForm):
         self.aliases_formset = WorkAliasesFormSet(
             self.data if self.is_bound else None,
             work=self.instance,
+            form_kwargs={'work': self.instance, 'user': self.user},
             prefix="aliases",
             initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance else []
         )
@@ -123,6 +124,7 @@ class WorkForm(forms.ModelForm):
                 "user": self.user,
                 "form_kwargs": {
                     "work": self.instance,
+                    "user": self.user,
                 },
                 "prefix": "repeals_made",
                 "initial": [{
@@ -140,6 +142,7 @@ class WorkForm(forms.ModelForm):
                 "user": self.user,
                 "form_kwargs": {
                     "work": self.instance,
+                    "user": self.user,
                 },
                 "prefix": "amended_by",
                 "initial": [{
@@ -160,6 +163,7 @@ class WorkForm(forms.ModelForm):
                 "user": self.user,
                 "form_kwargs": {
                     "work": self.instance,
+                    "user": self.user,
                 },
                 "prefix": "amendments_made",
                 "initial": [{
@@ -180,6 +184,7 @@ class WorkForm(forms.ModelForm):
                 "user": self.user,
                 "form_kwargs": {
                     "work": self.instance,
+                    "user": self.user,
                 },
                 "prefix": "commencements_made",
                 "initial": [{
@@ -336,7 +341,7 @@ class WorkForm(forms.ModelForm):
             commencement.main = True
             commencement.save()
 
-class BaseWorkFormSet(forms.BaseFormSet):
+class BasePartialWorkFormSet(forms.BaseFormSet):
     def __init__(self, *args, work=None, user=None, **kwargs):
         self.work = work
         self.user = user
@@ -345,10 +350,18 @@ class BaseWorkFormSet(forms.BaseFormSet):
 
     def save(self):
         for form in self.forms:
-            form.save(user=self.user)
+            form.save()
 
 
-class WorkAliasForm(forms.Form):
+class BasePartialWorkForm(forms.Form):
+
+    def __init__(self, *args, work, user,  **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+        self.user = user
+
+
+class WorkAliasForm(BasePartialWorkForm):
     alias = forms.CharField(label=_('Alias'), max_length=1024, required=False)
 
     def save(self, *args, **kwargs):
@@ -358,12 +371,12 @@ class WorkAliasForm(forms.Form):
 WorkAliasesBaseFormSet = formset_factory(
     WorkAliasForm,
     extra=2,
-    formset=BaseWorkFormSet,
+    formset=BasePartialWorkFormSet,
 )
 
 class WorkAliasesFormSet(WorkAliasesBaseFormSet):
 
-    def save(self):
+    def save(self, *args, **kwargs):
         existing = [x.alias for x in self.work.aliases.all()]
         new = [form.cleaned_data['alias'] for form in self.forms if form.cleaned_data.get('alias')]
         if existing != new:
@@ -375,19 +388,12 @@ class WorkAliasesFormSet(WorkAliasesBaseFormSet):
                     WorkAlias.objects.create(work=self.work, alias=alias)
 
 
-class AmendmentForm(forms.ModelForm):
+class AmendmentForm(BasePartialWorkForm):
     amending_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     amended_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
-    class Meta:
-        model = Amendment
-        fields = ('amending_work', 'amended_work', 'date', 'id')
-
-    def __init__(self, work, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.work = work
 
     @cached_property
     def amending_work_obj(self):
@@ -397,7 +403,7 @@ class AmendmentForm(forms.ModelForm):
     def amended_work_obj(self):
         return Work.objects.filter(pk=self['amended_work'].value()).first()
 
-    def save(self, user, *args, **kwargs):
+    def save(self, *args, **kwargs):
         amendment = Amendment.objects.filter(pk=self.cleaned_data['id']).first()
 
         if self.cleaned_data.get('DELETE'):
@@ -409,15 +415,15 @@ class AmendmentForm(forms.ModelForm):
                 amendment.amending_work = self.cleaned_data['amending_work']
                 amendment.amended_work = self.cleaned_data['amended_work']
                 amendment.date = self.cleaned_data["date"]
-                amendment.updated_by_user = user
+                amendment.updated_by_user = self.user
                 amendment.save()
             else:
                 Amendment.objects.create(
                     amended_work=self.cleaned_data['amended_work'],
                     amending_work=self.cleaned_data['amending_work'],
                     date=self.cleaned_data["date"],
-                    created_by_user=user,
-                    updated_by_user=user,
+                    created_by_user=self.user,
+                    updated_by_user=self.user,
                 )
 
 
@@ -425,7 +431,7 @@ AmendmentsFormSet = formset_factory(
     AmendmentForm,
     extra=0,
     can_delete=True,
-    formset=BaseWorkFormSet,
+    formset=BasePartialWorkFormSet,
 )
 
 
@@ -448,13 +454,10 @@ class AmendmentsBaseFormSet(AmendmentsFormSet):
             seen.add((amending_work, amended_work, date))
 
 
-class RepealMadeForm(forms.Form):
+class RepealMadeForm(BasePartialWorkForm):
     repealed_work = forms.ModelChoiceField(queryset=Work.objects)
     repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
-    def __init__(self, work, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.work = work
 
     @cached_property
     def repealed_work_obj(self):
@@ -463,24 +466,24 @@ class RepealMadeForm(forms.Form):
     def is_repealed_work_saved(self):
         return self.repealed_work_obj.repealed_by == self.work
 
-    def save(self, user):
+    def save(self, *args, **kwargs):
         work = self.cleaned_data['repealed_work']
         if self.cleaned_data.get('DELETE'):
             if work.repealed_by == self.work:
                 work.repealed_by = None
                 work.repealed_date = None
-                work.save_with_revision(user=user)
+                work.save_with_revision(user=self.user)
         else:
             work.repealed_by = self.work
             work.repealed_date = self.cleaned_data['repealed_date']
-            work.save_with_revision(user=user)
+            work.save_with_revision(user=self.user)
 
 
 RepealMadeFormSet = formset_factory(
     RepealMadeForm,
     extra=0,
     can_delete=True,
-    formset=BaseWorkFormSet,
+    formset=BasePartialWorkFormSet,
 )
 
 
@@ -548,20 +551,13 @@ class CommencementForm(forms.ModelForm):
         if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
 
-class CommencementsPartialForm(forms.Form):
+class CommencementsPartialForm(BasePartialWorkForm):
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     commenced_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     note = forms.CharField(required=False, widget=forms.TextInput)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
-    # class Meta:
-    #     model = Commencement
-    #     fields = ('commencing_work', 'commenced_work', 'date', 'id', 'note',)
-
-    def __init__(self, work, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.work = work
 
     @cached_property
     def commencing_work_obj(self):
@@ -571,7 +567,7 @@ class CommencementsPartialForm(forms.Form):
     def commenced_work_obj(self):
         return Work.objects.filter(pk=self['commenced_work'].value()).first()
 
-    def save(self, user, *args, **kwargs):
+    def save(self, *args, **kwargs):
         commencement = Commencement.objects.filter(pk=self.cleaned_data['id']).first()
 
         if self.cleaned_data.get('DELETE'):
@@ -584,7 +580,7 @@ class CommencementsPartialForm(forms.Form):
                 commencement.commenced_work = self.cleaned_data['commenced_work']
                 commencement.date = self.cleaned_data["date"]
                 commencement.note = self.cleaned_data["note"]
-                commencement.updated_by_user = user
+                commencement.updated_by_user = self.user
                 commencement.save()
             else:
                 Commencement.objects.create(
@@ -592,15 +588,15 @@ class CommencementsPartialForm(forms.Form):
                     commenced_work=self.cleaned_data['commenced_work'],
                     date=self.cleaned_data["date"],
                     note=self.cleaned_data["note"],
-                    created_by_user=user,
-                    updated_by_user=user,
+                    created_by_user=self.user,
+                    updated_by_user=self.user,
                 )
 
 CommencementsFormset = formset_factory(
     CommencementsPartialForm,
     extra=0,
     can_delete=True,
-    formset=BaseWorkFormSet,
+    formset=BasePartialWorkFormSet,
 )
 
 class CommencementsMadeBaseFormset(CommencementsFormset):

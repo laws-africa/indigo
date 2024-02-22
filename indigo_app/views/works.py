@@ -1331,7 +1331,8 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
                                         user=self.request.user,
                                         work=self.work,
                                         prefix="repeals_made",
-                                        form_kwargs={"work": self.work})
+                                        form_kwargs={"work": self.work,
+                                                     "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset.forms:
@@ -1361,7 +1362,8 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
                work=self.work,
                prefix='repeals_made',
                initial=initial,
-               form_kwargs={"work": self.work}
+               form_kwargs={"work": self.work,
+                            "user": self.request.user}
            ),
         }
         context["work"] = self.work
@@ -1395,7 +1397,8 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                                         user=self.request.user,
                                         work=self.work,
                                         prefix=prefix,
-                                        form_kwargs={"work": self.work})
+                                        form_kwargs={"work": self.work,
+                                                     "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset:
@@ -1437,7 +1440,8 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                 work=self.work,
                 prefix=prefix,
                 initial=initial,
-                form_kwargs={"work": self.work}
+                form_kwargs={"work": self.work,
+                             "user": self.request.user}
             )
         context_data["prefix"] = prefix
         return context_data
@@ -1467,7 +1471,8 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
                                                user=self.request.user,
                                                work=self.work,
                                                prefix=prefix,
-                                               form_kwargs={"work": self.work})
+                                               form_kwargs={"work": self.work,
+                                                            "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset:
@@ -1504,7 +1509,8 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             work=self.work,
             prefix=prefix,
             initial=initial,
-            form_kwargs={"work": self.work}
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
         )
         context_data["prefix"] = prefix
         return context_data

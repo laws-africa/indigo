@@ -801,7 +801,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         resp = super().render_to_response(context, **response_kwargs)
         if self.request.htmx:
             # encode request.POST as a URL string
-            url = f"{self.request.path}?{self.request.POST.urlencode()}"
+            url = f"{self.request.path}?{self.form.data_as_url()}"
             resp = push_url(resp, url)
         return resp
 

@@ -164,8 +164,15 @@
   {% include 'indigo_api/timeline/_work_points_in_time.html' with work=work editable=False %}
   {% endblock %}
 
+  {% block comments %}
+    <div class="h4 mb-3 mt-5">{% trans "Comments" %}</div>
+    <div id="work-comment-list">
+      {% include 'indigo_api/_work_comments.html' with post_to_id="work-comment-list" %}
+    </div>
+  {% endblock %}
+
   {% block active_tasks %}
-  <div class="h4 mb-3 mt-5">Open tasks</div>
+  <div class="h4 mb-3 mt-5">{% trans "Open tasks" %}</div>
   <div class="card">
     {% include 'indigo_api/_task_list.html' with tasks=active_tasks place=None hide_works=True %}
   </div>
@@ -175,7 +182,7 @@
     {% if contributors %}
       <div class="row">
         <div class="col-sm-6">
-          <div class="h4 mb-3 mt-5">Contributors</div>
+          <div class="h4 mb-3 mt-5">{% trans "Contributors" %}</div>
           <div class="card">
             <div class="card-body">
               <ul class="list-unstyled mb-0">

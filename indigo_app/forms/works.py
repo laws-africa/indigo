@@ -1,6 +1,7 @@
 import re
 from datetime import date
 from functools import cached_property
+from itertools import chain
 
 from django import forms
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.utils.translation import gettext as _, gettext_lazy as _l
 
 from cobalt import FrbrUri
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias
+    Commencement, Workflow, Task, Country
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -174,6 +175,43 @@ class WorkForm(forms.ModelForm):
                 amendments_made_formset_kwargs["data"] = self.data
             self.amendments_made_formset = AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
             self.formsets.append(self.amendments_made_formset)
+
+            self.amendments_made_formset = self.AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
+
+            self.CommencementsMadeBaseFormset = CommencementsMadeBaseFormset
+
+            commencements_made_formset_kwargs = {
+                "form_kwargs": {
+                    "work": self.instance,
+                },
+                "prefix": "commencements_made",
+                "initial": [{
+                    "commenced_work": commencement.commenced_work,
+                    "commencing_work": self.instance,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in Commencement.objects.filter(commencing_work=self.instance)],
+            }
+
+            if self.is_bound:
+                commencements_made_formset_kwargs["data"] = self.data
+
+            self.commencements_made_formset = self.CommencementsMadeBaseFormset(**commencements_made_formset_kwargs)
+
+            self.formsets.append(self.commencements_made_formset)
+
+        self.fields['frbr_doctype'].choices = [
+            (y, x)
+            for (x, y) in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
+        ]
+        self.fields['frbr_subtype'].choices = [
+            (s.abbreviation, s.name)
+            for s in Subtype.objects.order_by('name')
+        ]
+
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.country)
 
     def property_fields(self):
         fields = [
@@ -484,8 +522,125 @@ class CommencementForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+        # all_provisions may have been nuked during clean
+        if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
+
+class CommencementsPartialForm(forms.Form):
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    commenced_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    note = forms.CharField(required=False, widget=forms.TextInput)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    # class Meta:
+    #     model = Commencement
+    #     fields = ('commencing_work', 'commenced_work', 'date', 'id', 'note',)
+
+    def __init__(self, work, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+
+    @cached_property
+    def commencing_work_obj(self):
+        return Work.objects.filter(pk=self['commencing_work'].value()).first()
+
+    @cached_property
+    def commenced_work_obj(self):
+        return Work.objects.filter(pk=self['commenced_work'].value()).first()
+
+    def save(self, user, *args, **kwargs):
+        commencement = Commencement.objects.filter(pk=self.cleaned_data['id']).first()
+
+        if self.cleaned_data.get('DELETE'):
+            if commencement:
+                commencement.delete()
+            return
+        else:
+            if commencement:
+                commencement.commencing_work = self.cleaned_data['commencing_work']
+                commencement.commenced_work = self.cleaned_data['commenced_work']
+                commencement.date = self.cleaned_data["date"]
+                commencement.note = self.cleaned_data["note"]
+                commencement.updated_by_user = user
+                commencement.save()
+            else:
+                Commencement.objects.create(
+                    commencing_work=self.cleaned_data['commencing_work'],
+                    commenced_work=self.cleaned_data['commenced_work'],
+                    date=self.cleaned_data["date"],
+                    note=self.cleaned_data["note"],
+                    created_by_user=user,
+                    updated_by_user=user,
+                )
+
+CommencementsFormset = formset_factory(
+    CommencementsPartialForm,
+    extra=0,
+    can_delete=True,
+)
+
+class CommencementsMadeBaseFormset(CommencementsFormset):
+
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            amending_work = form.cleaned_data.get('commencing_work')
+            amended_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (amending_work, amended_work, date) in seen:
+                raise ValidationError("Commenced work and date must be unique together.")
+            seen.add((amending_work, amended_work, date))
+
+    def save(self, user, work, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            for form in self.forms:
+                form.save(user)
+
+            commenced_counts = Commencement.objects.filter(commencing_work=work).values("commenced_work").annotate(num_commencements=Count("id")).order_by()
+            multiple_commencements = commenced_counts.filter(num_commencements__gt=1).values_list("commenced_work", flat=True)
+            single_commencements = commenced_counts.filter(num_commencements=1).values_list("commenced_work", flat=True)
+
+            for commencement in multiple_commencements:
+                commencements = Commencement.objects.filter(commencing_work=work, commenced_work=commencement).order_by("date")
+                all_commencements = Commencement.objects.filter(commenced_work=commencement)
+
+                # update all commencements first
+                for c in all_commencements:
+                    c.all_provisions = False
+                    c.save()
+
+                has_main_commencement = all_commencements.filter(main=True).exists()
+                if not has_main_commencement:
+                    # update the first commencement to be the main one
+                    first = commencements.first()
+                    first.main = True
+                    first.save()
+
+            for commencement in single_commencements:
+                existing_commencements = Commencement.objects.filter(commenced_work=commencement).exclude(commencing_work=work)
+                c = Commencement.objects.filter(commencing_work=work, commenced_work=commencement).first()
+
+                if not existing_commencements:
+                    c.main = True
+                    c.all_provisions = True
+                    c.save()
+                else:
+                    for existing in existing_commencements:
+                        existing.all_provisions = False
+                        existing.save()
+                    has_main_commencement = existing_commencements.filter(main=True).exists()
+                    if not has_main_commencement:
+                        # update the first commencement to be the main one
+                        c.main = True
+                        c.save()
 
 
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
@@ -825,7 +980,7 @@ class WorkBulkApproveForm(forms.Form):
     gazette_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     gazette_task_description = forms.CharField(required=False)
-    amendment_task_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    amendments = forms.ModelMultipleChoiceField(queryset=Amendment.objects, required=False)
     update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
@@ -833,13 +988,18 @@ class WorkBulkApproveForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.is_valid():
-            self.add_amendment_task_description_fields(self.cleaned_data.get('works_in_progress', []))
+            self.add_amendment_task_description_fields(self.get_amendments())
             self.full_clean()
 
-    def add_amendment_task_description_fields(self, works_in_progress):
-        for work in works_in_progress:
-            for amendment in work.amendments.all():
-                self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
+    def get_amendments(self):
+        works_in_progress = self.cleaned_data.get('works_in_progress', [])
+        all_amendments = [w.amendments.all() for w in works_in_progress if w.amendments.exists()] + \
+                         [w.amendments_made.all() for w in works_in_progress if w.amendments_made.exists()]
+        return set(chain(*all_amendments))
+
+    def add_amendment_task_description_fields(self, amendments):
+        for amendment in amendments:
+            self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
 
     def save_changes(self, request):
         for work in self.cleaned_data["works_in_progress"]:
@@ -859,14 +1019,13 @@ class WorkBulkApproveForm(forms.Form):
                 self.block_or_cancel_tasks(gazette_tasks, self.cleaned_data['update_gazette_tasks'], request.user)
 
         # amendment tasks
-        if self.cleaned_data.get('amendment_task_works'):
+        if self.cleaned_data.get('amendments'):
             amendment_tasks = []
-            for work in self.cleaned_data['amendment_task_works']:
-                for amendment in work.amendments.all():
-                    amendment_tasks.append(self.get_or_create_task(
-                        work=work, task_type='apply-amendment',
-                        description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
-                        user=request.user, timeline_date=amendment.date))
+            for amendment in self.cleaned_data['amendments']:
+                amendment_tasks.append(self.get_or_create_task(
+                    work=amendment.amended_work, task_type='apply-amendment',
+                    description=self.cleaned_data[f'amendment_task_description_{amendment.pk}'],
+                    user=request.user, timeline_date=amendment.date))
             if self.cleaned_data.get('update_amendment_tasks'):
                 self.block_or_cancel_tasks(amendment_tasks, self.cleaned_data['update_amendment_tasks'], request.user)
 

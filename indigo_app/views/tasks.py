@@ -1,14 +1,15 @@
-import json
-from itertools import chain
 import datetime
+import json
 import math
+from itertools import chain
 
+from actstream import action
+from allauth.account.utils import user_display
+from django import forms
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-
-from django import forms
-from django.core.exceptions import PermissionDenied
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery, OuterRef, Count, IntegerField
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -18,17 +19,13 @@ from django.utils.translation import gettext as _
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from django_comments.models import Comment
 from django.views.generic.edit import BaseFormView
-from allauth.account.utils import user_display
-from actstream import action
+from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
-from indigo_api.serializers import WorkSerializer, DocumentSerializer
-
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
 from indigo_app.views.places import WorkChooserView
 
 
@@ -145,13 +142,8 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         Task.decorate_submission_message([task], self)
         Task.decorate_permissions([task], self.request.user)
 
-        # add work to context
-        if task.work:
-            context['work'] = task.work
-            context['work_json'] = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
-
-        if task.code:
-            context['task_type'] = dict(Task.CODES)[task.code]
+        # include labels form
+        context['labels_form'] = TaskEditLabelsForm(instance=task)
 
         return context
 
@@ -159,6 +151,16 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
+
+
+class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
+    form_class = TaskEditLabelsForm
+    template_name = 'indigo_api/_task_labels.html'
+    permission_required = ('indigo_api.change_task',)
+
+    def form_valid(self, form):
+        form.save()
+        return self.form_invalid(form)
 
 
 class TaskCreateView(TaskViewBase, CreateView):

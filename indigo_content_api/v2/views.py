@@ -121,7 +121,7 @@ class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSe
 
 
 class TaxonomyTopicView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = TaxonomyTopic.get_root_nodes()
+    queryset = TaxonomyTopic.get_public_root_nodes()
     serializer_class = TaxonomyTopicSerializer
 
 

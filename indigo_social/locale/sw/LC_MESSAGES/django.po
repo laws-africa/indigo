@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:12+0200\n"
+"POT-Creation-Date: 2024-02-19 12:44+0200\n"
 "PO-Revision-Date: 2023-05-02 15:21\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
@@ -193,4 +193,3 @@ msgstr "Toka nje"
 #: templates/main.html:27
 msgid "Log in"
 msgstr "Ingia"
-

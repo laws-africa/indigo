@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 15:32+0200\n"
+"POT-Creation-Date: 2024-02-19 12:44+0200\n"
 "PO-Revision-Date: 2023-06-20 14:49\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
@@ -19,12 +19,8 @@ msgstr ""
 
 #: models/documents.py:271
 #, python-format
-msgid ""
-"This is the version of this document from %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"Esta é a versão deste documento do %(start)s e inclui quaisquer alterações "
-"publicadas até %(end)s."
+msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
+msgstr "Esta é a versão deste documento do %(start)s e inclui quaisquer alterações publicadas até %(end)s."
 
 #: models/documents.py:273
 #, python-format
@@ -33,12 +29,8 @@ msgstr "Esta é a versão deste documento do %(start)s."
 
 #: models/documents.py:276
 #, python-format
-msgid ""
-"This is the version of this document at %(start)s and includes any "
-"amendments published up to %(end)s."
-msgstr ""
-"Esta é a versão deste documento em %(start)s e inclui quaisquer alterações "
-"publicadas até %(end)s."
+msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
+msgstr "Esta é a versão deste documento em %(start)s e inclui quaisquer alterações publicadas até %(end)s."
 
 #: models/documents.py:278
 #, python-format
@@ -47,8 +39,7 @@ msgstr "Esta é a versão deste documento em %(start)s."
 
 #: models/documents.py:281
 #, python-format
-msgid ""
-"This is the version of this document as it was from %(start)s to %(end)s."
+msgid "This is the version of this document as it was from %(start)s to %(end)s."
 msgstr "Esta é a versão deste documento como era de %(start)s para %(end)s."
 
 #: models/documents.py:284
@@ -62,90 +53,76 @@ msgid "This is the version of this document as it was at %(start)s."
 msgstr "Esta é a versão deste documento como estava em %(start)s."
 
 #: models/places.py:191
-msgid ""
-"Note: The original publication document is not available and this content "
-"could not be verified."
-msgstr ""
-"Nota: O documento de publicação original não está disponível e este conteúdo "
-"não pôde ser verificado."
+msgid "Note: The original publication document is not available and this content could not be verified."
+msgstr "Nota: O documento de publicação original não está disponível e este conteúdo não pôde ser verificado."
 
-#: models/tasks.py:233
+#: models/tasks.py:238
 msgid "Are you sure you want to submit this task for review?"
 msgstr "Tem certeza que quer submeter esta tarefa para revisão?"
 
-#: models/tasks.py:235
+#: models/tasks.py:240
 #, python-format
 msgid "Are you sure you want to submit this task for review on behalf of %s?"
 msgstr "Tem certeza que quer submeter esta tarefa para revisão em nome de %s?"
 
-#: models/works.py:103
+#: models/works.py:105
 msgid "taxonomy topic"
 msgstr ""
 
-#: models/works.py:104
+#: models/works.py:106
 msgid "taxonomy topics"
 msgstr ""
 
-#: models/works.py:444
+#: models/works.py:427
 msgid "Not commenced"
 msgstr "Não iniciado"
 
-#: models/works.py:449
+#: models/works.py:432
 #, fuzzy
 #| msgid "There are multiple commencements:"
 msgid "There are multiple commencements"
 msgstr "Há vários inícios:"
 
-#: models/works.py:539
+#: models/works.py:530
 #, python-format
 msgid "No such locality for this country: %s"
 msgstr "Não existe tal localidade para este país: %s"
 
-#: models/works.py:549
+#: models/works.py:540
 msgid "Invalid FRBR URI"
 msgstr "FRBR URI Inválido"
 
+#: templates/admin/tree_change_list.html:7
+msgid "Search"
+msgstr ""
+
+#: templates/admin/tree_change_list.html:8
+msgid "Collapse all"
+msgstr ""
+
+#: templates/admin/tree_change_list.html:9
+msgid "Expand all"
+msgstr ""
+
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
-"title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span "
-"class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
-"[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-"
-"title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span "
-"class=\"amendment-date\">%(date)s</span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid ""
-"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-"
-"title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</"
-"span>]"
-msgstr ""
-"[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-"
-"title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</"
-"span>]"
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
-"title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-"
-"date\">%(date)s</span>]"
-msgstr ""
-"[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-"
-"title\">%(title)s (%(numtitle)s)</a> em <span class=\"repeal-"
-"date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> em <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
-msgid ""
-"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-"
-"title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr ""
-"[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-"
-"title\">%(title)s</a> em <span class=\"repeal-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> em <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_commencements_table.html:6
 msgid "Provisions"
@@ -190,63 +167,6 @@ msgstr "ainda não iniciado"
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr "Aprovado em %(date)s"
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
-#, fuzzy, python-format
-#| msgid "Commencement date unknown"
-msgid "Document date: %(date)s"
-msgstr "Data de início desconhecida"
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:43
-msgid ""
-"Please note that there may have been updates since this file was created."
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:46
-#, python-format
-msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:49
-#, python-format
-msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:56
-msgid "About this collection"
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
-msgid ""
-"The legislation in this collection has been reproduced as it was originally "
-"printed in the Government Gazette, with improved formatting and with minor "
-"typographical errors corrected. All amendments have been applied directly to "
-"the text and annotated. A scan of the original gazette of each piece of "
-"legislation (including amendments) is available for reference."
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:67
-msgid "There is no copyright on the legislative content of this document."
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:68
-msgid ""
-"This PDF copy is licensed under a Creative Commons Attribution 4.0 License "
-"(CC BY 4.0). Share widely and freely."
-msgstr ""
-
-#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:78
-#, fuzzy
-#| msgid "Table of Contents"
-msgid "Contents"
-msgstr "Índice"
-
-#: templates/indigo_api/akn/export/pdf_static_content_akn.xml:17
-#, python-format
-msgid ""
-"By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed "
-"under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17
 #, fuzzy
@@ -345,17 +265,25 @@ msgstr ""
 
 #: views/documents.py:98
 msgid "DELETE not allowed for published documents, mark as a draft first."
-msgstr ""
-"DELETE não permitido para documentos publicados, marque como rascunho "
-"primeiro."
+msgstr "DELETE não permitido para documentos publicados, marque como rascunho primeiro."
 
 #: views/documents.py:207
 msgid "Cannot create a task for a reply annotation."
 msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
 
-#: views/documents.py:358
+#: views/documents.py:359
 msgid "Error during import"
 msgstr "Erro durante a importação"
+
+#, fuzzy, python-format
+#~| msgid "Commencement date unknown"
+#~ msgid "Document date: %(date)s"
+#~ msgstr "Data de início desconhecida"
+
+#, fuzzy
+#~| msgid "Table of Contents"
+#~ msgid "Contents"
+#~ msgstr "Índice"
 
 #, fuzzy, python-format
 #~| msgid "Commenced on %(date)s"

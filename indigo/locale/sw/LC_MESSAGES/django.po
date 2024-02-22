@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 09:54+0200\n"
+"POT-Creation-Date: 2024-02-19 12:44+0200\n"
 "PO-Revision-Date: 2023-05-02 15:21\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /master/indigo/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 137\n"
 
-#: analysis/toc/base.py:13 analysis/work_detail/base.py:65
+#: analysis/toc/base.py:13
 msgid "Act"
 msgstr "Tenda"
 
@@ -71,70 +71,55 @@ msgstr "Sura ya %(cap)s"
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s ya %(year)s"
 
-#: bulk_creator.py:294
+#: bulk_creator.py:295
 #, python-format
 msgid "Error talking to Google Sheets: %s"
 msgstr "Hitilafu katika kuzungumza na Majedwali ya Google: %s"
 
-#: bulk_creator.py:301
-msgid ""
-"Your sheet did not import successfully; please check that you have link "
-"sharing ON (Anyone with the link)."
-msgstr ""
-"Laha yako haikufaulu kuleta; tafadhali hakikisha kuwa una kushiriki kiungo "
-"ILIYOWASHWA (Mtu yeyote aliye na kiungo)."
+#: bulk_creator.py:302
+msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
+msgstr "Laha yako haikufaulu kuleta; tafadhali hakikisha kuwa una kushiriki kiungo ILIYOWASHWA (Mtu yeyote aliye na kiungo)."
 
-#: bulk_creator.py:334
+#: bulk_creator.py:335
 #, python-format
-msgid ""
-"Unable to access spreadsheet. Is the URL correct and have you shared it with "
-"%s?"
-msgstr ""
-"Imeshindwa kufikia lahajedwali. Je, URL ni sahihi na umeishiriki na %s?"
+msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
+msgstr "Imeshindwa kufikia lahajedwali. Je, URL ni sahihi na umeishiriki na %s?"
 
-#: bulk_creator.py:340
+#: bulk_creator.py:341
 #, python-format
 msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
 msgstr "Inaonekana hakuna data katika laha %(name)s kati ya %(id)s"
 
-#: bulk_creator.py:956
+#: bulk_creator.py:963
 msgid "Link gazette"
 msgstr "Unganisha gazeti"
 
-#: bulk_creator.py:957
+#: bulk_creator.py:964
 msgid ""
-"This work's gazette (original publication document) couldn't be linked "
-"automatically.\n"
+"This work's gazette (original publication document) couldn't be linked automatically.\n"
 "\n"
 "Find it and upload it manually."
 msgstr ""
-"Gazeti la kazi hii (hati halisi ya uchapishaji) haikuweza kuunganishwa "
-"kiotomatiki.\n"
+"Gazeti la kazi hii (hati halisi ya uchapishaji) haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Ipate na uipakie wewe mwenyewe."
 
-#: bulk_creator.py:962
+#: bulk_creator.py:969
 msgid "Import content"
 msgstr "Ingiza maudhui"
 
-#: bulk_creator.py:963
-msgid ""
-"Import the content for this work – either the initial publication (usually a "
-"PDF of the Gazette) or a later consolidation (usually a .docx file)."
-msgstr ""
-"Ingiza maudhui ya kazi hii - ama uchapishaji wa awali (kwa kawaida ni PDF ya "
-"Gazeti la Serikali) au ujumuishaji wa baadaye (kwa kawaida faili ya .docx)."
+#: bulk_creator.py:970
+msgid "Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file)."
+msgstr "Ingiza maudhui ya kazi hii - ama uchapishaji wa awali (kwa kawaida ni PDF ya Gazeti la Serikali) au ujumuishaji wa baadaye (kwa kawaida faili ya .docx)."
 
-#: bulk_creator.py:966
+#: bulk_creator.py:973
 msgid "Link commencement (passive)"
 msgstr "Kuanza kwa kiungo (kitendo)"
 
-#: bulk_creator.py:967
+#: bulk_creator.py:974
 #, python-format
 msgid ""
-"It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s "
-"(see row %(row_num)s of the spreadsheet), but it couldn't be linked "
-"automatically. This work has thus been recorded as 'Not commenced'.\n"
+"It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -142,9 +127,7 @@ msgid ""
 "\n"
 "Please link the commencement date and commencing work manually."
 msgstr ""
-"Inaonekana kazi hii ilianzishwa na \"%(commenced_by)s\" kwenye %(date)s "
-"(tazama safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza "
-"kuunganishwa kiotomatiki. Kwa hivyo kazi hii imerekodiwa kama 'Haijaanza'.\n"
+"Inaonekana kazi hii ilianzishwa na \"%(commenced_by)s\" kwenye %(date)s (tazama safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki. Kwa hivyo kazi hii imerekodiwa kama 'Haijaanza'.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "– kuchapa kwenye lahajedwali\n"
@@ -152,39 +135,33 @@ msgstr ""
 "\n"
 "Tafadhali unganisha tarehe ya kuanza na kuanza kazi wewe mwenyewe."
 
-#: bulk_creator.py:975
+#: bulk_creator.py:982
 msgid "(unknown)"
 msgstr "(haijulikani)"
 
-#: bulk_creator.py:980
+#: bulk_creator.py:987
 msgid "'Commences on' date missing"
 msgstr "Tarehe ya 'Kuanza' haipo"
 
-#: bulk_creator.py:981
+#: bulk_creator.py:988
 #, python-format
 msgid ""
-"It looks like this work commences \"%(commences)s\" (see row %(row_num)s of "
-"the spreadsheet), but 'commences_on_date' wasn't given so no action has been "
-"taken.\n"
+"It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n"
 "\n"
 "If it should be linked, please do so manually."
 msgstr ""
-"Inaonekana kazi hii inaanza \"%(commences)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini 'tarehe_ya_tarehe' haikutolewa kwa hivyo "
-"hakuna hatua iliyochukuliwa.\n"
+"Inaonekana kazi hii inaanza \"%(commences)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini 'tarehe_ya_tarehe' haikutolewa kwa hivyo hakuna hatua iliyochukuliwa.\n"
 "\n"
 "Ikiwa inapaswa kuunganishwa, tafadhali fanya hivyo mwenyewe."
 
-#: bulk_creator.py:989
+#: bulk_creator.py:996
 msgid "Link commencement (active)"
 msgstr "Kuanza kwa kiungo (inafanya kazi)"
 
-#: bulk_creator.py:990
+#: bulk_creator.py:997
 #, python-format
 msgid ""
-"It looks like this work commences \"%(commences)s\" on %(date)s (see row "
-"%(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no "
-"action has been taken.\n"
+"It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -192,9 +169,7 @@ msgid ""
 "\n"
 "If the commencement should be linked, please do so manually."
 msgstr ""
-"Inaonekana kazi hii inaanza \"%(commences)s\" kwenye %(date)s (tazama safu "
-"mlalo %(row_num)s ya lahajedwali), lakini \"%(commences)s\" haikupatikana, "
-"kwa hivyo hakuna hatua iliyochukuliwa.\n"
+"Inaonekana kazi hii inaanza \"%(commences)s\" kwenye %(date)s (tazama safu mlalo %(row_num)s ya lahajedwali), lakini \"%(commences)s\" haikupatikana, kwa hivyo hakuna hatua iliyochukuliwa.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "- kosa la kuchapa kwenye lahajedwali\n"
@@ -202,15 +177,14 @@ msgstr ""
 "\n"
 "Ikiwa kuanza kunapaswa kuunganishwa, tafadhali fanya hivyo mwenyewe."
 
-#: bulk_creator.py:1003
+#: bulk_creator.py:1010
 msgid "Link amendment (active)"
 msgstr "Marekebisho ya kiungo (yanatumika)"
 
-#: bulk_creator.py:1007
+#: bulk_creator.py:1014
 #, python-format
 msgid ""
-"It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of "
-"the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -219,26 +193,23 @@ msgid ""
 "\n"
 "Please link the amendment manually."
 msgstr ""
-"Inaonekana kazi hii inarekebisha \"%(amended_work)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi hii inarekebisha \"%(amended_work)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "– kosa la kuandika kwenye lahajedwali\n"
-"– zaidi ya kazi moja iliyorekebishwa iliorodheshwa (inafanya kazi tu ikiwa "
-"kuna moja)\n"
+"– zaidi ya kazi moja iliyorekebishwa iliorodheshwa (inafanya kazi tu ikiwa kuna moja)\n"
 "– kazi iliyorekebishwa haipo kwenye mfumo.\n"
 "\n"
 "Tafadhali unganisha marekebisho wewe mwenyewe."
 
-#: bulk_creator.py:1020
+#: bulk_creator.py:1027
 msgid "Link amendment (passive)"
 msgstr "Marekebisho ya kiungo (ya kupita kiasi)"
 
-#: bulk_creator.py:1024
+#: bulk_creator.py:1031
 #, python-format
 msgid ""
-"It looks like this work is amended by \"%(amending_work)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -247,67 +218,53 @@ msgid ""
 "\n"
 "Please link the amendment manually."
 msgstr ""
-"Inaonekana kazi hii imerekebishwa na \"%(amending_work)s\" (angalia safu "
-"mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa "
-"kiotomatiki.\n"
+"Inaonekana kazi hii imerekebishwa na \"%(amending_work)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "- kosa la kuchapa kwenye lahajedwali\n"
-"- zaidi ya kazi moja ya kurekebisha iliorodheshwa (inafanya kazi tu ikiwa "
-"kuna moja)\n"
+"- zaidi ya kazi moja ya kurekebisha iliorodheshwa (inafanya kazi tu ikiwa kuna moja)\n"
 "- kazi ya kurekebisha haipo kwenye mfumo.\n"
 "\n"
 "Tafadhali unganisha marekebisho wewe mwenyewe."
 
-#: bulk_creator.py:1037
+#: bulk_creator.py:1044
 msgid "Link amendment (pending commencement)"
 msgstr "Marekebisho ya kiungo (inasubiri kuanza)"
 
-#: bulk_creator.py:1038
+#: bulk_creator.py:1045
 #, python-format
 msgid ""
-"It looks like this work amends %(amended_title)s (%(numbered_title)s), but "
-"it couldn't be linked automatically because this work hasn't commenced yet "
-"(so there's no date for the amendment).\n"
+"It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n"
 "\n"
-"Please link the amendment manually (and apply it) when this work comes into "
-"force."
+"Please link the amendment manually (and apply it) when this work comes into force."
 msgstr ""
-"Inaonekana kazi hii inarekebisha %(amended_title)s (%(numbered_title)s), "
-"lakini haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza "
-"(kwa hivyo hakuna tarehe ya marekebisho).\n"
+"Inaonekana kazi hii inarekebisha %(amended_title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza (kwa hivyo hakuna tarehe ya marekebisho).\n"
 "\n"
-"Tafadhali unganisha marekebisho wewe mwenyewe (na uitumie) kazi hii "
-"inapoanza kutumika."
+"Tafadhali unganisha marekebisho wewe mwenyewe (na uitumie) kazi hii inapoanza kutumika."
 
-#: bulk_creator.py:1046
+#: bulk_creator.py:1053
 msgid "Apply amendment"
 msgstr "Tekeleza marekebisho"
 
-#: bulk_creator.py:1047
+#: bulk_creator.py:1054
 #, python-format
 msgid ""
-"Apply the amendments made by %(amending_title)s (%(numbered_title)s) on "
-"%(date)s.\n"
+"Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n"
 "\n"
-"The amendment has already been linked, so start at Step 3 of https://docs."
-"laws.africa/managing-works/amending-works."
+"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
 msgstr ""
-"Tekeleza marekebisho yaliyofanywa na %(amending_title)s (%(numbered_title)s) "
-"tarehe %(date)s.\n"
+"Tekeleza marekebisho yaliyofanywa na %(amending_title)s (%(numbered_title)s) tarehe %(date)s.\n"
 "\n"
-"Marekebisho tayari yameunganishwa, kwa hivyo anza katika Hatua ya 3 ya "
-"https://docs.laws.africa/managing-works/amending-works."
+"Marekebisho tayari yameunganishwa, kwa hivyo anza katika Hatua ya 3 ya https://docs.laws.africa/managing-works/amending-works."
 
-#: bulk_creator.py:1056
+#: bulk_creator.py:1063
 msgid "Link repealed by"
 msgstr "Kiungo kimefutwa na"
 
-#: bulk_creator.py:1057
+#: bulk_creator.py:1064
 #, python-format
 msgid ""
-"It looks like this work was repealed by \"%(repealed_by)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -315,8 +272,7 @@ msgid ""
 "\n"
 "Please link the repeal manually."
 msgstr ""
-"Inaonekana kazi hii ilifutwa na \"%(repealed_by)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi hii ilifutwa na \"%(repealed_by)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "- kosa la kuandika kwenye lahajedwali\n"
@@ -324,15 +280,14 @@ msgstr ""
 "\n"
 "Tafadhali unganisha ubatilishaji wewe mwenyewe."
 
-#: bulk_creator.py:1069 bulk_creator.py:1106
+#: bulk_creator.py:1076 bulk_creator.py:1113
 msgid "Link repeal"
 msgstr "Kufutwa kwa kiungo"
 
-#: bulk_creator.py:1070
+#: bulk_creator.py:1077
 #, python-format
 msgid ""
-"It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the "
-"spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -340,8 +295,7 @@ msgid ""
 "\n"
 "Please link the repeal manually."
 msgstr ""
-"Inaonekana kazi hii inabatilisha \"%(repeals)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi hii inabatilisha \"%(repeals)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "- kosa la kuandika kwenye lahajedwali\n"
@@ -349,75 +303,59 @@ msgstr ""
 "\n"
 "Tafadhali unganisha ubatilishaji wewe mwenyewe."
 
-#: bulk_creator.py:1082
+#: bulk_creator.py:1089
 msgid "Check / update repeal"
 msgstr "Angalia / sasisha kufuta"
 
-#: bulk_creator.py:1083
+#: bulk_creator.py:1090
 #, python-format
 msgid ""
-"On the spreadsheet (see row %(row_num)s), it says that this work was "
-"repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
+"On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
 "\n"
-"But this work is already listed as having been repealed by %(repealed_by)s "
-"(%(repealed_by_numbered_title)s), so the repeal information wasn't updated "
-"automatically.\n"
+"But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n"
 "\n"
-"If the old / existing repeal information was wrong, update it manually. "
-"Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
+"If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
 msgstr ""
-"Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii "
-"ilifutwa na %(repealing_title)s (%(repealing_numbered_title)s).\n"
+"Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii ilifutwa na %(repealing_title)s (%(repealing_numbered_title)s).\n"
 "\n"
-"Lakini kazi hii tayari imeorodheshwa kuwa imefutwa na %(repealed_by)s "
-"(%(repealed_by_numbered_title)s), kwa hivyo maelezo ya kufuta hayakusasishwa "
-"kiotomatiki.\n"
+"Lakini kazi hii tayari imeorodheshwa kuwa imefutwa na %(repealed_by)s (%(repealed_by_numbered_title)s), kwa hivyo maelezo ya kufuta hayakusasishwa kiotomatiki.\n"
 "\n"
-"Ikiwa maelezo ya zamani/yaliyopo ya kufuta hayakuwa sahihi, isasishe wewe "
-"mwenyewe. Vinginevyo (ikiwa lahajedwali haikuwa sahihi), ghairi jukumu hili "
-"kwa maoni.\n"
+"Ikiwa maelezo ya zamani/yaliyopo ya kufuta hayakuwa sahihi, isasishe wewe mwenyewe. Vinginevyo (ikiwa lahajedwali haikuwa sahihi), ghairi jukumu hili kwa maoni.\n"
 
-#: bulk_creator.py:1097
+#: bulk_creator.py:1104
 msgid "Link repeal (pending commencement)"
 msgstr "Kufutwa kwa kiungo (inasubiri kuanza)"
 
-#: bulk_creator.py:1098
+#: bulk_creator.py:1105
 #, python-format
 msgid ""
-"It looks like this work repeals %(title)s (%(numbered_title)s), but it "
-"couldn't be linked automatically because this work hasn't commenced yet (so "
-"there's no date for the repeal).\n"
+"It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n"
 "\n"
 "Please link the repeal manually when this work comes into force."
 msgstr ""
-"Inaonekana kazi hii inabatilisha %(title)s (%(numbered_title)s), lakini "
-"haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza (kwa "
-"hivyo hakuna tarehe ya kufutwa).\n"
+"Inaonekana kazi hii inabatilisha %(title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza (kwa hivyo hakuna tarehe ya kufutwa).\n"
 "\n"
 "Tafadhali unganisha ubatilishaji mwenyewe wakati kazi hii inaanza kutumika."
 
-#: bulk_creator.py:1107
+#: bulk_creator.py:1114
 #, python-format
 msgid ""
-"It looks like this work was repealed by %(title)s (%(numbered_title)s), but "
-"it couldn't be linked automatically.\n"
+"It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n"
 "\n"
 "Please link it manually."
 msgstr ""
-"Inaonekana kazi hii ilifutwa na %(title)s (%(numbered_title)s), lakini "
-"haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi hii ilifutwa na %(title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Tafadhali iunganishe wewe mwenyewe."
 
-#: bulk_creator.py:1115
+#: bulk_creator.py:1122
 msgid "Link primary work"
 msgstr "Unganisha kazi ya msingi"
 
-#: bulk_creator.py:1116
+#: bulk_creator.py:1123
 #, python-format
 msgid ""
-"It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s "
-"of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -425,8 +363,7 @@ msgid ""
 "\n"
 "Please link the primary work manually."
 msgstr ""
-"Inaonekana kazi ya msingi ya kazi hii ni \"%(work)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi ya msingi ya kazi hii ni \"%(work)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "– kuchapa kwenye lahajedwali\n"
@@ -434,15 +371,14 @@ msgstr ""
 "\n"
 "Tafadhali unganisha kazi ya msingi kwa mikono."
 
-#: bulk_creator.py:1128
+#: bulk_creator.py:1135
 msgid "Link subleg"
 msgstr "Kiungo subleg"
 
-#: bulk_creator.py:1129
+#: bulk_creator.py:1136
 #, python-format
 msgid ""
-"It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of "
-"the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
@@ -450,8 +386,7 @@ msgid ""
 "\n"
 "Please link the subleg work manually."
 msgstr ""
-"Inaonekana kazi hii ina subleg \"%(subleg)s\" (angalia safu mlalo "
-"%(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
+"Inaonekana kazi hii ina subleg \"%(subleg)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "– kuchapa kwenye lahajedwali\n"
@@ -459,62 +394,49 @@ msgstr ""
 "\n"
 "Tafadhali unganisha kazi ya subleg kwa mikono."
 
-#: bulk_creator.py:1141
+#: bulk_creator.py:1148
 msgid "Check / update primary work"
 msgstr "Angalia / sasisha kazi ya msingi"
 
-#: bulk_creator.py:1142
+#: bulk_creator.py:1149
 #, python-format
 msgid ""
-"On the spreadsheet (see row %(row_num)s), it says that this work is subleg "
-"under %(title)s (%(numbered_title)s).\n"
+"On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n"
 "\n"
 "But this work is already subleg under %(parent)s, so nothing was done.\n"
 "\n"
-"Double-check which work this work is subleg of and update it manually if "
-"needed. If the spreadsheet was wrong, cancel this task with a comment."
+"Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment."
 msgstr ""
-"Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii ni "
-"subleg chini ya %(title)s (%(numbered_title)s).\n"
+"Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii ni subleg chini ya %(title)s (%(numbered_title)s).\n"
 "\n"
-"Lakini kazi hii tayari ni subleg under %(parent)s, kwa hivyo hakuna "
-"kilichofanyika.\n"
+"Lakini kazi hii tayari ni subleg under %(parent)s, kwa hivyo hakuna kilichofanyika.\n"
 "\n"
-"Angalia mara mbili ni kazi gani ambayo kazi hii imedhibitiwa na usasishe "
-"mwenyewe ikiwa inahitajika. Ikiwa lahajedwali haikuwa sahihi, ghairi jukumu "
-"hili kwa maoni."
+"Angalia mara mbili ni kazi gani ambayo kazi hii imedhibitiwa na usasishe mwenyewe ikiwa inahitajika. Ikiwa lahajedwali haikuwa sahihi, ghairi jukumu hili kwa maoni."
 
-#: bulk_creator.py:1154
+#: bulk_creator.py:1161
 msgid "Link taxonomy"
 msgstr "Unganisha taxonomy"
 
-#: bulk_creator.py:1155
+#: bulk_creator.py:1162
 #, python-format
 msgid ""
-"It looks like this work has the following taxonomy: \"%(topics)s\" (see row "
-"%(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
+"It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
 "\n"
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
 "– the taxonomy doesn't exist on the system."
 msgstr ""
-"Inaonekana kazi hii ina taksonomia ifuatayo: \"%(topics)s\" (angalia safu "
-"mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa "
-"kiotomatiki.\n"
+"Inaonekana kazi hii ina taksonomia ifuatayo: \"%(topics)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini haikuweza kuunganishwa kiotomatiki.\n"
 "\n"
 "Sababu zinazowezekana:\n"
 "– kosa la kuchapa kwenye lahajedwali\n"
 "– taknologia haipo kwenye mfumo."
 
-#: bulk_creator.py:1235
+#: bulk_creator.py:1242
 #, python-format
 msgid "%s (about to be imported)"
 msgstr "%s (inakaribia kuingizwa)"
 
 #: pipelines/text.py:30
-msgid ""
-"There is not enough text in the document to import. You may need to OCR the "
-"file first."
-msgstr ""
-"Hakuna maandishi ya kutosha katika hati ya kuleta. Huenda ukahitaji OCR "
-"faili kwanza."
+msgid "There is not enough text in the document to import. You may need to OCR the file first."
+msgstr "Hakuna maandishi ya kutosha katika hati ya kuleta. Huenda ukahitaji OCR faili kwanza."

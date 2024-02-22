@@ -32,7 +32,7 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, WorkAliasesFormSet
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, WorkAliasesFormSet, CommencementsMadeBaseFormset
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -321,6 +321,11 @@ class WorkOverviewView(WorkViewBase, DetailView):
             user.task_count = counter[user.id]
 
         return sorted(users.values(), key=lambda u: -u.task_count)
+
+
+class WorkCommentsView(WorkViewBase, DetailView):
+    """HTMX view to render updated work comments"""
+    template_name = 'indigo_api/_work_comments.html'
 
 
 class WorkCommencementsView(WorkViewBase, DetailView):
@@ -1422,5 +1427,66 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                 initial=initial,
                 form_kwargs={"work": self.work}
             )
+        context_data["prefix"] = prefix
+        return context_data
+
+
+class WorkFormCommencementsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_commencements_made_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        commencement_made = self.request.POST.get("commencements_made")
+        deleting = self.request.GET.get("delete")
+        commencement_work_id = None
+        prefix = None
+
+        if commencement_made:
+            commencement_work_id = commencement_made
+            prefix = "commencements_made"
+        elif deleting:
+            prefix = deleting
+
+        context_data = super().get_context_data(**kwargs)
+        formset = CommencementsMadeBaseFormset(self.request.POST, prefix=prefix, form_kwargs={"work": self.work})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not form.cleaned_data.get('id'):
+                        continue
+                initial.append({
+                    "commenced_work": form.cleaned_data["commenced_work"],
+                    "commencing_work": form.cleaned_data["commencing_work"],
+                    "note": form.cleaned_data["note"],
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            if commencement_work_id:
+                work = Work.objects.filter(pk=commencement_work_id).first()
+                if work:
+                    if prefix == "commencements_made":
+                        initial.append({
+                            "commenced_work": work,
+                            "commencing_work": self.work,
+                            "date": work.commencement_date,
+                        })
+
+        else:
+            context_data['formset'] = formset
+            context_data["prefix"] = prefix
+
+            return context_data
+
+        context_data['formset'] = CommencementsMadeBaseFormset(
+            prefix=prefix,
+            initial=initial,
+            form_kwargs={"work": self.work}
+        )
         context_data["prefix"] = prefix
         return context_data

@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<ul class="list-unstyled">
+  {% with task.labels.all as labels %}
+    {% if labels %}
+      {% for label in labels %}
+        <li><span class="badge text-bg-secondary" title="{{ label.description }}">{{ label.title }}</span></li>
+      {% endfor %}
+    {% else %}
+      <li><em>{% trans "None" %}</em></li>
+    {% endif %}
+  {% endwith %}
+</ul>

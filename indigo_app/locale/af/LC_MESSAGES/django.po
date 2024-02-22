@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-22 09:01+0200\n"
-"PO-Revision-Date: 2023-05-02 15:21\n"
+"PO-Revision-Date: 2024-02-22 07:11\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -685,10 +685,8 @@ msgstr ""
 
 #: templates/indigo_api/_work_commencement_tables.html:12
 #: templates/indigo_api/_work_commencement_tables.html:48
-#, fuzzy
-#| msgid "Note:"
 msgid "Note"
-msgstr "Nota:"
+msgstr ""
 
 #: templates/indigo_api/_work_commencement_tables.html:13
 #: templates/indigo_api/_work_commencement_tables.html:49
@@ -2543,12 +2541,10 @@ msgstr ""
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
 msgstr[0] ""
@@ -2581,18 +2577,15 @@ msgstr ""
 
 #: templates/indigo_app/place/_bulk_approve_form.html:124
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
 "                          "
 msgstr ""
 
 #: templates/indigo_app/place/_bulk_approve_form.html:128
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
 msgstr ""
 
@@ -2876,24 +2869,20 @@ msgid "Your account"
 msgstr ""
 
 #: templates/place/_place_cards.html:14
-msgid ""
-"\n"
+msgid "\n"
 "                  Work\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Works\n"
 "                "
 msgstr[0] ""
 msgstr[1] ""
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                  Task\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Tasks\n"
 "                "
 msgstr[0] ""
@@ -2904,12 +2893,10 @@ msgid "As at date"
 msgstr ""
 
 #: templates/place/_place_cards.html:43
-msgid ""
-"\n"
+msgid "\n"
 "                  Page\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Pages\n"
 "                "
 msgstr[0] ""
@@ -3211,5 +3198,3 @@ msgstr ""
 msgid "Principal"
 msgstr ""
 
-#~ msgid "Not commenced"
-#~ msgstr "Nog nie in werking"

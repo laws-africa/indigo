@@ -24,6 +24,7 @@ from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
+from indigo_api.serializers import WorkSerializer
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
@@ -141,6 +142,12 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message([task], self)
         Task.decorate_permissions([task], self.request.user)
+
+        # add work to context
+        if task.work:
+            context['work'] = task.work
+            context['work_json'] = json.dumps(
+                WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
         # include labels form
         context['labels_form'] = TaskEditLabelsForm(instance=task)

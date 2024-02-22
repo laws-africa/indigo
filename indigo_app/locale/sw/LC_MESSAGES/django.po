@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-22 09:01+0200\n"
-"PO-Revision-Date: 2024-02-22 07:11\n"
+"PO-Revision-Date: 2024-02-22 08:12\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -1107,220 +1107,220 @@ msgstr "Kuanzisha Dibaji"
 
 #: templates/indigo_api/document/_cheatsheet.html:36
 msgid "Mark the start of the Preamble, after the Preface and before the body."
-msgstr ""
+msgstr "Weka alama kwenye mwanzo wa Dibaji, baada ya Dibaji na kabla ya mwili."
 
 #: templates/indigo_api/document/_cheatsheet.html:48
 msgid "Markup the long title"
-msgstr ""
+msgstr "Weka alama kwa kichwa kirefu"
 
 #: templates/indigo_api/document/_cheatsheet.html:52
 msgid "Indicate the long title of the work using <code>LONGTITLE</code>."
-msgstr ""
+msgstr "Onyesha kichwa kirefu cha kazi ukitumia <code>LONGTITLE</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:75
 msgid "Starting the body of the document"
-msgstr ""
+msgstr "Kuanzisha mwili wa hati"
 
 #: templates/indigo_api/document/_cheatsheet.html:79
 msgid "Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble."
-msgstr ""
+msgstr "Anzisha mwili wa hati kwa <code>BODY</code>. Hii inakuja baada ya Dibaji na Dibaji."
 
 #: templates/indigo_api/document/_cheatsheet.html:94
 msgid "Starting a new Chapter"
-msgstr ""
+msgstr "Kuanzisha Sura mpya"
 
 #: templates/indigo_api/document/_cheatsheet.html:98
 msgid "Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha Sura kwa <code>SURA</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:123
 msgid "Starting a new Part"
-msgstr ""
+msgstr "Kuanzisha Sehemu Mpya"
 
 #: templates/indigo_api/document/_cheatsheet.html:127
 msgid "Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha Sehemu kwa <code>SEHEMU</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:152
 msgid "Starting a new Subpart"
-msgstr ""
+msgstr "Kuanzisha Sehemu ndogo mpya"
 
 #: templates/indigo_api/document/_cheatsheet.html:156
 msgid "A subpart is a grouping container, like a Part, but without \"Part\" in the generated heading."
-msgstr ""
+msgstr "Sehemu ndogo ni chombo cha kupanga, kama Sehemu, lakini bila \"Sehemu\" kwenye kichwa kilichotolewa."
 
 #: templates/indigo_api/document/_cheatsheet.html:161
 msgid "Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha sehemu ndogo kwa <code>SUBPART</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:186
 msgid "Include a Crossheading"
-msgstr ""
+msgstr "Jumuisha Kichwa Mtambuka"
 
 #: templates/indigo_api/document/_cheatsheet.html:190
 msgid "Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart."
-msgstr ""
+msgstr "Tumia <code>CROSSHEADING</code> kujumuisha kichwa ambacho si sura, sehemu au sehemu ndogo."
 
 #: templates/indigo_api/document/_cheatsheet.html:212
 msgid "Starting a Section"
-msgstr ""
+msgstr "Kuanzisha Sehemu"
 
 #: templates/indigo_api/document/_cheatsheet.html:216
 msgid "Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha sehemu iliyowekewa nambari kwa <code>SEC</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:241
 msgid "Starting a Subsection"
-msgstr ""
+msgstr "Kuanzisha Kifungu kidogo"
 
 #: templates/indigo_api/document/_cheatsheet.html:245
 msgid "Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha kifungu kidogo kilicho na nambari kwa <code>SUBSEC</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:269
 msgid "Add a numbered paragraph"
-msgstr ""
+msgstr "Ongeza aya iliyo na nambari"
 
 #: templates/indigo_api/document/_cheatsheet.html:273
 msgid "Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha aya kwa <code>PARA</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:302
 msgid "Create a numbered list (a blocklist)"
-msgstr ""
+msgstr "Unda orodha yenye nambari (orodha ya kuzuia)"
 
 #: templates/indigo_api/document/_cheatsheet.html:306
 msgid "Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again."
-msgstr ""
+msgstr "Anzisha orodha yenye nambari kwa <code>VITU</code>. Tumia <code>ITEM</code> na nambari kwa kila kipengee kwenye orodha, na uzisogeze chini ya <code>ITEMS</code>. Jozisha orodha zilizoorodheshwa chini ya kipengee husika, kuanzia <code>ITEMS</code> tena."
 
 #: templates/indigo_api/document/_cheatsheet.html:371
 msgid "Starting a new Article"
-msgstr ""
+msgstr "Kuanzisha Makala mpya"
 
 #: templates/indigo_api/document/_cheatsheet.html:375
 msgid "Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
-msgstr ""
+msgstr "Anzisha Makala kwa <code>ART</code> na nambari, ikifuatiwa na <code> - </code> na kichwa. Nambari na kichwa vyote ni vya hiari."
 
 #: templates/indigo_api/document/_cheatsheet.html:400
 msgid "Insert a special character"
-msgstr ""
+msgstr "Weka herufi maalum"
 
 #: templates/indigo_api/document/_cheatsheet.html:404
 msgid "See guidance on using special characters in the <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
-msgstr ""
+msgstr "Tazama mwongozo wa kutumia herufi maalum katika <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Mwongozo wa Mhariri</a>."
 
 #: templates/indigo_api/document/_cheatsheet.html:415
 msgid "Make text italics"
-msgstr ""
+msgstr "Tengeneza maandishi ya italiki"
 
 #: templates/indigo_api/document/_cheatsheet.html:419
 msgid "Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms."
-msgstr ""
+msgstr "Onyesha neno au sentensi kama italiki kwa kutumia <code>//word//</code>. Fanya hivi kwa maneno yasiyo ya Kiingereza na maneno mengine maalum."
 
 #: templates/indigo_api/document/_cheatsheet.html:424
 msgid "For editorial remarks, use"
-msgstr ""
+msgstr "Kwa maoni ya wahariri, tumia"
 
 #: templates/indigo_api/document/_cheatsheet.html:444
 msgid "Make text bold"
-msgstr ""
+msgstr "Fanya maandishi kwa ujasiri"
 
 #: templates/indigo_api/document/_cheatsheet.html:448
 msgid "Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms."
-msgstr ""
+msgstr "Onyesha neno au sentensi kwa herufi nzito kwa kutumia <code>**word**</code>. Usitumie kwa vichwa au maneno yaliyofafanuliwa."
 
 #: templates/indigo_api/document/_cheatsheet.html:470
 msgid "Underline text"
-msgstr ""
+msgstr "Pigia mstari maandishi"
 
 #: templates/indigo_api/document/_cheatsheet.html:474
 msgid "Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings."
-msgstr ""
+msgstr "Pigia mstari neno au sentensi kwa kutumia vistari viwili kwa kila upande: <code>__word__</code>. Usitumie kwa vichwa."
 
 #: templates/indigo_api/document/_cheatsheet.html:496
 msgid "Add a link to a webpage"
-msgstr ""
+msgstr "Ongeza kiungo kwenye ukurasa wa tovuti"
 
 #: templates/indigo_api/document/_cheatsheet.html:500
 msgid "Link to a webpage using"
-msgstr ""
+msgstr "Unganisha kwa ukurasa wa wavuti kwa kutumia"
 
 #: templates/indigo_api/document/_cheatsheet.html:520
 msgid "Add a link to another Act or work"
-msgstr ""
+msgstr "Ongeza kiungo kwa Sheria au kazi nyingine"
 
 #: templates/indigo_api/document/_cheatsheet.html:524
 msgid "Link to another Act or work using"
-msgstr ""
+msgstr "Unganisha kwa Sheria nyingine au kazi kwa kutumia"
 
 #: templates/indigo_api/document/_cheatsheet.html:525
 msgid "where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>."
-msgstr ""
+msgstr "ambapo <code>frbr-uri</code> ni FRBR URI ya kazi unayotaka kuunganisha, kama vile <code>/akn/za/act/1998/2</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:545
 msgid "Insert an image"
-msgstr ""
+msgstr "Weka picha"
 
 #: templates/indigo_api/document/_cheatsheet.html:550
 #, python-format
 msgid "Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>%(markup)s</code>. Click <i>Attachments <span class=\"fa fa-paperclip\"></span></i> to see images you can insert, or upload new ones."
-msgstr ""
+msgstr "Ingiza picha kwa kubofya <i>Ingiza, Ingiza picha...</i> kwenye menyu, au tumia <code>%(markup)s</code>. Bofya <i>Viambatisho <span class=\"fa fa-paperclip\"></span></i> ili kuona picha unazoweza kuingiza, au kupakia mpya."
 
 #: templates/indigo_api/document/_cheatsheet.html:574
 msgid "Add an editorial remark"
-msgstr ""
+msgstr "Ongeza maoni ya uhariri"
 
 #: templates/indigo_api/document/_cheatsheet.html:578
 #, python-format
 msgid "Add an editorial remark, text that isn't part of the original document, using <code>%(markup)s</code>."
-msgstr ""
+msgstr "Ongeza maoni ya kihariri, maandishi ambayo si sehemu ya hati asili, kwa kutumia <code>%(markup)s</code>."
 
 #: templates/indigo_api/document/_cheatsheet.html:602
 msgid "Ignore text that looks like a chapter, part or section but isn't"
-msgstr ""
+msgstr "Puuza maandishi ambayo yanaonekana kama sura, sehemu au sehemu lakini sivyo"
 
 #: templates/indigo_api/document/_cheatsheet.html:606
 msgid "You can tell the system to ignore text that looks like a chapter, part, section or any other special words, by putting a backslash <code>\\</code> just before it."
-msgstr ""
+msgstr "Unaweza kuuambia mfumo kupuuza maandishi ambayo yanaonekana kama sura, sehemu, sehemu au maneno yoyote maalum, kwa kuweka nyuma <code>\\</code> kabla yake."
 
 #: templates/indigo_api/document/_cheatsheet.html:633
 msgid "Starting a Schedule"
-msgstr ""
+msgstr "Kuanzisha Ratiba"
 
 #: templates/indigo_api/document/_cheatsheet.html:637
 msgid "Start a schedule using <code>SCHEDULE</code> and an optional number and title."
-msgstr ""
+msgstr "Anzisha ratiba ukitumia <code>RATIBA</code> na nambari ya hiari na kichwa."
 
 #: templates/indigo_api/document/_cheatsheet.html:689
 msgid "Insert a table"
-msgstr ""
+msgstr "Weka meza"
 
 #: templates/indigo_api/document/_cheatsheet.html:693
 msgid "Insert a table by clicking <i>Insert, Insert table</i> in the menu."
-msgstr ""
+msgstr "Ingiza jedwali kwa kubofya <i>Ingiza, Ingiza jedwali</i> kwenye menyu."
 
 #: templates/indigo_api/document/_cheatsheet.html:698
 msgid "See guidance on working with tables in the <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Editor Guide</a>."
-msgstr ""
+msgstr "Tazama mwongozo wa kufanya kazi na majedwali katika <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Mwongozo wa Mhariri</a>."
 
 #: templates/indigo_api/document/_cheatsheet.html:740
 msgid "Paste a table"
-msgstr ""
+msgstr "Bandika meza"
 
 #: templates/indigo_api/document/_cheatsheet.html:743
 msgid "Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode."
-msgstr ""
+msgstr "Bandika jedwali kutoka kwa PDF au MS Word kwa kuinakili kutoka kwa chanzo, kisha ubandike kwenye kihariri ukiwa katika hali ya Kuhariri."
 
 #: templates/indigo_api/document/_cheatsheet.html:761
 #: templates/indigo_api/document/_toolbar.html:49
 #: templates/indigo_api/document/_toolbar.html:108
 #, python-format
 msgid "%(country)s Style Guide"
-msgstr ""
+msgstr "%(country)s Mwongozo wa Sinema"
 
 #: templates/indigo_api/document/_cheatsheet.html:764
 msgid "Full editor documentation"
-msgstr ""
+msgstr "Nyaraka kamili za mhariri"
 
 #: templates/indigo_api/document/_defined_terms.html:7
 msgid "Defined Terms"
@@ -1468,88 +1468,88 @@ msgstr "Mabadiliko"
 
 #: templates/indigo_api/document/_toolbar.html:10
 msgid "Compare to"
-msgstr ""
+msgstr "Linganisha na"
 
 #: templates/indigo_api/document/_toolbar.html:15
 msgid "current point in time"
-msgstr ""
+msgstr "hatua ya sasa kwa wakati"
 
 #: templates/indigo_api/document/_toolbar.html:21
 msgid "Show source"
-msgstr ""
+msgstr "Onyesha chanzo"
 
 #: templates/indigo_api/document/_toolbar.html:25
 msgid "Analysis"
-msgstr ""
+msgstr "Uchambuzi"
 
 #: templates/indigo_api/document/_toolbar.html:27
 msgid "Defined terms..."
-msgstr ""
+msgstr "Masharti yaliyofafanuliwa..."
 
 #: templates/indigo_api/document/_toolbar.html:28
 msgid "References..."
-msgstr ""
+msgstr "Marejeleo..."
 
 #: templates/indigo_api/document/_toolbar.html:29
 msgid "Italicised terms..."
-msgstr ""
+msgstr "Masharti yaliyochorwa..."
 
 #: templates/indigo_api/document/_toolbar.html:42
 msgid "Outline Akoma Ntoso Structure"
-msgstr ""
+msgstr "Muhtasari wa Muundo wa Akoma Ntoso"
 
 #: templates/indigo_api/document/_toolbar.html:42
 msgid "Structure"
-msgstr ""
+msgstr "Muundo"
 
 #: templates/indigo_api/document/_toolbar.html:44
 msgid "Akoma Ntoso"
-msgstr ""
+msgstr "Akoma Ntoso"
 
 #: templates/indigo_api/document/_toolbar.html:60
 msgid "Find..."
-msgstr ""
+msgstr "Tafuta..."
 
 #: templates/indigo_api/document/_toolbar.html:61
 msgid "Find next"
-msgstr ""
+msgstr "Tafuta ijayo"
 
 #: templates/indigo_api/document/_toolbar.html:62
 msgid "Find previous"
-msgstr ""
+msgstr "Tafuta uliopita"
 
 #: templates/indigo_api/document/_toolbar.html:63
 msgid "Find and replace..."
-msgstr ""
+msgstr "Tafuta na ubadilishe..."
 
 #: templates/indigo_api/document/_toolbar.html:67
 #: templates/indigo_api/document/_toolbar.html:156
 msgid "Insert"
-msgstr ""
+msgstr "Ingiza"
 
 #: templates/indigo_api/document/_toolbar.html:69
 msgid "Insert image..."
-msgstr ""
+msgstr "Weka picha..."
 
 #: templates/indigo_api/document/_toolbar.html:70
 msgid "Insert table"
-msgstr ""
+msgstr "Weka meza"
 
 #: templates/indigo_api/document/_toolbar.html:71
 msgid "Insert footnote"
-msgstr ""
+msgstr "Weka tanbihi"
 
 #: templates/indigo_api/document/_toolbar.html:72
 msgid "Insert Schedule"
-msgstr ""
+msgstr "Weka Ratiba"
 
 #: templates/indigo_api/document/_toolbar.html:74
 msgid "Insert annotation"
-msgstr ""
+msgstr "Weka kidokezo"
 
 #: templates/indigo_api/document/_toolbar.html:76
 msgid "Substitution"
-msgstr ""
+msgstr "Uingizwaji"
 
 #: templates/indigo_api/document/_toolbar.html:77
 #: templates/indigo_api/work_related.html:25
@@ -1558,15 +1558,15 @@ msgstr "Marekebisho"
 
 #: templates/indigo_api/document/_toolbar.html:78
 msgid "Insertion"
-msgstr ""
+msgstr "Uingizaji"
 
 #: templates/indigo_api/document/_toolbar.html:79
 msgid "Addition"
-msgstr ""
+msgstr "Nyongeza"
 
 #: templates/indigo_api/document/_toolbar.html:80
 msgid "Deletion"
-msgstr ""
+msgstr "Ufutaji"
 
 #: templates/indigo_api/document/_toolbar.html:81
 #: templates/indigo_api/work_related.html:32
@@ -1575,44 +1575,44 @@ msgstr "Kufuta"
 
 #: templates/indigo_api/document/_toolbar.html:82
 msgid "Other"
-msgstr ""
+msgstr "Nyingine"
 
 #: templates/indigo_api/document/_toolbar.html:88
 msgid "Markup"
-msgstr ""
+msgstr "Alama"
 
 #: templates/indigo_api/document/_toolbar.html:90
 msgid "Bold"
-msgstr ""
+msgstr "Ujasiri"
 
 #: templates/indigo_api/document/_toolbar.html:91
 msgid "Italics"
-msgstr ""
+msgstr "Italiki"
 
 #: templates/indigo_api/document/_toolbar.html:92
 msgid "Underline"
-msgstr ""
+msgstr "Piga mstari"
 
 #: templates/indigo_api/document/_toolbar.html:93
 msgid "Superscript"
-msgstr ""
+msgstr "Superscript"
 
 #: templates/indigo_api/document/_toolbar.html:94
 msgid "Subscript"
-msgstr ""
+msgstr "Usajili"
 
 #: templates/indigo_api/document/_toolbar.html:95
 msgid "Remark"
-msgstr ""
+msgstr "Toa maoni"
 
 #: templates/indigo_api/document/_toolbar.html:100
 #: templates/indigo_api/document/_toolbar.html:149
 msgid "Update"
-msgstr ""
+msgstr "Sasisha"
 
 #: templates/indigo_api/document/_toolbar.html:104
 msgid "Editor help..."
-msgstr ""
+msgstr "Usaidizi wa mhariri..."
 
 #: templates/indigo_api/document/_toolbar.html:116
 #: templates/indigo_api/task_list.html:4
@@ -1635,47 +1635,47 @@ msgstr "Mipangilio"
 
 #: templates/indigo_api/document/_toolbar.html:122
 msgid "Properties..."
-msgstr ""
+msgstr "Sifa..."
 
 #: templates/indigo_api/document/_toolbar.html:124
 msgid "Download as"
-msgstr ""
+msgstr "Pakua kama"
 
 #: templates/indigo_api/document/_toolbar.html:143
 msgid "Edit table"
-msgstr ""
+msgstr "Badilisha jedwali"
 
 #: templates/indigo_api/document/_toolbar.html:159
 msgid "Insert row above"
-msgstr ""
+msgstr "Weka safu mlalo juu"
 
 #: templates/indigo_api/document/_toolbar.html:160
 msgid "Insert row below"
-msgstr ""
+msgstr "Weka safu mlalo hapa chini"
 
 #: templates/indigo_api/document/_toolbar.html:162
 msgid "Insert column left"
-msgstr ""
+msgstr "Ingiza safu kushoto"
 
 #: templates/indigo_api/document/_toolbar.html:163
 msgid "Insert column right"
-msgstr ""
+msgstr "Ingiza safu kulia"
 
 #: templates/indigo_api/document/_toolbar.html:172
 msgid "Delete row"
-msgstr ""
+msgstr "Futa safu mlalo"
 
 #: templates/indigo_api/document/_toolbar.html:173
 msgid "Delete column"
-msgstr ""
+msgstr "Futa safu"
 
 #: templates/indigo_api/document/_toolbar.html:183
 msgid "Merge cells"
-msgstr ""
+msgstr "Unganisha seli"
 
 #: templates/indigo_api/document/_toolbar.html:184
 msgid "Heading"
-msgstr ""
+msgstr "Kichwa"
 
 #: templates/indigo_api/document/show.html:25
 #: templates/indigo_api/document_popup.html:9
@@ -1740,11 +1740,11 @@ msgstr "Aina"
 
 #: templates/indigo_api/task_form.html:54
 msgid "Choose a type, or enter a title."
-msgstr ""
+msgstr "Chagua aina, au weka kichwa."
 
 #: templates/indigo_api/task_form.html:73
 msgid "Description"
-msgstr ""
+msgstr "Maelezo"
 
 #: templates/indigo_api/task_form.html:109
 msgid "Are you sure you want to cancel this task?"
@@ -1795,7 +1795,7 @@ msgstr "Je, ungependa kufuta ujumuishaji huu kweli?"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:21
 msgid "Consolidation already exists at"
-msgstr ""
+msgstr "Ujumuishaji tayari upo"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:27
 msgid "Add consolidation date"
@@ -1850,7 +1850,7 @@ msgstr "Laha ya kwanza (kushoto kabisa) italetwa."
 
 #: templates/indigo_api/work_batch_create.html:59
 msgid "Please note we are phasing out projects; rather choose a topic. You're welcome to choose a project as well during the transition."
-msgstr ""
+msgstr "Tafadhali kumbuka tunakomesha miradi; badala ya kuchagua mada. Unakaribishwa kuchagua mradi pia wakati wa mabadiliko."
 
 #: templates/indigo_api/work_batch_create.html:63
 msgid "Choose a project for newly created tasks"
@@ -1870,15 +1870,15 @@ msgstr "Unda mradi mpya"
 
 #: templates/indigo_api/work_batch_create.html:89
 msgid "Choose a topic for newly created works"
-msgstr ""
+msgstr "Chagua mada kwa kazi mpya zilizoundwa"
 
 #: templates/indigo_api/work_batch_create.html:95
 msgid "Choose a project topic"
-msgstr ""
+msgstr "Chagua mada ya mradi"
 
 #: templates/indigo_api/work_batch_create.html:107
 msgid "There are no project topics"
-msgstr ""
+msgstr "Hakuna mada za mradi"
 
 #: templates/indigo_api/work_batch_create.html:114
 msgid "Block ALL 'Import content' tasks on creation"
@@ -2038,7 +2038,7 @@ msgstr "Sasisha kundi la kazi kutoka Majedwali ya Google"
 
 #: templates/indigo_api/work_batch_update.html:12
 msgid "Please note we are phasing out projects, and no project needs to be chosen for new tasks on existing works. Instead, tasks are now grouped according to their work's topic. You're welcome to choose a project during the transition."
-msgstr ""
+msgstr "Tafadhali kumbuka tunakomesha miradi, na hakuna mradi unaohitaji kuchaguliwa kwa kazi mpya kwenye kazi zilizopo. Badala yake, kazi sasa zimepangwa kulingana na mada ya kazi zao. Unakaribishwa kuchagua mradi wakati wa mabadiliko."
 
 #: templates/indigo_api/work_batch_update.html:18
 msgid "Choose columns to update"
@@ -2172,7 +2172,7 @@ msgstr "Kazi hii haijaanza"
 
 #: templates/indigo_api/work_form.html:5
 msgid "New work"
-msgstr ""
+msgstr "Kazi mpya"
 
 #: templates/indigo_api/work_import_document.html:4
 msgid "Import"
@@ -2239,7 +2239,7 @@ msgstr "Kazi zinazohusiana"
 #: templates/indigo_app/place/_bulk_unapprove_form.html:42
 #: templates/indigo_app/place/_work_detail.html:126
 msgid "Unapprove"
-msgstr ""
+msgstr "Usiidhinishe"
 
 #: templates/indigo_api/work_overview.html:44
 msgid "Edit work"
@@ -2256,11 +2256,11 @@ msgstr "mabadiliko ya hivi karibuni"
 #: templates/indigo_api/work_overview.html:96
 #, python-format
 msgid "%(n_kids)s subsidiary works"
-msgstr ""
+msgstr "%(n_kids)s kazi tanzu"
 
 #: templates/indigo_api/work_overview.html:109
 msgid "Approved"
-msgstr ""
+msgstr "Imeidhinishwa"
 
 #: templates/indigo_api/work_overview.html:124
 msgid "Core Details"
@@ -2537,7 +2537,7 @@ msgstr "katika"
 #: templates/indigo_app/maintenance.html:8
 #, python-format
 msgid "%(org)s is undergoing maintenance. We'll be back soon."
-msgstr ""
+msgstr "%(org)s inafanyiwa matengenezo. Tutarudi hivi karibuni."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
@@ -2547,81 +2547,89 @@ msgid "\n"
 msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "\n"
+"          Idhinisha %(works_length)s kazi inaendelea\n"
+"        "
+msgstr[1] "\n"
+"          Idhinisha %(works_length)s kazi zinaendelea\n"
+"        "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:48
 msgid "Import tasks will be created"
-msgstr ""
+msgstr "Kazi za kuingiza zitaundwa"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:59
 #: templates/indigo_app/place/_bulk_approve_form.html:88
 msgid "Task description"
-msgstr ""
+msgstr "Maelezo ya kazi"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:60
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Ingiza maudhui ya kazi hii kwa tarehe inayofaa - kwa kawaida tarehe ya kuchapishwa au ya ujumuishaji."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:77
 msgid "Gazette tasks will be created"
-msgstr ""
+msgstr "Kazi za Gazeti zitaundwa"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:89
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Tafuta na uunganishe Gazeti (hati halisi ya uchapishaji) kwa kazi hii."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:106
 msgid "Amendment tasks will be created"
-msgstr ""
+msgstr "Majukumu ya marekebisho yataundwa"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:124
 #, python-format
 msgid "\n"
 "                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
 "                          "
-msgstr ""
+msgstr "\n"
+"                            Maelezo ya kazi: %(title)s (%(numbered_title)s) - %(date)s\n"
+"                          "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:128
 #, python-format
 msgid "\n"
 "Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
+msgstr "\n"
+"Tekeleza marekebisho yaliyofanywa na %(title)s (%(numbered_title)s) kwenye %(date)s.\n\n"
+"Marekebisho tayari yameunganishwa, kwa hivyo anza katika Hatua ya 3 ya https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:160
 msgid "Approving..."
-msgstr ""
+msgstr "Inaidhinisha..."
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:7
 #, python-format
 msgid "Unapprove %(works_length)s works"
-msgstr ""
+msgstr "Usiidhinishe %(works_length)s inafanya kazi"
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:41
 msgid "Unapproving..."
-msgstr ""
+msgstr "Haiidhinishi..."
 
 #: templates/indigo_app/place/_bulk_update_form.html:7
 #, python-format
 msgid "Update %(works_length)s works"
-msgstr ""
+msgstr "Sasisha %(works_length)s inafanya kazi"
 
 #: templates/indigo_app/place/_bulk_update_form.html:24
 msgid "Add taxonomy topics"
-msgstr ""
+msgstr "Ongeza mada za jamii"
 
 #: templates/indigo_app/place/_bulk_update_form.html:37
 msgid "Remove taxonomy topics"
-msgstr ""
+msgstr "Ondoa mada za taksonomia"
 
 #: templates/indigo_app/place/_bulk_update_form.html:61
 msgid "Updating..."
-msgstr ""
+msgstr "Inasasisha..."
 
 #: templates/indigo_app/place/_bulk_update_form.html:62
 msgid "Save changes"
-msgstr ""
+msgstr "Hifadhi mabadiliko"
 
 #: templates/indigo_app/place/_overridden.html:3
 msgid "Overridden"
@@ -2629,11 +2637,11 @@ msgstr "Imebatilishwa"
 
 #: templates/indigo_app/place/_work.html:35
 msgid "Created"
-msgstr ""
+msgstr "Imeundwa"
 
 #: templates/indigo_app/place/_work_detail.html:34
 msgid "Amendments"
-msgstr ""
+msgstr "Marekebisho"
 
 #: templates/indigo_app/place/_work_detail.html:42
 msgid "Repeals"
@@ -2649,17 +2657,17 @@ msgstr "Mada"
 #: templates/indigo_app/place/_works_actions.html:22
 #, python-format
 msgid "Update %(works_length)s selected..."
-msgstr ""
+msgstr "Sasisha %(works_length)s imechaguliwa..."
 
 #: templates/indigo_app/place/_works_actions.html:47
 #, python-format
 msgid "Approve %(works_length)s selected..."
-msgstr ""
+msgstr "Idhinisha %(works_length)s imechaguliwa..."
 
 #: templates/indigo_app/place/_works_actions.html:73
 #, python-format
 msgid "Unapprove %(works_length)s selected..."
-msgstr ""
+msgstr "Usiidhinishe %(works_length)s imechaguliwa..."
 
 #: templates/indigo_app/place/_works_list.html:17
 #, python-format
@@ -2682,7 +2690,7 @@ msgstr "Pakua hadi Excel"
 #: templates/indigo_app/place/_works_list.html:46
 #, python-format
 msgid "Select all %(works_length)s matching works"
-msgstr ""
+msgstr "Chagua kazi zote %(works_length)s zote zinazolingana"
 
 #: templates/indigo_app/place/works.html:19
 msgid "Add new work"
@@ -3188,15 +3196,15 @@ msgstr "Uchapishaji"
 
 #: views/places.py:64
 msgid "Repealed"
-msgstr ""
+msgstr "Imefutwa"
 
 #: views/places.py:72
 msgid "As-at date"
-msgstr ""
+msgstr "Kama - kwa tarehe"
 
 #: views/places.py:76
 msgid "Consolidation date"
-msgstr ""
+msgstr "Tarehe ya ujumuishaji"
 
 #: views/places.py:80
 msgid "Consolidation note"
@@ -3208,5 +3216,5 @@ msgstr "Zuio"
 
 #: views/places.py:87
 msgid "Principal"
-msgstr ""
+msgstr "Mkuu wa shule"
 

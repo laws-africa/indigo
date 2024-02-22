@@ -109,7 +109,7 @@
                   <dt class="col-2">{% trans 'Approved' %}</dt>
                   <dd class="col-10">
                     {% user_profile work.updated_by_user %}
-                    {{ work.approved_at|naturaltime }}
+                    {{ work.approved_at|naturaltime|default:"" }}
                   </dd>
                 {% endif %}
               </div>

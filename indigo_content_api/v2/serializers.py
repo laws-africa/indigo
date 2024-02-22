@@ -4,7 +4,8 @@ from rest_framework import serializers
 
 from cobalt import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyTopic, TaxonomyVocabulary, Amendment
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyTopic, \
+    TaxonomyVocabulary, Amendment
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
@@ -117,6 +118,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     custom_properties = serializers.JSONField(source='work.labeled_properties')
     stub = serializers.BooleanField(source='work.stub')
     principal = serializers.BooleanField(source='work.principal')
+    aliases = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
@@ -132,6 +134,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'work_amendments', 'points_in_time', 'parent_work', 'custom_properties',
             'numbered_title', 'taxonomies', 'taxonomy_topics', 'as_at_date', 'stub', 'principal', 'type_name',
+            'aliases',
 
             'links',
         )
@@ -176,6 +179,9 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
                 'frbr_uri': doc.work.parent_work.frbr_uri,
                 'title': doc.work.parent_work.title,
             }
+
+    def get_aliases(self, doc):
+        return [x.alias for x in doc.work.aliases.all()]
 
     def get_links(self, doc):
         if not doc.draft:

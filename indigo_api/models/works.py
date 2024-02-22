@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
@@ -916,3 +916,15 @@ class Subtype(models.Model):
 def on_subtype_saved(sender, instance, **kwargs):
     # clear the subtype cache
     Subtype._cache = {}
+
+
+class WorkAlias(models.Model):
+    alias = models.CharField(max_length=255, help_text=_("Alias e.g. Penal Code, etc"))
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, related_name="aliases")
+
+    class Meta:
+        unique_together = ('alias', 'work')
+        ordering = ('alias',)
+
+    def __str__(self):
+        return self.alias

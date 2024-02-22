@@ -962,7 +962,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
             has_blocked_states=Count(
                 Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
-        ).values('has_open_states', 'has_unblocked_states', 'has_blocked_states')
+        ).values('pk', 'has_open_states', 'has_unblocked_states', 'has_blocked_states')
 
         # Organize the results into totals per state
         counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}

@@ -22,7 +22,7 @@
 
                     <pre class="editor-snippet">PREFACE
 
-This is the preface of the Act.</pre>
+  This is the preface of the Act.</pre>
                   </div>
                 </div>
               </div>
@@ -37,7 +37,7 @@ This is the preface of the Act.</pre>
 
                     <pre class="editor-snippet">PREAMBLE
 
-This is the preamble of the Act.</pre>
+  This is the preamble of the Act.</pre>
                   </div>
                 </div>
               </div>
@@ -50,7 +50,7 @@ This is the preamble of the Act.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Indicate the long title of the work using <code>LONGTITLE</code>. This usually comes just before the sentence 'BE IT ENACTED...'
+                        Indicate the long title of the work using <code>LONGTITLE</code>.
                       {% endblocktrans %}
                     </p>
 
@@ -96,7 +96,7 @@ This is the body of the Act.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a Chapter with <code>CHAPTER</code> and a number. The title is optional.
+                        Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -104,7 +104,7 @@ This is the body of the Act.</pre>
                       <div class="col">
                     <pre class="editor-snippet">CHAPTER 2 - Interpretation
 
-This is the body of the Chapter.</pre>
+  This is the body of the Chapter.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -125,7 +125,7 @@ This is the body of the Chapter.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a Part with <code>Part</code> and a number. The title is optional.
+                        Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -133,7 +133,7 @@ This is the body of the Chapter.</pre>
                       <div class="col">
                     <pre class="editor-snippet">PART 2 - Interpretation
 
-This is the body of the Part.</pre>
+  This is the body of the Part.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -159,7 +159,7 @@ This is the body of the Part.</pre>
                     </p>
                     <p>
                       {% blocktrans trimmed %}
-                        Start a subpart with <code>SUBPART</code> and a number. The title is optional.
+                        Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -167,7 +167,7 @@ This is the body of the Part.</pre>
                       <div class="col">
                   <pre class="editor-snippet">SUBPART A - Party and costs
 
-This is the body of the Subpart.</pre>
+  This is the body of the Subpart.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -188,17 +188,17 @@ This is the body of the Subpart.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.
+                        Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">CROSSHEADING E. Control under a Scheme</pre>
+                        <pre class="editor-snippet">CROSSHEADING Control under a Scheme</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
-                          <span class="akn-heading mb-0">E. Control under a Scheme</span>
+                          <span class="akn-heading mb-0">Control under a Scheme</span>
                         </la-akoma-ntoso>
                       </div>
                     </div>
@@ -214,7 +214,7 @@ This is the body of the Subpart.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered section with <code>SEC</code> and a number. The title is optional.
+                        Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -222,7 +222,7 @@ This is the body of the Subpart.</pre>
                       <div class="col">
                     <pre class="editor-snippet">SEC 2. - Definitions
 
-This is the body of the section.</pre>
+  This is the body of the section.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -243,7 +243,7 @@ This is the body of the section.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Start a numbered subsection with <code>SUBSEC</code> and the subsection number in brackets. A title is optional.
+                        Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
                       {% endblocktrans %}
                     </p>
 
@@ -304,7 +304,7 @@ This is the body of the section.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Create a numbered list with each item's number in brackets. Indent nested lists with four spaces (or a TAB).
+                        Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again.
                       {% endblocktrans %}
                     </p>
 
@@ -312,15 +312,22 @@ This is the body of the section.</pre>
                       <div class="col">
                     <pre class="editor-snippet">The following items are a blocklist:
 
-(a) first item
+ITEMS
+  ITEM (a)
+    first item
 
-(b) second item
+  ITEM (b)
+    ITEMS
+      second item
 
-    (i) nested item (b)(i)
+      ITEM (i)
+        nested item (b)(i)
 
-    (ii) nested item (b)(ii)
+      ITEM (ii)
+        nested item (b)(ii)
 
-(c) third item</pre>
+  ITEM (c)
+    third item</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -538,16 +545,18 @@ This is the body of the section.</pre>
                 <a href="#cheat-image" data-bs-toggle="collapse" class="card-header">{% trans "Insert an image" %}</a>
                 <div id="cheat-image" class="collapse" data-parent="#cheat-accordion">
                   <div class="card-body">
+                    <!-- TODO: add alt text markup -->
                     <p>
-                      {% blocktrans trimmed %}
-                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>![alternative text](/media/image.png)</code>.
+                      {% blocktrans trimmed with markup="{{IMG media/image.png}}" %}
+                        Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>{{ markup }}</code>.
                         Click <i>Attachments <span class="fa fa-paperclip"></span></i> to see images you can insert, or upload new ones.
                       {% endblocktrans %}
                     </p>
 
                     <div class="row">
                       <div class="col">
-                        <pre class="editor-snippet">![Logo](/static/images/logo.png)</pre>
+                        <!-- TODO: add alt text markup -->
+                        <pre class="editor-snippet">{% verbatim %}{{IMG media/logo.png}}{% endverbatim %}</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -566,8 +575,8 @@ This is the body of the section.</pre>
                 <div id="cheat-remark" class="collapse" data-parent="#cheat-accordion">
                   <div class="card-body">
                     <p>
-                      {% blocktrans trimmed %}
-                        Add an editorial remark, text that isn't part of the original document, using <code>[[remark]]</code>.
+                      {% blocktrans trimmed with markup="{{*[remark]}}" %}
+                        Add an editorial remark, text that isn't part of the original document, using <code>{{ markup }}</code>.
                       {% endblocktrans %}
                     </p>
 
@@ -632,9 +641,9 @@ This is the body of the section.</pre>
 
                     <div class="row mb-4">
                       <div class="col">
-                    <pre class="editor-snippet">SCHEDULE - Schedule heading
+                    <pre class="editor-snippet">SCHEDULE Schedule heading
 
-This is the body of the schedule.</pre>
+  This is the body of the schedule.</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
@@ -652,7 +661,7 @@ This is the body of the schedule.</pre>
 
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet">SCHEDULE - First schedule
+                    <pre class="editor-snippet">SCHEDULE First schedule
   SUBHEADING Laws to be repealed
 
   This is the body of the first schedule.</pre>
@@ -682,91 +691,38 @@ This is the body of the schedule.</pre>
                   <div class="card-body">
                     <p>
                       {% blocktrans trimmed %}
-                        Insert a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.
+                        Insert a table by clicking <i>Insert, Insert table</i> in the menu.
                       {% endblocktrans %}
                     </p>
-                    <ul>
+                    <p>
                       {% blocktrans trimmed %}
-                        <li>A table starts with <code>{|</code> and ends with <code>|}</code>.</li>
-                        <li>Use <code>|-</code> to separate rows.</li>
-                        <li>Use <code>|</code> to start a cell on a row.</li>
-                        <li>Use <code>!</code> to start a heading cell on a row.</li>
+                        See guidance on working with tables in the <a href="https://docs.laws.africa/how-tos/tables" target="_blank">Editor Guide</a>.
                       {% endblocktrans %}
-                    </ul>
-
+                    </p>
                     <div class="row">
                       <div class="col">
-                    <pre class="editor-snippet">{|
-|-
-! header 1
-! header 2
-! header 3
-|-
-| row 1, cell 1
-| row 1, cell 2
-| row 1, cell 3
-|-
-| row 2, cell 1
-| row 2, cell 2
-| row 2, cell 3
-|}</pre>
+                    <pre class="editor-snippet">TABLE
+  TR
+    TH
+      Heading 1
+    TH
+      Heading 2
+  TR
+    TC
+      Content 1
+    TC
+      Content 2</pre>
                       </div>
                       <div class="col">
                         <la-akoma-ntoso class="akoma-ntoso-snippet">
                           <table class="mb-0">
                             <tbody><tr>
-                              <th><span class="akn-p">header 1</span></th>
-                              <th><span class="akn-p">header 2</span></th>
-                              <th><span class="akn-p">header 3</span></th>
+                              <th><span class="akn-p">Heading 1</span></th>
+                              <th><span class="akn-p">Heading 2</span></th>
                             </tr>
                             <tr>
-                              <td><span class="akn-p">row 1, cell 1</span></td>
-                              <td><span class="akn-p">row 1, cell 2</span></td>
-                              <td><span class="akn-p">row 1, cell 3</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">row 2, cell 1</span></td>
-                              <td><span class="akn-p">row 2, cell 2</span></td>
-                              <td><span class="akn-p">row 2, cell 3</span></td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </la-akoma-ntoso>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            {% endblock %}
-
-            {% block cheat-convert-table %}
-              <div class="card">
-                <a href="#cheat-convert-table" data-bs-toggle="collapse" class="card-header">{% trans "Convert lines of text into a table" %}</a>
-                <div id="cheat-convert-table" class="collapse" data-parent="#cheat-accordion">
-                  <div class="card-body">
-                    {% blocktrans trimmed %}
-                      Convert lines of text to a table by selecting the lines, and then clicking <i>Insert, Insert table</i>.
-                    {% endblocktrans %}
-
-                    <div class="row">
-                      <div class="col">
-                    <pre class="editor-snippet">Line 1
-Line 2
-Line 3</pre>
-                      </div>
-                      <div class="col">
-                        <la-akoma-ntoso class="akoma-ntoso-snippet">
-                          <table class="mb-0">
-                            <tbody><tr>
-                            <tr>
-                              <td><span class="akn-p">Line 1</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">Line 2</span></td>
-                            </tr>
-                            <tr>
-                              <td><span class="akn-p">Line 3</span></td>
+                              <td><span class="akn-p">Content 1</span></td>
+                              <td><span class="akn-p">Content 2</span></td>
                             </tr>
                             </tbody>
                           </table>

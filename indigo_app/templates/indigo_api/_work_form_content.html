@@ -601,6 +601,7 @@
     {% endif %}
   {% endif %}
 
+  {% if work.pk %}
   <script>
     (function () {
       function refresh(e) {
@@ -611,5 +612,6 @@
       document.addEventListener('hide.bs.offcanvas', refresh);
     })();
   </script>
+  {% endif %}
 
 {% endblock %}

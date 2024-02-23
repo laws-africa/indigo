@@ -801,7 +801,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         resp = super().render_to_response(context, **response_kwargs)
         if self.request.htmx:
             # encode request.POST as a URL string
-            url = f"{self.request.path}?{self.request.POST.urlencode()}"
+            url = f"{self.request.path}?{self.form.data_as_url()}"
             resp = push_url(resp, url)
         return resp
 
@@ -962,7 +962,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
                 Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
             has_blocked_states=Count(
                 Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
-        ).values('has_open_states', 'has_unblocked_states', 'has_blocked_states')
+        ).values('pk', 'has_open_states', 'has_unblocked_states', 'has_blocked_states')
 
         # Organize the results into totals per state
         counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}

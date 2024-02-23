@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-19 12:44+0200\n"
-"PO-Revision-Date: 2023-06-20 14:49\n"
+"PO-Revision-Date: 2024-02-22 07:11\n"
 "Last-Translator: \n"
 "Language-Team: Northern Sotho\n"
 "Language: ns_ZA\n"
@@ -254,3 +254,4 @@ msgstr ""
 #: views/documents.py:359
 msgid "Error during import"
 msgstr ""
+

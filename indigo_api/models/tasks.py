@@ -14,7 +14,7 @@ from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
-from indigo.custom_tasks import tasks
+from indigo.custom_tasks import tasks as custom_tasks
 from indigo_api.signals import task_closed
 
 
@@ -42,6 +42,20 @@ class TaskManager(models.Manager):
             .prefetch_related('labels')
 
 
+def task_file_filename(instance, filename):
+    return f'task-file-attachments/{instance.task_as_input.id or instance.task_as_outupt.id}/{instance.id}/{filename}'
+
+
+class TaskFile(models.Model):
+    file = models.FileField(upload_to=task_file_filename)
+    url = models.URLField(null=True, blank=True)
+    size = models.IntegerField(null=True)
+    filename = models.CharField(max_length=1024)
+    mime_type = models.CharField(max_length=1024)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class Task(models.Model):
     OPEN = 'open'
     PENDING_REVIEW = 'pending_review'
@@ -66,6 +80,7 @@ class Task(models.Model):
     }
 
     MAIN_CODES = [
+        ('convert-document', __('Convert document')),
         ('import-content', __('Import content')),
         ('apply-amendment', __('Apply amendment')),
         ('link-gazette', __('Link gazette')),
@@ -116,6 +131,10 @@ class Task(models.Model):
 
     # internal task code
     code = models.CharField(max_length=100, null=True, blank=True)
+
+    # files
+    input_file = models.OneToOneField('TaskFile', related_name='task_as_input', null=True, blank=True, on_delete=models.SET_NULL)
+    output_file = models.OneToOneField('TaskFile', related_name='task_as_output', null=True, blank=True, on_delete=models.SET_NULL)
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     submitted_by_user = models.ForeignKey(User, related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
@@ -365,7 +384,7 @@ class Task(models.Model):
         """
         if self.code:
             if not hasattr(self, '_customised'):
-                plugin = tasks.for_locale(self.code, country=self.country, locality=self.locality)
+                plugin = custom_tasks.for_locale(self.code, country=self.country, locality=self.locality)
                 self._customised = plugin
                 if plugin:
                     self._customised.setup(self)

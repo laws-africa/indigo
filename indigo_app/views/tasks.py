@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery, OuterRef, Count, IntegerField
-from django.http import QueryDict
+from django.http import QueryDict, Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -23,11 +23,20 @@ from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
+from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
+
+
+def task_file_response(task_file):
+    """ Either return the task file as a response, or redirect to the URL.
+    """
+    if task_file.url:
+        return redirect(task_file.url)
+    return view_attachment(task_file)
 
 
 class TaskViewBase(PlaceViewBase):
@@ -224,6 +233,7 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         task = self.object
         task.updated_by_user = self.request.user
 
+        # TODO: delete related TaskFiles if needed
         # action signals
         if form.changed_data:
             action.send(self.request.user, verb='updated', action_object=task, place_code=task.place.place_code)
@@ -296,6 +306,97 @@ class TaskFormTitleView(PartialTaskFormView):
 
 class TaskFormTimelineDateView(PartialTaskFormView):
     template_name = 'indigo_api/_task_timeline_date_form.html'
+
+
+class TaskFormInputFileView(PartialTaskFormView):
+    template_name = 'indigo_api/_task_input_file.html'
+
+
+class TaskFormOutputFileView(PartialTaskFormView):
+    # TODO
+    template_name = 'indigo_api/_task_input_file.html'
+
+
+class TaskInputFileView(SingleTaskViewBase, View, SingleObjectMixin):
+    def get(self, request, *args, **kwargs):
+        task = self.get_object()
+        try:
+            return task_file_response(task.input_file)
+        except TaskFile.DoesNotExist:
+            pass
+        raise Http404()
+
+
+class TaskOutputFileView(SingleTaskViewBase, View, SingleObjectMixin):
+    def get(self, request, *args, **kwargs):
+        task = self.get_object()
+        try:
+            return task_file_response(task.output_file)
+        except TaskFile.DoesNotExist:
+            pass
+        raise Http404()
+
+
+# class TaskFormInputFileView(PlaceViewBase, TemplateView):
+#     http_method_names = ['post', 'delete', 'get']
+#     template_name = 'indigo_api/_task_input_file.html'
+# 
+#     class Form(forms.ModelForm):
+#         input_file = forms.FileField(required=False)
+#         input_file_trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
+#         input_file_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
+#         input_file_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
+#         delete_input_file = forms.CharField(required=False, widget=forms.HiddenInput())
+#         # prefix = 'task'
+# 
+#         class Meta:
+#             model = TaskFile
+#             fields = (
+#                 'file_url',
+#                 'size',
+#                 'mime_type',
+#                 'delete_input_file',    # ?
+#                 'file',
+#             )
+# 
+#     def post(self, request, *args, **kwargs):
+#         return self.get(request, *args, **kwargs)
+# 
+#     def delete(self, request, *args, **kwargs):
+#         return self.get(request, *args, **kwargs)
+# 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         form = self.request.GET.get('form')
+#         task_pk = self.request.GET.get('pk')
+#         if task_pk:
+#             task = Task.objects.filter(pk=task_pk).first()
+#             if task:
+#                 context["work"] = task
+#         initial = {}
+#         if form:
+#             initial = {
+#                 'file_url': form.cleaned_data['trusted_url'],
+#                 'size': form.cleaned_data['size'],
+#                 'mime_type': form.cleaned_data['mimetype'],
+#                 'delete_input_file': 'on',
+#             }
+#             # FindPubDocFormset = formset_factory(FindPubDocForm)
+#             # formset = FindPubDocFormset(prefix="pubdoc", data=self.request.POST)
+#             # if formset.is_valid():
+#             #     selected_form = formset.forms[int(form_id)]
+#             #     initial = {
+#             #         'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
+#             #         'publication_document_size': selected_form.cleaned_data['size'],
+#             #         'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
+#             #         'delete_publication_document': 'on',
+#             #     }
+# 
+#         if self.request.method == 'DELETE':
+#             initial['delete_input_file'] = 'on'
+# 
+#         context["form"] = self.Form(initial=initial)
+#         return context
 
 
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):

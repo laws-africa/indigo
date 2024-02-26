@@ -26,7 +26,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement, Workflow, Country, Locality
 from indigo_api.serializers import WorkSerializer
-from indigo_api.timeline import get_timeline
+from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -82,6 +82,29 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         # add expressions
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
+        # add tasks
+        open_timeline_tasks = work.tasks.filter(state__in=Task.OPEN_STATES, timeline_date__isnull=False)
+        dates = [entry.date for entry in timeline]
+        # simple case: add tasks to existing corresponding entries
+        for entry in timeline:
+            entry.tasks = open_timeline_tasks.filter(timeline_date=entry.date)
+
+        # these will have their own entries as their dates aren't in the timeline yet
+        extra_tasks = open_timeline_tasks.exclude(timeline_date__in=dates)
+        # TODO: group these by date and add [tasks] instead
+        for task in extra_tasks:
+            entry = TimelineEntry(date=task.timeline_date, initial=False, events=[])
+            entry.tasks = [task]
+            # dates are in descending order, so slot it in before the first one that's smaller
+            for i, date in enumerate(dates):
+                if date < entry.date:
+                    timeline.insert(i, entry)
+                    dates.insert(i, entry.date)
+                    break
+            if entry.date not in dates:
+                # we've gone past the earliest / last one, so just append
+                timeline.append(entry)
+                dates.append(entry.date)
         return timeline
 
     def get_object(self, queryset=None):

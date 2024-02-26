@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <form method="POST" action="" id="task-form" enctype="multipart/form-data">
+  <form method="POST" action="" id="task-form">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
@@ -98,9 +98,6 @@
                 {% endfor %}
               </div>
             {% endif %}
-          </div>
-          <div id="task-input-file">
-            {% include 'indigo_api/_task_input_file.html' %}
           </div>
         </div>
 

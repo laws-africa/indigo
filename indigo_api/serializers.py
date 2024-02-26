@@ -17,7 +17,7 @@ from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement
+    PublicationDocument, Task, VocabularyTopic, Commencement, WorkAlias
 from indigo_metrics.models import DocumentEditActivity
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display

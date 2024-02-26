@@ -146,7 +146,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     """
 
     # only published documents
-    queryset = DocumentViewMixin.queryset.published()
+    queryset = DocumentViewMixin.queryset.published().prefetch_related("work__aliases")
     document_queryset = queryset
 
     serializer_class = PublishedDocumentSerializer

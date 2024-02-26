@@ -32,7 +32,7 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, WorkAliasesFormSet, CommencementsMadeBaseFormset
 from indigo_metrics.models import WorkMetrics
 
 from .base import PlaceViewBase
@@ -1327,7 +1327,12 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        formset = RepealMadeBaseFormSet(self.request.POST, prefix="repeals_made", form_kwargs={"work": self.work})
+        formset = RepealMadeBaseFormSet(self.request.POST,
+                                        user=self.request.user,
+                                        work=self.work,
+                                        prefix="repeals_made",
+                                        form_kwargs={"work": self.work,
+                                                     "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset.forms:
@@ -1353,9 +1358,12 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
 
         context["form"] = {
            'repeals_made_formset': RepealMadeBaseFormSet(
+               user=self.request.user,
+               work=self.work,
                prefix='repeals_made',
                initial=initial,
-               form_kwargs={"work": self.work}
+               form_kwargs={"work": self.work,
+                            "user": self.request.user}
            ),
         }
         context["work"] = self.work
@@ -1369,7 +1377,6 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         amended_by = self.request.POST.get("amended_by")
         amendments_made = self.request.POST.get("amendments_made")
         deleting = self.request.GET.get("delete")
@@ -1386,7 +1393,12 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             prefix = deleting
 
         context_data = super().get_context_data(**kwargs)
-        formset = AmendmentsBaseFormSet(self.request.POST, prefix=prefix, form_kwargs={"work": self.work})
+        formset = AmendmentsBaseFormSet(self.request.POST,
+                                        user=self.request.user,
+                                        work=self.work,
+                                        prefix=prefix,
+                                        form_kwargs={"work": self.work,
+                                                     "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset:
@@ -1424,9 +1436,12 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
             return context_data
 
         context_data['formset'] = AmendmentsBaseFormSet(
+                user=self.request.user,
+                work=self.work,
                 prefix=prefix,
                 initial=initial,
-                form_kwargs={"work": self.work}
+                form_kwargs={"work": self.work,
+                             "user": self.request.user}
             )
         context_data["prefix"] = prefix
         return context_data
@@ -1452,7 +1467,12 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             prefix = deleting
 
         context_data = super().get_context_data(**kwargs)
-        formset = CommencementsMadeBaseFormset(self.request.POST, prefix=prefix, form_kwargs={"work": self.work})
+        formset = CommencementsMadeBaseFormset(self.request.POST,
+                                               user=self.request.user,
+                                               work=self.work,
+                                               prefix=prefix,
+                                               form_kwargs={"work": self.work,
+                                                            "user": self.request.user})
         initial = []
         if formset.is_valid():
             for form in formset:
@@ -1485,9 +1505,12 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             return context_data
 
         context_data['formset'] = CommencementsMadeBaseFormset(
+            user=self.request.user,
+            work=self.work,
             prefix=prefix,
             initial=initial,
-            form_kwargs={"work": self.work}
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
         )
         context_data["prefix"] = prefix
         return context_data

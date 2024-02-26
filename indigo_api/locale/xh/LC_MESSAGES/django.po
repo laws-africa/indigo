@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-19 12:44+0200\n"
-"PO-Revision-Date: 2023-06-20 14:50\n"
+"PO-Revision-Date: 2024-02-22 07:11\n"
 "Last-Translator: \n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -78,10 +78,8 @@ msgid "Not commenced"
 msgstr "Ayiqalanga"
 
 #: models/works.py:432
-#, fuzzy
-#| msgid "There are multiple commencements:"
 msgid "There are multiple commencements"
-msgstr "Kukho iintlobo ezininzi zokuqalisa:"
+msgstr ""
 
 #: models/works.py:530
 #, python-format
@@ -169,46 +167,36 @@ msgid "Assented to on %(date)s"
 msgstr "Kuvunyiwe ukuba kuqhubeke ngomhla we %(date)s"
 
 #: templates/indigo_api/akn/export/standalone.html:17
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Table of Contents"
 msgstr "Isiqulatho"
 
 #: timeline.py:57
-#, fuzzy, python-format
-#| msgid "Not commenced"
+#, python-format
 msgid "Note: %(note)s"
-msgstr "Ayiqalanga"
+msgstr ""
 
 #: timeline.py:73
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "Commenced on %(date)s by"
-msgstr "yaqala ngo %(date)s"
+msgstr ""
 
 #: timeline.py:77
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "Commenced on %(date)s"
-msgstr "yaqala ngo %(date)s"
-
-#: timeline.py:81
-#, fuzzy
-#| msgid "Commenced on %(date)s"
-msgid "Commenced by"
 msgstr "Yaqala ngo %(date)s"
 
+#: timeline.py:81
+msgid "Commenced by"
+msgstr ""
+
 #: timeline.py:85
-#, fuzzy
-#| msgid "Not commenced"
 msgid "Commenced"
-msgstr "Ayiqalanga"
+msgstr ""
 
 #: timeline.py:107
-#, fuzzy, python-format
-#| msgid "Published in %(name)s on %(date)s"
+#, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
+msgstr ""
 
 #: timeline.py:113
 #, python-format
@@ -216,44 +204,36 @@ msgid "Published in %(name)s on %(date)s"
 msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
 
 #: timeline.py:118
-#, fuzzy, python-format
-#| msgid "Published in %(name)s on %(date)s"
+#, python-format
 msgid "Published on %(date)s"
-msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
+msgstr ""
 
 #: timeline.py:124
-#, fuzzy, python-format
-#| msgid "Published in %(name)s on %(date)s"
+#, python-format
 msgid "Published in %(name)s %(number)s"
-msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
+msgstr ""
 
 #: timeline.py:131
-#, fuzzy, python-format
-#| msgid "Published in %(name)s on %(date)s"
+#, python-format
 msgid "Published in %(name)s"
-msgstr "Ipapashiwe kwi %(name)s ngomhla we %(date)s"
+msgstr ""
 
 #: timeline.py:136
 msgid "Published"
 msgstr ""
 
 #: timeline.py:179
-#, fuzzy
-#| msgid "Assented to on %(date)s"
 msgid "Assented to"
-msgstr "Kuvunyiwe ukuba kuqhubeke ngomhla we %(date)s"
+msgstr ""
 
 #: timeline.py:187
-#, fuzzy
-#| msgid "Commenced on %(date)s"
 msgid "Amended by"
-msgstr "Yaqala ngo %(date)s"
+msgstr ""
 
 #: timeline.py:197
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "Commencement note: %(note)s"
-msgstr "yaqala ngo %(date)s"
+msgstr ""
 
 #: timeline.py:209
 msgid "Consolidation"
@@ -275,50 +255,3 @@ msgstr ""
 msgid "Error during import"
 msgstr ""
 
-#, fuzzy, python-format
-#~| msgid "Commencement date unknown"
-#~ msgid "Document date: %(date)s"
-#~ msgstr "Umhla wokuqalisa awaziwa"
-
-#, fuzzy
-#~| msgid "Table of Contents"
-#~ msgid "Contents"
-#~ msgstr "Isiqulatho"
-
-#, fuzzy, python-format
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in full on %(date)s by"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, fuzzy, python-format
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in part on %(date)s by"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, fuzzy, python-format
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in full on %(date)s"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, fuzzy, python-format
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in part on %(date)s"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, fuzzy
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in full"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, fuzzy
-#~| msgid "Commenced on %(date)s"
-#~ msgid "Commenced in part"
-#~ msgstr "Yaqala ngo %(date)s"
-
-#, python-format
-#~ msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-#~ msgstr "– iqalwe ngu <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-
-#, python-format
-#~ msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-#~ msgstr "– iqalwe ngu <a href=\"%(resolver_uri)s\">%(title)s</a>"

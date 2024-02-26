@@ -456,6 +456,33 @@
 
     <div class="card mb-3">
       <div class="card-body">
+        <div class="row">
+          <label class="col-2 col-form-label">{% trans "Aliases" %}</label>
+          <div class="col-4">
+            {{ form.aliases_formset.management_form }}
+            {% for form in form.aliases_formset %}
+              <div class="mb-3">
+                <input class="form-control"
+                       type="text"
+                       value="{{ form.alias.value|default_if_none:"" }}"
+                       name="{{ form.alias.html_name }}" />
+              </div>
+            {% endfor %}
+
+            {% if form.aliases_formset.errors %}
+              <div class="text-danger">
+                {% for error in form.aliases_formset.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="col-6 form-text text-muted">
+            {% trans "Common aliases for this work, such as 'Penal Code' or 'POPIA'." %}
+          </div>
+        </div>
+
+        <hr>
 
         <div class="row mb-3">
           <label for="{{ form.as_at_date_override.id_for_label }}" class="col-2 col-form-label">{{ form.as_at_date_override.label }}</label>
@@ -574,6 +601,7 @@
     {% endif %}
   {% endif %}
 
+  {% if work.pk %}
   <script>
     (function () {
       function refresh(e) {
@@ -584,5 +612,6 @@
       document.addEventListener('hide.bs.offcanvas', refresh);
     })();
   </script>
+  {% endif %}
 
 {% endblock %}

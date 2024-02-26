@@ -309,12 +309,12 @@ class TaskFormTimelineDateView(PartialTaskFormView):
 
 
 class TaskFormInputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_input_file.html'
+    template_name = 'indigo_api/_task_input_file_form.html'
 
 
 class TaskFormOutputFileView(PartialTaskFormView):
     # TODO
-    template_name = 'indigo_api/_task_input_file.html'
+    template_name = 'indigo_api/_task_input_file_form.html'
 
 
 class TaskInputFileView(SingleTaskViewBase, View, SingleObjectMixin):
@@ -339,7 +339,7 @@ class TaskOutputFileView(SingleTaskViewBase, View, SingleObjectMixin):
 
 # class TaskFormInputFileView(PlaceViewBase, TemplateView):
 #     http_method_names = ['post', 'delete', 'get']
-#     template_name = 'indigo_api/_task_input_file.html'
+#     template_name = 'indigo_api/_task_input_file_form.html'
 # 
 #     class Form(forms.ModelForm):
 #         input_file = forms.FileField(required=False)

@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery, OuterRef, Count, IntegerField
-from django.http import QueryDict
+from django.http import QueryDict, Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -23,11 +23,20 @@ from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
+from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
+
+
+def task_file_response(task_file):
+    """ Either return the task file as a response, or redirect to the URL.
+    """
+    if task_file.url:
+        return redirect(task_file.url)
+    return view_attachment(task_file)
 
 
 class TaskViewBase(PlaceViewBase):
@@ -158,6 +167,20 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
+
+
+class TaskFileView(SingleTaskViewBase, DetailView):
+    task_file = None
+
+    def get(self, request, *args, **kwargs):
+        task = self.get_object()
+        try:
+            if self.task_file == 'input_file':
+                return task_file_response(task.input_file)
+            return task_file_response(task.output_file)
+        except TaskFile.DoesNotExist:
+            pass
+        raise Http404()
 
 
 class TaskEditLabelsView(SingleTaskViewBase, UpdateView):

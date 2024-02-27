@@ -321,6 +321,15 @@ class TaskFormTimelineDateView(PartialTaskFormView):
     template_name = 'indigo_api/_task_timeline_date_form.html'
 
 
+class TaskFormInputFileView(PartialTaskFormView):
+    template_name = 'indigo_api/_task_input_file_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = context["form"].input_file_form
+        return context
+
+
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)

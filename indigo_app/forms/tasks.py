@@ -63,9 +63,8 @@ class TaskForm(forms.ModelForm):
 
     def save(self, commit=True):
         task = super().save(commit=commit)
-        if commit:
+        if commit and self.input_file_form.has_changed():
             self.input_file_form.save()
-            # TODO: what if it was cleared?
             task.input_file = self.input_file_form.instance
             task.save()
         return task
@@ -78,6 +77,7 @@ class TaskFileForm(forms.ModelForm):
 
     url = forms.URLField(required=False)
     file = forms.FileField(required=False)
+    clear = forms.BooleanField(required=False)
 
     def __init__(self, task, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,7 +87,10 @@ class TaskFileForm(forms.ModelForm):
         file = self.cleaned_data['file']
         url = self.cleaned_data['url']
         task_file = self.instance
-        # TODO: if a literal file already exists and it's being changed (to another file or a URL), delete it
+        # save only gets called if there's a change, so we're either updating or deleting the TaskFile
+        # either way, we should delete the actual file
+        if self.initial.get('file'):
+            self.initial.get('file').delete()
         if url:
             resp = requests.get(url, timeout=10)
             resp.raise_for_status()
@@ -112,8 +115,10 @@ class TaskFileForm(forms.ModelForm):
                 task_file.task_as_output = self.task
             task_file.save()
         else:
-            # TODO
-            pass
+            # if there was a task_file on the task and it's been cleared, delete it and clear the form instance
+            if task_file.pk:
+                task_file.delete()
+            self.instance = None
 
 
 class TaskEditLabelsForm(forms.ModelForm):

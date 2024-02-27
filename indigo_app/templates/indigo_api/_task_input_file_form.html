@@ -19,6 +19,13 @@
           name="{{ form.clear.html_name }}"
           value="1"
       >{% trans 'Clear' %}</button>
+      {% if form.url.errors %}
+        <div class="text-danger">
+          {% for error in form.url.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
 {% else %}

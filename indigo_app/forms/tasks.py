@@ -87,6 +87,7 @@ class TaskFileForm(forms.ModelForm):
         file = self.cleaned_data['file']
         url = self.cleaned_data['url']
         task_file = self.instance
+        # TODO: if a literal file already exists and it's being changed (to another file or a URL), delete it
         if url:
             resp = requests.get(url, timeout=10)
             resp.raise_for_status()
@@ -101,8 +102,15 @@ class TaskFileForm(forms.ModelForm):
                 task_file.task_as_output = self.task
             task_file.save()
         elif file:
-            # TODO
-            pass
+            task_file.file = file
+            task_file.size = file.size
+            task_file.filename = file.name
+            task_file.mime_type = file.content_type
+            if self.prefix == 'input_file':
+                task_file.task_as_input = self.task
+            else:
+                task_file.task_as_output = self.task
+            task_file.save()
         else:
             # TODO
             pass

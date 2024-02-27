@@ -27,8 +27,12 @@
       <input
           class="form-control"
           type="text"
+          hx-post="{{ edit_url }}"
+          hx-trigger="change keyup"
+          hx-target="#task-input-file"
           id="{{ form.url.id_for_label }}"
           name="{{ form.url.html_name }}"
+          value="{{ form.url.value|default_if_none:'' }}"
       >
       {% if form.url.errors %}
         <div class="text-danger">
@@ -41,22 +45,24 @@
     <div class="col-6 form-text text-muted">{% trans "Paste in a URL (preferred), or upload a file." %}</div>
   </div>
 
-  <div class="mb-3 row">
-    <label for="{{ form.file.id_for_label }}" class="col-2 col-form-label">{% trans 'Input file' %}</label>
-    <div class="col-4">
-      <input
-          type="file"
-          id="{{ form.file.id_for_label }}"
-          name="{{ form.file.html_name }}"
-          accept=".pdf,.docx"
-      >
-      {% if form.file.errors %}
-        <div class="text-danger">
-          {% for error in form.file.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
+  {% if not form.url.value %}
+    <div class="mb-3 row">
+      <label for="{{ form.file.id_for_label }}" class="col-2 col-form-label">{% trans 'Input file' %}</label>
+      <div class="col-4">
+        <input
+            type="file"
+            id="{{ form.file.id_for_label }}"
+            name="{{ form.file.html_name }}"
+            accept=".pdf,.docx"
+        >
+        {% if form.file.errors %}
+          <div class="text-danger">
+            {% for error in form.file.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
     </div>
-  </div>
+  {% endif %}
 {% endif %}

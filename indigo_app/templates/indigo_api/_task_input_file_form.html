@@ -1,6 +1,6 @@
 {% load i18n %}
 {% url 'task_form_input_file' place.place_code as edit_url %}
-<input type="hidden" name="{{ form.clear.html_name }}" value="{{ form.clear.value }}">
+<input type="hidden" name="{{ form.clear.html_name }}" value="{{ form.clear.value|default_if_none:'' }}">
 {% if task.input_file %}
   <input type="hidden" name="{{ form.url.html_name }}" value="{{ task.input_file.url|default_if_none:'' }}">
   <div class="mb-3 row">

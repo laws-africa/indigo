@@ -1,5 +1,6 @@
 {% load i18n %}
 {% url 'task_form_input_file' place.place_code as edit_url %}
+<input type="hidden" name="{{ form.clear.html_name }}" value="{{ form.clear.value }}">
 {% if task.input_file %}
   <input type="hidden" name="{{ form.url.html_name }}" value="{{ task.input_file.url|default_if_none:'' }}">
   <div class="mb-3 row">
@@ -13,8 +14,10 @@
       <span class="text-muted">({{ task.input_file.size|filesizeformat }})</span>
       <button
           class="btn btn-outline-danger ms-2"
-          hx-get="{{ edit_url }}"
+          hx-post="{{ edit_url }}"
           hx-target="#task-input-file"
+          name="{{ form.clear.html_name }}"
+          value="1"
       >{% trans 'Clear' %}</button>
     </div>
   </div>

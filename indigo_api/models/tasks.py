@@ -43,11 +43,11 @@ class TaskManager(models.Manager):
 
 
 def task_file_filename(instance, filename):
-    return f'task-file-attachments/{instance.task_as_input.id or instance.task_as_outupt.id}/{instance.id}/{filename}'
+    return f'task-file-attachments/{"input" if instance.task_as_input else "output"}/{instance.task_as_input.id or instance.task_as_outupt.id}-{filename}'
 
 
 class TaskFile(models.Model):
-    file = models.FileField(upload_to=task_file_filename)
+    file = models.FileField(upload_to=task_file_filename, null=True, blank=True)
     url = models.URLField(null=True, blank=True)
     size = models.IntegerField(null=True)
     filename = models.CharField(max_length=1024)

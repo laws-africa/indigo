@@ -26,7 +26,7 @@ from django_fsm import has_transition_perm
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, TaskFileForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
 
@@ -253,6 +253,49 @@ class TaskEditView(SingleTaskViewBase, UpdateView):
         return context
 
 
+# class TaskFormInputFileView(PlaceViewBase, UpdateView):
+#     template_name = 'indigo_api/_task_input_file_form.html'
+#     form_class = TaskFileForm
+#     model = TaskFile
+#     pk_url_kwarg = 'task_file_pk'
+# 
+#     def post(self, request, *args, **kwargs):
+#         return self.get(request, *args, **kwargs)
+# 
+#     def get_form_kwargs(self):
+#         form_kwargs = super().get_form_kwargs()
+#         form_kwargs['task'] = self.object.task_as_input
+#         form_kwargs['prefix'] = 'input_file'
+#         form_kwargs['instance'] = TaskFile()
+#         form_kwargs['data'] = self.request.GET
+#         form_kwargs['files'] = self.request.FILES
+#         # TODO: data, files?
+#         return form_kwargs
+# 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # form = TaskForm(self.country, self.locality, self.request.POST)
+#         context['task'] = context['form'].task
+#         return context
+
+
+class TaskFormInputFileView(PlaceViewBase, TemplateView):
+    template_name = 'indigo_api/_task_input_file_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task_form = TaskForm(self.country, self.locality,
+                             self.request.GET, self.request.FILES,
+                             instance=Task.objects.get(pk=self.kwargs['pk']) if self.kwargs.get('pk') else Task())
+        form = task_form.input_file_form
+        form.is_valid()
+        context['form'] = form
+        return context
+
+
 class TaskWorkChooserView(WorkChooserView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -308,13 +351,9 @@ class TaskFormTimelineDateView(PartialTaskFormView):
     template_name = 'indigo_api/_task_timeline_date_form.html'
 
 
-class TaskFormInputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_input_file_form.html'
-
-
-class TaskFormOutputFileView(PartialTaskFormView):
-    # TODO
-    template_name = 'indigo_api/_task_input_file_form.html'
+# class TaskFormOutputFileView(PartialTaskFormView):
+#     # TODO
+#     template_name = 'indigo_api/_task_input_file_form.html'
 
 
 class TaskInputFileView(SingleTaskViewBase, View, SingleObjectMixin):

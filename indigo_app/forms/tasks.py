@@ -1,5 +1,6 @@
-import urllib.parse
+from urllib.parse import urlparse
 
+import requests
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -12,26 +13,27 @@ from indigo_app.forms.mixins import FormAsUrlMixin
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('code', 'description', 'work', 'document', 'timeline_date', 'labels', 'title', 'input_file')
+        fields = ('code', 'description', 'work', 'document', 'timeline_date', 'labels', 'title')
 
     title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
     timeline_date = forms.DateField(required=False)
     code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
     # TODO: allow multiple files to be uploaded; or maybe an input and an output file
-    input_file_file = forms.FileField(required=False)
-    input_file_url = forms.URLField(required=False)
-    input_file_size = forms.IntegerField(required=False)
-    input_file_mime_type = forms.CharField(required=False)
-    input_file_delete = forms.BooleanField(required=False)
-    output_file = forms.FileField(required=False)
-    output_file_url = forms.URLField(required=False)
-    output_file_size = forms.IntegerField(required=False)
-    output_file_mime_type = forms.CharField(required=False)
-    output_file_delete = forms.BooleanField(required=False)
+    # input_file_file = forms.FileField(required=False)
+    # input_file_url = forms.URLField(required=False)
+    # output_file_file = forms.FileField(required=False)
+    # output_file_url = forms.URLField(required=False)
+    # input_file_size = forms.IntegerField(required=False)
+    # input_file_mime_type = forms.CharField(required=False)
+    # input_file_delete = forms.BooleanField(required=False)
+    # output_file = forms.FileField(required=False)
+    # output_file_size = forms.IntegerField(required=False)
+    # output_file_mime_type = forms.CharField(required=False)
+    # output_file_delete = forms.BooleanField(required=False)
 
-    def __init__(self, country, locality, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, country, locality, data=None, files=None, *args, **kwargs):
+        super().__init__(data, files, *args, **kwargs)
         self.country = country
         self.locality = locality
         self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
@@ -40,6 +42,8 @@ class TaskForm(forms.ModelForm):
             # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
             document_queryset = task.work.expressions()
             self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
+        self.input_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='input_file', instance=task.input_file or TaskFile())
+        # self.output_file_form = TaskFileForm(prefix='output_file')
 
     def clean_timeline_date(self):
         timeline_date = self.cleaned_data['timeline_date']
@@ -63,28 +67,96 @@ class TaskForm(forms.ModelForm):
 
         return title
 
-    def clean_input_file(self):
-        file = self.cleaned_data.get('input_file_file')
-        input_file_url = self.cleaned_data.get('input_file_url')
-        if file:
-            input_file = TaskFile(file=file, size=file.size, filename=file.name, mime_type=file.content_type)
-            # input_file.save()
-            return input_file
+    def is_valid(self):
+        return super().is_valid() and self.input_file_form.is_valid()
+
+    def has_changed(self):
+        return super().has_changed() or self.input_file_form.has_changed()
 
     def save(self, commit=True):
-        task = super().save(commit=False)
-        if task.input_file:
-            task.input_file.save()
         task = super().save(commit=commit)
-        # self.save_input_file()
+        self.input_file_form.save()
+        # TODO: do this here rather? then we need to call super save on the input_file_form
+        # task.input_file = self.input_file_form.instance
+        # task.save()
         return task
 
-    def save_input_file(self):
-        input_file = self.cleaned_data['input_file']
-        input_file_url = self.cleaned_data['input_file_url']
-        if input_file:
-            task = self.instance
-            task_input_file = TaskFile(file=input_file)
+
+class TaskFileForm(forms.ModelForm):
+    class Meta:
+        model = TaskFile
+        fields = ('file', 'url')
+
+    file = forms.FileField(required=False)
+    url = forms.URLField(required=False)
+    # clear = forms.BooleanField(required=False)
+    # size = forms.IntegerField(required=False)
+    # filename = forms.CharField(required=False)
+    # mime_type = forms.CharField(required=False)
+    # delete = forms.BooleanField(required=False)
+
+    def __init__(self, task, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.task = task
+
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        if 'file' in self.changed_data:
+            return file
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # file = self.cleaned_data.get('file')
+        # url = self.cleaned_data.get('url')
+        # if not (file or url):
+        #     raise forms.ValidationError('You must provide a file or a URL')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        # TODO: make this generic, prefix is either 'input_file' or 'output_file'; 'task_as_input' or 'task_as_output' on model
+        # TODO: differentiate between new upload, cleared file -- don't make a new TaskFile if nothing changed
+        file = self.cleaned_data['file']
+        url = self.cleaned_data['url']
+        if self.instance:
+            pass
+        if url:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            file_size_a = len(resp.content)
+            file_size_b = resp.headers['Content-Length']
+            filename = urlparse(url).path.split('/')[-1]
+            task_file = TaskFile(url=url, size=len(resp.content), filename=url, mime_type=resp.headers['Content-Type'])
+            task_file.task_as_input = self.task
+            # self.set_task_relationship(task_file)
+            task_file.save()
+            self.task.input_file = task_file
+            # self.set_task_relationship(task_file)
+            self.task.save()
+        if file:
+            file_size_a = file.size
+            task_file = TaskFile(file=file, size=file.size, filename=file.name, mime_type=file.content_type)
+            task_file.task_as_input = self.task
+            # self.set_task_relationship(task_file)
+            task_file.save()
+            self.task.input_file = task_file
+            # self.set_task_relationship(task_file)
+            self.task.save()
+        # TODO: output
+        if not (file or url) and self.task.input_file:
+            self.task.input_file.delete()
+            self.task.input_file = None
+            self.task.save()
+
+    def set_file_relationship(self, task_file):
+        if self.prefix == 'input_file':
+            task_file.task_as_input = self.task
+        # TODO: output
+
+    def set_task_relationship(self, task_file):
+        if self.prefix == 'input_file':
+            self.task.input_file = task_file
+        # TODO: output
 
 
 class TaskEditLabelsForm(forms.ModelForm):

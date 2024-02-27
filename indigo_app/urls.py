@@ -55,7 +55,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/form/title', tasks.TaskFormTitleView.as_view(), name='task_form_title'),
     path('places/<str:place>/tasks/form/timeline-date', tasks.TaskFormTimelineDateView.as_view(), name='task_form_timeline_date'),
     path('places/<str:place>/tasks/form/input-file', tasks.TaskFormInputFileView.as_view(), name='task_form_input_file'),
-    path('places/<str:place>/tasks/form/output-file', tasks.TaskFormOutputFileView.as_view(), name='task_form_output_file'),
+    # path('places/<str:place>/tasks/form/output-file', tasks.TaskFormOutputFileView.as_view(), name='task_form_output_file'),
     path('places/<str:place>/tasks/update', tasks.TaskBulkUpdateView.as_view(), name='bulk_task_update'),
     path('places/<str:place>/tasks/assignees', tasks.TaskAssigneesView.as_view(), name='task_assignees_menu'),
     path('places/<str:place>/tasks/<int:pk>', tasks.TaskDetailView.as_view(), name='task_detail'),
@@ -73,6 +73,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>/block', tasks.TaskChangeStateView.as_view(change='block'), name='block_task'),
     path('places/<str:place>/tasks/<int:pk>/unblock', tasks.TaskChangeStateView.as_view(change='unblock'), name='unblock_task'),
     path('places/<str:place>/tasks/<int:pk>/edit-labels', tasks.TaskEditLabelsView.as_view(), name='task_labels'),
+    # path('places/<str:place>/tasks/<int:pk>/input-file/<int:task_file_pk>/edit', tasks.TaskFormInputFileView.as_view(), name='task_form_input_file'),
     path('places/<str:place>/tasks/<int:pk>/input-file', tasks.TaskInputFileView.as_view(), name='task_input_file'),
     path('places/<str:place>/tasks/<int:pk>/output-file', tasks.TaskOutputFileView.as_view(), name='task_output_file'),
 

@@ -1,101 +1,93 @@
 {% load i18n %}
 
-{% comment %}
-<div class="mb-3 row">
-  <label class="col-2 col-form-label">{% trans 'Hi' %}</label>
-  <div class="col-10">
-    <input type="hidden" id="{{ form.input_file_url.id_for_label }}" name="{{ form.input_file_url.html_name }}" value="{{ form.input_file_url.value|default_if_none:'' }}">
-    <input type="hidden" id="{{ form.input_file_size.id_for_label }}" name="{{ form.input_file_size.html_name }}" value="{{ form.input_file_size.value|default_if_none:'' }}">
-    <input type="hidden" id="{{ form.input_file_mime_type.id_for_label }}" name="{{ form.input_file_mime_type.html_name }}" value="{{ form.input_file_mime_type.value|default_if_none:'' }}">
-    <input type="hidden" id="{{ form.input_file_delete.id_for_label }}" name="{{ form.input_file_delete.html_name }}" value="{{ form.input_file_delete.value|default_if_none:'' }}">
-    {% if task.input_file %}
-      <div class="mb-2">
-        <i class="fas fa-file text-muted"></i>
-        <a href="{% url 'task_input_file' place=place.place_code %}"
-           target="_blank" rel="noopener">
-          {{ task.input_file.filename }}
-        </a>
-        <span class="text-muted">({{ task.input_file.size|filesizeformat }})</span>
-      </div>
-      <div class="mb-2">
-        {% url 'task_form_input_file' place.place_code as edit_url %}
-        <button
-            class="btn btn-outline-danger ms-2"
-            hx-get="{{ edit_url }}"
-            hx-target="#task-input-file"
-        >{% trans 'Clear' %}</button>
-      </div>
-    {% endif %}
-    {% if form.input_file_url.value %}
-      <div class="mb-2">
-        <a href="{{ form.input_file_url.value }}"
-           target="_blank" rel="noopener"
-        >{{ form.input_file_url.value }}</a>
-        <span class="text-muted">({{ form.input_file_size.value|filesizeformat }})</span>
-      </div>
-      <div class="mb-2">
-        {% url 'task_form_input_file' place.place_code as edit_url %}
-        {% if task.input_file %}
-          <button
-              class="btn btn-outline-danger ms-2"
-              hx-get="{{ edit_url }}"
-              hx-target="#task-input-file"
-          >{% trans 'Clear' %}</button>
-        {% endif %}
-      </div>
-    {% endif %}
-    {% if form.input_file.value %}
-      <div class="mb-2">
-        <i class="fas fa-file text-muted"></i>
-        {{ form.input_file.value.name }}
-        <span class="text-muted">({{ form.input_file_size.value|filesizeformat }})</span>
-      </div>
-      <div class="mb-2">
-        {% url 'task_form_input_file' place.place_code as edit_url %}
-        <button
-            class="btn btn-outline-danger ms-2"
-            hx-get="{{ edit_url }}"
-            hx-target="#task-input-file"
-        >{% trans 'Clear' %}</button>
-      </div>
-    {% endif %}
-  </div>
-  {% if form.input_file.errors %}
-    <div class="text-danger">
-      {% for error in form.input_file.errors %}
-        <p>{{ error }}</p>
+{% if form.non_form_errors %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for error in form.non_form_errors %}
+        {{ error }}
       {% endfor %}
-    </div>
-  {% endif %}
-</div>
-{% endcomment %}
+    </ul>
+  </div>
+{% endif %}
 
-<div class="mb-3 row">
-  <label for="{{ form.input_file.id_for_label }}" class="col-2 col-form-label">{% trans 'Input file' %}</label>
-  <div class="col-10">
-    {% if task.input_file %}
-      <div class="mb-2">
-        <i class="fas fa-file text-muted"></i>
-        <a href="{% url 'task_input_file' place=place.place_code pk=task.pk %}"
-           target="_blank" rel="noopener">
-          {{ task.input_file.filename }}
+{# TODO: when loading a form without an input file, form.instance.pk is None #}
+{% url 'task_form_input_file' place.place_code as edit_url %}
+{% if task.input_file %}
+  <div class="mb-3 row">
+    <label class="col-2 col-form-label">{% trans 'Input' %}</label>
+    <div class="col-10">
+      <i class="fas fa-file text-muted"></i>
+      <a href="{% url 'task_input_file' place=place.place_code pk=task.pk %}"
+         target="_blank" rel="noopener">
+        {{ task.input_file.filename }}
+      </a>
+      <span class="text-muted">({{ task.input_file.size|filesizeformat }})</span>
+      <button
+          class="btn btn-outline-danger ms-2"
+          hx-get="{{ edit_url }}"
+          hx-target="#task-input-file"
+      >{% trans 'Clear' %}</button>
+    </div>
+  </div>
+{% else %}
+  <div class="mb-3 row">
+    <label for="{{ form.url.id_for_label }}" class="col-2 col-form-label">{% trans 'Input URL' %}</label>
+    {% if form.url.value %}
+      <div class="col-4" style="text-overflow: ellipsis; white-space: nowrap; overflow:hidden">
+        <a href="{{ form.url.value }}" target="_blank" rel="noopener">
+          {{ form.url.value }}
         </a>
-        <span class="text-muted">({{ task.input_file.size|filesizeformat }})</span>
-        {% url 'task_form_input_file' place.place_code as edit_url %}
+      </div>
+      <div class="col-6">
         <button
-            class="btn btn-outline-danger ms-2"
+            class="btn btn-outline-danger me-2"
             hx-get="{{ edit_url }}"
             hx-target="#task-input-file"
         >{% trans 'Clear' %}</button>
       </div>
     {% else %}
-      <input
-          class="ms-3"
-          type="file"
-          id="{{ form.input_file_file.id_for_label }}"
-          name="{{ form.input_file_file.html_name }}"
-          accept=".pdf,.docx"
-      >
+      <div class="col-4">
+        <input
+            class="form-control"
+            hx-get="{{ edit_url }}"
+            hx-trigger="change keyup"
+            hx-target="#task-input-file"
+            type="text"
+            id="{{ form.url.id_for_label }}"
+            name="{{ form.url.html_name }}"
+        >
+      </div>
+      <div class="col-6 form-text text-muted">{% trans "Paste in a URL, or upload a file." %}</div>
+    {% endif %}
+    {% if form.url.errors %}
+      <div class="text-danger">
+        {% for error in form.url.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
     {% endif %}
   </div>
-</div>
+
+  {% if not form.url.value %}
+    <div class="mb-3 row">
+      <label for="{{ form.file.id_for_label }}" class="col-2 col-form-label">{% trans 'Input file' %}</label>
+      <div class="col-10">
+        <input
+            class="ms-3"
+            type="file"
+            id="{{ form.file.id_for_label }}"
+            name="{{ form.file.html_name }}"
+            accept=".pdf,.docx"
+        >
+        {% if form.file.errors %}
+          <div class="text-danger">
+            {% for error in form.file.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  {% endif %}
+{% endif %}

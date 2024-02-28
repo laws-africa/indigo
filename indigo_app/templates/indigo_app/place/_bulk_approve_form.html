@@ -4,7 +4,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">
-        {% blocktrans count works_length=works_in_progress|length %}
+        {% blocktrans count works_length=form.broker.works|length %}
           Approve {{ works_length }} work in progress
         {% plural %}
           Approve {{ works_length }} works in progress
@@ -20,21 +20,12 @@
           id="bulk-approve-form"
       >
         {% csrf_token %}
-        {% for work in works_in_progress %}
+        {% for work in form.broker.works %}
           <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
-        {% endfor %}
-        {% for work in import_task_works %}
-          <input type="hidden" name="import_task_works" value="{{ work.pk }}">
-        {% endfor %}
-        {% for work in gazette_task_works %}
-          <input type="hidden" name="gazette_task_works" value="{{ work.pk }}">
-        {% endfor %}
-        {% for amendment in amendments %}
-          <input type="hidden" name="amendments" value="{{ amendment.pk }}">
         {% endfor %}
         <div class="alert alert-warning">
           <ul>
-            {% for work in works_in_progress %}
+            {% for work in form.broker.works %}
               <li>
                 <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                 {% include 'indigo_api/_work_info_badges.html' %}
@@ -42,14 +33,14 @@
             {% endfor %}
           </ul>
         </div>
-        {% if import_task_works %}
+        {% if form.broker.import_task_works %}
           <div class="card mb-3">
             <h5 class="card-header">
               {% trans "Import tasks will be created" %}
             </h5>
             <div class="card-body">
               <ul>
-                {% for work in import_task_works %}
+                {% for work in form.broker.import_task_works %}
                   <li>
                     <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                   </li>
@@ -71,14 +62,14 @@
             </div>
           </div>
         {% endif %}
-        {% if gazette_task_works %}
+        {% if form.broker.gazette_task_works %}
           <div class="card mb-3">
             <h5 class="card-header">
               {% trans "Gazette tasks will be created" %}
             </h5>
             <div class="card-body">
               <ul>
-                {% for work in gazette_task_works %}
+                {% for work in form.broker.gazette_task_works %}
                   <li>
                     <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                   </li>
@@ -100,13 +91,13 @@
             </div>
           </div>
         {% endif %}
-        {% if amendments_per_work %}
+        {% if form.broker.amendments_per_work %}
           <div class="card">
             <h5 class="card-header">
               {% trans "Amendment tasks will be created" %}
             </h5>
             <div class="card-body">
-              {% for work, amendments in amendments_per_work.items %}
+              {% for work, amendments in form.broker.amendments_per_work.items %}
                 <div class="mb-3 list-group">
                   <div class="list-group-item">
                     <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>

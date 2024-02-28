@@ -1,0 +1,51 @@
+{% load i18n %}
+{% url 'task_form_output_file' place.place_code as edit_url %}
+<input type="hidden" name="{{ form.clear.html_name }}" value="{{ form.clear.value|default_if_none:'' }}">
+{% if task.output_file %}
+  <input type="hidden" name="{{ form.url.html_name }}" value="{{ task.output_file.url|default_if_none:'' }}">
+  <div class="mb-3 row">
+    <label class="col-2 col-form-label">{% trans 'Output' %}</label>
+    <div class="col-10">
+      <i class="fas fa-file text-muted"></i>
+      <a href="{% url 'task_output_file' place=place.place_code pk=task.pk %}"
+         target="_blank" rel="noopener">
+        {{ task.output_file.filename }}
+      </a>
+      <span class="text-muted">({{ task.output_file.size|filesizeformat }})</span>
+      <button
+          class="btn btn-outline-danger ms-2"
+          hx-post="{{ edit_url }}"
+          hx-target="#task-output-file"
+          name="{{ form.clear.html_name }}"
+          value="1"
+      >{% trans 'Clear' %}</button>
+      {% if form.url.errors %}
+        <div class="text-danger">
+          {% for error in form.url.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="mb-3 row">
+    <label for="{{ form.file.id_for_label }}" class="col-2 col-form-label">{% trans 'Output file' %}</label>
+    <div class="col-4">
+      <input
+          type="file"
+          id="{{ form.file.id_for_label }}"
+          name="{{ form.file.html_name }}"
+          accept=".docx"
+      >
+      {% if form.file.errors %}
+        <div class="text-danger">
+          {% for error in form.file.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-6 form-text text-muted">{% trans "Upload the converted file." %}</div>
+  </div>
+{% endif %}

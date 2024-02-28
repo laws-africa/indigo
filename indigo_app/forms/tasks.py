@@ -32,6 +32,8 @@ class TaskForm(forms.ModelForm):
             self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
         self.input_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='input_file',
                                             instance=task.input_file or TaskFile())
+        self.output_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='output_file',
+                                             instance=task.output_file or TaskFile())
 
     def clean_timeline_date(self):
         timeline_date = self.cleaned_data['timeline_date']
@@ -56,16 +58,20 @@ class TaskForm(forms.ModelForm):
         return title
 
     def is_valid(self):
-        return super().is_valid() and self.input_file_form.is_valid()
+        return super().is_valid() and self.input_file_form.is_valid() and self.output_file_form.is_valid()
 
     def has_changed(self):
-        return super().has_changed() or self.input_file_form.has_changed()
+        return super().has_changed() or self.input_file_form.has_changed() or self.output_file_form.has_changed()
 
     def save(self, commit=True):
         task = super().save(commit=commit)
         if commit and self.input_file_form.has_changed():
             self.input_file_form.save()
             task.input_file = self.input_file_form.instance
+            task.save()
+        if commit and self.output_file_form.has_changed():
+            self.output_file_form.save()
+            task.output_file = self.output_file_form.instance
             task.save()
         return task
 

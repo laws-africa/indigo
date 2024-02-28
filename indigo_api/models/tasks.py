@@ -541,7 +541,9 @@ class TaskLabel(models.Model):
 
 
 def task_file_filename(instance, filename):
-    return f'task-file-attachments/{"input" if instance.task_as_input else "output"}/{instance.task_as_input.id or instance.task_as_outupt.id}-{filename}'
+    subdirectory = 'input' if hasattr(instance, 'task_as_input') else 'output'
+    task_id = instance.task_as_input.id if hasattr(instance, 'task_as_input') else instance.task_as_output.id
+    return f'task-file-attachments/{subdirectory}/{task_id}-{filename}'
 
 
 class TaskFile(models.Model):

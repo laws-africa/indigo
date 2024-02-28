@@ -330,6 +330,15 @@ class TaskFormInputFileView(PartialTaskFormView):
         return context
 
 
+class TaskFormOutputFileView(PartialTaskFormView):
+    template_name = 'indigo_api/_task_output_file_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = context["form"].output_file_form
+        return context
+
+
 class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)

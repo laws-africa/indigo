@@ -67,10 +67,16 @@ class TaskForm(forms.ModelForm):
         task = super().save(commit=commit)
         if commit and self.input_file_form.has_changed():
             self.input_file_form.save()
+            if self.input_file_form.instance:
+                self.input_file_form.instance.task_as_input = task
+                self.input_file_form.instance.save()
             task.input_file = self.input_file_form.instance
             task.save()
         if commit and self.output_file_form.has_changed():
             self.output_file_form.save()
+            if self.output_file_form.instance:
+                self.output_file_form.instance.task_as_output = task
+                self.output_file_form.instance.save()
             task.output_file = self.output_file_form.instance
             task.save()
         return task
@@ -105,21 +111,11 @@ class TaskFileForm(forms.ModelForm):
             task_file.size = len(resp.content)
             task_file.filename = filename
             task_file.mime_type = resp.headers['Content-Type']
-            if self.prefix == 'input_file':
-                task_file.task_as_input = self.task
-            else:
-                task_file.task_as_output = self.task
-            task_file.save()
         elif file:
             task_file.file = file
             task_file.size = file.size
             task_file.filename = file.name
             task_file.mime_type = file.content_type
-            if self.prefix == 'input_file':
-                task_file.task_as_input = self.task
-            else:
-                task_file.task_as_output = self.task
-            task_file.save()
         else:
             # if there was a task_file on the task and it's been cleared, delete it and clear the form instance
             if task_file.pk:

@@ -1277,15 +1277,18 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):
             form.save_changes(self.request)
-            messages.success(self.request, f"Approved {form.broker.works.count()} works.")
-            if form.broker.import_task_works:
-                messages.success(self.request, f"Created {form.broker.import_task_works.count()} Import tasks.")
-            if form.broker.gazette_task_works:
-                messages.success(self.request, f"Created {len(form.broker.gazette_task_works)} Gazette tasks.")
-            if form.broker.amendments:
-                messages.success(self.request, f"Created {len(form.broker.amendments)} Amendment tasks.")
+            self.send_success_messages(form)
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
+
+    def send_success_messages(self, form):
+        messages.success(self.request, f"Approved {form.broker.works.count()} works.")
+        if form.broker.import_task_works:
+            messages.success(self.request, f"Created {form.broker.import_task_works.count()} Import tasks.")
+        if form.broker.gazette_task_works:
+            messages.success(self.request, f"Created {len(form.broker.gazette_task_works)} Gazette tasks.")
+        if form.broker.amendments:
+            messages.success(self.request, f"Created {len(form.broker.amendments)} Amendment tasks.")
 
 
 class WorkBulkUnapproveView(PlaceViewBase, FormView):

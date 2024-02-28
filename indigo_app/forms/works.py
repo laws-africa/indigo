@@ -1000,9 +1000,10 @@ class WorkBulkApproveForm(forms.Form):
     approve = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
+        broker_class = kwargs.pop('broker_class', TaskBroker)
         super().__init__(*args, **kwargs)
         if self.is_valid():
-            self.broker = TaskBroker(self.cleaned_data.get('works_in_progress', []))
+            self.broker = broker_class(self.cleaned_data.get('works_in_progress', []))
             self.add_amendment_task_description_fields(self.broker.amendments)
             self.full_clean()
 

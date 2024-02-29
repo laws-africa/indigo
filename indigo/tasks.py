@@ -45,19 +45,12 @@ class TaskBroker:
             self.block_or_cancel_tasks(amendment_tasks, data['update_amendment_tasks'], user)
 
     def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
-        task_titles = {
-            'import-content': _('Import content'),
-            'link-gazette': _('Link Gazette'),
-            'apply-amendment': _('Apply amendment'),
-        }
-        task_title = task_titles[task_type]
-
         task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date).first()
         if not task:
             task = Task(country=work.country, locality=work.locality, work=work,
                         code=task_type, timeline_date=timeline_date, created_by_user=user)
 
-        task.title = task_title
+        task.title = dict(Task.MAIN_CODES)[task_type]
         task.description = description
         task.updated_by_user = user
         task.save()

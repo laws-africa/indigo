@@ -61,6 +61,7 @@ class Task(models.Model):
         'reopen': 'reopened',
         'unsubmit': 'requested changes to',
         'close': 'approved',
+        'finish': 'finished',
         'block': 'blocked',
         'unblock': 'unblocked',
     }
@@ -97,6 +98,7 @@ class Task(models.Model):
             ('reopen_task', 'Can reopen a task that is closed or cancelled'),
             ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
+            ('finish_task', 'Can finish a task (close it without submitting it for review)'),
             ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
             ('block_task', 'Can block a task from being done, and unblock it'),
             ('exceed_task_limits', 'Can be assigned tasks in excess of limits'),
@@ -125,6 +127,7 @@ class Task(models.Model):
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     submitted_by_user = models.ForeignKey(User, related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
+    finished_by_user = models.ForeignKey(User, related_name='finished_tasks', null=True, on_delete=models.SET_NULL)
     closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
@@ -231,6 +234,7 @@ class Task(models.Model):
         for task in tasks:
             task.change_task_permission = user.has_perm('indigo_api.change_task') and user.editor.has_country_permission(task.country)
             task.submit_task_permission = has_transition_perm(task.submit, user)
+            task.finish_task_permission = has_transition_perm(task.finish, user)
             task.reopen_task_permission = has_transition_perm(task.reopen, user)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)
             task.close_task_permission = has_transition_perm(task.close, user)
@@ -327,6 +331,20 @@ class Task(models.Model):
 
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
+
+    # finish (skip submission)
+    def may_finish(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('finish_task')
+
+    @transition(field=state, source=['open'], target='done', permission=may_finish)
+    def finish(self, user, **kwargs):
+        self.finished_by_user = user
+        self.closed_at = timezone.now()
+        self.changes_requested = False
+        self.assigned_to = None
+        self.update_blocked_tasks(self, user)
 
     # block
     def may_block(self, user):

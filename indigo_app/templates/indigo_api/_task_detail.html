@@ -204,6 +204,13 @@
                              value="{% trans 'Reopen' %}">
                     {% endif %}
 
+                  {% elif task.code == 'convert-document' and task.state == 'open' and task.finish_task_permission %}
+                    <input class="btn btn-primary float-start me-2" type="submit"
+                           data-confirm="{% trans 'Are you sure you want to finish this task?' %}"
+                           formaction="{% url 'finish_task' place=place.place_code pk=task.pk %}"
+                           id="btn_finish"
+                           value="{% trans 'Finish' %}">
+
                   {% elif task.state == 'open' and task.submit_task_permission %}
                     <input class="btn btn-primary float-start me-2" type="submit"
                            data-confirm="{% trans task.submission_message %}"

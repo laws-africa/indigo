@@ -107,6 +107,16 @@ class TaxonomistBadge(PermissionBadge):
     )
 
 
+class FinisherBadge(PermissionBadge):
+    slug = 'finisher'
+    name = 'Finisher'
+    group_name = name + ' Badge'
+    description = 'Can finish tasks'
+    permissions = (
+        'indigo_api.finish_task',
+    )
+
+
 badges.register(ContentAPIBadge)
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
@@ -115,6 +125,7 @@ badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)
 badges.register(TaxonomistBadge)
+badges.register(FinisherBadge)
 
 
 # when a user signs up, grant them some badges immediately

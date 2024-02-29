@@ -61,13 +61,13 @@
             {% endif %}
           </div>
           <div id="task-title">
-            {% include 'indigo_api/_task_title_form.html' %}
+            {% include 'indigo_api/_task_form_title.html' %}
           </div>
           <div id="task-work">
-            {% include 'indigo_api/_task_work_form.html' %}
+            {% include 'indigo_api/_task_form_work.html' %}
           </div>
           <div id="task-timeline-date">
-            {% include 'indigo_api/_task_timeline_date_form.html' %}
+            {% include 'indigo_api/_task_form_timeline_date.html' %}
           </div>
           <div class="mb-3 row">
             <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{% trans 'Description' %}</label>
@@ -100,10 +100,10 @@
             {% endif %}
           </div>
           <div id="task-input-file">
-            {% include 'indigo_api/_task_input_file_form.html' with form=form.input_file_form %}
+            {% include 'indigo_api/_task_form_input_file.html' with form=form.input_file_form %}
           </div>
           <div id="task-output-file">
-            {% include 'indigo_api/_task_output_file_form.html' with form=form.output_file_form %}
+            {% include 'indigo_api/_task_form_output_file.html' with form=form.output_file_form %}
           </div>
         </div>
 

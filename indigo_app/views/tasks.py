@@ -275,7 +275,7 @@ class TaskWorkChooserView(WorkChooserView):
 
 
 class TaskFormWorkView(PlaceViewBase, TemplateView):
-    template_name = 'indigo_api/_task_work_form.html'
+    template_name = 'indigo_api/_task_form_work.html'
 
     class Form(forms.ModelForm):
         class Meta:
@@ -314,15 +314,15 @@ class PartialTaskFormView(PlaceViewBase, TemplateView):
 
 
 class TaskFormTitleView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_title_form.html'
+    template_name = 'indigo_api/_task_form_title.html'
 
 
 class TaskFormTimelineDateView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_timeline_date_form.html'
+    template_name = 'indigo_api/_task_form_timeline_date.html'
 
 
 class TaskFormInputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_input_file_form.html'
+    template_name = 'indigo_api/_task_form_input_file.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -331,7 +331,7 @@ class TaskFormInputFileView(PartialTaskFormView):
 
 
 class TaskFormOutputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_output_file_form.html'
+    template_name = 'indigo_api/_task_form_output_file.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

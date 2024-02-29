@@ -2,7 +2,7 @@ import json
 import logging
 from collections import Counter
 
-from itertools import chain
+from itertools import chain, groupby
 from datetime import timedelta
 
 from django import  forms
@@ -83,19 +83,18 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
         # add tasks
-        open_timeline_tasks = work.tasks.filter(state__in=Task.OPEN_STATES, timeline_date__isnull=False)
+        timeline_tasks = work.tasks.filter(timeline_date__isnull=False)
         dates = [entry.date for entry in timeline]
         # simple case: add tasks to existing corresponding entries
         for entry in timeline:
-            entry.tasks = open_timeline_tasks.filter(timeline_date=entry.date)
+            entry.tasks = timeline_tasks.filter(timeline_date=entry.date)
 
         # these will have their own entries as their dates aren't in the timeline yet
-        extra_tasks = open_timeline_tasks.exclude(timeline_date__in=dates)
-        # TODO: group these by date and add [tasks] instead
-        for task in extra_tasks:
-            entry = TimelineEntry(date=task.timeline_date, initial=False, events=[])
-            entry.tasks = [task]
-            # dates are in descending order, so slot it in before the first one that's smaller
+        extra_tasks = timeline_tasks.exclude(timeline_date__in=dates).order_by('timeline_date')
+        for date, tasks in groupby(extra_tasks, key=lambda t: t.timeline_date):
+            entry = TimelineEntry(date=date, initial=False, events=[])
+            entry.tasks = list(tasks)
+            # dates are in descending order, so slot the entry in before the first one that's earlier
             for i, date in enumerate(dates):
                 if date < entry.date:
                     timeline.insert(i, entry)

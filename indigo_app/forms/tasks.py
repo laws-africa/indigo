@@ -1,11 +1,12 @@
-import urllib.parse
+from urllib.parse import urlparse
 
+import requests
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
-from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic
+from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -19,8 +20,8 @@ class TaskForm(forms.ModelForm):
     timeline_date = forms.DateField(required=False)
     code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
 
-    def __init__(self, country, locality, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, country, locality, data=None, files=None, *args, **kwargs):
+        super().__init__(data, files, *args, **kwargs)
         self.country = country
         self.locality = locality
         self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
@@ -29,6 +30,10 @@ class TaskForm(forms.ModelForm):
             # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
             document_queryset = task.work.expressions()
             self.fields['document'].choices = [('', _('None'))] + [(document.pk, f'{document.expression_date} · { document.language.code } – {document.title}') for document in document_queryset]
+        self.input_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='input_file',
+                                            instance=task.input_file or TaskFile())
+        self.output_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='output_file',
+                                             instance=task.output_file or TaskFile())
 
     def clean_timeline_date(self):
         timeline_date = self.cleaned_data['timeline_date']
@@ -51,6 +56,71 @@ class TaskForm(forms.ModelForm):
             raise ValidationError(self.fields['title'].error_messages['required'], code='required')
 
         return title
+
+    def is_valid(self):
+        return super().is_valid() and self.input_file_form.is_valid() and self.output_file_form.is_valid()
+
+    def has_changed(self):
+        return super().has_changed() or self.input_file_form.has_changed() or self.output_file_form.has_changed()
+
+    def save(self, commit=True):
+        task = super().save(commit=commit)
+        if commit and self.input_file_form.has_changed():
+            self.input_file_form.save()
+            if self.input_file_form.instance:
+                self.input_file_form.instance.task_as_input = task
+                self.input_file_form.instance.save()
+            task.input_file = self.input_file_form.instance
+            task.save()
+        if commit and self.output_file_form.has_changed():
+            self.output_file_form.save()
+            if self.output_file_form.instance:
+                self.output_file_form.instance.task_as_output = task
+                self.output_file_form.instance.save()
+            task.output_file = self.output_file_form.instance
+            task.save()
+        return task
+
+
+class TaskFileForm(forms.ModelForm):
+    class Meta:
+        model = TaskFile
+        fields = ('url', 'file')
+
+    url = forms.URLField(required=False)
+    file = forms.FileField(required=False)
+    clear = forms.BooleanField(required=False)
+
+    def __init__(self, task, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.task = task
+
+    def save(self, commit=True):
+        file = self.cleaned_data['file']
+        url = self.cleaned_data['url']
+        task_file = self.instance
+        # save only gets called if there's a change, so we're either updating or deleting the TaskFile
+        # either way, we should delete the actual file
+        if self.initial.get('file'):
+            self.initial.get('file').delete()
+        if url:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            filename = urlparse(url).path.split('/')[-1] or url
+            task_file.url = url
+            task_file.size = len(resp.content)
+            task_file.filename = filename
+            task_file.mime_type = resp.headers['Content-Type']
+        elif file:
+            task_file.file = file
+            task_file.size = file.size
+            task_file.filename = file.name
+            task_file.mime_type = file.content_type
+        else:
+            # if there was a task_file on the task and it's been cleared, delete it and clear the form instance
+            if task_file.pk:
+                task_file.delete()
+            self.instance = None
 
 
 class TaskEditLabelsForm(forms.ModelForm):

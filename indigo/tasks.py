@@ -45,20 +45,18 @@ class TaskBroker:
             self.block_or_cancel_tasks(amendment_tasks, data['update_amendment_tasks'], user)
 
     def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
-        task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date).first()
+        task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date, state__in=Task.OPEN_STATES).first()
         if not task:
             task = Task(country=work.country, locality=work.locality, work=work,
                         code=task_type, timeline_date=timeline_date, created_by_user=user)
 
+        # set these here in case an existing task is being updated
         task.title = dict(Task.MAIN_CODES)[task_type]
         task.description = description
         task.updated_by_user = user
         task.save()
 
-        # reopen or unblock tasks: they'll be blocked or cancelled again if needed as chosen in the form
-        if task.state in [Task.CANCELLED, Task.DONE]:
-            task.reopen(user)
-        elif task.state == Task.BLOCKED and not task.blocked_by.exists():
+        if task.state == Task.BLOCKED and not task.blocked_by.exists():
             task.unblock(user)
 
         return task

@@ -56,10 +56,7 @@ class TaskBroker:
         task.save()
 
         # reopen or unblock tasks: they'll be blocked or cancelled again if needed as chosen in the form
-        # TODO: only leave closed tasks as done if they should be:
-        #  Gazette tasks never (we've already checked),
-        #  Import / Amendment tasks only if there's a published document at the timeline date
-        if task.state == Task.CANCELLED:
+        if task.state in [Task.CANCELLED, Task.DONE]:
             task.reopen(user)
         elif task.state == Task.BLOCKED and not task.blocked_by.exists():
             task.unblock(user)

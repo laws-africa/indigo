@@ -33,102 +33,104 @@
             {% endfor %}
           </ul>
         </div>
-        {% if form.broker.import_task_works %}
-          <div class="card mb-3">
-            <h5 class="card-header">
-              {% trans "Import tasks will be created" %}
-            </h5>
-            <div class="card-body">
-              <ul>
-                {% for work in form.broker.import_task_works %}
-                  <li>
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-              <div>
-                <label for="{{ form.import_task_description.id_for_label }}">{% trans "Task description" %}</label>
-                {% trans "Import the content for this work at the appropriate date — usually the publication or consolidation date." as description_default %}
-                <textarea id="{{ form.import_task_description.id_for_label }}" name="{{ form.import_task_description.name }}" class="form-control mt-2" required
-                >{{ description_default }}</textarea>
-              </div>
-              <div class="mt-3">
-                {% for opt in form.update_import_tasks %}
-                  <div>
-                    {{ opt }}
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-        {% if form.broker.gazette_task_works %}
-          <div class="card mb-3">
-            <h5 class="card-header">
-              {% trans "Gazette tasks will be created" %}
-            </h5>
-            <div class="card-body">
-              <ul>
-                {% for work in form.broker.gazette_task_works %}
-                  <li>
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-              <div>
-                <label for="{{ form.gazette_task_description.id_for_label }}">{% trans "Task description" %}</label>
-                {% trans "Find and link the Gazette (original publication document) for this work." as description_default %}
-                <textarea id="{{ form.gazette_task_description.id_for_label }}" name="{{ form.gazette_task_description.name }}" class="form-control mt-2" required
-                >{{ description_default }}</textarea>
-              </div>
-              <div class="mt-3">
-                {% for opt in form.update_gazette_tasks %}
-                  <div>
-                    {{ opt }}
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-        {% if form.broker.amendments_per_work %}
-          <div class="card">
-            <h5 class="card-header">
-              {% trans "Amendment tasks will be created" %}
-            </h5>
-            <div class="card-body">
-              {% for work, amendments in form.broker.amendments_per_work.items %}
-                <div class="mb-3 list-group">
-                  <div class="list-group-item">
-                    <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                    {% for amendment in amendments %}
-                      <div class="mt-3">
-                        <label for="amendment_task_description_id_{{ amendment.pk }}">
-                          {% blocktrans with amended_title=amendment.amended_work.title amended_numbered_title=amendment.amended_work.numbered_title amending_title=amendment.amending_work.title amending_numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-                            Task description: {{ amended_title }} ({{ amended_numbered_title }}) amended by {{ amending_title }} ({{ amending_numbered_title }}) – {{ date }}
-                          {% endblocktrans %}
-                        </label>
-                        {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
-
-The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
-                        <textarea id="amendment_task_description_id_{{ amendment.pk }}" name="amendment_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
-                        >{{ description_default }}</textarea>
-                      </div>
-                    {% endfor %}
-                  </div>
+        {% block tasks-will-be-created %}
+          {% if form.broker.import_task_works %}
+            <div class="card mb-3">
+              <h5 class="card-header">
+                {% trans "Import tasks will be created" %}
+              </h5>
+              <div class="card-body">
+                <ul>
+                  {% for work in form.broker.import_task_works %}
+                    <li>
+                      <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+                <div>
+                  <label for="{{ form.import_task_description.id_for_label }}">{% trans "Task description" %}</label>
+                  {% trans "Import the content for this work at the appropriate date — usually the publication or consolidation date." as description_default %}
+                  <textarea id="{{ form.import_task_description.id_for_label }}" name="{{ form.import_task_description.name }}" class="form-control mt-2" required
+                  >{{ description_default }}</textarea>
                 </div>
-              {% endfor %}
-              <div class="mt-3">
-                {% for opt in form.update_amendment_tasks %}
-                  <div>
-                    {{ opt }}
-                  </div>
-                {% endfor %}
+                <div class="mt-3">
+                  {% for opt in form.update_import_tasks %}
+                    <div>
+                      {{ opt }}
+                    </div>
+                  {% endfor %}
+                </div>
               </div>
             </div>
-          </div>
-        {% endif %}
+          {% endif %}
+          {% if form.broker.gazette_task_works %}
+            <div class="card mb-3">
+              <h5 class="card-header">
+                {% trans "Gazette tasks will be created" %}
+              </h5>
+              <div class="card-body">
+                <ul>
+                  {% for work in form.broker.gazette_task_works %}
+                    <li>
+                      <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+                <div>
+                  <label for="{{ form.gazette_task_description.id_for_label }}">{% trans "Task description" %}</label>
+                  {% trans "Find and link the Gazette (original publication document) for this work." as description_default %}
+                  <textarea id="{{ form.gazette_task_description.id_for_label }}" name="{{ form.gazette_task_description.name }}" class="form-control mt-2" required
+                  >{{ description_default }}</textarea>
+                </div>
+                <div class="mt-3">
+                  {% for opt in form.update_gazette_tasks %}
+                    <div>
+                      {{ opt }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          {% if form.broker.amendments_per_work %}
+            <div class="card">
+              <h5 class="card-header">
+                {% trans "Amendment tasks will be created" %}
+              </h5>
+              <div class="card-body">
+                {% for work, amendments in form.broker.amendments_per_work.items %}
+                  <div class="mb-3 list-group">
+                    <div class="list-group-item">
+                      <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                      {% for amendment in amendments %}
+                        <div class="mt-3">
+                          <label for="amendment_task_description_id_{{ amendment.pk }}">
+                            {% blocktrans with amended_title=amendment.amended_work.title amended_numbered_title=amendment.amended_work.numbered_title amending_title=amendment.amending_work.title amending_numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
+                              Task description: {{ amended_title }} ({{ amended_numbered_title }}) amended by {{ amending_title }} ({{ amending_numbered_title }}) – {{ date }}
+                            {% endblocktrans %}
+                          </label>
+                          {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
+                            Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
+
+                            The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
+                          <textarea id="amendment_task_description_id_{{ amendment.pk }}" name="amendment_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
+                          >{{ description_default }}</textarea>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+                <div class="mt-3">
+                  {% for opt in form.update_amendment_tasks %}
+                    <div>
+                      {{ opt }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endblock %}
       </form>
     </div>
 

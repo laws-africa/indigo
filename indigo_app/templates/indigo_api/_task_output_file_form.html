@@ -4,7 +4,7 @@
 {% if task.output_file %}
   <input type="hidden" name="{{ form.url.html_name }}" value="{{ task.output_file.url|default_if_none:'' }}">
   <div class="mb-3 row">
-    <label class="col-2 col-form-label">{% trans 'Output' %}</label>
+    <label class="col-2 col-form-label">{% trans 'Output file' %}</label>
     <div class="col-10">
       <i class="fas fa-file text-muted"></i>
       <a href="{% url 'task_output_file' place=place.place_code pk=task.pk %}"

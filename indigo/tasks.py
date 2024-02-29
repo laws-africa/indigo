@@ -9,6 +9,7 @@ class TaskBroker:
     def __init__(self, works):
         self.works = works.order_by("-created_at")
         self.import_task_works = works.filter(principal=True)
+        self.import_tasks = None
         self.gazette_task_works = [w for w in works if not w.has_publication_document()]
         all_amendments = [w.amendments.all() for w in works if w.amendments.exists()] + \
                          [w.amendments_made.all() for w in works if w.amendments_made.exists()]
@@ -19,11 +20,12 @@ class TaskBroker:
     def create_tasks(self, user, data):
         # import tasks
         # TODO: add the appropriate timeline date for Import tasks too?
-        import_tasks = [self.get_or_create_task(work=work, task_type='import-content',
-                                                description=data['import_task_description'],
-                                                user=user) for work in self.import_task_works]
+        # stash the import tasks in case we want to do something with them later
+        self.import_tasks = [self.get_or_create_task(work=work, task_type='import-content',
+                                                     description=data['import_task_description'],
+                                                     user=user) for work in self.import_task_works]
         if data.get('update_import_tasks'):
-            self.block_or_cancel_tasks(import_tasks, data['update_import_tasks'], user)
+            self.block_or_cancel_tasks(self.import_tasks, data['update_import_tasks'], user)
 
         # gazette tasks
         gazette_tasks = [self.get_or_create_task(work=work, task_type='link-gazette',

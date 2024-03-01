@@ -1193,7 +1193,7 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
     class Form(forms.Form):
         publication_date = forms.DateField()
         publication_number = forms.CharField(required=False)
-        publication_name = forms.CharField()
+        publication_name = forms.CharField(required=False)
         prefix = 'work'
 
         class Meta:

@@ -110,9 +110,9 @@
                             {% endblocktrans %}
                           </label>
                           {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
-                            Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
+Apply the amendments made by {{ title }} ({{ numbered_title }}) on {{ date }}.
 
-                            The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
+The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
                           <textarea id="amendment_task_description_id_{{ amendment.pk }}" name="amendment_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
                           >{{ description_default }}</textarea>
                         </div>

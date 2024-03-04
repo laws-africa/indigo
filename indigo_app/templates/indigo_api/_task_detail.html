@@ -206,6 +206,7 @@
 
                   {% elif task.code == 'convert-document' and task.state == 'open' and task.finish_task_permission %}
                     <input class="btn btn-primary float-start me-2" type="submit"
+                           {% if not task.output_file %}disabled{% endif %}
                            data-confirm="{% trans 'Are you sure you want to finish this task?' %}"
                            formaction="{% url 'finish_task' place=place.place_code pk=task.pk %}"
                            id="btn_finish"

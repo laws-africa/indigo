@@ -150,6 +150,7 @@
         // log details and then re-raise the error so that it's reported and we can work out what went wrong
         console.log("Error converting XML to text");
         console.log(fragment);
+        console.log(new XMLSerializer().serializeToString(fragment));
         console.log(e);
         throw e;
       }

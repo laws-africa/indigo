@@ -294,6 +294,13 @@ class Task(models.Model):
     def reopen(self, user, **kwargs):
         self.reviewed_by_user = None
         self.closed_at = None
+        # re-block import task if conversion task is reopened
+        if self.code in ['convert-document'] and self.timeline_date:
+            import_task = Task.objects.filter(work=self.work, code='import-content', timeline_date=self.timeline_date).first()
+            if import_task:
+                import_task.blocked_by.add(self)
+                if import_task.state in Task.UNBLOCKED_STATES:
+                    import_task.block(user)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, user):

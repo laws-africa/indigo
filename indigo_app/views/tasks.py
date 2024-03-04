@@ -421,6 +421,8 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         return redirect(self.get_redirect_url())
 
     def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
         if self.request.POST.get('next'):
             return self.request.POST.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

@@ -3,7 +3,6 @@ import json
 import math
 from itertools import chain
 
-from django_comments.forms import CommentForm
 from actstream import action
 from allauth.account.utils import user_display
 from django import forms
@@ -182,35 +181,6 @@ class TaskFileView(SingleTaskViewBase, DetailView):
         except TaskFile.DoesNotExist:
             pass
         raise Http404()
-
-
-class TaskActivityView(TaskDetailView):
-    """HTMX view to render updated task activity"""
-    template_name = 'indigo_api/_task_detail_activity.html'
-
-    def get_template_names(self):
-        return [self.template_name]
-
-
-class TaskActionsView(SingleTaskViewBase, DetailView):
-    """HTMX view to render updated task actions"""
-    template_name = 'indigo_api/_task_detail_actions.html'
-
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        resp = super().get(request, *args, **kwargs)
-        return resp
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = CommentForm(self.object, self.request.POST)
-        form.is_valid()
-        context['form'] = form
-        Task.decorate_submission_message([context["task"]], self)
-        Task.decorate_permissions([context["task"]], self.request.user)
-        return context
 
 
 class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
@@ -421,8 +391,8 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         return redirect(self.get_redirect_url())
 
     def get_redirect_url(self):
-        if self.request.POST.get('next'):
-            return self.request.POST.get('next')
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 

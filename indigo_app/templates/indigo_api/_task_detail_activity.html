@@ -1,0 +1,81 @@
+{% load i18n indigo_app comments %}
+
+<ul class="activity-list open-top pt-3">
+  {% for entry in task_timeline %}
+    {% if entry.comment %}
+      <li class="activity-item card">
+        <div class="card-header">
+          {% user_profile entry.user %} {% trans 'commented' %}
+          <span class="time-ago" data-timestamp="{{ entry.submit_date|date:'c' }}">{{ entry.submit_date|date:"Y-m-d H:i" }}</span>:
+        </div>
+        <div class="card-body">
+          {{ entry.comment|urlize|linebreaksbr }}
+        </div>
+      </li>
+    {% else %}
+      <li class="activity-item">
+        {% include 'indigo_app/actions/_action.html' with action=entry this_task=True ignore_place=True %}
+      </li>
+    {% endif %}
+  {% endfor %}
+  {% with task.resolve_anchor as anchor %}
+    {% if anchor %}
+      <li class="activity-item">
+        {% if anchor.element %}
+          {% url 'document' doc_id=task.document.pk as doc_url %}
+          {% with qid=anchor.toc_entry.qualified_id|default:'' anntn_id=task.annotation.id|slugify %}
+            {% blocktrans trimmed with item_url=doc_url|add:"?toc="|add:qid|add:"&anntn="|add:anntn_id title=anchor.toc_entry.title|default:anchor.anchor_id %}
+              Here is <a href="{{ item_url }}">{{ title }}</a> as it appears currently
+            {% endblocktrans %}
+          {% endwith %}
+          {% if not anchor.exact_match %}
+            {% blocktrans with a=anchor.anchor_id %}(<b>{{ a }}</b> may have been moved or removed){% endblocktrans %}
+          {% endif %}
+          <div class="sheet-outer"
+               {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
+            <div class="sheet-inner is-fragment">
+              <la-akoma-ntoso frbr-expression-uri="{{ anchor.document.expression_frbr_uri }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</la-akoma-ntoso>
+            </div>
+          </div>
+        {% else %}
+          {% blocktrans trimmed with a=anchor.toc_entry.title|default:anchor.anchor_id %}
+            The content at <b>{{ a }}</b> is not available and may have been moved or removed.
+          {% endblocktrans %}
+        {% endif %}
+      </li>
+    {% endif %}
+  {% endwith %}
+</ul>
+<hr>
+{% if user.is_authenticated %}
+  {% get_comment_form for task as form %}
+  <form
+      hx-post="{% comment_form_target %}"
+      hx-target="#task-activity"
+  >
+    {% csrf_token %}
+    {{ form.honeypot.as_hidden }}
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    <div class="card">
+      <div class="card-body">
+        <textarea
+            hx-trigger="change, keyup"
+            hx-post="{% url 'task_actions' place=place.place_code pk=task.pk %}"
+            hx-target="#task-actions"
+            name="comment"
+            class="form-control mb-3"
+            maxlength="3000" rows="3" cols="80"
+            placeholder="{% trans "Add a comment" %}"
+        ></textarea>
+      </div>
+      <div id="task-actions" class="card-footer d-flex">
+        {% include 'indigo_api/_task_detail_actions.html' %}
+      </div>
+    </div>
+  </form>
+{% else %}
+  <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to leave a comment.{% endblocktrans %}</p>
+{% endif %}

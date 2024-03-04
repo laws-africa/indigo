@@ -1,0 +1,54 @@
+{% load i18n %}
+
+<input type="hidden" name="next" value="{% url 'task_activity' place=place.place_code pk=task.pk %}"/>
+
+{% if task.state == 'pending_review' %}
+  {% if task.unsubmit_task_permission %}
+    <button
+        class="btn btn-primary float-start me-2" type="submit"
+        hx-confirm="{% trans 'Are you sure you want to request changes to this task?' %}"
+        hx-post="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
+        hx-target="#task-activity"
+    >{% if form.comment.value %}{% trans 'Comment and request changes' %}{% else %}{% trans 'Request changes' %}{% endif %}</button>
+  {% endif %}
+  {% if task.customised.close_url %}
+    <a class="btn btn-primary me-2 float-start" href="{{ task.customised.close_url }}">{% trans 'Review changes' %}</a>
+  {% elif task.close_task_permission %}
+    <button
+        class="btn btn-success float-start me-2" type="submit"
+        hx-confirm="{% trans 'Are you sure you want to approve this task?' %}"
+        hx-post="{% url 'close_task' place=place.place_code pk=task.pk %}"
+        hx-target="#task-activity"
+    >{% if form.comment.value %}{% trans 'Comment and approve' %}{% else %}{% trans 'Approve' %}{% endif %}</button>
+  {% endif %}
+{% elif task.state == 'cancelled' or task.state == 'done' %}
+  {% if task.reopen_task_permission %}
+    <button
+        class="btn btn-primary float-start me-2" type="submit"
+        hx-confirm="{% trans 'Are you sure you want to reopen this task?' %}"
+        hx-post="{% url 'reopen_task' place=place.place_code pk=task.pk %}"
+        hx-target="#task-activity"
+    >{% if form.comment.value %}{% trans 'Comment and reopen' %}{% else %}{% trans 'Reopen' %}{% endif %}</button>
+  {% endif %}
+{% elif task.code == 'convert-document' and task.state == 'open' and task.finish_task_permission %}
+  <button
+      class="btn btn-primary float-start me-2" type="submit"
+      hx-confirm="{% trans 'Are you sure you want to finish this task?' %}"
+      hx-post="{% url 'finish_task' place=place.place_code pk=task.pk %}"
+      hx-target="#task-activity"
+  >{% if form.comment.value %}{% trans 'Comment and finish' %}{% else %}{% trans 'Finish' %}{% endif %}</button>
+{% elif task.state == 'open' and task.submit_task_permission %}
+  <button
+      class="btn btn-primary float-start me-2" type="submit"
+      hx-confirm="{% trans task.submission_message %}"
+      hx-post="{% url 'submit_task' place=place.place_code pk=task.pk %}"
+      hx-target="#task-activity"
+  >{% if form.comment.value %}{% trans 'Comment and submit for review' %}{% else %}{% trans 'Submit for review' %}{% endif %}</button>
+{% endif %}
+
+<input
+    class="btn btn-primary ms-auto"
+    type="submit"
+    value="{% trans 'Add comment' %}"
+    {% if not form.comment.value %}disabled{% endif %}
+>

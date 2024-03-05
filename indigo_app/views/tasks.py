@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import math
 from itertools import chain
 
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models import Subquery, OuterRef, Count, IntegerField
 from django.http import QueryDict, Http404
 from django.shortcuts import redirect
@@ -23,12 +25,15 @@ from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile
+from indigo.plugins import plugins
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile, Document
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
+
+log = logging.getLogger(__name__)
 
 
 def task_file_response(task_file):
@@ -388,7 +393,34 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
 
         task.save()
 
+        # if a conversion task has been finished, do the import
+        if task.code in ['convert-document'] and self.change in ['finish'] and task.work is not None:
+            self.create_and_import_document(task)
+
         return redirect(self.get_redirect_url())
+
+    def create_and_import_document(self, task):
+        # create the document
+        document = Document()
+        document.work = task.work
+        document.expression_date = task.timeline_date or task.work.get_import_date()
+        document.language = task.country.primary_language
+        document.created_by_user = self.request.user
+        document.save()
+
+        # do the import
+        importer = plugins.for_document('importer', document)
+        upload = UploadedFile(file=task.output_file.file, name=task.output_file.filename, size=task.output_file.size,
+                              content_type=task.output_file.mime_type)
+        try:
+            importer.import_from_upload(upload, document, self.request)
+        except ValueError as e:
+            if document.pk:
+                document.delete()
+            log.error(f"Error during import: {e}", exc_info=e)
+
+        document.updated_by_user = self.request.user
+        document.save_with_revision(self.request.user)
 
     def get_redirect_url(self):
         if self.request.GET.get('next'):

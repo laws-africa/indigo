@@ -686,6 +686,12 @@ class Work(WorkMixin, models.Model):
         # TODO: make this less expensive?
         return [t for t in self.taxonomy_topics.all() if t.get_root().public]
 
+    def get_import_date(self):
+        """Return the date at which content should be imported for this work; may be None."""
+        import_timeline_dates = [self.publication_date] if self.publication_date else []
+        import_timeline_dates.extend(c.date for c in self.arbitrary_expression_dates.all())
+        return max(import_timeline_dates) if import_timeline_dates else None
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

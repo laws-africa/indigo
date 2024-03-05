@@ -24,7 +24,7 @@ class TaskBroker:
         # stash the import tasks in case we want to do something with them later
         self.import_tasks = [self.get_or_create_task(work=work, task_type='import-content',
                                                      description=data['import_task_description'],
-                                                     user=user, timeline_date=self.get_import_timeline_date(work))
+                                                     user=user, timeline_date=work.get_import_date())
                              for work in self.import_task_works]
         if data.get('update_import_tasks'):
             self.block_or_cancel_tasks(self.import_tasks, data['update_import_tasks'], user)
@@ -48,11 +48,6 @@ class TaskBroker:
                 user=user, timeline_date=amendment.date))
         if data.get('update_amendment_tasks'):
             self.block_or_cancel_tasks(self.amendment_tasks, data['update_amendment_tasks'], user)
-
-    def get_import_timeline_date(self, work):
-        import_timeline_dates = [work.publication_date] if work.publication_date else []
-        import_timeline_dates.extend(c.date for c in work.arbitrary_expression_dates.all())
-        return max(import_timeline_dates) if import_timeline_dates else None
 
     def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
         task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date, state__in=Task.OPEN_STATES).first()

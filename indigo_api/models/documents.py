@@ -298,7 +298,7 @@ class Document(DocumentMixin, models.Model):
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
     work = models.ForeignKey('indigo_api.Work', on_delete=models.CASCADE, db_index=True, null=False,
-                             verbose_name=_("Work"))
+                             verbose_name=_("work"))
     """ The work this document is an expression of. Details from the work will be inherited by this document.
     This is not exposed externally. Instead, the document is automatically linked to the appropriate
     work using the FRBR URI.
@@ -306,34 +306,34 @@ class Document(DocumentMixin, models.Model):
     You cannot create a document that has an FRBR URI that doesn't match a work.
     """
 
-    frbr_uri = models.CharField(_("FRBR URI"), max_length=512, null=False, blank=False, default='/',
+    frbr_uri = models.CharField(_("frbr uri"), max_length=512, null=False, blank=False, default='/',
                                 help_text=_("Used globally to identify this work"))
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
-    title = models.CharField(_("Title"), max_length=1024, null=False)
+    title = models.CharField(_("title"), max_length=1024, null=False)
 
     """ The 3-letter ISO-639-2 language code of this document """
     language = models.ForeignKey('indigo_api.Language', null=False, on_delete=models.PROTECT,
-                                 verbose_name=_("Language"),
+                                 verbose_name=_("language"),
                                  help_text=_("Language this document is in."))
-    draft = models.BooleanField(_("Draft"), default=True, help_text=_("Drafts aren't available through the public API"))
+    draft = models.BooleanField(_("draft"), default=True, help_text=_("Drafts aren't available through the public API"))
     """ Is this a draft? """
 
-    document_xml = models.TextField(_("Document XML"), null=True, blank=True)
+    document_xml = models.TextField(_("document XML"), null=True, blank=True)
     """ Raw XML content of the entire document """
 
     # Date from the FRBRExpression element. This is either the publication date or the date of the last
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
-    expression_date = models.DateField(_("Expression date"), null=False, blank=False,
+    expression_date = models.DateField(_("expression date"), null=False, blank=False,
                                        help_text=_("Date of publication or latest amendment"))
 
-    deleted = models.BooleanField(_("Deleted"), default=False, help_text=_("Has this document been deleted?"))
+    deleted = models.BooleanField(_("deleted"), default=False, help_text=_("Has this document been deleted?"))
 
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("Created by"))
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("Updated by"))
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("updated by"))
 
     # caching attributes
     _expression_uri = None
@@ -607,13 +607,13 @@ def attachment_filename(instance, filename):
 
 
 class Attachment(models.Model):
-    document = models.ForeignKey(Document, related_name='attachments', on_delete=models.CASCADE, verbose_name=_("Document"))
-    file = models.FileField(_("File"), upload_to=attachment_filename)
-    size = models.IntegerField(_("Size"))
-    filename = models.CharField(_("Filename"), max_length=255, help_text=_("Unique attachment filename"), db_index=True)
-    mime_type = models.CharField(_("Mime type"), max_length=255)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    document = models.ForeignKey(Document, related_name='attachments', on_delete=models.CASCADE, verbose_name=_("document"))
+    file = models.FileField(_("file"), upload_to=attachment_filename)
+    size = models.IntegerField(_("size"))
+    filename = models.CharField(_("filename"), max_length=255, help_text=_("Unique attachment filename"), db_index=True)
+    mime_type = models.CharField(_("mime type"), max_length=255)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
     class Meta:
         ordering = ('filename',)
@@ -636,11 +636,11 @@ class Colophon(models.Model):
     Indigo choose the one which most closely matches
     the country of the document.
     """
-    name = models.CharField(_("Name"), max_length=1024, help_text=_('Name of this colophon'))
+    name = models.CharField(_("name"), max_length=1024, help_text=_('Name of this colophon'))
     country = models.ForeignKey('indigo_api.Country', on_delete=models.CASCADE, null=False,
                                 help_text=_('Which country does this colophon apply to?'),
-                                verbose_name=_("Country"))
-    body = models.TextField(_("Body"))
+                                verbose_name=_("country"))
+    body = models.TextField(_("body"))
 
     def __str__(self):
         return str(self.name)
@@ -652,16 +652,16 @@ class AnnotationManager(models.Manager):
 
 
 class Annotation(models.Model):
-    document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE, verbose_name=_("Document"))
-    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+', verbose_name=_("Created by"))
-    in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True, verbose_name=_("In reply to"))
-    text = models.TextField(_("Text"), null=False, blank=False)
-    anchor_id = models.CharField(_("Anchor id"), max_length=512, null=False, blank=False)
-    closed = models.BooleanField(_("Closed"), default=False, null=False)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation', verbose_name=_("Task"))
-    selectors = JSONField(_("Selectors"), null=True)
+    document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE, verbose_name=_("document"))
+    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+', verbose_name=_("created by"))
+    in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True, verbose_name=_("in reply to"))
+    text = models.TextField(_("text"), null=False, blank=False)
+    anchor_id = models.CharField(_("anchor id"), max_length=512, null=False, blank=False)
+    closed = models.BooleanField(_("closed"), default=False, null=False)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation', verbose_name=_("task"))
+    selectors = JSONField(_("selectors"), null=True)
 
     objects = AnnotationManager()
 
@@ -712,12 +712,12 @@ class DocumentActivity(models.Model):
     Entries are vacuumed every ping, cleaning out stale entries.
     """
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities',
-                                 db_index=True, verbose_name=_("Document"))
+                                 db_index=True, verbose_name=_("document"))
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities',
-                             verbose_name=_("User"))
-    nonce = models.CharField(_("Nonce"), max_length=10, blank=False, null=False)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+                             verbose_name=_("user"))
+    nonce = models.CharField(_("nonce"), max_length=10, blank=False, null=False)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
     # dead after we haven't heard from them in how long?
     DEAD_SECS = 2 * 60

@@ -54,12 +54,12 @@
             <div><i class="fas fa-circle fa-fw {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
           {% endfor %}
           {% for task in entry.tasks %}
-            <h6>
+            <div class="h6 mt-3">
               <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-1"></i>
               <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
               <span class="text-muted small">#{{ task.id }}</span>
-            </h6>
-            <div class="ms-4 mt-1">{{ task.description|linebreaks|urlize }}</div>
+            </div>
+            <div class="ms-4">{{ task.description|linebreaks|urlize }}</div>
           {% endfor %}
         </div>
       </div>

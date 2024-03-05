@@ -408,6 +408,13 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         document.created_by_user = self.request.user
         document.save()
 
+        # link it to the related import task
+        import_task = Task.objects.filter(work=task.work, code='import-content',
+                                          timeline_date=task.timeline_date or task.work.get_import_date()).first()
+        if import_task:
+            import_task.document = document
+            import_task.save()
+
         # do the import
         importer = plugins.for_document('importer', document)
         upload = UploadedFile(file=task.output_file.file, name=task.output_file.filename, size=task.output_file.size,

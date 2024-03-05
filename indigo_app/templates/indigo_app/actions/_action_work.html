@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% with action.action_object as work %}
-  {% trans 'the work' %} <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+  <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
 
   {% include 'indigo_app/actions/_in_place.html' with place=work.place %}
 

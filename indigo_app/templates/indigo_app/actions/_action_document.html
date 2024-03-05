@@ -2,11 +2,10 @@
 
 {% with action.action_object as document %}
   {% if document.deleted %}
-    {% trans 'a document on the work' %}
+    {% trans 'a document on' %}
     <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
   {% else %}
-    {% trans 'the document' %}
-    <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
+    <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date|date:"Y-m-d" }} ({{ document.language.code }})</a>
   {% endif %}
 
   {% include 'indigo_app/actions/_in_place.html' with place=document.work.place %}

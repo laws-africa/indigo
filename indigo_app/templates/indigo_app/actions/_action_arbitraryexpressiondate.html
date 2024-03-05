@@ -1,9 +1,9 @@
 {% load i18n %}
 
 {% with action.action_object as arb_expression_date %}
-  {% trans 'an expression date' %}
-  {{ arb_expression_date.date|date:"Y-m-d" }}
-  {% trans 'on the work' %}
+  {% blocktrans with date=arb_expression_date.date|date:"Y-m-d" %}
+    a consolidation at {{ date }} on
+  {% endblocktrans %}
   <a href="{% url 'work' frbr_uri=arb_expression_date.work.frbr_uri %}">{{ arb_expression_date.work.title }}</a>
 
   {% include 'indigo_app/actions/_in_place.html' with place=arb_expression_date.work.place %}

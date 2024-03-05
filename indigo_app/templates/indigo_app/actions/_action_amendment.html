@@ -1,9 +1,11 @@
 {% load i18n %}
 
 {% with action.action_object as amendment %}
-  {% trans "an amendment on the work" %}
+  {% blocktrans with date=amendment.date|date:"Y-m-d" %}
+    an amendment at {{ date }} on
+  {% endblocktrans %}
   <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
-  {% trans "by the work" %}
+  {% trans "by" %}
   <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
 
   {% include 'indigo_app/actions/_in_place.html' with place=amendment.amended_work.place %}

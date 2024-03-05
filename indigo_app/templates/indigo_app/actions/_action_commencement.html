@@ -1,10 +1,12 @@
 {% load i18n %}
 
 {% with action.action_object as commencement %}
-  {% trans 'a commencement on the work' %}
+  {% blocktrans with date=commencement.date|date:"Y-m-d" %}
+    a commencement at {{ date }} on
+  {% endblocktrans %}
   <a href="{% url 'work' frbr_uri=commencement.commenced_work.frbr_uri %}">{{ commencement.commenced_work.title }}</a>
   {% if commencement.commencing_work %}
-    {% trans 'by the work' %}
+    {% trans 'by' %}
     <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
   {% endif %}
 

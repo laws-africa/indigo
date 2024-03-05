@@ -9,15 +9,14 @@
     {% if this_task %}
       {% trans 'this task' %}
     {% else %}
-      {% trans 'the task' %}
-      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>
 
       {% if not action.target %}
         {% if task.work %}
           {% if ignore_work %}
             {% trans 'on this work' %}
           {% else %}
-            {% trans 'on the work' %} <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+            {% trans 'on' %} <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
             {% if task.document %}
               @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
             {% endif %}

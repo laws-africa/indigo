@@ -70,7 +70,10 @@
     </div>
 
     <!-- task title -->
-    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
+    <span class="d-block mb-1">
+      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+      {% if task.timeline_date %} – {{ task.timeline_date|date:"Y-m-d" }}{% endif %}
+    </span>
 
     <div class="d-flex justify-content-between">
       <div>

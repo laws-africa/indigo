@@ -141,7 +141,20 @@
     },
 
     editFragmentText: function(fragment) {
-      var self = this;
+      let text;
+
+      // text from node in the actual XML document
+      try {
+        text = this.grammarModel.xmlToText(fragment);
+      } catch (e) {
+        // log details and then re-raise the error so that it's reported and we can work out what went wrong
+        console.log("Error converting XML to text");
+        console.log(fragment);
+        console.log(new XMLSerializer().serializeToString(fragment));
+        console.log(e);
+        throw e;
+      }
+
       this.editActivityStarted('text');
 
       this.editing = true;
@@ -154,9 +167,6 @@
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
-
-      // text from node in the actual XML document
-      const text = this.grammarModel.xmlToText(this.fragment);
 
       // show the text editor
       this.$('.document-content-view').addClass('show-text-editor');

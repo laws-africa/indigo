@@ -1,7 +1,9 @@
 import datetime
+import logging
 from itertools import groupby
 
 from actstream import action
+from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as __, gettext as _
 from django.db.models import JSONField
 from django.db import models
@@ -15,7 +17,11 @@ from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
 from indigo.custom_tasks import tasks as custom_tasks
+from indigo.plugins import plugins
+from indigo_api.models import Document
 from indigo_api.signals import task_closed
+
+log = logging.getLogger(__name__)
 
 
 class TaskQuerySet(models.QuerySet):
@@ -350,7 +356,42 @@ class Task(models.Model):
         self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None
+
+        # if a conversion task has been finished, do the import
+        if self.code in ['convert-document'] and self.work is not None:
+            self.create_and_import_document(user)
+
         self.update_blocked_tasks(self, user)
+
+    def create_and_import_document(self, user):
+        # create the document
+        document = Document()
+        document.work = self.work
+        document.expression_date = self.timeline_date or self.work.get_import_date()
+        document.language = self.country.primary_language
+        document.created_by_user = user
+        document.save()
+
+        # link it to the related import task
+        import_task = Task.objects.filter(work=self.work, code='import-content',
+                                          timeline_date=self.timeline_date or self.work.get_import_date()).first()
+        if import_task:
+            import_task.document = document
+            import_task.save()
+
+        # do the import
+        importer = plugins.for_document('importer', document)
+        upload = UploadedFile(file=self.output_file.file, name=self.output_file.filename, size=self.output_file.size,
+                              content_type=self.output_file.mime_type)
+        try:
+            importer.import_from_upload(upload, document, None)
+        except ValueError as e:
+            if document.pk:
+                document.delete()
+            log.error(f"Error during import: {e}", exc_info=e)
+
+        document.updated_by_user = user
+        document.save_with_revision(user)
 
     # block
     def may_block(self, user):

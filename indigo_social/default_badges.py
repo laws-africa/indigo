@@ -113,12 +113,7 @@ class ConverterBadge(PermissionBadge):
     group_name = name + ' Badge'
     description = 'Can do conversion tasks'
     permissions = (
-        # create document, import content (including saving attachments)
-        'indigo_api.add_document', 'indigo_api.change_document', 'indigo_api.add_attachment',
-        # block_task is for unblocking the related import task
-        'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.block_task', 'indigo_api.reopen_task',
-        # required when restoring a document version
-        'reversion.view_version', 'reversion.add_version',
+        'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
     )
 
 

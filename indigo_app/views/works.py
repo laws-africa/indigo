@@ -87,7 +87,8 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         dates = [entry.date for entry in timeline]
         # simple case: add tasks to existing corresponding entries
         for entry in timeline:
-            entry.tasks = timeline_tasks.filter(timeline_date=entry.date)
+            entry_tasks = timeline_tasks.filter(timeline_date=entry.date)
+            entry.tasks = list(entry_tasks)
 
         # these will have their own entries as their dates aren't in the timeline yet
         extra_tasks = timeline_tasks.exclude(timeline_date__in=dates).order_by('timeline_date')

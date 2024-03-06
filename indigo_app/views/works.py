@@ -83,7 +83,7 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
         # add tasks
-        timeline_tasks = work.tasks.filter(timeline_date__isnull=False)
+        timeline_tasks = work.tasks.filter(timeline_date__isnull=False).exclude(state=Task.CANCELLED)
         dates = [entry.date for entry in timeline]
         # simple case: add tasks to existing corresponding entries
         for entry in timeline:

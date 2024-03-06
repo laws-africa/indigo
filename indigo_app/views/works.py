@@ -2,7 +2,7 @@ import json
 import logging
 from collections import Counter
 
-from itertools import chain
+from itertools import chain, groupby
 from datetime import timedelta
 
 from django import  forms
@@ -26,7 +26,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement, Workflow, Country, Locality
 from indigo_api.serializers import WorkSerializer
-from indigo_api.timeline import get_timeline
+from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -82,6 +82,29 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         # add expressions
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
+        # add tasks
+        timeline_tasks = work.tasks.filter(timeline_date__isnull=False).exclude(state=Task.CANCELLED)
+        dates = [entry.date for entry in timeline]
+        simple_tasks = list(timeline_tasks.filter(timeline_date__in=dates))
+        # simple case: add tasks to existing corresponding entries
+        for entry in timeline:
+            entry.tasks = [t for t in simple_tasks if t.timeline_date == entry.date]
+
+        # these will have their own entries as their dates aren't in the timeline yet
+        extra_tasks = timeline_tasks.exclude(timeline_date__in=dates).order_by('timeline_date')
+        for date, tasks in groupby(extra_tasks, key=lambda t: t.timeline_date):
+            entry = TimelineEntry(date=date, initial=False, events=[])
+            entry.tasks = list(tasks)
+            # dates are in descending order, so slot the entry in before the first one that's earlier
+            for i, date in enumerate(dates):
+                if date < entry.date:
+                    timeline.insert(i, entry)
+                    dates.insert(i, entry.date)
+                    break
+            if entry.date not in dates:
+                # we've gone past the earliest / last one, so just append
+                timeline.append(entry)
+                dates.append(entry.date)
         return timeline
 
     def get_object(self, queryset=None):

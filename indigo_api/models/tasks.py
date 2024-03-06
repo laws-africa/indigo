@@ -239,7 +239,7 @@ class Task(models.Model):
         for task in tasks:
             task.change_task_permission = user.has_perm('indigo_api.change_task') and user.editor.has_country_permission(task.country)
             task.submit_task_permission = has_transition_perm(task.submit, user)
-            task.finish_task_permission = has_transition_perm(task.submit, user)
+            task.finish_task_permission = has_transition_perm(task.finish, user)
             task.reopen_task_permission = has_transition_perm(task.reopen, user)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)
             task.close_task_permission = has_transition_perm(task.close, user)
@@ -348,7 +348,7 @@ class Task(models.Model):
     def may_finish(self, user):
         return user.is_authenticated and \
                user.editor.has_country_permission(self.country) and \
-               user.has_perm('submit_task')
+               user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='done', permission=may_finish)
     def finish(self, user, **kwargs):

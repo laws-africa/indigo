@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 import math
 from itertools import chain
 
@@ -30,8 +29,6 @@ from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
-
-log = logging.getLogger(__name__)
 
 
 def task_file_response(task_file):

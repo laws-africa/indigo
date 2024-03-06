@@ -4,7 +4,7 @@
 {% block title %}{% if task.pk %}{{ task.title }}{% else %}{% trans 'New task' %}{% endif %} {{ block.super }}{% endblock %}
 
 {% block content %}
-  {% if perms.indigo_api.add_work %}
+  {% if perms.indigo_api.add_task %}
   {% else %}
     <div class="alert alert-danger">{% trans "You don't have permission to create a task." %}</div>
   {% endif %}

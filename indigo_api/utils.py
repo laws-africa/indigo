@@ -61,16 +61,22 @@ def filename_candidates(document, prefix='', suffix=''):
     This takes into account the country, type, subtype and language of the document,
     providing a number of opportunities to adjust the rendering logic.
 
-    The following templates are looked for, in order:
+    The following templates are looked for, in order. Note that place includes locality, and is only used
+    if place != country (e.g. za-cpt vs za)
 
+    * doctype-subtype-language-place
     * doctype-subtype-language-country
     * doctype-subtype-language
+    * doctype-subtype-place
     * doctype-subtype-country
     * doctype-subtype
+    * doctype-language-place
     * doctype-language-country
+    * doctype-place
     * doctype-country
     * doctype-language
     * doctype
+    * place
     * country
     * akn
     """
@@ -78,19 +84,30 @@ def filename_candidates(document, prefix='', suffix=''):
     doctype = uri.doctype
     language = uri.language
     country = uri.country
+    place = uri.place
     subtype = uri.subtype
 
     options = []
     if subtype:
+        if country != place:
+            options.append('-'.join([doctype, subtype, language, place]))
         options.append('-'.join([doctype, subtype, language, country]))
         options.append('-'.join([doctype, subtype, language]))
+        if country != place:
+            options.append('-'.join([doctype, subtype, place]))
         options.append('-'.join([doctype, subtype, country]))
         options.append('-'.join([doctype, subtype]))
 
+    if country != place:
+        options.append('-'.join([doctype, language, place]))
     options.append('-'.join([doctype, language, country]))
+    if country != place:
+        options.append('-'.join([doctype, place]))
     options.append('-'.join([doctype, country]))
     options.append('-'.join([doctype, language]))
     options.append(doctype)
+    if country != place:
+        options.append(place)
     options.append(country)
     options.append('akn')
 

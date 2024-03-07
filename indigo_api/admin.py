@@ -3,9 +3,13 @@ import json
 from django import forms
 from django.contrib import admin
 from django.shortcuts import reverse
+from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
 from ckeditor.widgets import CKEditorWidget
 from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
+from background_task.admin import TaskAdmin
 
 from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyVocabulary, VocabularyTopic, TaxonomyTopic
 
@@ -94,3 +98,11 @@ class TaxonomyVocabularyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("authority", "name")}
     inlines = (VocabularyTopicInline, )
     fields = ('title', 'authority', 'name', 'slug')
+
+
+def run_now(modeladmin, request, queryset):
+    queryset.update(run_at=now())
+    messages.success(request, _("Updated run time to now for selected tasks."))
+
+run_now.short_description = _("Set run time to now")
+TaskAdmin.actions.append(run_now)

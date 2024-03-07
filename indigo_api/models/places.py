@@ -21,13 +21,13 @@ class Language(models.Model):
     """
     language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE, verbose_name=_("language"))
     objects = LanguageManager()
-    verbose_name = _("language")
-    verbose_name_plural = _("languages")
 
     class Meta:
         ordering = ['language__name_en']
         # also use the manager for related object lookups
         base_manager_name = 'objects'
+        verbose_name = _("language")
+        verbose_name_plural = _("languages")
 
     @property
     def code(self):

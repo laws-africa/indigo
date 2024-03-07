@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.authtoken.models import Token
 
@@ -19,13 +20,17 @@ class Editor(models.Model):
     """ A complement to Django's User model that adds extra
     properties that we need, like a default country.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True)
-    accepted_terms = models.BooleanField(default=False)
-    permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text="Countries the user can work with.", blank=True)
-    language = models.CharField(max_length=10, blank=False, null=False, default="en-us", help_text="Preferred language")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("User"))
+    country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True, verbose_name=_("country"))
+    accepted_terms = models.BooleanField(_("accepted terms"), default=False)
+    permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text=_("Countries the user can work with."), blank=True, verbose_name=_("permitted countries"))
+    language = models.CharField(_("language"), max_length=10, blank=False, null=False, default="en-us", help_text=_("Preferred language"))
 
     objects = EditorManager
+
+    class Meta:
+        verbose_name = _("editor")
+        verbose_name_plural = _("editors")
 
     @property
     def country_code(self):
@@ -51,12 +56,14 @@ class Editor(models.Model):
 class Publication(models.Model):
     """ The publications available in the UI. They aren't enforced by the API.
     """
-    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.CASCADE)
-    name = models.CharField(max_length=512, null=False, blank=False, unique=False, help_text="Name of this publication")
+    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.CASCADE, verbose_name=_("country"))
+    name = models.CharField(_("name"), max_length=512, null=False, blank=False, unique=False, help_text=_("Name of this publication"))
 
     class Meta:
         ordering = ['name']
         unique_together = (('country', 'name'),)
+        verbose_name = _("publication")
+        verbose_name_plural = _("publications")
 
     def __str__(self):
         return str(self.name)

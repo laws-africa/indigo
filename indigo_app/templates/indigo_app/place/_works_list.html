@@ -14,23 +14,24 @@
   <div class="col-md">
     <div class="d-flex mb-3">
       <div class="text-muted mb-3">
-        {% blocktrans trimmed count count=paginator.count %}
-          {{ count }} work (of {{ total_works }} total)
-        {% plural %}
-          {{ count }} works (of {{ total_works }} total)
-        {% endblocktrans %}
-        {% blocktrans trimmed count page_count=page_count %}
-          · {{ page_count }} page
-        {% plural %}
-          · {{ page_count }} pages
-        {% endblocktrans %}
+        {% block works-count %}
+          {% blocktrans trimmed count count=paginator.count %}
+            {{ count }} work (of {{ total_works }} total)
+          {% plural %}
+            {{ count }} works (of {{ total_works }} total)
+          {% endblocktrans %}
+        {% endblock %}
       </div>
       <div class="flex-grow-1" id="work-bulk-actions"></div>
-      {% if perms.indigo_api.bulk_export_work %}
-        <div>
-          <a href="{{ download_xsl_url }}"><i class="fas fa-file-excel fa-fw me-1"></i>{% trans "Download to Excel" %}</a>
+      <div>
+        <div class="btn-toolbar">
+          {% block work-list-actions %}
+            {% if perms.indigo_api.bulk_export_work %}
+              <a href="{{ download_xsl_url }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-excel fa-fw me-1"></i>{% trans "Download to Excel" %}</a>
+            {% endif %}
+          {% endblock %}
         </div>
-      {% endif %}
+      </div>
     </div>
 
     <form

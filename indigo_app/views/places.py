@@ -115,6 +115,10 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
             ))\
             .all()
 
+        for c in context['countries']:
+            # ensure zeroes
+            c.n_works = c.n_works or 0
+
         return context
 
 

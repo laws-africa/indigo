@@ -20,7 +20,7 @@ class Editor(models.Model):
     """ A complement to Django's User model that adds extra
     properties that we need, like a default country.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("User"))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("user"))
     country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True, verbose_name=_("country"))
     accepted_terms = models.BooleanField(_("accepted terms"), default=False)
     permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text=_("Countries the user can work with."), blank=True, verbose_name=_("permitted countries"))

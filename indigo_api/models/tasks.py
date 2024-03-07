@@ -122,7 +122,7 @@ class Task(models.Model):
     document = models.ForeignKey('indigo_api.Document', verbose_name=_('document'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     timeline_date = models.DateField(_('timeline date'), null=True, blank=True, help_text=_("A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."))
 
-    state = FSMField(_('state'),default=OPEN)
+    state = FSMField(_('state'), default=OPEN)
 
     # internal task code
     code = models.CharField(_('code'), max_length=100, null=True, blank=True)

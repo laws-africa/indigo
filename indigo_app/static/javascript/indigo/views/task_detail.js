@@ -36,12 +36,14 @@
         this.$('#btn_request_changes').val('Comment and request changes');
         this.$('#btn_approve').val('Comment and approve');
         this.$('#btn_reopen').val('Comment and reopen');
+        this.$('#btn_finish').val('Comment and finish');
         this.$('#btn_submit_for_review').val('Comment and submit for review');
 
       } else {
         this.$('#btn_request_changes').val('Request changes');
         this.$('#btn_approve').val('Approve');
         this.$('#btn_reopen').val('Reopen');
+        this.$('#btn_finish').val('Finish');
         this.$('#btn_submit_for_review').val('Submit for review');
       }
     },

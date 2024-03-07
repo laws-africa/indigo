@@ -1,97 +1,101 @@
 {% load indigo_app humanize i18n comments %}
 
 <ul class="nav nav-underline px-3" hx-swap="innerHTML">
-  <li class="nav-item">
-    <a class="nav-link {% if tab == "overview" %}active{% endif %}"
-       href="#work-{{ work.pk }}-overview" data-bs-toggle="tab">
-      {% trans "Overview" %}
-    </a>
-  </li>
-  {% if n_documents %}
+  {% block tabs %}
     <li class="nav-item">
-      <a class="nav-link {% if tab == "documents" %}active{% endif %}"
-         href="#work-{{ work.pk }}-documents" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-documents"
-         hx-get="{% url 'place_works_work_documents' place=place.place_code pk=work.pk %}"
-      >{% trans "Points in time" %} <span class="badge text-bg-light">{{ n_documents }}</span></a>
+      <a class="nav-link {% if tab == "overview" %}active{% endif %}"
+         href="#work-{{ work.pk }}-overview" data-bs-toggle="tab">
+        {% trans "Overview" %}
+      </a>
     </li>
-  {% endif %}
-  {% if n_commencements or n_commencements_made %}
+    {% if n_documents %}
+      <li class="nav-item">
+        <a class="nav-link {% if tab == "documents" %}active{% endif %}"
+           href="#work-{{ work.pk }}-documents" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-documents"
+           hx-get="{% url 'place_works_work_documents' place=place.place_code pk=work.pk %}"
+        >{% trans "Points in time" %} <span class="badge text-bg-light">{{ n_documents }}</span></a>
+      </li>
+    {% endif %}
+    {% if n_commencements or n_commencements_made %}
+      <li class="nav-item">
+        <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
+           href="#work-{{ work.pk }}-commencements" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
+           hx-get="{% url 'place_works_work_commencements' place=place.place_code pk=work.pk %}"
+        >{% trans "Commencements" %} <span class="badge text-bg-light">{{ n_commencements|default:'–' }}/{{ n_commencements_made|default:'–' }}</span></a>
+      </li>
+    {% endif %}
+    {% if n_amendments or n_amendments_made %}
+      <li class="nav-item">
+        <a class="nav-link {% if tab == "amendments" %}active{% endif %}"
+           href="#work-{{ work.pk }}-amendments" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
+           hx-get="{% url 'place_works_work_amendments' place=place.place_code pk=work.pk %}"
+        >{% trans "Amendments" %} <span class="badge text-bg-light">{{ n_amendments|default:'–' }}/{{ n_amendments_made|default:'–' }}</span></a>
+      </li>
+    {% endif %}
+    {% if n_repeals or n_repeals_made %}
+      <li class="nav-item">
+        <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-repeals"
+           hx-get="{% url 'place_works_work_repeals' place=place.place_code pk=work.pk %}"
+        >{% trans "Repeals" %} <span class="badge text-bg-light">{{ n_repeals|default:'–' }}/{{ n_repeals_made|default:'–' }}</span></a>
+      </li>
+    {% endif %}
+    {% if n_primary_works or n_subsidiary_works %}
+      <li class="nav-item">
+        <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-subsidiary"
+           hx-get="{% url 'place_works_work_subsidiary' place=place.place_code pk=work.pk %}"
+        >{% trans "Subsidiary" %} <span class="badge text-bg-light">{{ n_primary_works|default:'–' }}/{{ n_subsidiary_works|default:'–' }}</span></a>
+      </li>
+    {% endif %}
+    {% if n_tasks %}
+      <li class="nav-item">
+        <a class="nav-link {% if tab == "tasks" %}active{% endif %}"
+           href="#work-{{ work.pk }}-tasks" data-bs-toggle="tab"
+           hx-trigger="click once" hx-target="#work-{{ work.pk }}-tasks"
+           hx-get="{% url 'place_works_work_tasks' place=place.place_code pk=work.pk %}"
+        >{% trans "Tasks" %} <span class="badge text-bg-light">{{ n_tasks }}</span></a>
+      </li>
+    {% endif %}
+    {% get_comment_count for work as n_comments %}
     <li class="nav-item">
-      <a class="nav-link {% if tab == "commencements" %}active{% endif %}"
-         href="#work-{{ work.pk }}-commencements" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-commencements"
-         hx-get="{% url 'place_works_work_commencements' place=place.place_code pk=work.pk %}"
-      >{% trans "Commencements" %} <span class="badge text-bg-light">{{ n_commencements|default:'–' }}/{{ n_commencements_made|default:'–' }}</span></a>
+      <a class="nav-link {% if tab == "comments" %}active{% endif %}"
+         href="#work-{{ work.pk }}-comments" data-bs-toggle="tab"
+         hx-trigger="click once" hx-target="#work-{{ work.pk }}-comments"
+         hx-get="{% url 'place_works_work_comments' place=place.place_code pk=work.pk %}"
+      >{% trans "Comments" %} <span class="badge text-bg-light">{{ n_comments }}</span></a>
     </li>
-  {% endif %}
-  {% if n_amendments or n_amendments_made %}
-    <li class="nav-item">
-      <a class="nav-link {% if tab == "amendments" %}active{% endif %}"
-         href="#work-{{ work.pk }}-amendments" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-amendments"
-         hx-get="{% url 'place_works_work_amendments' place=place.place_code pk=work.pk %}"
-      >{% trans "Amendments" %} <span class="badge text-bg-light">{{ n_amendments|default:'–' }}/{{ n_amendments_made|default:'–' }}</span></a>
-    </li>
-  {% endif %}
-  {% if n_repeals or n_repeals_made %}
-    <li class="nav-item">
-      <a class="nav-link" href="#work-{{ work.pk }}-repeals" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-repeals"
-         hx-get="{% url 'place_works_work_repeals' place=place.place_code pk=work.pk %}"
-      >{% trans "Repeals" %} <span class="badge text-bg-light">{{ n_repeals|default:'–' }}/{{ n_repeals_made|default:'–' }}</span></a>
-    </li>
-  {% endif %}
-  {% if n_primary_works or n_subsidiary_works %}
-    <li class="nav-item">
-      <a class="nav-link" href="#work-{{ work.pk }}-subsidiary" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-subsidiary"
-         hx-get="{% url 'place_works_work_subsidiary' place=place.place_code pk=work.pk %}"
-      >{% trans "Subsidiary" %} <span class="badge text-bg-light">{{ n_primary_works|default:'–' }}/{{ n_subsidiary_works|default:'–' }}</span></a>
-    </li>
-  {% endif %}
-  {% if n_tasks %}
-    <li class="nav-item">
-      <a class="nav-link {% if tab == "tasks" %}active{% endif %}"
-         href="#work-{{ work.pk }}-tasks" data-bs-toggle="tab"
-         hx-trigger="click once" hx-target="#work-{{ work.pk }}-tasks"
-         hx-get="{% url 'place_works_work_tasks' place=place.place_code pk=work.pk %}"
-      >{% trans "Tasks" %} <span class="badge text-bg-light">{{ n_tasks }}</span></a>
-    </li>
-  {% endif %}
-  {% get_comment_count for work as n_comments %}
-  <li class="nav-item">
-    <a class="nav-link {% if tab == "comments" %}active{% endif %}"
-       href="#work-{{ work.pk }}-comments" data-bs-toggle="tab"
-       hx-trigger="click once" hx-target="#work-{{ work.pk }}-comments"
-       hx-get="{% url 'place_works_work_comments' place=place.place_code pk=work.pk %}"
-    >{% trans "Comments" %} <span class="badge text-bg-light">{{ n_comments }}</span></a>
-  </li>
+  {% endblock %}
 </ul>
 
 <div class="tab-content border-top p-3">
-  <div class="tab-pane show active pt-2" id="work-{{ work.pk }}-overview">
-    {% include 'indigo_app/place/_work_detail_overview.html' %}
-  </div>
-  {% if n_documents %}
-    <div class="tab-pane" id="work-{{ work.pk }}-documents"></div>
-  {% endif %}
-  {% if n_commencements or n_commencements_made %}
-    <div class="tab-pane" id="work-{{ work.pk }}-commencements"></div>
-  {% endif %}
-  {% if n_amendments or n_amendments_made %}
-    <div class="tab-pane" id="work-{{ work.pk }}-amendments"></div>
-  {% endif %}
-  {% if n_repeals or n_repeals_made %}
-    <div class="tab-pane" id="work-{{ work.pk }}-repeals"></div>
-  {% endif %}
-  {% if n_primary_works or n_subsidiary_works %}
-    <div class="tab-pane" id="work-{{ work.pk }}-subsidiary"></div>
-  {% endif %}
-  {% if n_tasks %}
-    <div class="tab-pane" id="work-{{ work.pk }}-tasks"></div>
-  {% endif %}
-  <div class="tab-pane" id="work-{{ work.pk }}-comments"></div>
+  {% block tab-panes %}
+    <div class="tab-pane show active pt-2" id="work-{{ work.pk }}-overview">
+      {% include 'indigo_app/place/_work_detail_overview.html' %}
+    </div>
+    {% if n_documents %}
+      <div class="tab-pane" id="work-{{ work.pk }}-documents"></div>
+    {% endif %}
+    {% if n_commencements or n_commencements_made %}
+      <div class="tab-pane" id="work-{{ work.pk }}-commencements"></div>
+    {% endif %}
+    {% if n_amendments or n_amendments_made %}
+      <div class="tab-pane" id="work-{{ work.pk }}-amendments"></div>
+    {% endif %}
+    {% if n_repeals or n_repeals_made %}
+      <div class="tab-pane" id="work-{{ work.pk }}-repeals"></div>
+    {% endif %}
+    {% if n_primary_works or n_subsidiary_works %}
+      <div class="tab-pane" id="work-{{ work.pk }}-subsidiary"></div>
+    {% endif %}
+    {% if n_tasks %}
+      <div class="tab-pane" id="work-{{ work.pk }}-tasks"></div>
+    {% endif %}
+    <div class="tab-pane" id="work-{{ work.pk }}-comments"></div>
+  {% endblock %}
 </div>
 
 {% if perms.indigo_api.change_work or perms.indigo_api.bulk_add_work %}

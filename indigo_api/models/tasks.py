@@ -49,11 +49,11 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    OPEN = __('open')
-    PENDING_REVIEW = __('pending_review')
-    CANCELLED = __('cancelled')
-    DONE = __('done')
-    BLOCKED = __('blocked')
+    OPEN = 'open'
+    PENDING_REVIEW = 'pending_review'
+    CANCELLED = 'cancelled'
+    DONE = 'done'
+    BLOCKED = 'blocked'
 
     STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE, BLOCKED)
 
@@ -114,13 +114,13 @@ class Task(models.Model):
     objects = TaskManager.from_queryset(TaskQuerySet)()
 
     title = models.CharField(__('title'), max_length=256, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(__('description'), null=True, blank=True)
 
     country = models.ForeignKey('indigo_api.Country', verbose_name=__('country'), related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey('indigo_api.Locality', verbose_name=__('locality'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     work = models.ForeignKey('indigo_api.Work', verbose_name=__('work'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     document = models.ForeignKey('indigo_api.Document', verbose_name=__('document'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
-    timeline_date = models.DateField(__('timeline date'), null=True, blank=True, help_text="A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied.")
+    timeline_date = models.DateField(__('timeline date'), null=True, blank=True, help_text=__("A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."))
 
     state = FSMField(default=OPEN)
 
@@ -135,9 +135,9 @@ class Task(models.Model):
     submitted_by_user = models.ForeignKey(User, verbose_name=__('submitted by user'), related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     reviewed_by_user = models.ForeignKey(User, verbose_name=__('reviewed by user'), related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
     finished_by_user = models.ForeignKey(User, verbose_name=__('finished by user'), related_name='finished_tasks', null=True, on_delete=models.SET_NULL)
-    closed_at = models.DateTimeField(__('closed at'), help_text="When the task was marked as done or cancelled.", null=True)
+    closed_at = models.DateTimeField(__('closed at'), help_text=__("When the task was marked as done or cancelled."), null=True)
 
-    changes_requested = models.BooleanField(__('changes requested'), default=False, help_text="Have changes been requested on this task?")
+    changes_requested = models.BooleanField(__('changes requested'), default=False, help_text=__("Have changes been requested on this task?"))
 
     created_by_user = models.ForeignKey(User, verbose_name=__('created by user'), related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, verbose_name=__('updated by user'), related_name='+', null=True, on_delete=models.SET_NULL)
@@ -149,7 +149,7 @@ class Task(models.Model):
 
     extra_data = JSONField(__('extra data'), null=True, blank=True)
 
-    blocked_by = models.ManyToManyField('self', verbose_name=__('blocked by'), related_name='blocking', symmetrical=False, help_text='Tasks blocking this task from being done.')
+    blocked_by = models.ManyToManyField('self', verbose_name=__('blocked by'), related_name='blocking', symmetrical=False, help_text=__('Tasks blocking this task from being done.'))
 
     @property
     def place(self):

@@ -294,6 +294,8 @@ class Document(DocumentMixin, models.Model):
             ('view_published_document', 'Can view publish documents through the API'),
             ('view_document_xml', 'Can view the source XML of documents'),
         )
+        verbose_name = _("document")
+        verbose_name_plural = _("documents")
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
@@ -617,6 +619,8 @@ class Attachment(models.Model):
 
     class Meta:
         ordering = ('filename',)
+        verbose_name = _("attachment")
+        verbose_name_plural = _("attachments")
 
     # TODO: enforce unique filename for document
 
@@ -642,6 +646,10 @@ class Colophon(models.Model):
                                 verbose_name=_("country"))
     body = models.TextField(_("body"))
 
+    class Meta:
+        verbose_name = _("colophon")
+        verbose_name_plural = _("colophons")
+
     def __str__(self):
         return str(self.name)
 
@@ -664,6 +672,10 @@ class Annotation(models.Model):
     selectors = JSONField(_("selectors"), null=True)
 
     objects = AnnotationManager()
+
+    class Meta:
+        verbose_name = _("annotation")
+        verbose_name_plural = _("annotations")
 
     def resolve_anchor(self):
         if self.anchor_id and self.document:
@@ -727,6 +739,8 @@ class DocumentActivity(models.Model):
     class Meta:
         unique_together = ('document', 'user', 'nonce')
         ordering = ('created_at',)
+        verbose_name = _("document activity")
+        verbose_name_plural = _("document activities")
 
     def is_asleep(self):
         return (timezone.now() - self.updated_at).total_seconds() > self.ASLEEP_SECS

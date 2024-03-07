@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 09:01+0200\n"
+"POT-Creation-Date: 2024-03-07 17:28+0200\n"
 "PO-Revision-Date: 2024-02-22 08:12\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -17,28 +17,84 @@ msgstr ""
 "X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 141\n"
 
-#: forms/tasks.py:20 forms/tasks.py:31
-#: templates/indigo_api/_task_detail.html:236
-#: templates/indigo_api/_task_detail.html:265
-#: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:259
+#: forms/tasks.py:21 forms/tasks.py:32
+#: templates/indigo_api/_task_detail.html:326
+#: templates/indigo_api/_task_labels.html:10
+#: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:291
 msgid "None"
 msgstr "Aucun"
 
-#: forms/works.py:206
+#: forms/works.py:248
 msgid "Error building FRBR URI"
 msgstr "Erreur lors de la création de l'URI FRBR"
 
-#: forms/works.py:868
-msgid "Import content"
-msgstr "Importer du contenu"
+#: forms/works.py:364
+msgid "Alias"
+msgstr ""
 
-#: forms/works.py:869
-msgid "Link Gazette"
-msgstr "Lien vers la Gazette"
+#: models.py:23
+msgid "user"
+msgstr ""
 
-#: forms/works.py:870
-msgid "Apply amendment"
-msgstr "Appliquer la modification"
+#: models.py:24 models.py:59
+#, fuzzy
+#| msgid "Country"
+msgid "country"
+msgstr "Pays"
+
+#: models.py:25
+#, fuzzy
+#| msgid "Accept terms"
+msgid "accepted terms"
+msgstr "Accepter les termes"
+
+#: models.py:26
+msgid "Countries the user can work with."
+msgstr ""
+
+#: models.py:26
+msgid "permitted countries"
+msgstr ""
+
+#: models.py:27
+#, fuzzy
+#| msgid "Language"
+msgid "language"
+msgstr "Langue"
+
+#: models.py:27
+msgid "Preferred language"
+msgstr ""
+
+#: models.py:32
+msgid "editor"
+msgstr ""
+
+#: models.py:33
+msgid "editors"
+msgstr ""
+
+#: models.py:60
+msgid "name"
+msgstr ""
+
+#: models.py:60
+#, fuzzy
+#| msgid "initial publication"
+msgid "Name of this publication"
+msgstr "publication initiale"
+
+#: models.py:65
+#, fuzzy
+#| msgid "Publication"
+msgid "publication"
+msgstr "Publication"
+
+#: models.py:66
+#, fuzzy
+#| msgid "Publication"
+msgid "publications"
+msgstr "Publication"
 
 #: templates/403.html:4 templates/403.html:14
 msgid "Permission Denied"
@@ -98,6 +154,7 @@ msgstr "Rendre primaire"
 
 #: templates/account/email.html:63
 #: templates/indigo_api/_work_form_amendments_form.html:54
+#: templates/indigo_api/_work_form_commencements_made_form.html:55
 #: templates/indigo_api/_work_form_repeals_made_form.html:35
 #: templates/indigo_api/_work_publication_document.html:18
 #: templates/indigo_api/_work_publication_document.html:35
@@ -276,8 +333,8 @@ msgid "(in full)"
 msgstr "(au complet)"
 
 #: templates/indigo_api/_task_assign_to_menu.html:4
-#: templates/indigo_api/_task_card_single.html:125
-#: templates/indigo_api/_task_detail.html:210
+#: templates/indigo_api/_task_card_single.html:128
+#: templates/indigo_api/_task_detail.html:252
 msgid "Unassign"
 msgstr "désattribuer"
 
@@ -290,8 +347,8 @@ msgid "No users available"
 msgstr "Aucun utilisateur disponible"
 
 #: templates/indigo_api/_task_bulk_update_form.html:12
-#: templates/indigo_api/_task_card_single.html:143
-#: templates/indigo_api/_task_detail.html:220
+#: templates/indigo_api/_task_card_single.html:146
+#: templates/indigo_api/_task_detail.html:262
 msgid "Assign to"
 msgstr "Affecter à"
 
@@ -300,30 +357,30 @@ msgid "Update selected tasks"
 msgstr "Mettre à jour les tâches sélectionnées"
 
 #: templates/indigo_api/_task_card_single.html:18
-#: templates/indigo_api/_task_detail.html:180
+#: templates/indigo_api/_task_detail.html:220
 msgid "Submit for review"
 msgstr "Soumettre pour correction"
 
 #: templates/indigo_api/_task_card_single.html:25
-#: templates/indigo_api/_task_detail.html:148
+#: templates/indigo_api/_task_detail.html:180
 msgid "Are you sure you want to request changes to this task?"
 msgstr "Voulez-vous vraiment demander des modifications à cette tâche ?"
 
 #: templates/indigo_api/_task_card_single.html:26
-#: templates/indigo_api/_task_detail.html:151
+#: templates/indigo_api/_task_detail.html:183
 msgid "Request changes"
 msgstr "Demander des modifications"
 
 #: templates/indigo_api/_task_card_single.html:33
-#: templates/indigo_api/_task_detail.html:160
+#: templates/indigo_api/_task_detail.html:192
 msgid "Are you sure you want to approve this task?"
 msgstr "Voulez-vous vraiment approuver cette tâche ?"
 
 #: templates/indigo_api/_task_card_single.html:34
-#: templates/indigo_api/_task_detail.html:163
+#: templates/indigo_api/_task_detail.html:195
 #: templates/indigo_api/work_overview.html:22
-#: templates/indigo_app/place/_bulk_approve_form.html:161
-#: templates/indigo_app/place/_work_detail.html:118
+#: templates/indigo_app/place/_bulk_approve_form.html:146
+#: templates/indigo_app/place/_work_detail.html:127
 msgid "Approve"
 msgstr "Approuver"
 
@@ -337,33 +394,33 @@ msgstr "Supprimer du projet"
 
 #: templates/indigo_api/_task_card_single.html:62
 #: templates/indigo_api/_task_detail.html:35
-#: templates/indigo_api/_task_list.html:47
+#: templates/indigo_api/_task_list.html:48
 #: templates/templated_email/_task_detail_block.html:6
 msgid "Changes requested"
 msgstr "Modifications demandées"
 
-#: templates/indigo_api/_task_card_single.html:101
-#: templates/indigo_api/_task_detail.html:194
+#: templates/indigo_api/_task_card_single.html:104
+#: templates/indigo_api/_task_detail.html:235
 #: templates/indigo_api/_task_filter_form.html:25
 #: templates/templated_email/_task_detail_block.html:12
 #: templates/templated_email/_task_detail_block.html:17
 msgid "Assigned to"
 msgstr "Assigné à"
 
-#: templates/indigo_api/_task_card_single.html:121
+#: templates/indigo_api/_task_card_single.html:124
 msgid "Reassign"
 msgstr "Réaffecter"
 
-#: templates/indigo_api/_task_card_single.html:124
-#: templates/indigo_api/_task_detail.html:208
+#: templates/indigo_api/_task_card_single.html:127
+#: templates/indigo_api/_task_detail.html:250
 msgid "Are you sure you want to unassign this task?"
 msgstr "Voulez-vous vraiment annuler l'attribution de cette tâche ?"
 
-#: templates/indigo_api/_task_card_single.html:154
+#: templates/indigo_api/_task_card_single.html:157
 msgid "Approved by"
 msgstr "Approuvé par"
 
-#: templates/indigo_api/_task_card_single.html:161
+#: templates/indigo_api/_task_card_single.html:164
 #: templates/indigo_api/_task_filter_form.html:41
 msgid "Submitted by"
 msgstr "Proposé par"
@@ -384,67 +441,115 @@ msgstr "attribué"
 msgid "Edit task"
 msgstr "Modifier la tâche"
 
-#: templates/indigo_api/_task_detail.html:78
+#: templates/indigo_api/_task_detail.html:77
+#: templates/indigo_api/_task_form_input_file.html:7
+#: templates/indigo_api/_task_form_input_file.html:53
+msgid "Input file"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:90
+#: templates/indigo_api/_task_form_output_file.html:7
+#: templates/indigo_api/_task_form_output_file.html:33
+msgid "Output file"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:110
+#: templates/indigo_api/_work_comments.html:8
 msgid "commented"
 msgstr "commenté"
 
-#: templates/indigo_api/_task_detail.html:98
+#: templates/indigo_api/_task_detail.html:130
 #, python-format
 msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
 msgstr "Voici <a href=\"%(url de l'article)\">%(titre)s</a> tel qu'il apparaît actuellement"
 
-#: templates/indigo_api/_task_detail.html:104
+#: templates/indigo_api/_task_detail.html:136
 #, python-format
 msgid "(<b>%(a)s</b> may have been moved or removed)"
 msgstr "(<b>%(a)s</b> peut avoir été déplacé ou supprimé)"
 
-#: templates/indigo_api/_task_detail.html:113
+#: templates/indigo_api/_task_detail.html:145
 #, python-format
 msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
 msgstr "Le contenu en <b>%(a)s</b> n'est pas disponible et a peut-être été déplacé ou supprimé."
 
-#: templates/indigo_api/_task_detail.html:141
+#: templates/indigo_api/_task_detail.html:173
+#: templates/indigo_api/_work_comments.html:36
 msgid "Add comment"
 msgstr "Ajouter un commentaire"
 
-#: templates/indigo_api/_task_detail.html:155
+#: templates/indigo_api/_task_detail.html:187
 msgid "Review changes"
 msgstr "Examiner les modifications"
 
-#: templates/indigo_api/_task_detail.html:169
+#: templates/indigo_api/_task_detail.html:201
 msgid "Are you sure you want to reopen this task?"
 msgstr "Voulez-vous vraiment rouvrir cette tâche ?"
 
-#: templates/indigo_api/_task_detail.html:172
+#: templates/indigo_api/_task_detail.html:204
 msgid "Reopen"
 msgstr "Rouvrir"
 
-#: templates/indigo_api/_task_detail.html:188
+#: templates/indigo_api/_task_detail.html:210
+#, fuzzy
+#| msgid "Are you sure you want to unassign this task?"
+msgid "Are you sure you want to finish this task?"
+msgstr "Voulez-vous vraiment annuler l'attribution de cette tâche ?"
+
+#: templates/indigo_api/_task_detail.html:213
+msgid "Finish"
+msgstr ""
+
+#: templates/indigo_api/_task_detail.html:228
 #, python-format
 msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
 msgstr "Veuillez <a href=\"%(url_de_connexion)s\">vous connecter</a> pour laisser un commentaire."
 
-#: templates/indigo_api/_task_detail.html:199
+#: templates/indigo_api/_task_detail.html:241
 msgid "Unassigned"
 msgstr "Non attribué"
 
-#: templates/indigo_api/_task_detail.html:227
+#: templates/indigo_api/_task_detail.html:272
 #: templates/indigo_api/_task_filter_form.html:16
 #: templates/indigo_api/task_form.html:86
 msgid "Labels"
 msgstr "Étiquettes"
 
-#: templates/indigo_api/_task_detail.html:248
+#: templates/indigo_api/_task_detail.html:282
+#, fuzzy
+#| msgid "Choose locality"
+msgid "Choose labels"
+msgstr "Choisissez la localité"
+
+#: templates/indigo_api/_task_detail.html:298
 #: templates/indigo_api/workflow_list.html:4
 #: templates/place/tabbed_layout.html:47
 msgid "Projects"
 msgstr "Projets"
 
-#: templates/indigo_api/_task_detail.html:279
+#: templates/indigo_api/_task_detail.html:308
+#, fuzzy
+#| msgid "Choose a project"
+msgid "Choose projects"
+msgstr "Choisissez un projet"
+
+#: templates/indigo_api/_task_detail.html:334
 msgid "Blocked by"
 msgstr "Bloqué par"
 
-#: templates/indigo_api/_task_detail.html:303
+#: templates/indigo_api/_task_detail.html:344
+#, fuzzy
+#| msgid "Choose a work"
+msgid "Choose tasks"
+msgstr "Choisissez une oeuvre"
+
+#: templates/indigo_api/_task_detail.html:370
+#, fuzzy
+#| msgid "Blocked"
+msgid "Blocking"
+msgstr "Bloqué"
+
+#: templates/indigo_api/_task_detail.html:374
 msgid "This task is blocking these tasks:"
 msgstr "Cette tâche bloque ces tâches :"
 
@@ -492,6 +597,71 @@ msgstr "Afficher les tâches en colonnes"
 msgid "Show tasks in a list"
 msgstr "Afficher les tâches dans une liste"
 
+#: templates/indigo_api/_task_form_input_file.html:21
+#: templates/indigo_api/_task_form_output_file.html:21
+#: templates/indigo_api/_task_form_work.html:30
+#: templates/indigo_api/_work_commencement_form.html:32
+#: templates/indigo_api/_work_parent_form.html:32
+#: templates/indigo_api/_work_repeal_form.html:32
+msgid "Clear"
+msgstr "Nettoyer"
+
+#: templates/indigo_api/_task_form_input_file.html:33
+msgid "Input URL"
+msgstr ""
+
+#: templates/indigo_api/_task_form_input_file.html:49
+msgid "Paste in a URL (preferred), or upload a file."
+msgstr ""
+
+#: templates/indigo_api/_task_form_output_file.html:49
+msgid "Upload the converted file."
+msgstr ""
+
+#: templates/indigo_api/_task_form_timeline_date.html:5
+msgid "Timeline date"
+msgstr "Date de la chronologie"
+
+#: templates/indigo_api/_task_form_title.html:5
+#: templates/indigo_api/_work_chooser_modal.html:53
+#: templates/indigo_api/_work_form_content.html:105
+#: templates/indigo_api/document/_properties.html:15
+#: templates/indigo_app/place/_work_chooser.html:69
+msgid "Title"
+msgstr "Titre"
+
+#: templates/indigo_api/_task_form_title.html:7
+msgid "A short description of this task"
+msgstr "Une brève description de cette tâche"
+
+#: templates/indigo_api/_task_form_work.html:4
+#: templates/indigo_api/_work_amendment_tables.html:11
+#: templates/indigo_api/_work_amendment_tables.html:39
+#: templates/indigo_api/_work_commencement_tables.html:11
+#: templates/indigo_api/_work_commencement_tables.html:47
+#: templates/indigo_api/_work_repeal_tables.html:10
+#: templates/indigo_api/_work_repeal_tables.html:35
+#: templates/place/detail.html:206 templates/place/detail.html:242
+msgid "Work"
+msgstr "Travail"
+
+#: templates/indigo_api/_task_form_work.html:24
+msgid "Change work"
+msgstr "Changer de travail"
+
+#: templates/indigo_api/_task_form_work.html:24
+msgid "Choose work"
+msgstr "Choisissez le travail"
+
+#: templates/indigo_api/_task_form_work.html:38
+#: templates/indigo_api/_task_list.html:13
+msgid "Document"
+msgstr "Document"
+
+#: templates/indigo_api/_task_form_work.html:53
+msgid "Choose a document, or enter a date (optional)."
+msgstr "Choisissez un document ou saisissez une date (facultatif)."
+
 #: templates/indigo_api/_task_list.html:8
 #: templates/indigo_api/document/_annotations.html:38
 msgid "Task"
@@ -500,11 +670,6 @@ msgstr "Tâche"
 #: templates/indigo_api/_task_list.html:10
 msgid "Place"
 msgstr "Lieu"
-
-#: templates/indigo_api/_task_list.html:13
-#: templates/indigo_api/_task_work_form.html:38
-msgid "Document"
-msgstr "Document"
 
 #: templates/indigo_api/_task_list.html:15
 msgid "Work or Document"
@@ -516,55 +681,9 @@ msgstr "Travail ou document"
 msgid "Updated"
 msgstr "Mis à jour"
 
-#: templates/indigo_api/_task_list.html:92
+#: templates/indigo_api/_task_list.html:93
 msgid "No tasks found"
 msgstr "Aucune tâche trouvée"
-
-#: templates/indigo_api/_task_timeline_date_form.html:5
-msgid "Timeline date"
-msgstr "Date de la chronologie"
-
-#: templates/indigo_api/_task_title_form.html:5
-#: templates/indigo_api/_work_chooser_modal.html:53
-#: templates/indigo_api/_work_form_content.html:95
-#: templates/indigo_api/document/_properties.html:15
-#: templates/indigo_app/place/_work_chooser.html:69
-msgid "Title"
-msgstr "Titre"
-
-#: templates/indigo_api/_task_title_form.html:7
-msgid "A short description of this task"
-msgstr "Une brève description de cette tâche"
-
-#: templates/indigo_api/_task_work_form.html:4
-#: templates/indigo_api/_work_amendment_tables.html:11
-#: templates/indigo_api/_work_amendment_tables.html:39
-#: templates/indigo_api/_work_commencement_tables.html:11
-#: templates/indigo_api/_work_commencement_tables.html:47
-#: templates/indigo_api/_work_repeal_tables.html:10
-#: templates/indigo_api/_work_repeal_tables.html:35
-#: templates/place/detail.html:206 templates/place/detail.html:242
-msgid "Work"
-msgstr "Travail"
-
-#: templates/indigo_api/_task_work_form.html:24
-msgid "Change work"
-msgstr "Changer de travail"
-
-#: templates/indigo_api/_task_work_form.html:24
-msgid "Choose work"
-msgstr "Choisissez le travail"
-
-#: templates/indigo_api/_task_work_form.html:30
-#: templates/indigo_api/_work_commencement_form.html:32
-#: templates/indigo_api/_work_parent_form.html:32
-#: templates/indigo_api/_work_repeal_form.html:32
-msgid "Clear"
-msgstr "Nettoyer"
-
-#: templates/indigo_api/_task_work_form.html:53
-msgid "Choose a document, or enter a date (optional)."
-msgstr "Choisissez un document ou saisissez une date (facultatif)."
 
 #: templates/indigo_api/_work_amendment_tables.html:3
 #: templates/indigo_api/_work_form_amended_by.html:4
@@ -606,16 +725,16 @@ msgstr "Créer une nouvelle œuvre"
 #: templates/indigo_api/document/_attachments.html:67
 #: templates/indigo_api/document/_insert_image_modal.html:16
 #: templates/indigo_api/document/_toolbar.html:101
-#: templates/indigo_api/document/_toolbar.html:150
-#: templates/indigo_api/task_form.html:125
-#: templates/indigo_api/task_form.html:127
+#: templates/indigo_api/document/_toolbar.html:151
+#: templates/indigo_api/task_form.html:131
+#: templates/indigo_api/task_form.html:133
 #: templates/indigo_api/timeline/_edit_amendment.html:26
 #: templates/indigo_api/timeline/_edit_consolidation.html:26
 #: templates/indigo_api/work_commencements.html:160
 #: templates/indigo_api/work_form.html:12
 #: templates/indigo_api/workflow_detail.html:134
 #: templates/indigo_api/workflow_form.html:81
-#: templates/indigo_app/place/_bulk_approve_form.html:153
+#: templates/indigo_app/place/_bulk_approve_form.html:138
 #: templates/indigo_app/place/_bulk_unapprove_form.html:34
 #: templates/indigo_app/place/_bulk_update_form.html:54
 #: templates/indigo_app/place/_work_chooser.html:83
@@ -694,8 +813,15 @@ msgid "In full"
 msgstr "En entier"
 
 #: templates/indigo_api/_work_commencement_tables.html:39
+#: templates/indigo_api/_work_form_commencements_made.html:4
 msgid "Commencements made"
 msgstr "Débuts effectués"
+
+#: templates/indigo_api/_work_comments.html:33
+#, fuzzy
+#| msgid "Add comment"
+msgid "Add a comment"
+msgstr "Ajouter un commentaire"
 
 #: templates/indigo_api/_work_diff_card.html:5
 #, python-format
@@ -776,6 +902,11 @@ msgstr "Appliquer des filtres"
 msgid "Add amendment"
 msgstr "Ajouter un amendement"
 
+#: templates/indigo_api/_work_form_commencements_made.html:22
+#: templates/indigo_api/work_commencements.html:38
+msgid "Add commencement"
+msgstr "Ajouter le commencement"
+
 #: templates/indigo_api/_work_form_content.html:6
 msgid "You don't have permission to create or change a work."
 msgstr "Vous n'êtes pas autorisé à créer ou à modifier une œuvre."
@@ -784,162 +915,171 @@ msgstr "Vous n'êtes pas autorisé à créer ou à modifier une œuvre."
 msgid "There were some errors in the information you entered. Please correct the following:"
 msgstr "Il y a eu des erreurs dans les informations que vous avez saisies. Veuillez corriger ce qui suit :"
 
-#: templates/indigo_api/_work_form_content.html:86
+#: templates/indigo_api/_work_form_content.html:96
 #: templates/indigo_api/document/_properties.html:14
 msgid "Short title"
 msgstr "Titre court"
 
-#: templates/indigo_api/_work_form_content.html:100
+#: templates/indigo_api/_work_form_content.html:110
 msgid "Work type"
 msgstr "Type de travail"
 
-#: templates/indigo_api/_work_form_content.html:115
+#: templates/indigo_api/_work_form_content.html:125
 msgid "Work subtype"
 msgstr "Sous-type de travail"
 
-#: templates/indigo_api/_work_form_content.html:122
+#: templates/indigo_api/_work_form_content.html:132
 msgid "(none)"
 msgstr "(aucun)"
 
-#: templates/indigo_api/_work_form_content.html:131
+#: templates/indigo_api/_work_form_content.html:141
 msgid "Year (or date) of introduction"
 msgstr "Année (ou date) d'introduction"
 
-#: templates/indigo_api/_work_form_content.html:145
+#: templates/indigo_api/_work_form_content.html:155
 msgid "Number within year"
 msgstr "Nombre dans l'année"
 
-#: templates/indigo_api/_work_form_content.html:157
+#: templates/indigo_api/_work_form_content.html:167
 msgid "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only."
 msgstr "Numéro ou nom abrégé qui identifie de manière unique cette législation au cours de l'année d'introduction. Chiffres, lettres et '-' uniquement."
 
-#: templates/indigo_api/_work_form_content.html:185
+#: templates/indigo_api/_work_form_content.html:195
 msgid "Responsible organisation (actor)"
 msgstr "Organisation responsable (acteur)"
 
-#: templates/indigo_api/_work_form_content.html:195
+#: templates/indigo_api/_work_form_content.html:205
 msgid "Organisation that created this work. Not normally used for national legislation."
 msgstr "Organisation qui a créé cette œuvre. Normalement non utilisé pour la législation nationale."
 
-#: templates/indigo_api/_work_form_content.html:201
+#: templates/indigo_api/_work_form_content.html:211
 msgid "Principal work"
 msgstr "Travail principal"
 
-#: templates/indigo_api/_work_form_content.html:205 views/places.py:88
+#: templates/indigo_api/_work_form_content.html:215 views/places.py:88
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
 msgstr "Les œuvres principales ne sont pas simplement des abrogations, des modifications ou des introductions, et doivent avoir un contenu en texte intégral."
 
-#: templates/indigo_api/_work_form_content.html:209
+#: templates/indigo_api/_work_form_content.html:219
 msgid "Stub"
 msgstr "Bout"
 
-#: templates/indigo_api/_work_form_content.html:214
+#: templates/indigo_api/_work_form_content.html:224
 msgid "Check this option for commencing or amending works, or other works for which content won't be marked up."
 msgstr "Cochez cette option pour commencer ou modifier des travaux, ou d'autres travaux dont le contenu ne sera pas balisé."
 
-#: templates/indigo_api/_work_form_content.html:227
+#: templates/indigo_api/_work_form_content.html:237
 #: templates/indigo_api/work_batch_create.html:178
 msgid "Taxonomy topics"
 msgstr "Sujets de taxonomie"
 
-#: templates/indigo_api/_work_form_content.html:240 views/places.py:58
+#: templates/indigo_api/_work_form_content.html:250 views/places.py:58
 msgid "Assent date"
 msgstr "Date de sanction"
 
-#: templates/indigo_api/_work_form_content.html:260
+#: templates/indigo_api/_work_form_content.html:270
 msgid "Publication date"
 msgstr "Date de publication"
 
-#: templates/indigo_api/_work_form_content.html:276
+#: templates/indigo_api/_work_form_content.html:286
 msgid "Publication name"
 msgstr "Nom de publication"
 
-#: templates/indigo_api/_work_form_content.html:292
+#: templates/indigo_api/_work_form_content.html:302
 msgid "Usually the Government Gazette."
 msgstr "Généralement le Journal officiel."
 
-#: templates/indigo_api/_work_form_content.html:296
+#: templates/indigo_api/_work_form_content.html:306
 msgid "Publication number"
 msgstr "Numéro de parution"
 
-#: templates/indigo_api/_work_form_content.html:306
+#: templates/indigo_api/_work_form_content.html:316
 msgid "Usually the gazette number."
 msgstr "Généralement le numéro du journal officiel."
 
-#: templates/indigo_api/_work_form_content.html:328
+#: templates/indigo_api/_work_form_content.html:338
 #, python-format
 msgid "This work has mixed commencements, <a href=\"%(comm_url)s\">edit them in the Commencements page</a>."
 msgstr "Ce travail a des commencements mixtes, <a href=\"%(comm_url)s\">éditez-les dans la page Commencements</a>."
 
-#: templates/indigo_api/_work_form_content.html:335
+#: templates/indigo_api/_work_form_content.html:345
 #: templates/indigo_api/work_commencements.html:73 views/places.py:61
 msgid "Commenced"
 msgstr "Commencé"
 
-#: templates/indigo_api/_work_form_content.html:339
+#: templates/indigo_api/_work_form_content.html:349
 msgid "Check if this work has come into force, or has a future commencement date."
 msgstr "Vérifiez si ces travaux sont entrés en vigueur ou ont une date de début future."
 
-#: templates/indigo_api/_work_form_content.html:345
+#: templates/indigo_api/_work_form_content.html:355
 msgid "Commencement date"
 msgstr "Date de début"
 
-#: templates/indigo_api/_work_form_content.html:357
+#: templates/indigo_api/_work_form_content.html:367
 #, python-format
 msgid "If you change this commencement date, you may also have to manually change the dates for related <a href=\"%(work_url)s\">amendments and repeals</a> made by this work."
 msgstr "Si vous modifiez cette date de début, vous devrez peut-être également modifier manuellement les dates des <a href=\"%(work_url)s\">modifications et abrogations</a> liées apportées par ce travail."
 
-#: templates/indigo_api/_work_form_content.html:363
+#: templates/indigo_api/_work_form_content.html:373
 msgid "Date when most (or all) of the work comes into force."
 msgstr "Date à laquelle la plupart (ou la totalité) des travaux entrent en vigueur."
 
-#: templates/indigo_api/_work_form_content.html:364
+#: templates/indigo_api/_work_form_content.html:374
 msgid "Leave this blank when a work has come into force, but the exact commencement date is unknown or open to interpretation."
 msgstr "Laissez ce champ vide lorsqu'une œuvre est entrée en vigueur, mais que la date exacte de début est inconnue ou sujette à interprétation."
 
-#: templates/indigo_api/_work_form_content.html:373
+#: templates/indigo_api/_work_form_content.html:383
 msgid "Commencement note"
 msgstr "Note de lancement"
 
-#: templates/indigo_api/_work_form_content.html:378
+#: templates/indigo_api/_work_form_content.html:388
 msgid "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context."
 msgstr "Lorsque la date de début est sujette à interprétation, donnez une référence à une disposition de la présente ou à un travail de début pour un contexte supplémentaire."
 
-#: templates/indigo_api/_work_form_content.html:446
+#: templates/indigo_api/_work_form_content.html:460
+#: templates/indigo_app/place/_work_detail_overview.html:31
+msgid "Aliases"
+msgstr ""
+
+#: templates/indigo_api/_work_form_content.html:481
+msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
+msgstr ""
+
+#: templates/indigo_api/_work_form_content.html:495
 #, python-format
 msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date"
 msgstr "Date à laquelle cette œuvre a été vérifiée pour la dernière fois pour les mises à jour. Ne définissez cette valeur que si elle doit être différente de la date actuelle de %(name)s"
 
-#: templates/indigo_api/_work_form_content.html:466
+#: templates/indigo_api/_work_form_content.html:515
 #, python-format
 msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
 msgstr "Note de consolidation qui s'applique uniquement à ce travail. Remplace une note de consolidation en %(nom)s si elle est définie."
 
-#: templates/indigo_api/_work_form_content.html:487
+#: templates/indigo_api/_work_form_content.html:536
 msgid "Disclaimer for this work; it will be shown on all expressions."
 msgstr "Avis de non-responsabilité pour ce travail ; il sera affiché sur toutes les expressions."
 
-#: templates/indigo_api/_work_form_content.html:504
+#: templates/indigo_api/_work_form_content.html:553
 msgid "Change country or locality"
 msgstr "Changer de pays ou de localité"
 
-#: templates/indigo_api/_work_form_content.html:508
+#: templates/indigo_api/_work_form_content.html:557
 msgid "Country and locality (advanced)"
 msgstr "Pays et localité (avancé)"
 
-#: templates/indigo_api/_work_form_content.html:541
+#: templates/indigo_api/_work_form_content.html:590
 #, python-format
 msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
 msgstr "Ce travail ne peut pas être supprimé tant que <la refeerence=\"%(url_de_modification)s\">documents liés</a> et <la reference=\"%(url_connexe)s\">travaux liés</a> existent."
 
-#: templates/indigo_api/_work_form_content.html:548
+#: templates/indigo_api/_work_form_content.html:597
 msgid "Are you sure you want to delete this work?"
 msgstr "Voulez-vous vraiment supprimer cette œuvre ?"
 
-#: templates/indigo_api/_work_form_content.html:549
+#: templates/indigo_api/_work_form_content.html:598
 #: templates/indigo_api/document/_annotations.html:24
-#: templates/indigo_api/document/_toolbar.html:132
-#: templates/indigo_api/document/_toolbar.html:169
+#: templates/indigo_api/document/_toolbar.html:133
+#: templates/indigo_api/document/_toolbar.html:170
 #: templates/indigo_api/timeline/_edit_amendment.html:15
 #: templates/indigo_api/timeline/_edit_consolidation.html:15
 #: templates/indigo_api/work_commencements.html:63
@@ -947,7 +1087,7 @@ msgid "Delete"
 msgstr "Supprimez"
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:10
-#: templates/indigo_api/task_form.html:129
+#: templates/indigo_api/task_form.html:135
 #: templates/indigo_api/timeline/_edit_amendment.html:25
 #: templates/indigo_api/timeline/_edit_consolidation.html:25
 #: templates/indigo_api/work_commencements.html:161
@@ -958,10 +1098,21 @@ msgid "Save"
 msgstr "Sauvegarder"
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:10
-#: templates/indigo_api/timeline/_work_points_in_time.html:69
+#: templates/indigo_api/timeline/_work_points_in_time.html:77
 #: templates/indigo_api/work_form.html:20
 msgid "Create"
 msgstr "Créer"
+
+#: templates/indigo_api/_work_form_offcanvas_body.html:13
+#: templates/indigo_api/document/_attachments.html:16
+#: templates/indigo_api/document/_cheatsheet.html:765
+#: templates/indigo_api/document/_defined_terms.html:24
+#: templates/indigo_api/document/_italics_terms.html:51
+#: templates/indigo_api/document/_properties.html:61
+#: templates/indigo_api/document/_references.html:16
+#: templates/indigo_api/document/_revisions.html:18
+msgid "Close"
+msgstr "Fermer"
 
 #: templates/indigo_api/_work_form_repeals_made.html:4
 #: templates/indigo_api/_work_repeal_tables.html:27
@@ -1049,7 +1200,7 @@ msgid "Resolve"
 msgstr "Résoudre"
 
 #: templates/indigo_api/document/_annotations.html:16
-#: templates/indigo_api/task_form.html:129
+#: templates/indigo_api/task_form.html:135
 #: templates/indigo_api/work_overview.html:43
 #: templates/indigo_api/work_tasks.html:9
 msgid "Create task"
@@ -1060,7 +1211,7 @@ msgstr "Créer une tâche"
 #: templates/indigo_api/document/_toolbar.html:58
 #: templates/indigo_api/work_commencements.html:66
 #: templates/indigo_api/work_form.html:5
-#: templates/indigo_app/place/_work_detail.html:101
+#: templates/indigo_app/place/_work_detail.html:110
 msgid "Edit"
 msgstr "Modifier"
 
@@ -1073,16 +1224,6 @@ msgstr "Commentaire"
 #: templates/indigo_api/document/_toolbar.html:5
 msgid "Attachments"
 msgstr "Pièces jointes"
-
-#: templates/indigo_api/document/_attachments.html:16
-#: templates/indigo_api/document/_cheatsheet.html:765
-#: templates/indigo_api/document/_defined_terms.html:24
-#: templates/indigo_api/document/_italics_terms.html:51
-#: templates/indigo_api/document/_properties.html:61
-#: templates/indigo_api/document/_references.html:16
-#: templates/indigo_api/document/_revisions.html:18
-msgid "Close"
-msgstr "Fermer"
 
 #: templates/indigo_api/document/_attachments.html:54
 #: templates/indigo_api/work_import_document.html:56
@@ -1523,7 +1664,7 @@ msgid "Find and replace..."
 msgstr "Trouver et remplacer..."
 
 #: templates/indigo_api/document/_toolbar.html:67
-#: templates/indigo_api/document/_toolbar.html:156
+#: templates/indigo_api/document/_toolbar.html:157
 msgid "Insert"
 msgstr "Insérer"
 
@@ -1606,7 +1747,7 @@ msgid "Remark"
 msgstr "Remarque"
 
 #: templates/indigo_api/document/_toolbar.html:100
-#: templates/indigo_api/document/_toolbar.html:149
+#: templates/indigo_api/document/_toolbar.html:150
 msgid "Update"
 msgstr "Mise à jour"
 
@@ -1614,7 +1755,7 @@ msgstr "Mise à jour"
 msgid "Editor help..."
 msgstr "Aide de l'éditeur..."
 
-#: templates/indigo_api/document/_toolbar.html:116
+#: templates/indigo_api/document/_toolbar.html:117
 #: templates/indigo_api/task_list.html:4
 #: templates/indigo_api/work_batch_create.html:179
 #: templates/indigo_api/work_batch_create.html:312
@@ -1625,7 +1766,7 @@ msgstr "Aide de l'éditeur..."
 msgid "Tasks"
 msgstr "Tâches"
 
-#: templates/indigo_api/document/_toolbar.html:120
+#: templates/indigo_api/document/_toolbar.html:121
 #: templates/place/settings.html:4 templates/place/settings.html:11
 #: templates/place/settings_layout.html:4
 #: templates/place/settings_layout.html:12
@@ -1633,47 +1774,47 @@ msgstr "Tâches"
 msgid "Settings"
 msgstr "Paramètres"
 
-#: templates/indigo_api/document/_toolbar.html:122
+#: templates/indigo_api/document/_toolbar.html:123
 msgid "Properties..."
 msgstr "Propriétés..."
 
-#: templates/indigo_api/document/_toolbar.html:124
+#: templates/indigo_api/document/_toolbar.html:125
 msgid "Download as"
 msgstr "Télécharger en tant que"
 
-#: templates/indigo_api/document/_toolbar.html:143
+#: templates/indigo_api/document/_toolbar.html:144
 msgid "Edit table"
 msgstr "Modifier le tableau"
 
-#: templates/indigo_api/document/_toolbar.html:159
+#: templates/indigo_api/document/_toolbar.html:160
 msgid "Insert row above"
 msgstr "Insérer la ligne ci-dessus"
 
-#: templates/indigo_api/document/_toolbar.html:160
+#: templates/indigo_api/document/_toolbar.html:161
 msgid "Insert row below"
 msgstr "Insérer une ligne ci-dessous"
 
-#: templates/indigo_api/document/_toolbar.html:162
+#: templates/indigo_api/document/_toolbar.html:163
 msgid "Insert column left"
 msgstr "Insérer une colonne à gauche"
 
-#: templates/indigo_api/document/_toolbar.html:163
+#: templates/indigo_api/document/_toolbar.html:164
 msgid "Insert column right"
 msgstr "Insérer une colonne à droite"
 
-#: templates/indigo_api/document/_toolbar.html:172
+#: templates/indigo_api/document/_toolbar.html:173
 msgid "Delete row"
 msgstr "Supprimer la ligne"
 
-#: templates/indigo_api/document/_toolbar.html:173
+#: templates/indigo_api/document/_toolbar.html:174
 msgid "Delete column"
 msgstr "Supprimer la colonne"
 
-#: templates/indigo_api/document/_toolbar.html:183
+#: templates/indigo_api/document/_toolbar.html:184
 msgid "Merge cells"
 msgstr "Fusionner des cellules"
 
-#: templates/indigo_api/document/_toolbar.html:184
+#: templates/indigo_api/document/_toolbar.html:185
 msgid "Heading"
 msgstr "Titre"
 
@@ -1746,27 +1887,27 @@ msgstr "Choisissez un type ou saisissez un titre."
 msgid "Description"
 msgstr "Description"
 
-#: templates/indigo_api/task_form.html:109
+#: templates/indigo_api/task_form.html:115
 msgid "Are you sure you want to cancel this task?"
 msgstr "Voulez-vous vraiment annuler cette tâche ?"
 
-#: templates/indigo_api/task_form.html:110
+#: templates/indigo_api/task_form.html:116
 msgid "Cancel task"
 msgstr "Annuler la tâche"
 
-#: templates/indigo_api/task_form.html:115
+#: templates/indigo_api/task_form.html:121
 msgid "Are you sure you want to block this task?"
 msgstr "Voulez-vous vraiment bloquer cette tâche ?"
 
-#: templates/indigo_api/task_form.html:116
+#: templates/indigo_api/task_form.html:122
 msgid "Block task"
 msgstr "Bloquer la tâche"
 
-#: templates/indigo_api/task_form.html:119
+#: templates/indigo_api/task_form.html:125
 msgid "Are you sure you want to unblock this task?"
 msgstr "Voulez-vous vraiment débloquer cette tâche ?"
 
-#: templates/indigo_api/task_form.html:120
+#: templates/indigo_api/task_form.html:126
 msgid "Unblock task"
 msgstr "Débloquer la tâche"
 
@@ -1801,11 +1942,11 @@ msgstr "La consolidation existe déjà à"
 msgid "Add consolidation date"
 msgstr "Ajouter une date de consolidation"
 
-#: templates/indigo_api/timeline/_work_points_in_time.html:71
+#: templates/indigo_api/timeline/_work_points_in_time.html:79
 msgid "Create amended version"
 msgstr "Créer une version modifiée"
 
-#: templates/indigo_api/timeline/_work_points_in_time.html:81
+#: templates/indigo_api/timeline/_work_points_in_time.html:89
 msgid "Import document"
 msgstr "Importer un document"
 
@@ -2080,6 +2221,7 @@ msgid "Update complete"
 msgstr "Mise à jour terminée"
 
 #: templates/indigo_api/work_batch_update.html:131
+#: templates/indigo_api/work_overview.html:175
 msgid "Open tasks"
 msgstr "Tâches ouvertes"
 
@@ -2102,10 +2244,6 @@ msgstr[1] "Ce travail a %(count)s <a href=\"#uncommenced\">dispositions non comm
 msgid "All provisions have commenced, no additional commencement events are required."
 msgstr "Toutes les dispositions ont commencé, aucun événement de lancement supplémentaire n'est requis."
 
-#: templates/indigo_api/work_commencements.html:38
-msgid "Add commencement"
-msgstr "Ajouter le commencement"
-
 #: templates/indigo_api/work_commencements.html:41
 msgid "Add without a commencing work"
 msgstr "Ajouter sans commencer les travaux"
@@ -2123,6 +2261,8 @@ msgid "Commenced in part"
 msgstr "Commencé en partie"
 
 #: templates/indigo_api/work_commencements.html:78
+#: templates/indigo_app/actions/_action_amendment.html:8
+#: templates/indigo_app/actions/_action_commencement.html:9
 #: templates/place/detail.html:223 templates/place/detail.html:259
 msgid "by"
 msgstr "par"
@@ -2237,7 +2377,7 @@ msgstr "Travaux connexes"
 
 #: templates/indigo_api/work_overview.html:37
 #: templates/indigo_app/place/_bulk_unapprove_form.html:42
-#: templates/indigo_app/place/_work_detail.html:126
+#: templates/indigo_app/place/_work_detail.html:135
 msgid "Unapprove"
 msgstr "Désapprouver"
 
@@ -2288,7 +2428,20 @@ msgstr "Gérer les points dans le temps"
 msgid "Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub."
 msgstr "Les travaux tronqués ne doivent pas avoir de points dans le temps. Supprimez ces points dans le temps ou ne marquez pas ce travail comme un stub."
 
+#: templates/indigo_api/work_overview.html:168
+#: templates/indigo_app/place/_work_detail.html:68
+#, fuzzy
+#| msgid "Comment"
+msgid "Comments"
+msgstr "Commentaire"
+
 #: templates/indigo_api/work_overview.html:185
+#, fuzzy
+#| msgid "Contributor leaderboard"
+msgid "Contributors"
+msgstr "Classement des contributeurs"
+
+#: templates/indigo_api/work_overview.html:192
 #, python-format
 msgid "%(user.task_count)s task"
 msgid_plural "%(user.task_count)s tasks"
@@ -2453,78 +2606,79 @@ msgid "It looks like you're offline or the server is unavailable."
 msgstr "Il semble que vous soyez hors ligne ou que le serveur soit indisponible."
 
 #: templates/indigo_app/actions/_action_amendment.html:4
-msgid "an amendment on the work"
+#, fuzzy, python-format
+#| msgid "an amendment on the work"
+msgid ""
+"\n"
+"    an amendment at %(date)s on\n"
+"  "
 msgstr "un amendement sur le travail"
 
-#: templates/indigo_app/actions/_action_amendment.html:6
-#: templates/indigo_app/actions/_action_commencement.html:7
-msgid "by the work"
-msgstr "par le travail"
-
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
-msgid "an expression date"
-msgstr "une date d'expression"
-
-#: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:6
-#: templates/indigo_app/actions/_action_task.html:15
-msgid "on the work"
-msgstr "sur le travail"
+#, fuzzy, python-format
+#| msgid "Add consolidation date"
+msgid ""
+"\n"
+"    a consolidation at %(date)s on\n"
+"  "
+msgstr "Ajouter une date de consolidation"
 
 #: templates/indigo_app/actions/_action_commencement.html:4
-msgid "a commencement on the work"
-msgstr "un début de travaux"
+#, fuzzy, python-format
+#| msgid "commencement date unknown"
+msgid ""
+"\n"
+"    a commencement at %(date)s on\n"
+"  "
+msgstr "date de début inconnue"
 
 #: templates/indigo_app/actions/_action_document.html:5
-msgid "a document on the work"
+#, fuzzy
+#| msgid "a document on the work"
+msgid "a document on"
 msgstr "un document sur le travail"
-
-#: templates/indigo_app/actions/_action_document.html:8
-msgid "the document"
-msgstr "le document"
 
 #: templates/indigo_app/actions/_action_placesettings.html:4
 msgid "the settings for"
 msgstr "les paramètres de"
 
-#: templates/indigo_app/actions/_action_task.html:5
+#: templates/indigo_app/actions/_action_task.html:10
 msgid "this task"
 msgstr "cette tâche"
 
-#: templates/indigo_app/actions/_action_task.html:7
-msgid "the task"
-msgstr "la tâche"
-
-#: templates/indigo_app/actions/_action_task.html:13
+#: templates/indigo_app/actions/_action_task.html:17
 msgid "on this work"
 msgstr "sur ce travail"
 
-#: templates/indigo_app/actions/_action_task.html:26
-#: templates/indigo_app/actions/_action_task.html:38
+#: templates/indigo_app/actions/_action_task.html:19
+#, fuzzy
+#| msgid "None"
+msgid "on"
+msgstr "Aucun"
+
+#: templates/indigo_app/actions/_action_task.html:30
+#: templates/indigo_app/actions/_action_task.html:42
 msgid "from"
 msgstr "depuis"
 
-#: templates/indigo_app/actions/_action_task.html:28
-#: templates/indigo_app/actions/_action_task.html:36
+#: templates/indigo_app/actions/_action_task.html:32
+#: templates/indigo_app/actions/_action_task.html:40
 msgid "to"
 msgstr "pour"
 
-#: templates/indigo_app/actions/_action_task.html:41
+#: templates/indigo_app/actions/_action_task.html:45
 #: templates/indigo_app/actions/_action_workflow.html:5
 msgid "this project"
 msgstr "ce projet"
 
-#: templates/indigo_app/actions/_action_task.html:43
+#: templates/indigo_app/actions/_action_task.html:47
 #: templates/indigo_app/actions/_action_workflow.html:7
 msgid "the project"
 msgstr "le projet"
 
-#: templates/indigo_app/actions/_action_task.html:55
+#: templates/indigo_app/actions/_action_task.html:59
 msgid "for review"
 msgstr "pour évaluation"
-
-#: templates/indigo_app/actions/_action_work.html:4
-msgid "the work"
-msgstr "l'oeuvre"
 
 #: templates/indigo_app/actions/_activity_list.html:20
 msgid "No recent activity"
@@ -2541,63 +2695,77 @@ msgstr "%(org)s est en cours de maintenance. Nous reviendrons bientôt."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
 
-#: templates/indigo_app/place/_bulk_approve_form.html:48
+#: templates/indigo_app/place/_bulk_approve_form.html:40
 msgid "Import tasks will be created"
 msgstr "Des tâches d'importation seront créées"
 
-#: templates/indigo_app/place/_bulk_approve_form.html:59
-#: templates/indigo_app/place/_bulk_approve_form.html:88
+#: templates/indigo_app/place/_bulk_approve_form.html:51
+#: templates/indigo_app/place/_bulk_approve_form.html:80
 msgid "Task description"
 msgstr "Description de la tâche"
 
-#: templates/indigo_app/place/_bulk_approve_form.html:60
+#: templates/indigo_app/place/_bulk_approve_form.html:52
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
 msgstr "Importez le contenu de ce travail à la date appropriée – généralement la date de publication ou de consolidation."
 
-#: templates/indigo_app/place/_bulk_approve_form.html:77
+#: templates/indigo_app/place/_bulk_approve_form.html:69
 msgid "Gazette tasks will be created"
 msgstr "Des tâches de Gazette seront créées"
 
-#: templates/indigo_app/place/_bulk_approve_form.html:89
+#: templates/indigo_app/place/_bulk_approve_form.html:81
 msgid "Find and link the Gazette (original publication document) for this work."
 msgstr "Recherchez et associez la Gazette (document de publication original) pour ce travail."
 
-#: templates/indigo_app/place/_bulk_approve_form.html:106
+#: templates/indigo_app/place/_bulk_approve_form.html:98
 msgid "Amendment tasks will be created"
 msgstr "Des tâches de modification seront créées"
 
-#: templates/indigo_app/place/_bulk_approve_form.html:124
-#, python-format
-msgid "\n"
-"                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
-"                          "
-msgstr "\n"
+#: templates/indigo_app/place/_bulk_approve_form.html:108
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
+#| "                          "
+msgid ""
+"\n"
+"                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                            "
+msgstr ""
+"\n"
 "                            Description de la tâche : %(title)s (%(numbered_title)s) – %(date)s\n"
 "                          "
 
-#: templates/indigo_app/place/_bulk_approve_form.html:128
+#: templates/indigo_app/place/_bulk_approve_form.html:112
 #, python-format
-msgid "\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
+msgid ""
+"\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n"
+"\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr "\n"
-"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) au %(date)s.\n\n"
+msgstr ""
+"\n"
+"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) au %(date)s.\n"
+"\n"
 "L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
 
-#: templates/indigo_app/place/_bulk_approve_form.html:160
+#: templates/indigo_app/place/_bulk_approve_form.html:145
 msgid "Approving..."
 msgstr "Approuvant..."
 
@@ -2647,7 +2815,7 @@ msgstr "Amendements"
 msgid "Repeals"
 msgstr "Abrogations"
 
-#: templates/indigo_app/place/_work_detail_overview.html:31
+#: templates/indigo_app/place/_work_detail_overview.html:46
 #: templates/indigo_app/tasks/tabbed_layout.html:28
 #: templates/indigo_app/tasks/taxonomy_task_detail.html:4
 #: templates/indigo_app/tasks/taxonomy_task_list.html:4
@@ -2877,30 +3045,38 @@ msgid "Your account"
 msgstr "Votre compte"
 
 #: templates/place/_place_cards.html:14
-msgid "\n"
+msgid ""
+"\n"
 "                  Work\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Works\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  Travail\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  Travaux\n"
 "                "
 
 #: templates/place/_place_cards.html:23
-msgid "\n"
+msgid ""
+"\n"
 "                  Task\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Tasks\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  Tâche\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  Tâches\n"
 "                "
 
@@ -2909,16 +3085,20 @@ msgid "As at date"
 msgstr "A la date"
 
 #: templates/place/_place_cards.html:43
-msgid "\n"
+msgid ""
+"\n"
 "                  Page\n"
 "                "
-msgid_plural "\n"
+msgid_plural ""
+"\n"
 "                  Pages\n"
 "                "
-msgstr[0] "\n"
+msgstr[0] ""
+"\n"
 "                  page\n"
 "                "
-msgstr[1] "\n"
+msgstr[1] ""
+"\n"
 "                  pages\n"
 "                "
 
@@ -3218,3 +3398,32 @@ msgstr "Clause de non-responsabilité"
 msgid "Principal"
 msgstr "Principal"
 
+#~ msgid "Import content"
+#~ msgstr "Importer du contenu"
+
+#~ msgid "Link Gazette"
+#~ msgstr "Lien vers la Gazette"
+
+#~ msgid "Apply amendment"
+#~ msgstr "Appliquer la modification"
+
+#~ msgid "by the work"
+#~ msgstr "par le travail"
+
+#~ msgid "an expression date"
+#~ msgstr "une date d'expression"
+
+#~ msgid "on the work"
+#~ msgstr "sur le travail"
+
+#~ msgid "a commencement on the work"
+#~ msgstr "un début de travaux"
+
+#~ msgid "the document"
+#~ msgstr "le document"
+
+#~ msgid "the task"
+#~ msgstr "la tâche"
+
+#~ msgid "the work"
+#~ msgstr "l'oeuvre"

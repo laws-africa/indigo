@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-25 17:12+0200\n"
+"POT-Creation-Date: 2024-03-07 17:28+0200\n"
 "PO-Revision-Date: 2024-02-22 07:11\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -16,6 +16,74 @@ msgstr ""
 "X-Crowdin-Language: pl\n"
 "X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 143\n"
+
+#: models.py:39
+msgid "user"
+msgstr ""
+
+#: models.py:40
+msgid "bio"
+msgstr ""
+
+#: models.py:40
+msgid "A short bio"
+msgstr ""
+
+#: models.py:41
+msgid "qualifications"
+msgstr ""
+
+#: models.py:41 templates/indigo_social/user_layout.html:66
+msgid "Qualifications"
+msgstr ""
+
+#: models.py:42
+msgid "skills"
+msgstr ""
+
+#: models.py:42 templates/indigo_social/user_layout.html:61
+msgid "Skills"
+msgstr ""
+
+#: models.py:43
+msgid "organisations"
+msgstr ""
+
+#: models.py:43 templates/indigo_social/user_layout.html:56
+msgid "Organisations"
+msgstr ""
+
+#: models.py:44
+msgid "specialisations"
+msgstr ""
+
+#: models.py:44 templates/indigo_social/user_layout.html:71
+msgid "Specialisations"
+msgstr ""
+
+#: models.py:45
+msgid "areas of law"
+msgstr ""
+
+#: models.py:45 templates/indigo_social/user_layout.html:76
+msgid "Areas of law"
+msgstr ""
+
+#: models.py:46
+msgid "profile photo"
+msgstr ""
+
+#: models.py:47
+msgid "profile photo nonce"
+msgstr ""
+
+#: models.py:48
+msgid "twitter username"
+msgstr ""
+
+#: models.py:49
+msgid "linkedin profile"
+msgstr ""
 
 #: templates/indigo_app/user_account/edit.html:4
 msgid "Edit Profile"
@@ -109,26 +177,6 @@ msgstr ""
 msgid "Activity"
 msgstr ""
 
-#: templates/indigo_social/user_layout.html:56
-msgid "Organisations"
-msgstr ""
-
-#: templates/indigo_social/user_layout.html:61
-msgid "Skills"
-msgstr ""
-
-#: templates/indigo_social/user_layout.html:66
-msgid "Qualifications"
-msgstr ""
-
-#: templates/indigo_social/user_layout.html:71
-msgid "Specialisations"
-msgstr ""
-
-#: templates/indigo_social/user_layout.html:76
-msgid "Areas of law"
-msgstr ""
-
 #: templates/indigo_social/user_layout.html:82
 msgid "Edit profile"
 msgstr ""
@@ -193,4 +241,3 @@ msgstr ""
 #: templates/main.html:27
 msgid "Log in"
 msgstr ""
-

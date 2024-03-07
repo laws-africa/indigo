@@ -107,6 +107,16 @@ class TaxonomistBadge(PermissionBadge):
     )
 
 
+class ConverterBadge(PermissionBadge):
+    slug = 'converter'
+    name = 'Converter'
+    group_name = name + ' Badge'
+    description = 'Can do conversion tasks'
+    permissions = (
+        'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
+    )
+
+
 badges.register(ContentAPIBadge)
 badges.register(ContributorBadge)
 badges.register(EditorBadge)
@@ -115,6 +125,7 @@ badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)
 badges.register(TaxonomistBadge)
+badges.register(ConverterBadge)
 
 
 # when a user signs up, grant them some badges immediately

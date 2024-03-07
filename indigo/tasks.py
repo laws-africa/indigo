@@ -21,11 +21,11 @@ class TaskBroker:
 
     def create_tasks(self, user, data):
         # import tasks
-        # TODO: add the appropriate timeline date for Import tasks too?
         # stash the import tasks in case we want to do something with them later
         self.import_tasks = [self.get_or_create_task(work=work, task_type='import-content',
                                                      description=data['import_task_description'],
-                                                     user=user) for work in self.import_task_works]
+                                                     user=user, timeline_date=work.get_import_date())
+                             for work in self.import_task_works]
         if data.get('update_import_tasks'):
             self.block_or_cancel_tasks(self.import_tasks, data['update_import_tasks'], user)
 
@@ -33,7 +33,8 @@ class TaskBroker:
         # stash the gazette tasks in case we want to do something with them later
         self.gazette_tasks = [self.get_or_create_task(work=work, task_type='link-gazette',
                                                       description=data['gazette_task_description'],
-                                                      user=user) for work in self.gazette_task_works]
+                                                      user=user, timeline_date=work.publication_date)
+                              for work in self.gazette_task_works]
         if data.get('update_gazette_tasks'):
             self.block_or_cancel_tasks(self.gazette_tasks, data['update_gazette_tasks'], user)
 

@@ -1,7 +1,9 @@
 import datetime
+import logging
 from itertools import groupby
 
 from actstream import action
+from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as __, gettext as _
 from django.db.models import JSONField
 from django.db import models
@@ -15,7 +17,11 @@ from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
 from indigo.custom_tasks import tasks as custom_tasks
+from indigo.plugins import plugins
+from indigo_api.models import Document
 from indigo_api.signals import task_closed
+
+log = logging.getLogger(__name__)
 
 
 class TaskQuerySet(models.QuerySet):
@@ -61,6 +67,7 @@ class Task(models.Model):
         'reopen': 'reopened',
         'unsubmit': 'requested changes to',
         'close': 'approved',
+        'finish': 'finished',
         'block': 'blocked',
         'unblock': 'unblocked',
     }
@@ -125,6 +132,7 @@ class Task(models.Model):
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     submitted_by_user = models.ForeignKey(User, related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
+    finished_by_user = models.ForeignKey(User, related_name='finished_tasks', null=True, on_delete=models.SET_NULL)
     closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
@@ -231,6 +239,7 @@ class Task(models.Model):
         for task in tasks:
             task.change_task_permission = user.has_perm('indigo_api.change_task') and user.editor.has_country_permission(task.country)
             task.submit_task_permission = has_transition_perm(task.submit, user)
+            task.finish_task_permission = has_transition_perm(task.finish, user)
             task.reopen_task_permission = has_transition_perm(task.reopen, user)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)
             task.close_task_permission = has_transition_perm(task.close, user)
@@ -290,6 +299,13 @@ class Task(models.Model):
     def reopen(self, user, **kwargs):
         self.reviewed_by_user = None
         self.closed_at = None
+        # re-block import task if conversion task is reopened
+        if self.code in ['convert-document'] and self.timeline_date:
+            import_task = Task.objects.filter(work=self.work, code='import-content', timeline_date=self.timeline_date).first()
+            if import_task:
+                import_task.blocked_by.add(self)
+                if import_task.state in Task.UNBLOCKED_STATES:
+                    import_task.block(user)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, user):
@@ -328,6 +344,55 @@ class Task(models.Model):
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
 
+    # finish (skip submission)
+    def may_finish(self, user):
+        return user.is_authenticated and \
+               user.editor.has_country_permission(self.country) and \
+               user.has_perm('indigo_api.submit_task')
+
+    @transition(field=state, source=['open'], target='done', permission=may_finish)
+    def finish(self, user, **kwargs):
+        self.finished_by_user = user
+        self.closed_at = timezone.now()
+        self.changes_requested = False
+        self.assigned_to = None
+
+        # if a conversion task has been finished, do the import
+        if self.code in ['convert-document'] and self.work is not None:
+            self.create_and_import_document(user)
+
+        self.update_blocked_tasks(self, user)
+
+    def create_and_import_document(self, user):
+        # create the document
+        document = Document()
+        document.work = self.work
+        document.expression_date = self.timeline_date or self.work.get_import_date()
+        document.language = self.country.primary_language
+        document.created_by_user = user
+        document.save()
+
+        # link it to the related import task
+        import_task = Task.objects.filter(work=self.work, code='import-content',
+                                          timeline_date=self.timeline_date or self.work.get_import_date()).first()
+        if import_task:
+            import_task.document = document
+            import_task.save()
+
+        # do the import
+        importer = plugins.for_document('importer', document)
+        upload = UploadedFile(file=self.output_file.file, name=self.output_file.filename, size=self.output_file.size,
+                              content_type=self.output_file.mime_type)
+        try:
+            importer.import_from_upload(upload, document, None)
+        except ValueError as e:
+            if document.pk:
+                document.delete()
+            log.error(f"Error during import: {e}", exc_info=e)
+
+        document.updated_by_user = user
+        document.save_with_revision(user)
+
     # block
     def may_block(self, user):
         return user.is_authenticated and \
@@ -359,6 +424,18 @@ class Task(models.Model):
             for blocked_task in blocked_tasks:
                 action.send(user, verb='resolved a task previously blocking', action_object=blocked_task,
                             target=task, place_code=blocked_task.place.place_code)
+
+                # send a separate action to this task about it (partially) unblocking the previously blocked task
+                # while we still have both of them available (the usual actions are sent post transition, when they
+                # won't be linked anymore)
+                action_verb = 'partially unblocked'
+
+                if task.code in ['convert-document'] and blocked_task.code in ['import-content']:
+                    blocked_task.unblock(user)
+                    action_verb = self.VERBS['unblock']
+
+                action.send(user, verb=action_verb, action_object=task,
+                            target=blocked_task, place_code=task.place.place_code)
 
     def resolve_anchor(self):
         if self.annotation:

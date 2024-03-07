@@ -1,60 +1,64 @@
 {% load indigo_app i18n %}
 
 {% with action.action_object as task %}
-  {% if this_task %}
-    {% trans 'this task' %}
+  {% if action.target and action.verb == 'unblocked' %}
+    {% with action.target as blocking_task %}
+      <a href="{% url 'task_detail' place=blocking_task.place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }} – {{ blocking_task.title }}</a>
+    {% endwith %}
   {% else %}
-    {% trans 'the task' %}
-    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+    {% if this_task %}
+      {% trans 'this task' %}
+    {% else %}
+      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>
 
-    {% if not action.target %}
-      {% if task.work %}
-        {% if ignore_work %}
-          {% trans 'on this work' %}
-        {% else %}
-          {% trans 'on the work' %} <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-          {% if task.document %}
-            @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+      {% if not action.target %}
+        {% if task.work %}
+          {% if ignore_work %}
+            {% trans 'on this work' %}
+          {% else %}
+            {% trans 'on' %} <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+            {% if task.document %}
+              @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}
-  {% endif %}
 
-  {% if action.target.target_actions.content_type.model == 'user' %}
-    {% if action.verb == 'requested changes to' %}
-      {% trans 'from' %}
-    {% else %}
-      {% trans 'to' %}
-    {% endif %}
-    {% user_profile action.target %}
-  {% endif %}
-
-  {% if action.target.target_actions.content_type.model == 'workflow' %}
-    {% with action.target as workflow %}
-      {% if action.verb == 'added' %}
-        {% trans 'to' %}
-      {% elif action.verb == 'removed' %}
+    {% if action.target.target_actions.content_type.model == 'user' %}
+      {% if action.verb == 'requested changes to' %}
         {% trans 'from' %}
-      {% endif %}
-      {% if this_workflow %}
-        {% trans 'this project' %}
       {% else %}
-        {% trans 'the project' %} <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+        {% trans 'to' %}
       {% endif %}
-    {% endwith %}
-  {% endif %}
+      {% user_profile action.target %}
+    {% endif %}
 
-  {% if action.target.target_actions.content_type.model == 'task' %}
-    {% with action.target as blocking_task %}
-      (<a href="{% url 'task_detail' place=blocking_task.place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }} – {{ blocking_task.title }}</a>)
-    {% endwith %}
-  {% endif %}
+    {% if action.target.target_actions.content_type.model == 'workflow' %}
+      {% with action.target as workflow %}
+        {% if action.verb == 'added' %}
+          {% trans 'to' %}
+        {% elif action.verb == 'removed' %}
+          {% trans 'from' %}
+        {% endif %}
+        {% if this_workflow %}
+          {% trans 'this project' %}
+        {% else %}
+          {% trans 'the project' %} <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
 
-  {% if action.verb == 'submitted' %}
-    {% trans 'for review' %}
-  {% endif %}
+    {% if action.target.target_actions.content_type.model == 'task' %}
+      {% with action.target as blocking_task %}
+        (<a href="{% url 'task_detail' place=blocking_task.place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }} – {{ blocking_task.title }}</a>)
+      {% endwith %}
+    {% endif %}
 
+    {% if action.verb == 'submitted' %}
+      {% trans 'for review' %}
+    {% endif %}
+
+  {% endif %}
   {% include 'indigo_app/actions/_in_place.html' with place=task.place %}
-
 {% endwith %}

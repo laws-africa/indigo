@@ -121,28 +121,6 @@
 
     <div class="col-3">
       {% block secondary-info %}
-        <h6>{% trans 'Core Details' %}</h6>
-
-        <div class="d-flex mb-2">
-          <div>
-            {% include 'indigo_metrics/_progress_ball.html' with size=70 progress=work.metrics.p_breadth_complete %}
-          </div>
-          <div class="ms-2 mt-2">
-            <h3 class="mb-0">{{ work.metrics.p_breadth_complete|floatformat:0 }}%</h3>
-            {% trans 'Complete' %}
-          </div>
-        </div>
-
-        {% if work.metrics.p_complete < 100 %}
-          <ul class="mb-0 mt-3 ps-4">
-            {% if not work.publication_document %}
-              <li>{% trans 'Add a publication document.' %}</li>
-            {% endif %}
-            {% if not work.stub and work.metrics.n_expressions == 0 %}
-              <li>{% trans 'Publish at least one point in time.' %}</li>
-            {% endif %}
-          </ul>
-        {% endif %}
       {% endblock %}
     </div>
   </div>

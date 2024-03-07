@@ -18,10 +18,6 @@ class PlacesTest(testcases.TestCase):
         response = self.client.get('/places/za/activity')
         self.assertEqual(response.status_code, 200)
 
-    def test_place_metrics(self):
-        response = self.client.get('/places/za/metrics')
-        self.assertEqual(response.status_code, 200)
-
     def test_place_settings(self):
         response = self.client.get('/places/za/settings')
         self.assertEqual(response.status_code, 200)

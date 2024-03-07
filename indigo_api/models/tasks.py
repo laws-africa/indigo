@@ -4,7 +4,7 @@ from itertools import groupby
 
 from actstream import action
 from django.core.files.uploadedfile import UploadedFile
-from django.utils.translation import gettext_lazy as __, gettext as _
+from django.utils.translation import ugettext_lazy as __, ugettext as _
 from django.db.models import JSONField
 from django.db import models
 from django.db.models import signals, Prefetch, Count
@@ -49,11 +49,11 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    OPEN = 'open'
-    PENDING_REVIEW = 'pending_review'
-    CANCELLED = 'cancelled'
-    DONE = 'done'
-    BLOCKED = 'blocked'
+    OPEN = __('open')
+    PENDING_REVIEW = __('pending_review')
+    CANCELLED = __('cancelled')
+    DONE = __('done')
+    BLOCKED = __('blocked')
 
     STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE, BLOCKED)
 
@@ -62,14 +62,14 @@ class Task(models.Model):
     UNBLOCKED_STATES = (OPEN, PENDING_REVIEW)
 
     VERBS = {
-        'submit': 'submitted',
-        'cancel': 'cancelled',
-        'reopen': 'reopened',
-        'unsubmit': 'requested changes to',
-        'close': 'approved',
-        'finish': 'finished',
-        'block': 'blocked',
-        'unblock': 'unblocked',
+        'submit': __('submitted'),
+        'cancel': __('cancelled'),
+        'reopen': __('reopened'),
+        'unsubmit': __('requested changes to'),
+        'close': __('approved'),
+        'finish': __('finished'),
+        'block': __('blocked'),
+        'unblock': __('unblocked'),
     }
 
     MAIN_CODES = [
@@ -99,55 +99,57 @@ class Task(models.Model):
 
     class Meta:
         permissions = (
-            ('submit_task', 'Can submit an open task for review'),
-            ('cancel_task', 'Can cancel a task that is open or has been submitted for review'),
-            ('reopen_task', 'Can reopen a task that is closed or cancelled'),
-            ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
-            ('close_task', 'Can close a task that has been submitted for review'),
-            ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
-            ('block_task', 'Can block a task from being done, and unblock it'),
-            ('exceed_task_limits', 'Can be assigned tasks in excess of limits'),
+            ('submit_task', __('Can submit an open task for review')),
+            ('cancel_task', __('Can cancel a task that is open or has been submitted for review')),
+            ('reopen_task', __('Can reopen a task that is closed or cancelled')),
+            ('unsubmit_task', __('Can unsubmit a task that has been submitted for review')),
+            ('close_task', __('Can close a task that has been submitted for review')),
+            ('close_any_task', __('Can close any task that has been submitted for review, regardless of who submitted it')),
+            ('block_task', __('Can block a task from being done, and unblock it')),
+            ('exceed_task_limits', __('Can be assigned tasks in excess of limits')),
         )
+        verbose_name = __('task')
+        verbose_name_plural = __('tasks')
 
     objects = TaskManager.from_queryset(TaskQuerySet)()
 
-    title = models.CharField(max_length=256, null=False, blank=False)
+    title = models.CharField(__('title'), max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
-    country = models.ForeignKey('indigo_api.Country', related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
-    locality = models.ForeignKey('indigo_api.Locality', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
-    work = models.ForeignKey('indigo_api.Work', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
-    document = models.ForeignKey('indigo_api.Document', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
-    timeline_date = models.DateField(null=True, blank=True, help_text="A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied.")
+    country = models.ForeignKey('indigo_api.Country', verbose_name=__('country'), related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey('indigo_api.Locality', verbose_name=__('locality'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    work = models.ForeignKey('indigo_api.Work', verbose_name=__('work'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    document = models.ForeignKey('indigo_api.Document', verbose_name=__('document'), related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    timeline_date = models.DateField(__('timeline date'), null=True, blank=True, help_text="A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied.")
 
     state = FSMField(default=OPEN)
 
     # internal task code
-    code = models.CharField(max_length=100, null=True, blank=True)
+    code = models.CharField(__('code'), max_length=100, null=True, blank=True)
 
     # files
-    input_file = models.OneToOneField('TaskFile', related_name='task_as_input', null=True, blank=True, on_delete=models.SET_NULL)
-    output_file = models.OneToOneField('TaskFile', related_name='task_as_output', null=True, blank=True, on_delete=models.SET_NULL)
+    input_file = models.OneToOneField('TaskFile', verbose_name=__('input file'), related_name='task_as_input', null=True, blank=True, on_delete=models.SET_NULL)
+    output_file = models.OneToOneField('TaskFile', verbose_name=__('output file'), related_name='task_as_output', null=True, blank=True, on_delete=models.SET_NULL)
 
-    assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
-    submitted_by_user = models.ForeignKey(User, related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
-    reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
-    finished_by_user = models.ForeignKey(User, related_name='finished_tasks', null=True, on_delete=models.SET_NULL)
-    closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
+    assigned_to = models.ForeignKey(User, verbose_name=__('assigned to'), related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    submitted_by_user = models.ForeignKey(User, verbose_name=__('submitted by user'), related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    reviewed_by_user = models.ForeignKey(User, verbose_name=__('reviewed by user'), related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
+    finished_by_user = models.ForeignKey(User, verbose_name=__('finished by user'), related_name='finished_tasks', null=True, on_delete=models.SET_NULL)
+    closed_at = models.DateTimeField(__('closed at'), help_text="When the task was marked as done or cancelled.", null=True)
 
-    changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
+    changes_requested = models.BooleanField(__('changes requested'), default=False, help_text="Have changes been requested on this task?")
 
-    created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    created_by_user = models.ForeignKey(User, verbose_name=__('created by user'), related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by_user = models.ForeignKey(User, verbose_name=__('updated by user'), related_name='+', null=True, on_delete=models.SET_NULL)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(__('created at'), auto_now_add=True)
+    updated_at = models.DateTimeField(__('updated at'), auto_now=True)
 
-    labels = models.ManyToManyField('TaskLabel', related_name='tasks')
+    labels = models.ManyToManyField('TaskLabel', verbose_name=__('labels'), related_name='tasks')
 
-    extra_data = JSONField(null=True, blank=True)
+    extra_data = JSONField(__('extra data'), null=True, blank=True)
 
-    blocked_by = models.ManyToManyField('self', related_name='blocking', symmetrical=False, help_text='Tasks blocking this task from being done.')
+    blocked_by = models.ManyToManyField('self', verbose_name=__('blocked by'), related_name='blocking', symmetrical=False, help_text='Tasks blocking this task from being done.')
 
     @property
     def place(self):
@@ -557,26 +559,29 @@ class Workflow(models.Model):
             ('close_workflow', 'Can close a workflow'),
         )
         ordering = ('-priority', 'pk',)
+        verbose_name = __('workflow')
+        verbose_name_plural = __('workflows')
 
     objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 
-    title = models.CharField(max_length=256, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
+    title = models.CharField(__('title'), max_length=256, null=False, blank=False)
+    description = models.TextField(__('description'), null=True, blank=True)
 
-    tasks = models.ManyToManyField(Task, related_name='workflows')
+    tasks = models.ManyToManyField(Task, verbose_name=__('tasks'), related_name='workflows')
 
-    closed = models.BooleanField(default=False)
-    due_date = models.DateField(null=True, blank=True)
-    priority = models.BooleanField(default=False, db_index=True)
+    closed = models.BooleanField(__('closed'), default=False)
+    due_date = models.DateField(__('due date'), null=True, blank=True)
+    priority = models.BooleanField(__('priority'), default=False, db_index=True)
 
-    country = models.ForeignKey('indigo_api.Country', related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
-    locality = models.ForeignKey('indigo_api.Locality', related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
+    country = models.ForeignKey('indigo_api.Country', verbose_name=__('country'), related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey('indigo_api.Locality', verbose_name=__('locality'), related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
 
-    created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    created_by_user = models.ForeignKey(User, verbose_name=__('created by user'), related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by_user = models.ForeignKey(User, verbose_name=__('updated by user'), related_name='+', null=True, on_delete=models.SET_NULL)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(__('created at'), auto_now_add=True)
+    updated_at = models.DateTimeField(__('updated at'), auto_now=True)
+
 
     @property
     def place(self):
@@ -606,12 +611,14 @@ def post_save_workflow(sender, instance, **kwargs):
 
 
 class TaskLabel(models.Model):
-    title = models.CharField(max_length=30, null=False, unique=True, blank=False)
-    slug = models.SlugField(null=False, unique=True, blank=False)
-    description = models.CharField(max_length=256, null=True, blank=True)
+    title = models.CharField(__('title'), max_length=30, null=False, unique=True, blank=False)
+    slug = models.SlugField(__('slug'), null=False, unique=True, blank=False)
+    description = models.CharField(__('description'), max_length=256, null=True, blank=True)
 
     class Meta:
         ordering = ['title']
+        verbose_name = __('task label')
+        verbose_name_plural = __('task labels')
 
     def __str__(self):
         return self.title
@@ -624,10 +631,14 @@ def task_file_filename(instance, filename):
 
 
 class TaskFile(models.Model):
-    file = models.FileField(upload_to=task_file_filename, null=True, blank=True)
-    url = models.URLField(null=True, blank=True)
-    size = models.IntegerField(null=True)
-    filename = models.CharField(max_length=1024)
-    mime_type = models.CharField(max_length=1024)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    file = models.FileField(__('file'), upload_to=task_file_filename, null=True, blank=True)
+    url = models.URLField(__('url'), null=True, blank=True)
+    size = models.IntegerField(__('size'), null=True)
+    filename = models.CharField(__('filename'), max_length=1024)
+    mime_type = models.CharField(__('mimetype'), max_length=1024)
+    created_at = models.DateTimeField(__('created at'), auto_now_add=True)
+    updated_at = models.DateTimeField(__('updated at'), auto_now=True)
+
+    class Meta:
+        verbose_name = __('task file')
+        verbose_name_plural = __('task files')

@@ -632,7 +632,7 @@ def task_file_filename(instance, filename):
 
 class TaskFile(models.Model):
     file = models.FileField(__('file'), upload_to=task_file_filename, null=True, blank=True)
-    url = models.URLField(__('url'), null=True, blank=True)
+    url = models.URLField(__('URL'), null=True, blank=True)
     size = models.IntegerField(__('size'), null=True)
     filename = models.CharField(__('filename'), max_length=1024)
     mime_type = models.CharField(__('mimetype'), max_length=1024)

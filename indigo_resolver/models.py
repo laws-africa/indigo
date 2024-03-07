@@ -49,8 +49,7 @@ class Authority(models.Model):
 
 
 class AuthorityReference(models.Model):
-    """ Reference to a particular document,
-    belonging to a resolver.
+    """ Reference to a particular document, belonging to a resolver.
     """
     frbr_uri = models.CharField(_("FRBR URI"), max_length=255, db_index=True, help_text=_("FRBR Work or Expression URI to match on"))
     title = models.CharField(_("title"), max_length=255, help_text=_("Document title"))
@@ -63,6 +62,8 @@ class AuthorityReference(models.Model):
 
     class Meta:
         unique_together = ('authority', 'frbr_uri')
+        verbose_name = _("authority reference")
+        verbose_name_plural = _("authority references")
 
     def authority_name(self):
         if self.authority.url:

@@ -19,8 +19,8 @@ class Authority(models.Model):
     FRBR URIs into real-world URLs.
     """
     name = models.CharField(_("name"), max_length=255, unique=True, help_text=_("Descriptive name of this resolver"))
-    url = models.URLField(_("url"), help_text=_("Website for this authority (optional)"), blank=True, null=True)
-    not_found_url = models.URLField(_("not found url"), help_text=_("URL of a 404 page (optional)"), null=True, blank=True)
+    url = models.URLField(_("URL"), help_text=_("Website for this authority (optional)"), blank=True, null=True)
+    not_found_url = models.URLField(_("not found URL"), help_text=_("URL of a 404 page (optional)"), null=True, blank=True)
     slug = models.CharField(_("slug"), null=False, blank=False, validators=[validate_slug], max_length=50, unique=True)
     priority = models.IntegerField(_("priority"), null=False, default=10, help_text=_("When multiple resolvers match, highest priority wins"))
 
@@ -52,12 +52,12 @@ class AuthorityReference(models.Model):
     """ Reference to a particular document,
     belonging to a resolver.
     """
-    frbr_uri = models.CharField(_("frbr uri"), max_length=255, db_index=True, help_text=_("FRBR Work or Expression URI to match on"))
-    title = models.CharField(_("frbr uri"), max_length=255, help_text=_("Document title"))
-    url = models.URLField(_("frbr uri"), max_length=1024, help_text=_("URL from which this document can be retrieved"))
-    created_at = models.DateTimeField(_("frbr uri"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("frbr uri"), auto_now=True)
-    priority = models.IntegerField(_("frbr uri"), null=True, blank=True, help_text=_("Priority for this URL. If unset, uses the authority's priority"))
+    frbr_uri = models.CharField(_("FRBR URI"), max_length=255, db_index=True, help_text=_("FRBR Work or Expression URI to match on"))
+    title = models.CharField(_("title"), max_length=255, help_text=_("Document title"))
+    url = models.URLField(_("URL"), max_length=1024, help_text=_("URL from which this document can be retrieved"))
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    priority = models.IntegerField(_("priority"), null=True, blank=True, help_text=_("Priority for this URL. If unset, uses the authority's priority"))
 
     authority = models.ForeignKey(Authority, related_name='references', on_delete=models.CASCADE, verbose_name=_("authority"))
 

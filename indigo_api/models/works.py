@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
@@ -25,7 +25,7 @@ class WorkQuerySet(models.QuerySet):
     def get_for_frbr_uri(self, frbr_uri):
         work = self.filter(frbr_uri=frbr_uri).first()
         if work is None:
-            raise ValueError("Work for FRBR URI '%s' doesn't exist" % frbr_uri)
+            raise ValueError(_("Work for FRBR URI '%(uri)s' doesn't exist") % {"uri": frbr_uri})
         return work
 
 
@@ -42,14 +42,17 @@ class WorkManager(models.Manager):
 
 
 class TaxonomyVocabulary(models.Model):
-    authority = models.CharField(max_length=512, null=False, blank=False, help_text="Organisation managing this taxonomy")
-    name = models.CharField(max_length=512, null=False, blank=False, help_text="Short name for this taxonomy, under this authority")
-    slug = models.SlugField(null=False, unique=True, blank=False, help_text="Code used in the API")
-    title = models.CharField(max_length=512, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
+    authority = models.CharField(_("authority"), max_length=512, null=False, blank=False,
+                                 help_text=_("Organisation managing this taxonomy"))
+    name = models.CharField(_("name"), max_length=512, null=False, blank=False,
+                            help_text=_("Short name for this taxonomy, under this authority"))
+    slug = models.SlugField(_("slug"), null=False, unique=True, blank=False, help_text=_("Code used in the API"))
+    title = models.CharField(_("title"), max_length=512, null=False, unique=True, blank=False,
+                             help_text=_("Friendly, full title for the taxonomy"))
 
     class Meta:
-        verbose_name = 'Taxonomy'
-        verbose_name_plural = 'Taxonomies'
+        verbose_name = _("taxonomy")
+        verbose_name_plural = _("taxonomies")
         ordering = ('title',)
         unique_together = ('authority', 'name')
 
@@ -58,13 +61,16 @@ class TaxonomyVocabulary(models.Model):
 
 
 class VocabularyTopic(models.Model):
-    vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False, on_delete=models.CASCADE)
-    level_1 = models.CharField(max_length=512, null=False, blank=False)
-    level_2 = models.CharField(max_length=512, null=True, blank=True, help_text='(optional)')
+    vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False,
+                                   on_delete=models.CASCADE, verbose_name=_("vocabulary"))
+    level_1 = models.CharField(_("level 1"), max_length=512, null=False, blank=False)
+    level_2 = models.CharField(_("level 2"), max_length=512, null=True, blank=True, help_text=_("(optional)"))
 
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
         ordering = ('level_1', 'level_2')
+        verbose_name = _("vocabulary topic")
+        verbose_name_plural = _("vocabulary topics")
 
     @property
     def title(self):
@@ -96,10 +102,10 @@ class VocabularyTopic(models.Model):
 
 
 class TaxonomyTopic(MP_Node):
-    name = models.CharField(max_length=512, null=False, blank=False)
-    slug = models.SlugField(max_length=4096, null=False, unique=True, blank=False)
-    description = models.TextField(null=True, blank=True)
-    public = models.BooleanField(default=True)
+    name = models.CharField(_("name"), max_length=512, null=False, blank=False)
+    slug = models.SlugField(_("slug"), max_length=4096, null=False, unique=True, blank=False)
+    description = models.TextField(_("description"), null=True, blank=True)
+    public = models.BooleanField(_("public"), default=True)
     node_order_by = ['name']
 
     class Meta:
@@ -143,7 +149,7 @@ class TaxonomyTopic(MP_Node):
 
         if all_topics:
             tree = [{
-                "title": "All topics",
+                "title": _("All topics"),
                 "href": f"?{new_query.urlencode()}",
                 "data": {"slug": None},
                 "children": [],
@@ -458,64 +464,86 @@ class Work(WorkMixin, models.Model):
     """
     class Meta:
         permissions = (
-            ('review_work', 'Can review work details'),
-            ('bulk_add_work', 'Can import works in bulk'),
-            ('bulk_export_work', 'Can export works in bulk'),
+            ('review_work', _('Can review work details')),
+            ('bulk_add_work', _('Can import works in bulk')),
+            ('bulk_export_work', _('Can export works in bulk')),
         )
+        verbose_name = _("work")
+        verbose_name_plural = _("works")
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
+    frbr_uri = models.CharField(_("FRBR URI"), max_length=512, null=False, blank=False, unique=True,
+                                help_text=_("Used globally to identify this work"))
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
-    title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works')
-    locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT, related_name='works')
+    title = models.CharField(_("title"), max_length=1024, null=True, default=_("(untitled)"))
+    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works',
+                                verbose_name=_("country"))
+    locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT,
+                                 related_name='works', verbose_name=_("locality"))
 
-    doctype = models.CharField(max_length=64, null=False, blank=True, help_text="FRBR doctype")
-    subtype = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR subtype")
-    actor = models.CharField(max_length=512, null=True, blank=True, help_text="FRBR actor")
-    date = models.CharField(max_length=10, null=False, blank=True, help_text="FRBR date")
-    number = models.CharField(max_length=512, null=False, blank=True, help_text="FRBR number")
+    doctype = models.CharField(_("doctype"), max_length=64, null=False, blank=True, help_text=_("FRBR doctype"))
+    subtype = models.CharField(_("subtype"), max_length=512, null=True, blank=True, help_text=_("FRBR subtype"))
+    actor = models.CharField(_("actor"), max_length=512, null=True, blank=True, help_text=_("FRBR actor"))
+    date = models.CharField(_("date"), max_length=10, null=False, blank=True, help_text=_("FRBR date"))
+    number = models.CharField(_("number"), max_length=512, null=False, blank=True, help_text=_("FRBR number"))
 
     # publication details
-    publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
-    publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
-    publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
+    publication_name = models.CharField(_("publication name"), null=True, blank=True, max_length=255,
+                                        help_text=_("Original publication's name, e.g. Government Gazette"))
+    publication_number = models.CharField(_("publication number"), null=True, blank=True, max_length=255,
+                                          help_text=_("Publication's sequence number, eg. gazette number"))
+    publication_date = models.DateField(_("publication date"), null=True, blank=True, help_text=_("Date of publication"))
 
-    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+    assent_date = models.DateField(_("assent date"), null=True, blank=True, help_text=_("Date signed by the president"))
 
-    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
+    commenced = models.BooleanField(_("commenced"), null=False, default=False,
+                                    help_text=_("Has this work commenced? (Date may be unknown)"))
 
     # repeal information
-    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')
-    repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
+    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
+                                    help_text=_("Work that repealed this work"), related_name='repealed_works',
+                                    verbose_name=_("repealed by"))
+    repealed_date = models.DateField(_("repealed date"), null=True, blank=True, help_text=_("Date of repeal of this work"))
 
     # optional parent work
-    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
+    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
+                                    help_text=_("Parent (primary) work for subsidiary legislation"),
+                                    related_name='child_works', verbose_name=_("parent (primary) work"))
 
-    principal = models.BooleanField(null=False, default=False, help_text="Principal works are not simply repeals, amendments or commencements, and should have full text content.")
-    stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
+    principal = models.BooleanField(_("principal"), null=False, default=False,
+                                    help_text=_("Principal works are not simply repeals, amendments or commencements,"
+                                                " and should have full text content."))
+    stub = models.BooleanField(_("stub"), default=False, help_text=_("Stub works do not have content or points in time"))
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
-    properties = JSONField(null=False, blank=True, default=dict)
+    properties = JSONField(_("properties"), null=False, blank=True, default=dict)
 
     # taxonomies
-    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
+    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works', verbose_name=_("taxonomies"))
 
-    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True)
+    taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True, verbose_name=_("taxonomy topics"))
 
-    as_at_date_override = models.DateField(null=True, blank=True, help_text="Date up to which this work was last checked for updates")
-    consolidation_note_override = models.CharField(max_length=1024, null=True, blank=True, help_text='Consolidation note about this particular work, to override consolidation note for place')
-    disclaimer = models.CharField(max_length=1024, null=True, blank=True, help_text='Disclaimer text about this work')
+    as_at_date_override = models.DateField(_("as-at date override"), null=True, blank=True,
+                                           help_text=_("Date up to which this work was last checked for updates"))
+    consolidation_note_override = models.CharField(_("consolidation note override"), max_length=1024, null=True, blank=True,
+                                                   help_text=_("Consolidation note about this particular work, to"
+                                                               " override any consolidation note for the place"))
+    disclaimer = models.CharField(_("disclaimer"), max_length=1024, null=True, blank=True,
+                                  help_text=_("Disclaimer text about this work"))
 
-    work_in_progress = models.BooleanField(default=True, help_text="Work in progress, to be approved")
+    work_in_progress = models.BooleanField(_("work in progress"), default=True,
+                                           help_text=_("Work in progress, to be approved"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    approved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    approved_at = models.DateTimeField(_("approved at"), null=True, blank=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("updated by"))
+    approved_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+',
+                                         verbose_name=_("approved by"))
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
 
@@ -533,7 +561,7 @@ class Work(WorkMixin, models.Model):
         if value:
             locality = self.country.localities.filter(code=value).first()
             if not locality:
-                raise ValueError(_("No such locality for this country: %s") % value)
+                raise ValueError(_("No such locality for this country: %(code)s") % {"code": value})
             self.locality = locality
         else:
             self.locality = None
@@ -677,7 +705,7 @@ class Work(WorkMixin, models.Model):
         # unpublish all documents
         for document in self.document_set.published():
             document.draft = True
-            document.save_with_revision(user, comment='This document was unpublished because its work was unapproved.')
+            document.save_with_revision(user, comment=_("This document was unpublished because its work was unapproved."))
 
     def has_publication_document(self):
         return PublicationDocument.objects.filter(work=self).exists()
@@ -728,15 +756,20 @@ def publication_document_filename(instance, filename):
 
 
 class PublicationDocument(models.Model):
-    work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE)
+    work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE,
+                                verbose_name=_("work"))
     # either file or trusted_url should be provided
-    file = models.FileField(upload_to=publication_document_filename)
-    trusted_url = models.URLField(null=True, blank=True)
-    size = models.IntegerField(null=True)
-    filename = models.CharField(max_length=255)
-    mime_type = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    file = models.FileField(_("file"), upload_to=publication_document_filename)
+    trusted_url = models.URLField(_("trusted URL"), null=True, blank=True)
+    size = models.IntegerField(_("file size"), null=True)
+    filename = models.CharField(_("file name"), max_length=255)
+    mime_type = models.CharField(_("file MIME type"), max_length=255)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("publication document")
+        verbose_name_plural = _("publication documents")
 
     def build_filename(self):
         # don't include /akn/ from FRBR URI in filename
@@ -751,25 +784,40 @@ class Commencement(models.Model):
     """ The commencement details of (provisions of) a work,
     optionally performed by a commencing work or a provision of the work itself.
     """
-    commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
-    commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
-    date = models.DateField(null=True, blank=True, help_text="Date of the commencement, or null if it is unknown")
-    main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
-    all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
-    note = models.TextField(max_length=1024, blank=True, null=True, help_text="Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation")
+    commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("commenced work"),
+                                       help_text=_("Principal work being commenced"), related_name="commencements")
+    commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, verbose_name=_("commencing work"),
+                                        help_text=_("Work that provides the commencement date for the principal work"),
+                                        related_name="commencements_made")
+    date = models.DateField(_("date"), null=True, blank=True,
+                            help_text=_("Date of the commencement, or null if it is unknown"))
+    main = models.BooleanField(_("main"), default=False,
+                               help_text=_("This commencement date is the date on which most of the provisions of the"
+                                           " commenced work come into force"))
+    all_provisions = models.BooleanField(_("all provisions"), default=False,
+                                         help_text=_("All provisions of this work commenced on this date"))
+    note = models.TextField(_("note"), max_length=1024, blank=True, null=True,
+                            help_text=_("Usually a reference to a provision of the commenced work or a commencing work,"
+                                        " if there is a commencement but the date is open to interpretation"))
 
     # list of the element ids of the provisions commenced, e.g. ["sec_2", "sec_4.3.list0.a"]
-    provisions = JSONField(null=False, blank=False, default=list)
+    provisions = JSONField(_("commenced provisions"), null=False, blank=False, default=list,
+                           help_text=_("A list of the element ids of the provisions that come into force with this"
+                                       " commencement"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("updated by"))
 
     class Meta:
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
+        verbose_name = _("commencement")
+        verbose_name_plural = _("commencements")
 
     def rationalise(self, user):
         work = self.commenced_work
@@ -798,18 +846,25 @@ def post_save_commencement(sender, instance, **kwargs):
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """
-    amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work amended.", related_name='amendments')
-    amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work making the amendment.", related_name='amendments_made')
-    date = models.DateField(null=False, blank=False, help_text="Date of the amendment")
+    amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amended work"),
+                                     help_text=_("Work being amended"), related_name='amendments')
+    amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amending work"),
+                                      help_text=_("Work making the amendment"), related_name='amendments_made')
+    date = models.DateField(_("date"), null=False, blank=False,
+                            help_text=_("Date on which the amendment comes into operation"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("updated by"))
 
     class Meta:
         ordering = ['date']
+        verbose_name = _("amendment")
+        verbose_name_plural = _("amendments")
 
     def expressions(self):
         """ The amended work's documents (expressions) at this date.
@@ -855,19 +910,24 @@ def post_save_amendment(sender, instance, **kwargs):
 class ArbitraryExpressionDate(models.Model):
     """ An arbitrary expression date not tied to an amendment, e.g. a consolidation date.
     """
-    date = models.DateField(null=False, blank=False, help_text="Arbitrary date, e.g. consolidation date")
-    description = models.TextField(null=True, blank=True)
-    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work", related_name="arbitrary_expression_dates")
+    date = models.DateField(_("date"), null=False, blank=False, help_text=_("Arbitrary date, e.g. consolidation date"))
+    description = models.TextField(_("description"), null=True, blank=True)
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("work"),
+                             related_name="arbitrary_expression_dates")
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("updated by"))
 
     class Meta:
         unique_together = ('date', 'work')
         ordering = ['date']
+        verbose_name = _("arbitrary expression date")
+        verbose_name_plural = _("arbitrary expression dates")
 
     def expressions(self):
         """ The work's documents (expressions) at this date.
@@ -894,14 +954,16 @@ def post_save_arbitrary_expression_date(sender, instance, **kwargs):
 
 
 class Subtype(models.Model):
-    name = models.CharField(max_length=1024, help_text="Name of the document subtype")
-    abbreviation = models.CharField(max_length=20, help_text="Short abbreviation to use in FRBR URI. No punctuation.", unique=True)
+    name = models.CharField(_("name"), max_length=1024, help_text=_("Name of the subtype"))
+    abbreviation = models.CharField(_("abbreviation"), max_length=20, unique=True,
+                                    help_text=_("Short abbreviation to use in the FRBR URI. No punctuation."))
 
     # cheap cache for subtypes, to avoid DB lookups
     _cache = {}
 
     class Meta:
-        verbose_name = 'Document subtype'
+        verbose_name = _("subtype")
+        verbose_name_plural = _("subtypes")
         ordering = ('name',)
 
     def clean(self):
@@ -925,12 +987,14 @@ def on_subtype_saved(sender, instance, **kwargs):
 
 
 class WorkAlias(models.Model):
-    alias = models.CharField(max_length=255, help_text=_("Alias e.g. Penal Code, etc"))
-    work = models.ForeignKey(Work, on_delete=models.CASCADE, related_name="aliases")
+    alias = models.CharField(_("alias"), max_length=255, help_text=_("Alias e.g. Penal Code, etc"))
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, related_name="aliases", verbose_name=_("work"))
 
     class Meta:
         unique_together = ('alias', 'work')
         ordering = ('alias',)
+        verbose_name = _("work alias")
+        verbose_name_plural = _("work aliases")
 
     def __str__(self):
         return self.alias

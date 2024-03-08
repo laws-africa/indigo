@@ -13,7 +13,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 import reversion.revisions
@@ -294,10 +294,13 @@ class Document(DocumentMixin, models.Model):
             ('view_published_document', 'Can view publish documents through the API'),
             ('view_document_xml', 'Can view the source XML of documents'),
         )
+        verbose_name = _("document")
+        verbose_name_plural = _("documents")
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
-    work = models.ForeignKey('indigo_api.Work', on_delete=models.CASCADE, db_index=True, null=False)
+    work = models.ForeignKey('indigo_api.Work', on_delete=models.CASCADE, db_index=True, null=False,
+                             verbose_name=_("work"))
     """ The work this document is an expression of. Details from the work will be inherited by this document.
     This is not exposed externally. Instead, the document is automatically linked to the appropriate
     work using the FRBR URI.
@@ -305,30 +308,34 @@ class Document(DocumentMixin, models.Model):
     You cannot create a document that has an FRBR URI that doesn't match a work.
     """
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
+    frbr_uri = models.CharField(_("frbr uri"), max_length=512, null=False, blank=False, default='/',
+                                help_text=_("Used globally to identify this work"))
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
-    title = models.CharField(max_length=1024, null=False)
+    title = models.CharField(_("title"), max_length=1024, null=False)
 
     """ The 3-letter ISO-639-2 language code of this document """
-    language = models.ForeignKey('indigo_api.Language', null=False, on_delete=models.PROTECT, help_text="Language this document is in.")
-    draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
+    language = models.ForeignKey('indigo_api.Language', null=False, on_delete=models.PROTECT,
+                                 verbose_name=_("language"),
+                                 help_text=_("Language this document is in."))
+    draft = models.BooleanField(_("draft"), default=True, help_text=_("Drafts aren't available through the public API"))
     """ Is this a draft? """
 
-    document_xml = models.TextField(null=True, blank=True)
+    document_xml = models.TextField(_("document XML"), null=True, blank=True)
     """ Raw XML content of the entire document """
 
     # Date from the FRBRExpression element. This is either the publication date or the date of the last
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
-    expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
+    expression_date = models.DateField(_("expression date"), null=False, blank=False,
+                                       help_text=_("Date of publication or latest amendment"))
 
-    deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
+    deleted = models.BooleanField(_("deleted"), default=False, help_text=_("Has this document been deleted?"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("created by"))
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("updated by"))
 
     # caching attributes
     _expression_uri = None
@@ -602,16 +609,18 @@ def attachment_filename(instance, filename):
 
 
 class Attachment(models.Model):
-    document = models.ForeignKey(Document, related_name='attachments', on_delete=models.CASCADE)
-    file = models.FileField(upload_to=attachment_filename)
-    size = models.IntegerField()
-    filename = models.CharField(max_length=255, help_text="Unique attachment filename", db_index=True)
-    mime_type = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    document = models.ForeignKey(Document, related_name='attachments', on_delete=models.CASCADE, verbose_name=_("document"))
+    file = models.FileField(_("file"), upload_to=attachment_filename)
+    size = models.IntegerField(_("size"))
+    filename = models.CharField(_("filename"), max_length=255, help_text=_("Unique attachment filename"), db_index=True)
+    mime_type = models.CharField(_("mime type"), max_length=255)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
     class Meta:
         ordering = ('filename',)
+        verbose_name = _("attachment")
+        verbose_name_plural = _("attachments")
 
     # TODO: enforce unique filename for document
 
@@ -631,9 +640,15 @@ class Colophon(models.Model):
     Indigo choose the one which most closely matches
     the country of the document.
     """
-    name = models.CharField(max_length=1024, help_text='Name of this colophon')
-    country = models.ForeignKey('indigo_api.Country', on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
-    body = models.TextField()
+    name = models.CharField(_("name"), max_length=1024, help_text=_('Name of this colophon'))
+    country = models.ForeignKey('indigo_api.Country', on_delete=models.CASCADE, null=False,
+                                help_text=_('Which country does this colophon apply to?'),
+                                verbose_name=_("country"))
+    body = models.TextField(_("body"))
+
+    class Meta:
+        verbose_name = _("colophon")
+        verbose_name_plural = _("colophons")
 
     def __str__(self):
         return str(self.name)
@@ -645,18 +660,22 @@ class AnnotationManager(models.Manager):
 
 
 class Annotation(models.Model):
-    document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE)
-    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
-    in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
-    text = models.TextField(null=False, blank=False)
-    anchor_id = models.CharField(max_length=512, null=False, blank=False)
-    closed = models.BooleanField(default=False, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
-    selectors = JSONField(null=True)
+    document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE, verbose_name=_("document"))
+    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+', verbose_name=_("created by"))
+    in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True, verbose_name=_("in reply to"))
+    text = models.TextField(_("text"), null=False, blank=False)
+    anchor_id = models.CharField(_("anchor id"), max_length=512, null=False, blank=False)
+    closed = models.BooleanField(_("closed"), default=False, null=False)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation', verbose_name=_("task"))
+    selectors = JSONField(_("selectors"), null=True)
 
     objects = AnnotationManager()
+
+    class Meta:
+        verbose_name = _("annotation")
+        verbose_name_plural = _("annotations")
 
     def resolve_anchor(self):
         if self.anchor_id and self.document:
@@ -704,11 +723,13 @@ class DocumentActivity(models.Model):
     If an entry with that nonce doesn't exist, it's created. Otherwise it's refreshed.
     Entries are vacuumed every ping, cleaning out stale entries.
     """
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities', db_index=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities')
-    nonce = models.CharField(max_length=10, blank=False, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities',
+                                 db_index=True, verbose_name=_("document"))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities',
+                             verbose_name=_("user"))
+    nonce = models.CharField(_("nonce"), max_length=10, blank=False, null=False)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
     # dead after we haven't heard from them in how long?
     DEAD_SECS = 2 * 60
@@ -718,6 +739,8 @@ class DocumentActivity(models.Model):
     class Meta:
         unique_together = ('document', 'user', 'nonce')
         ordering = ('created_at',)
+        verbose_name = _("document activity")
+        verbose_name_plural = _("document activities")
 
     def is_asleep(self):
         return (timezone.now() - self.updated_at).total_seconds() > self.ASLEEP_SECS

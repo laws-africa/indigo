@@ -23,8 +23,8 @@ import datetime
 from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement, Workflow, Country, Locality
+from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
+    Commencement, Workflow, Country, Locality
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
@@ -32,8 +32,7 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, WorkAliasesFormSet, CommencementsMadeBaseFormset
-from indigo_metrics.models import WorkMetrics
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset
 
 from .base import PlaceViewBase
 
@@ -316,10 +315,6 @@ class WorkOverviewView(WorkViewBase, DetailView):
         context['active_tasks'] = self.work.tasks.filter(state__in=Task.OPEN_STATES).order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['contributors'] = self.get_top_contributors()
-
-        # ensure work metrics are up to date
-        WorkMetrics.create_or_update(self.work)
-
         return context
 
     def get_top_contributors(self):
@@ -1216,7 +1211,7 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
     class Form(forms.Form):
         publication_date = forms.DateField()
         publication_number = forms.CharField(required=False)
-        publication_name = forms.CharField()
+        publication_name = forms.CharField(required=False)
         prefix = 'work'
 
         class Meta:

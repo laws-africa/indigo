@@ -52,10 +52,8 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Commenced date range -->
-        <div class="row mt-2">
+          <!-- Commenced date range -->
           <div class="col-md-4">
             <div class="mb-3">
               <label for="commencement-daterange">{% trans 'Commencement date range' %}</label>
@@ -70,10 +68,8 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Amendment date range -->
-        <div class="row mt-2">
+          <!-- Amendment date range -->
           <div class="col-md-4">
             <div class="mb-3">
               <label for="amendment-daterange">{% trans 'Amendment date range' %}</label>
@@ -88,10 +84,8 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Repealed date range -->
-        <div class="row mt-2">
+          <!-- Repealed date range -->
           <div class="col-md-4">
             <div class="mb-3">
               <label for="repeal-daterange">{% trans 'Repeal date range' %}</label>
@@ -106,10 +100,8 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Assent date range -->
-        <div class="row mt-2">
+          <!-- Assent date range -->
           <div class="col-md-4">
             <div class="mb-3">
               <label for="assent-daterange">{% trans 'Assent date range' %}</label>
@@ -124,6 +116,15 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div>
+          <label>{% trans 'FRBR URIs' %}</label>
+          <textarea
+            class="form-control"
+            name="{{ form.frbr_uris.html_name }}"
+            rows="4"
+          >{{ form.frbr_uris.value|default_if_none:'' }}</textarea>
         </div>
 
         <!-- Reset filters -->

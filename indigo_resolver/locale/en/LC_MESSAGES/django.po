@@ -1,0 +1,107 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-07 17:28+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:12
+msgid "Enter a valid 'slug' consisting of letters, numbers, underscores, dots or hyphens."
+msgstr ""
+
+#: models.py:21
+msgid "name"
+msgstr ""
+
+#: models.py:21
+msgid "Descriptive name of this resolver"
+msgstr ""
+
+#: models.py:22 models.py:56
+msgid "URL"
+msgstr ""
+
+#: models.py:22
+msgid "Website for this authority (optional)"
+msgstr ""
+
+#: models.py:23
+msgid "not found URL"
+msgstr ""
+
+#: models.py:23
+msgid "URL of a 404 page (optional)"
+msgstr ""
+
+#: models.py:24
+msgid "slug"
+msgstr ""
+
+#: models.py:25 models.py:59
+msgid "priority"
+msgstr ""
+
+#: models.py:25
+msgid "When multiple resolvers match, highest priority wins"
+msgstr ""
+
+#: models.py:28 models.py:61
+msgid "authority"
+msgstr ""
+
+#: models.py:29
+msgid "authorities"
+msgstr ""
+
+#: models.py:54
+msgid "FRBR URI"
+msgstr ""
+
+#: models.py:54
+msgid "FRBR Work or Expression URI to match on"
+msgstr ""
+
+#: models.py:55
+msgid "title"
+msgstr ""
+
+#: models.py:55
+msgid "Document title"
+msgstr ""
+
+#: models.py:56
+msgid "URL from which this document can be retrieved"
+msgstr ""
+
+#: models.py:57
+msgid "created at"
+msgstr ""
+
+#: models.py:58
+msgid "updated at"
+msgstr ""
+
+#: models.py:59
+msgid "Priority for this URL. If unset, uses the authority's priority"
+msgstr ""
+
+#: models.py:65
+msgid "authority reference"
+msgstr ""
+
+#: models.py:66
+msgid "authority references"
+msgstr ""

@@ -9,48 +9,34 @@
             <h5 class="card-title">{{ place.name }} · {{ place.code }}</h5>
 
             <div class="row text-muted">
-              <div class="col mb-2">
-                <h5 class="mb-0">{{ place.n_works }}</h5>
-                {% blocktrans count counter=place.n_works %}
-                  Work
-                {% plural %}
-                  Works
-                {% endblocktrans %}
-              </div>
-              {% if place.n_open_tasks %}
-              <div class="col mb-2">
-                <h5 class="mb-0">{{ place.n_open_tasks }}</h5>
-                {% blocktrans count counter=place.n_open_tasks %}
-                  Task
-                {% plural %}
-                  Tasks
-                {% endblocktrans %}
-              </div>
-              {% endif %}
-              <div class="col mb-2">
-                <h5 class="mb-0">{%if place.p_breadth_complete %}{{ place.p_breadth_complete }}% {% else %} — {% endif %}</h5>
-                {% trans "Complete" %}
-              </div>
-              <div class="col mb-2">
-                <h5 class="mb-0">{% if place.settings.as_at_date %}{{ place.settings.as_at_date|date:"Y-m-d" }} {% else %} — {% endif %}</h5>
-                {% trans "As at date" %}
-              </div>
+              {% block first-row %}
+                <div class="col mb-2">
+                  <h5 class="mb-0">{{ place.n_works }}</h5>
+                  {% blocktrans count counter=place.n_works %}
+                    Work
+                  {% plural %}
+                    Works
+                  {% endblocktrans %}
+                </div>
+                <div class="col mb-2">
+                  <h5 class="mb-0">{{ place.n_open_tasks|default_if_none:0 }}</h5>
+                  {% blocktrans count counter=place.n_open_tasks|default_if_none:0 %}
+                    Task
+                  {% plural %}
+                    Tasks
+                  {% endblocktrans %}
+                </div>
+              {% endblock %}
             </div>
 
             <div class="row text-muted">
-              <div class="col mb-2">
-                <h6 class="mb-0">{{ place.n_pages }}</h6>
-                {% blocktrans count counter=place.n_pages %}
-                  Page
-                {% plural %}
-                  Pages
-                {% endblocktrans %}
-              </div>
+              {% block second-row %}
+                <div class="col mb-2">
+                  <h5 class="mb-0">{% if place.settings.as_at_date %}{{ place.settings.as_at_date|date:"Y-m-d" }} {% else %} — {% endif %}</h5>
+                  {% trans "As at date" %}
+                </div>
+              {% endblock %}
             </div>
-
-          </div>
-          <div class="card-footer pb-0 p-relative" style="height: 50px">
-            <canvas class="place-activity-chart" data-values="{{ place.activity_history }}" title="{% trans "Recent activity" %}"></canvas>
           </div>
         </div>
       </a>

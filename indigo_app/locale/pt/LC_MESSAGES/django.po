@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 06:06\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -30,59 +30,59 @@ msgstr "Erro ao criar URI FRBR"
 
 #: forms/works.py:364
 msgid "Alias"
-msgstr ""
+msgstr "Alias"
 
 #: models.py:23
 msgid "user"
-msgstr ""
+msgstr "usuário"
 
 #: models.py:24 models.py:59
 msgid "country"
-msgstr ""
+msgstr "País"
 
 #: models.py:25
 msgid "accepted terms"
-msgstr ""
+msgstr "termos aceitos"
 
 #: models.py:26
 msgid "Countries the user can work with."
-msgstr ""
+msgstr "Países com os quais o usuário pode trabalhar."
 
 #: models.py:26
 msgid "permitted countries"
-msgstr ""
+msgstr "países permitidos"
 
 #: models.py:27
 msgid "language"
-msgstr ""
+msgstr "idioma"
 
 #: models.py:27
 msgid "Preferred language"
-msgstr ""
+msgstr "Língua preferida"
 
 #: models.py:32
 msgid "editor"
-msgstr ""
+msgstr "editor"
 
 #: models.py:33
 msgid "editors"
-msgstr ""
+msgstr "editores"
 
 #: models.py:60
 msgid "name"
-msgstr ""
+msgstr "Nome"
 
 #: models.py:60
 msgid "Name of this publication"
-msgstr ""
+msgstr "Nome desta publicação"
 
 #: models.py:65
 msgid "publication"
-msgstr ""
+msgstr "publicação"
 
 #: models.py:66
 msgid "publications"
-msgstr ""
+msgstr "publicações"
 
 #: templates/403.html:4 templates/403.html:14
 msgid "Permission Denied"
@@ -433,13 +433,13 @@ msgstr "Editar tarefa"
 #: templates/indigo_api/_task_form_input_file.html:7
 #: templates/indigo_api/_task_form_input_file.html:53
 msgid "Input file"
-msgstr ""
+msgstr "Arquivo de entrada"
 
 #: templates/indigo_api/_task_detail.html:90
 #: templates/indigo_api/_task_form_output_file.html:7
 #: templates/indigo_api/_task_form_output_file.html:33
 msgid "Output file"
-msgstr ""
+msgstr "Arquivo de saída"
 
 #: templates/indigo_api/_task_detail.html:110
 #: templates/indigo_api/_work_comments.html:8
@@ -480,11 +480,11 @@ msgstr "Reabrir"
 
 #: templates/indigo_api/_task_detail.html:210
 msgid "Are you sure you want to finish this task?"
-msgstr ""
+msgstr "Tem certeza de que deseja concluir esta tarefa?"
 
 #: templates/indigo_api/_task_detail.html:213
 msgid "Finish"
-msgstr ""
+msgstr "Terminar"
 
 #: templates/indigo_api/_task_detail.html:228
 #, python-format
@@ -503,7 +503,7 @@ msgstr "Etiquetas"
 
 #: templates/indigo_api/_task_detail.html:282
 msgid "Choose labels"
-msgstr ""
+msgstr "Escolha rótulos"
 
 #: templates/indigo_api/_task_detail.html:298
 #: templates/indigo_api/workflow_list.html:4
@@ -513,7 +513,7 @@ msgstr "Projetos"
 
 #: templates/indigo_api/_task_detail.html:308
 msgid "Choose projects"
-msgstr ""
+msgstr "Escolha projetos"
 
 #: templates/indigo_api/_task_detail.html:334
 msgid "Blocked by"
@@ -521,11 +521,11 @@ msgstr "Bloqueado por"
 
 #: templates/indigo_api/_task_detail.html:344
 msgid "Choose tasks"
-msgstr ""
+msgstr "Escolha tarefas"
 
 #: templates/indigo_api/_task_detail.html:370
 msgid "Blocking"
-msgstr ""
+msgstr "Bloqueio"
 
 #: templates/indigo_api/_task_detail.html:374
 msgid "This task is blocking these tasks:"
@@ -586,15 +586,15 @@ msgstr "Limpar"
 
 #: templates/indigo_api/_task_form_input_file.html:33
 msgid "Input URL"
-msgstr ""
+msgstr "URL de entrada"
 
 #: templates/indigo_api/_task_form_input_file.html:49
 msgid "Paste in a URL (preferred), or upload a file."
-msgstr ""
+msgstr "Cole um URL (de preferência) ou carregue um arquivo."
 
 #: templates/indigo_api/_task_form_output_file.html:49
 msgid "Upload the converted file."
-msgstr ""
+msgstr "Carregue o arquivo convertido."
 
 #: templates/indigo_api/_task_form_timeline_date.html:5
 msgid "Timeline date"
@@ -797,7 +797,7 @@ msgstr "Começos feitos"
 
 #: templates/indigo_api/_work_comments.html:33
 msgid "Add a comment"
-msgstr ""
+msgstr "Adicione um comentário"
 
 #: templates/indigo_api/_work_diff_card.html:5
 #, python-format
@@ -1015,11 +1015,11 @@ msgstr "Quando a data de início estiver aberta a interpretações, faça refer�
 #: templates/indigo_api/_work_form_content.html:460
 #: templates/indigo_app/place/_work_detail_overview.html:31
 msgid "Aliases"
-msgstr ""
+msgstr "Apelido"
 
 #: templates/indigo_api/_work_form_content.html:481
 msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
-msgstr ""
+msgstr "Apelidos comuns para este trabalho, como 'Código Penal' ou 'POPIA'."
 
 #: templates/indigo_api/_work_form_content.html:495
 #, python-format
@@ -2407,11 +2407,11 @@ msgstr "Os trabalhos stub não devem ter pontos no tempo. Remova esses pontos no
 #: templates/indigo_api/work_overview.html:168
 #: templates/indigo_app/place/_work_detail.html:68
 msgid "Comments"
-msgstr ""
+msgstr "Comentários"
 
 #: templates/indigo_api/work_overview.html:185
 msgid "Contributors"
-msgstr ""
+msgstr "Colaboradores"
 
 #: templates/indigo_api/work_overview.html:192
 #, python-format
@@ -2582,25 +2582,31 @@ msgstr "Parece que você está offline ou o servidor não está disponível."
 msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    uma alteração em %(date)s em\n"
+"  "
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
 msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    uma consolidação em %(date)s em\n"
+"  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
 msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    um início em %(date)s em\n"
+"  "
 
 #: templates/indigo_app/actions/_action_document.html:5
 msgid "a document on"
-msgstr ""
+msgstr "um documento sobre"
 
 #: templates/indigo_app/actions/_action_placesettings.html:4
 msgid "the settings for"
@@ -2616,7 +2622,7 @@ msgstr "neste trabalho"
 
 #: templates/indigo_app/actions/_action_task.html:19
 msgid "on"
-msgstr ""
+msgstr "sobre"
 
 #: templates/indigo_app/actions/_action_task.html:30
 #: templates/indigo_app/actions/_action_task.html:42
@@ -2700,7 +2706,9 @@ msgstr "Tarefas de alteração serão criadas"
 msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
+msgstr "\n"
+"                              Descrição da tarefa: %(amended_title)s (%(amended_numbered_title)s) alterada por %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:112
 #, python-format

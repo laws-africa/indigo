@@ -735,7 +735,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
                 except ValueError:
                     continue
             if uris:
-                queryset = queryset.filter(work_frbr_uri__in=uris)
+                queryset = queryset.filter(frbr_uri__in=uris)
 
         # filter by work in progress
         if exclude != "work_in_progress":

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 06:06\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -23,15 +23,15 @@ msgstr "mtumiaji"
 
 #: models.py:40
 msgid "bio"
-msgstr ""
+msgstr "wasifu"
 
 #: models.py:40
 msgid "A short bio"
-msgstr ""
+msgstr "Wasifu mfupi"
 
 #: models.py:41
 msgid "qualifications"
-msgstr ""
+msgstr "sifa"
 
 #: models.py:41 templates/indigo_social/user_layout.html:66
 msgid "Qualifications"
@@ -39,7 +39,7 @@ msgstr "Sifa"
 
 #: models.py:42
 msgid "skills"
-msgstr ""
+msgstr "ujuzi"
 
 #: models.py:42 templates/indigo_social/user_layout.html:61
 msgid "Skills"
@@ -47,7 +47,7 @@ msgstr "Ujuzi"
 
 #: models.py:43
 msgid "organisations"
-msgstr ""
+msgstr "mashirika"
 
 #: models.py:43 templates/indigo_social/user_layout.html:56
 msgid "Organisations"
@@ -55,7 +55,7 @@ msgstr "Mashirika"
 
 #: models.py:44
 msgid "specialisations"
-msgstr ""
+msgstr "utaalamu"
 
 #: models.py:44 templates/indigo_social/user_layout.html:71
 msgid "Specialisations"
@@ -63,7 +63,7 @@ msgstr "Umaalumu"
 
 #: models.py:45
 msgid "areas of law"
-msgstr ""
+msgstr "maeneo ya sheria"
 
 #: models.py:45 templates/indigo_social/user_layout.html:76
 msgid "Areas of law"
@@ -75,15 +75,15 @@ msgstr "picha ya akaunti ya mtandaoni"
 
 #: models.py:47
 msgid "profile photo nonce"
-msgstr ""
+msgstr "picha ya wasifu mara moja"
 
 #: models.py:48
 msgid "twitter username"
-msgstr ""
+msgstr "jina la mtumiaji la twitter"
 
 #: models.py:49
 msgid "linkedin profile"
-msgstr ""
+msgstr "wasifu uliounganishwa"
 
 #: templates/indigo_app/user_account/edit.html:4
 msgid "Edit Profile"

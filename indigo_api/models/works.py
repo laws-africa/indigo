@@ -162,6 +162,11 @@ class TaxonomyTopic(MP_Node):
         root_nodes = cls.get_root_nodes()
         return root_nodes.filter(public=True)
 
+    @classmethod
+    def get_project_root_nodes(cls):
+        root_nodes = cls.get_root_nodes()
+        return root_nodes.filter(project=True)
+
 
 class WorkMixin(object):
     """ Support methods that define behaviour for a work, independent of the database model.

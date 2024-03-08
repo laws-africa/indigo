@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-02-22 07:11\n"
+"PO-Revision-Date: 2024-03-08 06:05\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: af\n"
-"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /[laws-africa.indigo] master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 139\n"
 
 #: models/documents.py:271
@@ -368,10 +368,8 @@ msgid "Check / update repeal"
 msgstr ""
 
 #: models/tasks.py:85
-#, fuzzy
-#| msgid "Commenced on %(date)s"
 msgid "'Commences on' date missing"
-msgstr "Inwerking getree op %(date)s"
+msgstr ""
 
 #: models/tasks.py:86
 msgid "Link amendment (active)"
@@ -386,10 +384,8 @@ msgid "Link amendment (pending commencement)"
 msgstr ""
 
 #: models/tasks.py:89
-#, fuzzy
-#| msgid "commenced on %(date)s"
 msgid "Link commencement (active)"
-msgstr "begin op%(date)s"
+msgstr ""
 
 #: models/tasks.py:90
 msgid "Link commencement (passive)"
@@ -776,10 +772,8 @@ msgid "Date signed by the president"
 msgstr ""
 
 #: models/works.py:499
-#, fuzzy
-#| msgid "Not commenced"
 msgid "commenced"
-msgstr "Nog nie in werking"
+msgstr ""
 
 #: models/works.py:500
 msgid "Has this work commenced? (Date may be unknown)"
@@ -907,10 +901,8 @@ msgid "publication documents"
 msgstr ""
 
 #: models/works.py:787
-#, fuzzy
-#| msgid "Not commenced"
 msgid "commenced work"
-msgstr "Nog nie in werking"
+msgstr ""
 
 #: models/works.py:788
 msgid "Principal work being commenced"
@@ -937,10 +929,8 @@ msgid "This commencement date is the date on which most of the provisions of the
 msgstr ""
 
 #: models/works.py:797
-#, fuzzy
-#| msgid "Provisions"
 msgid "all provisions"
-msgstr "Bepalings"
+msgstr ""
 
 #: models/works.py:798
 msgid "All provisions of this work commenced on this date"
@@ -955,26 +945,20 @@ msgid "Usually a reference to a provision of the commenced work or a commencing 
 msgstr ""
 
 #: models/works.py:804
-#, fuzzy
-#| msgid "Unknown provisions"
 msgid "commenced provisions"
-msgstr "Onbekende bepalings"
+msgstr ""
 
 #: models/works.py:805
 msgid "A list of the element ids of the provisions that come into force with this commencement"
 msgstr ""
 
 #: models/works.py:819
-#, fuzzy
-#| msgid "Not commenced"
 msgid "commencement"
-msgstr "Nog nie in werking"
+msgstr ""
 
 #: models/works.py:820
-#, fuzzy
-#| msgid "commenced on %(date)s"
 msgid "commencements"
-msgstr "begin op%(date)s"
+msgstr ""
 
 #: models/works.py:849
 msgid "amended work"
@@ -1212,3 +1196,4 @@ msgstr ""
 #: views/documents.py:359
 msgid "Error during import"
 msgstr ""
+

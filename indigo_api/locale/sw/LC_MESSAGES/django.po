@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 06:06\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -200,7 +200,7 @@ msgstr "kolofoni"
 
 #: models/documents.py:665
 msgid "in reply to"
-msgstr ""
+msgstr "kwa kujibu"
 
 #: models/documents.py:666
 msgid "text"
@@ -216,19 +216,19 @@ msgstr "imefungwa"
 
 #: models/documents.py:671 models/tasks.py:111
 msgid "task"
-msgstr ""
+msgstr "kazi"
 
 #: models/documents.py:672
 msgid "selectors"
-msgstr ""
+msgstr "wateuzi"
 
 #: models/documents.py:677
 msgid "annotation"
-msgstr ""
+msgstr "maelezo"
 
 #: models/documents.py:678
 msgid "annotations"
-msgstr ""
+msgstr "maelezo"
 
 #: models/documents.py:729
 msgid "user"
@@ -236,15 +236,15 @@ msgstr "mtumiaji"
 
 #: models/documents.py:730
 msgid "nonce"
-msgstr ""
+msgstr "mara moja"
 
 #: models/documents.py:742
 msgid "document activity"
-msgstr ""
+msgstr "shughuli ya hati"
 
 #: models/documents.py:743
 msgid "document activities"
-msgstr ""
+msgstr "shughuli za hati"
 
 #: models/places.py:30
 msgid "languages"
@@ -252,19 +252,19 @@ msgstr "lugha"
 
 #: models/places.py:51
 msgid "Primary language for this country"
-msgstr ""
+msgstr "Lugha ya msingi kwa nchi hii"
 
 #: models/places.py:52
 msgid "primary language"
-msgstr ""
+msgstr "lugha ya msingi"
 
 #: models/places.py:54
 msgid "italics terms"
-msgstr ""
+msgstr "maneno ya italiki"
 
 #: models/places.py:62
 msgid "countries"
-msgstr ""
+msgstr "nchi"
 
 #: models/places.py:142
 msgid "Local name of this locality"
@@ -285,23 +285,23 @@ msgstr "maeneo"
 
 #: models/places.py:194
 msgid "spreadsheet URL"
-msgstr ""
+msgstr "URL ya lahajedwali"
 
 #: models/places.py:195
 msgid "as-at date"
-msgstr ""
+msgstr "kwa tarehe"
 
 #: models/places.py:196
 msgid "styleguide URL"
-msgstr ""
+msgstr "URL ya mwongozo wa mtindo"
 
 #: models/places.py:197
 msgid "consolidation note"
-msgstr ""
+msgstr "maelezo ya uimarishaji"
 
 #: models/places.py:199
 msgid "'No publication document' text"
-msgstr ""
+msgstr "Maandishi ya 'Hakuna hati ya uchapishaji'"
 
 #: models/places.py:200
 msgid "Note: The original publication document is not available and this content could not be verified."
@@ -309,232 +309,232 @@ msgstr "Kumbuka: Hati asili ya uchapishaji haipatikani na maudhui haya hayakuwez
 
 #: models/places.py:201
 msgid "publication date is optional"
-msgstr ""
+msgstr "tarehe ya kuchapishwa ni ya hiari"
 
 #: models/places.py:202
 msgid "Are publication dates optional in this place?"
-msgstr ""
+msgstr "Je, tarehe za uchapishaji ni za hiari mahali hapa?"
 
 #: models/places.py:203
 msgid "a consolidation is being imported"
-msgstr ""
+msgstr "ujumuishaji unaingizwa kutoka nje"
 
 #: models/places.py:204
 msgid "Is a consolidation being worked on in this place?"
-msgstr ""
+msgstr "Je, ujumuishaji unafanyiwa kazi mahali hapa?"
 
 #: models/places.py:205
 msgid "chapters are used"
-msgstr ""
+msgstr "sura zinatumika"
 
 #: models/places.py:206
 msgid "Are Chapters used for Acts in this place?"
-msgstr ""
+msgstr "Je, Sura zinatumika kwa Matendo mahali hapa?"
 
 #: models/places.py:209
 msgid "place settings"
-msgstr ""
+msgstr "mipangilio ya mahali"
 
 #: models/places.py:210
 msgid "places' settings"
-msgstr ""
+msgstr "mipangilio ya maeneo"
 
 #: models/places.py:234
 msgid "Chapter (Cap.)"
-msgstr ""
+msgstr "Sura (Sura)"
 
 #: models/tasks.py:76
 msgid "Convert document"
-msgstr ""
+msgstr "Badilisha hati"
 
 #: models/tasks.py:77
 msgid "Import content"
-msgstr ""
+msgstr "Ingiza yaliyomo"
 
 #: models/tasks.py:78
 msgid "Apply amendment"
-msgstr ""
+msgstr "Tekeleza marekebisho"
 
 #: models/tasks.py:79
 msgid "Link gazette"
-msgstr ""
+msgstr "Unganisha gazeti"
 
 #: models/tasks.py:83
 msgid "Check / update primary work"
-msgstr ""
+msgstr "Angalia / sasisha kazi ya msingi"
 
 #: models/tasks.py:84
 msgid "Check / update repeal"
-msgstr ""
+msgstr "Angalia / sasisha kufuta"
 
 #: models/tasks.py:85
 msgid "'Commences on' date missing"
-msgstr ""
+msgstr "Tarehe ya 'Kuanza' haipo"
 
 #: models/tasks.py:86
 msgid "Link amendment (active)"
-msgstr ""
+msgstr "Marekebisho ya kiungo (yanatumika)"
 
 #: models/tasks.py:87
 msgid "Link amendment (passive)"
-msgstr ""
+msgstr "Marekebisho ya kiungo (ya kupita kiasi)"
 
 #: models/tasks.py:88
 msgid "Link amendment (pending commencement)"
-msgstr ""
+msgstr "Marekebisho ya kiungo (inasubiri kuanza)"
 
 #: models/tasks.py:89
 msgid "Link commencement (active)"
-msgstr ""
+msgstr "Kuanza kwa kiungo (inafanya kazi)"
 
 #: models/tasks.py:90
 msgid "Link commencement (passive)"
-msgstr ""
+msgstr "Kuanza kwa kiungo (kitendo)"
 
 #: models/tasks.py:91
 msgid "Link primary work"
-msgstr ""
+msgstr "Unganisha kazi ya msingi"
 
 #: models/tasks.py:92
 msgid "Link repeal"
-msgstr ""
+msgstr "Kufutwa kwa kiungo"
 
 #: models/tasks.py:93
 msgid "Link repeal (not found)"
-msgstr ""
+msgstr "Kufutwa kwa kiungo (haijapatikana)"
 
 #: models/tasks.py:94
 msgid "Link repeal (pending commencement)"
-msgstr ""
+msgstr "Kufutwa kwa kiungo (inasubiri kuanza)"
 
 #: models/tasks.py:95
 msgid "Link subleg"
-msgstr ""
+msgstr "Kiungo kidogo"
 
 #: models/tasks.py:96
 msgid "Link taxonomy"
-msgstr ""
+msgstr "Unganisha taksonomia"
 
 #: models/tasks.py:97
 msgid "Sign-off"
-msgstr ""
+msgstr "Ondoka"
 
 #: models/tasks.py:102
 msgid "Can submit an open task for review"
-msgstr ""
+msgstr "Inaweza kuwasilisha kazi iliyo wazi kwa ukaguzi"
 
 #: models/tasks.py:103
 msgid "Can cancel a task that is open or has been submitted for review"
-msgstr ""
+msgstr "Inaweza kughairi kazi ambayo imefunguliwa au imewasilishwa kwa ukaguzi"
 
 #: models/tasks.py:104
 msgid "Can reopen a task that is closed or cancelled"
-msgstr ""
+msgstr "Inaweza kufungua tena kazi ambayo imefungwa au kughairiwa"
 
 #: models/tasks.py:105
 msgid "Can unsubmit a task that has been submitted for review"
-msgstr ""
+msgstr "Inaweza kubatilisha kuwasilisha kazi ambayo imewasilishwa kwa ukaguzi"
 
 #: models/tasks.py:106
 msgid "Can close a task that has been submitted for review"
-msgstr ""
+msgstr "Anaweza kufunga kazi ambayo imewasilishwa kwa ukaguzi"
 
 #: models/tasks.py:107
 msgid "Can close any task that has been submitted for review, regardless of who submitted it"
-msgstr ""
+msgstr "Anaweza kufunga kazi yoyote ambayo imewasilishwa kwa ukaguzi, bila kujali ni nani aliyeiwasilisha"
 
 #: models/tasks.py:108
 msgid "Can block a task from being done, and unblock it"
-msgstr ""
+msgstr "Anaweza kuzuia kazi isifanywe, na kuifungua"
 
 #: models/tasks.py:109
 msgid "Can be assigned tasks in excess of limits"
-msgstr ""
+msgstr "Inaweza kupewa kazi zaidi ya mipaka"
 
 #: models/tasks.py:112 models/tasks.py:570
 msgid "tasks"
-msgstr ""
+msgstr "kazi"
 
 #: models/tasks.py:117 models/tasks.py:568 models/tasks.py:616
 #: models/works.py:107 models/works.py:914
 msgid "description"
-msgstr ""
+msgstr "maelezo"
 
 #: models/tasks.py:123
 msgid "timeline date"
-msgstr ""
+msgstr "tarehe ya ratiba"
 
 #: models/tasks.py:123
 msgid "A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."
-msgstr ""
+msgstr "Tarehe ya ratiba ya kazi zinazohusiana na kazi, kwa mfano, tarehe ambayo marekebisho yanapaswa kutumika."
 
 #: models/tasks.py:125
 msgid "state"
-msgstr ""
+msgstr "jimbo"
 
 #: models/tasks.py:131
 msgid "input file"
-msgstr ""
+msgstr "faili ya pembejeo"
 
 #: models/tasks.py:132
 msgid "output file"
-msgstr ""
+msgstr "faili ya pato"
 
 #: models/tasks.py:134
 msgid "assigned to"
-msgstr ""
+msgstr "kupewa"
 
 #: models/tasks.py:135
 msgid "submitted by user"
-msgstr ""
+msgstr "iliyowasilishwa na mtumiaji"
 
 #: models/tasks.py:136
 msgid "reviewed by user"
-msgstr ""
+msgstr "kukaguliwa na mtumiaji"
 
 #: models/tasks.py:137
 msgid "finished by user"
-msgstr ""
+msgstr "imekamilika na mtumiaji"
 
 #: models/tasks.py:138
 msgid "closed at"
-msgstr ""
+msgstr "imefungwa saa"
 
 #: models/tasks.py:138
 msgid "When the task was marked as done or cancelled."
-msgstr ""
+msgstr "Wakati kazi ilitiwa alama kuwa imefanywa au kughairiwa."
 
 #: models/tasks.py:140
 msgid "changes requested"
-msgstr ""
+msgstr "mabadiliko yaliyoombwa"
 
 #: models/tasks.py:140
 msgid "Have changes been requested on this task?"
-msgstr ""
+msgstr "Je, mabadiliko yameombwa kwenye jukumu hili?"
 
 #: models/tasks.py:142 models/tasks.py:579
 msgid "created by user"
-msgstr ""
+msgstr "iliyoundwa na mtumiaji"
 
 #: models/tasks.py:143 models/tasks.py:580
 msgid "updated by user"
-msgstr ""
+msgstr "imesasishwa na mtumiaji"
 
 #: models/tasks.py:148
 msgid "labels"
-msgstr ""
+msgstr "lebo"
 
 #: models/tasks.py:150
 msgid "extra data"
-msgstr ""
+msgstr "data ya ziada"
 
 #: models/tasks.py:152
 msgid "blocked by"
-msgstr ""
+msgstr "imezuiwa na"
 
 #: models/tasks.py:152
 msgid "Tasks blocking this task from being done."
-msgstr ""
+msgstr "Majukumu yanayozuia kazi hii kufanywa."
 
 #: models/tasks.py:254
 msgid "Are you sure you want to submit this task for review?"
@@ -547,112 +547,112 @@ msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi kwa niaba ya %s
 
 #: models/tasks.py:559
 msgid "Can close a workflow"
-msgstr ""
+msgstr "Inaweza kufunga mtiririko wa kazi"
 
 #: models/tasks.py:562
 msgid "workflow"
-msgstr ""
+msgstr "mtiririko wa kazi"
 
 #: models/tasks.py:563
 msgid "workflows"
-msgstr ""
+msgstr "mtiririko wa kazi"
 
 #: models/tasks.py:573
 msgid "due date"
-msgstr ""
+msgstr "tarehe ya kukamilisha"
 
 #: models/tasks.py:574
 msgid "priority"
-msgstr ""
+msgstr "kipaumbele"
 
 #: models/tasks.py:615 models/works.py:49 models/works.py:106
 msgid "slug"
-msgstr ""
+msgstr "namna rahisi"
 
 #: models/tasks.py:620
 msgid "task label"
-msgstr ""
+msgstr "lebo ya kazi"
 
 #: models/tasks.py:621
 msgid "task labels"
-msgstr ""
+msgstr "lebo za kazi"
 
 #: models/tasks.py:635
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: models/tasks.py:638
 msgid "mimetype"
-msgstr ""
+msgstr "aina ya maudhui"
 
 #: models/tasks.py:643
 msgid "task file"
-msgstr ""
+msgstr "faili ya kazi"
 
 #: models/tasks.py:644
 msgid "task files"
-msgstr ""
+msgstr "faili za kazi"
 
 #: models/works.py:28
 #, python-format
 msgid "Work for FRBR URI '%(uri)s' doesn't exist"
-msgstr ""
+msgstr "Fanya kazi FRBR URI '%(uri)s' haipo"
 
 #: models/works.py:45
 msgid "authority"
-msgstr ""
+msgstr "mamlaka"
 
 #: models/works.py:46
 msgid "Organisation managing this taxonomy"
-msgstr ""
+msgstr "Shirika linalosimamia taaluma hii"
 
 #: models/works.py:48
 msgid "Short name for this taxonomy, under this authority"
-msgstr ""
+msgstr "Jina fupi la taksonomia hii, chini ya mamlaka hii"
 
 #: models/works.py:49
 msgid "Code used in the API"
-msgstr ""
+msgstr "Msimbo unaotumika kwenye API"
 
 #: models/works.py:51
 msgid "Friendly, full title for the taxonomy"
-msgstr ""
+msgstr "Rafiki, jina kamili la jamii"
 
 #: models/works.py:54
 msgid "taxonomy"
-msgstr ""
+msgstr "taksonomia"
 
 #: models/works.py:55 models/works.py:522
 msgid "taxonomies"
-msgstr ""
+msgstr "taksonomia"
 
 #: models/works.py:65
 msgid "vocabulary"
-msgstr ""
+msgstr "Msamiati"
 
 #: models/works.py:66
 msgid "level 1"
-msgstr ""
+msgstr "kiwango cha 1"
 
 #: models/works.py:67
 msgid "level 2"
-msgstr ""
+msgstr "kiwango cha 2"
 
 #: models/works.py:67
 msgid "(optional)"
-msgstr ""
+msgstr "(si lazima)"
 
 #: models/works.py:72
 msgid "vocabulary topic"
-msgstr ""
+msgstr "mada ya msamiati"
 
 #: models/works.py:73
 msgid "vocabulary topics"
-msgstr ""
+msgstr "mada za msamiati"
 
 #: models/works.py:108
 msgid "public"
-msgstr ""
+msgstr "umma"
 
 #: models/works.py:112
 msgid "taxonomy topic"
@@ -664,7 +664,7 @@ msgstr "mada za taxonomia"
 
 #: models/works.py:152
 msgid "All topics"
-msgstr ""
+msgstr "Mada zote"
 
 #: models/works.py:439
 msgid "Not commenced"
@@ -676,197 +676,197 @@ msgstr "Kuna kuanza nyingi"
 
 #: models/works.py:467
 msgid "Can review work details"
-msgstr ""
+msgstr "Inaweza kukagua maelezo ya kazi"
 
 #: models/works.py:468
 msgid "Can import works in bulk"
-msgstr ""
+msgstr "Inaweza kuagiza kazi kwa wingi"
 
 #: models/works.py:469
 msgid "Can export works in bulk"
-msgstr ""
+msgstr "Inaweza kuhamisha kazi kwa wingi"
 
 #: models/works.py:472
 msgid "works"
-msgstr ""
+msgstr "kazi"
 
 #: models/works.py:474
 msgid "FRBR URI"
-msgstr ""
+msgstr "FRBR URI"
 
 #: models/works.py:478
 msgid "(untitled)"
-msgstr ""
+msgstr "(isiyo na jina)"
 
 #: models/works.py:484
 msgid "doctype"
-msgstr ""
+msgstr "doctype"
 
 #: models/works.py:484
 msgid "FRBR doctype"
-msgstr ""
+msgstr "FRBR aina ya hati"
 
 #: models/works.py:485 models/works.py:965
 msgid "subtype"
-msgstr ""
+msgstr "aina ndogo"
 
 #: models/works.py:485
 msgid "FRBR subtype"
-msgstr ""
+msgstr "Aina ndogo ya FRBR"
 
 #: models/works.py:486
 msgid "actor"
-msgstr ""
+msgstr "mwigizaji"
 
 #: models/works.py:486
 msgid "FRBR actor"
-msgstr ""
+msgstr "FRBR mwigizaji"
 
 #: models/works.py:487 models/works.py:792 models/works.py:853
 #: models/works.py:913
 msgid "date"
-msgstr ""
+msgstr "tarehe"
 
 #: models/works.py:487
 msgid "FRBR date"
-msgstr ""
+msgstr "Tarehe ya kulipia ugawaji kwenye hisa za FRBR"
 
 #: models/works.py:488
 msgid "number"
-msgstr ""
+msgstr "namba"
 
 #: models/works.py:488
 msgid "FRBR number"
-msgstr ""
+msgstr "Nambari ya FRBR"
 
 #: models/works.py:491
 msgid "publication name"
-msgstr ""
+msgstr "jina la uchapishaji"
 
 #: models/works.py:492
 msgid "Original publication's name, e.g. Government Gazette"
-msgstr ""
+msgstr "Jina halisi la uchapishaji, kwa mfano Gazeti la Serikali"
 
 #: models/works.py:493
 msgid "publication number"
-msgstr ""
+msgstr "nambari ya uchapishaji"
 
 #: models/works.py:494
 msgid "Publication's sequence number, eg. gazette number"
-msgstr ""
+msgstr "Nambari ya mfuatano wa uchapishaji, kwa mfano. nambari ya gazeti"
 
 #: models/works.py:495
 msgid "publication date"
-msgstr ""
+msgstr "tarehe ya uchapishaji"
 
 #: models/works.py:495
 msgid "Date of publication"
-msgstr ""
+msgstr "Tarehe ya kuchapishwa"
 
 #: models/works.py:497
 msgid "assent date"
-msgstr ""
+msgstr "tarehe ya kupitishwa"
 
 #: models/works.py:497
 msgid "Date signed by the president"
-msgstr ""
+msgstr "Tarehe iliyosainiwa na rais"
 
 #: models/works.py:499
 msgid "commenced"
-msgstr ""
+msgstr "ilianza"
 
 #: models/works.py:500
 msgid "Has this work commenced? (Date may be unknown)"
-msgstr ""
+msgstr "Je, kazi hii imeanza? (Tarehe inaweza kuwa haijulikani)"
 
 #: models/works.py:504
 msgid "Work that repealed this work"
-msgstr ""
+msgstr "Kazi ambayo ilibatilisha kazi hii"
 
 #: models/works.py:505
 msgid "repealed by"
-msgstr ""
+msgstr "kufutwa na"
 
 #: models/works.py:506
 msgid "repealed date"
-msgstr ""
+msgstr "tarehe iliyofutwa"
 
 #: models/works.py:506
 msgid "Date of repeal of this work"
-msgstr ""
+msgstr "Tarehe ya kufutwa kwa kazi hii"
 
 #: models/works.py:510
 msgid "Parent (primary) work for subsidiary legislation"
-msgstr ""
+msgstr "Kazi ya mzazi (msingi) kwa sheria tanzu"
 
 #: models/works.py:511
 msgid "parent (primary) work"
-msgstr ""
+msgstr "kazi ya mzazi (msingi)."
 
 #: models/works.py:513
 msgid "principal"
-msgstr ""
+msgstr "mkuu"
 
 #: models/works.py:514
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
-msgstr ""
+msgstr "Kazi kuu sio kubatilisha tu, marekebisho au kuanza, na zinapaswa kuwa na maandishi kamili."
 
 #: models/works.py:516
 msgid "stub"
-msgstr ""
+msgstr "mbegu"
 
 #: models/works.py:516
 msgid "Stub works do not have content or points in time"
-msgstr ""
+msgstr "Kazi za Stub hazina maudhui au pointi kwa wakati"
 
 #: models/works.py:519
 msgid "properties"
-msgstr ""
+msgstr "mali"
 
 #: models/works.py:526
 msgid "as-at date override"
-msgstr ""
+msgstr "kubatilisha kwa tarehe"
 
 #: models/works.py:527
 msgid "Date up to which this work was last checked for updates"
-msgstr ""
+msgstr "Tarehe ambayo kazi hii iliangaliwa mara ya mwisho ili kupata masasisho"
 
 #: models/works.py:528
 msgid "consolidation note override"
-msgstr ""
+msgstr "ubatilishaji wa noti ya uimarishaji"
 
 #: models/works.py:529
 msgid "Consolidation note about this particular work, to override any consolidation note for the place"
-msgstr ""
+msgstr "Ujumbe wa ujumuishaji kuhusu kazi hii mahususi, ili kubatilisha dokezo lolote la ujumuishaji la mahali"
 
 #: models/works.py:531
 msgid "disclaimer"
-msgstr ""
+msgstr "kanusho"
 
 #: models/works.py:532
 msgid "Disclaimer text about this work"
-msgstr ""
+msgstr "Maandishi ya kanusho kuhusu kazi hii"
 
 #: models/works.py:534
 msgid "work in progress"
-msgstr ""
+msgstr "kazi inaendelea"
 
 #: models/works.py:535
 msgid "Work in progress, to be approved"
-msgstr ""
+msgstr "Kazi inaendelea, ili kuidhinishwa"
 
 #: models/works.py:539
 msgid "approved at"
-msgstr ""
+msgstr "kupitishwa saa"
 
 #: models/works.py:546
 msgid "approved by"
-msgstr ""
+msgstr "imeidhinishwa na"
 
 #: models/works.py:564
 #, python-format
 msgid "No such locality for this country: %(code)s"
-msgstr ""
+msgstr "Hakuna eneo kama hilo kwa nchi hii: %(code)s"
 
 #: models/works.py:574
 msgid "Invalid FRBR URI"
@@ -874,163 +874,163 @@ msgstr "URI ya FRBR si sahihi"
 
 #: models/works.py:708
 msgid "This document was unpublished because its work was unapproved."
-msgstr ""
+msgstr "Hati hii haikuchapishwa kwa sababu kazi yake haikuidhinishwa."
 
 #: models/works.py:763
 msgid "trusted URL"
-msgstr ""
+msgstr "URL inayoaminika"
 
 #: models/works.py:764
 msgid "file size"
-msgstr ""
+msgstr "ukubwa wa faili"
 
 #: models/works.py:765
 msgid "file name"
-msgstr ""
+msgstr "jina la faili"
 
 #: models/works.py:766
 msgid "file MIME type"
-msgstr ""
+msgstr "aina ya faili MIME"
 
 #: models/works.py:771
 msgid "publication document"
-msgstr ""
+msgstr "hati ya uchapishaji"
 
 #: models/works.py:772
 msgid "publication documents"
-msgstr ""
+msgstr "nyaraka za uchapishaji"
 
 #: models/works.py:787
 msgid "commenced work"
-msgstr ""
+msgstr "ilianza kazi"
 
 #: models/works.py:788
 msgid "Principal work being commenced"
-msgstr ""
+msgstr "Kazi kuu inaanza"
 
 #: models/works.py:789
 msgid "commencing work"
-msgstr ""
+msgstr "kuanza kazi"
 
 #: models/works.py:790
 msgid "Work that provides the commencement date for the principal work"
-msgstr ""
+msgstr "Kazi ambayo hutoa tarehe ya kuanza kwa kazi kuu"
 
 #: models/works.py:793
 msgid "Date of the commencement, or null if it is unknown"
-msgstr ""
+msgstr "Tarehe ya kuanza, au batili ikiwa haijulikani"
 
 #: models/works.py:794
 msgid "main"
-msgstr ""
+msgstr "kuu"
 
 #: models/works.py:795
 msgid "This commencement date is the date on which most of the provisions of the commenced work come into force"
-msgstr ""
+msgstr "Tarehe hii ya kuanza ni tarehe ambayo vifungu vingi vya kazi iliyoanza huanza kutumika"
 
 #: models/works.py:797
 msgid "all provisions"
-msgstr ""
+msgstr "masharti yote"
 
 #: models/works.py:798
 msgid "All provisions of this work commenced on this date"
-msgstr ""
+msgstr "Masharti yote ya kazi hii yalianza tarehe hii"
 
 #: models/works.py:799
 msgid "note"
-msgstr ""
+msgstr "Kumbuka"
 
 #: models/works.py:800
 msgid "Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation"
-msgstr ""
+msgstr "Kawaida rejeleo la kifungu cha kazi iliyoanzishwa au kazi inayoanza, ikiwa kuna kuanza lakini tarehe iko wazi kwa tafsiri."
 
 #: models/works.py:804
 msgid "commenced provisions"
-msgstr ""
+msgstr "vifungu vilianza"
 
 #: models/works.py:805
 msgid "A list of the element ids of the provisions that come into force with this commencement"
-msgstr ""
+msgstr "Orodha ya vitambulisho vya vipengele vya masharti yatakayoanza kutumika wakati huu kuanza"
 
 #: models/works.py:819
 msgid "commencement"
-msgstr ""
+msgstr "kuanza"
 
 #: models/works.py:820
 msgid "commencements"
-msgstr ""
+msgstr "kuanza"
 
 #: models/works.py:849
 msgid "amended work"
-msgstr ""
+msgstr "kazi iliyorekebishwa"
 
 #: models/works.py:850
 msgid "Work being amended"
-msgstr ""
+msgstr "Kazi inayofanyiwa marekebisho"
 
 #: models/works.py:851
 msgid "amending work"
-msgstr ""
+msgstr "kurekebisha kazi"
 
 #: models/works.py:852
 msgid "Work making the amendment"
-msgstr ""
+msgstr "Kazi ya kufanya marekebisho"
 
 #: models/works.py:854
 msgid "Date on which the amendment comes into operation"
-msgstr ""
+msgstr "Tarehe ambayo marekebisho yanaanza kutumika"
 
 #: models/works.py:866
 msgid "amendment"
-msgstr ""
+msgstr "marekebisho"
 
 #: models/works.py:867
 msgid "amendments"
-msgstr ""
+msgstr "marekebisho"
 
 #: models/works.py:913
 msgid "Arbitrary date, e.g. consolidation date"
-msgstr ""
+msgstr "Tarehe ya kiholela, kwa mfano tarehe ya ujumuishaji"
 
 #: models/works.py:929
 msgid "arbitrary expression date"
-msgstr ""
+msgstr "tarehe ya kujieleza kiholela"
 
 #: models/works.py:930
 msgid "arbitrary expression dates"
-msgstr ""
+msgstr "tarehe za kujieleza kiholela"
 
 #: models/works.py:957
 msgid "Name of the subtype"
-msgstr ""
+msgstr "Jina la aina ndogo"
 
 #: models/works.py:958
 msgid "abbreviation"
-msgstr ""
+msgstr "ufupisho"
 
 #: models/works.py:959
 msgid "Short abbreviation to use in the FRBR URI. No punctuation."
-msgstr ""
+msgstr "Ufupisho mfupi wa kutumia katika FRBR URI. Hakuna uakifishaji."
 
 #: models/works.py:966
 msgid "subtypes"
-msgstr ""
+msgstr "aina ndogo"
 
 #: models/works.py:990
 msgid "alias"
-msgstr ""
+msgstr "pak"
 
 #: models/works.py:990
 msgid "Alias e.g. Penal Code, etc"
-msgstr ""
+msgstr "Lakabu mfano Kanuni ya Adhabu, nk"
 
 #: models/works.py:996
 msgid "work alias"
-msgstr ""
+msgstr "jina la kazi"
 
 #: models/works.py:997
 msgid "work aliases"
-msgstr ""
+msgstr "majina ya utani wa kazi"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"

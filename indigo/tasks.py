@@ -7,6 +7,7 @@ from indigo_api.models import Task
 
 class TaskBroker:
     def __init__(self, works):
+        works, self.ignored_works = self.get_works_and_ignored_works(works)
         self.works = works.order_by("-created_at")
         self.import_task_works = works.filter(principal=True)
         self.import_tasks = None
@@ -18,6 +19,14 @@ class TaskBroker:
         self.amendments_per_work = {w: w.amendments.filter(pk__in=[a.pk for a in self.amendments])
                                     for w in set(a.amended_work for a in self.amendments)}
         self.amendment_tasks = None
+
+    def get_works_and_ignored_works(self, works):
+        """ Return (works, ignored_works) from the form data, partitioning on those that can be approved in bulk
+        and those that can't.
+        By default, all works in progress can be approved. Subclass to introduce approval requirements.
+        """
+
+        return works.all(), works.none()
 
     def create_tasks(self, user, data):
         # import tasks

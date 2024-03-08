@@ -106,6 +106,7 @@ class TaxonomyTopic(MP_Node):
     slug = models.SlugField(_("slug"), max_length=4096, null=False, unique=True, blank=False)
     description = models.TextField(_("description"), null=True, blank=True)
     public = models.BooleanField(_("public"), default=True)
+    project = models.BooleanField(_("project"), default=False)
     node_order_by = ['name']
 
     class Meta:
@@ -160,6 +161,11 @@ class TaxonomyTopic(MP_Node):
     def get_public_root_nodes(cls):
         root_nodes = cls.get_root_nodes()
         return root_nodes.filter(public=True)
+
+    @classmethod
+    def get_project_root_nodes(cls):
+        root_nodes = cls.get_root_nodes()
+        return root_nodes.filter(project=True)
 
 
 class WorkMixin(object):

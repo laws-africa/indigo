@@ -23,16 +23,33 @@
         {% for work in form.broker.works %}
           <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
         {% endfor %}
-        <div class="alert alert-warning">
-          <ul>
-            {% for work in form.broker.works %}
-              <li>
-                <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
-                {% include 'indigo_api/_work_info_badges.html' %}
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
+        {% if form.broker.works  %}
+          <div class="alert alert-warning">
+            <ul>
+              {% for work in form.broker.works %}
+                <li>
+                  <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                  {% include 'indigo_api/_work_info_badges.html' %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if form.broker.ignored_works  %}
+          <div class="alert alert-danger mt-3">
+            {% block ignored-works-reason %}
+              <p>{% trans "These works cannot be approved in bulk:" %}</p>
+            {% endblock %}
+            <ul>
+              {% for work in form.broker.ignored_works %}
+                <li>
+                  <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                  {% include 'indigo_api/_work_info_badges.html' %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
         {% block tasks-will-be-created %}
           {% if form.broker.import_task_works %}
             <div class="card mb-3">

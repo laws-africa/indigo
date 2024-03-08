@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 06:06\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -30,7 +30,7 @@ msgstr "Hitilafu katika kuunda FRBR URI"
 
 #: forms/works.py:364
 msgid "Alias"
-msgstr ""
+msgstr "Lakabu"
 
 #: models.py:23
 msgid "user"
@@ -42,15 +42,15 @@ msgstr "nchi"
 
 #: models.py:25
 msgid "accepted terms"
-msgstr ""
+msgstr "masharti yaliyokubaliwa"
 
 #: models.py:26
 msgid "Countries the user can work with."
-msgstr ""
+msgstr "Nchi ambazo mtumiaji anaweza kufanya kazi nazo."
 
 #: models.py:26
 msgid "permitted countries"
-msgstr ""
+msgstr "nchi zinazoruhusiwa"
 
 #: models.py:27
 msgid "language"
@@ -58,15 +58,15 @@ msgstr "lugha"
 
 #: models.py:27
 msgid "Preferred language"
-msgstr ""
+msgstr "Lugha inayopendekezwa"
 
 #: models.py:32
 msgid "editor"
-msgstr ""
+msgstr "mhariri"
 
 #: models.py:33
 msgid "editors"
-msgstr ""
+msgstr "wahariri"
 
 #: models.py:60
 msgid "name"
@@ -74,15 +74,15 @@ msgstr "jina"
 
 #: models.py:60
 msgid "Name of this publication"
-msgstr ""
+msgstr "Jina la chapisho hili"
 
 #: models.py:65
 msgid "publication"
-msgstr ""
+msgstr "uchapishaji"
 
 #: models.py:66
 msgid "publications"
-msgstr ""
+msgstr "machapisho"
 
 #: templates/403.html:4 templates/403.html:14
 msgid "Permission Denied"
@@ -433,13 +433,13 @@ msgstr "Badilisha kazi"
 #: templates/indigo_api/_task_form_input_file.html:7
 #: templates/indigo_api/_task_form_input_file.html:53
 msgid "Input file"
-msgstr ""
+msgstr "Ingiza faili"
 
 #: templates/indigo_api/_task_detail.html:90
 #: templates/indigo_api/_task_form_output_file.html:7
 #: templates/indigo_api/_task_form_output_file.html:33
 msgid "Output file"
-msgstr ""
+msgstr "Faili ya pato"
 
 #: templates/indigo_api/_task_detail.html:110
 #: templates/indigo_api/_work_comments.html:8
@@ -480,11 +480,11 @@ msgstr "Fungua upya"
 
 #: templates/indigo_api/_task_detail.html:210
 msgid "Are you sure you want to finish this task?"
-msgstr ""
+msgstr "Je, una uhakika unataka kumaliza kazi hii?"
 
 #: templates/indigo_api/_task_detail.html:213
 msgid "Finish"
-msgstr ""
+msgstr "Maliza"
 
 #: templates/indigo_api/_task_detail.html:228
 #, python-format
@@ -503,7 +503,7 @@ msgstr "Lebo"
 
 #: templates/indigo_api/_task_detail.html:282
 msgid "Choose labels"
-msgstr ""
+msgstr "Chagua lebo"
 
 #: templates/indigo_api/_task_detail.html:298
 #: templates/indigo_api/workflow_list.html:4
@@ -513,7 +513,7 @@ msgstr "Miradi"
 
 #: templates/indigo_api/_task_detail.html:308
 msgid "Choose projects"
-msgstr ""
+msgstr "Chagua miradi"
 
 #: templates/indigo_api/_task_detail.html:334
 msgid "Blocked by"
@@ -521,11 +521,11 @@ msgstr "Imezuiwa na"
 
 #: templates/indigo_api/_task_detail.html:344
 msgid "Choose tasks"
-msgstr ""
+msgstr "Chagua kazi"
 
 #: templates/indigo_api/_task_detail.html:370
 msgid "Blocking"
-msgstr ""
+msgstr "Kuzuia"
 
 #: templates/indigo_api/_task_detail.html:374
 msgid "This task is blocking these tasks:"
@@ -586,15 +586,15 @@ msgstr "Wazi"
 
 #: templates/indigo_api/_task_form_input_file.html:33
 msgid "Input URL"
-msgstr ""
+msgstr "Ingiza URL"
 
 #: templates/indigo_api/_task_form_input_file.html:49
 msgid "Paste in a URL (preferred), or upload a file."
-msgstr ""
+msgstr "Bandika kwenye URL (inayopendekezwa), au pakia faili."
 
 #: templates/indigo_api/_task_form_output_file.html:49
 msgid "Upload the converted file."
-msgstr ""
+msgstr "Pakia faili iliyobadilishwa."
 
 #: templates/indigo_api/_task_form_timeline_date.html:5
 msgid "Timeline date"
@@ -797,7 +797,7 @@ msgstr "Kuanza kufanywa"
 
 #: templates/indigo_api/_work_comments.html:33
 msgid "Add a comment"
-msgstr ""
+msgstr "Ongeza maoni"
 
 #: templates/indigo_api/_work_diff_card.html:5
 #, python-format
@@ -1015,11 +1015,11 @@ msgstr "Wakati tarehe ya kuanza iko wazi kwa tafsiri, toa rejeleo kwa kifungu ch
 #: templates/indigo_api/_work_form_content.html:460
 #: templates/indigo_app/place/_work_detail_overview.html:31
 msgid "Aliases"
-msgstr ""
+msgstr "Majina ya utani"
 
 #: templates/indigo_api/_work_form_content.html:481
 msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
-msgstr ""
+msgstr "Lakabu za kawaida za kazi hii, kama vile 'Msimbo wa Adhabu' au 'POPIA'."
 
 #: templates/indigo_api/_work_form_content.html:495
 #, python-format
@@ -2407,11 +2407,11 @@ msgstr "Kazi za stub hazipaswi kuwa na pointi kwa wakati. Unaweza kuondoa vidoke
 #: templates/indigo_api/work_overview.html:168
 #: templates/indigo_app/place/_work_detail.html:68
 msgid "Comments"
-msgstr ""
+msgstr "Maoni"
 
 #: templates/indigo_api/work_overview.html:185
 msgid "Contributors"
-msgstr ""
+msgstr "Wachangiaji"
 
 #: templates/indigo_api/work_overview.html:192
 #, python-format
@@ -2582,25 +2582,31 @@ msgstr "Inaonekana uko nje ya mtandao au seva haipatikani."
 msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    marekebisho katika %(date)s on\n"
+"  "
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
 msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    ujumuishaji kwa %(date)s on\n"
+"  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
 msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
+msgstr "\n"
+"    anza saa %(date)s on\n"
+"  "
 
 #: templates/indigo_app/actions/_action_document.html:5
 msgid "a document on"
-msgstr ""
+msgstr "hati juu ya"
 
 #: templates/indigo_app/actions/_action_placesettings.html:4
 msgid "the settings for"
@@ -2616,7 +2622,7 @@ msgstr "juu ya kazi hii"
 
 #: templates/indigo_app/actions/_action_task.html:19
 msgid "on"
-msgstr ""
+msgstr "juu"
 
 #: templates/indigo_app/actions/_action_task.html:30
 #: templates/indigo_app/actions/_action_task.html:42
@@ -2700,7 +2706,9 @@ msgstr "Majukumu ya marekebisho yataundwa"
 msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
+msgstr "\n"
+"                              Maelezo ya kazi: %(amended_title)s (%(amended_numbered_title)s) imerekebishwa na %(amending_title)s (%(amending_numbered_title)s) - %(date)s\n"
+"                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:112
 #, python-format

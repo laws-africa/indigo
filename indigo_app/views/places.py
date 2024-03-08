@@ -1,15 +1,13 @@
 import logging
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import timedelta
-from typing import List
 
 from actstream import action
 from actstream.models import Action
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Case, When, Value
-from django.db.models import Q
+from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -549,12 +547,13 @@ class PlaceWorksView(PlaceViewBase, ListView):
     context_object_name = 'works'
     paginate_by = 50
     http_method_names = ['post', 'get']
+    filter_form_class = WorkFilterForm
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        self.form = WorkFilterForm(self.country, request.POST or request.GET)
+        self.form = self.filter_form_class(self.country, request.POST or request.GET)
         self.form.is_valid()
 
         if self.form.data.get('format') == 'xlsx':
@@ -601,27 +600,11 @@ class PlaceWorksView(PlaceViewBase, ListView):
         return super().get_template_names()
 
 
-@dataclass
-class FacetItem:
-    label: str
-    value: str
-    count: int
-    selected: bool
-
-
-@dataclass
-class Facet:
-    label: str
-    name: str
-    type: str
-    items: List[FacetItem] = field(default_factory=list)
-
-
 class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
 
     def get(self, request, *args, **kwargs):
-        self.form = WorkFilterForm(self.country, request.GET)
+        self.form = PlaceWorksView.filter_form_class(self.country, request.GET)
         self.form.is_valid()
         return super().get(request, *args, **kwargs)
 
@@ -634,388 +617,10 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         qs = Work.objects.filter(country=self.country, locality=self.locality)
 
         # build facets
-        context["work_facets"] = work_facets = []
-        self.facet_subtype(work_facets, qs)
-        self.facet_work_in_progress(work_facets, qs)
-        self.facet_principal(work_facets, qs)
-        self.facet_stub(work_facets, qs)
-        self.facet_tasks(work_facets, qs)
-        self.facet_publication_document(work_facets, qs)
-        self.facet_primary(work_facets, qs)
-        self.facet_commencement(work_facets, qs)
-        self.facet_amendment(work_facets, qs)
-        self.facet_consolidation(work_facets, qs)
-        self.facet_repeal(work_facets, qs)
-        self.facet_taxonomy(context['taxonomy_toc'], qs)
-
-        context["document_facets"] = doc_facets = []
-        self.facet_points_in_time(doc_facets, qs)
-        self.facet_point_in_time_status(doc_facets, qs)
+        context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'])
+        context["document_facets"] = self.form.document_facets(qs)
 
         return context
-
-    def facet_subtype(self, facets, qs):
-        # count doctypes, subtypes in the current place first, so these are always shown as an option
-        counts_in_place = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
-        counts_subtype_in_place = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
-        counts_in_place.update(counts_subtype_in_place)
-
-        qs = self.form.filter_queryset(qs, exclude="subtype")
-        # count doctypes, subtypes by code
-        counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
-        counts_subtype = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
-        counts.update(counts_subtype)
-        items = [
-            FacetItem(
-                c[1],
-                c[0],
-                counts.get(c[0], 0),
-                c[0] in self.form.cleaned_data.get("subtype", [])
-            )
-            for c in self.form.fields["subtype"].choices
-            if counts_in_place.get(c[0])
-        ]
-        facets.append(Facet("Type", "subtype", "checkbox", items))
-
-    def facet_principal(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="principal")
-        counts = qs.aggregate(
-            principal_counts=Count("pk", filter=Q(principal=True), distinct=True),
-            not_principal_counts=Count("pk", filter=Q(principal=False), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Principal",
-                "principal",
-                counts.get("principal_counts", 0),
-                "principal" in self.form.cleaned_data.get("principal", [])
-            ),
-            FacetItem(
-                "Not principal",
-                "not_principal",
-                counts.get("not_principal_counts", 0),
-                "not_principal" in self.form.cleaned_data.get("principal", [])
-            ),
-        ]
-        facets.append(Facet("Principal", "principal", "checkbox", items))
-
-    def facet_stub(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="stub")
-        counts = qs.aggregate(
-            stub_counts=Count("pk", filter=Q(stub=True), distinct=True),
-            not_stub_counts=Count("pk", filter=Q(stub=False), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Stub",
-                "stub",
-                counts.get("stub_counts", 0),
-                "stub" in self.form.cleaned_data.get("stub", [])
-            ),
-            FacetItem(
-                "Not a stub",
-                "not_stub",
-                counts.get("not_stub_counts", 0),
-                "not_stub" in self.form.cleaned_data.get("stub", [])
-            ),
-        ]
-        facets.append(Facet("Stubs", "stub", "checkbox", items))
-
-    def facet_work_in_progress(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="work_in_progress")
-        counts = qs.aggregate(
-            work_in_progress_counts=Count("pk", filter=Q(work_in_progress=True), distinct=True),
-            approved_counts=Count("pk", filter=Q(work_in_progress=False), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Work in progress",
-                "work_in_progress",
-                counts.get("work_in_progress_counts", 0),
-                "work_in_progress" in self.form.cleaned_data.get("work_in_progress", [])
-            ),
-            FacetItem(
-                "Approved",
-                "approved",
-                counts.get("approved_counts", 0),
-                "approved" in self.form.cleaned_data.get("work_in_progress", [])
-            ),
-        ]
-        facets.append(Facet("Work in progress", "work_in_progress", "checkbox", items))
-
-    def facet_tasks(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="tasks")
-        task_states = qs.annotate(
-            has_open_states=Count(
-                Case(When(tasks__state__in=Task.OPEN_STATES, then=Value(1)), output_field=IntegerField())),
-            has_unblocked_states=Count(
-                Case(When(tasks__state__in=Task.UNBLOCKED_STATES, then=Value(1)), output_field=IntegerField())),
-            has_blocked_states=Count(
-                Case(When(tasks__state=Task.BLOCKED, then=Value(1)), output_field=IntegerField())),
-        ).values('pk', 'has_open_states', 'has_unblocked_states', 'has_blocked_states')
-
-        # Organize the results into totals per state
-        counts = {'open_states': 0, 'unblocked_states': 0, 'only_blocked_states': 0, 'no_open_states': 0}
-
-        for item in task_states:
-            if item['has_open_states'] > 0:
-                counts['open_states'] += 1
-            else:
-                counts['no_open_states'] += 1
-
-            # unblocked and only blocked tasks
-            if item['has_unblocked_states'] > 0:
-                counts['unblocked_states'] += 1
-            if item['has_blocked_states'] > 0 and not item['has_unblocked_states'] > 0:
-                counts['only_blocked_states'] += 1
-
-        items = [
-            FacetItem(
-                "Has open tasks",
-                "has_open_tasks",
-                counts['open_states'],
-                "has_open_tasks" in self.form.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has unblocked tasks",
-                "has_unblocked_tasks",
-                counts['unblocked_states'],
-                "has_unblocked_tasks" in self.form.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has only blocked tasks",
-                "has_only_blocked_tasks",
-                counts['only_blocked_states'],
-                "has_only_blocked_tasks" in self.form.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has no open tasks",
-                "no_open_tasks",
-                counts['no_open_states'],
-                "no_open_tasks" in self.form.cleaned_data.get("tasks", [])
-            ),
-        ]
-        facets.append(Facet("Tasks", "tasks", "checkbox", items))
-
-    def facet_primary(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="primary")
-        counts = qs.aggregate(
-            primary_counts=Count("pk", filter=Q(parent_work__isnull=True), distinct=True),
-            subsidiary_counts=Count("pk", filter=Q(parent_work__isnull=False), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Primary",
-                "primary",
-                counts.get("primary_counts", 0),
-                "primary" in self.form.cleaned_data.get("primary", [])
-            ),
-            FacetItem(
-                "Subsidiary",
-                "subsidiary",
-                counts.get("subsidiary_counts", 0),
-                "subsidiary" in self.form.cleaned_data.get("primary", [])
-            ),
-        ]
-        facets.append(Facet("Primary and Subsidiary", "primary", "checkbox", items))
-
-    def facet_commencement(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="commencement")
-        counts = qs.aggregate(
-            commenced_count=Count("pk", filter=Q(commenced=True), distinct=True),
-            not_commenced_count=Count("pk", filter=Q(commenced=False), distinct=True),
-            date_unknown_count=Count("pk", filter=Q(commencements__date__isnull=True, commenced=True), distinct=True),
-        )
-        qs = qs.annotate(Count("commencements"))
-        counts['multipe_count'] = qs.filter(commencements__count__gt=1).count()
-        items = [
-            FacetItem(
-                "Commenced",
-                "yes",
-                counts.get("commenced_count", 0),
-                "yes" in self.form.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Not commenced",
-                "no",
-                counts.get("not_commenced_count", 0),
-                "no" in self.form.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Commencement date unknown",
-                "date_unknown",
-                counts.get("date_unknown_count", 0),
-                "date_unknown" in self.form.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Multiple commencements",
-                "multiple",
-                counts.get("multipe_count", 0),
-                "multiple" in self.form.cleaned_data.get("commencement", [])
-            ),
-        ]
-        facets.append(Facet("Commencements", "commencement", "checkbox", items))
-
-    def facet_amendment(self, facet, qs):
-        qs = self.form.filter_queryset(qs, exclude="amendment")
-        counts = qs.aggregate(
-            amended_count=Count("pk", filter=Q(amendments__isnull=False), distinct=True),
-            not_amended_count=Count("pk", filter=Q(amendments__isnull=True), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Amended",
-                "yes",
-                counts.get("amended_count", 0),
-                "yes" in self.form.cleaned_data.get("amendment", [])
-            ),
-            FacetItem(
-                "Not amended",
-                "no",
-                counts.get("not_amended_count", 0),
-                "no" in self.form.cleaned_data.get("amendment", [])
-            ),
-        ]
-        facet.append(Facet("Amendments", "amendment", "checkbox", items))
-
-    def facet_consolidation(self, facets,  qs):
-        qs = self.form.filter_queryset(qs, exclude="consolidation")
-        counts = qs.aggregate(
-            has_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=False), distinct=True),
-            no_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=True), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Has consolidation",
-                "has_consolidation",
-                counts.get("has_consolidation", 0),
-                "has_consolidation" in self.form.cleaned_data.get("consolidation", [])
-            ),
-            FacetItem(
-                "No consolidation",
-                "no_consolidation",
-                counts.get("no_consolidation", 0),
-                "no_consolidation" in self.form.cleaned_data.get("consolidation", [])
-            ),
-        ]
-        facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
-
-    def facet_publication_document(self, facets,  qs):
-        qs = self.form.filter_queryset(qs, exclude="publication_document")
-        counts = qs.aggregate(
-            has_publication_document=Count("pk", filter=Q(publication_document__isnull=False), distinct=True),
-            no_publication_document=Count("pk", filter=Q(publication_document__isnull=True), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Has publication document",
-                "has_publication_document",
-                counts.get("has_publication_document", 0),
-                "has_publication_document" in self.form.cleaned_data.get("publication_document", [])
-            ),
-            FacetItem(
-                "No publication document",
-                "no_publication_document",
-                counts.get("no_publication_document", 0),
-                "no_publication_document" in self.form.cleaned_data.get("publication_document", [])
-            ),
-        ]
-        facets.append(Facet("Publication document", "publication_document", "checkbox", items))
-
-    def facet_repeal(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="repeal")
-        counts = qs.aggregate(
-            repealed_count=Count("pk", filter=Q(repealed_date__isnull=False), distinct=True),
-            not_repealed_count=Count("pk", filter=Q(repealed_date__isnull=True), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Repealed",
-                "yes",
-                counts.get("repealed_count", 0),
-                "yes" in self.form.cleaned_data.get("repeal", [])
-            ),
-            FacetItem(
-                "Not repealed",
-                "no",
-                counts.get("not_repealed_count", 0),
-                "no" in self.form.cleaned_data.get("repeal", [])
-            ),
-        ]
-        facets.append(Facet("Repeals", "repeal", "checkbox", items))
-
-    def facet_points_in_time(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="documents")
-        no_document_ids = qs.filter(document__isnull=True).values_list('pk', flat=True)
-        deleted_document_ids = qs.filter(document__deleted=True).values_list('pk', flat=True)
-        undeleted_document_ids = qs.filter(document__deleted=False).values_list('pk', flat=True)
-        all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
-        no_document_ids = list(no_document_ids) + list(all_deleted_document_ids)
-        items = [
-            FacetItem(
-                "Has no points in time",
-                "none",
-                qs.annotate(Count('document')).filter(id__in=no_document_ids).count(),
-                "none" in self.form.cleaned_data.get("documents", [])
-            ),
-            FacetItem(
-                "Has one point in time",
-                "one",
-                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).count(),
-                "one" in self.form.cleaned_data.get("documents", [])
-            ),
-            FacetItem(
-                "Has multiple points in time",
-                "multiple",
-                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).count(),
-                "multiple" in self.form.cleaned_data.get("documents", [])
-            ),
-        ]
-        facets.append(Facet("Points in time", "documents", "checkbox", items))
-
-    def facet_point_in_time_status(self, facets, qs):
-        qs = self.form.filter_queryset(qs, exclude="status")
-        counts = qs.aggregate(
-            drafts_count=Count("pk", filter=Q(document__draft=True), distinct=True),
-            published_count=Count("pk", filter=Q(document__draft=False), distinct=True),
-        )
-        items = [
-            FacetItem(
-                "Draft",
-                "draft",
-                counts.get("drafts_count", 0),
-                "draft" in self.form.cleaned_data.get("status", [])
-            ),
-            FacetItem(
-                "Published",
-                "published",
-                counts.get("published_count", 0),
-                "published" in self.form.cleaned_data.get("status", [])
-            ),
-        ]
-        facets.append(Facet("Point in time status", "status", "checkbox",  items))
-
-    def facet_taxonomy(self, taxonomy_tree, qs):
-        qs = self.form.filter_queryset(qs, exclude="taxonomy_topic")
-        # count works per taxonomy topic
-        counts = {
-            x["taxonomy_topics__slug"]: x["count"]
-            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("taxonomy_topics__slug")).order_by()
-        }
-
-        # fold the counts into the taxonomy tree
-        def decorate(item):
-            total = 0
-            for child in item.get('children', []):
-                total = total + decorate(child)
-            # count for this item
-            item['data']['count'] = counts.get(item["data"]["slug"])
-            # total of count for descendants
-            item['data']['total'] = total
-            return total + (item['data']['count'] or 0)
-
-        for item in taxonomy_tree:
-            decorate(item)
 
 
 class WorkActionsView(PlaceViewBase, FormView):

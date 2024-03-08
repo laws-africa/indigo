@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 06:06\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -23,15 +23,15 @@ msgstr "utilisateur"
 
 #: models.py:40
 msgid "bio"
-msgstr ""
+msgstr "biographie"
 
 #: models.py:40
 msgid "A short bio"
-msgstr ""
+msgstr "Une courte biographie"
 
 #: models.py:41
 msgid "qualifications"
-msgstr ""
+msgstr "qualifications"
 
 #: models.py:41 templates/indigo_social/user_layout.html:66
 msgid "Qualifications"
@@ -39,7 +39,7 @@ msgstr "Qualifications"
 
 #: models.py:42
 msgid "skills"
-msgstr ""
+msgstr "compétences"
 
 #: models.py:42 templates/indigo_social/user_layout.html:61
 msgid "Skills"
@@ -47,7 +47,7 @@ msgstr "Compétences"
 
 #: models.py:43
 msgid "organisations"
-msgstr ""
+msgstr "organisations"
 
 #: models.py:43 templates/indigo_social/user_layout.html:56
 msgid "Organisations"
@@ -55,7 +55,7 @@ msgstr "Organisations"
 
 #: models.py:44
 msgid "specialisations"
-msgstr ""
+msgstr "spécialisations"
 
 #: models.py:44 templates/indigo_social/user_layout.html:71
 msgid "Specialisations"
@@ -63,7 +63,7 @@ msgstr "Spécialisations"
 
 #: models.py:45
 msgid "areas of law"
-msgstr ""
+msgstr "domaines du droit"
 
 #: models.py:45 templates/indigo_social/user_layout.html:76
 msgid "Areas of law"
@@ -75,15 +75,15 @@ msgstr "photo de profil"
 
 #: models.py:47
 msgid "profile photo nonce"
-msgstr ""
+msgstr "photo de profil occasionnellement"
 
 #: models.py:48
 msgid "twitter username"
-msgstr ""
+msgstr "nom d'utilisateur Twitter"
 
 #: models.py:49
 msgid "linkedin profile"
-msgstr ""
+msgstr "profil LinkedIn"
 
 #: templates/indigo_app/user_account/edit.html:4
 msgid "Edit Profile"

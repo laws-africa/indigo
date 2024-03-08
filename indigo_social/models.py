@@ -11,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 
 def user_profile_photo_path(instance, filename):
@@ -35,17 +36,17 @@ class UserProfile(models.Model):
     class Meta:
         permissions = (('audit_user_activity', 'Can audit user activity'),)
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True, null=True, default='', help_text="A short bio")
-    qualifications = models.TextField(blank=True, null=True, default='', help_text="Qualifications")
-    skills = models.TextField(blank=True, null=True, default='', help_text="Skills")
-    organisations = models.TextField(blank=True, null=True, default='', help_text="Organisation(s)")
-    specialisations = models.TextField(blank=True, null=True, default='', help_text="Specialisation(s)")
-    areas_of_law = models.CharField(max_length=256, blank=True, null=True, default='', help_text="Area(s) of law")
-    profile_photo = models.ImageField(upload_to=user_profile_photo_path, blank=True, null=True)
-    profile_photo_nonce = models.CharField(max_length=256, blank=True, null=True)
-    twitter_username = models.CharField(max_length=256, blank=True, null=True, default='')
-    linkedin_profile = models.URLField(blank=True, null=True, default='')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("user"))
+    bio = models.TextField(_("bio"), blank=True, null=True, default='', help_text=_("A short bio"))
+    qualifications = models.TextField(_("qualifications"), blank=True, null=True, default='', help_text=_("Qualifications"))
+    skills = models.TextField(_("skills"), blank=True, null=True, default='', help_text=_("Skills"))
+    organisations = models.TextField(_("organisations"), blank=True, null=True, default='', help_text=_("Organisations"))
+    specialisations = models.TextField(_("specialisations"), blank=True, null=True, default='', help_text=_("Specialisations"))
+    areas_of_law = models.CharField(_("areas of law"), max_length=256, blank=True, null=True, default='', help_text=_("Areas of law"))
+    profile_photo = models.ImageField(_("profile photo"), upload_to=user_profile_photo_path, blank=True, null=True)
+    profile_photo_nonce = models.CharField(_("profile photo nonce"), max_length=256, blank=True, null=True)
+    twitter_username = models.CharField(_("twitter username"), max_length=256, blank=True, null=True, default='')
+    linkedin_profile = models.URLField(_("linkedin profile"), blank=True, null=True, default='')
 
     def generate_nonce(self):
         self.profile_photo_nonce = ''.join(random.sample(string.ascii_lowercase, 8))

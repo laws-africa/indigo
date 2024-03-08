@@ -19,6 +19,7 @@
       "properties": {
         "cap": "52"
       },
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -36,6 +37,7 @@
       "doctype": "act",
       "date": "1998",
       "number": "2",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -56,6 +58,7 @@
       "date": "2010",
       "number": "1",
       "publication_date": "2010-05-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -133,6 +136,7 @@
       "date": "1945",
       "number": "1",
       "publication_date": "1945-10-12",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -191,6 +195,7 @@
       "date": "1996",
       "number": "constitution",
       "publication_date": "1996-12-18",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -209,6 +214,7 @@
       "date": "2021",
       "number": "1",
       "publication_date": "2020-01-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -227,6 +233,7 @@
       "date": "2017",
       "number": "17",
       "publication_date": "2017-01-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -245,6 +252,7 @@
       "date": "2016",
       "number": "16",
       "publication_date": "2016-01-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -263,6 +271,7 @@
       "date": "2023",
       "number": "1",
       "publication_date": "2023-01-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -318,6 +327,7 @@
       "date": "2023",
       "number": "10",
       "publication_date": "2023-10-01",
+      "principal": true,
       "work_in_progress": false
     }
   },
@@ -354,6 +364,7 @@
       "date": "2023",
       "number": "21",
       "publication_date": "2023-10-01",
+      "principal": true,
       "work_in_progress": false
     }
   },

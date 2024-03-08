@@ -698,8 +698,9 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     publication_document = forms.MultipleChoiceField(required=False, choices=[('has_publication_document', 'Has publication document'), ('no_publication_document', 'No publication document')])
     documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
     taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
+    frbr_uris = forms.CharField(required=False)
 
-    advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start']
+    advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start', 'frbr_uris']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -721,9 +722,20 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         return any(is_set(a) for a in self.advanced_filters)
 
     def filter_queryset(self, queryset, exclude=None):
-
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
+
+        if self.cleaned_data.get('frbr_uris'):
+            # filter by *work* FRBR URI
+            uris = []
+            for s in self.cleaned_data['frbr_uris'].split():
+                try:
+                    frbr_uri = FrbrUri.parse(s)
+                    uris.append(frbr_uri.work_uri(work_component=False))
+                except ValueError:
+                    continue
+            if uris:
+                queryset = queryset.filter(frbr_uri__in=uris)
 
         # filter by work in progress
         if exclude != "work_in_progress":

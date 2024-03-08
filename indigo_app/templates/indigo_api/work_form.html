@@ -16,6 +16,7 @@
           class="btn btn-success save"
           type="submit"
           form="edit-work-form"
+          data-disable-with="{% trans 'Saving…' %}"
         >
           {% if work.pk %}{% trans 'Save' %}{% else %}{% trans 'Create' %}{% endif %}
         </button>

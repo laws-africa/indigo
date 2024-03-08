@@ -41,6 +41,7 @@ class IndigoApp {
 
     this.createComponents(document.body);
     this.createVueComponents(document.body);
+    this.disableWith();
     window.dispatchEvent(new Event('indigo.components-created'));
   }
 
@@ -67,7 +68,6 @@ class IndigoApp {
       this.createComponents(e.target);
       this.createVueComponents(e.target);
       relativeTimestamps(e.target);
-      this.disableWith();
       $('.selectpicker').selectpicker();
     });
     document.body.addEventListener('hx-messages', (e) => {

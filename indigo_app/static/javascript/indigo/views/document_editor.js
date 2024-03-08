@@ -28,9 +28,6 @@
       this.editing = false;
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
-      this.editStartedAt = null;
-      this.editMode = null;
-      this.editTimes = [];
 
       this.grammarName = this.parent.model.tradition().settings.grammar.name;
       this.grammarModel = new Indigo.grammars.registry[this.grammarName](
@@ -61,24 +58,12 @@
     },
 
     editActivityStarted: function(mode) {
-      this.editMode = mode;
-      this.editStartedAt = new Date().toISOString();
     },
 
     editActivityEnded: function() {
-      if(!this.editStartedAt) return;
-      this.editTimes.push({
-        mode: this.editMode,
-        started_at: this.editStartedAt,
-        ended_at: new Date().toISOString()
-      });
-      this.editStartedAt = null;
-      this.editMode = null;
     },
 
     editActivityCancelled: function() {
-      this.editStartedAt = null;
-      this.editMode = null;
     },
 
     setupTextEditor: function() {
@@ -704,27 +689,6 @@
       return (!this.sourceEditor.editing || confirm("You will lose your changes, are you sure?"));
     },
 
-    saveEditTimes: function() {
-      var sourceEditor = this.sourceEditor;
-      fetch(`/api/documents/${Indigo.Preloads.document.id}/activity/edits`, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": Indigo.csrfToken
-        },
-        body: JSON.stringify(sourceEditor.editTimes)
-      }).then(function(response) {
-        if(response.ok) {
-          sourceEditor.editTimes = [];
-        } else {
-          console.log('Edit times',JSON.stringify(sourceEditor.editTimes));
-          response.text().then(text => {
-            throw new Error(text);
-          });
-        }
-      });
-    },
-
     // Save the content of the editor, returns a Deferred
     save: function() {
       var self = this,
@@ -744,7 +708,6 @@
           .done(function() {
             // save the model
             self.saveModel().done(ok).fail(fail);
-            self.saveEditTimes();
           })
           .fail(fail);
       }

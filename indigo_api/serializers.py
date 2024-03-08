@@ -17,8 +17,7 @@ from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement, WorkAlias
-from indigo_metrics.models import DocumentEditActivity
+    PublicationDocument, Task, VocabularyTopic, Commencement
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -673,15 +672,3 @@ class DocumentDiffSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['document'].instance = self.instance
-
-
-class DocumentEditActivitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DocumentEditActivity
-        fields = ('id', 'started_at', 'ended_at', 'mode')
-        read_only_fields = ('duration_secs',)
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        validated_data['document'] = self.context['document']
-        return super().create(validated_data)

@@ -1,9 +1,7 @@
-import json
 import logging
 from collections import Counter
 from dataclasses import dataclass, field
-from datetime import timedelta, date
-from itertools import groupby
+from datetime import timedelta
 from typing import List
 
 from actstream import action
@@ -12,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Case, When, Value
 from django.db.models import Q
-from django.db.models.functions import Extract
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -22,13 +19,11 @@ from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
 from lxml import etree
 
-from indigo_api.models import Country, Task, Work, Amendment, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
+from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
 from indigo_api.timeline import describe_publication_event
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
     WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
 from indigo_app.xlsx_exporter import XlsxExporter
-from indigo_metrics.models import DailyWorkMetrics, DailyPlaceMetrics
-from indigo_metrics.models import DocumentMetrics
 from indigo_social.badges import badges
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -90,36 +85,7 @@ def get_work_overview_data(work):
     return overview_data
 
 
-class PlaceMetricsHelper:
-    def add_activity_metrics(self, places, metrics, since):
-        # fold metrics into countries
-        for place in places:
-            place.activity_history = json.dumps([
-                [m.date.isoformat(), m.n_activities]
-                for m in self.add_zero_days(metrics.get(place, []), since)
-            ])
-
-    def add_zero_days(self, metrics, since):
-        """ Fold zeroes into the daily metrics
-        """
-        today = date.today()
-        d = since
-        i = 0
-        output = []
-
-        while d <= today:
-            if i < len(metrics) and metrics[i].date == d:
-                output.append(metrics[i])
-                i += 1
-            else:
-                # add a zero
-                output.append(DailyPlaceMetrics(date=d))
-            d = d + timedelta(days=1)
-
-        return output
-
-
-class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
+class PlaceListView(AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/list.html'
 
     def dispatch(self, request, **kwargs):
@@ -147,32 +113,9 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
                 .values('cnt'),
                 output_field=IntegerField()
             ))\
-            .annotate(p_breadth_complete=Subquery(
-                DailyWorkMetrics.objects
-                .filter(place_code__iexact=OuterRef('country_id'), locality__exact='')
-                .order_by('-date')
-                .values('p_breadth_complete')[:1],
-                output_field=IntegerField()
-            ))\
             .all()
 
-        # place activity
-        since = now() - timedelta(days=14)
-        metrics = DailyPlaceMetrics.objects\
-            .prefetch_related('country')\
-            .filter(locality=None, date__gte=since)\
-            .order_by('country', 'date')\
-            .all()
-
-        # group by country
-        metrics = {
-            country: list(group)
-            for country, group in groupby(metrics, lambda m: m.country)}
-        self.add_activity_metrics(context['countries'], metrics, since.date())
-
-        # page counts
         for c in context['countries']:
-            c.n_pages = DocumentMetrics.calculate_for_place(c.code)['n_pages'] or 0
             # ensure zeroes
             c.n_works = c.n_works or 0
 
@@ -193,25 +136,12 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
         context['total_works'] = sum(p[1] for p in context['subtypes'])
-        context['total_page_count'] = DocumentMetrics.calculate_for_place(self.place.place_code)['n_pages'] or 0
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
         context['open_tasks'] = open_tasks_data['open_tasks_chart']
         context['open_tasks_by_label'] = open_tasks_data['labels_chart']
         context['total_open_tasks'] = open_tasks_data['total_open_tasks']
-
-        # place activity - 4 weeks
-        since = now() - timedelta(days=7 * 4)
-        metrics = DailyPlaceMetrics.objects \
-            .filter(country=self.country, locality=self.locality, date__gte=since) \
-            .order_by('date') \
-            .all()
-
-        context['activity_history'] = json.dumps([
-            [m.date.isoformat(), m.n_activities]
-            for m in metrics
-        ])
 
         # stubs overview
         context['stubs_count'] = works.filter(stub=True).count()
@@ -224,22 +154,6 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
         context['subsidiary_works_count'] = works.filter(parent_work__isnull=False).count()
         context['primary_works_percentage'] = int((context['primary_works_count'] / (works.count() or 1)) * 100)
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
-
-        # Completeness
-        context['latest_stat'] = DailyWorkMetrics.objects\
-            .filter(place_code=self.place.place_code)\
-            .order_by('-date')\
-            .first()
-
-        # breadth completeness history, most recent 30 days
-        metrics = list(DailyWorkMetrics.objects
-            .filter(place_code=self.place.place_code)
-            .order_by('-date')[:30])
-        # latest last
-        metrics.reverse()
-        if metrics:
-            context['latest_completeness_stat'] = metrics[-1]
-            context['completeness_history'] = [m.p_breadth_complete for m in metrics]
 
         # Latest stats
         since = now() - timedelta(days=30)
@@ -426,105 +340,6 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             return action
 
 
-class PlaceMetricsView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
-    template_name = 'place/metrics.html'
-    tab = 'insights'
-    insights_tab = 'metrics'
-
-    def add_zero_years(self, years):
-        # ensure zeros
-        if years:
-            min_year, max_year = min(years.keys()), max(years.keys())
-            for year in range(min_year, max_year + 1):
-                years.setdefault(year, 0)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['day_options'] = [
-            (30, "30 days"),
-            (90, "3 months"),
-            (180, "6 months"),
-            (360, "12 months"),
-        ]
-        try:
-            days = int(self.request.GET.get('days', 180))
-        except ValueError:
-            days = 180
-        context['days'] = days
-        since = now() - timedelta(days=days)
-
-        metrics = list(DailyWorkMetrics.objects
-            .filter(place_code=self.place.place_code)
-            .filter(date__gte=since)
-            .order_by('date')
-            .all())
-
-        if metrics:
-            context['latest_stat'] = metrics[-1]
-
-        # breadth completeness history
-        context['completeness_history'] = json.dumps([
-            [m.date.isoformat(), m.p_breadth_complete]
-            for m in metrics])
-
-        # works and expressions
-        context['n_works_history'] = json.dumps([
-            [m.date.isoformat(), m.n_works]
-            for m in metrics])
-
-        context['n_expressions_history'] = json.dumps([
-            [m.date.isoformat(), m.n_expressions]
-            for m in metrics])
-
-        # works by year
-        works = Work.objects\
-            .filter(country=self.country, locality=self.locality)\
-            .select_related(None).prefetch_related(None).all()
-        years = Counter([int(w.year) for w in works])
-        self.add_zero_years(years)
-        years = list(years.items())
-        years.sort()
-        context['works_by_year'] = json.dumps(years)
-
-        # amendments by year
-        years = Amendment.objects\
-            .filter(amended_work__country=self.country, amended_work__locality=self.locality)\
-            .annotate(year=Extract('date', 'year'))\
-            .values('year')\
-            .annotate(n=Count('id'))\
-            .order_by()\
-            .all()
-        years = {x['year']: x['n'] for x in years}
-        self.add_zero_years(years)
-        years = list(years.items())
-        years.sort()
-        context['amendments_by_year'] = json.dumps(years)
-
-        # works by subtype
-        def subtype_name(abbr):
-            if not abbr:
-                return 'Act'
-            st = Subtype.for_abbreviation(abbr)
-            return st.name if st else abbr
-        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
-        pairs.sort(key=lambda p: p[1], reverse=True)
-        context['subtypes'] = json.dumps(pairs)
-
-        # place activity
-        metrics = DailyPlaceMetrics.objects \
-            .filter(country=self.country, locality=self.locality, date__gte=since) \
-            .order_by('date') \
-            .all()
-
-        context['activity_history'] = json.dumps([
-            [m.date.isoformat(), m.n_activities]
-            for m in metrics
-        ])
-
-        return context
-
-
 class PlaceExplorerView(PlaceViewBase, ListView):
     template_name = 'place/explorer.html'
     tab = 'insights'
@@ -705,7 +520,7 @@ class PlaceWorksIndexView(PlaceViewBase, TemplateView):
         return exporter.generate_xlsx(works, filename, True)
 
 
-class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
+class PlaceLocalitiesView(PlaceViewBase, TemplateView):
     template_name = 'place/localities.html'
     tab = 'localities'
     js_view = 'PlaceListView'
@@ -723,31 +538,7 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView, PlaceMetricsHelper):
                     .values('cnt'),
                 output_field=IntegerField()
             ))\
-            .annotate(p_breadth_complete=Subquery(
-                DailyWorkMetrics.objects.filter(locality=OuterRef('code'))
-                .order_by('-date')
-                .values('p_breadth_complete')[:1],
-                output_field=IntegerField()
-            ))\
             .all()
-
-        # place activity
-        since = now() - timedelta(days=14)
-        metrics = DailyPlaceMetrics.objects \
-            .filter(country=self.country, date__gte=since) \
-            .exclude(locality=None) \
-            .order_by('locality', 'date') \
-            .all()
-
-        # group by locality
-        metrics = {
-            country: list(group)
-            for country, group in groupby(metrics, lambda m: m.locality)}
-        self.add_activity_metrics(context['localities'], metrics, since.date())
-
-        # page counts
-        for p in context['localities']:
-            p.n_pages = DocumentMetrics.calculate_for_place(p.place_code)['n_pages'] or 0
 
         return context
 
@@ -781,19 +572,18 @@ class PlaceWorksView(PlaceViewBase, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
-        works = context["works"]
-        # using both .only("pk") makes the query much faster; values_list just gives us the pks
+        # using .only("pk") makes the query much faster; values_list just gives us the pks
         work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
         context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
-        context['page_count'] = DocumentMetrics.calculate_for_works(works)['n_pages'] or 0
+        query_url = (self.request.POST or self.request.GET).urlencode()
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
-            '?' + (self.request.POST or self.request.GET).urlencode()
+            '?' + query_url
         )
         context['download_xsl_url'] = (
             reverse('place_works', kwargs={'place': self.kwargs['place']}) +
-            '?' + (self.request.POST or self.request.GET).urlencode() + '&format=xlsx'
+            '?' + query_url + '&format=xlsx'
         )
         return context
 

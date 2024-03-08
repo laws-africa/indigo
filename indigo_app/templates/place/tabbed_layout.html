@@ -46,9 +46,6 @@
         <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
           <i class="fas fa-fw fa-tasks"></i> {% trans "Projects" %} <span class="badge text-bg-light">{{ place.place_workflows.unclosed.count }}</span>
         </a>
-        <a class="nav-item nav-link {% if view.tab == 'insights' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">
-          <i class="fa fa-fw fa-chart-bar"></i> {% trans "Insights" %}
-        </a>
         <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">
           <i class="fas fa-fw fa-clock"></i> {% trans "Activity" %}
         </a>

@@ -41,7 +41,6 @@ urlpatterns = [
     path('places/<str:place>/works/detail/<int:pk>/comments', places.WorkCommentsView.as_view(), name='place_works_work_comments'),
 
     path('places/<str:place>/activity', places.PlaceActivityView.as_view(), name='place_activity'),
-    path('places/<str:place>/metrics', places.PlaceMetricsView.as_view(), name='place_metrics'),
     path('places/<str:place>/explorer', places.PlaceExplorerView.as_view(), name='place_explorer'),
     path('places/<str:place>/settings', places.PlaceSettingsView.as_view(), name='place_settings'),
     path('places/<str:place>/users', places.PlaceUsersView.as_view(), name='place_users'),

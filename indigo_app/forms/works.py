@@ -1406,10 +1406,13 @@ class WorkBulkUpdateForm(forms.Form):
 class WorkBulkApproveForm(forms.Form):
     TASK_CHOICES = [('', 'Create tasks'), ('block', 'Create and block tasks'), ('cancel', 'Create and cancel tasks')]
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    conversion_task_description = forms.CharField(required=False)
     import_task_description = forms.CharField(required=False)
-    update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     gazette_task_description = forms.CharField(required=False)
+    # amendment task descriptions are added per amendment on init
+    update_conversion_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
+    update_gazette_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     update_amendment_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     # TODO: add multichoice label dropdown per task type too
     approve = forms.BooleanField(required=False)
@@ -1419,11 +1422,11 @@ class WorkBulkApproveForm(forms.Form):
         super().__init__(*args, **kwargs)
         if self.is_valid():
             self.broker = broker_class(self.cleaned_data.get('works_in_progress', []))
-            self.add_amendment_task_description_fields(self.broker.amendments)
+            self.add_amendment_task_description_fields()
             self.full_clean()
 
-    def add_amendment_task_description_fields(self, amendments):
-        for amendment in amendments:
+    def add_amendment_task_description_fields(self):
+        for amendment in self.broker.amendments:
             self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
 
     def save_changes(self, request):

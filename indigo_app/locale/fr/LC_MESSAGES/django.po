@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-02-22 08:12\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /[laws-africa.indigo] master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 141\n"
 
 #: forms/tasks.py:21 forms/tasks.py:32
@@ -30,71 +30,59 @@ msgstr "Erreur lors de la création de l'URI FRBR"
 
 #: forms/works.py:364
 msgid "Alias"
-msgstr ""
+msgstr "Alias"
 
 #: models.py:23
 msgid "user"
-msgstr ""
+msgstr "utilisateur"
 
 #: models.py:24 models.py:59
-#, fuzzy
-#| msgid "Country"
 msgid "country"
 msgstr "Pays"
 
 #: models.py:25
-#, fuzzy
-#| msgid "Accept terms"
 msgid "accepted terms"
-msgstr "Accepter les termes"
+msgstr "conditions acceptées"
 
 #: models.py:26
 msgid "Countries the user can work with."
-msgstr ""
+msgstr "Pays avec lesquels l’utilisateur peut travailler."
 
 #: models.py:26
 msgid "permitted countries"
-msgstr ""
+msgstr "pays autorisés"
 
 #: models.py:27
-#, fuzzy
-#| msgid "Language"
 msgid "language"
-msgstr "Langue"
+msgstr "langue"
 
 #: models.py:27
 msgid "Preferred language"
-msgstr ""
+msgstr "Langue préférée"
 
 #: models.py:32
 msgid "editor"
-msgstr ""
+msgstr "éditeur"
 
 #: models.py:33
 msgid "editors"
-msgstr ""
+msgstr "éditeurs"
 
 #: models.py:60
 msgid "name"
-msgstr ""
+msgstr "nom"
 
 #: models.py:60
-#, fuzzy
-#| msgid "initial publication"
 msgid "Name of this publication"
-msgstr "publication initiale"
+msgstr "Nom de cette publication"
 
 #: models.py:65
-#, fuzzy
-#| msgid "Publication"
 msgid "publication"
-msgstr "Publication"
+msgstr "publication"
 
 #: models.py:66
-#, fuzzy
-#| msgid "Publication"
 msgid "publications"
-msgstr "Publication"
+msgstr "publications"
 
 #: templates/403.html:4 templates/403.html:14
 msgid "Permission Denied"
@@ -445,13 +433,13 @@ msgstr "Modifier la tâche"
 #: templates/indigo_api/_task_form_input_file.html:7
 #: templates/indigo_api/_task_form_input_file.html:53
 msgid "Input file"
-msgstr ""
+msgstr "Fichier d'entrée"
 
 #: templates/indigo_api/_task_detail.html:90
 #: templates/indigo_api/_task_form_output_file.html:7
 #: templates/indigo_api/_task_form_output_file.html:33
 msgid "Output file"
-msgstr ""
+msgstr "Fichier de sortie"
 
 #: templates/indigo_api/_task_detail.html:110
 #: templates/indigo_api/_work_comments.html:8
@@ -491,14 +479,12 @@ msgid "Reopen"
 msgstr "Rouvrir"
 
 #: templates/indigo_api/_task_detail.html:210
-#, fuzzy
-#| msgid "Are you sure you want to unassign this task?"
 msgid "Are you sure you want to finish this task?"
-msgstr "Voulez-vous vraiment annuler l'attribution de cette tâche ?"
+msgstr "Êtes-vous sûr de vouloir terminer cette tâche ?"
 
 #: templates/indigo_api/_task_detail.html:213
 msgid "Finish"
-msgstr ""
+msgstr "Finition"
 
 #: templates/indigo_api/_task_detail.html:228
 #, python-format
@@ -516,10 +502,8 @@ msgid "Labels"
 msgstr "Étiquettes"
 
 #: templates/indigo_api/_task_detail.html:282
-#, fuzzy
-#| msgid "Choose locality"
 msgid "Choose labels"
-msgstr "Choisissez la localité"
+msgstr "Choisissez des étiquettes"
 
 #: templates/indigo_api/_task_detail.html:298
 #: templates/indigo_api/workflow_list.html:4
@@ -528,26 +512,20 @@ msgid "Projects"
 msgstr "Projets"
 
 #: templates/indigo_api/_task_detail.html:308
-#, fuzzy
-#| msgid "Choose a project"
 msgid "Choose projects"
-msgstr "Choisissez un projet"
+msgstr "Choisissez des projets"
 
 #: templates/indigo_api/_task_detail.html:334
 msgid "Blocked by"
 msgstr "Bloqué par"
 
 #: templates/indigo_api/_task_detail.html:344
-#, fuzzy
-#| msgid "Choose a work"
 msgid "Choose tasks"
-msgstr "Choisissez une oeuvre"
+msgstr "Choisissez des tâches"
 
 #: templates/indigo_api/_task_detail.html:370
-#, fuzzy
-#| msgid "Blocked"
 msgid "Blocking"
-msgstr "Bloqué"
+msgstr "Blocage"
 
 #: templates/indigo_api/_task_detail.html:374
 msgid "This task is blocking these tasks:"
@@ -608,15 +586,15 @@ msgstr "Nettoyer"
 
 #: templates/indigo_api/_task_form_input_file.html:33
 msgid "Input URL"
-msgstr ""
+msgstr "URL d'entrée"
 
 #: templates/indigo_api/_task_form_input_file.html:49
 msgid "Paste in a URL (preferred), or upload a file."
-msgstr ""
+msgstr "Collez une URL (de préférence) ou téléchargez un fichier."
 
 #: templates/indigo_api/_task_form_output_file.html:49
 msgid "Upload the converted file."
-msgstr ""
+msgstr "Téléchargez le fichier converti."
 
 #: templates/indigo_api/_task_form_timeline_date.html:5
 msgid "Timeline date"
@@ -818,8 +796,6 @@ msgid "Commencements made"
 msgstr "Débuts effectués"
 
 #: templates/indigo_api/_work_comments.html:33
-#, fuzzy
-#| msgid "Add comment"
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
@@ -1039,11 +1015,11 @@ msgstr "Lorsque la date de début est sujette à interprétation, donnez une ré
 #: templates/indigo_api/_work_form_content.html:460
 #: templates/indigo_app/place/_work_detail_overview.html:31
 msgid "Aliases"
-msgstr ""
+msgstr "Alias"
 
 #: templates/indigo_api/_work_form_content.html:481
 msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
-msgstr ""
+msgstr "Alias courants pour ce travail, tels que « Code pénal » ou « POPIA »."
 
 #: templates/indigo_api/_work_form_content.html:495
 #, python-format
@@ -2430,16 +2406,12 @@ msgstr "Les travaux tronqués ne doivent pas avoir de points dans le temps. Supp
 
 #: templates/indigo_api/work_overview.html:168
 #: templates/indigo_app/place/_work_detail.html:68
-#, fuzzy
-#| msgid "Comment"
 msgid "Comments"
-msgstr "Commentaire"
+msgstr "commentaires"
 
 #: templates/indigo_api/work_overview.html:185
-#, fuzzy
-#| msgid "Contributor leaderboard"
 msgid "Contributors"
-msgstr "Classement des contributeurs"
+msgstr "Contributeurs"
 
 #: templates/indigo_api/work_overview.html:192
 #, python-format
@@ -2606,37 +2578,35 @@ msgid "It looks like you're offline or the server is unavailable."
 msgstr "Il semble que vous soyez hors ligne ou que le serveur soit indisponible."
 
 #: templates/indigo_app/actions/_action_amendment.html:4
-#, fuzzy, python-format
-#| msgid "an amendment on the work"
-msgid ""
-"\n"
+#, python-format
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr "un amendement sur le travail"
+msgstr "\n"
+"    un amendement à %(date)s le\n"
+"  "
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
-#, fuzzy, python-format
-#| msgid "Add consolidation date"
-msgid ""
-"\n"
+#, python-format
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr "Ajouter une date de consolidation"
+msgstr "\n"
+"    une consolidation à %(date)s le\n"
+"  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
-#, fuzzy, python-format
-#| msgid "commencement date unknown"
-msgid ""
-"\n"
+#, python-format
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr "date de début inconnue"
+msgstr "\n"
+"    un début à %(date)s le\n"
+"  "
 
 #: templates/indigo_app/actions/_action_document.html:5
-#, fuzzy
-#| msgid "a document on the work"
 msgid "a document on"
-msgstr "un document sur le travail"
+msgstr "un document sur"
 
 #: templates/indigo_app/actions/_action_placesettings.html:4
 msgid "the settings for"
@@ -2651,10 +2621,8 @@ msgid "on this work"
 msgstr "sur ce travail"
 
 #: templates/indigo_app/actions/_action_task.html:19
-#, fuzzy
-#| msgid "None"
 msgid "on"
-msgstr "Aucun"
+msgstr "sur"
 
 #: templates/indigo_app/actions/_action_task.html:30
 #: templates/indigo_app/actions/_action_task.html:42
@@ -2695,20 +2663,16 @@ msgstr "%(org)s est en cours de maintenance. Nous reviendrons bientôt."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
 
@@ -2738,31 +2702,21 @@ msgid "Amendment tasks will be created"
 msgstr "Des tâches de modification seront créées"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:108
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                            Task description: %(title)s (%(numbered_title)s) – %(date)s\n"
-#| "                          "
-msgid ""
-"\n"
+#, python-format
+msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
-"\n"
-"                            Description de la tâche : %(title)s (%(numbered_title)s) – %(date)s\n"
-"                          "
+msgstr "\n"
+"                              Description de la tâche : %(amended_title)s (%(amended_numbered_title)s) modifiée par %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:112
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) au %(date)s.\n"
-"\n"
+msgstr "\n"
+"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) au %(date)s.\n\n"
 "L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:145
@@ -3045,38 +2999,30 @@ msgid "Your account"
 msgstr "Votre compte"
 
 #: templates/place/_place_cards.html:14
-msgid ""
-"\n"
+msgid "\n"
 "                  Work\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Works\n"
 "                "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                  Travail\n"
 "                "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                  Travaux\n"
 "                "
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                  Task\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Tasks\n"
 "                "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                  Tâche\n"
 "                "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                  Tâches\n"
 "                "
 
@@ -3085,20 +3031,16 @@ msgid "As at date"
 msgstr "A la date"
 
 #: templates/place/_place_cards.html:43
-msgid ""
-"\n"
+msgid "\n"
 "                  Page\n"
 "                "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                  Pages\n"
 "                "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                  page\n"
 "                "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                  pages\n"
 "                "
 
@@ -3398,32 +3340,3 @@ msgstr "Clause de non-responsabilité"
 msgid "Principal"
 msgstr "Principal"
 
-#~ msgid "Import content"
-#~ msgstr "Importer du contenu"
-
-#~ msgid "Link Gazette"
-#~ msgstr "Lien vers la Gazette"
-
-#~ msgid "Apply amendment"
-#~ msgstr "Appliquer la modification"
-
-#~ msgid "by the work"
-#~ msgstr "par le travail"
-
-#~ msgid "an expression date"
-#~ msgstr "une date d'expression"
-
-#~ msgid "on the work"
-#~ msgstr "sur le travail"
-
-#~ msgid "a commencement on the work"
-#~ msgstr "un début de travaux"
-
-#~ msgid "the document"
-#~ msgstr "le document"
-
-#~ msgid "the task"
-#~ msgstr "la tâche"
-
-#~ msgid "the work"
-#~ msgstr "l'oeuvre"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-02-22 07:11\n"
+"PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -14,90 +14,76 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: pt\n"
-"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /[laws-africa.indigo] master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 143\n"
 
 #: models.py:39
 msgid "user"
-msgstr ""
+msgstr "usuário"
 
 #: models.py:40
 msgid "bio"
-msgstr ""
+msgstr "biografia"
 
 #: models.py:40
 msgid "A short bio"
-msgstr ""
+msgstr "Uma breve biografia"
 
 #: models.py:41
-#, fuzzy
-#| msgid "Qualifications"
 msgid "qualifications"
-msgstr "Qualificações"
+msgstr "qualificações"
 
 #: models.py:41 templates/indigo_social/user_layout.html:66
 msgid "Qualifications"
 msgstr "Qualificações"
 
 #: models.py:42
-#, fuzzy
-#| msgid "Skills"
 msgid "skills"
-msgstr "Habilidades"
+msgstr "habilidades"
 
 #: models.py:42 templates/indigo_social/user_layout.html:61
 msgid "Skills"
 msgstr "Habilidades"
 
 #: models.py:43
-#, fuzzy
-#| msgid "Organisations"
 msgid "organisations"
-msgstr "Organizações"
+msgstr "organizações"
 
 #: models.py:43 templates/indigo_social/user_layout.html:56
 msgid "Organisations"
 msgstr "Organizações"
 
 #: models.py:44
-#, fuzzy
-#| msgid "Specialisations"
 msgid "specialisations"
-msgstr "Especializações"
+msgstr "especializações"
 
 #: models.py:44 templates/indigo_social/user_layout.html:71
 msgid "Specialisations"
 msgstr "Especializações"
 
 #: models.py:45
-#, fuzzy
-#| msgid "Areas of law"
 msgid "areas of law"
-msgstr "Áreas do direito"
+msgstr "áreas do direito"
 
 #: models.py:45 templates/indigo_social/user_layout.html:76
 msgid "Areas of law"
 msgstr "Áreas do direito"
 
 #: models.py:46
-#, fuzzy
-#| msgid "Profile"
 msgid "profile photo"
-msgstr "Perfil"
+msgstr "foto do perfil"
 
 #: models.py:47
 msgid "profile photo nonce"
-msgstr ""
+msgstr "foto de perfil nonce"
 
 #: models.py:48
 msgid "twitter username"
-msgstr ""
+msgstr "nome de usuário do Twitter"
 
 #: models.py:49
-#, fuzzy
-#| msgid "Edit profile"
 msgid "linkedin profile"
-msgstr "Editar Perfil"
+msgstr "Perfil do linkedIn"
 
 #: templates/indigo_app/user_account/edit.html:4
 msgid "Edit Profile"
@@ -255,3 +241,4 @@ msgstr "Sair"
 #: templates/main.html:27
 msgid "Log in"
 msgstr "Efetuar Login"
+

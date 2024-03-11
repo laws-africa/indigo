@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-02-22 07:11\n"
+"PO-Revision-Date: 2024-03-08 06:06\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /[laws-africa.indigo] master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 143\n"
 
 #: models.py:39
@@ -241,3 +241,4 @@ msgstr ""
 #: templates/main.html:27
 msgid "Log in"
 msgstr ""
+

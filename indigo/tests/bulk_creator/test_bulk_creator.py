@@ -48,7 +48,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertFalse(row1.work.commenced)
         self.assertEqual(['Uncommenced', 'Principal work'], row1.notes)
         self.assertEqual([], row1.relationships)
-        self.assertEqual(['link gazette', 'import content'], row1.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], row1.tasks)
 
         row2 = works[1]
         self.assertEqual('success', row2.status)
@@ -73,7 +73,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertTrue(row3.work.principal)
         self.assertEqual(['Uncommenced', 'Principal work'], row3.notes)
         self.assertEqual([], row3.relationships)
-        self.assertEqual(['link gazette', 'import content'], row3.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], row3.tasks)
 
         # work with commencement_date set to '9999-01-01' is imported as 
         # commenced but without a commencement_date
@@ -90,7 +90,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertTrue(row4.work.principal)
         self.assertEqual(['Unknown commencement date', 'Principal work'], row4.notes)
         self.assertEqual([], row4.relationships)
-        self.assertEqual(['link gazette', 'import content'], row4.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], row4.tasks)
 
         row5 = works[4]
         self.assertEqual('success', row5.status)
@@ -105,7 +105,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertTrue(row5.work.principal)
         self.assertEqual(['Unknown commencement date', 'Principal work'], row5.notes)
         self.assertEqual([], row5.relationships)
-        self.assertEqual(['link gazette', 'import content'], row5.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], row5.tasks)
 
         # not actually created though
         with self.assertRaises(Work.DoesNotExist):
@@ -132,9 +132,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], row1.notes)
         self.assertEqual([], row1.relationships)
         tasks = work1.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         work2 = Work.objects.get(frbr_uri='/akn/za/act/2020/2')
@@ -167,23 +168,26 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], row3.notes)
         self.assertEqual([], row3.relationships)
         tasks = work3.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
     def test_block_cancel_preview(self):
-        works = self.get_works(True, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_gazette_tasks': True})
+        works = self.get_works(True, 'basic.csv', form_data={'block_import_tasks': True, 'block_conversion_tasks': True, 'cancel_gazette_tasks': True})
 
         row1 = works[0]
-        self.assertEqual(['link gazette (CANCELLED)', 'import content (BLOCKED)'], row1.tasks)
+        self.assertEqual(['link gazette (CANCELLED)', 'convert document (BLOCKED)', 'import content (BLOCKED)'], row1.tasks)
 
     def test_block_cancel_live(self):
-        self.get_works(False, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_gazette_tasks': True})
+        self.get_works(False, 'basic.csv', form_data={'block_import_tasks': True, 'block_conversion_tasks': True, 'cancel_gazette_tasks': True})
 
         work1 = Work.objects.get(frbr_uri='/akn/za/act/2020/1')
+        conversion_task1 = work1.tasks.get(title='Convert document')
         import_task1 = work1.tasks.get(title='Import content')
         gazette_task1 = work1.tasks.get(title='Link gazette')
+        self.assertEqual('blocked', conversion_task1.state)
         self.assertEqual('blocked', import_task1.state)
         self.assertEqual('cancelled', gazette_task1.state)
 
@@ -193,7 +197,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         works = self.get_works(True, 'basic.csv', form_data={'block_import_tasks': True, 'cancel_import_tasks': True})
 
         row1 = works[0]
-        self.assertEqual(['link gazette', 'import content (CANCELLED)'], row1.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content (CANCELLED)'], row1.tasks)
 
     def test_block_and_cancel_live(self):
         """ Both blocking and cancelling a task results in it being cancelled.
@@ -358,7 +362,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Subleg under /akn/za/act/2020/1 – Parent (about to be imported)'], row2.relationships)
 
         row3 = works[2]
-        self.assertEqual(['link gazette', 'import content', 'link primary work'], row3.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content', 'link primary work'], row3.tasks)
 
         # live
         works = self.get_works(False, 'parents.csv')
@@ -380,7 +384,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
             'Primary work of /akn/za/act/2020/3 (about to be imported)'],
             row1.relationships)
         # child not found
-        self.assertEqual(3, len(row1.tasks))
+        self.assertEqual(4, len(row1.tasks))
+        self.assertIn('convert document', row1.tasks)
         self.assertIn('import content', row1.tasks)
         self.assertIn('link gazette', row1.tasks)
         self.assertIn('link subleg', row1.tasks)
@@ -441,7 +446,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # uncommenced
         self.assertEqual(['Uncommenced', 'Principal work'], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
-        self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], uncommenced.tasks)
 
         # both
         self.assertEqual(['Principal work'], both.notes)
@@ -449,12 +454,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
                           'Commencement notice 1 (about to be imported) '
                           'on 2020-06-05'],
                          both.relationships)
-        self.assertEqual(['link gazette', 'import content'], both.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], both.tasks)
 
         # date only
         self.assertEqual(['Principal work'], date_only.notes)
         self.assertEqual([], date_only.relationships)
-        self.assertEqual(['link gazette', 'import content'], date_only.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], date_only.tasks)
 
         # commenced_by only
         self.assertEqual(['Unknown commencement date', 'Principal work'], commenced_by_only.notes)
@@ -462,7 +467,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
                           'Commencement notice 1 (about to be imported) '
                           'on (unknown)'],
                          commenced_by_only.relationships)
-        self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], commenced_by_only.tasks)
 
         # commencement notice
         self.assertEqual(['Stub'], commencement_notice.notes)
@@ -472,7 +477,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # error
         self.assertEqual(['Principal work'], error.notes)
         self.assertEqual([], error.relationships)
-        self.assertEqual(['link gazette', 'import content', 'link commencement passive'], error.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content', 'link commencement passive'], error.tasks)
 
         # commenced_by_and_commenced_on_date
         self.assertEqual(['Principal work'], commenced_by_and_commenced_on_date.notes)
@@ -480,12 +485,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
                           'Commencement notice 1 (about to be imported) '
                           'on 2020-08-01'],
                          commenced_by_and_commenced_on_date.relationships)
-        self.assertEqual(['link gazette', 'import content'], commenced_by_and_commenced_on_date.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], commenced_by_and_commenced_on_date.tasks)
 
         # commenced_on_date_only
         self.assertEqual(['Principal work'], commenced_on_date_only.notes)
         self.assertEqual([], commenced_on_date_only.relationships)
-        self.assertEqual(['link gazette', 'import content'], commenced_on_date_only.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], commenced_on_date_only.tasks)
 
         # live
         works = self.get_works(False, 'commencements_passive.csv')
@@ -505,9 +510,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
         tasks = uncommenced.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # both
@@ -519,9 +525,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Commenced by /akn/za/act/2020/5 (Commencement notice 1) on 2020-06-05'],
                          both.relationships)
         tasks = both.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # date only
@@ -532,9 +539,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], date_only.notes)
         self.assertEqual([], date_only.relationships)
         tasks = date_only.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commenced_by only
@@ -545,9 +553,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], both.notes)
         self.assertEqual(['Commenced by /akn/za/act/2020/5 (Commencement notice 1) on (unknown)'], commenced_by_only.relationships)
         tasks = commenced_by_only.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commencement notice
@@ -569,9 +578,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], error.notes)
         self.assertEqual([], error.relationships)
         tasks = error.work.tasks.all()
-        self.assertEqual(3, len(tasks))
+        self.assertEqual(4, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
         self.assertIn('Link commencement (passive)', task_titles)
 
@@ -584,9 +594,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Commenced by /akn/za/act/2020/5 (Commencement notice 1) on 2020-08-01'],
                          commenced_by_and_commenced_on_date.relationships)
         tasks = commenced_by_and_commenced_on_date.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commenced_on_date_only
@@ -597,9 +608,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], commenced_on_date_only.notes)
         self.assertEqual([], commenced_on_date_only.relationships)
         tasks = commenced_on_date_only.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commenced later, preview
@@ -634,9 +646,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual(['Commenced by /akn/za/act/2020/9 (Commencement notice 2) on 2020-09-01'],
                          now_commenced.relationships)
         tasks = actual.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
     def test_link_commencements_active(self):
@@ -652,17 +665,17 @@ class BaseBulkCreatorTest(testcases.TestCase):
         # uncommenced
         self.assertEqual(['Uncommenced', 'Principal work'], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
-        self.assertEqual(['link gazette', 'import content'], uncommenced.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], uncommenced.tasks)
 
         # both
         self.assertEqual(['Principal work'], both.notes)
         self.assertEqual([], both.relationships)
-        self.assertEqual(['link gazette', 'import content'], both.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], both.tasks)
 
         # commenced_by only
         self.assertEqual(['Uncommenced', 'Principal work'], commenced_by_only.notes)
         self.assertEqual([], commenced_by_only.relationships)
-        self.assertEqual(['link gazette', 'import content'], commenced_by_only.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], commenced_by_only.tasks)
 
         # commencement notice 1
         self.assertEqual(['Stub', 'Duplicate in batch'], commencement_notice_1.notes)
@@ -695,9 +708,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], uncommenced.notes)
         self.assertEqual([], uncommenced.relationships)
         tasks = uncommenced.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # both
@@ -710,9 +724,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], both.notes)
         self.assertEqual([], both.relationships)
         tasks = both.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commenced_by only
@@ -722,9 +737,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], commenced_by_only.notes)
         self.assertEqual([], commenced_by_only.relationships)
         tasks = commenced_by_only.work.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         # commencement notice 1
@@ -775,9 +791,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
                          now_commenced.commencement_date)
         self.assertEqual(new_commencement_notice.work, now_commenced.commencing_work)
         tasks = now_commenced.tasks.all()
-        self.assertEqual(2, len(tasks))
+        self.assertEqual(3, len(tasks))
         task_titles = [t.title for t in tasks]
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
 
         self.assertEqual('success', new_commencement_notice.status)
@@ -806,11 +823,11 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Principal work'], main.notes)
         self.assertEqual([], main.relationships)
-        self.assertEqual(['link gazette', 'import content'], main.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main.tasks)
 
         self.assertEqual(['Principal work'], other_main.notes)
         self.assertEqual([], other_main.relationships)
-        self.assertEqual(['link gazette', 'import content'], other_main.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], other_main.tasks)
 
         self.assertEqual(
             ['Stub', "An 'Apply amendment' task will be created on /akn/za/act/2020/1 – Main (about to be imported)"],
@@ -900,10 +917,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], amend_1.relationships)
         self.assertEqual([], amend_2.relationships)
         self.assertEqual([], amend_3.relationships)
-        self.assertEqual(['link gazette', 'import content'], main.tasks)
-        self.assertEqual(['link gazette', 'import content'], dupe1.tasks)
-        self.assertEqual(['link gazette', 'import content'], dupe2.tasks)
-        self.assertEqual(['link gazette', 'import content', 'link amendment passive'], dupe3.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], dupe1.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], dupe2.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content', 'link amendment passive'], dupe3.tasks)
         self.assertEqual(['link gazette'], amend_1.tasks)
         self.assertEqual(['link gazette'], amend_2.tasks)
         self.assertEqual(['link gazette'], amend_3.tasks)
@@ -956,8 +973,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         tasks = main.work.tasks.all()
         task_titles = [t.title for t in tasks]
-        self.assertEqual(5, len(tasks))
+        self.assertEqual(6, len(tasks))
         self.assertIn('Link gazette', task_titles)
+        self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
         self.assertIn('Link amendment (passive)', task_titles)
         self.assertEqual(2, task_titles.count('Apply amendment'))
@@ -1074,15 +1092,15 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Principal work'], main1.notes)
         self.assertEqual(['Repealed by /akn/za/act/2020/2 (about to be imported)'], main1.relationships)
-        self.assertEqual(['link gazette', 'import content'], main1.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main1.tasks)
 
         self.assertEqual(['Principal work'], main2.notes)
         self.assertEqual(['Repealed by /akn/za/act/2020/4 (about to be imported)'], main2.relationships)
-        self.assertEqual(['link gazette', 'import content'], main2.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main2.tasks)
 
         self.assertEqual(['Principal work'], main3.notes)
         self.assertEqual([], main3.relationships)
-        self.assertEqual(['link gazette', 'import content', 'no repealed by match'], main3.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content', 'no repealed by match'], main3.tasks)
 
         # live
         works = self.get_works(False, 'repeals_passive.csv')
@@ -1124,7 +1142,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Principal work'], main1.notes)
         self.assertEqual([], main1.relationships)
-        self.assertEqual(['link gazette', 'import content'], main1.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main1.tasks)
 
         self.assertEqual(['Stub'], repeal1.notes)
         self.assertEqual(['Repeals /akn/za/act/2020/1 (about to be imported)'], repeal1.relationships)
@@ -1137,7 +1155,7 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         self.assertEqual(['Principal work'], main2.notes)
         self.assertEqual([], main2.relationships)
-        self.assertEqual(['link gazette', 'import content'], main2.tasks)
+        self.assertEqual(['link gazette', 'convert document', 'import content'], main2.tasks)
 
         self.assertEqual(['Uncommenced', 'Stub'], repeal2.notes)
         self.assertEqual(['Repeals /akn/za/act/2020/3 (about to be imported)'], repeal2.relationships)
@@ -1229,10 +1247,10 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertIn(communications, w1_taxonomies)
         self.assertEqual(1, len(w2_taxonomies))
         self.assertIn(children, w2_taxonomies)
-        self.assertEqual(3, len(w2_tasks))
+        self.assertEqual(4, len(w2_tasks))
         self.assertIn('Link taxonomy', [t.title for t in w2_tasks])
         self.assertEqual(0, len(w3_taxonomies))
-        self.assertEqual(3, len(w3_tasks))
+        self.assertEqual(4, len(w3_tasks))
         self.assertIn('Link taxonomy', [t.title for t in w3_tasks])
         self.assertEqual(2, len(w4_taxonomies))
         self.assertIn(children, w4_taxonomies)
@@ -1246,8 +1264,8 @@ class BaseBulkCreatorTest(testcases.TestCase):
         works = self.get_works(False, 'taxonomies.csv')
         w2_tasks = works[1].work.tasks.all()
         w3_tasks = works[2].work.tasks.all()
-        self.assertEqual(3, len(w2_tasks))
-        self.assertEqual(3, len(w3_tasks))
+        self.assertEqual(4, len(w2_tasks))
+        self.assertEqual(4, len(w3_tasks))
 
     def test_subtypes(self):
         # dry run

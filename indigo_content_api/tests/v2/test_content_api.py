@@ -143,6 +143,17 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(len(response.data['results']), 1)
 
+    def test_published_listing_filters(self):
+        response = self.client.get(self.api_path + '/akn/za/', {'updated_at__lte': '2015-02-20T00:00:00Z'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.accepted_media_type, 'application/json')
+        self.assertEqual(len(response.data['results']), 3)
+
+        response = self.client.get(self.api_path + '/akn/za/', {'updated_at__gte': '2015-06-01T00:00:00Z'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.accepted_media_type, 'application/json')
+        self.assertEqual(len(response.data['results']), 5)
+
     @patch.object(PDFExporter, 'render', return_value='pdf-content')
     def test_published_listing_pdf(self, mock):
         response = self.client.get(self.api_path + '/akn/za/act.pdf')

@@ -29,6 +29,7 @@
               {% for work in form.broker.works %}
                 <li>
                   <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                  <span class="text-muted">{{ work.frbr_uri }}</span>
                   {% include 'indigo_api/_work_info_badges.html' %}
                 </li>
               {% endfor %}
@@ -44,6 +45,7 @@
               {% for work in form.broker.ignored_works %}
                 <li>
                   <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                  <span class="text-muted">{{ work.frbr_uri }}</span>
                   {% include 'indigo_api/_work_info_badges.html' %}
                 </li>
               {% endfor %}
@@ -54,18 +56,36 @@
           {% if form.broker.import_task_works %}
             <div class="card mb-3">
               <h5 class="card-header">
-                {% trans "Import tasks will be created" %}
+                {% trans "Conversion and Import tasks will be created – Import tasks will be blocked" %}
               </h5>
               <div class="card-body">
                 <ul>
                   {% for work in form.broker.import_task_works %}
                     <li>
                       <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                      <span class="text-muted">{{ work.frbr_uri }}</span>
                     </li>
                   {% endfor %}
                 </ul>
                 <div>
-                  <label for="{{ form.import_task_description.id_for_label }}">{% trans "Task description" %}</label>
+                  <label for="{{ form.conversion_task_description.id_for_label }}">{% trans "Task description: Conversion tasks" %}</label>
+                  {% trans "Convert the input file into a .docx file and remove automatic numbering." as description_default %}
+                  <textarea
+                      id="{{ form.conversion_task_description.id_for_label }}"
+                      name="{{ form.conversion_task_description.name }}"
+                      class="form-control mt-2"
+                      required
+                  >{{ description_default }}</textarea>
+                </div>
+                <div class="mt-3">
+                  {% for opt in form.update_conversion_tasks %}
+                    <div>
+                      {{ opt }}
+                    </div>
+                  {% endfor %}
+                </div>
+                <div class="mt-3">
+                  <label for="{{ form.import_task_description.id_for_label }}">{% trans "Task description: Import tasks" %}</label>
                   {% trans "Import the content for this work at the appropriate date — usually the publication or consolidation date." as description_default %}
                   <textarea id="{{ form.import_task_description.id_for_label }}" name="{{ form.import_task_description.name }}" class="form-control mt-2" required
                   >{{ description_default }}</textarea>
@@ -90,6 +110,7 @@
                   {% for work in form.broker.gazette_task_works %}
                     <li>
                       <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                      <span class="text-muted">{{ work.frbr_uri }}</span>
                     </li>
                   {% endfor %}
                 </ul>
@@ -119,6 +140,7 @@
                   <div class="mb-3 list-group">
                     <div class="list-group-item">
                       <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
+                      <span class="text-muted">{{ work.frbr_uri }}</span>
                       {% for amendment in amendments %}
                         <div class="mt-3">
                           <label for="amendment_task_description_id_{{ amendment.pk }}">

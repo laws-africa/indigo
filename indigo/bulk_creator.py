@@ -414,9 +414,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def create_main_tasks(self):
         works = Work.objects.filter(pk__in=[w['work'].pk for w in self.works if hasattr(w, 'work')])
         broker = self.broker_class(works)
-        broker.create_tasks(self.user, self.get_broker_data(broker))
-
-    def get_broker_data(self, broker):
         # fake form data for the broker
         data = {
             'conversion_task_description': _('Convert the input file into a .docx file and remove automatic numbering.'),
@@ -435,6 +432,7 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 'numbered_title': amendment.amending_work.numbered_title(),
                 'date': amendment.date,
             }
+        broker.create_tasks(self.user, data)
 
     def update_relationships(self):
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)

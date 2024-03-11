@@ -16,6 +16,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
+from indigo.tasks import TaskBroker
 from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
     VocabularyTopic, TaxonomyTopic, TaskLabel, ArbitraryExpressionDate
 from indigo_api.signals import work_changed
@@ -223,6 +224,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     workflow = None
     taxonomy_topic = None
+    block_conversion_tasks = False
+    cancel_conversion_tasks = False
     block_import_tasks = False
     cancel_import_tasks = False
     block_gazette_tasks = False
@@ -253,6 +256,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     _gsheets_secret = None
 
     GSHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+
+    broker_class = TaskBroker
 
     def setup(self, country, locality, request):
         self.country = country
@@ -381,6 +386,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def create_works(self, table, dry_run, form_data):
         self.workflow = form_data.get('workflow')
         self.taxonomy_topic = form_data.get('taxonomy_topic')
+        self.block_conversion_tasks = form_data.get('block_conversion_tasks')
+        self.cancel_conversion_tasks = form_data.get('cancel_conversion_tasks')
         self.block_import_tasks = form_data.get('block_import_tasks')
         self.cancel_import_tasks = form_data.get('cancel_import_tasks')
         self.block_gazette_tasks = form_data.get('block_gazette_tasks')
@@ -399,8 +406,33 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         self.check_preview_duplicates()
         self.update_relationships()
+        if not self.dry_run:
+            self.create_main_tasks()
 
         return self.works
+
+    def create_main_tasks(self):
+        works = Work.objects.filter(pk__in=[w.work.pk for w in self.works if hasattr(w, 'work')])
+        broker = self.broker_class(works)
+        # fake form data for the broker
+        data = {
+            'conversion_task_description': _('Convert the input file into a .docx file and remove automatic numbering.'),
+            'update_conversion_tasks': 'cancel' if self.cancel_conversion_tasks else 'block' if self.block_conversion_tasks else None,
+            'import_task_description': _('Import the content for this work at the appropriate date — usually the publication or consolidation date.'),
+            'update_import_tasks': 'cancel' if self.cancel_import_tasks else 'block' if self.block_import_tasks else None,
+            'gazette_task_description': _('Find and link the Gazette (original publication document) for this work.'),
+            'update_gazette_tasks': 'cancel' if self.cancel_gazette_tasks else 'block' if self.block_gazette_tasks else None,
+            'update_amendment_tasks': 'cancel' if self.cancel_amendment_tasks else 'block' if self.block_amendment_tasks else None,
+        }
+        for amendment in broker.amendments:
+            data[f'amendment_task_description_{amendment.pk}'] = _('''Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.
+
+The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.''') % {
+                'amending_title': amendment.amending_work.title,
+                'numbered_title': amendment.amending_work.numbered_title(),
+                'date': amendment.date,
+            }
+        broker.create_tasks(self.user, data)
 
     def update_relationships(self):
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
@@ -466,6 +498,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
                 # create import task for principal works
                 if work.principal:
+                    self.create_task(work, row, task_type='convert-document')
                     self.create_task(work, row, task_type='import-content')
 
                 row.work = work
@@ -946,6 +979,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def preview_task(self, row, task_type):
         task_preview = task_type.replace('-', ' ')
+        if task_type == 'convert-document':
+            if self.cancel_conversion_tasks:
+                task_preview += ' (CANCELLED)'
+            elif self.block_conversion_tasks:
+                task_preview += ' (BLOCKED)'
         if task_type == 'import-content':
             if self.cancel_import_tasks:
                 task_preview += ' (CANCELLED)'
@@ -959,17 +997,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row.tasks.append(task_preview)
 
     def add_task_title_description(self, task, work, row, task_type, repealing_work, repealed_work, amended_work, amendment, subleg, main_work):
-        if task_type == 'link-gazette':
-            task.title = _('Link gazette')
-            task.description = _('''This work's gazette (original publication document) couldn't be linked automatically.
-
-Find it and upload it manually.''')
-
-        elif task_type == 'import-content':
-            task.title = _('Import content')
-            task.description = _('Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).')
-
-        elif task_type == 'link-commencement-passive':
+        if task_type == 'link-commencement-passive':
             task.title = _('Link commencement (passive)')
             task.description = _('''It looks like this work was commenced by "%(commenced_by)s" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
@@ -1047,16 +1075,6 @@ Please link the amendment manually.''') % {
 Please link the amendment manually (and apply it) when this work comes into force.''') % {
                 'amended_title': amended_work.title,
                 'numbered_title': amended_work.numbered_title(),
-            }
-
-        elif task_type == 'apply-amendment':
-            task.title = _('Apply amendment')
-            task.description = _('''Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.
-
-The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.''') % {
-                'amending_title': amendment.amending_work.title,
-                'numbered_title': amendment.amending_work.numbered_title(),
-                'date': amendment.date,
             }
 
         elif task_type == 'no-repealed-by-match':
@@ -1172,6 +1190,10 @@ Possible reasons:
         if self.dry_run:
             return self.preview_task(row, task_type)
 
+        # these will be done by the task broker: convert-document, import-content, link-gazette, apply-amendment
+        elif task_type in dict(Task.MAIN_CODES):
+            return
+
         task = Task()
         task.country = self.country
         task.locality = self.locality
@@ -1191,24 +1213,6 @@ Possible reasons:
         if self.workflow:
             task.workflows.set([self.workflow])
             task.save()
-
-        if task_type == 'import-content':
-            if self.block_import_tasks:
-                task.block(self.user)
-            if self.cancel_import_tasks:
-                task.cancel(self.user)
-
-        if task_type == 'link-gazette':
-            if self.block_gazette_tasks:
-                task.block(self.user)
-            if self.cancel_gazette_tasks:
-                task.cancel(self.user)
-
-        if task_type == 'apply-amendment':
-            if self.block_amendment_tasks:
-                task.block(self.user)
-            if self.cancel_amendment_tasks:
-                task.cancel(self.user)
 
         if 'pending-commencement' in task_type:
             # add the `pending commencement` label, if it exists

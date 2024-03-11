@@ -110,6 +110,16 @@
         {% endblock %}
 
         <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="{{ form.block_conversion_tasks.id_for_label }}" name="{{ form.block_conversion_tasks.name }}" {% if form.block_conversion_tasks.data %}checked{% endif %}>
+          <label class="form-check-label" for="{{ form.block_conversion_tasks.id_for_label }}">{% trans "Block ALL 'Convert document' tasks on creation" %}</label>
+        </div>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="{{ form.cancel_conversion_tasks.id_for_label }}" name="{{ form.cancel_conversion_tasks.name }}" {% if form.cancel_conversion_tasks.data %}checked{% endif %}>
+          <label class="form-check-label" for="{{ form.cancel_conversion_tasks.id_for_label }}">{% trans "Cancel ALL 'Convert document' tasks on creation (this will override blocking them)" %}</label>
+        </div>
+
+        <div class="form-check mb-2">
           <input class="form-check-input" type="checkbox" id="{{ form.block_import_tasks.id_for_label }}" name="{{ form.block_import_tasks.name }}" {% if form.block_import_tasks.data %}checked{% endif %}>
           <label class="form-check-label" for="{{ form.block_import_tasks.id_for_label }}">{% trans "Block ALL 'Import content' tasks on creation" %}</label>
         </div>

@@ -412,7 +412,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self.works
 
     def create_main_tasks(self):
-        works = Work.objects.filter(pk__in=[w['work'].pk for w in self.works if hasattr(w, 'work')])
+        works = Work.objects.filter(pk__in=[w.work.pk for w in self.works if hasattr(w, 'work')])
         broker = self.broker_class(works)
         # fake form data for the broker
         data = {

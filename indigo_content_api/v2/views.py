@@ -6,6 +6,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.versioning import NamespaceVersioning
+from django_filters.rest_framework import DjangoFilterBackend
 
 from cobalt import FrbrUri
 
@@ -152,6 +153,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     serializer_class = PublishedDocumentSerializer
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer, AkomaNtosoRenderer, HTMLRenderer, ZIPRenderer)
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = {
+        "updated_at": ["exact", "gte", "lte"],
+        "created_at": ["exact", "gte", "lte"],
+    }
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format

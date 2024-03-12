@@ -1509,13 +1509,14 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             if commencement_work_id:
+                commenced_works = {form.cleaned_data["commenced_work"] for form in formset}
                 work = Work.objects.filter(pk=commencement_work_id).first()
                 if work:
                     if prefix == "commencements_made":
                         initial.append({
                             "commenced_work": work,
                             "commencing_work": self.work,
-                            "date": self.work.commencement_date,
+                            "date": self.work.commencement_date if work not in commenced_works else None,
                         })
 
         else:

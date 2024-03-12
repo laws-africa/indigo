@@ -1515,7 +1515,7 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
                         initial.append({
                             "commenced_work": work,
                             "commencing_work": self.work,
-                            "date": work.commencement_date,
+                            "date": self.work.commencement_date,
                         })
 
         else:

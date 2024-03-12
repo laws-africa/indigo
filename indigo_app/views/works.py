@@ -1433,6 +1433,7 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                 })
             if amendment_work_id:
                 amending_works = {form.cleaned_data["amending_work"] for form in formset}
+                amended_works = {form.cleaned_data["amended_work"] for form in formset}
                 work = Work.objects.filter(pk=amendment_work_id).first()
                 if work:
                     if prefix == "amended_by":
@@ -1445,7 +1446,7 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                         initial.append({
                             "amended_work": work,
                             "amending_work": self.work,
-                            "date": self.work.commencement_date if self.work not in amending_works else None,
+                            "date": self.work.commencement_date if work not in amended_works else None,
                         })
 
         else:

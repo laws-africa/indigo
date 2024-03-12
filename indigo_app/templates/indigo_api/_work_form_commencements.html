@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="mb-3 row">
+  <label class="col-2 col-form-label">{% trans 'Commencements' %}</label>
+  <div class="col">
+
+    <div id="work-form-commencements-formset">
+      {% include 'indigo_api/_work_form_commencements_form.html' with formset=form.commencements_formset prefix="commencements" %}
+    </div>
+
+    <div class="mt-3 row">
+      {% url 'work_form_commencements' work.frbr_uri as commencements_url %}
+      <div class="col">
+        <button
+            type="submit"
+            class="btn btn-primary"
+            hx-post="{% url 'work_form_commencements' work.frbr_uri %}"
+            hx-target="#work-form-commencements-formset"
+            hx-include="#work-form-commencements"
+        >{% trans 'Add commencement' %}</button>
+      </div>
+    </div>
+  </div>
+</div>

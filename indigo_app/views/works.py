@@ -32,7 +32,8 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
+    CommencementsBaseFormset
 
 from .base import PlaceViewBase
 
@@ -1467,14 +1468,13 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         return context_data
 
 
-class WorkFormCommencementsView(WorkViewBase, TemplateView):
+class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_commencements_made_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         commencement_made = self.request.POST.get("commencements_made")
         deleting = self.request.GET.get("delete")
         commencement_work_id = None
@@ -1526,6 +1526,81 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             return context_data
 
         context_data['formset'] = CommencementsMadeBaseFormset(
+            user=self.request.user,
+            work=self.work,
+            prefix=prefix,
+            initial=initial,
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
+        )
+        context_data["prefix"] = prefix
+        return context_data
+
+
+class WorkFormCommencementsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_commencements_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        commencements = self.request.POST.get("commencements")
+        deleting = self.request.GET.get("delete")
+        commencing_work_id = None
+        prefix = "commencements"
+
+        if commencements:
+            commencing_work_id = commencements
+            # prefix = "commencements"
+        elif deleting:
+            prefix = deleting
+
+        context_data = super().get_context_data(**kwargs)
+        formset = CommencementsBaseFormset(self.request.POST,
+                                           user=self.request.user,
+                                           work=self.work,
+                                           prefix=prefix,
+                                           form_kwargs={"work": self.work,
+                                                        "user": self.request.user})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not form.cleaned_data.get('id'):
+                        continue
+                initial.append({
+                    "commenced_work": form.cleaned_data["commenced_work"],
+                    "commencing_work": form.cleaned_data["commencing_work"],
+                    "note": form.cleaned_data["note"],
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            if commencing_work_id:
+                commencing_works = {form.cleaned_data["commencing_work"] for form in formset}
+                work = Work.objects.filter(pk=commencing_work_id).first()
+                if work:
+                    if prefix == "commencements":
+                        initial.append({
+                            "commenced_work": self.work,
+                            "commencing_work": work,
+                            "date": work.commencement_date if work not in commencing_works else None,
+                        })
+            elif prefix == "commencements":
+                initial.append({
+                    "commenced_work": self.work,
+                    # "commencing_work": None,
+                    # "date": None,
+                })
+
+        else:
+            context_data['formset'] = formset
+            context_data["prefix"] = prefix
+
+            return context_data
+
+        context_data['formset'] = CommencementsBaseFormset(
             user=self.request.user,
             work=self.work,
             prefix=prefix,

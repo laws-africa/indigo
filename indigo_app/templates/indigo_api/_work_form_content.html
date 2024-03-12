@@ -331,6 +331,16 @@
     {% block work-form-commencement %}
       <div class="card mb-3" id="commencement">
         <div class="card-body">
+          <div id="work-form-commencements">
+            {% include 'indigo_api/_work_form_commencements.html' %}
+          </div>
+        </div>
+      </div>
+    {% endblock work-form-commencement %}
+{% comment %}
+    {% block work-form-commencement %}
+      <div class="card mb-3" id="commencement">
+        <div class="card-body">
           {% if work.pk and work.commencements.count > 1 %}
             <div class="mb-3">
               <input type="hidden" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
@@ -394,6 +404,7 @@
         </div>
       </div>
     {% endblock work-form-commencement %}
+{% endcomment %}
 
     {% block work-form-commencements_made %}
     {% if work.pk %}

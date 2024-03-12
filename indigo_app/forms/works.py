@@ -197,11 +197,32 @@ class WorkForm(forms.ModelForm):
                 }
                     for commencement in Commencement.objects.filter(commencing_work=self.instance)],
             }
-
             if self.is_bound:
                 commencements_made_formset_kwargs["data"] = self.data
             self.commencements_made_formset = CommencementsMadeBaseFormset(**commencements_made_formset_kwargs)
             self.formsets.append(self.commencements_made_formset)
+
+            commencements_formset_kwargs = {
+                "work": self.instance,
+                "user": self.user,
+                "form_kwargs": {
+                    "work": self.instance,
+                    "user": self.user,
+                },
+                "prefix": "commencements",
+                "initial": [{
+                    "commenced_work": self.instance,
+                    "commencing_work": commencement.commencing_work,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in Commencement.objects.filter(commenced_work=self.instance)],
+            }
+            if self.is_bound:
+                commencements_formset_kwargs["data"] = self.data
+            self.commencements_formset = CommencementsBaseFormset(**commencements_formset_kwargs)
+            self.formsets.append(self.commencements_formset)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -375,6 +396,7 @@ WorkAliasesBaseFormSet = formset_factory(
     formset=BasePartialWorkFormSet,
 )
 
+
 class WorkAliasesFormSet(WorkAliasesBaseFormSet):
 
     def save(self, *args, **kwargs):
@@ -394,7 +416,6 @@ class AmendmentForm(BasePartialWorkForm):
     amended_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-
 
     @cached_property
     def amending_work_obj(self):
@@ -437,7 +458,6 @@ AmendmentsFormSet = formset_factory(
 
 
 class AmendmentsBaseFormSet(AmendmentsFormSet):
-
     def clean(self):
         super().clean()
         if any(self.errors):
@@ -601,6 +621,7 @@ CommencementsFormset = formset_factory(
     formset=BasePartialWorkFormSet,
 )
 
+
 class CommencementsMadeBaseFormset(CommencementsFormset):
     def clean(self):
         super().clean()
@@ -659,6 +680,30 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
                         # update the first commencement to be the main one
                         c.main = True
                         c.save()
+
+
+class CommencementsBaseFormset(CommencementsFormset):
+    def clean(self):
+        # TODO: just use CommencementsMadeBaseFormset's?
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            commencing_work = form.cleaned_data.get('commencing_work')
+            commenced_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (commencing_work, commenced_work, date) in seen:
+                raise ValidationError("Commenced work and date must be unique together.")
+            seen.add((commencing_work, commenced_work, date))
+
+    def save(self, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            super().save(*args, **kwargs)
+            # TODO: validation and marking all_provisions; see CommencementsMadeBaseFormset
 
 
 @dataclass

@@ -1432,19 +1432,21 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             if amendment_work_id:
+                amending_works = {form.cleaned_data["amending_work"] for form in formset}
+                amended_works = {form.cleaned_data["amended_work"] for form in formset}
                 work = Work.objects.filter(pk=amendment_work_id).first()
                 if work:
                     if prefix == "amended_by":
                         initial.append({
                             "amended_work": self.work,
                             "amending_work": work,
-                            "date": work.commencement_date,
+                            "date": work.commencement_date if work not in amending_works else None,
                         })
                     elif prefix == "amendments_made":
                         initial.append({
                             "amended_work": work,
                             "amending_work": self.work,
-                            "date": work.commencement_date,
+                            "date": self.work.commencement_date if work not in amended_works else None,
                         })
 
         else:
@@ -1507,13 +1509,14 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             if commencement_work_id:
+                commenced_works = {form.cleaned_data["commenced_work"] for form in formset}
                 work = Work.objects.filter(pk=commencement_work_id).first()
                 if work:
                     if prefix == "commencements_made":
                         initial.append({
                             "commenced_work": work,
                             "commencing_work": self.work,
-                            "date": work.commencement_date,
+                            "date": self.work.commencement_date if work not in commenced_works else None,
                         })
 
         else:

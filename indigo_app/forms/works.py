@@ -274,7 +274,6 @@ class WorkForm(forms.ModelForm):
         for formset in self.formsets:
             formset.save()
 
-
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
         pub_doc_url = self.cleaned_data['publication_document_trusted_url']

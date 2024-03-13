@@ -51,6 +51,10 @@
       </li>
     {% endif %}
 
+    <div id="commencements-list">
+      {% include "indigo_api/commencement_list.html" %}
+    </div>
+{% comment %}
     {% for commencement in commencements %}
       <li class="timeline-item card">
         <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>{% trans 'Unknown' %}</em>{% endif %}</h6>
@@ -162,6 +166,7 @@
         </div>
       </li>
     {% endfor %}
+{% endcomment %}
   </ol>
 
   {% if uncommenced_provisions_count %}

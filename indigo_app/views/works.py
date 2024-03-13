@@ -13,7 +13,7 @@ from django.db.models import Count
 from django.forms import formset_factory
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.list import MultipleObjectMixin, ListView
 from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
@@ -395,6 +395,44 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
 
         return rich_provisions
+
+
+class WorkCommencementsListView(WorkViewBase, ListView):
+    http_method_names = ['get', 'delete']
+    model = Commencement
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset=Work.objects.prefetch_related('commencements'))
+
+    def get_queryset(self):
+        return self.work.commencements.all().reverse()
+
+    def delete(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['commencements'] = self.object_list
+        return context
+
+
+class WorkCommencementDetailView(DetailView):
+    http_method_names = ['post', 'delete', 'get']
+    model = Commencement
+    pk_url_kwarg = 'pk'
+
+    def delete(self, request, *args, **kwargs):
+        commencement = self.get_object()
+        work = commencement.commenced_work
+        commencement.delete()
+        work.updated_by_user = self.request.user
+        work.save()
+        return redirect(reverse('work_commencements_list', kwargs={'frbr_uri': self.kwargs['frbr_uri']}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['work'] = self.object.commenced_work
+        return context
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

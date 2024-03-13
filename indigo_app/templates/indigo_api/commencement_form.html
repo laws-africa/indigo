@@ -1,0 +1,80 @@
+{% load i18n %}
+
+<form
+    hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+    hx-target="#commencements-list"
+>
+  {% csrf_token %}
+
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-4 col-lg-3">
+        <input
+            type="text"
+            class="form-control commencement-date me-2"
+            data-provide="datepicker"
+            placeholder="yyyy-mm-dd"
+            pattern="\d{4}-\d\d-\d\d"
+            name="date"
+            value="{{ commencement.date|date:"Y-m-d" }}"
+            autocomplete="off"
+        >
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6 col-lg-4">
+        <input type="text" class="form-control me-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main"
+               value="true" name="main"
+               {% if commencement.main %}checked{% endif %}
+               {% if has_main_commencement and not commencement.main %}disabled{% endif %}>
+        <label class="form-check-label" for="commencement-{{ commencement.id }}-main">{% trans 'Main commencement' %}</label>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions"
+               value="true" name="all_provisions"
+               {% if commencement.all_provisions %}checked{% endif %}
+               {% if commencements|length > 1 and not commencement.all_provisions %}disabled{% endif %}>
+        <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">{% trans 'Commences all provisions' %}</label>
+      </div>
+    </div>
+
+    <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>{% trans 'Provisions commenced' %}:</div>
+        <label class="d-flex align-items-center">
+          <input type="checkbox"
+                 name="select-all"
+                 class="me-2"
+          />
+          {% trans 'Select all provisions' %}
+        </label>
+      </div>
+      <ul data-id="provisions" class="provisions-list">
+        {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="card-footer text-end">
+    <button
+        class="btn btn-link"
+        type="button"
+        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+        hx-target="#commencement-timeline-{{ commencement.id }}"
+    >{% trans 'Cancel' %}</button>
+    <button
+        class="btn btn-success"
+        type="submit"
+    >{% trans 'Save' %}</button>
+  </div>
+</form>

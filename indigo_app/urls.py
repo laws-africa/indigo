@@ -109,6 +109,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements-list$', works.WorkCommencementsListView.as_view(), name='work_commencements_list'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)$', works.WorkCommencementDetailView.as_view(), name='work_commencement_detail'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)/edit$', works.WorkCommencementEditView.as_view(), name='work_commencement_edit'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<commencement_id>\d+)/update$', works.WorkCommencementUpdateView.as_view(), name='work_commencement_update'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/uncommenced$', works.WorkUncommencedView.as_view(), name='work_uncommenced'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/$', works.WorkAmendmentsView.as_view(), name='work_amendments'),

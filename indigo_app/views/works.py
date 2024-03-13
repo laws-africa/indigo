@@ -427,12 +427,49 @@ class WorkCommencementDetailView(DetailView):
         commencement.delete()
         work.updated_by_user = self.request.user
         work.save()
-        return redirect(reverse('work_commencements_list', kwargs={'frbr_uri': self.kwargs['frbr_uri']}))
+        return redirect(reverse('work_commencements_list', kwargs={'frbr_uri': work.frbr_uri}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['work'] = self.object.commenced_work
         return context
+
+
+class WorkCommencementEditView(WorkDependentView, UpdateView):
+    http_method_names = ['get', 'post']
+    model = Commencement
+    pk_url_kwarg = 'pk'
+    form_class = CommencementForm
+    context_object_name = 'commencement'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['work'] = self.work
+        kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        resp = super().post(request, *args, **kwargs)
+        return resp
+
+    def form_invalid(self, form):
+        # send errors as messages, since we redirect back to the commencements page
+        errors = list(form.non_field_errors())
+
+    def form_valid(self, form):
+        self.object.updated_by_user = self.request.user
+        self.object = form.save()
+        # make necessary changes to work, including updating updated_by_user
+        self.object.rationalise(self.request.user)
+        self.object.save()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('work_commencements_list', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

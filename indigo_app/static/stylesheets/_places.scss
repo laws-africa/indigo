@@ -21,6 +21,25 @@
   }
 }
 
+.work-detail-toggle {
+  &::after {
+    content: "▼";
+  }
+
+  display: inline-block;
+  width: 1em;
+}
+
+.work-list-card-heading {
+  cursor: pointer;
+
+  &.collapsed {
+    .work-detail-toggle::after {
+      content: "▶";
+    }
+  }
+}
+
 .min-vh-60 {
   min-height: 60vh;
 }

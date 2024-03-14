@@ -14,8 +14,8 @@
   {% endif %}
   <div class="flex-fill">
     <div class="border {% if work.work_in_progress %}bg-work-in-progress{% else %}bg-white{% endif %} mb-2">
-      <div class="d-flex p-2 pl-3" type="button" data-bs-toggle="collapse" id="work-heading-{{ work.pk }}"
-           data-bs-target="#work-detail-{{ work.pk }}" aria-expanded="true" aria-controls="work-detail-{{ work.pk }}"
+      <div class="d-flex p-2 pl-3 collapsed work-list-card-heading" id="work-heading-{{ work.pk }}"
+           data-component="WorkListCard"
            hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
            hx-target="#work-detail-{{ work.pk }}"
            hx-swap="innerHTML"
@@ -25,10 +25,13 @@
           <div class="d-flex">
             <div class="col-9 ps-0">
               <div>
-                <a href="{% url 'work' frbr_uri=work.frbr_uri %}"><span>{{ work.title }}</span></a>
+                <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
                 {% include 'indigo_api/_work_info_badges.html' %}
               </div>
-              <div class="text-muted">{{ work.frbr_uri }}</div>
+              <div class="text-muted">
+                <span class="work-detail-toggle"></span>
+                {{ work.frbr_uri }}
+              </div>
             </div>
             <div class="col-3">
               <div>

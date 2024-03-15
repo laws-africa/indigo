@@ -35,8 +35,7 @@ from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDoc
     NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
     CommencementsBaseFormset
 
-from .base import PlaceViewBase
-
+from .base import PlaceViewBase, AbstractAuthedIndigoView
 
 log = logging.getLogger(__name__)
 
@@ -398,8 +397,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
 
 class WorkCommencementsListView(WorkViewBase, ListView):
-    http_method_names = ['get', 'delete']
+    http_method_names = ['get']
     model = Commencement
+    permission_required = ('indigo_api.view_commencement',)
 
     def get_object(self, queryset=None):
         return super().get_object(queryset=Work.objects.prefetch_related('commencements'))
@@ -407,19 +407,28 @@ class WorkCommencementsListView(WorkViewBase, ListView):
     def get_queryset(self):
         return self.work.commencements.all().reverse()
 
-    def delete(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['commencements'] = self.object_list
         return context
 
 
-class WorkCommencementDetailView(DetailView):
-    http_method_names = ['post', 'delete', 'get']
+class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
+    http_method_names = ['post', 'get']
     model = Commencement
     pk_url_kwarg = 'pk'
+    # optionally refresh the timeline too, when a date may have changed
+    refresh_timeline = None
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_commencement',)
+        return ('indigo_api.view_commencement',)
+
+    def post(self, request, *args, **kwargs):
+        # for now, the only thing we post to this view is 'delete'
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         commencement = self.get_object()
@@ -434,31 +443,32 @@ class WorkCommencementDetailView(DetailView):
         context['work'] = self.object.commenced_work
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.refresh_timeline:
+            resp.headers['HX-Trigger'] = "hx_refresh_timeline"
+        return resp
 
-class WorkCommencementEditView(WorkDependentView, UpdateView):
+
+class WorkCommencementEditView(WorkDependentView, UpdateView, WorkCommencementsView):
     http_method_names = ['get', 'post']
     model = Commencement
     pk_url_kwarg = 'pk'
     form_class = CommencementForm
     context_object_name = 'commencement'
+    permission_required = ('indigo_api.change_commencement',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['disable_main_commencement'] = self.work.main_commencement and not self.object.main
+        context['disable_all_provisions'] = self.work.commencements.count() > 1
+        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        resp = super().post(request, *args, **kwargs)
-        return resp
-
-    def form_invalid(self, form):
-        # send errors as messages, since we redirect back to the commencements page
-        errors = list(form.non_field_errors())
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
@@ -469,7 +479,8 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('work_commencements_list', kwargs={'frbr_uri': self.work.frbr_uri})
+        # re-render the commencement and refresh the timeline
+        return reverse('work_commencement_detail_refresh_timeline', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

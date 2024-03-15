@@ -2,79 +2,129 @@
 
 <form
     hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
-    hx-target="#commencements-list"
+    hx-target="#commencement-detail-{{ commencement.id }}"
 >
   {% csrf_token %}
+
+  {# TODO #}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for err in form.non_field_errors %}
+        <div>{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      {% for err in form.errors %}
+        <div>{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <div class="card-body">
     <div class="row mb-3">
       <div class="col-md-4 col-lg-3">
         <input
             type="text"
-            class="form-control commencement-date me-2"
+            class="form-control me-2"
             data-provide="datepicker"
             placeholder="yyyy-mm-dd"
             pattern="\d{4}-\d\d-\d\d"
-            name="date"
+            name="{{ form.date.html_name }}"
             value="{{ commencement.date|date:"Y-m-d" }}"
             autocomplete="off"
         >
       </div>
     </div>
-
     <div class="row mb-3">
       <div class="col-md-6 col-lg-4">
-        <input type="text" class="form-control me-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
+        <input
+            type="text"
+            class="form-control me-2"
+            placeholder="{% trans 'Example: See section 1 ...' %}"
+            name="{{ form.note.html_name }}"
+            value="{{ commencement.note|default:'' }}"
+        >
       </div>
     </div>
-
     <div class="mb-3">
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main"
-               value="true" name="main"
-               {% if commencement.main %}checked{% endif %}
-               {% if has_main_commencement and not commencement.main %}disabled{% endif %}>
-        <label class="form-check-label" for="commencement-{{ commencement.id }}-main">{% trans 'Main commencement' %}</label>
+        <input
+            type="checkbox"
+            class="form-check-input"
+            id="{{ form.main.id_for_label }}-{{ commencement.id }}"
+            name="{{ form.main.html_name }}"
+            value="true"
+            {% if commencement.main %}checked{% endif %}
+            {% if disable_main_commencement %}disabled{% endif %}
+        >
+        <label
+            for="{{ form.main.id_for_label }}-{{ commencement.id }}"
+            class="form-check-label"
+        >{% trans 'Main commencement' %}</label>
       </div>
+      {% if form.main.errors %}
+        <div class="text-danger">
+          {% for error in form.main.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
-
     <div class="mb-3">
       <div class="form-check">
-        <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions"
-               value="true" name="all_provisions"
-               {% if commencement.all_provisions %}checked{% endif %}
-               {% if commencements|length > 1 and not commencement.all_provisions %}disabled{% endif %}>
-        <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">{% trans 'Commences all provisions' %}</label>
+        <input
+            type="checkbox"
+            class="form-check-input all-provisions"
+            id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+            name="{{ form.all_provisions.html_name }}"
+            value="true"
+            {% if commencement.all_provisions %}checked{% endif %}
+            {% if disable_all_provisions %}disabled{% endif %}
+        >
+        <label
+            for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+            class="form-check-label"
+        >{% trans 'Commences all provisions' %}</label>
       </div>
+      {% if form.all_provisions.errors %}
+        <div class="text-danger">
+          {% for error in form.all_provisions.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
-
     <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-      <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex justify-content-between">
         <div>{% trans 'Provisions commenced' %}:</div>
-        <label class="d-flex align-items-center">
-          <input type="checkbox"
-                 name="select-all"
-                 class="me-2"
-          />
-          {% trans 'Select all provisions' %}
-        </label>
+        <div>
+          <input
+              type="checkbox"
+              class="form-check-input me-1"
+              id="select-all-provisions-{{ commencement.id }}"
+              name="select-all"
+          >
+          <label
+              for="select-all-provisions-{{ commencement.id }}"
+              class="form-check-label"
+          >{% trans 'Select all provisions' %}</label>
+        </div>
       </div>
       <ul data-id="provisions" class="provisions-list">
         {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
       </ul>
     </div>
   </div>
-  </div>
   <div class="card-footer text-end">
     <button
         class="btn btn-link"
-        type="button"
-        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-        hx-target="#commencement-timeline-{{ commencement.id }}"
+        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}?clear=1"
+        hx-target="#commencement-detail-{{ commencement.id }}"
+        hx-swap="outerHTML"
     >{% trans 'Cancel' %}</button>
-    <button
-        class="btn btn-success"
-        type="submit"
-    >{% trans 'Save' %}</button>
+    <button class="btn btn-success">{% trans 'Save' %}</button>
   </div>
 </form>

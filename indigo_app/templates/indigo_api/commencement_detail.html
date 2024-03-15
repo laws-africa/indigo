@@ -1,71 +1,60 @@
 {% load i18n %}
 
-<div id="commencement-timeline-{{ commencement.id }}">
-  <li class="timeline-item card">
-    <h6 class="timeline-date">
-      {% if commencement.date %}
-        {{ commencement.date|date:"Y-m-d" }}
+<div class="card-body" id="commencement-detail-{{ commencement.id }}">
+  <div class="float-end">
+    {# TODO: disable these buttons when a form is open #}
+    {% if perms.indigo_api.delete_commencement %}
+      <button
+          class="btn btn-link text-danger me-2"
+          name="delete"
+          hx-post="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+          hx-target="#commencements-list"
+          hx-confirm="{% trans 'Really delete this commencement?' %}"
+      >{% trans 'Delete' %}</button>
+    {% endif %}
+    {% if perms.indigo_api.change_commencement %}
+      <button
+          class="btn btn-outline-primary"
+          hx-get="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+          hx-target="#commencement-detail-{{ commencement.id }}"
+      >{% trans 'Edit' %}</button>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <h6>
+      {% if commencement.all_provisions %}
+        {% trans 'Commenced' %}
       {% else %}
-        <em>{% trans 'Unknown' %}</em>
+        {% trans 'Commenced in part' %}
+      {% endif %}
+      {% if commencement.commencing_work %}
+        {% trans 'by' %}
+        <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
       {% endif %}
     </h6>
-    <div class="card-body" id="commencement-detail-{{ commencement.id }}">
-      <div class="float-end">
-        {% if perms.indigo_api.delete_commencement %}
-          <button
-              class="btn btn-link text-danger me-2"
-              type="submit"
-              hx-delete="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-              hx-target="#commencements-list"
-              hx-confirm="{% trans 'Really delete this commencement?' %}"
-          >{% trans 'Delete' %}</button>
-        {% endif %}
-        {% if perms.indigo_api.change_commencement %}
-          <button
-              class="btn btn-outline-primary"
-              type="button"
-              hx-get="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
-              hx-target="#commencement-detail-{{ commencement.id }}"
-          >{% trans 'Edit' %}</button>
-        {% endif %}
-      </div>
+    {% if commencement.commencing_work %}
+      <div class="text-muted">{{ commencement.commencing_work.frbr_uri }}</div>
+    {% endif %}
+  </div>
+  <div>
+    {% if commencement.note %}<h6>{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
+    {% if commencement.main %}<h6>{% trans 'Main commencement' %}</h6>{% endif %}
+    <h6>
+      {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
+      {% if commencement.provisions %}
+        {% blocktrans trimmed with provisions=commencement.provisions|length %}
+          Commences {{ provisions }} of {{ total_provisions_count }} provisions:
+        {% endblocktrans %}
+      {% endif %}
+    </h6>
 
-      <div class="mb-3">
-        <h6>
-          {% if commencement.all_provisions %}
-            {% trans 'Commenced' %}
-          {% else %}
-            {% trans 'Commenced in part' %}
-          {% endif %}
-          {% if commencement.commencing_work %}
-            {% trans 'by' %}
-            <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
-          {% endif %}
-        </h6>
-        {% if commencement.commencing_work %}
-          <div class="text-muted">{{ commencement.commencing_work.frbr_uri }}</div>
-        {% endif %}
+    {% if commencement.provisions %}
+      <div class="treelist-wrapper">
+        <ul>
+          {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
+        </ul>
       </div>
-      <div class="commencement-details collapse show">
-        {% if commencement.note %}<h6>{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
-        {% if commencement.main %}<h6>{% trans 'Main commencement' %}</h6>{% endif %}
-        <h6>
-          {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
-          {% if commencement.provisions %}
-            {% blocktrans trimmed with provisions=commencement.provisions|length %}
-              Commences {{ provisions }} of {{ total_provisions_count }} provisions:
-            {% endblocktrans %}
-          {% endif %}
-        </h6>
-
-        {% if commencement.provisions %}
-          <div class="treelist-wrapper">
-            <ul>
-              {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
-            </ul>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </li>
+    {% endif %}
+  </div>
 </div>

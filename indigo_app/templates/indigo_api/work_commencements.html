@@ -51,7 +51,11 @@
       </li>
     {% endif %}
 
-    <div id="commencements-list">
+    <div
+        id="commencements-list"
+        hx-get="{% url 'work_commencements_list' frbr_uri=work.frbr_uri %}"
+        hx-trigger="hx_refresh_timeline from:body"
+    >
       {% include "indigo_api/commencement_list.html" %}
     </div>
 {% comment %}

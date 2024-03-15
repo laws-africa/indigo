@@ -1,5 +1,14 @@
 {% load i18n %}
 
 {% for commencement in commencements %}
-  {% include "indigo_api/commencement_detail.html" %}
+  <li class="timeline-item card">
+    <h6 class="timeline-date">
+      {% if commencement.date %}
+        {{ commencement.date|date:"Y-m-d" }}
+      {% else %}
+        <em>{% trans 'Unknown' %}</em>
+      {% endif %}
+    </h6>
+    {% include "indigo_api/commencement_detail.html" %}
+  </li>
 {% endfor %}

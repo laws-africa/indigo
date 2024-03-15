@@ -3,7 +3,7 @@ from django.http import Http404
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 
-from indigo_api.models import TaxonomyTopic
+from indigo_api.models import TaxonomyTopic, Work
 from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase, \
     PublishedDocumentDetailView
 
@@ -34,5 +34,6 @@ class TaxonomyTopicPublishedDocumentsView(ContentAPIBase, ListModelMixin, Generi
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(work__taxonomy_topics__path__startswith=self.taxonomy_topic.path).distinct("pk")
+        works = Work.objects.filter(taxonomy_topics__path__startswith=self.taxonomy_topic.path).distinct("pk")
+        queryset = queryset.filter(work__in=works)
         return super().filter_queryset(queryset)

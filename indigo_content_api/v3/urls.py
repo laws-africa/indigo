@@ -18,4 +18,6 @@ urlpatterns = urlpatterns_base + [
 
     # taxonomy topic work list
     path('taxonomy-topics/<slug:slug>/work-expressions', TaxonomyTopicPublishedDocumentsView.as_view({'get': 'list'}), name='taxonomy_topic-work-expressions'),
+    path('taxonomy-topics/<slug:slug>/work-expressions.<slug:format>', TaxonomyTopicPublishedDocumentsView.as_view({'get': 'list'}),
+         name='taxonomy_topic-work-expressions'),
 ]

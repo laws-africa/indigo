@@ -4,8 +4,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from indigo_api.models import TaxonomyTopic, Work
-from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase, \
-    PublishedDocumentDetailView
+from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase
 
 from .serializers import PublishedDocumentSerializerV3
 
@@ -16,10 +15,11 @@ class PublishedDocumentDetailViewV3(PublishedDocumentDetailViewV2):
 
 class TaxonomyTopicPublishedDocumentsView(ContentAPIBase, ListModelMixin, GenericViewSet):
     """ List of work expressions for a taxonomy topic."""
-    serializer_class = PublishedDocumentSerializerV3
-    queryset = PublishedDocumentDetailView.queryset
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
     filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+
+    def get_serializer_class(self):
+        return PublishedDocumentDetailViewV3.serializer_class
 
     def list(self, request, *args, **kwargs):
         self.taxonomy_topic = self.get_taxonomy_topic(kwargs['slug'])
@@ -33,7 +33,7 @@ class TaxonomyTopicPublishedDocumentsView(ContentAPIBase, ListModelMixin, Generi
         return obj
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = PublishedDocumentDetailViewV3.queryset
         works = Work.objects.filter(taxonomy_topics__path__startswith=self.taxonomy_topic.path).distinct("pk")
         queryset = queryset.filter(work__in=works)
         return super().filter_queryset(queryset)

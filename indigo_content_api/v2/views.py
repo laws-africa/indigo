@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.versioning import NamespaceVersioning
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 
 from cobalt import FrbrUri
 
@@ -114,16 +115,6 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
     """
     queryset = Country.objects.prefetch_related('localities', 'country')
     serializer_class = CountrySerializer
-
-
-class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
-    serializer_class = TaxonomySerializer
-
-
-class TaxonomyTopicView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = TaxonomyTopic.get_public_root_nodes()
-    serializer_class = TaxonomyTopicSerializer
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
@@ -379,3 +370,31 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             return publication_document_response(work.publication_document)
 
         raise Http404()
+
+
+class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
+    serializer_class = TaxonomySerializer
+
+
+class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):
+    queryset = TaxonomyTopic.get_public_root_nodes()
+    serializer_class = TaxonomyTopicSerializer
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        # when listing, just use the top-level public nodes
+        if self.action == 'list':
+            return TaxonomyTopic.get_public_root_nodes()
+
+        # otherwise, filter to only those that are at or below the public root notes
+        paths = [n.path for n in TaxonomyTopic.get_public_root_nodes()]
+        if not paths:
+            return TaxonomyTopic.objects.none()
+
+        filter = Q(path__startswith=paths[0])
+        for path in paths[1:]:
+            filter |= Q(path__startswith=path)
+
+        queryset = TaxonomyTopic.objects.filter(filter)
+        return queryset

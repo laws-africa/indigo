@@ -51,7 +51,7 @@ class PlaceAPIBase(ContentAPIBase):
     def check_permissions(self, request):
         # ensure we have a country and locality before checking permissions
         self.determine_place()
-        super(PlaceAPIBase, self).check_permissions(request)
+        super().check_permissions(request)
 
 
 class FrbrUriViewMixin(PlaceAPIBase):
@@ -62,7 +62,7 @@ class FrbrUriViewMixin(PlaceAPIBase):
     def initial(self, request, **kwargs):
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
-        super(FrbrUriViewMixin, self).initial(request, **kwargs)
+        super().initial(request, **kwargs)
         self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
 
     def parse_frbr_uri(self, frbr_uri):
@@ -87,7 +87,7 @@ class FrbrUriViewMixin(PlaceAPIBase):
         except (Country.DoesNotExist, Locality.DoesNotExist):
             raise Http404
 
-        super(FrbrUriViewMixin, self).determine_place()
+        super().determine_place()
 
     def get_document(self):
         """ Find and return one document based on the FRBR URI
@@ -223,7 +223,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
 
-        response = super(PublishedDocumentDetailView, self).list(request)
+        response = super().list(request)
 
         # add alternate links for json
         if self.request.accepted_renderer.format == 'json':
@@ -256,13 +256,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
         """
-        queryset = super(PublishedDocumentDetailView, self).filter_queryset(queryset)
+        queryset = super().filter_queryset(queryset)
         queryset = queryset\
             .latest_expression()\
             .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])\
             .filter(language__language__iso_639_2T=self.country.primary_language.code)
-        if queryset.count() == 0:
-            raise Http404
         return queryset
 
     def get_format_suffix(self, **kwargs):
@@ -281,7 +279,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_renderer = renderers.StaticHTMLRenderer()
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
-        return super(PublishedDocumentDetailView, self).handle_exception(exc)
+        return super().handle_exception(exc)
 
 
 class PublishedDocumentCommencementsView(PublishedDocumentDetailView):

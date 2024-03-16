@@ -6,6 +6,7 @@ import logging
 
 from django.core.cache import caches
 from django.conf import settings
+from django.http import Http404
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 
@@ -133,6 +134,9 @@ class PDFRenderer(BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         self.renderer_context = renderer_context
 
+        if not data:
+            raise Http404()
+
         # we don't support rendering more than one PDF
         if not hasattr(data, 'frbr_uri') or isinstance(data, list):
             return ''
@@ -224,6 +228,9 @@ class EPUBRenderer(ExporterMixin, PDFRenderer):
 
         if isinstance(data, list):
             # render many
+            # we can't render an empty list
+            if not data:
+                raise Http404()
             epub = exporter.render_many(data)
         elif not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
             # whole document

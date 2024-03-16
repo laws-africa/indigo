@@ -143,12 +143,13 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(len(response.data['results']), 1)
 
-    def test_published_listing_filters(self):
+    def test_published_listing_filters_lte(self):
         response = self.client.get(self.api_path + '/akn/za/', {'updated_at__lte': '2015-02-20T00:00:00Z'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(['/akn/za/act/1880/1', '/akn/za/act/2014/10', '/akn/za/act/2017/17'], [r["frbr_uri"] for r in response.data['results']])
 
+    def test_published_listing_filters_gte(self):
         response = self.client.get(self.api_path + '/akn/za/', {'updated_at__gte': '2015-06-01T00:00:00Z'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')

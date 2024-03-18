@@ -231,6 +231,6 @@ class PlaceSettings(models.Model):
 
         # optionally add / overwrite cap
         if self.uses_chapter:
-            props['cap'] = _("Chapter (Cap.)")
+            props['cap'] = "Chapter (Cap.)"
 
         return props

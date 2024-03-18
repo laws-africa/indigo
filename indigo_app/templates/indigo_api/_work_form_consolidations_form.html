@@ -1,0 +1,49 @@
+{% load indigo i18n %}
+
+{{ formset.management_form }}
+
+{% if formset.non_form_errors %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for error in formset.non_form_errors %}
+        {{ error }}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% for form in formset %}
+  <div class="{% if form.DELETE.value  %}d-none{% endif %}">
+    {% if forloop.counter > 1 %}<hr>{% endif %}
+    <div class="row align-items-center ">
+      <div class="col">
+        {{ form.id.as_hidden }}
+        {% if form.DELETE.value %}
+          {{ form.DELETE.as_hidden }}
+        {% endif %}
+        <label class="form-label" for="{{ form.date.id_for_label }}">{{ form.date.label }}</label>
+        <input class="form-control"
+               id="{{ form.date.id_for_label }}"
+               type="{{ form.date.field.widget.input_type }}"
+               value="{{ form.date.value|format_input_date }}"
+               name="{{ form.date.html_name }}"
+               required />
+      </div>
+
+      <div class="col">
+        {% if not form.DELETE.value %}
+          <button hx-post="{% url 'work_form_consolidation' work.frbr_uri %}?delete=consolidation"
+                  hx-target="#work-form-consolidations-formset"
+                  hx-include="#work-form-consolidations-formset"
+                  type="button"
+                  name="{{ form.DELETE.html_name }}"
+                  value="1"
+                  class="btn btn-outline-danger">
+            {% trans 'Remove' %}
+          </button>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

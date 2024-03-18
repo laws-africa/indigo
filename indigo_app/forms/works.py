@@ -16,7 +16,7 @@ from django.utils.translation import gettext as _, gettext_lazy as _l
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias
+    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -202,6 +202,24 @@ class WorkForm(forms.ModelForm):
                 commencements_made_formset_kwargs["data"] = self.data
             self.commencements_made_formset = CommencementsMadeBaseFormset(**commencements_made_formset_kwargs)
             self.formsets.append(self.commencements_made_formset)
+
+            consolidation_formset_kwargs = {
+                "work": self.instance,
+                "user": self.user,
+                "form_kwargs": {
+                    "work": self.instance,
+                    "user": self.user,
+                },
+                "prefix": "consolidations",
+                "initial": [{
+                    "date": consolidation.date,
+                    "id": consolidation.id,
+                } for consolidation in ArbitraryExpressionDate.objects.filter(work=self.instance)]
+            }
+            if self.is_bound:
+                consolidation_formset_kwargs["data"] = self.data
+            self.consolidations_formset = ConsolidationsBaseFormset(**consolidation_formset_kwargs)
+            self.formsets.append(self.consolidations_formset)
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -491,6 +509,42 @@ RepealMadeFormSet = formset_factory(
 class RepealMadeBaseFormSet(RepealMadeFormSet):
     pass
 
+class ConsolidationForm(BasePartialWorkForm):
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+
+    def save(self, *args, **kwargs):
+        consolidation = ArbitraryExpressionDate.objects.filter(pk=self.cleaned_data['id']).first()
+
+        if self.cleaned_data.get('DELETE'):
+            if consolidation:
+                consolidation.delete()
+            return
+        else:
+            if consolidation and self.has_changed():
+                consolidation.date = self.cleaned_data["date"]
+                consolidation.updated_by_user = self.user
+                consolidation.save()
+            else:
+                ArbitraryExpressionDate.objects.create(
+                    work=self.work,
+                    date=self.cleaned_data["date"],
+                    created_by_user=self.user,
+                    updated_by_user=self.user,
+                )
+
+
+
+ConsolidationsFormSet = formset_factory(
+    ConsolidationForm,
+    extra=0,
+    can_delete=True,
+    formset=BasePartialWorkFormSet
+)
+
+class ConsolidationsBaseFormset(ConsolidationsFormSet):
+    pass
 
 class FindPubDocForm(forms.Form):
     name = forms.CharField(required=False, widget=forms.HiddenInput())

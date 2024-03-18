@@ -32,7 +32,8 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset
+    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
+    ConsolidationsBaseFormset
 
 from .base import PlaceViewBase
 
@@ -1535,3 +1536,47 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
         )
         context_data["prefix"] = prefix
         return context_data
+
+
+class WorkFormConsolidationView(WorkViewBase, TemplateView):
+    template_name = "indigo_api/_work_form_consolidations_form.html"
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        formset = ConsolidationsBaseFormset(self.request.POST,
+                                            user=self.request.user,
+                                            work=self.work,
+                                            prefix="consolidations",
+                                            form_kwargs={"work":self.work,
+                                                         "user": self.request.user})
+        initial = []
+        if formset.is_valid():
+            for form in formset.forms:
+                delete = form.cleaned_data.get("DELETE")
+                if delete and not form.cleaned_data.get("id"):
+                    continue
+                initial.append({
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+
+            add_consolidation = self.request.POST.get("consolidation")
+            if "add" == add_consolidation:
+                initial.append({
+                    "date": datetime.datetime.today()
+                })
+
+        context["formset"] =  ConsolidationsBaseFormset(
+                user=self.request.user,
+                work=self.work,
+                prefix="consolidations",
+                initial=initial,
+                form_kwargs={"work": self.work,
+                             "user": self.request.user}
+            )
+        context["work"] = self.work
+        return context

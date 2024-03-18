@@ -32,7 +32,7 @@
 
       <div class="col">
         {% if not form.DELETE.value %}
-          <button hx-post="{% url 'work_form_consolidation' work.frbr_uri %}?delete=consolidation"
+          <button hx-post="{% url 'work_form_consolidation' work.frbr_uri %}"
                   hx-target="#work-form-consolidations-formset"
                   hx-include="#work-form-consolidations-formset"
                   type="button"

@@ -369,7 +369,8 @@ class BasePartialWorkFormSet(forms.BaseFormSet):
 
     def save(self):
         for form in self.forms:
-            form.save()
+            if form.has_changed():
+                form.save()
 
 
 class BasePartialWorkForm(forms.Form):
@@ -522,7 +523,7 @@ class ConsolidationForm(BasePartialWorkForm):
                 consolidation.delete()
             return
         else:
-            if consolidation and self.has_changed():
+            if consolidation:
                 consolidation.date = self.cleaned_data["date"]
                 consolidation.updated_by_user = self.user
                 consolidation.save()
@@ -544,7 +545,17 @@ ConsolidationsFormSet = formset_factory(
 )
 
 class ConsolidationsBaseFormset(ConsolidationsFormSet):
-    pass
+
+    def clean(self):
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            date = form.cleaned_data.get('date')
+            if date in seen:
+                raise ValidationError("Consolidation dates must be unique.")
+            seen.add(date)
+
 
 class FindPubDocForm(forms.Form):
     name = forms.CharField(required=False, widget=forms.HiddenInput())

@@ -1564,8 +1564,17 @@ class WorkFormConsolidationView(WorkViewBase, TemplateView):
                     "DELETE": form.cleaned_data["DELETE"],
                 })
 
-            add_consolidation = self.request.POST.get("consolidation")
-            if "add" == add_consolidation:
+            if self.request.POST.get("consolidation") == "add":
+                date = datetime.datetime.today()
+                # if (
+                #     self.place.place_settings.is_consolidation and
+                #     self.place.place_settings.as_at_date and
+                #     self.work.principal and
+                #     self.work.publication_date and
+                #     self.work.publication_date > self.place.place_settings.as_at_date
+                # ):
+                #
+                #     date = self.place.place_settings.as_at_date
                 initial.append({
                     "date": datetime.datetime.today()
                 })

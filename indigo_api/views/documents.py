@@ -28,6 +28,7 @@ from lxml.etree import LxmlError
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.plugins import plugins
+from indigo.xmlutils import parse_html_str
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
@@ -262,9 +263,8 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_html = new_document.to_html()
 
         # we have to explicitly tell the HTML parser that we're dealing with utf-8
-        parser = lxml.html.HTMLParser(encoding='utf-8')
-        old_tree = lxml.html.fromstring(old_html.encode('utf-8'), parser=parser) if old_html else None
-        new_tree = lxml.html.fromstring(new_html.encode('utf-8'), parser=parser)
+        old_tree = parse_html_str(old_html) if old_html else None
+        new_tree = parse_html_str(new_html)
 
         diff = differ.diff_html(old_tree, new_tree)
         n_changes = differ.count_differences(diff)
@@ -485,9 +485,8 @@ class DocumentDiffView(DocumentResourceView, APIView):
             remote_html = remote_doc.to_html()
 
         # we have to explicitly tell the HTML parser that we're dealing with utf-8
-        parser = lxml.html.HTMLParser(encoding='utf-8')
-        local_tree = lxml.html.fromstring((local_html or "<div></div>").encode('utf-8'), parser=parser)
-        remote_tree = lxml.html.fromstring(remote_html.encode('utf-8'), parser=parser) if remote_html else None
+        local_tree = parse_html_str(local_html or "<div></div>")
+        remote_tree = parse_html_str(remote_html) if remote_html else None
 
         diff = differ.diff_html(remote_tree, local_tree)
         n_changes = differ.count_differences(diff)

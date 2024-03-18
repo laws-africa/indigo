@@ -9,6 +9,7 @@ from cobalt import AkomaNtosoDocument, FrbrUri
 from docpipe.matchers import ExtractedCitation
 
 from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_provision_refs, MainProvisionRef
+from indigo.xmlutils import parse_html_str
 from indigo_api.tests.fixtures import document_fixture
 
 
@@ -1314,7 +1315,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
         html = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section 26(b) and section 31(a) thereof.</p>'
         expected = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section <a href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</a> and section <a href="/akn/za/act/2009/1/~sec_31">31</a>(a) thereof.</p>'
 
-        actual = lxml.html.fromstring(html)
+        actual = parse_html_str(html)
         self.finder.markup_html_matches(self.frbr_uri, actual)
         self.assertEqual(
             expected,
@@ -1324,7 +1325,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
     def test_markup_html_local(self):
         html = '<p>Concerning section 26(b) of this act, and section 2 of <a href="#footnote">a footnote</a>.</p>'
 
-        actual = lxml.html.fromstring(html)
+        actual = parse_html_str(html)
         self.finder.markup_html_matches(self.frbr_uri, actual)
         self.assertEqual(
             html,

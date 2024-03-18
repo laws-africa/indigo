@@ -11,6 +11,7 @@ from bluebell.parser import AkomaNtosoParser
 from docpipe.html import ParseHtml
 from docpipe.pipeline import Stage
 from docpipe.xmlutils import unwrap_element
+from indigo.xmlutils import parse_html_str
 
 
 def chomp_left(elem, count):
@@ -139,7 +140,7 @@ class SimplifyHtml(Stage):
         xslt = etree.XSLT(etree.parse(self.xsl_fname))
         # When context.html is a root div element, the xslt ignores the div and produces a bunch of standalone p tags.
         # So, turn into text and re-parse, and then ensure there's a single container root
-        context.html = html.fromstring(str(xslt(context.html)))
+        context.html = parse_html_str(str(xslt(context.html)))
         ParseHtml().ensure_container_root(context)
 
 

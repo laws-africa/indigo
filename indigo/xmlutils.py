@@ -42,3 +42,10 @@ def closest(element, predicate):
         return next(e for e in chain([element], element.iterancestors()) if predicate(e))
     except StopIteration:
         return None
+
+
+html_parser = lxml.html.HTMLParser(encoding='utf-8')
+
+def parse_html_str(html):
+    """Encode HTML into utf-8 bytes and parse."""
+    return lxml.html.fromstring(html.encode('utf-8'), parser=html_parser)

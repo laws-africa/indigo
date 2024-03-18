@@ -13,6 +13,7 @@ from xmldiff import formatting
 from xmldiff.diff import Differ
 from cobalt.schemas import AkomaNtoso30
 from docpipe.xmlutils import unwrap_element
+from indigo.xmlutils import parse_html_str
 
 log = logging.getLogger(__name__)
 
@@ -126,9 +127,8 @@ class AKNHTMLDiffer:
             # it was deleted
             return '<div class="del">' + old_html + '</div>'
 
-        parser = lxml.html.HTMLParser(encoding='utf-8')
-        old_tree = lxml.html.fromstring(old_html.encode('utf-8'), parser=parser)
-        new_tree = lxml.html.fromstring(new_html.encode('utf-8'), parser=parser)
+        old_tree = parse_html_str(old_html)
+        new_tree = parse_html_str(new_html)
         diff = self.diff_html(old_tree, new_tree)
         return lxml.html.tostring(diff, encoding='unicode')
 

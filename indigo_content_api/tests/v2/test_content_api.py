@@ -203,8 +203,13 @@ class ContentAPIV2TestMixin:
         self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2014/10/fre').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2014/10/fre.html').status_code, 404)
 
+    def test_published_listing_no_results(self):
+        # valid countries with no results return empty lists, not 404
+        resp = self.client.get(self.api_path + '/akn/za/act/2999/')
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual([], resp.json()['results'])
+
     def test_published_listing_missing(self):
-        self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2999/').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/zm/').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/za-foo/').status_code, 404)
 

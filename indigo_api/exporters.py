@@ -5,7 +5,6 @@ import shutil
 import tempfile
 from collections import defaultdict
 
-import lxml.html
 import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
@@ -19,6 +18,7 @@ from sass_processor.processor import SassProcessor
 
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo.xmlutils import parse_html_str
 from indigo_api.models import Colophon
 from indigo_api.pdf import run_fop
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
@@ -199,7 +199,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """
         xslt = etree.XSLT(etree.parse(find_static('xsl/html_to_xml.xsl')))
         # apply xslt
-        xml = str(xslt(lxml.html.fromstring(html_string.encode('utf-8'))))
+        xml = str(xslt(parse_html_str(html_string)))
         # turn string into bytes and parse into xml
         return etree.fromstring(xml.encode('utf-8'))
 

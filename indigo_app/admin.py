@@ -28,8 +28,7 @@ class PublicationInline(admin.TabularInline):
 
 
 # Define a new User admin
-class UserAdmin(UserAdmin):
-    inlines = (EditorInline, )
+UserAdmin.inlines = UserAdmin.inlines + [EditorInline]
 
 
 @admin.register(Country)

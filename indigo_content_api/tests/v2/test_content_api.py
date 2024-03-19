@@ -143,16 +143,22 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(len(response.data['results']), 1)
 
-    def test_published_listing_filters(self):
+    def test_published_listing_filters_lte(self):
         response = self.client.get(self.api_path + '/akn/za/', {'updated_at__lte': '2015-02-20T00:00:00Z'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 3)
+        self.assertEqual(['/akn/za/act/1880/1', '/akn/za/act/2014/10', '/akn/za/act/2017/17'], [r["frbr_uri"] for r in response.data['results']])
 
+    def test_published_listing_filters_gte(self):
         response = self.client.get(self.api_path + '/akn/za/', {'updated_at__gte': '2015-06-01T00:00:00Z'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/json')
-        self.assertEqual(len(response.data['results']), 5)
+        self.assertEqual(['/akn/za/act/2001/8',
+                          '/akn/za/act/2010/1',
+                          '/akn/za/act/2016/16',
+                          '/akn/za/act/2017/17',
+                          '/akn/za/act/2023/1'],
+                         [r["frbr_uri"] for r in response.data['results']])
 
     @patch.object(PDFExporter, 'render', return_value='pdf-content')
     def test_published_listing_pdf(self, mock):
@@ -197,8 +203,13 @@ class ContentAPIV2TestMixin:
         self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2014/10/fre').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2014/10/fre.html').status_code, 404)
 
+    def test_published_listing_no_results(self):
+        # valid countries with no results return empty lists, not 404
+        resp = self.client.get(self.api_path + '/akn/za/act/2999/')
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual([], resp.json()['results'])
+
     def test_published_listing_missing(self):
-        self.assertEqual(self.client.get(self.api_path + '/akn/za/act/2999/').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/zm/').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/za-foo/').status_code, 404)
 

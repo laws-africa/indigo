@@ -1546,12 +1546,13 @@ class WorkFormConsolidationView(WorkViewBase, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        formset = ConsolidationsBaseFormset(self.request.POST,
-                                            user=self.request.user,
-                                            work=self.work,
-                                            prefix="consolidations",
-                                            form_kwargs={"work":self.work,
-                                                         "user": self.request.user})
+        context["formset"] = formset = ConsolidationsBaseFormset(self.request.POST,
+                                                    user=self.request.user,
+                                                    work=self.work,
+                                                    prefix="consolidations",
+                                                    form_kwargs={"work":self.work,
+                                                                 "user": self.request.user})
+
         initial = []
         if formset.is_valid():
             for form in formset.forms:
@@ -1565,27 +1566,28 @@ class WorkFormConsolidationView(WorkViewBase, TemplateView):
                 })
 
             if self.request.POST.get("consolidation") == "add":
-                date = datetime.datetime.today()
-                # if (
-                #     self.place.place_settings.is_consolidation and
-                #     self.place.place_settings.as_at_date and
-                #     self.work.principal and
-                #     self.work.publication_date and
-                #     self.work.publication_date > self.place.place_settings.as_at_date
-                # ):
-                #
-                #     date = self.place.place_settings.as_at_date
+                date = ""
+                if (
+                    self.work.principal and
+                    self.work.publication_date and
+                    self.place.settings.is_consolidation and
+                    self.place.settings.as_at_date and
+                    self.work.publication_date.year >= self.place.settings.as_at_date.year
+                ):
+                    date = self.work.as_at_date()
+
                 initial.append({
-                    "date": datetime.datetime.today()
+                    "date": date
                 })
 
-        context["formset"] =  ConsolidationsBaseFormset(
-                user=self.request.user,
-                work=self.work,
-                prefix="consolidations",
-                initial=initial,
-                form_kwargs={"work": self.work,
-                             "user": self.request.user}
-            )
+            context["formset"] =  ConsolidationsBaseFormset(
+                    user=self.request.user,
+                    work=self.work,
+                    prefix="consolidations",
+                    initial=initial,
+                    form_kwargs={"work": self.work,
+                                 "user": self.request.user}
+                )
+
         context["work"] = self.work
         return context

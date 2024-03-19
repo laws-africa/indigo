@@ -193,7 +193,9 @@ class TasksTest(WebTest):
         form.submit().follow()
 
         task.refresh_from_db()
-        self.assertEqual(list(task.blocked_by.all()), [blocking_task, second_blocking_task])
+        self.assertEqual(2, task.blocked_by.count())
+        for task_blocking_this in task.blocked_by.all():
+            self.assertIn(task_blocking_this, [blocking_task, second_blocking_task])
         self.assertEqual(task.state, Task.BLOCKED)
 
         # now unblock it

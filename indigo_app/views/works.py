@@ -1566,15 +1566,7 @@ class WorkFormConsolidationView(WorkViewBase, TemplateView):
                 })
 
             if self.request.POST.get("consolidation") == "add":
-                date = ""
-                if (
-                    self.work.principal and
-                    self.work.publication_date and
-                    self.place.settings.is_consolidation and
-                    self.place.settings.as_at_date and
-                    self.work.publication_date.year >= self.place.settings.as_at_date.year
-                ):
-                    date = self.work.as_at_date()
+                date = self.work.as_at_date()
 
                 initial.append({
                     "date": date

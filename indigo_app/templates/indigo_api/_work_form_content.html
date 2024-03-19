@@ -406,16 +406,28 @@
     {% endblock work-form-commencement %}
 
     {% block work-form-commencements_made %}
-    {% if work.pk %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <div id="work-form-commencements_made">
-            {% include 'indigo_api/_work_form_commencements_made.html' %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-commencements_made">
+              {% include 'indigo_api/_work_form_commencements_made.html' %}
+            </div>
           </div>
         </div>
-      </div>
-    {% endif %}
-  {% endblock work-form-commencements_made %}
+      {% endif %}
+    {% endblock work-form-commencements_made %}
+
+    {% block work-form-consolidations %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-consolidations">
+              {% include 'indigo_api/_work_form_consolidations.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-consolidations %}
 
     {% block work-form-amended_by %}
       {% if work.pk %}
@@ -463,18 +475,6 @@
         </div>
       {% endif %}
     {% endblock work-form-repeals-made %}
-
-    {% block work-form-consolidations %}
-      {% if work.pk %}
-        <div class="card mb-3">
-          <div class="card-body">
-            <div id="work-form-repeals-made">
-              {% include 'indigo_api/_work_form_consolidations.html' %}
-            </div>
-          </div>
-        </div>
-      {% endif %}
-    {% endblock work-form-consolidations %}
 
     <div class="card mb-3">
       <div class="card-body">

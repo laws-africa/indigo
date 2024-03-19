@@ -25,97 +25,104 @@
 
   <div class="card-body">
     <div class="row mb-3">
-      <div class="col-md-4 col-lg-3">
-        <input
-            type="text"
-            class="form-control me-2"
-            data-provide="datepicker"
-            placeholder="yyyy-mm-dd"
-            pattern="\d{4}-\d\d-\d\d"
-            name="{{ form.date.html_name }}"
-            value="{{ commencement.date|date:"Y-m-d" }}"
-            autocomplete="off"
-        >
+      <div class="col">
+        {% include 'indigo_api/_commencement_form_commencing_work.html' %}
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-md-6 col-lg-4">
-        <input
-            type="text"
-            class="form-control me-2"
-            placeholder="{% trans 'Example: See section 1 ...' %}"
-            name="{{ form.note.html_name }}"
-            value="{{ commencement.note|default:'' }}"
-        >
-      </div>
-    </div>
-    <div class="mb-3">
-      <div class="form-check">
-        <input
-            type="checkbox"
-            class="form-check-input"
-            id="{{ form.main.id_for_label }}-{{ commencement.id }}"
-            name="{{ form.main.html_name }}"
-            value="true"
-            {% if commencement.main %}checked{% endif %}
-            {% if disable_main_commencement %}disabled{% endif %}
-        >
-        <label
-            for="{{ form.main.id_for_label }}-{{ commencement.id }}"
-            class="form-check-label"
-        >{% trans 'Main commencement' %}</label>
-      </div>
-      {% if form.main.errors %}
-        <div class="text-danger">
-          {% for error in form.main.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
+    <div id="non-commencing-work-data-{{ commencement.id }}">
+      <div class="row mb-3">
+        <div class="col-md-4 col-lg-3">
+          <input
+              type="text"
+              class="form-control me-2"
+              data-provide="datepicker"
+              placeholder="yyyy-mm-dd"
+              pattern="\d{4}-\d\d-\d\d"
+              name="{{ form.date.html_name }}"
+              value="{{ commencement.date|date:"Y-m-d" }}"
+              autocomplete="off"
+          >
         </div>
-      {% endif %}
-    </div>
-    <div class="mb-3">
-      <div class="form-check">
-        <input
-            type="checkbox"
-            class="form-check-input all-provisions"
-            id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
-            name="{{ form.all_provisions.html_name }}"
-            value="true"
-            {% if commencement.all_provisions %}checked{% endif %}
-            {% if disable_all_provisions %}disabled{% endif %}
-        >
-        <label
-            for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
-            class="form-check-label"
-        >{% trans 'Commences all provisions' %}</label>
       </div>
-      {% if form.all_provisions.errors %}
-        <div class="text-danger">
-          {% for error in form.all_provisions.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
+      <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+          <input
+              type="text"
+              class="form-control me-2"
+              placeholder="{% trans 'Example: See section 1 ...' %}"
+              name="{{ form.note.html_name }}"
+              value="{{ commencement.note|default:'' }}"
+          >
         </div>
-      {% endif %}
-    </div>
-    <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-      <div class="d-flex justify-content-between">
-        <div>{% trans 'Provisions commenced' %}:</div>
-        <div>
+      </div>
+      <div class="mb-3">
+        <div class="form-check">
           <input
               type="checkbox"
-              class="form-check-input me-1"
-              id="select-all-provisions-{{ commencement.id }}"
-              name="select-all"
+              class="form-check-input"
+              id="{{ form.main.id_for_label }}-{{ commencement.id }}"
+              name="{{ form.main.html_name }}"
+              value="true"
+              {% if commencement.main %}checked{% endif %}
+              {% if disable_main_commencement %}disabled{% endif %}
           >
           <label
-              for="select-all-provisions-{{ commencement.id }}"
+              for="{{ form.main.id_for_label }}-{{ commencement.id }}"
               class="form-check-label"
-          >{% trans 'Select all provisions' %}</label>
+          >{% trans 'Main commencement' %}</label>
         </div>
+        {% if form.main.errors %}
+          <div class="text-danger">
+            {% for error in form.main.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
-      <ul data-id="provisions" class="provisions-list">
-        {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
-      </ul>
+      <div class="mb-3">
+        <div class="form-check">
+          <input
+              type="checkbox"
+              class="form-check-input all-provisions"
+              id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+              name="{{ form.all_provisions.html_name }}"
+              value="true"
+              {% if commencement.all_provisions %}checked{% endif %}
+              {% if disable_all_provisions %}disabled{% endif %}
+          >
+          <label
+              for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+              class="form-check-label"
+          >{% trans 'Commences all provisions' %}</label>
+        </div>
+        {% if form.all_provisions.errors %}
+          <div class="text-danger">
+            {% for error in form.all_provisions.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
+        <div class="d-flex justify-content-between">
+          <div>{% trans 'Provisions commenced' %}:</div>
+          <div>
+            <input
+                type="checkbox"
+                class="form-check-input me-1"
+                id="select-all-provisions-{{ commencement.id }}"
+                name="select-all"
+            >
+            <label
+                for="select-all-provisions-{{ commencement.id }}"
+                class="form-check-label"
+            >{% trans 'Select all provisions' %}</label>
+          </div>
+        </div>
+        <ul data-id="provisions" class="provisions-list">
+          {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
+        </ul>
+      </div>
     </div>
   </div>
   <div class="card-footer text-end">

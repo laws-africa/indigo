@@ -535,10 +535,12 @@ class NewCommencementForm(forms.ModelForm):
 
 class CommencementForm(forms.ModelForm):
     provisions = forms.MultipleChoiceField(required=False)
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    clear_commencing_work = forms.BooleanField(required=False)
 
     class Meta:
         model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
+        fields = ('date', 'commencing_work', 'all_provisions', 'provisions', 'main', 'note')
 
     def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)

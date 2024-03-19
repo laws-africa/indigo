@@ -468,6 +468,9 @@ class WorkCommencementEditView(WorkDependentView, UpdateView, WorkCommencementsV
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
+        # TODO: is there a neater way of doing this?
+        if self.request.GET.get('commencing_work') or self.request.GET.get('clear_commencing_work'):
+            kwargs['data'] = self.request.GET
         return kwargs
 
     def form_valid(self, form):

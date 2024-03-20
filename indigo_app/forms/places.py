@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.utils.translation import ugettext_lazy as _
 from lxml import etree
 
 from indigo_api.models import Country, PlaceSettings
@@ -21,7 +22,7 @@ class PlaceSettingsForm(forms.ModelForm):
         URLValidator(
             schemes=['https'],
             regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/[\w#=]*',
-            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
+            message=_("Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"), code='bad')
     ])
 
     def clean_spreadsheet_url(self):
@@ -32,7 +33,7 @@ class PlaceSettingsForm(forms.ModelForm):
 class PlaceUsersForm(forms.Form):
     # make choices a lambda so that it's evaluated at runtime, not import time
     choices = lambda: [(u.id, (u.get_full_name() or u.username)) for u in User.objects.filter(badges_earned__slug='editor')]
-    users = forms.MultipleChoiceField(choices=choices, label="Users with edit permissions", required=False, widget=forms.CheckboxSelectMultiple)
+    users = forms.MultipleChoiceField(choices=choices, label=_("Users with edit permissions"), required=False, widget=forms.CheckboxSelectMultiple)
 
 
 class CountryAdminForm(forms.ModelForm):
@@ -48,10 +49,10 @@ class CountryAdminForm(forms.ModelForm):
 
 
 class ExplorerForm(forms.Form, FormAsUrlMixin):
-    xpath = forms.CharField(required=True)
-    parent = forms.ChoiceField(choices=[('', 'None'), ('1', '1 level'), ('2', '2 levels')], required=False)
-    localities = forms.BooleanField(required=False)
-    global_search = forms.BooleanField(required=False)
+    xpath = forms.CharField(label=_("XPath"), required=True)
+    parent = forms.ChoiceField(label=_("Parent context"), choices=[('', _('None')), ('1', _('1 level')), ('2', _('2 levels'))], required=False)
+    localities = forms.BooleanField(label=_("Include localities"), required=False)
+    global_search = forms.BooleanField(label=_("Global search"), required=False)
 
     def clean_xpath(self):
         value = self.cleaned_data['xpath']

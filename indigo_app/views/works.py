@@ -16,6 +16,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
@@ -192,7 +193,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, "Work updated.")
+            messages.success(self.request, _("Work updated."))
 
         return resp
 
@@ -295,10 +296,10 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, 'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            messages.success(request, _('Deleted %s · %s') % (self.work.title, self.work.frbr_uri))
             return redirect(self.get_success_url())
         else:
-            messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
+            messages.error(request, _('This work cannot be deleted while linked documents and related works exist.'))
             return redirect('work_edit', frbr_uri=self.work.frbr_uri)
 
     def get_success_url(self):
@@ -929,14 +930,14 @@ class BatchAddWorkView(PlaceViewBase, FormView):
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
 
             if not sheet_id:
-                add_spreadsheet_url_error('Unable to get spreadsheet ID from URL')
+                add_spreadsheet_url_error(_('Unable to get spreadsheet ID from URL'))
             else:
                 try:
                     sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
                     sheets = [s['properties']['title'] for s in sheets]
                     form.fields['sheet_name'].choices = [(s, s) for s in sheets]
                 except ValueError:
-                    add_spreadsheet_url_error(f"Unable to fetch spreadsheet information. Is your spreadsheet shared with {self.bulk_creator._gsheets_secret['client_email']}?")
+                    add_spreadsheet_url_error(_("Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?").format(self.bulk_creator._gsheets_secret['client_email']))
 
         return form
 
@@ -1033,7 +1034,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         except ValueError as e:
             if document.pk:
                 document.delete()
-            log.error("Error during import: %s" % str(e), exc_info=e)
+            log.error(_("Error during import: %s") % str(e), exc_info=e)
             return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user

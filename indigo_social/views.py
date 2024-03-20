@@ -270,7 +270,7 @@ class UnawardBadgeView(AwardBadgeView):
         badge = form.actual_badge()
 
         badge.unaward(user)
-        messages.success(self.request, _('%(badge)s badge remove from %(user)s') % {'badge': badge.name, 'user': user_display(user)})
+        messages.success(self.request, _('%(badge)s badge removed from %(user)s') % {'badge': badge.name, 'user': user_display(user)})
         return super(AwardBadgeView, self).form_valid(form)
 
 

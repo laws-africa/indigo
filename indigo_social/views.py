@@ -9,6 +9,7 @@ from django.http import Http404, FileResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.templatetags.static import static
+from django.utils.translation import ugettext as _
 from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
@@ -250,9 +251,9 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
 
         if badge.can_award(user):
             badge.possibly_award(user=self.user)
-            messages.success(self.request, '%s badge awarded to %s' % (badge.name, user_display(user)))
+            messages.success(self.request, _('%(badge)s badge awarded to %(user)s') % {'badge': badge.name, 'user': user_display(user)})
         else:
-            messages.warning(self.request, '%s badge couldn\'t be awarded to %s' % (badge.name, user_display(user)))
+            messages.warning(self.request, _("%(badge)s badge couldn't be awarded to %(user)s") % {'badge': badge.name, 'user': user_display(user)})
         return super(AwardBadgeView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -269,7 +270,7 @@ class UnawardBadgeView(AwardBadgeView):
         badge = form.actual_badge()
 
         badge.unaward(user)
-        messages.success(self.request, '%s badge remove from %s' % (badge.name, user_display(user)))
+        messages.success(self.request, _('%(badge)s badge remove from %(user)s') % {'badge': badge.name, 'user': user_display(user)})
         return super(AwardBadgeView, self).form_valid(form)
 
 

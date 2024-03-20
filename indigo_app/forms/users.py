@@ -2,15 +2,16 @@ from allauth.account.forms import SignupForm
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from indigo_api.models import Country
 from indigo_app.models import Editor
 
 
 class UserEditorForm(forms.ModelForm):
-    first_name = forms.CharField(label='First name')
-    last_name = forms.CharField(label='Last name')
-    language = forms.ChoiceField(label='Language', choices=settings.LANGUAGES)
+    first_name = forms.CharField(label=_('First name'))
+    last_name = forms.CharField(label=_('Last name'))
+    language = forms.ChoiceField(label=_('Language'), choices=settings.LANGUAGES)
 
     class Meta:
         model = Editor
@@ -24,18 +25,18 @@ class UserEditorForm(forms.ModelForm):
 
 
 class UserSignupForm(SignupForm):
-    first_name = forms.CharField(required=True, max_length=30, label='First name')
-    last_name = forms.CharField(required=True, max_length=30, label='Last name')
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
+    first_name = forms.CharField(required=True, max_length=30, label=_('First name'))
+    last_name = forms.CharField(required=True, max_length=30, label=_('Last name'))
+    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label=_('Country'), empty_label=None)
     captcha = ReCaptchaField()
     accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
-        'required': 'Please accept the Terms of Use.',
+        'required': _('Please accept the Terms of Use.'),
     })
     signup_enabled = settings.ACCOUNT_SIGNUP_ENABLED
 
     def clean(self):
         if not self.signup_enabled:
-            raise forms.ValidationError("Creating new accounts is currently not allowed.")
+            raise forms.ValidationError(_("Creating new accounts is currently not allowed."))
         return super().clean()
 
     def save(self, request):

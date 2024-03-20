@@ -5,6 +5,7 @@ from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import _lazy_re_compile, RegexValidator
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 from PIL import Image
 
 from indigo_api.models import Country, User
@@ -16,16 +17,16 @@ from pinax.badges.models import BadgeAward
 class UserProfileForm(forms.ModelForm):
     validate_username = RegexValidator(
         _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
-        "Your username cannot include spaces, punctuation or capital letters.",
+        _("Your username cannot include spaces, punctuation or capital letters."),
         'invalid'
     )
 
-    first_name = forms.CharField(label='First name')
-    last_name = forms.CharField(label='Last name')
-    username = forms.CharField(label='Username', validators=[validate_username])
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
-    new_profile_photo = forms.ImageField(label='Profile photo', required=False)
-    language = forms.ChoiceField(label='Language', choices=settings.LANGUAGES)
+    first_name = forms.CharField(label=_('First name'))
+    last_name = forms.CharField(label=_('Last name'))
+    username = forms.CharField(label=_('Username'), validators=[validate_username])
+    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label=_('Country'), empty_label=None)
+    new_profile_photo = forms.ImageField(label=_('Profile photo'), required=False)
+    language = forms.ChoiceField(label=_('Language'), choices=settings.LANGUAGES)
 
     class Meta:
         model = UserProfile
@@ -51,7 +52,7 @@ class UserProfileForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError("This username is already taken.")
+            raise forms.ValidationError(_("This username is already taken."))
         return username
 
     def save(self, commit=True):

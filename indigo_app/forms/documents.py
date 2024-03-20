@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from indigo_api.models import Document, Language
 
@@ -24,4 +25,4 @@ class ImportDocumentForm(forms.Form):
         try:
             return json.loads(val or '{}')
         except ValueError:
-            raise forms.ValidationError("Invalid json data")
+            raise forms.ValidationError(_("Invalid json data"))

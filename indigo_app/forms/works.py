@@ -1340,7 +1340,8 @@ class WorkBulkUpdateForm(forms.Form):
 
 
 class WorkBulkApproveForm(forms.Form):
-    TASK_CHOICES = [('', 'Create tasks'), ('block', 'Create and block tasks'), ('cancel', 'Create and cancel tasks')]
+    TASK_CHOICES = [('', 'Create tasks'), ('block', _('Create and block tasks')), ('cancel', _('Create and cancel tasks'))]
+
     works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     conversion_task_description = forms.CharField(required=False)
     import_task_description = forms.CharField(required=False)
@@ -1382,7 +1383,7 @@ class BatchCreateWorkForm(forms.Form):
         URLValidator(
             schemes=['https'],
             regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
-            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
+            message=_("Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"), code='bad')
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
     workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
@@ -1396,7 +1397,7 @@ class BatchCreateWorkForm(forms.Form):
     block_amendment_tasks = forms.BooleanField(initial=False, required=False)
     cancel_amendment_tasks = forms.BooleanField(initial=False, required=False)
     tasks = forms.MultipleChoiceField(
-        choices=(('import-content', 'Import content'), ('link-gazette', 'Link gazette')), required=False)
+        choices=(('import-content', _('Import content')), ('link-gazette', _('Link gazette'))), required=False)
 
 
 class ColumnSelectWidget(SelectMultiple):

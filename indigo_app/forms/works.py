@@ -11,7 +11,7 @@ from django.core.validators import URLValidator
 from django.db.models import IntegerField, Case, When, Value
 from django.db.models import Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
-from django.utils.translation import gettext as _, gettext_lazy as _l
+from django.utils.translation import ugettext_lazy as _
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
@@ -374,7 +374,6 @@ class BasePartialWorkFormSet(forms.BaseFormSet):
 
 
 class BasePartialWorkForm(forms.Form):
-
     def __init__(self, *args, work, user,  **kwargs):
         super().__init__(*args, **kwargs)
         self.work = work
@@ -394,8 +393,8 @@ WorkAliasesBaseFormSet = formset_factory(
     formset=BasePartialWorkFormSet,
 )
 
-class WorkAliasesFormSet(WorkAliasesBaseFormSet):
 
+class WorkAliasesFormSet(WorkAliasesBaseFormSet):
     def save(self, *args, **kwargs):
         existing = [x.alias for x in self.work.aliases.all()]
         new = [form.cleaned_data['alias'] for form in self.forms if form.cleaned_data.get('alias')]
@@ -413,7 +412,6 @@ class AmendmentForm(BasePartialWorkForm):
     amended_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-
 
     @cached_property
     def amending_work_obj(self):
@@ -456,7 +454,6 @@ AmendmentsFormSet = formset_factory(
 
 
 class AmendmentsBaseFormSet(AmendmentsFormSet):
-
     def clean(self):
         super().clean()
         if any(self.errors):
@@ -477,7 +474,6 @@ class AmendmentsBaseFormSet(AmendmentsFormSet):
 class RepealMadeForm(BasePartialWorkForm):
     repealed_work = forms.ModelChoiceField(queryset=Work.objects)
     repealed_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-
 
     @cached_property
     def repealed_work_obj(self):
@@ -510,10 +506,10 @@ RepealMadeFormSet = formset_factory(
 class RepealMadeBaseFormSet(RepealMadeFormSet):
     pass
 
+
 class ConsolidationForm(BasePartialWorkForm):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-
 
     def save(self, *args, **kwargs):
         consolidation = ArbitraryExpressionDate.objects.filter(pk=self.cleaned_data['id']).first()
@@ -536,7 +532,6 @@ class ConsolidationForm(BasePartialWorkForm):
                 )
 
 
-
 ConsolidationsFormSet = formset_factory(
     ConsolidationForm,
     extra=0,
@@ -544,8 +539,8 @@ ConsolidationsFormSet = formset_factory(
     formset=BasePartialWorkFormSet
 )
 
-class ConsolidationsBaseFormset(ConsolidationsFormSet):
 
+class ConsolidationsBaseFormset(ConsolidationsFormSet):
     def clean(self):
         seen = set()
         for form in self.forms:
@@ -598,7 +593,7 @@ class CommencementForm(forms.ModelForm):
             if self.instance:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise ValidationError("A main commencement already exists.")
+                raise ValidationError(_("A main commencement already exists."))
         return self.cleaned_data['main']
 
     def clean_all_provisions(self):
@@ -608,14 +603,14 @@ class CommencementForm(forms.ModelForm):
             if self.instance:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise ValidationError("A commencement for all provisions must be the only commencement.")
+                raise ValidationError(_("A commencement for all provisions must be the only commencement."))
         return self.cleaned_data['all_provisions']
 
     def clean(self):
         super().clean()
         # all_provisions may have been nuked during clean
         if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
-            raise ValidationError("Cannot specify all provisions, and a list of provisions.")
+            raise ValidationError(_("Cannot specify all provisions, and a list of provisions."))
 
 
 class CommencementsPartialForm(BasePartialWorkForm):
@@ -666,6 +661,7 @@ CommencementsFormset = formset_factory(
     formset=BasePartialWorkFormSet,
 )
 
+
 class CommencementsMadeBaseFormset(CommencementsFormset):
     def clean(self):
         super().clean()
@@ -680,7 +676,7 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
             amended_work = form.cleaned_data.get('commenced_work')
             date = form.cleaned_data.get('date')
             if (amending_work, amended_work, date) in seen:
-                raise ValidationError("Commenced work and date must be unique together.")
+                raise ValidationError(_("Commenced work and date must be unique together."))
             seen.add((amending_work, amended_work, date))
 
     def save(self, *args, **kwargs):
@@ -751,34 +747,56 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
-    amendment = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended')])
+    amendment = forms.MultipleChoiceField(label=_("Amendments"), choices=[('no', 'Not amended'), ('yes', 'Amended')])
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
-    commencement = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('partial', 'Partially commenced'), ('multiple', 'Multiple commencements')])
+    commencement = forms.MultipleChoiceField(label=_("Commencement"), choices=[
+        ('no', _('Not commenced')), ('date_unknown', _('Commencement date unknown')), ('yes', _('Commenced')),
+        ('partial', _('Partially commenced')), ('multiple', _('Multiple commencements'))
+    ])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
-    repeal = forms.MultipleChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed')])
+    repeal = forms.MultipleChoiceField(label=_("Repeals"), choices=[('no', _('Not repealed')), ('yes', _('Repealed'))])
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
-    stub = forms.MultipleChoiceField(choices=[('stub', 'Stub'), ('not_stub', 'Not a stub'), ])
-    work_in_progress = forms.MultipleChoiceField(choices=[('work_in_progress', 'Work in progress'), ('approved', 'Approved')])
-    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    sortby = forms.ChoiceField(choices=[
-        ('-created_at', _l('Created at (newest first)')), ('created_at', _l('Created at (oldest first)')),
-        ('-updated_at', _l('Updated at (newest first)')), ('updated_at', _l('Updated at (oldest first)')),
-        ('title', _l('Title (A-Z)')), ('-title', _l('Title (Z-A)')),
-        ('date', _l('Date (oldest first)')), ('-date', _l('Date (newest first)')),
-        ('number', _l('Number (ascending)')), ('-number', _l('Number (descending)')),
+    stub = forms.MultipleChoiceField(label=_("Stubs"), choices=[('stub', _('Stub')), ('not_stub', _('Not a stub'))])
+    work_in_progress = forms.MultipleChoiceField(label=_("Work in progress"), choices=[
+        ('work_in_progress', _('Work in progress')), ('approved', _('Approved'))
     ])
-    principal = forms.MultipleChoiceField(required=False, choices=[('principal', 'Principal'), ('not_principal', 'Not Principal')])
-    tasks = forms.MultipleChoiceField(required=False, choices=[('has_open_tasks', 'Has open tasks'), ('has_unblocked_tasks', 'Has unblocked tasks'), ('has_only_blocked_tasks', 'Has only blocked tasks'), ('no_open_tasks', 'Has no open tasks')])
-    primary = forms.MultipleChoiceField(required=False, choices=[('primary', 'Primary'), ('primary_subsidiary', 'Primary with subsidiary'), ('subsidiary', 'Subsidiary')])
-    consolidation = forms.MultipleChoiceField(required=False, choices=[('has_consolidation', 'Has consolidation'), ('no_consolidation', 'No consolidation')])
-    publication_document = forms.MultipleChoiceField(required=False, choices=[('has_publication_document', 'Has publication document'), ('no_publication_document', 'No publication document')])
-    documents = forms.MultipleChoiceField(required=False, choices=[('one', 'Has one document'), ('multiple', 'Has multiple documents'), ('none', 'Has no documents'), ('published', 'Has published document(s)'), ('draft', 'Has draft document(s)')])
+    status = forms.MultipleChoiceField(label=_("Point in time status"), choices=[
+        ('published', _('Published')), ('draft', _('Draft'))
+    ])
+    sortby = forms.ChoiceField(choices=[
+        ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
+        ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
+        ('title', _('Title (A-Z)')), ('-title', _('Title (Z-A)')),
+        ('date', _('Date (oldest first)')), ('-date', _('Date (newest first)')),
+        ('number', _('Number (ascending)')), ('-number', _('Number (descending)')),
+    ])
+    principal = forms.MultipleChoiceField(label=_("Principal"), required=False, choices=[
+        ('principal', _('Principal')), ('not_principal', _('Not Principal'))
+    ])
+    tasks = forms.MultipleChoiceField(label=_("Tasks"), required=False, choices=[
+        ('has_open_tasks', _('Has open tasks')), ('has_unblocked_tasks', _('Has unblocked tasks')),
+        ('has_only_blocked_tasks', _('Has only blocked tasks')), ('no_open_tasks', _('Has no open tasks'))
+    ])
+    primary = forms.MultipleChoiceField(label=_("Primary and subsidiary"), required=False, choices=[
+        ('primary', _('Primary')), ('subsidiary', _('Subsidiary'))
+    ])
+    consolidation = forms.MultipleChoiceField(label=_("Consolidations"), required=False, choices=[
+        ('has_consolidation', _('Has consolidation')), ('no_consolidation', _('No consolidation'))
+    ])
+    publication_document = forms.MultipleChoiceField(label=_("Publication document"), required=False, choices=[
+        ('has_publication_document', _('Has publication document')),
+        ('no_publication_document', _('No publication document')),
+    ])
+    documents = forms.MultipleChoiceField(label=_("Points in time"), required=False, choices=[
+        ('one', _('Has one point in time')), ('multiple', _('Has multiple points in time')),
+        ('none', _('Has no points in time'))
+    ])
     taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
     frbr_uris = forms.CharField(required=False)
 
@@ -1025,6 +1043,17 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         return queryset.distinct()
 
+    def facet_item(self, field, value, count):
+        try:
+            label = next(lab for (val, lab) in self.fields[field].choices if val == value)
+        except StopIteration:
+            raise ValueError(f"Unknown choice {value} for field {field}")
+        return FacetItem(label, value, count, value in self.cleaned_data.get(field, []))
+
+    def facet(self, name, type, items):
+        items = [self.facet_item(name, value, count) for value, count in items]
+        return Facet(self.fields[name].label, name, type, items)
+
     def work_facets(self, queryset, taxonomy_toc):
         work_facets = []
         self.facet_subtype(work_facets, queryset)
@@ -1068,7 +1097,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             for c in self.fields["subtype"].choices
             if counts_in_place.get(c[0])
         ]
-        facets.append(Facet("Type", "subtype", "checkbox", items))
+        facets.append(Facet(_("Type"), "subtype", "checkbox", items))
 
     def facet_principal(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="principal")
@@ -1076,21 +1105,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             principal_counts=Count("pk", filter=Q(principal=True), distinct=True),
             not_principal_counts=Count("pk", filter=Q(principal=False), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Principal",
-                "principal",
-                counts.get("principal_counts", 0),
-                "principal" in self.cleaned_data.get("principal", [])
-            ),
-            FacetItem(
-                "Not principal",
-                "not_principal",
-                counts.get("not_principal_counts", 0),
-                "not_principal" in self.cleaned_data.get("principal", [])
-            ),
-        ]
-        facets.append(Facet("Principal", "principal", "checkbox", items))
+        facets.append(self.facet("principal", "checkbox", [
+            ("principal", counts.get("principal_counts", 0)),
+            ("not_principal", counts.get("not_principal_counts", 0)),
+        ]))
 
     def facet_stub(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="stub")
@@ -1098,21 +1116,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             stub_counts=Count("pk", filter=Q(stub=True), distinct=True),
             not_stub_counts=Count("pk", filter=Q(stub=False), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Stub",
-                "stub",
-                counts.get("stub_counts", 0),
-                "stub" in self.cleaned_data.get("stub", [])
-            ),
-            FacetItem(
-                "Not a stub",
-                "not_stub",
-                counts.get("not_stub_counts", 0),
-                "not_stub" in self.cleaned_data.get("stub", [])
-            ),
-        ]
-        facets.append(Facet("Stubs", "stub", "checkbox", items))
+        facets.append(self.facet("stub", "checkbox", [
+            ("stub", counts.get("stub_counts", 0)),
+            ("not_stub", counts.get("not_stub_counts", 0)),
+        ]))
 
     def facet_work_in_progress(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="work_in_progress")
@@ -1120,21 +1127,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             work_in_progress_counts=Count("pk", filter=Q(work_in_progress=True), distinct=True),
             approved_counts=Count("pk", filter=Q(work_in_progress=False), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Work in progress",
-                "work_in_progress",
-                counts.get("work_in_progress_counts", 0),
-                "work_in_progress" in self.cleaned_data.get("work_in_progress", [])
-            ),
-            FacetItem(
-                "Approved",
-                "approved",
-                counts.get("approved_counts", 0),
-                "approved" in self.cleaned_data.get("work_in_progress", [])
-            ),
-        ]
-        facets.append(Facet("Work in progress", "work_in_progress", "checkbox", items))
+        facets.append(self.facet("work_in_progress", "checkbox", [
+            ("work_in_progress", counts.get("work_in_progress_counts", 0)),
+            ("approved", counts.get("approved_counts", 0)),
+        ]))
 
     def facet_tasks(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="tasks")
@@ -1162,33 +1158,12 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             if item['has_blocked_states'] > 0 and not item['has_unblocked_states'] > 0:
                 counts['only_blocked_states'] += 1
 
-        items = [
-            FacetItem(
-                "Has open tasks",
-                "has_open_tasks",
-                counts['open_states'],
-                "has_open_tasks" in self.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has unblocked tasks",
-                "has_unblocked_tasks",
-                counts['unblocked_states'],
-                "has_unblocked_tasks" in self.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has only blocked tasks",
-                "has_only_blocked_tasks",
-                counts['only_blocked_states'],
-                "has_only_blocked_tasks" in self.cleaned_data.get("tasks", [])
-            ),
-            FacetItem(
-                "Has no open tasks",
-                "no_open_tasks",
-                counts['no_open_states'],
-                "no_open_tasks" in self.cleaned_data.get("tasks", [])
-            ),
-        ]
-        facets.append(Facet("Tasks", "tasks", "checkbox", items))
+        facets.append(self.facet("tasks", "checkbox", [
+            ("has_open_tasks", counts['open_states']),
+            ("has_unblocked_tasks", counts['unblocked_states']),
+            ("has_only_blocked_tasks", counts['only_blocked_states']),
+            ("no_open_tasks", counts['no_open_states']),
+        ]))
 
     def facet_primary(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="primary")
@@ -1196,21 +1171,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             primary_counts=Count("pk", filter=Q(parent_work__isnull=True), distinct=True),
             subsidiary_counts=Count("pk", filter=Q(parent_work__isnull=False), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Primary",
-                "primary",
-                counts.get("primary_counts", 0),
-                "primary" in self.cleaned_data.get("primary", [])
-            ),
-            FacetItem(
-                "Subsidiary",
-                "subsidiary",
-                counts.get("subsidiary_counts", 0),
-                "subsidiary" in self.cleaned_data.get("primary", [])
-            ),
-        ]
-        facets.append(Facet("Primary and Subsidiary", "primary", "checkbox", items))
+        facets.append(self.facet("primary", "checkbox", [
+            ("primary", counts.get("primary_counts", 0)),
+            ("subsidiary", counts.get("subsidiary_counts", 0)),
+        ]))
 
     def facet_commencement(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="commencement")
@@ -1221,33 +1185,12 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         )
         qs = qs.annotate(Count("commencements"))
         counts['multipe_count'] = qs.filter(commencements__count__gt=1).count()
-        items = [
-            FacetItem(
-                "Commenced",
-                "yes",
-                counts.get("commenced_count", 0),
-                "yes" in self.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Not commenced",
-                "no",
-                counts.get("not_commenced_count", 0),
-                "no" in self.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Commencement date unknown",
-                "date_unknown",
-                counts.get("date_unknown_count", 0),
-                "date_unknown" in self.cleaned_data.get("commencement", [])
-            ),
-            FacetItem(
-                "Multiple commencements",
-                "multiple",
-                counts.get("multipe_count", 0),
-                "multiple" in self.cleaned_data.get("commencement", [])
-            ),
-        ]
-        facets.append(Facet("Commencements", "commencement", "checkbox", items))
+        facets.append(self.facet("commencement", "checkbox", [
+            ("yes", counts.get("commenced_count", 0)),
+            ("no", counts.get("not_commenced_count", 0)),
+            ("date_unknown", counts.get("date_unknown_count", 0)),
+            ("multiple", counts.get("multipe_count", 0)),
+        ]))
 
     def facet_amendment(self, facet, qs):
         qs = self.filter_queryset(qs, exclude="amendment")
@@ -1255,21 +1198,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             amended_count=Count("pk", filter=Q(amendments__isnull=False), distinct=True),
             not_amended_count=Count("pk", filter=Q(amendments__isnull=True), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Amended",
-                "yes",
-                counts.get("amended_count", 0),
-                "yes" in self.cleaned_data.get("amendment", [])
-            ),
-            FacetItem(
-                "Not amended",
-                "no",
-                counts.get("not_amended_count", 0),
-                "no" in self.cleaned_data.get("amendment", [])
-            ),
-        ]
-        facet.append(Facet("Amendments", "amendment", "checkbox", items))
+        facet.append(self.facet("amendment", "checkbox", [
+            ("yes", counts.get("amended_count", 0)),
+            ("no", counts.get("not_amended_count", 0)),
+        ]))
 
     def facet_consolidation(self, facets,  qs):
         qs = self.filter_queryset(qs, exclude="consolidation")
@@ -1277,21 +1209,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             has_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=False), distinct=True),
             no_consolidation=Count("pk", filter=Q(arbitrary_expression_dates__date__isnull=True), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Has consolidation",
-                "has_consolidation",
-                counts.get("has_consolidation", 0),
-                "has_consolidation" in self.cleaned_data.get("consolidation", [])
-            ),
-            FacetItem(
-                "No consolidation",
-                "no_consolidation",
-                counts.get("no_consolidation", 0),
-                "no_consolidation" in self.cleaned_data.get("consolidation", [])
-            ),
-        ]
-        facets.append(Facet("Consolidations", "consolidation", "checkbox", items))
+        facets.append(self.facet("consolidation", "checkbox", [
+            ("has_consolidation", counts.get("has_consolidation", 0)),
+            ("no_consolidation", counts.get("no_consolidation", 0)),
+        ]))
 
     def facet_publication_document(self, facets,  qs):
         qs = self.filter_queryset(qs, exclude="publication_document")
@@ -1299,21 +1220,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             has_publication_document=Count("pk", filter=Q(publication_document__isnull=False), distinct=True),
             no_publication_document=Count("pk", filter=Q(publication_document__isnull=True), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Has publication document",
-                "has_publication_document",
-                counts.get("has_publication_document", 0),
-                "has_publication_document" in self.cleaned_data.get("publication_document", [])
-            ),
-            FacetItem(
-                "No publication document",
-                "no_publication_document",
-                counts.get("no_publication_document", 0),
-                "no_publication_document" in self.cleaned_data.get("publication_document", [])
-            ),
-        ]
-        facets.append(Facet("Publication document", "publication_document", "checkbox", items))
+        facets.append(self.facet("publication_document", "checkbox", [
+            ("has_publication_document", counts.get("has_publication_document", 0)),
+            ("no_publication_document", counts.get("no_publication_document", 0)),
+        ]))
 
     def facet_repeal(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="repeal")
@@ -1321,21 +1231,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             repealed_count=Count("pk", filter=Q(repealed_date__isnull=False), distinct=True),
             not_repealed_count=Count("pk", filter=Q(repealed_date__isnull=True), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Repealed",
-                "yes",
-                counts.get("repealed_count", 0),
-                "yes" in self.cleaned_data.get("repeal", [])
-            ),
-            FacetItem(
-                "Not repealed",
-                "no",
-                counts.get("not_repealed_count", 0),
-                "no" in self.cleaned_data.get("repeal", [])
-            ),
-        ]
-        facets.append(Facet("Repeals", "repeal", "checkbox", items))
+        facets.append(self.facet("repeal", "checkbox", [
+            ("yes", counts.get("repealed_count", 0)),
+            ("no", counts.get("not_repealed_count", 0)),
+        ]))
 
     def facet_points_in_time(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="documents")
@@ -1344,27 +1243,11 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         undeleted_document_ids = qs.filter(document__deleted=False).values_list('pk', flat=True)
         all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
         no_document_ids = list(no_document_ids) + list(all_deleted_document_ids)
-        items = [
-            FacetItem(
-                "Has no points in time",
-                "none",
-                qs.annotate(Count('document')).filter(id__in=no_document_ids).count(),
-                "none" in self.cleaned_data.get("documents", [])
-            ),
-            FacetItem(
-                "Has one point in time",
-                "one",
-                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).count(),
-                "one" in self.cleaned_data.get("documents", [])
-            ),
-            FacetItem(
-                "Has multiple points in time",
-                "multiple",
-                qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).count(),
-                "multiple" in self.cleaned_data.get("documents", [])
-            ),
-        ]
-        facets.append(Facet("Points in time", "documents", "checkbox", items))
+        facets.append(self.facet("documents", "checkbox", [
+            ("none", qs.annotate(Count('document')).filter(id__in=no_document_ids).count()),
+            ("one", qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).count()),
+            ("multiple", qs.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).count()),
+        ]))
 
     def facet_point_in_time_status(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="status")
@@ -1372,21 +1255,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             drafts_count=Count("pk", filter=Q(document__draft=True), distinct=True),
             published_count=Count("pk", filter=Q(document__draft=False), distinct=True),
         )
-        items = [
-            FacetItem(
-                "Draft",
-                "draft",
-                counts.get("drafts_count", 0),
-                "draft" in self.cleaned_data.get("status", [])
-            ),
-            FacetItem(
-                "Published",
-                "published",
-                counts.get("published_count", 0),
-                "published" in self.cleaned_data.get("status", [])
-            ),
-        ]
-        facets.append(Facet("Point in time status", "status", "checkbox",  items))
+        facets.append(self.facet("status", "checkbox", [
+            ("draft", counts.get("drafts_count", 0)),
+            ("published", counts.get("published_count", 0)),
+        ]))
 
     def facet_taxonomy(self, taxonomy_tree, qs):
         qs = self.filter_queryset(qs, exclude="taxonomy_topic")

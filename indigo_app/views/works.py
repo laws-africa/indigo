@@ -868,9 +868,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment("Restored version %s" % version.id)
+            reversion.set_comment(_("Restored version %s") % version.id)
             version.revert()
-        messages.success(request, 'Restored version %s' % version.id)
+        messages.success(request, _('Restored version %s') % version.id)
 
         # signals
         work_changed.send(sender=self.work.__class__, work=self.work, request=request)

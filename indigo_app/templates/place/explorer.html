@@ -8,7 +8,7 @@
   <h3>{% trans "Explorer" %}</h3>
 
   <form method="get" class="mb-5">
-    <label for="{{ form.xpath.id_for_label }}">{% trans "XPath query" %}</label>
+    <label for="{{ form.xpath.id_for_label }}">{{ form.xpath.label }}</label>
     <div class="d-flex">
       <div class="flex-grow-1">
         <input type="text" class="form-control text-monospace" name="{{ form.xpath.name }}" placeholder="xpath query" value="{{ form.xpath.value | default:'' }}" autofocus>
@@ -31,7 +31,7 @@
     {% endif %}
 
     <div>
-      <label class="me-3">{% trans "Parent context" %}:</label>
+      <label class="me-3">{{ form.parent.label }}</label>
       {% for choice in form.parent %}
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="parent" id="{{ choice.id_for_label }}" value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}>
@@ -42,13 +42,13 @@
 
     <div class="form-check mb-2">
       <input class="form-check-input" type="checkbox" value="on" id="{{ form.global_search.id_for_label }}" name="{{ form.global_search.name }}" {% if form.global_search.data %}checked{% endif %}>
-      <label class="form-check-label" for="{{ form.global_search.id_for_label }}">{% trans "Global search" %}</label>
+      <label class="form-check-label" for="{{ form.global_search.id_for_label }}">{{ form.global_search.label }}</label>
     </div>
 
     {% if not locality %}
       <div class="form-check mb-2">
         <input class="form-check-input" type="checkbox" value="on" id="{{ form.localities.id_for_label }}" name="{{ form.localities.name }}" {% if form.localities.data %}checked{% endif %}>
-        <label class="form-check-label" for="{{ form.localities.id_for_label }}">{% trans "Include localities" %}</label>
+        <label class="form-check-label" for="{{ form.localities.id_for_label }}">{{ form.localities.label }}</label>
       </div>
     {% endif %}
 

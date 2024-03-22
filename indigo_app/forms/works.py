@@ -467,7 +467,7 @@ class AmendmentsBaseFormSet(AmendmentsFormSet):
             amended_work = form.cleaned_data.get('amended_work')
             date = form.cleaned_data.get('date')
             if (amending_work, amended_work, date) in seen:
-                raise ValidationError("Amending work and date must be unique together.")
+                raise ValidationError(_("Amending work and date must be unique together."))
             seen.add((amending_work, amended_work, date))
 
 
@@ -548,7 +548,7 @@ class ConsolidationsBaseFormset(ConsolidationsFormSet):
                 continue
             date = form.cleaned_data.get('date')
             if date in seen:
-                raise ValidationError("Consolidation dates must be unique.")
+                raise ValidationError(_("Consolidation dates must be unique."))
             seen.add(date)
 
 

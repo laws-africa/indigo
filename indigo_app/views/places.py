@@ -11,7 +11,7 @@ from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, TemplateView, UpdateView, FormView, DetailView
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
@@ -218,19 +218,19 @@ class PlaceDetailView(PlaceViewBase, TemplateView):
 
         open_tasks_chart = [{
                 'state': 'open',
-                'state_string': 'Open',
+                'state_string': _('Open'),
                 'count': open_tasks,
                 'percentage': int((open_tasks / (total_open_tasks or 1)) * 100)
             },
             {
                 'state': 'assigned',
-                'state_string': 'Assigned',
+                'state_string': _('Assigned'),
                 'count': assigned_tasks,
                 'percentage': int((assigned_tasks / (total_open_tasks or 1)) * 100)
             },
             {
                 'state': 'pending_review',
-                'state_string': 'Pending review',
+                'state_string': _('Pending review'),
                 'count': pending_review_tasks,
                 'percentage': int((pending_review_tasks / (total_open_tasks or 1)) * 100)
             }]
@@ -360,8 +360,8 @@ class PlaceExplorerView(PlaceViewBase, ListView):
         self.prettify(context['matches'])
 
         context['samples'] = [
-            ('List introductions containing remarks', '//a:subsection//a:blockList/a:listIntroduction/a:remark', '2'),
-            ('Adjacent block lists', '//a:blockList/following-sibling::*[1][self::a:blockList]', '1'),
+            (_('List introductions containing remarks'), '//a:subsection//a:blockList/a:listIntroduction/a:remark', '2'),
+            (_('Adjacent block lists'), '//a:blockList/following-sibling::*[1][self::a:blockList]', '1'),
         ]
 
         return context
@@ -425,7 +425,8 @@ class PlaceExplorerView(PlaceViewBase, ListView):
             return e.getparent()
 
         if not isinstance(e, etree.ElementBase):
-            raise ValueError(f'Expression must produce elements, but found {e.__class__.__name__} instead.')
+            raise ValueError(_("Expression must produce elements, but found %(classname)s instead.") %
+                             {"classname": e.__class__.__name__})
 
         return e
 
@@ -473,7 +474,7 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
             action.send(self.request.user, verb='updated', action_object=placesettings,
                         place_code=placesettings.place.place_code)
 
-        messages.success(self.request, "Settings updated.")
+        messages.success(self.request, _("Settings %(test)s updated.") % {"test": "HI THERE!"})
 
         return super().form_valid(form)
 
@@ -499,7 +500,7 @@ class PlaceUsersView(PlaceViewBase, FormView):
                 country_badge.possibly_award(user=user)
             else:
                 country_badge.unaward(user=user)
-        messages.success(self.request, "Users updated.")
+        messages.success(self.request, _("Users updated."))
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -512,8 +513,7 @@ class PlaceWorksIndexView(PlaceViewBase, TemplateView):
 
     def get(self, request, *args, **kwargs):
         works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
-        filename = f"Full index for {self.place}.xlsx"
-
+        filename = _("Full index for %(place)s.xlsx") % {"place": self.place}
         exporter = XlsxExporter(self.country, self.locality)
         return exporter.generate_xlsx(works, filename, True)
 
@@ -558,7 +558,8 @@ class PlaceWorksView(PlaceViewBase, ListView):
 
         if self.form.data.get('format') == 'xlsx':
             exporter = XlsxExporter(self.country, self.locality)
-            return exporter.generate_xlsx(self.get_queryset(), f"legislation {self.kwargs['place']}.xlsx", False)
+            filename = _("legislation %(place)s.xlsx") % {"place": self.kwargs['place']}
+            return exporter.generate_xlsx(self.get_queryset(), filename, False)
 
         return super().get(request, *args, **kwargs)
 
@@ -652,7 +653,7 @@ class WorkBulkUpdateView(PlaceViewBase, FormView):
     def form_valid(self, form):
         if form.cleaned_data['save']:
             form.save_changes()
-            messages.success(self.request, f"Updated {form.cleaned_data['works'].count()} works.")
+            messages.success(self.request, _("Updated %(works_count)s works.") % {"works_count": form.cleaned_data['works'].count()})
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 
@@ -677,13 +678,13 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
         return self.form_invalid(form)
 
     def send_success_messages(self, form):
-        messages.success(self.request, f"Approved {form.broker.works.count()} works.")
+        messages.success(self.request, _("Approved %(works_count)s works.") % {"works_count": form.broker.works.count()})
         if form.broker.import_tasks:
-            messages.success(self.request, f"Created {len(form.broker.import_tasks)} Import tasks.")
+            messages.success(self.request, _("Created %(import_tasks_count)s Import tasks.") % {"import_tasks_count": len(form.broker.import_tasks)})
         if form.broker.gazette_tasks:
-            messages.success(self.request, f"Created {len(form.broker.gazette_tasks)} Gazette tasks.")
+            messages.success(self.request, _("Created %(gazette_tasks_count)s Gazette tasks.") % {"gazette_tasks_count": len(form.broker.gazette_tasks)})
         if form.broker.amendment_tasks:
-            messages.success(self.request, f"Created {len(form.broker.amendment_tasks)} Amendment tasks.")
+            messages.success(self.request, _("Created %(amendment_tasks_count)s Amendment tasks.") % {"amendment_tasks_count": len(form.broker.amendment_tasks)})
 
 
 class WorkBulkUnapproveView(PlaceViewBase, FormView):
@@ -699,7 +700,7 @@ class WorkBulkUnapproveView(PlaceViewBase, FormView):
         if form.cleaned_data.get("unapprove"):
             for work in form.cleaned_data["approved_works"]:
                 work.unapprove(self.request.user)
-            messages.success(self.request, f"Unapproved {form.cleaned_data['approved_works'].count()} works.")
+            messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['approved_works'].count()})
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

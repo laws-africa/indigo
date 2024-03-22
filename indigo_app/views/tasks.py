@@ -101,7 +101,6 @@ class TaskListView(TaskViewBase, ListView):
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
-        context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
         context['total_tasks'] = self.get_base_queryset().count()
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)

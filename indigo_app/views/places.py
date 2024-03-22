@@ -578,8 +578,7 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
         # using .only("pk") makes the query much faster; values_list just gives us the pks
         work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
         context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
-        # TODO
-        context['total_works'] = 99 # Work.objects.filter(country=self.country, locality=self.locality).count()
+        context['total_works'] = self.get_base_queryset().count()
         query_url = (self.request.POST or self.request.GET).urlencode()
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
@@ -605,6 +604,9 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
             return ['indigo_app/place/_works_list.html']
         return super().get_template_names()
 
+    def has_all_country_permission(self):
+        return True
+
 
 class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
@@ -621,10 +623,35 @@ class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
         context['form'] = self.form
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
 
+        if self.country.place_code == 'all':
+            # dump the places tree for the places the user has permissions for
+            if self.request.user.is_superuser:
+                countries = Country.objects
+            else:
+                countries = self.request.user.editor.permitted_countries.all()
+            countries = countries.prefetch_related('country', 'localities')
+            context['places_toc'] = [{
+                'title': country.name,
+                'data': {
+                    'slug': country.code,
+                    'count': 0,
+                    'total': 0,
+                },
+                'children': [{
+                    'title': loc.name,
+                    'data': {
+                        'slug': loc.place_code,
+                        'count': 0,
+                        'total': 0,
+                    },
+                    'children': [],
+                } for loc in country.localities.all()]
+            } for country in countries]
+
         qs = self.get_base_queryset()
 
         # build facets
-        context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'])
+        context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'], context.get('places_toc', []))
         context["document_facets"] = self.form.document_facets(qs)
 
         return context

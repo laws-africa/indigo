@@ -144,6 +144,8 @@ class PlaceWorksViewBase(PlaceViewBase):
 
     def get_base_queryset(self):
         queryset = self.queryset
-        if self.country.place_code != "all":
+        if self.country.place_code == "all":
+            queryset = AllPlace.filter_works_queryset(queryset, self.request.user)
+        else:
             queryset = queryset.filter(country=self.country, locality=self.locality)
         return queryset

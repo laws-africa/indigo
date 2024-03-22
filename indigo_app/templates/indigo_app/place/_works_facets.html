@@ -1,6 +1,16 @@
+{% if places_toc %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <div data-vue-component="TaxonomyTOC" data-checkbox="place" data-tree="#places_toc"
+           data-selected="{{ form.place.value|join:' ' }}"></div>
+      {{ places_toc|json_script:"places_toc" }}
+    </div>
+  </div>
+{% endif %}
 <div class="card mb-3">
   <div class="card-body">
-    <div data-vue-component="TaxonomyTOC" data-checkbox="taxonomy_topic" data-selected="{{ form.taxonomy_topic.value|join:' ' }}"></div>
+    <div data-vue-component="TaxonomyTOC" data-checkbox="taxonomy_topic" data-tree="#taxonomy_toc"
+         data-selected="{{ form.taxonomy_topic.value|join:' ' }}"></div>
     {{ taxonomy_toc|json_script:"taxonomy_toc" }}
   </div>
 </div>

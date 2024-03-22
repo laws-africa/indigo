@@ -3,9 +3,10 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
+from django.utils.translation import ugettext as _
 
 from indigo_api.authz import is_maintenance_mode
-from indigo_api.models import Country
+from indigo_api.models import Country, Work
 
 
 class IndigoJSViewMixin(object):
@@ -67,11 +68,23 @@ class PlaceViewBase(AbstractAuthedIndigoView):
 
     The place is determined and set on the view right at the start of dispatch,
     and `country`, `locality` and `place` set accordingly.
+
+    If the allow_all_place attribute is set to True, the view will allow the special
+    'all' place, which is a special case that means all places in the system.
     """
     country = None
     locality = None
     place = None
     permission_required = ('indigo_api.view_country',)
+    allow_all_place = False
+
+    class AllPlace:
+        place_code = code = iso = 'all'
+        name = _('All places')
+
+        @property
+        def country(self):
+            return self
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()
@@ -85,19 +98,22 @@ class PlaceViewBase(AbstractAuthedIndigoView):
         return super().get_context_data(**kwargs)
 
     def determine_place(self):
-        parts = self.kwargs['place'].split('-', 1)
-        country = parts[0]
-        locality = parts[1] if len(parts) > 1 else None
+        if self.kwargs['place'] == 'all' and self.allow_all_place:
+            self.country = self.AllPlace()
+        else:
+            parts = self.kwargs['place'].split('-', 1)
+            country = parts[0]
+            locality = parts[1] if len(parts) > 1 else None
 
-        try:
-            self.country = Country.for_code(country)
-        except Country.DoesNotExist:
-            raise Http404
-
-        if locality:
-            self.locality = self.country.localities.filter(code=locality).first()
-            if not self.locality:
+            try:
+                self.country = Country.for_code(country)
+            except Country.DoesNotExist:
                 raise Http404
+
+            if locality:
+                self.locality = self.country.localities.filter(code=locality).first()
+                if not self.locality:
+                    raise Http404
 
         self.place = self.locality or self.country
 
@@ -112,6 +128,9 @@ class PlaceViewBase(AbstractAuthedIndigoView):
             raise Exception("This request will change state and country permissions are required, "
                             "but self.country is None.")
 
+        if self.country.place_code == 'all':
+            return False
+
         return self.request.user.editor.has_country_permission(self.country)
 
     def doctypes(self):
@@ -122,3 +141,15 @@ class PlaceViewBase(AbstractAuthedIndigoView):
             return doctypes + extras
 
         return doctypes
+
+
+class PlaceWorksViewBase(PlaceViewBase):
+    """Base view for views that display a list of works for a place, that adds support
+    for filtering by the special All place."""
+    queryset = Work.objects.order_by('-created_at').prefetch_related('country', 'locality')
+
+    def get_base_queryset(self):
+        queryset = self.queryset
+        if self.country.place_code != "all":
+            queryset = queryset.filter(country=self.country, locality=self.locality)
+        return queryset

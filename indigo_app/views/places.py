@@ -23,7 +23,7 @@ from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, 
     WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_social.badges import badges
-from .base import AbstractAuthedIndigoView, PlaceViewBase
+from .base import AbstractAuthedIndigoView, PlaceViewBase, PlaceWorksViewBase
 
 log = logging.getLogger(__name__)
 
@@ -123,6 +123,12 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
 class PlaceDetailView(PlaceViewBase, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
+    allow_all_place = True
+
+    def get(self, request, *args, **kwargs):
+        if self.place.place_code == 'all':
+            return redirect('place_works', place='all')
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -506,12 +512,12 @@ class PlaceUsersView(PlaceViewBase, FormView):
         return reverse('place_users', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceWorksIndexView(PlaceViewBase, TemplateView):
+class PlaceWorksIndexView(PlaceWorksViewBase, TemplateView):
     tab = 'place_settings'
     permission_required = ('indigo_api.change_placesettings',)
 
     def get(self, request, *args, **kwargs):
-        works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
+        works = self.get_base_queryset().order_by('publication_date')
         filename = f"Full index for {self.place}.xlsx"
 
         exporter = XlsxExporter(self.country, self.locality)
@@ -541,13 +547,14 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView):
         return context
 
 
-class PlaceWorksView(PlaceViewBase, ListView):
+class PlaceWorksView(PlaceWorksViewBase, ListView):
     template_name = 'indigo_app/place/works.html'
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
     http_method_names = ['post', 'get']
     filter_form_class = WorkFilterForm
+    allow_all_place = True
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -563,10 +570,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Work.objects \
-            .filter(country=self.country, locality=self.locality) \
-            .order_by('-created_at')
-        return self.form.filter_queryset(queryset)
+        return self.form.filter_queryset(self.get_base_queryset())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -574,16 +578,18 @@ class PlaceWorksView(PlaceViewBase, ListView):
         # using .only("pk") makes the query much faster; values_list just gives us the pks
         work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
         context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
-        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+        # TODO
+        context['total_works'] = 99 # Work.objects.filter(country=self.country, locality=self.locality).count()
         query_url = (self.request.POST or self.request.GET).urlencode()
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + query_url
         )
-        context['download_xsl_url'] = (
-            reverse('place_works', kwargs={'place': self.kwargs['place']}) +
-            '?' + query_url + '&format=xlsx'
-        )
+        if self.country.place_code != 'all':
+            context['download_xsl_url'] = (
+                reverse('place_works', kwargs={'place': self.kwargs['place']}) +
+                '?' + query_url + '&format=xlsx'
+            )
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -600,8 +606,9 @@ class PlaceWorksView(PlaceViewBase, ListView):
         return super().get_template_names()
 
 
-class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
+class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
+    allow_all_place = True
 
     def get(self, request, *args, **kwargs):
         self.form = PlaceWorksView.filter_form_class(self.country, request.GET)
@@ -614,7 +621,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         context['form'] = self.form
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
 
-        qs = Work.objects.filter(country=self.country, locality=self.locality)
+        qs = self.get_base_queryset()
 
         # build facets
         context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'])
@@ -623,7 +630,7 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         return context
 
 
-class WorkActionsView(PlaceViewBase, FormView):
+class WorkActionsView(PlaceWorksViewBase, FormView):
     form_class = WorkBulkActionsForm
     template_name = "indigo_app/place/_works_actions.html"
 

@@ -4,6 +4,7 @@ from django.http import HttpResponseBadRequest, Http404
 from django.conf import settings
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
+from django.utils.translation import ugettext as _
 
 from cobalt.uri import FrbrUri
 
@@ -19,7 +20,7 @@ class ResolveView(TemplateView):
             FrbrUri.default_language = None
             self.frbr_uri = FrbrUri.parse(frbr_uri)
         except ValueError:
-            return HttpResponseBadRequest("Invalid FRBR URI")
+            return HttpResponseBadRequest(_("Invalid FRBR URI"))
 
         if not self.frbr_uri.language:
             try:

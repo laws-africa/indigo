@@ -136,7 +136,7 @@ class TaskEditLabelsForm(forms.ModelForm):
 
 class TaskFilterForm(forms.Form, FormAsUrlMixin):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(label=_('State'))
+    state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
     format = forms.ChoiceField(choices=[('columns', _('columns')), ('list', _('list'))])
     assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
@@ -149,10 +149,6 @@ class TaskFilterForm(forms.Form, FormAsUrlMixin):
         super().__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
         self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
-        # insert 'assigned' in task states after 'open' so that they're in the right order in the form
-        states = list(Task.STATES)
-        states.insert(states.index('open') + 1, 'assigned')
-        self.fields['state'].choices = [(x, _(x.replace('_', ' ').capitalize())) for x in states]
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('country'):

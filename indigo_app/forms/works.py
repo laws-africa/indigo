@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate
+    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -1319,7 +1319,22 @@ class WorkBulkActionsForm(forms.Form):
         return self.cleaned_data.get('all_work_pks').split() or []
 
 
-class WorkBulkUpdateForm(forms.Form):
+class WorkBulkActionFormBase(forms.Form):
+    """Base form for bulk work actions in the works listing view. Ensures that the works queryset is
+    limited to the appropriate country, locality and user permissions.
+    """
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+
+    def __init__(self, country, locality, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if country.place_code == 'all':
+            self.fields['works'].queryset = AllPlace.filter_works_queryset(self.fields['works'].queryset, user)
+        else:
+            self.fields['works'].queryset = self.fields['works'].queryset.filter(country=country, locality=locality)
+
+
+class WorkBulkUpdateForm(WorkBulkActionFormBase):
     save = forms.BooleanField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
@@ -1339,10 +1354,10 @@ class WorkBulkUpdateForm(forms.Form):
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
 
 
-class WorkBulkApproveForm(forms.Form):
+class WorkBulkApproveForm(WorkBulkActionFormBase):
     TASK_CHOICES = [('', 'Create tasks'), ('block', _('Create and block tasks')), ('cancel', _('Create and cancel tasks'))]
 
-    works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     conversion_task_description = forms.CharField(required=False)
     import_task_description = forms.CharField(required=False)
     gazette_task_description = forms.CharField(required=False)
@@ -1358,7 +1373,7 @@ class WorkBulkApproveForm(forms.Form):
         broker_class = kwargs.pop('broker_class', TaskBroker)
         super().__init__(*args, **kwargs)
         if self.is_valid():
-            self.broker = broker_class(self.cleaned_data.get('works_in_progress', []))
+            self.broker = broker_class(self.cleaned_data.get('works', []))
             self.add_amendment_task_description_fields()
             self.full_clean()
 
@@ -1373,8 +1388,8 @@ class WorkBulkApproveForm(forms.Form):
         self.broker.create_tasks(request.user, self.cleaned_data)
 
 
-class WorkBulkUnapproveForm(forms.Form):
-    approved_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+class WorkBulkUnapproveForm(WorkBulkActionFormBase):
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     unapprove = forms.BooleanField(required=False)
 
 

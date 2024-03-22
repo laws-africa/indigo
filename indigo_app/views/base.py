@@ -3,10 +3,9 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
-from django.utils.translation import ugettext as _
 
 from indigo_api.authz import is_maintenance_mode
-from indigo_api.models import Country, Work
+from indigo_api.models import Country, Work, AllPlace
 
 
 class IndigoJSViewMixin(object):
@@ -78,14 +77,6 @@ class PlaceViewBase(AbstractAuthedIndigoView):
     permission_required = ('indigo_api.view_country',)
     allow_all_place = False
 
-    class AllPlace:
-        place_code = code = iso = 'all'
-        name = _('All places')
-
-        @property
-        def country(self):
-            return self
-
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()
         return super().dispatch(request, *args, **kwargs)
@@ -99,7 +90,7 @@ class PlaceViewBase(AbstractAuthedIndigoView):
 
     def determine_place(self):
         if self.kwargs['place'] == 'all' and self.allow_all_place:
-            self.country = self.AllPlace()
+            self.country = AllPlace()
         else:
             parts = self.kwargs['place'].split('-', 1)
             country = parts[0]
@@ -129,7 +120,7 @@ class PlaceViewBase(AbstractAuthedIndigoView):
                             "but self.country is None.")
 
         if self.country.place_code == 'all':
-            return False
+            return self.has_all_country_permission()
 
         return self.request.user.editor.has_country_permission(self.country)
 
@@ -141,6 +132,9 @@ class PlaceViewBase(AbstractAuthedIndigoView):
             return doctypes + extras
 
         return doctypes
+
+    def has_all_country_permission(self):
+        return False
 
 
 class PlaceWorksViewBase(PlaceViewBase):

@@ -21,7 +21,7 @@
       >
         {% csrf_token %}
         {% for work in form.broker.works %}
-          <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+          <input type="hidden" name="works" value="{{ work.pk }}">
         {% endfor %}
         {% if form.broker.works  %}
           <div class="alert alert-warning">

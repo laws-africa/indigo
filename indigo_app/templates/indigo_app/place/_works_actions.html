@@ -37,7 +37,7 @@
               >
                 {% csrf_token %}
                 {% for work in works_in_progress %}
-                  <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+                  <input type="hidden" name="works" value="{{ work.pk }}">
                 {% endfor %}
                 <button
                     class="btn btn-sm btn-outline-secondary"
@@ -63,7 +63,7 @@
               >
                 {% csrf_token %}
                 {% for work in approved_works %}
-                  <input type="hidden" name="approved_works" value="{{ work.pk }}">
+                  <input type="hidden" name="works" value="{{ work.pk }}">
                 {% endfor %}
                 <button
                     class="btn btn-sm btn-outline-secondary"
@@ -82,4 +82,13 @@
       {% endblock actions-toolbar %}
     </div>
   {% endblock actions %}
+{% endif %}
+
+{% if n_disallowed %}
+  <p class="alert alert-warning mt-2">
+    <i class="fas fa-exclamation-triangle"></i>
+    {% blocktrans trimmed %}
+      You do not have country permissions to update {{ n_disallowed }} of the selected works.
+    {% endblocktrans %}
+  </p>
 {% endif %}

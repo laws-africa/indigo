@@ -17,7 +17,7 @@
       >
         {% csrf_token %}
         {% for work in approved_works %}
-          <input type="hidden" name="approved_works" value="{{ work.pk }}">
+          <input type="hidden" name="works" value="{{ work.pk }}">
         {% endfor %}
         <div class="alert alert-warning mb-3">
           <p>Any documents will be unpublished.</p>

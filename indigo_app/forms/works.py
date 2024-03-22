@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate
+    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -741,6 +741,8 @@ class Facet:
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
+    place = forms.MultipleChoiceField()
+
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
@@ -810,6 +812,11 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
                     settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
+        self.fields['place'].choices = [
+            (c.code, c.name) for c in Country.objects.all()
+        ] + [
+            (loc.place_code, loc.name) for loc in Locality.objects.all()
+        ]
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
@@ -836,6 +843,13 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
                     continue
             if uris:
                 queryset = queryset.filter(frbr_uri__in=uris)
+
+        if exclude != "place":
+            q = Q()
+            for place in self.cleaned_data.get('place', []):
+                country, locality = Country.get_country_locality(place)
+                q |= Q(country=country, locality=locality)
+            queryset = queryset.filter(q)
 
         # filter by work in progress
         if exclude != "work_in_progress":
@@ -1054,7 +1068,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         items = [self.facet_item(name, value, count) for value, count in items]
         return Facet(self.fields[name].label, name, type, items)
 
-    def work_facets(self, queryset, taxonomy_toc):
+    def work_facets(self, queryset, taxonomy_toc, places_toc):
         work_facets = []
         self.facet_subtype(work_facets, queryset)
         self.facet_work_in_progress(work_facets, queryset)
@@ -1068,6 +1082,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         self.facet_consolidation(work_facets, queryset)
         self.facet_repeal(work_facets, queryset)
         self.facet_taxonomy(taxonomy_toc, queryset)
+        self.facet_place(places_toc, queryset)
         return work_facets
 
     def document_facets(self, queryset):
@@ -1282,6 +1297,33 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         for item in taxonomy_tree:
             decorate(item)
 
+    def facet_place(self, place_tree, qs):
+        if not place_tree:
+            return
+
+        qs = self.filter_queryset(qs, exclude="place")
+
+        # count works per place
+        counts = {}
+        for row in qs.values("country__country__pk", "locality__code").annotate(count=Count("id")).order_by():
+            code = row["country__country__pk"].lower()
+            code = code + ("-" + row["locality__code"] if row["locality__code"] else "")
+            counts[code] = row["count"]
+
+        # fold the counts into the taxonomy tree
+        def decorate(item):
+            total = 0
+            for child in item.get('children', []):
+                total = total + decorate(child)
+            # count for this item
+            item['data']['count'] = counts.get(item["data"]["slug"])
+            # total of count for descendants
+            item['data']['total'] = total
+            return total + (item['data']['count'] or 0)
+
+        for item in place_tree:
+            decorate(item)
+
 
 class WorkChooserForm(forms.Form):
     country = forms.ModelChoiceField(queryset=Country.objects)
@@ -1319,7 +1361,22 @@ class WorkBulkActionsForm(forms.Form):
         return self.cleaned_data.get('all_work_pks').split() or []
 
 
-class WorkBulkUpdateForm(forms.Form):
+class WorkBulkActionFormBase(forms.Form):
+    """Base form for bulk work actions in the works listing view. Ensures that the works queryset is
+    limited to the appropriate country, locality and user permissions.
+    """
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=True)
+
+    def __init__(self, country, locality, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if country.place_code == 'all':
+            self.fields['works'].queryset = AllPlace.filter_works_queryset(self.fields['works'].queryset, user)
+        else:
+            self.fields['works'].queryset = self.fields['works'].queryset.filter(country=country, locality=locality)
+
+
+class WorkBulkUpdateForm(WorkBulkActionFormBase):
     save = forms.BooleanField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
@@ -1339,10 +1396,10 @@ class WorkBulkUpdateForm(forms.Form):
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
 
 
-class WorkBulkApproveForm(forms.Form):
+class WorkBulkApproveForm(WorkBulkActionFormBase):
     TASK_CHOICES = [('', 'Create tasks'), ('block', _('Create and block tasks')), ('cancel', _('Create and cancel tasks'))]
 
-    works_in_progress = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     conversion_task_description = forms.CharField(required=False)
     import_task_description = forms.CharField(required=False)
     gazette_task_description = forms.CharField(required=False)
@@ -1358,7 +1415,7 @@ class WorkBulkApproveForm(forms.Form):
         broker_class = kwargs.pop('broker_class', TaskBroker)
         super().__init__(*args, **kwargs)
         if self.is_valid():
-            self.broker = broker_class(self.cleaned_data.get('works_in_progress', []))
+            self.broker = broker_class(self.cleaned_data.get('works', []))
             self.add_amendment_task_description_fields()
             self.full_clean()
 
@@ -1373,8 +1430,8 @@ class WorkBulkApproveForm(forms.Form):
         self.broker.create_tasks(request.user, self.cleaned_data)
 
 
-class WorkBulkUnapproveForm(forms.Form):
-    approved_works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
+class WorkBulkUnapproveForm(WorkBulkActionFormBase):
+    works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     unapprove = forms.BooleanField(required=False)
 
 

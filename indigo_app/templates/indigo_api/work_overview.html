@@ -13,7 +13,7 @@
                 hx-target="#work-approve-modal"
             >
               {% csrf_token %}
-              <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+              <input type="hidden" name="works" value="{{ work.pk }}">
               <button
                   class="btn btn-success me-1"
                   data-bs-toggle="modal"

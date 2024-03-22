@@ -34,30 +34,34 @@
 
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
-        <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">
-          <i class="fas fa-fw fa-globe-africa"></i> {% trans "Overview" %}
-        </a>
+        {% if place.place_code != "all" %}
+          <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">
+            <i class="fas fa-fw fa-globe-africa"></i> {% trans "Overview" %}
+          </a>
+        {% endif %}
         <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place_works' place=place.place_code %}">
           <i class="fas fa-fw fa-book"></i> {% trans "Works" %}
         </a>
-        <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
-          <i class="fas fa-fw fa-thumbtack"></i> {% trans "Tasks" %} <span class="badge text-bg-light">{{ place.place_tasks.unclosed.count }}</span>
-        </a>
-        <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
-          <i class="fas fa-fw fa-tasks"></i> {% trans "Projects" %} <span class="badge text-bg-light">{{ place.place_workflows.unclosed.count }}</span>
-        </a>
-        <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">
-          <i class="fas fa-fw fa-clock"></i> {% trans "Activity" %}
-        </a>
-        {% if place.localities.exists %}
-          <a class="nav-item nav-link {% if view.tab == 'localities' %}active{% endif %}" href="{% url 'place_localities' place=place.place_code %}">
-            <i class="fa fa-fw fa-map-marker-alt"></i> {% trans "Localities" %}
+        {% if place.place_code != "all" %}
+          <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
+            <i class="fas fa-fw fa-thumbtack"></i> {% trans "Tasks" %} <span class="badge text-bg-light">{{ place.place_tasks.unclosed.count }}</span>
           </a>
-        {% endif %}
-        {% if user_can_change_place_settings %}
-          <a class="nav-item nav-link {% if view.tab == 'place_settings' or view.tab == 'place_users' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">
-            <i class="fas fa-fw fa-cog"></i> {% trans "Settings" %}
+          <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
+            <i class="fas fa-fw fa-tasks"></i> {% trans "Projects" %} <span class="badge text-bg-light">{{ place.place_workflows.unclosed.count }}</span>
           </a>
+          <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">
+            <i class="fas fa-fw fa-clock"></i> {% trans "Activity" %}
+          </a>
+          {% if place.localities.exists %}
+            <a class="nav-item nav-link {% if view.tab == 'localities' %}active{% endif %}" href="{% url 'place_localities' place=place.place_code %}">
+              <i class="fa fa-fw fa-map-marker-alt"></i> {% trans "Localities" %}
+            </a>
+          {% endif %}
+          {% if user_can_change_place_settings %}
+            <a class="nav-item nav-link {% if view.tab == 'place_settings' or view.tab == 'place_users' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">
+              <i class="fas fa-fw fa-cog"></i> {% trans "Settings" %}
+            </a>
+          {% endif %}
         {% endif %}
       {% endblock %}
     </nav>

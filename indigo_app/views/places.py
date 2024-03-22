@@ -17,13 +17,13 @@ from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
 from lxml import etree
 
-from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic
+from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace
 from indigo_api.timeline import describe_publication_event
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
     WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_social.badges import badges
-from .base import AbstractAuthedIndigoView, PlaceViewBase
+from .base import AbstractAuthedIndigoView, PlaceViewBase, PlaceWorksViewBase
 
 log = logging.getLogger(__name__)
 
@@ -123,6 +123,12 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
 class PlaceDetailView(PlaceViewBase, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
+    allow_all_place = True
+
+    def get(self, request, *args, **kwargs):
+        if self.place.place_code == 'all':
+            return redirect('place_works', place='all')
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -507,12 +513,12 @@ class PlaceUsersView(PlaceViewBase, FormView):
         return reverse('place_users', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceWorksIndexView(PlaceViewBase, TemplateView):
+class PlaceWorksIndexView(PlaceWorksViewBase, TemplateView):
     tab = 'place_settings'
     permission_required = ('indigo_api.change_placesettings',)
 
     def get(self, request, *args, **kwargs):
-        works = Work.objects.filter(country=self.country, locality=self.locality).order_by('publication_date')
+        works = self.get_base_queryset().order_by('publication_date')
         filename = _("Full index for %(place)s.xlsx") % {"place": self.place}
         exporter = XlsxExporter(self.country, self.locality)
         return exporter.generate_xlsx(works, filename, True)
@@ -541,13 +547,14 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView):
         return context
 
 
-class PlaceWorksView(PlaceViewBase, ListView):
+class PlaceWorksView(PlaceWorksViewBase, ListView):
     template_name = 'indigo_app/place/works.html'
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
     http_method_names = ['post', 'get']
     filter_form_class = WorkFilterForm
+    allow_all_place = True
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -564,10 +571,7 @@ class PlaceWorksView(PlaceViewBase, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Work.objects \
-            .filter(country=self.country, locality=self.locality) \
-            .order_by('-created_at')
-        return self.form.filter_queryset(queryset)
+        return self.form.filter_queryset(self.get_base_queryset())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -575,16 +579,17 @@ class PlaceWorksView(PlaceViewBase, ListView):
         # using .only("pk") makes the query much faster; values_list just gives us the pks
         work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
         context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
-        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+        context['total_works'] = self.get_base_queryset().count()
         query_url = (self.request.POST or self.request.GET).urlencode()
         context['facets_url'] = (
             reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
             '?' + query_url
         )
-        context['download_xsl_url'] = (
-            reverse('place_works', kwargs={'place': self.kwargs['place']}) +
-            '?' + query_url + '&format=xlsx'
-        )
+        if self.country.place_code != 'all':
+            context['download_xsl_url'] = (
+                reverse('place_works', kwargs={'place': self.kwargs['place']}) +
+                '?' + query_url + '&format=xlsx'
+            )
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -600,9 +605,13 @@ class PlaceWorksView(PlaceViewBase, ListView):
             return ['indigo_app/place/_works_list.html']
         return super().get_template_names()
 
+    def has_all_country_permission(self):
+        return True
 
-class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
+
+class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
+    allow_all_place = True
 
     def get(self, request, *args, **kwargs):
         self.form = PlaceWorksView.filter_form_class(self.country, request.GET)
@@ -615,18 +624,44 @@ class PlaceWorksFacetsView(PlaceViewBase, TemplateView):
         context['form'] = self.form
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
 
-        qs = Work.objects.filter(country=self.country, locality=self.locality)
+        if self.country.place_code == 'all':
+            # dump the places tree for the places the user has permissions for
+            if self.request.user.is_superuser:
+                countries = Country.objects
+            else:
+                countries = self.request.user.editor.permitted_countries.all()
+            countries = countries.prefetch_related('country', 'localities')
+            context['places_toc'] = [{
+                'title': country.name,
+                'data': {
+                    'slug': country.code,
+                    'count': 0,
+                    'total': 0,
+                },
+                'children': [{
+                    'title': loc.name,
+                    'data': {
+                        'slug': loc.place_code,
+                        'count': 0,
+                        'total': 0,
+                    },
+                    'children': [],
+                } for loc in country.localities.all()]
+            } for country in countries]
+
+        qs = self.get_base_queryset()
 
         # build facets
-        context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'])
+        context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'], context.get('places_toc', []))
         context["document_facets"] = self.form.document_facets(qs)
 
         return context
 
 
-class WorkActionsView(PlaceViewBase, FormView):
+class WorkActionsView(PlaceWorksViewBase, FormView):
     form_class = WorkBulkActionsForm
     template_name = "indigo_app/place/_works_actions.html"
+    allow_all_place = True
 
     def form_valid(self, form):
         # this form just gets the works and gives the context to the actions toolbar
@@ -635,18 +670,52 @@ class WorkActionsView(PlaceViewBase, FormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.has_perm('indigo_api.bulk_add_work'):
-            works = self.get_works(form)
+            works, disallowed = self.get_works(form)
             context["works"] = works
             context["works_in_progress"] = works.filter(work_in_progress=True) if works else []
             context["approved_works"] = works.filter(work_in_progress=False) if works else []
+            context["n_disallowed"] = disallowed
         return context
 
+    def has_all_country_permission(self):
+        # we'll double check permissions elsewhere
+        return True
+
     def get_works(self, form):
-        works = Work.objects.filter(pk__in=form.cleaned_data.get("all_work_pks"))
-        return works or form.cleaned_data.get("works", [])
+        if form.cleaned_data.get("all_work_pks"):
+            works = self.get_base_queryset().filter(pk__in=form.cleaned_data.get("all_work_pks"))
+        else:
+            works = form.cleaned_data.get("works", self.get_base_queryset().none())
+
+        disallowed = 0
+        if self.country.place_code == 'all':
+            # restrict to those places that the user has perms for
+            n_works = works.count()
+            works = AllPlace.filter_works_queryset(works, self.request.user)
+            disallowed = n_works - works.count()
+
+        return works, disallowed
 
 
-class WorkBulkUpdateView(PlaceViewBase, FormView):
+class WorkBulkActionBase(PlaceViewBase, FormView):
+    """Base view for bulk actions on works. Ensures permissions for the "all" country, and passes
+    place information to the form. Assumes the form class extends WorkBulkActionFormBase.
+    """
+    allow_all_place = True
+
+    def has_all_country_permission(self):
+        # the forms must filter the works to the countries for which the user has permissions
+        return True
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['country'] = self.country
+        kwargs['locality'] = self.locality
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class WorkBulkUpdateView(WorkBulkActionBase):
     form_class = WorkBulkUpdateForm
     template_name = "indigo_app/place/_bulk_update_form.html"
 
@@ -666,7 +735,7 @@ class WorkBulkUpdateView(PlaceViewBase, FormView):
         return context
 
 
-class WorkBulkApproveView(PlaceViewBase, FormView):
+class WorkBulkApproveView(WorkBulkActionBase):
     form_class = WorkBulkApproveForm
     template_name = "indigo_app/place/_bulk_approve_form.html"
 
@@ -687,7 +756,7 @@ class WorkBulkApproveView(PlaceViewBase, FormView):
             messages.success(self.request, _("Created %(amendment_tasks_count)s Amendment tasks.") % {"amendment_tasks_count": len(form.broker.amendment_tasks)})
 
 
-class WorkBulkUnapproveView(PlaceViewBase, FormView):
+class WorkBulkUnapproveView(WorkBulkActionBase):
     form_class = WorkBulkUnapproveForm
     template_name = "indigo_app/place/_bulk_unapprove_form.html"
 

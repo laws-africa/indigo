@@ -961,7 +961,7 @@ def post_save_arbitrary_expression_date(sender, instance, **kwargs):
 
 class Subtype(models.Model):
     name = models.CharField(_("name"), max_length=1024, help_text=_("Name of the subtype"))
-    abbreviation = models.CharField(_("abbreviation"), max_length=20, unique=True,
+    abbreviation = models.CharField(_("abbreviation"), max_length=32, unique=True,
                                     help_text=_("Short abbreviation to use in the FRBR URI. No punctuation."))
 
     # cheap cache for subtypes, to avoid DB lookups

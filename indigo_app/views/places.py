@@ -474,7 +474,7 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
             action.send(self.request.user, verb='updated', action_object=placesettings,
                         place_code=placesettings.place.place_code)
 
-        messages.success(self.request, _("Settings %(test)s updated.") % {"test": "HI THERE!"})
+        messages.success(self.request, _("Settings updated."))
 
         return super().form_valid(form)
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-22 16:16+0200\n"
-"PO-Revision-Date: 2024-03-08 07:03\n"
+"PO-Revision-Date: 2024-03-22 15:01\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: admin.py:105
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "Ilisasisha muda wa utekelezaji hadi sasa kwa kazi ulizochagua."
 
 #: admin.py:107
 msgid "Set run time to now"
-msgstr ""
+msgstr "Weka wakati wa kukimbia hadi sasa"
 
 #: models/documents.py:271
 #, python-format
@@ -348,32 +348,28 @@ msgid "places' settings"
 msgstr "mipangilio ya maeneo"
 
 #: models/tasks.py:66
-#, fuzzy
-#| msgid "blocked by"
 msgid "Blocked"
-msgstr "imezuiwa na"
+msgstr "Imezuiwa"
 
 #: models/tasks.py:67
 msgid "Open"
-msgstr ""
+msgstr "Fungua"
 
 #: models/tasks.py:68
-#, fuzzy
-#| msgid "assigned to"
 msgid "Assigned"
-msgstr "kupewa"
+msgstr "Imekabidhiwa"
 
 #: models/tasks.py:69
 msgid "Pending review"
-msgstr ""
+msgstr "Inasubiri ukaguzi"
 
 #: models/tasks.py:70
 msgid "Done"
-msgstr ""
+msgstr "Imekamilika"
 
 #: models/tasks.py:71
 msgid "Cancelled"
-msgstr ""
+msgstr "Imeghairiwa"
 
 #: models/tasks.py:86
 msgid "Convert document"
@@ -688,7 +684,7 @@ msgstr "umma"
 
 #: models/works.py:109
 msgid "project"
-msgstr ""
+msgstr "mradi"
 
 #: models/works.py:113
 msgid "taxonomy topic"
@@ -1233,5 +1229,3 @@ msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 msgid "Error during import"
 msgstr "Hitilafu wakati wa kuingiza"
 
-#~ msgid "Chapter (Cap.)"
-#~ msgstr "Sura (Sura)"

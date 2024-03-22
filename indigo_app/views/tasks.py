@@ -384,7 +384,7 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
                     verb = _('submitted for review')
                 if change == 'unsubmit':
                     verb = _('returned with changes requested')
-                messages.success(request, _("Task '{}' has been {}").format(task.title, verb))
+                messages.success(request, _("Task '%(title)' has been %(verb)") % {"title": task.title, "verb": verb})
 
         task.save()
 
@@ -422,16 +422,16 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
 
         if self.unassign:
             task.assign_to(None, user)
-            messages.success(request, _("Task '%s' has been unassigned") % task.title)
+            messages.success(request, _("Task '%(title)' has been unassigned") % {"title": task.title})
         else:
             assignee = User.objects.get(id=self.request.POST.get('assigned_to'))
             if not task.can_assign_to(assignee):
                 raise PermissionDenied
             task.assign_to(assignee, user)
             if user == assignee:
-                messages.success(request, _("You have picked up the task '%s'") % task.title)
+                messages.success(request, _("You have picked up the task '%(title)'") % {"title": task.title})
             else:
-                messages.success(request, _("Task '%s' has been assigned") % task.title)
+                messages.success(request, _("Task '%(title)' has been assigned") % {"title": task.title})
 
         task.updated_by_user = user
         task.save()
@@ -494,18 +494,18 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
                 task.blocked_by.set(blocked_by)
                 action.send(user, verb='updated', action_object=task,
                             place_code=task.place.place_code)
-                messages.success(request, _("Task '{}' has been updated").format(task.title))
+                messages.success(request, _("Task '%(title)' has been updated") % {"title": task.title})
 
             elif has_transition_perm(task.block, user):
                 task.blocked_by.set(blocked_by)
                 task.block(user)
-                messages.success(request, _("Task '{}' has been blocked").format(task.title))
+                messages.success(request, _("Task '%(title)' has been blocked") % {"title": task.title})
 
         else:
             task.blocked_by.clear()
             if has_transition_perm(task.unblock, user):
                 task.unblock(user)
-                messages.success(request, _("Task '{}' has been unblocked").format(task.title))
+                messages.success(request, _("Task '%(title)' has been unblocked") % {"title": task.title})
 
         task.save()
 
@@ -545,9 +545,9 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         if count > 0:
             plural = 's' if count > 1 else ''
             if form.unassign:
-                messages.success(self.request, _("Unassigned {} task{}").format(count, plural))
+                messages.success(self.request, _("Unassigned %(count) task%(plural)") % {"count": count, "plural": plural})
             elif assignee:
-                messages.success(self.request, _("Assigned {} task{} to {}").format(count, plural, user_display(assignee)))
+                messages.success(self.request, _("Assigned %(count) task%(plural) to %(user)") % {"count": count, "plural": plural, "user": user_display(assignee)})
 
         return redirect(self.get_redirect_url())
 

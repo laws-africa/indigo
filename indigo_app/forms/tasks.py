@@ -196,7 +196,7 @@ class BulkTaskUpdateForm(forms.Form):
     def clean_assigned_to(self):
         user = self.cleaned_data['assigned_to']
         if user and self.country not in user.editor.permitted_countries.all():
-            raise forms.ValidationError(_("That user doesn't have appropriate permissions for {}").format(self.country.name))
+            raise forms.ValidationError(_("That user doesn't have appropriate permissions for %(country)") % {"country": self.country.name})
         return user
 
     def clean(self):

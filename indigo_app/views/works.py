@@ -296,7 +296,7 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, _('Deleted %s · %s') % (self.work.title, self.work.frbr_uri))
+            messages.success(request, _('Deleted %(title) · %(frbr_uri)') % {"title": self.work.title, "frbr_uri": self.work.frbr_uri})
             return redirect(self.get_success_url())
         else:
             messages.error(request, _('This work cannot be deleted while linked documents and related works exist.'))
@@ -868,9 +868,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment(_("Restored version %s") % version.id)
+            reversion.set_comment(_("Restored version %(version_id)") % {"version_id": version.id})
             version.revert()
-        messages.success(request, _('Restored version %s') % version.id)
+        messages.success(request, _('Restored version %(version_id)') % {"version_id": version.id})
 
         # signals
         work_changed.send(sender=self.work.__class__, work=self.work, request=request)
@@ -937,7 +937,7 @@ class BatchAddWorkView(PlaceViewBase, FormView):
                     sheets = [s['properties']['title'] for s in sheets]
                     form.fields['sheet_name'].choices = [(s, s) for s in sheets]
                 except ValueError:
-                    add_spreadsheet_url_error(_("Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?").format(self.bulk_creator._gsheets_secret['client_email']))
+                    add_spreadsheet_url_error(_("Unable to fetch spreadsheet information. Is your spreadsheet shared with %(email)?") % {"email": self.bulk_creator._gsheets_secret['client_email']})
 
         return form
 
@@ -1034,7 +1034,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         except ValueError as e:
             if document.pk:
                 document.delete()
-            log.error(_("Error during import: %s") % str(e), exc_info=e)
+            log.error(_("Error during import: %(error)") % {"error": str(e)}, exc_info=e)
             return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user

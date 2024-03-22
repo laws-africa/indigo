@@ -35,21 +35,20 @@
           {% include 'indigo_api/_task_bulk_update_form.html' %}
         </div>
 
-        {% if tasks %}
+        <div class="text-muted mb-3 p-1">
+          {% blocktrans trimmed count count=paginator.count %}
+            {{ count }} task (of {{ total_tasks }} total)
+          {% plural %}
+            {{ count }} tasks (of {{ total_tasks }} total)
+          {% endblocktrans %}
+        </div>
 
-          {% if form.format.value == 'list' %}
-            {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
-          {% else %}
-            {% include 'indigo_api/_task_cards.html' with task_groups=task_groups assign_controls=True selectable=True %}
-          {% endif %}
-
-        {% else %}
-          <div class="card-body">
-            <p class="text-center"><em>{% trans 'No tasks found.' %}</em></p>
-          </div>
-        {% endif %}
-
+        {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
       </div>
+
+      <nav class="mt-4">
+        {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+      </nav>
     </div>
   </div>
 </div>

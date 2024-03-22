@@ -4,7 +4,7 @@ import requests
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile
 from indigo_app.forms.mixins import FormAsUrlMixin
@@ -140,6 +140,10 @@ class TaskFilterForm(forms.Form, FormAsUrlMixin):
     type = forms.MultipleChoiceField(choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     taxonomy_topic = forms.CharField()
+    sortby = forms.ChoiceField(choices=[
+        ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
+        ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
+    ])
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -179,6 +183,9 @@ class TaskFilterForm(forms.Form, FormAsUrlMixin):
             topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
             topics = [topic] + [t for t in topic.get_descendants()]
             queryset = queryset.filter(work__taxonomy_topics__in=topics)
+
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data['sortby'])
 
         return queryset
 

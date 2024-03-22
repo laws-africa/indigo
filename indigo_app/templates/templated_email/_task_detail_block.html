@@ -11,7 +11,7 @@
   {% if task.state == 'open' and task.assigned_to %}
     <b>{% trans "Assigned to" %} {% user_display task.assigned_to %}</b>
   {% else %}
-    <b>{{ task.friendly_state|capfirst }}</b>
+    <b>{{ task.friendly_state }}</b>
 
     {% if task.assigned_to %}
       <br><b>{% trans "Assigned to" %} {% user_display task.assigned_to %}</b>

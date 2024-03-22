@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from indigo_api.models import Document, Language
 from django.utils.translation import ugettext_lazy as _

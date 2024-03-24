@@ -2,7 +2,7 @@ from indigo_content_api.tests.v2.test_taxonomies_api import TaxonomiesAPIV2Test
 
 
 class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'colophon',
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'published', 'colophon',
                 'attachments', 'commencements']
     api_path = '/api/v3'
 

@@ -5,7 +5,7 @@ from indigo_api.models import Work, Country, User
 
 
 class BaseTaskBrokerTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'published']
 
     def setUp(self):
         self.country = Country.objects.first()

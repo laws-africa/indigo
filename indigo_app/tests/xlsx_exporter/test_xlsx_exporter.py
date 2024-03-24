@@ -13,7 +13,7 @@ from indigo_app.xlsx_exporter import XlsxExporter
 
 
 class XLSXExporterTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics']
 
     def setUp(self):
         self.maxDiff = None

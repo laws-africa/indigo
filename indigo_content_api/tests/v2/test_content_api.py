@@ -569,34 +569,11 @@ class ContentAPIV2TestMixin:
         self.assertNotIn('<akomaNtoso', response.content.decode('utf-8'))
         self.assertIn('<span', response.content.decode('utf-8'))
 
-    def test_taxonomies(self):
+    def test_taxonomy_topics(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.json')
         self.assertEqual(response.status_code, 200)
 
-        # sort them so we can compare them easily
-        taxonomies = sorted(json.loads(json.dumps(response.data['taxonomies'])), key=lambda t: t['vocabulary'])
-        for tax in taxonomies:
-            tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
-
-        self.assertEqual([{
-            "vocabulary": "",
-            "title": "Third Party Taxonomy",
-            "topics": [
-                {
-                    "level_1": "Fun stuff",
-                    "level_2": None,
-                },
-            ],
-        }, {
-            "vocabulary": "lawsafrica-subjects",
-            "title": "Laws.Africa Subject Taxonomy",
-            "topics": [
-                {
-                    "level_1": "Money and Business",
-                    "level_2": "Banking"
-                },
-            ],
-        }], taxonomies)
+        self.assertEqual(['lawsafrica-subject-areas-money-and-business'], response.data['taxonomy_topics'])
 
     def test_as_at_date(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.json')

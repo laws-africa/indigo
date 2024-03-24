@@ -5,7 +5,6 @@ from . import views
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'countries', views.CountryViewSet, basename='country')
-router.register(r'taxonomies', views.TaxonomyView, basename='taxonomy')
 router.register(r'taxonomy_topics', views.TaxonomyTopicView, basename='taxonomy_topic')
 
 

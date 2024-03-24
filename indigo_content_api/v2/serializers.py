@@ -5,9 +5,9 @@ from rest_framework import serializers
 from cobalt import datestring
 
 from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyTopic, \
-    TaxonomyVocabulary, Amendment
+    Amendment
 from indigo_api.serializers import \
-    DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
+    DocumentSerializer, AttachmentSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
 from indigo_content_api.reverse import reverse_content_api
 
@@ -284,15 +284,6 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
                 "href": self.place_url(self.context['request'], f"{instance.code}/"),
             },
         ]
-
-
-class TaxonomySerializer(serializers.ModelSerializer):
-    topics = VocabularyTopicSerializer(many=True, read_only=True)
-    vocabulary = serializers.CharField(source='slug')
-
-    class Meta:
-        model = TaxonomyVocabulary
-        fields = ['vocabulary', 'title', 'topics']
 
 
 class TaxonomyTopicSerializer(serializers.BaseSerializer):

@@ -155,7 +155,6 @@
       "doctype": "act",
       "date": "1880",
       "number": "1",
-      "taxonomies" : [1,5],
       "taxonomy_topics" : [2],
       "publication_date": "1880-10-12",
       "work_in_progress": false
@@ -176,7 +175,6 @@
       "doctype": "act",
       "date": "2005",
       "number": "1",
-      "taxonomies" : [1,5],
       "publication_date": "2005-02-03",
       "work_in_progress": false
     }

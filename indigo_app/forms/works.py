@@ -175,6 +175,28 @@ class WorkForm(forms.ModelForm):
             self.amendments_made_formset = AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
             self.formsets.append(self.amendments_made_formset)
 
+            commencements_formset_kwargs = {
+                "work": self.instance,
+                "user": self.user,
+                "form_kwargs": {
+                    "work": self.instance,
+                    "user": self.user,
+                },
+                "prefix": "commencements",
+                "initial": [{
+                    "commenced_work": self.instance,
+                    "commencing_work": commencement.commencing_work,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in Commencement.objects.filter(commenced_work=self.instance)],
+            }
+            if self.is_bound:
+                commencements_formset_kwargs["data"] = self.data
+            self.commencements_formset = CommencementsBaseFormset(**commencements_formset_kwargs)
+            self.formsets.append(self.commencements_formset)
+
             commencements_made_formset_kwargs = {
                 "work": self.instance,
                 "user": self.user,
@@ -192,7 +214,6 @@ class WorkForm(forms.ModelForm):
                 }
                     for commencement in Commencement.objects.filter(commencing_work=self.instance)],
             }
-
             if self.is_bound:
                 commencements_made_formset_kwargs["data"] = self.data
             self.commencements_made_formset = CommencementsMadeBaseFormset(**commencements_made_formset_kwargs)
@@ -570,10 +591,12 @@ class NewCommencementForm(forms.ModelForm):
 
 class CommencementForm(forms.ModelForm):
     provisions = forms.MultipleChoiceField(required=False)
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    clear_commencing_work = forms.BooleanField(required=False)
 
     class Meta:
         model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
+        fields = ('date', 'commencing_work', 'all_provisions', 'provisions', 'main', 'note')
 
     def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -715,6 +738,30 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
                         # update the first commencement to be the main one
                         c.main = True
                         c.save()
+
+
+class CommencementsBaseFormset(CommencementsFormset):
+    def clean(self):
+        # TODO: just use CommencementsMadeBaseFormset's?
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            commencing_work = form.cleaned_data.get('commencing_work')
+            commenced_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (commencing_work, commenced_work, date) in seen:
+                raise ValidationError("Commenced work and date must be unique together.")
+            seen.add((commencing_work, commenced_work, date))
+
+    def save(self, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            super().save(*args, **kwargs)
+            # TODO: validation and marking all_provisions; see CommencementsMadeBaseFormset
 
 
 @dataclass

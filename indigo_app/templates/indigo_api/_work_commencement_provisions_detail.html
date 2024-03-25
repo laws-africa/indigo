@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<h6>
+  {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
+  {% if commencement.provisions %}
+    {% blocktrans trimmed with provisions=commencement.provisions|length %}
+      Commences {{ provisions }} provisions:
+    {% endblocktrans %}
+  {% endif %}
+</h6>
+
+{% if commencement.provisions %}
+  <div class="treelist-wrapper">
+    <ul>
+      {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
+    </ul>
+  </div>
+{% endif %}

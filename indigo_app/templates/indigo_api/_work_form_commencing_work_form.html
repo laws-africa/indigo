@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
+{% if commencing_work %}
+  <div class="mb-2">
+    <a href="{% url 'work' commencing_work.frbr_uri %}">{{ commencing_work.title }}</a>
+    <br>
+    <span class="text-muted">{{ commencing_work.frbr_uri }}</span>
+  </div>
+{% endif %}
+
+<div>
+  {% url 'work_form_commencements' work.frbr_uri as edit_url %}
+  <button
+      class="btn btn-outline-primary"
+      type="button"
+      hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-commencing-work-"|add:form.prefix|urlencode }}&field=work-commencing_work"
+      hx-target="#work-chooser-modal"
+      hx-trigger="click"
+      data-bs-toggle="modal"
+      data-bs-target="#work-chooser-modal"
+  >
+    {% if commencing_work %}
+      {% trans 'Change commencing work' %}
+    {% else %}
+      {% trans 'Choose commencing work' %}
+    {% endif %}
+  </button>
+
+  {% if commencing_work %}
+    <button
+        class="btn btn-outline-danger ms-2"
+        hx-get="{{ edit_url }}"
+        hx-target="#work-form-commencing-work"
+    >{% trans 'Clear' %}</button>
+  {% endif %}
+</div>

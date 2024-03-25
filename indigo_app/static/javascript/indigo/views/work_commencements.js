@@ -21,8 +21,8 @@
     initialize: function() {
       this.model = new Indigo.Work(Indigo.Preloads.work);
 
-      this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
-      this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
+      // this.$('.commencement-form').on('show.bs.collapse', _.bind(this.formShow, this));
+      // this.$('.commencement-form').on('hide.bs.collapse', _.bind(this.formHide, this));
     },
 
     addCommencement: function(e) {

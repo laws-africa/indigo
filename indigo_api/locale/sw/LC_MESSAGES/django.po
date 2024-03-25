@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-03-08 07:03\n"
+"PO-Revision-Date: 2024-03-25 10:28\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: admin.py:89
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "Ilisasisha muda wa utekelezaji hadi sasa kwa kazi ulizochagua."
 
 #: admin.py:91
 msgid "Set run time to now"
-msgstr ""
+msgstr "Weka wakati wa kukimbia hadi sasa"
 
 #: models/documents.py:271
 #, python-format
@@ -275,10 +275,8 @@ msgid "countries"
 msgstr "nchi"
 
 #: models/places.py:132
-#, fuzzy
-#| msgid "All topics"
 msgid "All places"
-msgstr "Mada zote"
+msgstr "Maeneo yote"
 
 #: models/places.py:158
 msgid "Local name of this locality"
@@ -354,32 +352,28 @@ msgid "places' settings"
 msgstr "mipangilio ya maeneo"
 
 #: models/tasks.py:66
-#, fuzzy
-#| msgid "blocked by"
 msgid "Blocked"
-msgstr "imezuiwa na"
+msgstr "Imezuiwa"
 
 #: models/tasks.py:67
 msgid "Open"
-msgstr ""
+msgstr "Fungua"
 
 #: models/tasks.py:68
-#, fuzzy
-#| msgid "assigned to"
 msgid "Assigned"
-msgstr "kupewa"
+msgstr "Imekabidhiwa"
 
 #: models/tasks.py:69
 msgid "Pending review"
-msgstr ""
+msgstr "Inasubiri ukaguzi"
 
 #: models/tasks.py:70
 msgid "Done"
-msgstr ""
+msgstr "Imekamilika"
 
 #: models/tasks.py:71
 msgid "Cancelled"
-msgstr ""
+msgstr "Imeghairiwa"
 
 #: models/tasks.py:86
 msgid "Convert document"
@@ -642,7 +636,7 @@ msgstr "umma"
 
 #: models/works.py:49
 msgid "project"
-msgstr ""
+msgstr "mradi"
 
 #: models/works.py:53
 msgid "taxonomy topic"
@@ -1187,44 +1181,3 @@ msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 msgid "Error during import"
 msgstr "Hitilafu wakati wa kuingiza"
 
-#~ msgid "authority"
-#~ msgstr "mamlaka"
-
-#~ msgid "Organisation managing this taxonomy"
-#~ msgstr "Shirika linalosimamia taaluma hii"
-
-#~ msgid "Short name for this taxonomy, under this authority"
-#~ msgstr "Jina fupi la taksonomia hii, chini ya mamlaka hii"
-
-#~ msgid "Code used in the API"
-#~ msgstr "Msimbo unaotumika kwenye API"
-
-#~ msgid "Friendly, full title for the taxonomy"
-#~ msgstr "Rafiki, jina kamili la jamii"
-
-#~ msgid "taxonomy"
-#~ msgstr "taksonomia"
-
-#~ msgid "taxonomies"
-#~ msgstr "taksonomia"
-
-#~ msgid "vocabulary"
-#~ msgstr "Msamiati"
-
-#~ msgid "level 1"
-#~ msgstr "kiwango cha 1"
-
-#~ msgid "level 2"
-#~ msgstr "kiwango cha 2"
-
-#~ msgid "(optional)"
-#~ msgstr "(si lazima)"
-
-#~ msgid "vocabulary topic"
-#~ msgstr "mada ya msamiati"
-
-#~ msgid "vocabulary topics"
-#~ msgstr "mada za msamiati"
-
-#~ msgid "Chapter (Cap.)"
-#~ msgstr "Sura (Sura)"

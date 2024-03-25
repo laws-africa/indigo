@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 16:16+0200\n"
+"POT-Creation-Date: 2024-03-25 12:21+0200\n"
 "PO-Revision-Date: 2024-03-08 07:03\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File: /[laws-africa.indigo] master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 139\n"
 
-#: admin.py:105
+#: admin.py:89
 msgid "Updated run time to now for selected tasks."
 msgstr ""
 
-#: admin.py:107
+#: admin.py:91
 msgid "Set run time to now"
 msgstr ""
 
@@ -69,8 +69,8 @@ msgstr "document"
 msgid "documents"
 msgstr "documents"
 
-#: models/documents.py:303 models/tasks.py:131 models/works.py:477
-#: models/works.py:766 models/works.py:921 models/works.py:997
+#: models/documents.py:303 models/tasks.py:131 models/works.py:417
+#: models/works.py:703 models/works.py:858 models/works.py:934
 msgid "work"
 msgstr "travail"
 
@@ -78,12 +78,12 @@ msgstr "travail"
 msgid "frbr uri"
 msgstr "frbr uri"
 
-#: models/documents.py:312 models/works.py:481
+#: models/documents.py:312 models/works.py:421
 msgid "Used globally to identify this work"
 msgstr "Utilisé globalement pour identifier ce travail"
 
 #: models/documents.py:315 models/tasks.py:126 models/tasks.py:578
-#: models/tasks.py:625 models/works.py:50 models/works.py:484
+#: models/tasks.py:625 models/works.py:424
 msgid "title"
 msgstr "titre"
 
@@ -125,29 +125,29 @@ msgstr "Ce document a-t-il été supprimé ?"
 
 #: models/documents.py:334 models/documents.py:617 models/documents.py:669
 #: models/documents.py:731 models/tasks.py:155 models/tasks.py:593
-#: models/tasks.py:650 models/works.py:543 models/works.py:773
-#: models/works.py:814 models/works.py:862 models/works.py:924
+#: models/tasks.py:650 models/works.py:480 models/works.py:710
+#: models/works.py:751 models/works.py:799 models/works.py:861
 msgid "created at"
 msgstr "créé le"
 
 #: models/documents.py:335 models/documents.py:618 models/documents.py:670
 #: models/documents.py:732 models/tasks.py:156 models/tasks.py:594
-#: models/tasks.py:651 models/works.py:544 models/works.py:774
-#: models/works.py:815 models/works.py:863 models/works.py:925
+#: models/tasks.py:651 models/works.py:481 models/works.py:711
+#: models/works.py:752 models/works.py:800 models/works.py:862
 msgid "updated at"
 msgstr "mis à jour le"
 
-#: models/documents.py:337 models/documents.py:664 models/works.py:548
-#: models/works.py:818 models/works.py:866 models/works.py:928
+#: models/documents.py:337 models/documents.py:664 models/works.py:485
+#: models/works.py:755 models/works.py:803 models/works.py:865
 msgid "created by"
 msgstr "créer par"
 
-#: models/documents.py:338 models/works.py:550 models/works.py:820
-#: models/works.py:868 models/works.py:930
+#: models/documents.py:338 models/works.py:487 models/works.py:757
+#: models/works.py:805 models/works.py:867
 msgid "updated by"
 msgstr "Mis à jour par"
 
-#: models/documents.py:613 models/tasks.py:645 models/works.py:768
+#: models/documents.py:613 models/tasks.py:645 models/works.py:705
 msgid "file"
 msgstr "fichier"
 
@@ -175,8 +175,8 @@ msgstr "pièce jointe"
 msgid "attachments"
 msgstr "pièces jointes"
 
-#: models/documents.py:643 models/places.py:142 models/works.py:47
-#: models/works.py:105 models/works.py:963
+#: models/documents.py:643 models/places.py:158 models/works.py:45
+#: models/works.py:900
 msgid "name"
 msgstr "nom"
 
@@ -189,8 +189,8 @@ msgid "Which country does this colophon apply to?"
 msgstr "À quel pays ce colophon s’applique-t-il ?"
 
 #: models/documents.py:646 models/places.py:49 models/places.py:61
-#: models/places.py:141 models/places.py:190 models/tasks.py:129
-#: models/tasks.py:587 models/works.py:486
+#: models/places.py:157 models/places.py:206 models/tasks.py:129
+#: models/tasks.py:587 models/works.py:426
 msgid "country"
 msgstr "Pays"
 
@@ -274,76 +274,82 @@ msgstr "termes en italique"
 msgid "countries"
 msgstr "des pays"
 
-#: models/places.py:142
+#: models/places.py:132
+#, fuzzy
+#| msgid "All topics"
+msgid "All places"
+msgstr "Tous les sujets"
+
+#: models/places.py:158
 msgid "Local name of this locality"
 msgstr "Nom local de cette localité"
 
-#: models/places.py:143 models/tasks.py:138
+#: models/places.py:159 models/tasks.py:138
 msgid "code"
 msgstr "code"
 
-#: models/places.py:147 models/places.py:192 models/tasks.py:130
-#: models/tasks.py:588 models/works.py:488
+#: models/places.py:163 models/places.py:208 models/tasks.py:130
+#: models/tasks.py:588 models/works.py:428
 msgid "locality"
 msgstr "localité"
 
-#: models/places.py:148
+#: models/places.py:164
 msgid "localities"
 msgstr "localités"
 
-#: models/places.py:194
+#: models/places.py:210
 msgid "spreadsheet URL"
 msgstr "URL de la feuille de calcul"
 
-#: models/places.py:195
+#: models/places.py:211
 msgid "as-at date"
 msgstr "à la date"
 
-#: models/places.py:196
+#: models/places.py:212
 msgid "styleguide URL"
 msgstr "URL du guide de style"
 
-#: models/places.py:197
+#: models/places.py:213
 msgid "consolidation note"
 msgstr "note de consolidation"
 
-#: models/places.py:199
+#: models/places.py:215
 msgid "'No publication document' text"
 msgstr "Texte « Aucun document de publication »"
 
-#: models/places.py:200
+#: models/places.py:216
 msgid "Note: The original publication document is not available and this content could not be verified."
 msgstr "Remarque : le document de publication original n'est pas disponible et ce contenu n'a pas pu être vérifié."
 
-#: models/places.py:201
+#: models/places.py:217
 msgid "publication date is optional"
 msgstr "la date de publication est facultative"
 
-#: models/places.py:202
+#: models/places.py:218
 msgid "Are publication dates optional in this place?"
 msgstr "Les dates de publication sont-elles facultatives à cet endroit ?"
 
-#: models/places.py:203
+#: models/places.py:219
 msgid "a consolidation is being imported"
 msgstr "une consolidation est en cours d'importation"
 
-#: models/places.py:204
+#: models/places.py:220
 msgid "Is a consolidation being worked on in this place?"
 msgstr "Une consolidation est-elle en cours à cet endroit ?"
 
-#: models/places.py:205
+#: models/places.py:221
 msgid "chapters are used"
 msgstr "les chapitres sont utilisés"
 
-#: models/places.py:206
+#: models/places.py:222
 msgid "Are Chapters used for Acts in this place?"
 msgstr "Les chapitres sont-ils utilisés pour les actes à cet endroit ?"
 
-#: models/places.py:209
+#: models/places.py:225
 msgid "place settings"
 msgstr "Paramètres de lieu"
 
-#: models/places.py:210
+#: models/places.py:226
 msgid "places' settings"
 msgstr "paramètres des lieux"
 
@@ -488,7 +494,7 @@ msgid "tasks"
 msgstr "Tâches"
 
 #: models/tasks.py:127 models/tasks.py:579 models/tasks.py:627
-#: models/works.py:107 models/works.py:920
+#: models/works.py:47 models/works.py:857
 msgid "description"
 msgstr "description"
 
@@ -597,7 +603,7 @@ msgstr "date d'échéance"
 msgid "priority"
 msgstr "priorité"
 
-#: models/tasks.py:626 models/works.py:49 models/works.py:106
+#: models/tasks.py:626 models/works.py:46
 msgid "slug"
 msgstr "slug"
 
@@ -630,441 +636,389 @@ msgstr "fichiers de tâches"
 msgid "Work for FRBR URI '%(uri)s' doesn't exist"
 msgstr "Le travail pour FRBR URI '%(uri)s' n'existe pas"
 
-#: models/works.py:45
-msgid "authority"
-msgstr "autorité"
-
-#: models/works.py:46
-msgid "Organisation managing this taxonomy"
-msgstr "Organisation gérant cette taxonomie"
-
 #: models/works.py:48
-msgid "Short name for this taxonomy, under this authority"
-msgstr "Nom abrégé de cette taxonomie, sous cette autorité"
-
-#: models/works.py:49
-msgid "Code used in the API"
-msgstr "Code utilisé dans l'API"
-
-#: models/works.py:51
-msgid "Friendly, full title for the taxonomy"
-msgstr "Titre convivial et complet pour la taxonomie"
-
-#: models/works.py:54
-msgid "taxonomy"
-msgstr "taxonomie"
-
-#: models/works.py:55 models/works.py:528
-msgid "taxonomies"
-msgstr "taxonomies"
-
-#: models/works.py:65
-msgid "vocabulary"
-msgstr "vocabulaire"
-
-#: models/works.py:66
-msgid "level 1"
-msgstr "niveau 1"
-
-#: models/works.py:67
-msgid "level 2"
-msgstr "niveau 2"
-
-#: models/works.py:67
-msgid "(optional)"
-msgstr "(facultatif)"
-
-#: models/works.py:72
-msgid "vocabulary topic"
-msgstr "sujet de vocabulaire"
-
-#: models/works.py:73
-msgid "vocabulary topics"
-msgstr "sujets de vocabulaire"
-
-#: models/works.py:108
 msgid "public"
 msgstr "publique"
 
-#: models/works.py:109
+#: models/works.py:49
 msgid "project"
 msgstr ""
 
-#: models/works.py:113
+#: models/works.py:53
 msgid "taxonomy topic"
 msgstr "sujet de taxonomie"
 
-#: models/works.py:114 models/works.py:530
+#: models/works.py:54 models/works.py:467
 msgid "taxonomy topics"
 msgstr "sujets de taxonomie"
 
-#: models/works.py:153
+#: models/works.py:93
 msgid "All topics"
 msgstr "Tous les sujets"
 
-#: models/works.py:445
+#: models/works.py:385
 msgid "Not commenced"
 msgstr "Non commencé"
 
-#: models/works.py:450
+#: models/works.py:390
 msgid "There are multiple commencements"
 msgstr "Il y a plusieurs commencements"
 
-#: models/works.py:473
+#: models/works.py:413
 msgid "Can review work details"
 msgstr "Peut examiner les détails du travail"
 
-#: models/works.py:474
+#: models/works.py:414
 msgid "Can import works in bulk"
 msgstr "Peut importer des œuvres en masse"
 
-#: models/works.py:475
+#: models/works.py:415
 msgid "Can export works in bulk"
 msgstr "Peut exporter des œuvres en masse"
 
-#: models/works.py:478
+#: models/works.py:418
 msgid "works"
 msgstr "travaux"
 
-#: models/works.py:480
+#: models/works.py:420
 msgid "FRBR URI"
 msgstr "FRBR URI"
 
-#: models/works.py:484
+#: models/works.py:424
 msgid "(untitled)"
 msgstr "(sans titre)"
 
-#: models/works.py:490
+#: models/works.py:430
 msgid "doctype"
 msgstr "type de document"
 
-#: models/works.py:490
+#: models/works.py:430
 msgid "FRBR doctype"
 msgstr "Type de document FRBR"
 
-#: models/works.py:491 models/works.py:971
+#: models/works.py:431 models/works.py:908
 msgid "subtype"
 msgstr "sous-type"
 
-#: models/works.py:491
+#: models/works.py:431
 msgid "FRBR subtype"
 msgstr "Sous-type FRBR"
 
-#: models/works.py:492
+#: models/works.py:432
 msgid "actor"
 msgstr "acteur"
 
-#: models/works.py:492
+#: models/works.py:432
 msgid "FRBR actor"
 msgstr "Acteur FRBR"
 
-#: models/works.py:493 models/works.py:798 models/works.py:859
-#: models/works.py:919
+#: models/works.py:433 models/works.py:735 models/works.py:796
+#: models/works.py:856
 msgid "date"
 msgstr "date"
 
-#: models/works.py:493
+#: models/works.py:433
 msgid "FRBR date"
 msgstr "Date FRBR"
 
-#: models/works.py:494
+#: models/works.py:434
 msgid "number"
 msgstr "nombre"
 
-#: models/works.py:494
+#: models/works.py:434
 msgid "FRBR number"
 msgstr "Numéro FRBR"
 
-#: models/works.py:497
+#: models/works.py:437
 msgid "publication name"
 msgstr "nom de publication"
 
-#: models/works.py:498
+#: models/works.py:438
 msgid "Original publication's name, e.g. Government Gazette"
 msgstr "Nom de la publication originale, par exemple Journal officiel"
 
-#: models/works.py:499
+#: models/works.py:439
 msgid "publication number"
 msgstr "numéro de publication"
 
-#: models/works.py:500
+#: models/works.py:440
 msgid "Publication's sequence number, eg. gazette number"
 msgstr "Numéro de séquence de la publication, par ex. numéro du journal officiel"
 
-#: models/works.py:501
+#: models/works.py:441
 msgid "publication date"
 msgstr "date de publication"
 
-#: models/works.py:501
+#: models/works.py:441
 msgid "Date of publication"
 msgstr "Date de publication"
 
-#: models/works.py:503
+#: models/works.py:443
 msgid "assent date"
 msgstr "date d'approbation"
 
-#: models/works.py:503
+#: models/works.py:443
 msgid "Date signed by the president"
 msgstr "Date signée par le président"
 
-#: models/works.py:505
+#: models/works.py:445
 msgid "commenced"
 msgstr "commencé"
 
-#: models/works.py:506
+#: models/works.py:446
 msgid "Has this work commenced? (Date may be unknown)"
 msgstr "Ces travaux ont-ils commencé ? (La date peut être inconnue)"
 
-#: models/works.py:510
+#: models/works.py:450
 msgid "Work that repealed this work"
 msgstr "Ouvrage qui a abrogé cet ouvrage"
 
-#: models/works.py:511
+#: models/works.py:451
 msgid "repealed by"
 msgstr "abrogé par"
 
-#: models/works.py:512
+#: models/works.py:452
 msgid "repealed date"
 msgstr "date d'abrogation"
 
-#: models/works.py:512
+#: models/works.py:452
 msgid "Date of repeal of this work"
 msgstr "Date d'abrogation de cet ouvrage"
 
-#: models/works.py:516
+#: models/works.py:456
 msgid "Parent (primary) work for subsidiary legislation"
 msgstr "Travail principal (primaire) pour la législation subsidiaire"
 
-#: models/works.py:517
+#: models/works.py:457
 msgid "parent (primary) work"
 msgstr "travail des parents (primaire)"
 
-#: models/works.py:519
+#: models/works.py:459
 msgid "principal"
 msgstr "principal"
 
-#: models/works.py:520
+#: models/works.py:460
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
 msgstr "Les œuvres principales ne sont pas simplement des abrogations, des modifications ou des introductions, et doivent avoir un contenu en texte intégral."
 
-#: models/works.py:522
+#: models/works.py:462
 msgid "stub"
 msgstr "bout"
 
-#: models/works.py:522
+#: models/works.py:462
 msgid "Stub works do not have content or points in time"
 msgstr "Les œuvres tronquées n'ont pas de contenu ni de moments dans le temps"
 
-#: models/works.py:525
+#: models/works.py:465
 msgid "properties"
 msgstr "propriétés"
 
-#: models/works.py:532
+#: models/works.py:469
 msgid "as-at date override"
 msgstr "remplacement de la date du jour"
 
-#: models/works.py:533
+#: models/works.py:470
 msgid "Date up to which this work was last checked for updates"
 msgstr "Date à laquelle cette œuvre a été vérifiée pour la dernière fois pour les mises à jour"
 
-#: models/works.py:534
+#: models/works.py:471
 msgid "consolidation note override"
 msgstr "remplacement d'une note de consolidation"
 
-#: models/works.py:535
+#: models/works.py:472
 msgid "Consolidation note about this particular work, to override any consolidation note for the place"
 msgstr "Note de consolidation sur ce travail particulier, pour remplacer toute note de consolidation pour le lieu"
 
-#: models/works.py:537
+#: models/works.py:474
 msgid "disclaimer"
 msgstr "clause de non-responsabilité"
 
-#: models/works.py:538
+#: models/works.py:475
 msgid "Disclaimer text about this work"
 msgstr "Texte de clause de non-responsabilité concernant cette œuvre"
 
-#: models/works.py:540
+#: models/works.py:477
 msgid "work in progress"
 msgstr "travail en cours"
 
-#: models/works.py:541
+#: models/works.py:478
 msgid "Work in progress, to be approved"
 msgstr "Travaux en cours, à approuver"
 
-#: models/works.py:545
+#: models/works.py:482
 msgid "approved at"
 msgstr "approuvé à"
 
-#: models/works.py:552
+#: models/works.py:489
 msgid "approved by"
 msgstr "approuvé par"
 
-#: models/works.py:570
+#: models/works.py:507
 #, python-format
 msgid "No such locality for this country: %(code)s"
 msgstr "Aucune localité de ce type pour ce pays : %(code)s"
 
-#: models/works.py:580
+#: models/works.py:517
 msgid "Invalid FRBR URI"
 msgstr "FRBR URI invalide"
 
-#: models/works.py:714
+#: models/works.py:651
 msgid "This document was unpublished because its work was unapproved."
 msgstr "Ce document n'a pas été publié car ses travaux n'ont pas été approuvés."
 
-#: models/works.py:769
+#: models/works.py:706
 msgid "trusted URL"
 msgstr "URL de confiance"
 
-#: models/works.py:770
+#: models/works.py:707
 msgid "file size"
 msgstr "taille du fichier"
 
-#: models/works.py:771
+#: models/works.py:708
 msgid "file name"
 msgstr "nom de fichier"
 
-#: models/works.py:772
+#: models/works.py:709
 msgid "file MIME type"
 msgstr "type de fichier MIME"
 
-#: models/works.py:777
+#: models/works.py:714
 msgid "publication document"
 msgstr "document de publication"
 
-#: models/works.py:778
+#: models/works.py:715
 msgid "publication documents"
 msgstr "documents de publication"
 
-#: models/works.py:793
+#: models/works.py:730
 msgid "commenced work"
 msgstr "commencé les travaux"
 
-#: models/works.py:794
+#: models/works.py:731
 msgid "Principal work being commenced"
 msgstr "Principaux travaux en cours"
 
-#: models/works.py:795
+#: models/works.py:732
 msgid "commencing work"
 msgstr "commencer les travaux"
 
-#: models/works.py:796
+#: models/works.py:733
 msgid "Work that provides the commencement date for the principal work"
 msgstr "Travaux qui fournissent la date de début des travaux principaux"
 
-#: models/works.py:799
+#: models/works.py:736
 msgid "Date of the commencement, or null if it is unknown"
 msgstr "Date de début, ou nulle si elle est inconnue"
 
-#: models/works.py:800
+#: models/works.py:737
 msgid "main"
 msgstr "principal"
 
-#: models/works.py:801
+#: models/works.py:738
 msgid "This commencement date is the date on which most of the provisions of the commenced work come into force"
 msgstr "Cette date de début est la date à laquelle la plupart des dispositions des travaux commencés entrent en vigueur."
 
-#: models/works.py:803
+#: models/works.py:740
 msgid "all provisions"
 msgstr "toutes les dispositions"
 
-#: models/works.py:804
+#: models/works.py:741
 msgid "All provisions of this work commenced on this date"
 msgstr "Toutes les dispositions de ces travaux ont commencé à cette date"
 
-#: models/works.py:805
+#: models/works.py:742
 msgid "note"
 msgstr "note"
 
-#: models/works.py:806
+#: models/works.py:743
 msgid "Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation"
 msgstr "Généralement une référence à une disposition des travaux commencés ou à un début de travaux, s'il y a un début mais que la date est sujette à interprétation"
 
-#: models/works.py:810
+#: models/works.py:747
 msgid "commenced provisions"
 msgstr "dispositions commencées"
 
-#: models/works.py:811
+#: models/works.py:748
 msgid "A list of the element ids of the provisions that come into force with this commencement"
 msgstr "Une liste des identifiants d'éléments des dispositions qui entrent en vigueur avec ce début"
 
-#: models/works.py:825
+#: models/works.py:762
 msgid "commencement"
 msgstr "commencement"
 
-#: models/works.py:826
+#: models/works.py:763
 msgid "commencements"
 msgstr "débuts"
 
-#: models/works.py:855
+#: models/works.py:792
 msgid "amended work"
 msgstr "travail modifié"
 
-#: models/works.py:856
+#: models/works.py:793
 msgid "Work being amended"
 msgstr "Travaux en cours de modification"
 
-#: models/works.py:857
+#: models/works.py:794
 msgid "amending work"
 msgstr "travaux de modification"
 
-#: models/works.py:858
+#: models/works.py:795
 msgid "Work making the amendment"
 msgstr "Travailler à la modification"
 
-#: models/works.py:860
+#: models/works.py:797
 msgid "Date on which the amendment comes into operation"
 msgstr "Date d'entrée en vigueur de la modification"
 
-#: models/works.py:872
+#: models/works.py:809
 msgid "amendment"
 msgstr "amendement"
 
-#: models/works.py:873
+#: models/works.py:810
 msgid "amendments"
 msgstr "amendements"
 
-#: models/works.py:919
+#: models/works.py:856
 msgid "Arbitrary date, e.g. consolidation date"
 msgstr "Date arbitraire, par exemple date de consolidation"
 
-#: models/works.py:935
+#: models/works.py:872
 msgid "arbitrary expression date"
 msgstr "date d'expression arbitraire"
 
-#: models/works.py:936
+#: models/works.py:873
 msgid "arbitrary expression dates"
 msgstr "dates d'expression arbitraires"
 
-#: models/works.py:963
+#: models/works.py:900
 msgid "Name of the subtype"
 msgstr "Nom du sous-type"
 
-#: models/works.py:964
+#: models/works.py:901
 msgid "abbreviation"
 msgstr "abréviation"
 
-#: models/works.py:965
+#: models/works.py:902
 msgid "Short abbreviation to use in the FRBR URI. No punctuation."
 msgstr "Abréviation courte à utiliser dans l’URI FRBR. Aucune ponctuation."
 
-#: models/works.py:972
+#: models/works.py:909
 msgid "subtypes"
 msgstr "sous-types"
 
-#: models/works.py:996
+#: models/works.py:933
 msgid "alias"
 msgstr "alias"
 
-#: models/works.py:996
+#: models/works.py:933
 msgid "Alias e.g. Penal Code, etc"
 msgstr "Alias, par exemple Code pénal, etc."
 
-#: models/works.py:1002
+#: models/works.py:939
 msgid "work alias"
 msgstr "pseudonyme de travail"
 
-#: models/works.py:1003
+#: models/works.py:940
 msgid "work aliases"
 msgstr "pseudonymes de travail"
 
@@ -1221,17 +1175,56 @@ msgstr "Consolidation"
 msgid "Repealed by"
 msgstr "Abrogé par"
 
-#: views/documents.py:97
+#: views/documents.py:96
 msgid "DELETE not allowed for published documents, mark as a draft first."
 msgstr "SUPPRIMER les documents publiés, marquer comme brouillon d'abord."
 
-#: views/documents.py:206
+#: views/documents.py:205
 msgid "Cannot create a task for a reply annotation."
 msgstr "Impossible de créer une tâche pour une annotation de réponse."
 
-#: views/documents.py:344
+#: views/documents.py:343
 msgid "Error during import"
 msgstr "Erreur lors de l'importation"
+
+#~ msgid "authority"
+#~ msgstr "autorité"
+
+#~ msgid "Organisation managing this taxonomy"
+#~ msgstr "Organisation gérant cette taxonomie"
+
+#~ msgid "Short name for this taxonomy, under this authority"
+#~ msgstr "Nom abrégé de cette taxonomie, sous cette autorité"
+
+#~ msgid "Code used in the API"
+#~ msgstr "Code utilisé dans l'API"
+
+#~ msgid "Friendly, full title for the taxonomy"
+#~ msgstr "Titre convivial et complet pour la taxonomie"
+
+#~ msgid "taxonomy"
+#~ msgstr "taxonomie"
+
+#~ msgid "taxonomies"
+#~ msgstr "taxonomies"
+
+#~ msgid "vocabulary"
+#~ msgstr "vocabulaire"
+
+#~ msgid "level 1"
+#~ msgstr "niveau 1"
+
+#~ msgid "level 2"
+#~ msgstr "niveau 2"
+
+#~ msgid "(optional)"
+#~ msgstr "(facultatif)"
+
+#~ msgid "vocabulary topic"
+#~ msgstr "sujet de vocabulaire"
+
+#~ msgid "vocabulary topics"
+#~ msgstr "sujets de vocabulaire"
 
 #~ msgid "Chapter (Cap.)"
 #~ msgstr "Chapitre (Cap.)"

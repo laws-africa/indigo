@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 16:16+0200\n"
+"POT-Creation-Date: 2024-03-25 12:21+0200\n"
 "PO-Revision-Date: 2024-03-08 06:05\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
@@ -115,11 +115,11 @@ msgstr ""
 "\n"
 "A alteração já foi vinculada, então comece na Etapa 3 de https://docs.laws.africa/managing-works/amending-works."
 
-#: bulk_creator.py:1001
+#: bulk_creator.py:998
 msgid "Link commencement (passive)"
 msgstr "Início do link (passivo)"
 
-#: bulk_creator.py:1002
+#: bulk_creator.py:999
 #, python-format
 msgid ""
 "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n"
@@ -138,15 +138,15 @@ msgstr ""
 "\n"
 "Por favor, vincule a data de início e comece a trabalhar manualmente."
 
-#: bulk_creator.py:1010
+#: bulk_creator.py:1007
 msgid "(unknown)"
 msgstr "(desconhecido)"
 
-#: bulk_creator.py:1015
+#: bulk_creator.py:1012
 msgid "'Commences on' date missing"
 msgstr "Data da menção 'Em Falta"
 
-#: bulk_creator.py:1016
+#: bulk_creator.py:1013
 #, python-format
 msgid ""
 "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n"
@@ -157,11 +157,11 @@ msgstr ""
 "\n"
 "Caso deva ser vinculado, por favor fazê-lo manualmente."
 
-#: bulk_creator.py:1024
+#: bulk_creator.py:1021
 msgid "Link commencement (active)"
 msgstr "Início do link (activo)"
 
-#: bulk_creator.py:1025
+#: bulk_creator.py:1022
 #, python-format
 msgid ""
 "It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n"
@@ -180,11 +180,11 @@ msgstr ""
 "\n"
 "Se o início deve ser vinculado, por favor fazê-lo manualmente."
 
-#: bulk_creator.py:1038
+#: bulk_creator.py:1035
 msgid "Link amendment (active)"
 msgstr "Alteração de link (activa)"
 
-#: bulk_creator.py:1042
+#: bulk_creator.py:1039
 #, python-format
 msgid ""
 "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -205,11 +205,11 @@ msgstr ""
 "\n"
 "Por favor, vincule a alteração manualmente."
 
-#: bulk_creator.py:1055
+#: bulk_creator.py:1052
 msgid "Link amendment (passive)"
 msgstr "Alteração de link (passivo)"
 
-#: bulk_creator.py:1059
+#: bulk_creator.py:1056
 #, python-format
 msgid ""
 "It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -230,11 +230,11 @@ msgstr ""
 "\n"
 "Por favor, vincule a alteração manualmente."
 
-#: bulk_creator.py:1072
+#: bulk_creator.py:1069
 msgid "Link amendment (pending commencement)"
 msgstr "Alteração de link (pendente de início)"
 
-#: bulk_creator.py:1073
+#: bulk_creator.py:1070
 #, python-format
 msgid ""
 "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n"
@@ -245,11 +245,11 @@ msgstr ""
 "\n"
 "Por favor vincule a alteração manualmente (e aplique-la) quando esta obra entrar em vigor."
 
-#: bulk_creator.py:1081
+#: bulk_creator.py:1078
 msgid "Link repealed by"
 msgstr "Link revogado por"
 
-#: bulk_creator.py:1082
+#: bulk_creator.py:1079
 #, python-format
 msgid ""
 "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -268,11 +268,11 @@ msgstr ""
 "\n"
 "Por favor, vincule a revogação manualmente."
 
-#: bulk_creator.py:1094 bulk_creator.py:1131
+#: bulk_creator.py:1091 bulk_creator.py:1128
 msgid "Link repeal"
 msgstr "Revogação do link"
 
-#: bulk_creator.py:1095
+#: bulk_creator.py:1092
 #, python-format
 msgid ""
 "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -291,11 +291,11 @@ msgstr ""
 "\n"
 "Por favor, vincule a revogação manualmente."
 
-#: bulk_creator.py:1107
+#: bulk_creator.py:1104
 msgid "Check / update repeal"
 msgstr "Verificar / actualizar revogação"
 
-#: bulk_creator.py:1108
+#: bulk_creator.py:1105
 #, python-format
 msgid ""
 "On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n"
@@ -310,11 +310,11 @@ msgstr ""
 "\n"
 "Se a informação de revogação antiga / existente estava errada, atualize-a manualmente. Caso contrário (se a planilha estiver errada), cancele esta tarefa com um comentário.\n"
 
-#: bulk_creator.py:1122
+#: bulk_creator.py:1119
 msgid "Link repeal (pending commencement)"
 msgstr "Revogação do link (início pendente)"
 
-#: bulk_creator.py:1123
+#: bulk_creator.py:1120
 #, python-format
 msgid ""
 "It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n"
@@ -325,7 +325,7 @@ msgstr ""
 "\n"
 "Por favor vincule a revogação manualmente quando esta obra entrar em vigor."
 
-#: bulk_creator.py:1132
+#: bulk_creator.py:1129
 #, python-format
 msgid ""
 "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n"
@@ -336,11 +336,11 @@ msgstr ""
 "\n"
 "Por favor, vincule-o manualmente."
 
-#: bulk_creator.py:1140
+#: bulk_creator.py:1137
 msgid "Link primary work"
 msgstr "Link da obra primária"
 
-#: bulk_creator.py:1141
+#: bulk_creator.py:1138
 #, python-format
 msgid ""
 "It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -359,11 +359,11 @@ msgstr ""
 "\n"
 "Por favor, vincule esta obra principal manualmente."
 
-#: bulk_creator.py:1153
+#: bulk_creator.py:1150
 msgid "Link subleg"
 msgstr "Link da legislação subordinada"
 
-#: bulk_creator.py:1154
+#: bulk_creator.py:1151
 #, python-format
 msgid ""
 "It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -382,11 +382,11 @@ msgstr ""
 "\n"
 "Por favor, vincule a sub-folha manualmente."
 
-#: bulk_creator.py:1166
+#: bulk_creator.py:1163
 msgid "Check / update primary work"
 msgstr "Verificar / atualizar a obra primária"
 
-#: bulk_creator.py:1167
+#: bulk_creator.py:1164
 #, python-format
 msgid ""
 "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n"
@@ -401,11 +401,11 @@ msgstr ""
 "\n"
 "Verifique novamente qual obra esta obra está sob legislação subordinada e atualize-o manualmente se necessário. Se a planilha estava errada, cancele esta tarefa com um comentário."
 
-#: bulk_creator.py:1179
+#: bulk_creator.py:1176
 msgid "Link taxonomy"
 msgstr "Taxonomia do link"
 
-#: bulk_creator.py:1180
+#: bulk_creator.py:1177
 #, python-format
 msgid ""
 "It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n"
@@ -420,7 +420,7 @@ msgstr ""
 "- um erro de digitação na planilha\n"
 "- a taxonomia não existe no sistema."
 
-#: bulk_creator.py:1246
+#: bulk_creator.py:1243
 #, python-format
 msgid "%s (about to be imported)"
 msgstr "%s (prestes a ser importado)"

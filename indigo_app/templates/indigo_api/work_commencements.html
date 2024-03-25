@@ -5,7 +5,6 @@
 {% block title %}{% trans 'Commencements' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>{% trans 'Commencements' %}</h4>
 
   {% if work.commenced and not work.commencement_date %}
     <p class="alert alert-warning">{% trans 'This work has commenced, but the commencement date is unknown.' %}</p>
@@ -15,22 +14,16 @@
     <p class="alert alert-info">{% trans 'This work has not commenced.' %}</p>
   {% endif %}
 
-  {% if uncommenced_provisions_count %}
+  {% if has_uncommenced_provisions %}
     <p class="alert alert-warning">
-      {% blocktrans trimmed count count=uncommenced_provisions_count %}
-        This work has {{ count }} <a href="#uncommenced">uncommenced provision</a>.
-      {% plural %}
-        This work has {{ count }} <a href="#uncommenced">uncommenced provisions</a>.
+      {% blocktrans trimmed %}
+        This work has <a href="#uncommenced-provisions">uncommenced provisions</a>.
       {% endblocktrans %}
     </p>
   {% endif %}
 
-  {% if everything_commenced %}
-    <p>{% trans "All provisions have commenced, no additional commencement events are required." %}</p>
-  {% endif %}
-
   <ol class="timeline">
-    {% if perms.indigo_api.add_commencement and not everything_commenced %}
+    {% if perms.indigo_api.add_commencement %}
       <li class="timeline-item card">
         <div class="card-body">
           {% block new-commencement-card %}
@@ -51,13 +44,7 @@
       </li>
     {% endif %}
 
-    <div
-        id="commencements-list"
-        hx-get="{% url 'work_commencements_list' frbr_uri=work.frbr_uri %}"
-        hx-trigger="hx_refresh_timeline from:body"
-    >
-      {% include "indigo_api/commencement_list.html" %}
-    </div>
+    {% include "indigo_api/commencement_list.html" %}
 {% comment %}
     {% for commencement in commencements %}
       <li class="timeline-item card">
@@ -173,18 +160,12 @@
 {% endcomment %}
   </ol>
 
-  {% if uncommenced_provisions_count %}
-    <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">{% trans 'Uncommenced provisions' %} <span class="badge text-bg-warning">{{ uncommenced_provisions_count }}</span></h5>
-      <div class="card-body">
-        <div class="treelist-wrapper">
-          <ul>
-            {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=provisions %}
-          </ul>
-        </div>
-      </div>
-    </div>
-  {% endif %}
+  <div
+      id="uncommenced-provisions"
+      hx-get="{% url 'work_uncommenced_provisions' frbr_uri=work.frbr_uri %}"
+      hx-trigger="load"
+      hx-target="#uncommenced-provisions"
+  >{% trans "Loading uncommenced provisions…" %}</div>
 
   {% if work.commencements.count and perms.indigo_api.delete_commencement %}
     <form method="post" class="mt-5" action="{% url 'work_uncommenced' frbr_uri=work.frbr_uri %}">
@@ -194,4 +175,15 @@
       <button type="submit" class="btn btn-danger" data-confirm="{% trans 'Are you sure?' %}" name="delete">{% trans 'This work has not commenced' %}</button>
     </form>
   {% endif %}
+
+  <div
+      id="work-chooser-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">Loading...</div>
+    </div>
+  </div>
 {% endblock %}

@@ -9,7 +9,7 @@
             class="btn btn-link text-danger me-2"
             name="delete"
             hx-post="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-            hx-target="#commencements-list"
+            hx-target="body"
             hx-confirm="{% trans 'Really delete this commencement?' %}"
         >{% trans 'Delete' %}</button>
       {% endif %}
@@ -41,22 +41,12 @@
     <div>
       {% if commencement.note %}<h6>{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
       {% if commencement.main %}<h6>{% trans 'Main commencement' %}</h6>{% endif %}
-      <h6>
-        {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
-        {% if commencement.provisions %}
-          {% blocktrans trimmed with provisions=commencement.provisions|length %}
-            Commences {{ provisions }} of {{ total_provisions_count }} provisions:
-          {% endblocktrans %}
-        {% endif %}
-      </h6>
-
-      {% if commencement.provisions %}
-        <div class="treelist-wrapper">
-          <ul>
-            {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
-          </ul>
-        </div>
-      {% endif %}
+      <div
+          id="provisions-{{ commencement.id }}"
+          hx-get="{% url 'work_commencement_provisions_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+          hx-trigger="load"
+          hx-target="#provisions-{{ commencement.id }}"
+      >{% trans "Loading provisions…" %}</div>
     </div>
   </div>
 </div>

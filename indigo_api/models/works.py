@@ -391,7 +391,7 @@ class WorkMixin(object):
         # this'll be the last document's cumulative_provisions, or []
         return cumulative_provisions
 
-    def all_uncommenced_provision_ids(self, date=None):
+    def all_uncommenced_provision_ids(self, date=None, return_bool=False):
         """ Returns a (potentially empty) list of the ids of TOCElement objects that haven't yet commenced.
             If `date` is provided, only provisions in expressions up to and including that date are included.
         """
@@ -404,8 +404,16 @@ class WorkMixin(object):
 
         # commencement.provisions are lists of provision ids
         commenced = [p for c in commencements for p in c.provisions]
-
-        return [p.id for p in descend_toc_pre_order(self.all_commenceable_provisions(date=date)) if p.id not in commenced]
+        uncommenced = []
+        for p in descend_toc_pre_order(self.all_commenceable_provisions(date=date)):
+            if p.id not in commenced:
+                # sometimes we just want to know if there's at least one uncommenced provision; no need to keep looking
+                if return_bool:
+                    return True
+                uncommenced.append(p.id)
+        if not return_bool:
+            return uncommenced
+        return False
 
     @property
     def commencements_count(self):

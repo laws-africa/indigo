@@ -349,76 +349,71 @@ class WorkCommentsView(WorkViewBase, DetailView):
 class WorkCommencementsView(WorkViewBase, DetailView):
     template_name_suffix = '_commencements'
     tab = 'commencements'
-    beautifier = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        provisions = self.work.all_commenceable_provisions()
-        context['commencements'] = commencements = self.work.commencements.all().reverse()
-        context['has_all_provisions'] = any(c.all_provisions for c in commencements)
-        context['has_main_commencement'] = any(c.main for c in commencements)
-        context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
-        context['total_provisions_count'] = sum(1 for _ in descend_toc_pre_order(provisions))
-        context['everything_commenced'] = context['has_all_provisions'] or (provisions and not context['uncommenced_provisions_count'])
-
-        self.beautifier = plugins.for_locale(
-            'commencements-beautifier', self.country.code, None,
-            self.locality.code if self.locality else None,
-        )
-
-        # decorate all provisions on the work
-        commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
-        provisions = self.beautifier.decorate_provisions(provisions, commenced_provision_ids)
-        context['provisions'] = provisions
-
-        # decorate provisions on each commencement
-        for commencement in commencements:
-            commencement.rich_provisions = self.decorate_commencement_provisions(commencement, commencements)
-
+        context['commencements'] = self.work.commencements.all().reverse()
+        context['has_uncommenced_provisions'] = self.work.all_uncommenced_provision_ids(return_bool=True)
         return context
 
-    def decorate_commencement_provisions(self, commencement, commencements):
-        # provisions from all documents up to this commencement's date
-        provisions = self.work.all_commenceable_provisions(commencement.date)
+
+class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/_work_uncommenced_provisions_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
+        # only decorate provisions if there are uncommenced provisions
+        if context['uncommenced_provisions_count']:
+            context['provisions'] = self.decorate_work_provisions()
+        return context
+
+    def decorate_work_provisions(self):
+        beautifier = plugins.for_locale(
+            'commencements-beautifier', self.work.country.code, None,
+            self.work.locality.code if self.work.locality else None,
+        )
+        commencements = self.work.commencements.all().reverse()
+        provisions = self.work.all_commenceable_provisions()
+        commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
+        return beautifier.decorate_provisions(provisions, commenced_provision_ids)
+
+
+class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView):
+    model = Commencement
+    pk_url_kwarg = 'pk'
+    template_name = 'indigo_api/_work_commencement_provisions_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['commencement'].rich_provisions = self.decorate_commencement_provisions(context['commencement'])
+        return context
+
+    def decorate_commencement_provisions(self, commencement):
+        beautifier = plugins.for_locale(
+            'commencements-beautifier', commencement.commenced_work.country.code, None,
+            commencement.commenced_work.locality.code if commencement.commenced_work.locality else None,
+        )
+        # provisions from all documents up to the commencement's date
+        # (expensive but needs to be worked out afresh for each commencement)
+        provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
         # provision ids commenced by everything else; will affect visibility per commencement form
-        commenced_provision_ids = set(p_id for comm in commencements
-                                      if comm != commencement
-                                      for p_id in comm.provisions)
+        other_commencements = commencement.commenced_work.commencements.exclude(pk=commencement.pk)
+        commenced_provision_ids = set(p_id for comm in other_commencements for p_id in comm.provisions)
 
         # commencement status for displaying provisions on commencement detail
-        rich_provisions = self.beautifier.decorate_provisions(provisions, commencement.provisions)
-
-        # visibility for what to show in commencement form
+        rich_provisions = beautifier.decorate_provisions(provisions, commencement.provisions)
+        # disable already-commenced provisions in the commencement form
         for p in descend_toc_post_order(rich_provisions):
-            p.visible = p.id not in commenced_provision_ids
-            p.visible_descendants = any(c.visible or c.visible_descendants for c in p.children)
+            p.disabled = p.id in commenced_provision_ids
 
         return rich_provisions
-
-
-class WorkCommencementsListView(WorkViewBase, ListView):
-    http_method_names = ['get']
-    model = Commencement
-    permission_required = ('indigo_api.view_commencement',)
-
-    def get_object(self, queryset=None):
-        return super().get_object(queryset=Work.objects.prefetch_related('commencements'))
-
-    def get_queryset(self):
-        return self.work.commencements.all().reverse()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['commencements'] = self.object_list
-        return context
 
 
 class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
     http_method_names = ['post', 'get']
     model = Commencement
     pk_url_kwarg = 'pk'
-    # optionally refresh the timeline too, when a date may have changed
-    refresh_timeline = None
 
     def get_permission_required(self):
         if 'delete' in self.request.POST:
@@ -436,21 +431,19 @@ class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
         commencement.delete()
         work.updated_by_user = self.request.user
         work.save()
-        return redirect(reverse('work_commencements_list', kwargs={'frbr_uri': work.frbr_uri}))
+        return redirect(reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['work'] = self.object.commenced_work
         return context
 
-    def render_to_response(self, context, **response_kwargs):
-        resp = super().render_to_response(context, **response_kwargs)
-        if self.refresh_timeline:
-            resp.headers['HX-Trigger'] = "hx_refresh_timeline"
-        return resp
+
+class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView):
+    template_name = 'indigo_api/_work_commencement_provisions_edit.html'
 
 
-class WorkCommencementEditView(WorkDependentView, UpdateView, WorkCommencementsView):
+class WorkCommencementEditView(WorkDependentView, UpdateView):
     http_method_names = ['get', 'post']
     model = Commencement
     pk_url_kwarg = 'pk'
@@ -469,6 +462,7 @@ class WorkCommencementEditView(WorkDependentView, UpdateView, WorkCommencementsV
         kwargs['work'] = self.work
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         # TODO: is there a neater way of doing this?
+        # TODO: do something similar for changed provisions too
         if self.request.GET.get('commencing_work') or self.request.GET.get('clear_commencing_work'):
             kwargs['data'] = self.request.GET
         return kwargs
@@ -482,8 +476,9 @@ class WorkCommencementEditView(WorkDependentView, UpdateView, WorkCommencementsV
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        # re-render the commencement and refresh the timeline
-        return reverse('work_commencement_detail_refresh_timeline', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
+        # re-render the whole page (updated provisions)
+        # TODO: navigate to the commencement on the page, e.g. works/…/commencements/#commencement-1076
+        return reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):

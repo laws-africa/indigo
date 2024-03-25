@@ -718,6 +718,7 @@ class WorkBulkActionBase(PlaceViewBase, FormView):
 class WorkBulkUpdateView(WorkBulkActionBase):
     form_class = WorkBulkUpdateForm
     template_name = "indigo_app/place/_bulk_update_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.change_work')
 
     def form_valid(self, form):
         if form.cleaned_data['save']:
@@ -738,6 +739,7 @@ class WorkBulkUpdateView(WorkBulkActionBase):
 class WorkBulkApproveView(WorkBulkActionBase):
     form_class = WorkBulkApproveForm
     template_name = "indigo_app/place/_bulk_approve_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.bulk_add_work')
 
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):
@@ -759,17 +761,18 @@ class WorkBulkApproveView(WorkBulkActionBase):
 class WorkBulkUnapproveView(WorkBulkActionBase):
     form_class = WorkBulkUnapproveForm
     template_name = "indigo_app/place/_bulk_unapprove_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.bulk_add_work')
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["approved_works"] = form.cleaned_data.get("approved_works").order_by("-created_at")
+        context["works"] = form.cleaned_data.get("works").order_by("-created_at")
         return context
 
     def form_valid(self, form):
         if form.cleaned_data.get("unapprove"):
-            for work in form.cleaned_data["approved_works"]:
+            for work in form.cleaned_data["works"]:
                 work.unapprove(self.request.user)
-            messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['approved_works'].count()})
+            messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['works'].count()})
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

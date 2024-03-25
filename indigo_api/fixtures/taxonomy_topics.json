@@ -46,5 +46,41 @@
       "name": "I'm private",
       "slug": "internal-topic-im-private"
     }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 5,
+    "fields": {
+      "public": true,
+      "path": "00010005",
+      "depth": 2,
+      "numchild": 0,
+      "name": "Children",
+      "slug": "lawsafrica-subject-areas-children"
+    }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 6,
+    "fields": {
+      "public": true,
+      "path": "00010006",
+      "depth": 2,
+      "numchild": 0,
+      "name": "Communications",
+      "slug": "lawsafrica-subject-areas-communications"
+    }
+  },
+  {
+    "model": "indigo_api.taxonomytopic",
+    "pk": 7,
+    "fields": {
+      "public": true,
+      "path": "00010007",
+      "depth": 2,
+      "numchild": 0,
+      "name": "Estates, Trusts and Succession",
+      "slug": "lawsafrica-subject-areas-estates-trusts-and-succession"
+    }
   }
 ]

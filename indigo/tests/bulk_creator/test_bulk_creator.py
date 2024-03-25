@@ -7,12 +7,12 @@ from django.conf import settings
 from django.test import testcases
 
 from indigo.bulk_creator import SpreadsheetRow, BaseBulkCreator
-from indigo_api.models import Country, Work, VocabularyTopic, Locality
+from indigo_api.models import Country, Work, TaxonomyTopic, Locality
 from indigo_app.models import User
 
 
 class BaseBulkCreatorTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'subtype']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'subtype']
 
     def setUp(self):
         self.maxDiff = None
@@ -1209,9 +1209,9 @@ class BaseBulkCreatorTest(testcases.TestCase):
         self.assertEqual([], work2.notes)
 
     def test_link_taxonomies(self):
-        children = VocabularyTopic.objects.get(pk=3)
-        communications = VocabularyTopic.objects.get(pk=4)
-        topic_with_comma = VocabularyTopic.objects.get(pk=7)
+        children = TaxonomyTopic.objects.get(pk=5)
+        communications = TaxonomyTopic.objects.get(pk=6)
+        topic_with_comma = TaxonomyTopic.objects.get(pk=7)
 
         # preview
         works = self.get_works(True, 'taxonomies.csv')
@@ -1220,28 +1220,28 @@ class BaseBulkCreatorTest(testcases.TestCase):
         w3 = works[2]
         w4 = works[3]
         w5 = works[4]
-        self.assertIn(children, w1.taxonomies)
-        self.assertIn(communications, w1.taxonomies)
-        self.assertIn(children, w2.taxonomies)
-        self.assertIn('Taxonomy not found: Animal Husbandry; Finance', w2.notes)
-        self.assertIn('Taxonomy not found: lawsafrica-subjects:People and Work', w3.notes)
-        self.assertIn(children, w4.taxonomies)
-        self.assertIn(communications, w4.taxonomies)
-        self.assertIn(children, w5.taxonomies)
-        self.assertIn(communications, w5.taxonomies)
-        self.assertIn(topic_with_comma, w5.taxonomies)
+        self.assertIn(children, w1.taxonomy_topics)
+        self.assertIn(communications, w1.taxonomy_topics)
+        self.assertIn(children, w2.taxonomy_topics)
+        self.assertIn('TaxonomyTopic not found: Animal Husbandry; Finance', w2.notes)
+        self.assertIn('TaxonomyTopic not found: lawsafrica-subject-areas-people-and-work', w3.notes)
+        self.assertIn(children, w4.taxonomy_topics)
+        self.assertIn(communications, w4.taxonomy_topics)
+        self.assertIn(children, w5.taxonomy_topics)
+        self.assertIn(communications, w5.taxonomy_topics)
+        self.assertIn(topic_with_comma, w5.taxonomy_topics)
 
         # live
         works = self.get_works(False, 'taxonomies.csv')
-        w1_taxonomies = works[0].work.taxonomies.all()
+        w1_taxonomies = works[0].work.taxonomy_topics.all()
         w2 = works[1].work
         w2_tasks = w2.tasks.all()
-        w2_taxonomies = w2.taxonomies.all()
+        w2_taxonomies = w2.taxonomy_topics.all()
         w3 = works[2].work
         w3_tasks = w3.tasks.all()
-        w3_taxonomies = w3.taxonomies.all()
-        w4_taxonomies = works[3].work.taxonomies.all()
-        w5_taxonomies = works[4].work.taxonomies.all()
+        w3_taxonomies = w3.taxonomy_topics.all()
+        w4_taxonomies = works[3].work.taxonomy_topics.all()
+        w5_taxonomies = works[4].work.taxonomy_topics.all()
         self.assertEqual(2, len(w1_taxonomies))
         self.assertIn(children, w1_taxonomies)
         self.assertIn(communications, w1_taxonomies)

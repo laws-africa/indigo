@@ -1,8 +1,6 @@
 from django.core.management import BaseCommand
-from indigo_api.models import TaxonomyTopic, TaxonomyVocabulary, Work
+from indigo_api.models import TaxonomyTopic, TaxonomyVocabulary
 from django.utils.text import slugify
-from treebeard.exceptions import NodeAlreadySaved
-from psycopg2 import IntegrityError
 
 import logging
 

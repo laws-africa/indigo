@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, VocabularyTopic, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
+    Commencement, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -1443,7 +1443,6 @@ class BatchCreateWorkForm(forms.Form):
             message=_("Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"), code='bad')
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
-    workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
     taxonomy_topic = forms.ModelChoiceField(queryset=TaxonomyTopic.objects.filter(slug__startswith='projects-', depth__gte=3), empty_label='Choose a topic')
     block_conversion_tasks = forms.BooleanField(initial=False, required=False)
     cancel_conversion_tasks = forms.BooleanField(initial=False, required=False)

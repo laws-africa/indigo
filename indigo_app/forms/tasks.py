@@ -214,15 +214,3 @@ class BulkTaskUpdateForm(forms.Form):
             del self.errors['assigned_to']
             self.cleaned_data['assigned_to'] = None
             self.unassign = True
-
-
-class WorkflowFilterForm(forms.Form):
-    state = forms.ChoiceField(choices=[('open', 'open'), ('closed', 'closed')])
-
-    def filter_queryset(self, queryset):
-        if self.cleaned_data.get('state') == 'open':
-            queryset = queryset.filter(closed=False)
-        elif self.cleaned_data.get('state') == 'closed':
-            queryset = queryset.filter(closed=True)
-
-        return queryset

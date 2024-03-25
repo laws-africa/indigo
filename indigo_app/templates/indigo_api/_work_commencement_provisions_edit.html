@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<div class="d-flex justify-content-between">
+  <div>{% trans 'Provisions commenced' %}:</div>
+  <div>
+    <input
+        type="checkbox"
+        class="form-check-input me-1"
+        id="select-all-provisions-{{ commencement.id }}"
+        name="select-all"
+    >
+    <label
+        for="select-all-provisions-{{ commencement.id }}"
+        class="form-check-label"
+    >{% trans 'Select all provisions' %}</label>
+  </div>
+</div>
+<ul data-id="provisions" class="provisions-list">
+  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
+</ul>

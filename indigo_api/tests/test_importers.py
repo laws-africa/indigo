@@ -1205,7 +1205,7 @@ PARAGRAPH 9.2.2
 
 
 class ImporterDocxTestCase(TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'drafts']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'drafts']
 
     def setUp(self):
         self.importer = Importer()

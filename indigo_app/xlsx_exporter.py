@@ -1,4 +1,3 @@
-# coding=utf-8
 import datetime
 import io
 import xlsxwriter
@@ -26,7 +25,7 @@ class XlsxExporter:
                             'subtype', 'number', 'year',
                             'publication_name', 'publication_number',
                             'assent_date', 'publication_date', 'commencement_date',
-                            'stub', 'principal', 'taxonomy',
+                            'stub', 'principal', 'taxonomy_topic',
                             'primary_work',
                             'commenced_by', 'commenced_on_date',
                             'amended_by', 'amended_on_date',
@@ -114,8 +113,8 @@ class XlsxExporter:
                 to_write = '✔'
             elif field == 'principal' and work.principal:
                 to_write = '✔'
-            elif field == 'taxonomy':
-                to_write = '; '.join(t.slug for t in work.taxonomies.all())
+            elif field == 'taxonomy_topic':
+                to_write = '; '.join(t.slug for t in work.taxonomy_topics.all())
             elif field == 'primary_work':
                 to_write = uri_title(work.parent_work)
             elif field == 'repealed_by':

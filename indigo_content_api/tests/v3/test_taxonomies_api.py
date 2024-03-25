@@ -1,10 +1,14 @@
-from indigo_content_api.tests.v2.test_taxonomies_api import TaxonomiesAPIV2Test
+from rest_framework.test import APITestCase
 
 
-class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'taxonomy_topics', 'work', 'published', 'colophon',
+class TaxonomyTopicsAPIV3Test(APITestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'published', 'colophon',
                 'attachments', 'commencements']
     api_path = '/api/v3'
+    api_host = 'testserver'
+
+    def setUp(self):
+        self.client.login(username='api-user@example.com', password='password')
 
     def test_taxonomies(self):
         response = self.client.get(self.api_path + '/taxonomies.json')
@@ -15,22 +19,33 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
         response = self.client.get(self.api_path + '/taxonomy-topics.json')
         self.assertEqual(200, response.status_code)
 
-        taxonomy_topics = response.json()['results']
-        self.assertEqual([
-            {
-                "name": "Laws.Africa Subject Areas",
-                "slug": "lawsafrica-subject-areas",
-                "id": 1,
-                "children": [
-                    {
-                        "name": "Money and Business",
-                        "slug": "lawsafrica-subject-areas-money-and-business",
-                        "id": 2,
-                        "children": [],
-                    },
-                ],
-            },
-        ], taxonomy_topics)
+        taxonomy_topic = response.json()['results'][0]
+        self.assertEqual({
+            'name': 'Laws.Africa Subject Areas',
+            'slug': 'lawsafrica-subject-areas',
+            'id': 1,
+            'children': [{
+                'name': 'Money and Business',
+                'slug': 'lawsafrica-subject-areas-money-and-business',
+                'id': 2,
+                'children': []
+            }, {
+                'name': 'Children',
+                'slug': 'lawsafrica-subject-areas-children',
+                'id': 5,
+                'children': []
+            }, {
+                'name': 'Communications',
+                'slug': 'lawsafrica-subject-areas-communications',
+                'id': 6,
+                'children': []
+            }, {
+                'name': 'Estates, Trusts and Succession',
+                'slug': 'lawsafrica-subject-areas-estates-trusts-and-succession',
+                'id': 7,
+                'children': []
+            }]
+        }, taxonomy_topic)
 
     def test_taxonomy_topic_root_detail(self):
         response = self.client.get(self.api_path + '/taxonomy-topics/lawsafrica-subject-areas.json')
@@ -38,17 +53,30 @@ class TaxonomyTopicsAPIV3Test(TaxonomiesAPIV2Test):
 
         topic = response.json()
         self.assertEqual({
-            "name": "Laws.Africa Subject Areas",
-            "slug": "lawsafrica-subject-areas",
-            "id": 1,
-            "children": [
-                {
-                    "name": "Money and Business",
-                    "slug": "lawsafrica-subject-areas-money-and-business",
-                    "id": 2,
-                    "children": [],
-                },
-            ],
+            'name': 'Laws.Africa Subject Areas',
+            'slug': 'lawsafrica-subject-areas',
+            'id': 1,
+            'children': [{
+                'name': 'Money and Business',
+                'slug': 'lawsafrica-subject-areas-money-and-business',
+                'id': 2,
+                'children': []
+            }, {
+                'name': 'Children',
+                'slug': 'lawsafrica-subject-areas-children',
+                'id': 5,
+                'children': []
+            }, {
+                'name': 'Communications',
+                'slug': 'lawsafrica-subject-areas-communications',
+                'id': 6,
+                'children': []
+            }, {
+                'name': 'Estates, Trusts and Succession',
+                'slug': 'lawsafrica-subject-areas-estates-trusts-and-succession',
+                'id': 7,
+                'children': []
+            }]
         }, topic)
 
     def test_taxonomy_topic_child_detail(self):

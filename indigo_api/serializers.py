@@ -17,7 +17,7 @@ from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement
+    PublicationDocument, Task, Commencement
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -581,7 +581,6 @@ class WorkSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
-    taxonomies = serializers.SerializerMethodField()
     taxonomy_topics = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -605,7 +604,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'frbr_uri',
 
             # taxonomies
-            'taxonomies', 'taxonomy_topics',
+            'taxonomy_topics',
         )
         read_only_fields = fields
 
@@ -613,19 +612,6 @@ class WorkSerializer(serializers.ModelSerializer):
         if not work.pk:
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
-
-    def get_taxonomies(self, instance):
-        taxonomies = []
-        topics = sorted(instance.taxonomies.all(), key=lambda t: t.vocabulary.title)
-
-        for vocab, group in groupby(topics, key=lambda t: t.vocabulary):
-            taxonomies.append({
-                "vocabulary": vocab.slug,
-                "title": vocab.title,
-                "topics": VocabularyTopicSerializer(many=True).to_representation(list(group)),
-            })
-
-        return taxonomies
 
     def get_taxonomy_topics(self, instance):
         return [t.slug for t in instance.public_taxonomy_topics()]
@@ -655,12 +641,6 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
-
-
-class VocabularyTopicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VocabularyTopic
-        fields = ['level_1', 'level_2']
 
 
 class DocumentDiffSerializer(serializers.Serializer):

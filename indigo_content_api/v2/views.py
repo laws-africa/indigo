@@ -11,13 +11,13 @@ from django.db.models import Q
 
 from cobalt import FrbrUri
 
-from indigo_api.models import Attachment, Country, Document, TaxonomyTopic, TaxonomyVocabulary, Locality
+from indigo_api.models import Attachment, Country, Document, TaxonomyTopic, Locality
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
 from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
-    TaxonomyTopicSerializer, TaxonomySerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
+    TaxonomyTopicSerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
     PublishedDocumentTimelineSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
@@ -368,11 +368,6 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             return publication_document_response(work.publication_document)
 
         raise Http404()
-
-
-class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
-    serializer_class = TaxonomySerializer
 
 
 class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):

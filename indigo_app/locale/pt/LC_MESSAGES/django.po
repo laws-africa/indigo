@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 16:16+0200\n"
-"PO-Revision-Date: 2024-03-08 07:03\n"
+"POT-Creation-Date: 2024-03-25 12:21+0200\n"
+"PO-Revision-Date: 2024-03-25 10:28\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -19,21 +19,19 @@ msgstr ""
 
 #: forms/documents.py:29
 msgid "Invalid json data"
-msgstr ""
+msgstr "Dados JSON inválidos"
 
-#: forms/places.py:25 forms/works.py:1386
+#: forms/places.py:25 forms/works.py:1438
 msgid "Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"
-msgstr ""
+msgstr "Insira um URL válido do Planilhas Google, como https://docs.google.com/spreadsheets/d/ABCXXX/"
 
 #: forms/places.py:36
 msgid "Users with edit permissions"
-msgstr ""
+msgstr "Usuários com permissões de edição"
 
 #: forms/places.py:52
-#, fuzzy
-#| msgid "XPath query"
 msgid "XPath"
-msgstr "consulta XPath"
+msgstr "XPath"
 
 #: forms/places.py:53
 msgid "Parent context"
@@ -42,17 +40,17 @@ msgstr "Contexto pai"
 #: forms/places.py:53 forms/tasks.py:21 forms/tasks.py:32
 #: templates/indigo_api/_task_detail.html:326
 #: templates/indigo_api/_task_labels.html:10
-#: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:291
+#: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:294
 msgid "None"
 msgstr "Nenhum"
 
 #: forms/places.py:53
 msgid "1 level"
-msgstr ""
+msgstr "1 nível"
 
 #: forms/places.py:53
 msgid "2 levels"
-msgstr ""
+msgstr "2 níveis"
 
 #: forms/places.py:54
 msgid "Include localities"
@@ -62,7 +60,7 @@ msgstr "Incluir localidades"
 msgid "Global search"
 msgstr "Pesquisa global"
 
-#: forms/tasks.py:21 forms/works.py:1100
+#: forms/tasks.py:21 forms/works.py:1110
 #: templates/indigo_api/work_batch_create.html:180
 #: templates/indigo_api/work_batch_create.html:314
 msgid "Type"
@@ -81,26 +79,20 @@ msgid "Input URL"
 msgstr "URL de entrada"
 
 #: forms/tasks.py:98
-#, fuzzy
-#| msgid "Input URL"
 msgid "Output URL"
-msgstr "URL de entrada"
+msgstr "URL de saída"
 
 #: forms/tasks.py:139
-#, fuzzy
-#| msgid "Status"
 msgid "State"
-msgstr "Status"
+msgstr "Estado"
 
 #: forms/tasks.py:140
-#, fuzzy
-#| msgid "Delete column"
 msgid "columns"
-msgstr "Excluir coluna"
+msgstr "colunas"
 
 #: forms/tasks.py:140
 msgid "list"
-msgstr ""
+msgstr "lista"
 
 #: forms/tasks.py:141 templates/indigo_api/_task_card_single.html:104
 #: templates/indigo_api/_task_detail.html:235
@@ -117,24 +109,38 @@ msgstr "Enviado por"
 msgid "Task type"
 msgstr "Tipo de tarefa"
 
-#: forms/tasks.py:191 templates/indigo_api/_task_detail.html:241
+#: forms/tasks.py:147 forms/works.py:770
+msgid "Created at (newest first)"
+msgstr "Criado em (mais novo primeiro)"
+
+#: forms/tasks.py:147 forms/works.py:770
+msgid "Created at (oldest first)"
+msgstr "Criado em (mais antigo primeiro)"
+
+#: forms/tasks.py:148 forms/works.py:771
+msgid "Updated at (newest first)"
+msgstr "Atualizado em (mais recente primeiro)"
+
+#: forms/tasks.py:148 forms/works.py:771
+msgid "Updated at (oldest first)"
+msgstr "Atualizado em (mais antigo primeiro)"
+
+#: forms/tasks.py:198 templates/indigo_api/_task_detail.html:241
 msgid "Unassigned"
 msgstr "Não atribuído"
 
-#: forms/tasks.py:202
+#: forms/tasks.py:209
 #, python-format
 msgid "That user doesn't have appropriate permissions for %(country)s"
-msgstr ""
+msgstr "Esse usuário não tem permissões apropriadas para %(country)s"
 
 #: forms/users.py:12 forms/users.py:28
 msgid "First name"
-msgstr ""
+msgstr "Primeiro nome"
 
 #: forms/users.py:13 forms/users.py:29
-#, fuzzy
-#| msgid "name"
 msgid "Last name"
-msgstr "Nome"
+msgstr "Sobrenome"
 
 #: forms/users.py:14 templates/indigo_api/document/_properties.html:19
 msgid "Language"
@@ -145,328 +151,250 @@ msgid "Country"
 msgstr "País/região"
 
 #: forms/users.py:33
-#, fuzzy
-#| msgid "To continue, please accept the Terms of Use"
 msgid "Please accept the Terms of Use."
-msgstr "Para continuar, aceite os Termos de Uso"
+msgstr "Por favor, aceite os Termos de Uso."
 
 #: forms/users.py:39 templates/account/signup.html:139
 msgid "Creating new accounts is currently not allowed."
 msgstr "A criação de novas contas não é permitida no momento."
 
-#: forms/works.py:269
+#: forms/works.py:264
 msgid "Error building FRBR URI"
 msgstr "Erro ao criar URI FRBR"
 
-#: forms/works.py:384
+#: forms/works.py:379
 msgid "Alias"
 msgstr "Alias"
 
-#: forms/works.py:470
+#: forms/works.py:465
 msgid "Amending work and date must be unique together."
-msgstr ""
+msgstr "A alteração do trabalho e da data deve ser única em conjunto."
 
-#: forms/works.py:551
-#, fuzzy
-#| msgid "Consolidation date"
+#: forms/works.py:546
 msgid "Consolidation dates must be unique."
-msgstr "Data de consolidação"
+msgstr "As datas de consolidação devem ser exclusivas."
 
-#: forms/works.py:596
-#, fuzzy
-#| msgid "Main commencement"
+#: forms/works.py:591
 msgid "A main commencement already exists."
-msgstr "Começo principal"
+msgstr "Já existe um começo principal."
 
-#: forms/works.py:606
+#: forms/works.py:601
 msgid "A commencement for all provisions must be the only commencement."
-msgstr ""
+msgstr "O início de todas as disposições deve ser o único início."
 
-#: forms/works.py:613
+#: forms/works.py:608
 msgid "Cannot specify all provisions, and a list of provisions."
-msgstr ""
+msgstr "Não é possível especificar todas as disposições e uma lista de disposições."
 
-#: forms/works.py:679
+#: forms/works.py:674
 msgid "Commenced work and date must be unique together."
-msgstr ""
+msgstr "O trabalho iniciado e a data devem ser únicos juntos."
 
-#: forms/works.py:750 templates/indigo_app/place/_work_detail.html:35
+#: forms/works.py:747 templates/indigo_app/place/_work_detail.html:35
 msgid "Amendments"
 msgstr "Emendas"
 
-#: forms/works.py:754 templates/indigo_api/work_related.html:18
+#: forms/works.py:751 templates/indigo_api/work_related.html:18
 msgid "Commencement"
 msgstr "Começo"
 
-#: forms/works.py:755
-#, fuzzy
-#| msgid "not commenced"
+#: forms/works.py:752
 msgid "Not commenced"
-msgstr "não começou"
+msgstr "Não iniciado"
 
-#: forms/works.py:755
-#, fuzzy
-#| msgid "commencement date unknown"
+#: forms/works.py:752
 msgid "Commencement date unknown"
-msgstr "data de início desconhecida"
+msgstr "Data de início desconhecida"
 
-#: forms/works.py:755 templates/indigo_api/_work_form_content.html:355
+#: forms/works.py:752 templates/indigo_api/_work_form_content.html:355
 #: templates/indigo_api/work_commencements.html:73 views/places.py:54
 msgid "Commenced"
 msgstr "começou"
 
-#: forms/works.py:756
-#, fuzzy
-#| msgid "not commenced"
+#: forms/works.py:753
 msgid "Partially commenced"
-msgstr "não começou"
+msgstr "Parcialmente iniciado"
 
-#: forms/works.py:756
-#, fuzzy
-#| msgid "Main commencement"
+#: forms/works.py:753
 msgid "Multiple commencements"
-msgstr "Começo principal"
+msgstr "Vários começos"
 
-#: forms/works.py:761 templates/indigo_app/place/_work_detail.html:43
+#: forms/works.py:758 templates/indigo_app/place/_work_detail.html:43
 msgid "Repeals"
 msgstr "Revogações"
 
-#: forms/works.py:761
-#, fuzzy
-#| msgid "repealed"
+#: forms/works.py:758
 msgid "Not repealed"
-msgstr "revogado"
+msgstr "Não revogado"
 
-#: forms/works.py:761 views/places.py:57
+#: forms/works.py:758 views/places.py:57
 msgid "Repealed"
 msgstr "Revogado"
 
-#: forms/works.py:765 templates/place/detail.html:77
+#: forms/works.py:762 templates/place/detail.html:77
 msgid "Stubs"
 msgstr "Canhotos"
 
-#: forms/works.py:765 templates/indigo_api/_work_form_content.html:229
+#: forms/works.py:762 templates/indigo_api/_work_form_content.html:229
 msgid "Stub"
 msgstr "Esboço"
 
-#: forms/works.py:765
+#: forms/works.py:762
 msgid "Not a stub"
-msgstr ""
+msgstr "Não é um esboço"
 
-#: forms/works.py:766 forms/works.py:767
-#, fuzzy
-#| msgid "work in progress"
+#: forms/works.py:763 forms/works.py:764
 msgid "Work in progress"
-msgstr "trabalho em progresso"
+msgstr "Trabalho em progresso"
 
-#: forms/works.py:767 templates/indigo_api/work_overview.html:109
+#: forms/works.py:764 templates/indigo_api/work_overview.html:109
 msgid "Approved"
 msgstr "Aprovado"
 
-#: forms/works.py:769
-#, fuzzy
-#| msgid "Points in time"
+#: forms/works.py:766
 msgid "Point in time status"
-msgstr "Pontos no tempo"
+msgstr "Status pontual"
 
-#: forms/works.py:770
-#, fuzzy
-#| msgid "published"
+#: forms/works.py:767
 msgid "Published"
 msgstr "Publicados"
 
-#: forms/works.py:770
-#, fuzzy
-#| msgid "draft"
+#: forms/works.py:767
 msgid "Draft"
-msgstr "rascunho"
+msgstr "Rascunho"
 
-#: forms/works.py:773
-#, fuzzy
-#| msgid "Create a new work"
-msgid "Created at (newest first)"
-msgstr "Criar um novo trabalho"
-
-#: forms/works.py:773
-msgid "Created at (oldest first)"
-msgstr ""
-
-#: forms/works.py:774
-msgid "Updated at (newest first)"
-msgstr ""
-
-#: forms/works.py:774
-msgid "Updated at (oldest first)"
-msgstr ""
-
-#: forms/works.py:775
-#, fuzzy
-#| msgid "Title"
+#: forms/works.py:772
 msgid "Title (A-Z)"
-msgstr "Título"
+msgstr "Título (AZ)"
 
-#: forms/works.py:775
-#, fuzzy
-#| msgid "Title"
+#: forms/works.py:772
 msgid "Title (Z-A)"
-msgstr "Título"
+msgstr "Título (ZA)"
 
-#: forms/works.py:776
+#: forms/works.py:773
 msgid "Date (oldest first)"
-msgstr ""
+msgstr "Data (mais antigo primeiro)"
 
-#: forms/works.py:776
+#: forms/works.py:773
 msgid "Date (newest first)"
-msgstr ""
+msgstr "Data (mais recente primeiro)"
 
-#: forms/works.py:777
+#: forms/works.py:774
 msgid "Number (ascending)"
-msgstr ""
+msgstr "Número (crescente)"
 
-#: forms/works.py:777
+#: forms/works.py:774
 msgid "Number (descending)"
-msgstr ""
+msgstr "Número (decrescente)"
 
-#: forms/works.py:779 forms/works.py:780 views/places.py:80
+#: forms/works.py:776 forms/works.py:777 views/places.py:80
 msgid "Principal"
 msgstr "Diretor"
 
-#: forms/works.py:780
-#, fuzzy
-#| msgid "Principal"
+#: forms/works.py:777
 msgid "Not Principal"
-msgstr "Diretor"
+msgstr "Não Diretor"
 
-#: forms/works.py:782 templates/indigo_api/document/_toolbar.html:117
+#: forms/works.py:779 templates/indigo_api/document/_toolbar.html:117
 #: templates/indigo_api/task_list.html:4
 #: templates/indigo_api/work_batch_create.html:189
 #: templates/indigo_api/work_batch_create.html:322
 #: templates/indigo_api/work_layout.html:45
 #: templates/indigo_api/work_tasks.html:4
 #: templates/indigo_app/place/_work_detail.html:60 templates/main.html:38
-#: templates/place/detail.html:116 templates/place/tabbed_layout.html:44
+#: templates/place/detail.html:116 templates/place/tabbed_layout.html:47
 msgid "Tasks"
 msgstr "Tarefas"
 
-#: forms/works.py:783
-#, fuzzy
-#| msgid "Open tasks"
+#: forms/works.py:780
 msgid "Has open tasks"
-msgstr "Tarefas abertas"
+msgstr "Tem tarefas abertas"
+
+#: forms/works.py:780
+msgid "Has unblocked tasks"
+msgstr "Tem tarefas desbloqueadas"
+
+#: forms/works.py:781
+msgid "Has only blocked tasks"
+msgstr "Só bloqueou tarefas"
+
+#: forms/works.py:781
+msgid "Has no open tasks"
+msgstr "Não tem tarefas abertas"
 
 #: forms/works.py:783
-#, fuzzy
-#| msgid "Unblock task"
-msgid "Has unblocked tasks"
-msgstr "Desbloquear tarefa"
-
-#: forms/works.py:784
-#, fuzzy
-#| msgid "Unblock task"
-msgid "Has only blocked tasks"
-msgstr "Desbloquear tarefa"
-
-#: forms/works.py:784
-#, fuzzy
-#| msgid "Open tasks"
-msgid "Has no open tasks"
-msgstr "Tarefas abertas"
-
-#: forms/works.py:786
 msgid "Primary and subsidiary"
-msgstr ""
+msgstr "Primária e subsidiária"
 
-#: forms/works.py:787 templates/place/detail.html:83
+#: forms/works.py:784 templates/place/detail.html:83
 msgid "Primary"
 msgstr "primário"
 
-#: forms/works.py:787 templates/indigo_api/work_related.html:11
+#: forms/works.py:784 templates/indigo_api/work_related.html:11
 #: templates/indigo_app/place/_work_detail.html:51
 #: templates/place/detail.html:92
 msgid "Subsidiary"
 msgstr "Subsidiária"
 
-#: forms/works.py:789 templates/indigo_api/_work_form_consolidations.html:4
-#, fuzzy
-#| msgid "consolidation"
+#: forms/works.py:786 templates/indigo_api/_work_form_consolidations.html:4
 msgid "Consolidations"
-msgstr "consolidação"
+msgstr "Consolidações"
 
-#: forms/works.py:790
-#, fuzzy
-#| msgid "consolidation"
+#: forms/works.py:787
 msgid "Has consolidation"
-msgstr "consolidação"
+msgstr "Tem consolidação"
 
-#: forms/works.py:790
-#, fuzzy
-#| msgid "consolidation"
+#: forms/works.py:787
 msgid "No consolidation"
-msgstr "consolidação"
+msgstr "Sem consolidação"
 
-#: forms/works.py:792 templates/indigo_api/_work_publication_document.html:4
+#: forms/works.py:789 templates/indigo_api/_work_publication_document.html:4
 #: templates/indigo_app/place/_work_detail_overview.html:17
 msgid "Publication document"
 msgstr "Documento de publicação"
 
-#: forms/works.py:793
-#, fuzzy
-#| msgid "Publication document"
+#: forms/works.py:790
 msgid "Has publication document"
-msgstr "Documento de publicação"
+msgstr "Possui documento de publicação"
 
-#: forms/works.py:794
-#, fuzzy
-#| msgid "Publication document"
+#: forms/works.py:791
 msgid "No publication document"
-msgstr "Documento de publicação"
+msgstr "Nenhum documento de publicação"
 
-#: forms/works.py:796 templates/indigo_api/work_amendments.html:5
+#: forms/works.py:793 templates/indigo_api/work_amendments.html:5
 #: templates/indigo_api/work_amendments.html:8
 #: templates/indigo_api/work_layout.html:39
 #: templates/indigo_app/place/_work_detail.html:17
 msgid "Points in time"
 msgstr "Pontos no tempo"
 
-#: forms/works.py:797
-#, fuzzy
-#| msgid "Manage points in time"
+#: forms/works.py:794
 msgid "Has one point in time"
-msgstr "Gerenciar pontos no tempo"
+msgstr "Tem um ponto no tempo"
 
-#: forms/works.py:797
-#, fuzzy
-#| msgid "Manage points in time"
+#: forms/works.py:794
 msgid "Has multiple points in time"
-msgstr "Gerenciar pontos no tempo"
+msgstr "Tem vários pontos no tempo"
 
-#: forms/works.py:798
-#, fuzzy
-#| msgid "Manage points in time"
+#: forms/works.py:795
 msgid "Has no points in time"
-msgstr "Gerenciar pontos no tempo"
+msgstr "Não tem pontos no tempo"
 
-#: forms/works.py:1343
-#, fuzzy
-#| msgid "Create task"
+#: forms/works.py:1395
 msgid "Create and block tasks"
-msgstr "Criar tarefa"
+msgstr "Criar e bloquear tarefas"
 
-#: forms/works.py:1343
-#, fuzzy
-#| msgid "Create a new work"
+#: forms/works.py:1395
 msgid "Create and cancel tasks"
-msgstr "Criar um novo trabalho"
+msgstr "Criar e cancelar tarefas"
 
-#: forms/works.py:1400
-#, fuzzy
-#| msgid "Import complete"
+#: forms/works.py:1452
 msgid "Import content"
-msgstr "Importação concluída"
+msgstr "Importar conteúdo"
 
-#: forms/works.py:1400
+#: forms/works.py:1452
 msgid "Link gazette"
-msgstr ""
+msgstr "Link do Diário do Governo"
 
 #: models.py:23
 msgid "user"
@@ -635,8 +563,8 @@ msgstr "Esqueceu-se da sua senha?"
 #: templates/account/login.html:54
 #: templates/account/password_reset_from_key.html:55
 #: templates/account/password_reset_from_key_done.html:10
-#: templates/account/signup.html:135 templates/main.html:81
-#: templates/main.html:123
+#: templates/account/signup.html:135 templates/main.html:67
+#: templates/main.html:124
 msgid "Log in"
 msgstr "Efetuar Login"
 
@@ -908,7 +836,7 @@ msgstr "Escolha rótulos"
 
 #: templates/indigo_api/_task_detail.html:298
 #: templates/indigo_api/workflow_list.html:4
-#: templates/place/tabbed_layout.html:47
+#: templates/place/tabbed_layout.html:50
 msgid "Projects"
 msgstr "Projetos"
 
@@ -935,15 +863,7 @@ msgstr "Esta tarefa está bloqueando estas tarefas:"
 #: templates/indigo_api/_task_filter_form.html:28
 #: templates/indigo_api/_task_filter_form.html:44
 msgid "Me"
-msgstr ""
-
-#: templates/indigo_api/_task_filter_form.html:82
-msgid "Show tasks in columns"
-msgstr "Mostrar tarefas em colunas"
-
-#: templates/indigo_api/_task_filter_form.html:85
-msgid "Show tasks in a list"
-msgstr "Mostrar tarefas em uma lista"
+msgstr "Meu"
 
 #: templates/indigo_api/_task_form_input_file.html:21
 #: templates/indigo_api/_task_form_output_file.html:21
@@ -1224,10 +1144,8 @@ msgid "Assent date range"
 msgstr "Período de aprovação"
 
 #: templates/indigo_api/_work_filter_form.html:122
-#, fuzzy
-#| msgid "FRBR URI"
 msgid "FRBR URIs"
-msgstr "FRBR URI"
+msgstr "URIs de FRBR"
 
 #: templates/indigo_api/_work_filter_form.html:132
 msgid "Clear filters"
@@ -1249,10 +1167,8 @@ msgid "Add commencement"
 msgstr "Adicionar início"
 
 #: templates/indigo_api/_work_form_consolidations.html:21
-#, fuzzy
-#| msgid "Add consolidation date"
 msgid "Add consolidation"
-msgstr "Adicionar data de consolidação"
+msgstr "Adicionar consolidação"
 
 #: templates/indigo_api/_work_form_content.html:6
 msgid "You don't have permission to create or change a work."
@@ -1426,7 +1342,7 @@ msgstr "Excluir"
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:9
 msgid "Saving"
-msgstr ""
+msgstr "Salvando"
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:11
 #: templates/indigo_api/task_form.html:135
@@ -1934,7 +1850,7 @@ msgstr "Restaurar esta revisão"
 
 #: templates/indigo_api/document/_source_att.html:10
 #: templates/indigo_api/workflow_list.html:18
-#: templates/indigo_app/tasks/available_tasks.html:76 views/places.py:221
+#: templates/indigo_app/tasks/available_tasks.html:76 views/places.py:227
 msgid "Open"
 msgstr "Abrir"
 
@@ -2098,7 +2014,7 @@ msgstr "Ajuda do editor..."
 #: templates/place/settings.html:4 templates/place/settings.html:11
 #: templates/place/settings_layout.html:4
 #: templates/place/settings_layout.html:12
-#: templates/place/tabbed_layout.html:59
+#: templates/place/tabbed_layout.html:62
 msgid "Settings"
 msgstr "Configurações"
 
@@ -2182,9 +2098,10 @@ msgstr "<a href=\"%(url)s\">Faça login </a> para fazer alterações."
 
 #: templates/indigo_api/document/show.html:91
 #: templates/indigo_api/work_layout.html:15
-#: templates/indigo_app/place/works.html:4 templates/place/detail.html:43
-#: templates/place/detail.html:44 templates/place/detail.html:170
-#: templates/place/detail.html:206 templates/place/tabbed_layout.html:41
+#: templates/indigo_app/place/works.html:4 templates/main.html:39
+#: templates/place/detail.html:43 templates/place/detail.html:44
+#: templates/place/detail.html:170 templates/place/detail.html:206
+#: templates/place/tabbed_layout.html:43
 msgid "Works"
 msgstr "Funciona"
 
@@ -2201,10 +2118,8 @@ msgid "You don't have permission to create a task."
 msgstr "Você não tem permissão para criar uma tarefa."
 
 #: templates/indigo_api/task_form.html:19
-#, fuzzy
-#| msgid "Updating..."
 msgid "Loading..."
-msgstr "Atualizando..."
+msgstr "Carregando..."
 
 #: templates/indigo_api/task_form.html:54
 msgid "Choose a type, or enter a title."
@@ -2234,10 +2149,12 @@ msgstr "Tem certeza de que deseja desbloquear esta tarefa?"
 msgid "Unblock task"
 msgstr "Desbloquear tarefa"
 
-#: templates/indigo_api/task_list.html:48
-#: templates/indigo_app/tasks/available_tasks.html:114
-msgid "No tasks found."
-msgstr "Nenhuma tarefa encontrada."
+#: templates/indigo_api/task_list.html:39
+#, python-format
+msgid "%(count)s task (of %(total_tasks)s total)"
+msgid_plural "%(count)s tasks (of %(total_tasks)s total)"
+msgstr[0] "%(count)s tarefa (de %(total_tasks)s total)"
+msgstr[1] "%(count)s tarefas (de %(total_tasks)s total)"
 
 #: templates/indigo_api/timeline/_edit_amendment.html:10
 #: templates/indigo_api/timeline/_edit_consolidation.html:10
@@ -2338,16 +2255,12 @@ msgid "There are no project topics"
 msgstr "Não há tópicos de projeto"
 
 #: templates/indigo_api/work_batch_create.html:114
-#, fuzzy
-#| msgid "Block ALL 'Import content' tasks on creation"
 msgid "Block ALL 'Convert document' tasks on creation"
-msgstr "Bloqueie TODAS as tarefas de 'Importação de conteúdo' na criação"
+msgstr "Bloquear TODAS as tarefas de 'Converter documento' na criação"
 
 #: templates/indigo_api/work_batch_create.html:119
-#, fuzzy
-#| msgid "Cancel ALL 'Import content' tasks on creation (this will override blocking them)"
 msgid "Cancel ALL 'Convert document' tasks on creation (this will override blocking them)"
-msgstr "Cancele TODAS as tarefas de 'Importação de conteúdo' na criação (isso substituirá o bloqueio delas)"
+msgstr "Cancele TODAS as tarefas de 'Converter documento' na criação (isso substituirá o bloqueio delas)"
 
 #: templates/indigo_api/work_batch_create.html:124
 msgid "Block ALL 'Import content' tasks on creation"
@@ -2644,7 +2557,7 @@ msgstr "Novo trabalho"
 
 #: templates/indigo_api/work_form.html:19
 msgid "Saving…"
-msgstr ""
+msgstr "Salvando…"
 
 #: templates/indigo_api/work_import_document.html:4
 msgid "Import"
@@ -2697,7 +2610,7 @@ msgstr "Importando, isso pode levar alguns minutos..."
 #: templates/indigo_api/work_layout.html:36
 #: templates/indigo_app/place/_work.html:53
 #: templates/indigo_app/place/_work_detail.html:8
-#: templates/place/tabbed_layout.html:38
+#: templates/place/tabbed_layout.html:39
 msgid "Overview"
 msgstr "Visão geral"
 
@@ -2903,34 +2816,28 @@ msgstr "Parece que você está offline ou o servidor não está disponível."
 
 #: templates/indigo_app/actions/_action_amendment.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma alteração em %(date)s em\n"
 "  "
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma consolidação em %(date)s em\n"
 "  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    um início em %(date)s em\n"
 "  "
 
@@ -2993,46 +2900,38 @@ msgstr "%(org)s está em manutenção. Voltaremos em breve."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Aprovar %(works_length)s trabalho em andamento\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Aprovar %(works_length)s trabalhos em andamento\n"
 "        "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:42
 msgid "These works cannot be approved in bulk:"
-msgstr ""
+msgstr "Estes trabalhos não podem ser aprovados em massa:"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:59
 msgid "Conversion and Import tasks will be created – Import tasks will be blocked"
-msgstr ""
+msgstr "As tarefas de conversão e importação serão criadas – as tarefas de importação serão bloqueadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:71
-#, fuzzy
-#| msgid "Task description"
 msgid "Task description: Conversion tasks"
-msgstr "Descrição da tarefa"
+msgstr "Descrição da tarefa: tarefas de conversão"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:72
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "Converta o arquivo de entrada em um arquivo .docx e remova a numeração automática."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:88
-#, fuzzy
-#| msgid "Task description"
 msgid "Task description: Import tasks"
-msgstr "Descrição da tarefa"
+msgstr "Descrição da tarefa: tarefas de importação"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:89
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
@@ -3056,26 +2955,20 @@ msgstr "Tarefas de alteração serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:147
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
-"\n"
+msgstr "\n"
 "                              Descrição da tarefa: %(amended_title)s (%(amended_numbered_title)s) alterada por %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:151
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Aplicar as alterações feitas por %(title)s (%(numbered_title)s) em %(date)s.\n"
-"\n"
+msgstr "\n"
+"Aplicar as alterações feitas por %(title)s (%(numbered_title)s) em %(date)s.\n\n"
 "A alteração já foi vinculada, então comece na Etapa 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:184
@@ -3142,6 +3035,11 @@ msgstr "Aprovar %(works_length)s selecionado..."
 msgid "Unapprove %(works_length)s selected..."
 msgstr "Desaprovar %(works_length)s selecionado..."
 
+#: templates/indigo_app/place/_works_actions.html:90
+#, python-format
+msgid "You do not have country permissions to update %(n_disallowed)s of the selected works."
+msgstr "Você não tem permissão de país para atualizar %(n_disallowed)s das obras selecionadas."
+
 #: templates/indigo_app/place/_works_list.html:18
 #, python-format
 msgid "%(count)s work (of %(total_works)s total)"
@@ -3158,15 +3056,15 @@ msgstr "Baixar para Excel"
 msgid "Select all %(works_length)s matching works"
 msgstr "Selecione todos os trabalhos correspondentes %(works_length)s"
 
-#: templates/indigo_app/place/works.html:19
+#: templates/indigo_app/place/works.html:20
 msgid "Add new work"
 msgstr "Adicionar novo trabalho"
 
-#: templates/indigo_app/place/works.html:23
+#: templates/indigo_app/place/works.html:24
 msgid "Batch add new works"
 msgstr "Adicionar novos trabalhos em lote"
 
-#: templates/indigo_app/place/works.html:24
+#: templates/indigo_app/place/works.html:25
 msgid "Batch update works"
 msgstr "A atualização em lote funciona"
 
@@ -3232,9 +3130,13 @@ msgstr "Projetos prioritários"
 msgid "Due"
 msgstr "Devido"
 
-#: templates/indigo_app/tasks/available_tasks.html:81 views/places.py:233
+#: templates/indigo_app/tasks/available_tasks.html:81 views/places.py:239
 msgid "Pending review"
 msgstr "Revisão pendente"
+
+#: templates/indigo_app/tasks/available_tasks.html:114
+msgid "No tasks found."
+msgstr "Nenhuma tarefa encontrada."
 
 #: templates/indigo_app/tasks/my_tasks.html:4
 #: templates/indigo_app/tasks/tabbed_layout.html:10
@@ -3310,95 +3212,69 @@ msgstr "Modo de manutenção. Apenas funcionários podem usar o site."
 msgid "Home"
 msgstr "Página inicial"
 
-#: templates/main.html:42
-msgid "Help"
-msgstr "Ajuda"
-
-#: templates/main.html:44 templates/main.html:132
-msgid "Documentation"
-msgstr "Documentação"
-
-#: templates/main.html:45 templates/main.html:133
-msgid "Feedback"
-msgstr "Opinião"
-
-#: templates/main.html:48 templates/main.html:134
-msgid "Indigo on GitHub"
-msgstr "Indigo no GitHub"
-
-#: templates/main.html:51 templates/main.html:141
-msgid "Terms of Use &amp; Privacy Policy"
-msgstr "Termos de Uso &amp; Política de Privacidade"
-
-#: templates/main.html:69
+#: templates/main.html:55
 msgid "Account"
 msgstr "Conta"
 
-#: templates/main.html:73
+#: templates/main.html:59
 msgid "Site settings"
 msgstr "Configurações do site"
 
-#: templates/main.html:77 templates/main.html:121
+#: templates/main.html:63 templates/main.html:122
 msgid "Log out"
 msgstr "Sair"
 
-#: templates/main.html:120
+#: templates/main.html:72
+msgid "Help"
+msgstr "Ajuda"
+
+#: templates/main.html:74 templates/main.html:133
+msgid "Documentation"
+msgstr "Documentação"
+
+#: templates/main.html:75 templates/main.html:134
+msgid "Feedback"
+msgstr "Opinião"
+
+#: templates/main.html:78 templates/main.html:135
+msgid "Indigo on GitHub"
+msgstr "Indigo no GitHub"
+
+#: templates/main.html:81 templates/main.html:142
+msgid "Terms of Use &amp; Privacy Policy"
+msgstr "Termos de Uso &amp; Política de Privacidade"
+
+#: templates/main.html:121
 msgid "Your account"
 msgstr "Sua conta"
 
 #: templates/place/_place_cards.html:15
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                  Work\n"
-#| "                "
-#| msgid_plural ""
-#| "\n"
-#| "                  Works\n"
-#| "                "
-msgid ""
-"\n"
+msgid "\n"
 "                    Work\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Works\n"
 "                  "
-msgstr[0] ""
-"\n"
-"                  Trabalho\n"
-"                "
-msgstr[1] ""
-"\n"
-"                  Trabalhos\n"
-"                "
+msgstr[0] "\n"
+"                    Trabalho\n"
+"                  "
+msgstr[1] "\n"
+"                    Funciona\n"
+"                  "
 
 #: templates/place/_place_cards.html:23
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                  Task\n"
-#| "                "
-#| msgid_plural ""
-#| "\n"
-#| "                  Tasks\n"
-#| "                "
-msgid ""
-"\n"
+msgid "\n"
 "                    Task\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Tasks\n"
 "                  "
-msgstr[0] ""
-"\n"
-"                  Tarefa\n"
-"                "
-msgstr[1] ""
-"\n"
-"                  Tarefas\n"
-"                "
+msgstr[0] "\n"
+"                    Tarefa\n"
+"                  "
+msgstr[1] "\n"
+"                    Tarefas\n"
+"                  "
 
 #: templates/place/_place_cards.html:36
 msgid "As at date"
@@ -3412,7 +3288,7 @@ msgstr[0] "%(counter)s tarefa"
 msgstr[1] "%(counter)s tarefas"
 
 #: templates/place/activity.html:4 templates/place/activity.html:9
-#: templates/place/tabbed_layout.html:50
+#: templates/place/tabbed_layout.html:53
 msgid "Activity"
 msgstr "Atividade"
 
@@ -3481,7 +3357,7 @@ msgstr "Métricas"
 msgid "Places"
 msgstr "Lugares"
 
-#: templates/place/localities.html:4 templates/place/tabbed_layout.html:54
+#: templates/place/localities.html:4 templates/place/tabbed_layout.html:57
 msgid "Localities"
 msgstr "Localidades"
 
@@ -3609,270 +3485,157 @@ msgstr "Nota de consolidação"
 msgid "Disclaimer"
 msgstr "Isenção de responsabilidade"
 
-#: views/places.py:227
+#: views/places.py:233
 msgid "Assigned"
 msgstr "Atribuído"
 
-#: views/places.py:363
+#: views/places.py:369
 msgid "List introductions containing remarks"
-msgstr ""
+msgstr "Listar introduções contendo comentários"
 
-#: views/places.py:364
+#: views/places.py:370
 msgid "Adjacent block lists"
-msgstr ""
+msgstr "Listas de bloqueio adjacentes"
 
-#: views/places.py:428
+#: views/places.py:434
 #, python-format
 msgid "Expression must produce elements, but found %(classname)s instead."
-msgstr ""
+msgstr "A expressão deve produzir elementos, mas encontrou %(classname)s em vez disso."
 
-#: views/places.py:477
-#, fuzzy
-#| msgid "Settings"
+#: views/places.py:483
 msgid "Settings updated."
-msgstr "Configurações"
+msgstr "Configurações atualizadas."
 
-#: views/places.py:503
-#, fuzzy
-#| msgid "updated"
+#: views/places.py:509
 msgid "Users updated."
-msgstr "Atualizada"
+msgstr "Usuários atualizados."
 
-#: views/places.py:516
-#, fuzzy, python-format
-#| msgid "Download full legislation index for %(place)s"
+#: views/places.py:522
+#, python-format
 msgid "Full index for %(place)s.xlsx"
-msgstr "Baixe o índice de legislação completo para %(place)s"
+msgstr "Índice completo para %(place)s.xlsx"
 
-#: views/places.py:561
+#: views/places.py:568
 #, python-format
 msgid "legislation %(place)s.xlsx"
-msgstr ""
+msgstr "legislação %(place)s.xlsx"
 
-#: views/places.py:656
-#, fuzzy, python-format
-#| msgid "Update %(works_length)s works"
+#: views/places.py:726
+#, python-format
 msgid "Updated %(works_count)s works."
-msgstr "Atualização %(works_length)s funciona"
+msgstr "%(works_count)s atualizado funciona."
 
-#: views/places.py:681
-#, fuzzy, python-format
-#| msgid "Unapprove %(works_length)s works"
+#: views/places.py:752
+#, python-format
 msgid "Approved %(works_count)s works."
-msgstr "Desaprovar %(works_length)s funciona"
+msgstr "%(works_count)s trabalhos aprovados."
 
-#: views/places.py:683
+#: views/places.py:754
 #, python-format
 msgid "Created %(import_tasks_count)s Import tasks."
-msgstr ""
+msgstr "Criado %(import_tasks_count)s Tarefas de importação."
 
-#: views/places.py:685
+#: views/places.py:756
 #, python-format
 msgid "Created %(gazette_tasks_count)s Gazette tasks."
-msgstr ""
+msgstr "Criadas %(gazette_tasks_count)s tarefas do Gazette."
 
-#: views/places.py:687
+#: views/places.py:758
 #, python-format
 msgid "Created %(amendment_tasks_count)s Amendment tasks."
-msgstr ""
+msgstr "%(amendment_tasks_count)s Tarefas de alteração criadas."
 
-#: views/places.py:703
-#, fuzzy, python-format
-#| msgid "Unapprove %(works_length)s works"
+#: views/places.py:775
+#, python-format
 msgid "Unapproved %(works_count)s works."
-msgstr "Desaprovar %(works_length)s funciona"
-
-#: views/tasks.py:384
-#, fuzzy
-#| msgid "Submit for review"
-msgid "submitted for review"
-msgstr "Enviar para revisão"
-
-#: views/tasks.py:386
-#, fuzzy
-#| msgid "Changes requested"
-msgid "returned with changes requested"
-msgstr "Alterações solicitadas"
+msgstr "%(works_count)s não aprovado funciona."
 
 #: views/tasks.py:387
+msgid "submitted for review"
+msgstr "enviado para revisão"
+
+#: views/tasks.py:389
+msgid "returned with changes requested"
+msgstr "retornou com alterações solicitadas"
+
+#: views/tasks.py:390
 #, python-format
 msgid "Task '%(title)s' has been %(verb)s"
-msgstr ""
+msgstr "A tarefa '%(title)s' foi %(verb)s"
 
-#: views/tasks.py:425
+#: views/tasks.py:428
 #, python-format
 msgid "Task '%(title)s' has been unassigned"
-msgstr ""
+msgstr "A tarefa '%(title)s' não foi atribuída"
 
-#: views/tasks.py:432
+#: views/tasks.py:435
 #, python-format
 msgid "You have picked up the task '%(title)s'"
-msgstr ""
+msgstr "Você pegou a tarefa '%(title)s'"
 
-#: views/tasks.py:434
+#: views/tasks.py:437
 #, python-format
 msgid "Task '%(title)s' has been assigned"
-msgstr ""
+msgstr "A tarefa '%(title)s' foi atribuída"
 
-#: views/tasks.py:497
+#: views/tasks.py:500
 #, python-format
 msgid "Task '%(title)s' has been updated"
-msgstr ""
+msgstr "A tarefa '%(title)s' foi atualizada"
 
-#: views/tasks.py:502
+#: views/tasks.py:505
 #, python-format
 msgid "Task '%(title)s' has been blocked"
-msgstr ""
+msgstr "A tarefa '%(title)s' foi bloqueada"
 
-#: views/tasks.py:508
+#: views/tasks.py:511
 #, python-format
 msgid "Task '%(title)s' has been unblocked"
-msgstr ""
+msgstr "A tarefa '%(title)s' foi desbloqueada"
 
-#: views/tasks.py:548
+#: views/tasks.py:551
 #, python-format
 msgid "Unassigned %(count)d task%(plural)s"
-msgstr ""
+msgstr "Tarefa %(count)d não atribuída%(plural)s"
 
-#: views/tasks.py:550
+#: views/tasks.py:553
 #, python-format
 msgid "Assigned %(count)d task%(plural)s to %(user)s"
-msgstr ""
+msgstr "Atribuída %(count)d tarefa%(plural)s a %(user)s"
 
-#: views/tasks.py:555
+#: views/tasks.py:558
 msgid "Computer says no."
-msgstr ""
+msgstr "O computador diz não."
 
 #: views/works.py:196
-#, fuzzy
-#| msgid "updated"
 msgid "Work updated."
-msgstr "Atualizada"
+msgstr "Trabalho atualizado."
 
 #: views/works.py:299
 #, python-format
 msgid "Deleted %(title)s · %(frbr_uri)s"
-msgstr ""
+msgstr "Excluído %(title)s · %(frbr_uri)s"
 
 #: views/works.py:302
-#, fuzzy
-#| msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
 msgid "This work cannot be deleted while linked documents and related works exist."
-msgstr "Este trabalho não pode ser excluído enquanto existirem <a href=\"%(amendments_url)s\">documentos vinculados</a> e <a href=\"%(related_url)s\">trabalhos relacionados</a>."
+msgstr "Este trabalho não pode ser excluído enquanto existirem documentos vinculados e trabalhos relacionados."
 
 #: views/works.py:871 views/works.py:873
-#, fuzzy, python-format
-#| msgid "Restore this version"
+#, python-format
 msgid "Restored version %(version_id)s"
-msgstr "Restaurar esta versão"
+msgstr "Versão restaurada %(version_id)s"
 
 #: views/works.py:933
 msgid "Unable to get spreadsheet ID from URL"
-msgstr ""
+msgstr "Não foi possível obter o ID da planilha do URL"
 
 #: views/works.py:940
 #, python-format
 msgid "Unable to fetch spreadsheet information. Is your spreadsheet shared with %(email)s?"
-msgstr ""
+msgstr "Não foi possível buscar informações da planilha. Sua planilha é compartilhada com %(email)s?"
 
 #: views/works.py:1037
 #, python-format
 msgid "Error during import: %(error)s"
-msgstr ""
+msgstr "Erro durante a importação: %(error)s"
 
-#~ msgid "Blocked"
-#~ msgstr "Bloqueado"
-
-#~ msgid "Done"
-#~ msgstr "Feito"
-
-#~ msgid "Cancelled"
-#~ msgstr "Cancelado"
-
-#~ msgid "Timeline date"
-#~ msgstr "Data da linha do tempo"
-
-#~ msgid "Description"
-#~ msgstr "Descrição"
-
-#~ msgid "Core Details"
-#~ msgstr "Detalhes principais"
-
-#~ msgid "Add a publication document."
-#~ msgstr "Adicione um documento de publicação."
-
-#~ msgid "Publish at least one point in time."
-#~ msgstr "Publique pelo menos um ponto no tempo."
-
-#~ msgid "Import tasks will be created"
-#~ msgstr "As tarefas de importação serão criadas"
-
-#, python-format
-#~ msgid "· %(page_count)s page"
-#~ msgid_plural "· %(page_count)s pages"
-#~ msgstr[0] "· %(page_count)s página"
-#~ msgstr[1] "· %(page_count)s páginas"
-
-#~ msgid ""
-#~ "\n"
-#~ "                  Page\n"
-#~ "                "
-#~ msgid_plural ""
-#~ "\n"
-#~ "                  Pages\n"
-#~ "                "
-#~ msgstr[0] ""
-#~ "\n"
-#~ "                  Página\n"
-#~ "                "
-#~ msgstr[1] ""
-#~ "\n"
-#~ "                  Páginas\n"
-#~ "                "
-
-#~ msgid "Recent activity"
-#~ msgstr "Atividade recente"
-
-#~ msgid "page"
-#~ msgid_plural "pages"
-#~ msgstr[0] "página"
-#~ msgstr[1] "Páginas"
-
-#~ msgid "Recent activity (30 days)"
-#~ msgstr "Atividade recente (30 dias)"
-
-#~ msgid "New works added"
-#~ msgstr "Novos trabalhos adicionados"
-
-#~ msgid "Tasks completed"
-#~ msgstr "Tarefas concluídas"
-
-#~ msgid "New tasks added"
-#~ msgstr "Novas tarefas adicionadas"
-
-#~ msgid "Works and Amendments"
-#~ msgstr "Obras e Alterações"
-
-#~ msgid "Works by Year"
-#~ msgstr "Trabalhos por ano"
-
-#~ msgid "Amendments by Year"
-#~ msgstr "Alterações por ano"
-
-#~ msgid "Types of works"
-#~ msgstr "tipos de obras"
-
-#~ msgid "Core Detail Completeness"
-#~ msgstr "Completude do Detalhe Central"
-
-#~ msgid "Works Complete"
-#~ msgstr "Trabalhos Concluídos"
-
-#~ msgid "Expressions (documents)"
-#~ msgstr "Expressões (documentos)"
-
-#~ msgid "Changes and updates"
-#~ msgstr "Alterações e atualizações"
-
-#~ msgid "Insights"
-#~ msgstr "Percepções"

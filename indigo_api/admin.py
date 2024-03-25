@@ -11,7 +11,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyVocabulary, VocabularyTopic, TaxonomyTopic
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic
 
 admin.site.register(Subtype)
 
@@ -82,22 +82,6 @@ class ColophonAdmin(admin.ModelAdmin):
 class TaskLabelAdmin(admin.ModelAdmin):
     list_display = ('title', 'description',)
     prepopulated_fields = {"slug": ("title",)}
-
-
-class VocabularyTopicInline(admin.TabularInline):
-    model = VocabularyTopic
-    can_delete = True
-    extra = 3
-    fields = ('level_1', 'level_2', 'slug')
-    readonly_fields = ('slug',)
-
-
-@admin.register(TaxonomyVocabulary)
-class TaxonomyVocabularyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'authority', '__str__')
-    prepopulated_fields = {"slug": ("authority", "name")}
-    inlines = (VocabularyTopicInline, )
-    fields = ('title', 'authority', 'name', 'slug')
 
 
 def run_now(modeladmin, request, queryset):

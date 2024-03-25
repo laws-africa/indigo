@@ -718,6 +718,7 @@ class WorkBulkActionBase(PlaceViewBase, FormView):
 class WorkBulkUpdateView(WorkBulkActionBase):
     form_class = WorkBulkUpdateForm
     template_name = "indigo_app/place/_bulk_update_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.change_work')
 
     def form_valid(self, form):
         if form.cleaned_data['save']:
@@ -738,6 +739,7 @@ class WorkBulkUpdateView(WorkBulkActionBase):
 class WorkBulkApproveView(WorkBulkActionBase):
     form_class = WorkBulkApproveForm
     template_name = "indigo_app/place/_bulk_approve_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.bulk_add_work')
 
     def form_valid(self, form):
         if form.cleaned_data.get("approve"):
@@ -759,6 +761,7 @@ class WorkBulkApproveView(WorkBulkActionBase):
 class WorkBulkUnapproveView(WorkBulkActionBase):
     form_class = WorkBulkUnapproveForm
     template_name = "indigo_app/place/_bulk_unapprove_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.bulk_add_work')
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)

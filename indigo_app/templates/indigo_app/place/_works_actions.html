@@ -49,7 +49,7 @@
               </form>
             </div>
             <div class="modal fade" tabindex="-1" id="bulk-approve-modal">
-              {% include 'indigo_app/place/_bulk_approve_form.html' %}
+              {% include 'indigo_app/place/_bulk_approve_form.html' with works=None %}
             </div>
           {% endblock %}
         {% endif %}
@@ -75,7 +75,7 @@
               </form>
             </div>
             <div class="modal fade" tabindex="-1" id="bulk-unapprove-modal">
-              {% include 'indigo_app/place/_bulk_unapprove_form.html' %}
+              {% include 'indigo_app/place/_bulk_unapprove_form.html' with works=None %}
             </div>
           {% endblock %}
         {% endif %}

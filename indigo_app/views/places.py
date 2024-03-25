@@ -762,14 +762,14 @@ class WorkBulkUnapproveView(WorkBulkActionBase):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["approved_works"] = form.cleaned_data.get("approved_works").order_by("-created_at")
+        context["works"] = form.cleaned_data.get("works").order_by("-created_at")
         return context
 
     def form_valid(self, form):
         if form.cleaned_data.get("unapprove"):
-            for work in form.cleaned_data["approved_works"]:
+            for work in form.cleaned_data["works"]:
                 work.unapprove(self.request.user)
-            messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['approved_works'].count()})
+            messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['works'].count()})
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

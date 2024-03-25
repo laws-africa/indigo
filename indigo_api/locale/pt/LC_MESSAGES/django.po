@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-03-08 07:03\n"
+"PO-Revision-Date: 2024-03-25 10:28\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: admin.py:89
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "Tempo de execução atualizado para agora para tarefas selecionadas."
 
 #: admin.py:91
 msgid "Set run time to now"
-msgstr ""
+msgstr "Defina o tempo de execução para agora"
 
 #: models/documents.py:271
 #, python-format
@@ -275,10 +275,8 @@ msgid "countries"
 msgstr "países"
 
 #: models/places.py:132
-#, fuzzy
-#| msgid "All topics"
 msgid "All places"
-msgstr "Todos os tópicos"
+msgstr "Todos lugares"
 
 #: models/places.py:158
 msgid "Local name of this locality"
@@ -354,32 +352,28 @@ msgid "places' settings"
 msgstr "configurações de lugares"
 
 #: models/tasks.py:66
-#, fuzzy
-#| msgid "blocked by"
 msgid "Blocked"
-msgstr "bloqueado por"
+msgstr "Bloqueado"
 
 #: models/tasks.py:67
 msgid "Open"
-msgstr ""
+msgstr "Abrir"
 
 #: models/tasks.py:68
-#, fuzzy
-#| msgid "assigned to"
 msgid "Assigned"
-msgstr "atribuído a"
+msgstr "Atribuído"
 
 #: models/tasks.py:69
 msgid "Pending review"
-msgstr ""
+msgstr "Revisão pendente"
 
 #: models/tasks.py:70
 msgid "Done"
-msgstr ""
+msgstr "Feito"
 
 #: models/tasks.py:71
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: models/tasks.py:86
 msgid "Convert document"
@@ -642,7 +636,7 @@ msgstr "público"
 
 #: models/works.py:49
 msgid "project"
-msgstr ""
+msgstr "projeto"
 
 #: models/works.py:53
 msgid "taxonomy topic"
@@ -1187,44 +1181,3 @@ msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
 msgid "Error during import"
 msgstr "Erro durante a importação"
 
-#~ msgid "authority"
-#~ msgstr "autoridade"
-
-#~ msgid "Organisation managing this taxonomy"
-#~ msgstr "Organização que gerencia esta taxonomia"
-
-#~ msgid "Short name for this taxonomy, under this authority"
-#~ msgstr "Nome abreviado para esta taxonomia, sob esta autoridade"
-
-#~ msgid "Code used in the API"
-#~ msgstr "Código usado na API"
-
-#~ msgid "Friendly, full title for the taxonomy"
-#~ msgstr "Título completo e amigável para a taxonomia"
-
-#~ msgid "taxonomy"
-#~ msgstr "taxonomia"
-
-#~ msgid "taxonomies"
-#~ msgstr "taxonomias"
-
-#~ msgid "vocabulary"
-#~ msgstr "vocabulário"
-
-#~ msgid "level 1"
-#~ msgstr "nível 1"
-
-#~ msgid "level 2"
-#~ msgstr "nível 2"
-
-#~ msgid "(optional)"
-#~ msgstr "(opcional)"
-
-#~ msgid "vocabulary topic"
-#~ msgstr "tópico de vocabulário"
-
-#~ msgid "vocabulary topics"
-#~ msgstr "tópicos de vocabulário"
-
-#~ msgid "Chapter (Cap.)"
-#~ msgstr "Capítulo (Cap.)"

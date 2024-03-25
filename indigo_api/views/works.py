@@ -43,9 +43,7 @@ class WorkViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Work.objects.order_by('frbr_uri')\
-        .prefetch_related('parent_work', 'repealed_by',
-                          'taxonomies', 'taxonomies__vocabulary')
+    queryset = Work.objects.order_by('frbr_uri').prefetch_related('parent_work', 'repealed_by')
     serializer_class = WorkSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = WorkFilterSet

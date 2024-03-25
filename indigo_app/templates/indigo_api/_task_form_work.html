@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div class="mb-3 row">
-  <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{% trans 'Work' %}</label>
+  <label for="{{ form.work.id_for_label }}" class="col-2 col-form-label">{{ form.work.label }}</label>
   <div class="col-10">
     <input type="hidden" id="{{ form.work.id_for_label }}" name="{{ form.work.html_name }}" value="{{ form.work.value|default:'' }}">
     {% if task.work %}
@@ -35,7 +35,7 @@
 
 {% if task.work and task.work.expressions %}
   <div class="mb-3 row">
-    <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{% trans 'Document' %}</label>
+    <label for="{{ form.document.id_for_label }}" class="col-2 col-form-label">{{ form.document.label }}</label>
     <div class="col-4">
       <select
           hx-post="{% url 'task_form_timeline_date' place=place.place_code %}"

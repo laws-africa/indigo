@@ -5,7 +5,7 @@ from django_webtest import WebTest
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class PlacesTest(testcases.TestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -35,6 +35,20 @@ class PlacesTest(testcases.TestCase):
         response = self.client.get('/places/za/works')
         self.assertEqual(response.status_code, 200)
 
+        response = self.client.get('/places/za/works/facets')
+        self.assertEqual(response.status_code, 200)
+
+    def test_all_place_works(self):
+        response = self.client.get('/places/all/works')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/places/all/works/facets')
+        self.assertEqual(response.status_code, 200)
+
+    def test_all_place_tasks_404(self):
+        response = self.client.get('/places/all/tasks')
+        self.assertEqual(response.status_code, 404)
+
     def test_place_works_xlsx(self):
         response = self.client.get('/places/za/works?format=xlsx')
         self.assertEqual(response.status_code, 200)
@@ -43,7 +57,7 @@ class PlacesTest(testcases.TestCase):
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class PlacesWebTest(WebTest):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

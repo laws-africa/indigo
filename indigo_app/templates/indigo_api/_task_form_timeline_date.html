@@ -2,7 +2,7 @@
 
 {% if not form.document.value %}
   <div class="mb-3 row">
-    <label for="{{ form.timeline_date.id_for_label }}" class="col-2 col-form-label">{% trans 'Timeline date' %}</label>
+    <label for="{{ form.timeline_date.id_for_label }}" class="col-2 col-form-label">{{ form.timeline_date.label }}</label>
     <div class="col-4">
       <input type="date" class="form-control" id="{{ form.timeline_date.id_for_label }}"
              name="{{ form.timeline_date.html_name }}"

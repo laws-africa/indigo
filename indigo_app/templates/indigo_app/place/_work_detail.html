@@ -123,7 +123,7 @@
                 hx-swap="innerHTML"
             >
               {% csrf_token %}
-              <input type="hidden" name="works_in_progress" value="{{ work.pk }}">
+              <input type="hidden" name="works" value="{{ work.pk }}">
               <button
                   class="btn btn-success btn-sm"
                   data-bs-toggle="modal"

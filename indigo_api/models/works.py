@@ -41,66 +41,6 @@ class WorkManager(models.Manager):
             .prefetch_related('commencements')
 
 
-class TaxonomyVocabulary(models.Model):
-    authority = models.CharField(_("authority"), max_length=512, null=False, blank=False,
-                                 help_text=_("Organisation managing this taxonomy"))
-    name = models.CharField(_("name"), max_length=512, null=False, blank=False,
-                            help_text=_("Short name for this taxonomy, under this authority"))
-    slug = models.SlugField(_("slug"), null=False, unique=True, blank=False, help_text=_("Code used in the API"))
-    title = models.CharField(_("title"), max_length=512, null=False, unique=True, blank=False,
-                             help_text=_("Friendly, full title for the taxonomy"))
-
-    class Meta:
-        verbose_name = _("taxonomy")
-        verbose_name_plural = _("taxonomies")
-        ordering = ('title',)
-        unique_together = ('authority', 'name')
-
-    def __str__(self):
-        return str(self.title)
-
-
-class VocabularyTopic(models.Model):
-    vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False,
-                                   on_delete=models.CASCADE, verbose_name=_("vocabulary"))
-    level_1 = models.CharField(_("level 1"), max_length=512, null=False, blank=False)
-    level_2 = models.CharField(_("level 2"), max_length=512, null=True, blank=True, help_text=_("(optional)"))
-
-    class Meta:
-        unique_together = ('level_1', 'level_2', 'vocabulary')
-        ordering = ('level_1', 'level_2')
-        verbose_name = _("vocabulary topic")
-        verbose_name_plural = _("vocabulary topics")
-
-    @property
-    def title(self):
-        return ' / '.join(x for x in [self.level_1, self.level_2] if x)
-
-    @property
-    def slug(self):
-        detail = '/'.join(x for x in [self.level_1, self.level_2] if x)
-        return f'{self.vocabulary.slug}:{detail}'
-
-    def __str__(self):
-        return self.title
-
-    @classmethod
-    def get_topic(self, value):
-        """ Get a taxonomy topic based on a string, such as lawsafrica-collections:level1[/level2]
-        """
-        if ':' in value:
-            vocab, topic = value.split(':', 1)
-            if '/' in topic:
-                level_1, level_2 = topic.split('/', 1)
-            else:
-                level_1 = topic
-                level_2 = None
-
-            return VocabularyTopic.objects\
-                .filter(vocabulary__slug=vocab, level_1=level_1, level_2=level_2)\
-                .first()
-
-
 class TaxonomyTopic(MP_Node):
     name = models.CharField(_("name"), max_length=512, null=False, blank=False)
     slug = models.SlugField(_("slug"), max_length=4096, null=False, unique=True, blank=False)
@@ -531,9 +471,6 @@ class Work(WorkMixin, models.Model):
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
     properties = JSONField(_("properties"), null=False, blank=True, default=dict)
-
-    # taxonomies
-    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works', verbose_name=_("taxonomies"))
 
     taxonomy_topics = models.ManyToManyField(TaxonomyTopic, related_name='works', blank=True, verbose_name=_("taxonomy topics"))
 
@@ -969,7 +906,7 @@ def post_save_arbitrary_expression_date(sender, instance, **kwargs):
 
 class Subtype(models.Model):
     name = models.CharField(_("name"), max_length=1024, help_text=_("Name of the subtype"))
-    abbreviation = models.CharField(_("abbreviation"), max_length=20, unique=True,
+    abbreviation = models.CharField(_("abbreviation"), max_length=32, unique=True,
                                     help_text=_("Short abbreviation to use in the FRBR URI. No punctuation."))
 
     # cheap cache for subtypes, to avoid DB lookups

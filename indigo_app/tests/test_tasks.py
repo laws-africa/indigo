@@ -7,7 +7,7 @@ from indigo_api.models import Task, Work, Workflow
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class TasksTest(WebTest):
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
@@ -193,7 +193,9 @@ class TasksTest(WebTest):
         form.submit().follow()
 
         task.refresh_from_db()
-        self.assertEqual(list(task.blocked_by.all()), [blocking_task, second_blocking_task])
+        self.assertEqual(2, task.blocked_by.count())
+        for task_blocking_this in task.blocked_by.all():
+            self.assertIn(task_blocking_this, [blocking_task, second_blocking_task])
         self.assertEqual(task.state, Task.BLOCKED)
 
         # now unblock it

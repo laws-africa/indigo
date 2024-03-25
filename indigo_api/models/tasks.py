@@ -50,6 +50,7 @@ class TaskManager(models.Manager):
 
 class Task(models.Model):
     OPEN = 'open'
+    ASSIGNED = 'assigned'
     PENDING_REVIEW = 'pending_review'
     CANCELLED = 'cancelled'
     DONE = 'done'
@@ -60,6 +61,15 @@ class Task(models.Model):
     CLOSED_STATES = (CANCELLED, DONE)
     OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
     UNBLOCKED_STATES = (OPEN, PENDING_REVIEW)
+
+    STATE_CHOICES = [
+        (BLOCKED, _('Blocked')),
+        (OPEN, _('Open')),
+        (ASSIGNED, _('Assigned')),
+        (PENDING_REVIEW, _('Pending review')),
+        (DONE, _('Done')),
+        (CANCELLED, _('Cancelled')),
+    ]
 
     VERBS = {
         'submit': 'submitted',
@@ -463,6 +473,7 @@ class Task(models.Model):
             else:
                 return task.state
 
+        state_choices = dict(cls.STATE_CHOICES)
         tasks = sorted(tasks, key=grouper)
         tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
 
@@ -470,14 +481,14 @@ class Task(models.Model):
         groups = {}
         for key in required_groups:
             groups[key] = {
-                'title': key.replace('_', ' ').capitalize(),
+                'title': state_choices[key],
                 'badge': key,
             }
 
         for key, group in tasks.items():
             if key not in groups:
                 groups[key] = {
-                    'title': key.replace('_', ' ').capitalize(),
+                    'title': state_choices[key],
                     'badge': key,
                 }
             groups[key]['tasks'] = group
@@ -492,7 +503,7 @@ class Task(models.Model):
 
     @property
     def friendly_state(self):
-        return self.state.replace('_', ' ')
+        return dict(self.STATE_CHOICES).get(self.state, '')
 
 
 @receiver(signals.post_save, sender=Task)

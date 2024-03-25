@@ -16,7 +16,7 @@
     <div class="border {% if work.work_in_progress %}bg-work-in-progress{% else %}bg-white{% endif %} mb-2">
       <div class="d-flex p-2 pl-3 collapsed work-list-card-heading" id="work-heading-{{ work.pk }}"
            data-component="WorkListCard"
-           hx-get="{% url 'place_works_work_detail' place=place.place_code pk=work.pk %}"
+           hx-get="{% url 'place_works_work_detail' place=work.place.place_code pk=work.pk %}"
            hx-target="#work-detail-{{ work.pk }}"
            hx-swap="innerHTML"
            hx-trigger="click once"

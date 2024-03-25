@@ -16,7 +16,7 @@
       tabindex="-1"
   >
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-      <div class="modal-content">Loading...</div>
+      <div class="modal-content">{% trans "Loading..." %}</div>
     </div>
   </div>
 
@@ -36,7 +36,7 @@
         <div class="card-body">
 
           <div class="mb-3 row">
-            <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{% trans 'Type' %}</label>
+            <label for="{{ form.code.id_for_label }}" class="col-2 col-form-label">{{ form.code.label }}</label>
             <div class="col-4">
               <select
                   hx-post="{% url 'task_form_title' place=place.place_code %}"
@@ -70,7 +70,7 @@
             {% include 'indigo_api/_task_form_timeline_date.html' %}
           </div>
           <div class="mb-3 row">
-            <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{% trans 'Description' %}</label>
+            <label for="{{ form.description.id_for_label }}" class="col-2 col-form-label">{{ form.description.label }}</label>
             <div class="col-8">
               <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
             </div>
@@ -83,7 +83,7 @@
             {% endif %}
           </div>
           <div class="mb-3 row">
-            <label for="{{ form.labels.id_for_label }}" class="col-2 col-form-label">{% trans 'Labels' %}</label>
+            <label for="{{ form.labels.id_for_label }}" class="col-2 col-form-label">{{ form.labels.label }}</label>
             <div class="col-4">
               <select class="selectpicker col-12" multiple id="{{ form.labels.id_for_label }}" name="{{ form.labels.html_name }}">
                 {% for opt in form.labels %}

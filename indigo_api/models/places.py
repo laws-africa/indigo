@@ -126,6 +126,22 @@ class Country(models.Model):
         return country, locality
 
 
+class AllPlace:
+    """A fake country that mimics a country but is used to represent all places in the system."""
+    place_code = code = iso = 'all'
+    name = _('All places')
+
+    @property
+    def country(self):
+        return self
+
+    @classmethod
+    def filter_works_queryset(cls, works, user):
+        if not user.is_superuser:
+            works = works.filter(country__in=user.editor.permitted_countries.all())
+        return works
+
+
 @receiver(signals.post_save, sender=Country)
 def post_save_country(sender, instance, **kwargs):
     """ When a country is saved, make sure a PlaceSettings exists for it.

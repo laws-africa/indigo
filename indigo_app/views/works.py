@@ -16,6 +16,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin, ListView
 from django.http import Http404, JsonResponse
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
@@ -33,7 +34,7 @@ from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
     NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
-    CommencementsBaseFormset
+    CommencementsBaseFormset, ConsolidationsBaseFormset
 
 from .base import PlaceViewBase, AbstractAuthedIndigoView
 
@@ -191,7 +192,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, "Work updated.")
+            messages.success(self.request, _("Work updated."))
 
         return resp
 
@@ -294,10 +295,10 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, 'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            messages.success(request, _('Deleted %(title)s · %(frbr_uri)s') % {"title": self.work.title, "frbr_uri": self.work.frbr_uri})
             return redirect(self.get_success_url())
         else:
-            messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
+            messages.error(request, _('This work cannot be deleted while linked documents and related works exist.'))
             return redirect('work_edit', frbr_uri=self.work.frbr_uri)
 
     def get_success_url(self):
@@ -951,9 +952,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment("Restored version %s" % version.id)
+            reversion.set_comment(_("Restored version %(version_id)s") % {"version_id": version.id})
             version.revert()
-        messages.success(request, 'Restored version %s' % version.id)
+        messages.success(request, _('Restored version %(version_id)s') % {"version_id": version.id})
 
         # signals
         work_changed.send(sender=self.work.__class__, work=self.work, request=request)
@@ -1013,14 +1014,14 @@ class BatchAddWorkView(PlaceViewBase, FormView):
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
 
             if not sheet_id:
-                add_spreadsheet_url_error('Unable to get spreadsheet ID from URL')
+                add_spreadsheet_url_error(_('Unable to get spreadsheet ID from URL'))
             else:
                 try:
                     sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
                     sheets = [s['properties']['title'] for s in sheets]
                     form.fields['sheet_name'].choices = [(s, s) for s in sheets]
                 except ValueError:
-                    add_spreadsheet_url_error(f"Unable to fetch spreadsheet information. Is your spreadsheet shared with {self.bulk_creator._gsheets_secret['client_email']}?")
+                    add_spreadsheet_url_error(_("Unable to fetch spreadsheet information. Is your spreadsheet shared with %(email)s?") % {"email": self.bulk_creator._gsheets_secret['client_email']})
 
         return form
 
@@ -1117,7 +1118,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         except ValueError as e:
             if document.pk:
                 document.delete()
-            log.error("Error during import: %s" % str(e), exc_info=e)
+            log.error(_("Error during import: %(error)s") % {"error": str(e)}, exc_info=e)
             return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user
@@ -1552,75 +1553,6 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         return context_data
 
 
-class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_commencements_made_form.html'
-
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        commencement_made = self.request.POST.get("commencements_made")
-        deleting = self.request.GET.get("delete")
-        commencement_work_id = None
-        prefix = None
-
-        if commencement_made:
-            commencement_work_id = commencement_made
-            prefix = "commencements_made"
-        elif deleting:
-            prefix = deleting
-
-        context_data = super().get_context_data(**kwargs)
-        formset = CommencementsMadeBaseFormset(self.request.POST,
-                                               user=self.request.user,
-                                               work=self.work,
-                                               prefix=prefix,
-                                               form_kwargs={"work": self.work,
-                                                            "user": self.request.user})
-        initial = []
-        if formset.is_valid():
-            for form in formset:
-                delete = form.cleaned_data.get('DELETE')
-                if delete:
-                    if not form.cleaned_data.get('id'):
-                        continue
-                initial.append({
-                    "commenced_work": form.cleaned_data["commenced_work"],
-                    "commencing_work": form.cleaned_data["commencing_work"],
-                    "note": form.cleaned_data["note"],
-                    "date": form.cleaned_data["date"],
-                    "id": form.cleaned_data["id"],
-                    "DELETE": form.cleaned_data["DELETE"],
-                })
-            if commencement_work_id:
-                commenced_works = {form.cleaned_data["commenced_work"] for form in formset}
-                work = Work.objects.filter(pk=commencement_work_id).first()
-                if work:
-                    if prefix == "commencements_made":
-                        initial.append({
-                            "commenced_work": work,
-                            "commencing_work": self.work,
-                            "date": self.work.commencement_date if work not in commenced_works else None,
-                        })
-
-        else:
-            context_data['formset'] = formset
-            context_data["prefix"] = prefix
-
-            return context_data
-
-        context_data['formset'] = CommencementsMadeBaseFormset(
-            user=self.request.user,
-            work=self.work,
-            prefix=prefix,
-            initial=initial,
-            form_kwargs={"work": self.work,
-                         "user": self.request.user}
-        )
-        context_data["prefix"] = prefix
-        return context_data
-
-
 class WorkFormCommencementsView(WorkViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_commencements_form.html'
 
@@ -1694,3 +1626,119 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
         )
         context_data["prefix"] = prefix
         return context_data
+
+
+class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_commencements_made_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        commencement_made = self.request.POST.get("commencements_made")
+        deleting = self.request.GET.get("delete")
+        commencement_work_id = None
+        prefix = None
+
+        if commencement_made:
+            commencement_work_id = commencement_made
+            prefix = "commencements_made"
+        elif deleting:
+            prefix = deleting
+
+        context_data = super().get_context_data(**kwargs)
+        formset = CommencementsMadeBaseFormset(self.request.POST,
+                                               user=self.request.user,
+                                               work=self.work,
+                                               prefix=prefix,
+                                               form_kwargs={"work": self.work,
+                                                            "user": self.request.user})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not form.cleaned_data.get('id'):
+                        continue
+                initial.append({
+                    "commenced_work": form.cleaned_data["commenced_work"],
+                    "commencing_work": form.cleaned_data["commencing_work"],
+                    "note": form.cleaned_data["note"],
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            if commencement_work_id:
+                commenced_works = {form.cleaned_data["commenced_work"] for form in formset}
+                work = Work.objects.filter(pk=commencement_work_id).first()
+                if work:
+                    if prefix == "commencements_made":
+                        initial.append({
+                            "commenced_work": work,
+                            "commencing_work": self.work,
+                            "date": self.work.commencement_date if work not in commenced_works else None,
+                        })
+
+        else:
+            context_data['formset'] = formset
+            context_data["prefix"] = prefix
+
+            return context_data
+
+        context_data['formset'] = CommencementsMadeBaseFormset(
+            user=self.request.user,
+            work=self.work,
+            prefix=prefix,
+            initial=initial,
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
+        )
+        context_data["prefix"] = prefix
+        return context_data
+
+
+class WorkFormConsolidationView(WorkViewBase, TemplateView):
+    template_name = "indigo_api/_work_form_consolidations_form.html"
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["formset"] = formset = ConsolidationsBaseFormset(self.request.POST,
+                                                    user=self.request.user,
+                                                    work=self.work,
+                                                    prefix="consolidations",
+                                                    form_kwargs={"work":self.work,
+                                                                 "user": self.request.user})
+
+        initial = []
+        if formset.is_valid():
+            for form in formset.forms:
+                delete = form.cleaned_data.get("DELETE")
+                if delete and not form.cleaned_data.get("id"):
+                    continue
+                initial.append({
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+
+            if self.request.POST.get("consolidation") == "add":
+                date = self.work.as_at_date()
+
+                initial.append({
+                    "date": date
+                })
+
+            context["formset"] =  ConsolidationsBaseFormset(
+                    user=self.request.user,
+                    work=self.work,
+                    prefix="consolidations",
+                    initial=initial,
+                    form_kwargs={"work": self.work,
+                                 "user": self.request.user}
+                )
+
+        context["work"] = self.work
+        return context

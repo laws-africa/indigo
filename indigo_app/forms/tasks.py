@@ -4,7 +4,7 @@ import requests
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile
 from indigo_app.forms.mixins import FormAsUrlMixin
@@ -18,7 +18,7 @@ class TaskForm(forms.ModelForm):
     title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
     timeline_date = forms.DateField(required=False)
-    code = forms.ChoiceField(choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
+    code = forms.ChoiceField(label=_('Type'), choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
 
     def __init__(self, country, locality, data=None, files=None, *args, **kwargs):
         super().__init__(data, files, *args, **kwargs)
@@ -93,6 +93,9 @@ class TaskFileForm(forms.ModelForm):
 
     def __init__(self, task, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['file'].label = _('Input file') if self.prefix == 'input_file' else _('Output file')
+        # we don't yet support output file URLs, but this won't hurt anyone
+        self.fields['url'].label = _('Input URL') if self.prefix == 'input_file' else _('Output URL')
         self.task = task
 
     def save(self, commit=True):
@@ -133,13 +136,17 @@ class TaskEditLabelsForm(forms.ModelForm):
 
 class TaskFilterForm(forms.Form, FormAsUrlMixin):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
-    format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
-    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
-    submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
-    type = forms.MultipleChoiceField(choices=Task.CODES)
+    state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
+    format = forms.ChoiceField(choices=[('columns', _('columns')), ('list', _('list'))])
+    assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
+    submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
+    type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     taxonomy_topic = forms.CharField()
+    sortby = forms.ChoiceField(choices=[
+        ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
+        ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
+    ])
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -180,12 +187,15 @@ class TaskFilterForm(forms.Form, FormAsUrlMixin):
             topics = [topic] + [t for t in topic.get_descendants()]
             queryset = queryset.filter(work__taxonomy_topics__in=topics)
 
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data['sortby'])
+
         return queryset
 
 
 class BulkTaskUpdateForm(forms.Form):
     tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label=_('Unassigned'), required=False)
     unassign = False
 
     def __init__(self, country, *args, **kwargs):
@@ -196,7 +206,7 @@ class BulkTaskUpdateForm(forms.Form):
     def clean_assigned_to(self):
         user = self.cleaned_data['assigned_to']
         if user and self.country not in user.editor.permitted_countries.all():
-            raise forms.ValidationError("That user doesn't have appropriate permissions for {}".format(self.country.name))
+            raise forms.ValidationError(_("That user doesn't have appropriate permissions for %(country)s") % {'country': self.country.name})
         return user
 
     def clean(self):

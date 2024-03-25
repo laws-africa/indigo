@@ -5,7 +5,7 @@
     expand-all-btn-classes="btn btn-sm btn-secondary"
     title-filter-clear-btn-classes="btn btn-sm btn-secondary"
     title-filter-input-classes="form-field"
-    title-filter-placeholder="Filter by topic"
+    title-filter-placeholder="Filter..."
     class="taxonomy-sidebar"
   ></la-table-of-contents-controller>
 </template>
@@ -19,9 +19,9 @@
  */
 export default {
   name: 'TaxonomyTOC',
-  props: ['checkbox', 'selected'],
-  data () {
-    const taxonomy = JSON.parse(document.querySelector('#taxonomy_toc').textContent);
+  props: ['checkbox', 'selected', 'tree'],
+  data (self) {
+    const taxonomy = JSON.parse(document.querySelector(self.tree || '#taxonomy_toc').textContent);
     const selected = (this.selected || '').split(' ');
 
     // Set expanded state of current item and its parents
@@ -38,8 +38,7 @@ export default {
     };
   },
   mounted () {
-    const toc = document.getElementsByTagName('la-table-of-contents-controller');
-    toc[0].addEventListener('itemRendered', (e) => {
+    this.$el.addEventListener('itemRendered', (e) => {
       const tocItem = e.target;
       if (!tocItem) return;
 

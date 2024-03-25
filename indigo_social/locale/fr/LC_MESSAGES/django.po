@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-07 17:28+0200\n"
-"PO-Revision-Date: 2024-03-08 07:03\n"
+"POT-Creation-Date: 2024-03-22 16:16+0200\n"
+"PO-Revision-Date: 2024-03-25 10:28\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -16,6 +16,38 @@ msgstr ""
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /[laws-africa.indigo] master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 143\n"
+
+#: forms.py:20
+msgid "Your username cannot include spaces, punctuation or capital letters."
+msgstr "Votre nom d'utilisateur ne peut pas contenir d'espaces, de signes de ponctuation ou de majuscules."
+
+#: forms.py:24
+msgid "First name"
+msgstr "Prénom"
+
+#: forms.py:25
+msgid "Last name"
+msgstr "Nom de famille"
+
+#: forms.py:26
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: forms.py:27
+msgid "Country"
+msgstr "Pays"
+
+#: forms.py:28
+msgid "Profile photo"
+msgstr "Photo de profil"
+
+#: forms.py:29
+msgid "Language"
+msgstr "Langue"
+
+#: forms.py:55
+msgid "This username is already taken."
+msgstr "Ce nom d'utilisateur est déjà pris."
 
 #: models.py:39
 msgid "user"
@@ -241,4 +273,19 @@ msgstr "Se déconnecter"
 #: templates/main.html:27
 msgid "Log in"
 msgstr "Se connecter"
+
+#: views.py:254
+#, python-format
+msgid "%(badge)s badge awarded to %(user)s"
+msgstr "%(badge)s badge attribué à %(user)s"
+
+#: views.py:256
+#, python-format
+msgid "%(badge)s badge couldn't be awarded to %(user)s"
+msgstr "%(badge)s Le badge n'a pas pu être attribué à %(user)s"
+
+#: views.py:273
+#, python-format
+msgid "%(badge)s badge removed from %(user)s"
+msgstr "%(badge)s badge supprimé de %(user)s"
 

@@ -79,7 +79,7 @@
     </div>
 
     <div class="modal-footer">
-      <a href="#" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
+      <a href="{% url 'new_work' place.code %}" class="btn btn-link create-work" target="_blank">{% trans 'Create a new work' %}</a>
       <a href="#" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</a>
       <input type="submit" class="btn btn-primary" value="{% trans 'OK' %}" form="work-chooser-form">
     </div>

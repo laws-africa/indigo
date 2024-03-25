@@ -2,6 +2,26 @@
 Changelog
 =========
 
+19.0.0 (???)
+------------
+
+* CHANGE: Taxonomies are removed. You must upgrade to 18.1.0 first and run `python manage.py migrate_taxonomies` before upgrading to this version.
+
+18.1.0 (2024-03-25)
+-------------------
+
+* FEATURE / DEPRECATED: Taxonomies are replaced by Taxonomy Topics, a full taxonomy tree which is much more flexible than the old taxonomy system. You must migrate your taxonomies with the `python manage.py migrate_taxonomies` management command.
+* FEATURE: Source documents are an improved way of importing information into Indigo.
+* FEATURE: new "work in progress" concept to support indexing works from a source document that must then be reviewed before being published.
+* FEATURE: new V3 of the Content API. V2 is deprecated. The primary difference is that a work's commencements information is available at a separate endpoint.
+* FEATURE: improved faceting and filtering in the place works view.
+* FEATURE: all-places works list.
+* FEATURE: smarter provision citation reference lookup.
+* FEATURE: improved work editing form.
+* FEATURE: work aliases.
+* Tasks can be associated with a date in the work timeline.
+* FIX: parsing of documents with certain unicode characters.
+
 18.0.0 (2023-06-30)
 -------------------
 

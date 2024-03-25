@@ -18,7 +18,7 @@ from google.oauth2 import service_account
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo.tasks import TaskBroker
 from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
-    VocabularyTopic, TaxonomyTopic, TaskLabel, ArbitraryExpressionDate
+    TaxonomyTopic, TaskLabel, ArbitraryExpressionDate
 from indigo_api.signals import work_changed
 
 
@@ -452,11 +452,8 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 if row.subleg:
                     self.link_children_works(row)
 
-                if row.taxonomy:
-                    self.link_taxonomy(row)
-
                 if row.taxonomy_topic:
-                    self.link_taxonomy(row, model=TaxonomyTopic, attr='taxonomy_topics', attr_single='taxonomy_topic')
+                    self.link_taxonomy(row)
 
                 if row.amended_by:
                     self.link_amendment_passive(row)
@@ -953,15 +950,15 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                                      task_type='apply-amendment',
                                      amendment=amendment)
 
-    def link_taxonomy(self, row, model=VocabularyTopic, attr='taxonomies', attr_single='taxonomy'):
-        topics = [x.strip() for x in getattr(row,  attr_single).split(';') if x.strip()]
+    def link_taxonomy(self, row):
+        topics = [x.strip() for x in row.taxonomy_topic.split(';') if x.strip()]
         unlinked_topics = []
         for t in topics:
-            topic = model.get_topic(t)
+            topic = TaxonomyTopic.get_topic(t)
             if topic:
-                row[attr].append(topic)
+                row['taxonomy_topics'].append(topic)
                 if not self.dry_run:
-                    getattr(row.work, attr).add(topic)
+                    row.work.taxonomy_topics.add(topic)
                     row.work.save_with_revision(self.user)
 
             else:
@@ -969,11 +966,11 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
         if unlinked_topics:
             if self.dry_run:
 
-                row.notes.append(f'{" ".join(attr_single.split("_")).capitalize()} not found: {"; ".join(unlinked_topics)}')
+                row.notes.append(f'TaxonomyTopic not found: {"; ".join(unlinked_topics)}')
             else:
                 row.unlinked_topics = "; ".join(unlinked_topics)
                 try:
-                    existing_task = Task.objects.get(work=row.work, code='link-taxonomy', description__contains=row.unlinked_topics)
+                    Task.objects.get(work=row.work, code='link-taxonomy', description__contains=row.unlinked_topics)
                 except Task.DoesNotExist:
                     self.create_task(row.work, row, task_type='link-taxonomy')
 

@@ -26,7 +26,7 @@
       <div>
         <div class="btn-toolbar">
           {% block work-list-actions %}
-            {% if perms.indigo_api.bulk_export_work %}
+            {% if download_xsl_url and perms.indigo_api.bulk_export_work %}
               <a href="{{ download_xsl_url }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-excel fa-fw me-1"></i>{% trans "Download to Excel" %}</a>
             {% endif %}
           {% endblock %}

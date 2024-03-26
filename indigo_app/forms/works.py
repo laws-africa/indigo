@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Workflow, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
+    Commencement, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 

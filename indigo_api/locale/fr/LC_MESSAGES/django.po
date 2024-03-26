@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-03-25 10:28\n"
+"PO-Revision-Date: 2024-03-26 10:55\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -28,32 +28,32 @@ msgstr "Définir le temps d'exécution sur maintenant"
 #: models/documents.py:271
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr "Ceci est la version de ce document de %(début)s et inclut tous les amendements publiés jusqu'à %(fin)s."
+msgstr "Ceci est la version de ce document de %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
 
 #: models/documents.py:273
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr "Ceci est la version de ce document de %(début)s."
+msgstr "Ceci est la version de ce document de %(start)s."
 
 #: models/documents.py:276
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr "Ceci est la version de ce document à %(début)s et inclut tous les amendements publiés jusqu'à %(fin)s."
+msgstr "Ceci est la version de ce document à %(start)s et inclut tous les amendements publiés jusqu'à %(end)s."
 
 #: models/documents.py:278
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr "Ceci est la version de ce document à %(début)s."
+msgstr "Ceci est la version de ce document à %(start)s."
 
 #: models/documents.py:281
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr "Il s'agit de la version de ce document telle qu'elle était du %(début)s au %(fin)s."
+msgstr "Il s'agit de la version de ce document telle qu'elle était du %(start)s au %(end)s."
 
 #: models/documents.py:284
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr "Il s'agit de la version de ce document telle qu'elle était à %(début)s à %(fin)s."
+msgstr "Il s'agit de la version de ce document telle qu'elle était à %(start)s à %(end)s."
 
 #: models/documents.py:287
 #, python-format

@@ -1,5 +1,5 @@
 {% extends "indigo_app/standalone.html" %}
-{% load static sass_tags i18n %}
+{% load static i18n %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -7,7 +7,7 @@
 
   <div class="card allauth-box">
     <div class="card-header text-end">
-      <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+      <img src="{% static 'images/logo.png' %}" class="logo" title="{{ INDIGO_ORGANISATION }}">
     </div>
     <div class="card-body">
       {% block content %}{% endblock %}

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from allauth.socialaccount.models import SocialAccount
 
 from .models import Editor, Publication
 from indigo_api.models import Language, Country, Locality
@@ -27,8 +28,14 @@ class PublicationInline(admin.TabularInline):
     extra = 0
 
 
+class SocialAccountInline(admin.TabularInline):
+    model = SocialAccount
+    can_delete = True
+    extra = 0
+
+
 # Define a new User admin
-UserAdmin.inlines = UserAdmin.inlines + [EditorInline]
+UserAdmin.inlines = UserAdmin.inlines + [EditorInline, SocialAccountInline]
 
 
 @admin.register(Country)

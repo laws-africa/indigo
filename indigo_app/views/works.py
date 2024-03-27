@@ -25,7 +25,7 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
-    Commencement, Workflow, Country, Locality
+    Commencement, Country, Locality
 from indigo_api.serializers import WorkSerializer
 from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
@@ -914,7 +914,6 @@ class BatchAddWorkView(PlaceViewBase, FormView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['workflow'].queryset = Workflow.objects.filter(country=self.country, locality=self.locality, closed=False).order_by('title').all()
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 

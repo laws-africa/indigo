@@ -43,68 +43,9 @@ class UserProfileView(AbstractAuthedIndigoView, DetailView):
             context['award_form'] = AwardBadgeForm(user=self.object)
             context['unaward_form'] = UnawardBadgeForm(user=self.object)
 
-        activity = self.object.actor_actions.all()[:20]
-        context['activity_stream'] = self.coalesce_entries(activity)
+        context['activity_stream'] = self.object.actor_actions.all()[:20]
 
         return context
-
-    def coalesce_entries(self, stream):
-        """ If more than 1 task were added to a workflow at once, rather display something like
-        '<User> added <n> tasks to <workflow> at <time>'
-        """
-        activity_stream = []
-        added_stash = []
-        for i, action in enumerate(stream):
-            if i == 0:
-                # is the first action an addition?
-                if getattr(action, 'verb', None) == 'added':
-                    added_stash.append(action)
-                else:
-                    activity_stream.append(action)
-
-            else:
-                # is a subsequent action an addition?
-                if getattr(action, 'verb', None) == 'added':
-                    # if yes, was the previous action also an addition on the same workflow?
-                    prev = stream[i - 1]
-                    if getattr(prev, 'verb', None) == 'added' \
-                            and action.target_object_id == prev.target_object_id:
-                        # if yes, did the two actions happen close together?
-                        if prev.timestamp - action.timestamp < self.threshold:
-                            # if yes, the previous action was added to the stash and
-                            # this action should also be added to the stash
-                            added_stash.append(action)
-                        else:
-                            # if not, this action should start a new stash,
-                            # but first squash, add and delete the existing stash
-                            stash = self.combine(added_stash)
-                            activity_stream.append(stash)
-                            added_stash = []
-                            added_stash.append(action)
-                    else:
-                        # the previous action wasn't an addition
-                        # so this action should start a new stash
-                        added_stash.append(action)
-                else:
-                    # this action isn't an addition, so squash and add the existing stash first
-                    # (if it exists) and then add this action
-                    if len(added_stash) > 0:
-                        stash = self.combine(added_stash)
-                        activity_stream.append(stash)
-                        added_stash = []
-                    activity_stream.append(action)
-
-        return activity_stream
-
-    def combine(self, stash):
-        first = stash[0]
-        if len(stash) == 1:
-            return first
-        else:
-            workflow = first.target
-            action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
-            action.timestamp = first.timestamp
-            return action
 
 
 class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
@@ -154,7 +95,6 @@ class UserActivityView(AbstractAuthedIndigoView, MultipleObjectMixin, DetailView
         context = super(UserActivityView, self).get_context_data(**kwargs)
 
         activity = self.object.actor_actions.all()
-        activity = self.coalesce_entries(activity)
 
         paginator, page, versions, is_paginated = self.paginate_queryset(activity, self.page_size)
         context.update({
@@ -165,64 +105,6 @@ class UserActivityView(AbstractAuthedIndigoView, MultipleObjectMixin, DetailView
         })
 
         return context
-
-    def coalesce_entries(self, stream):
-        """ If more than 1 task were added to a workflow at once, rather display something like
-        '<User> added <n> tasks to <workflow> at <time>'
-        """
-        activity_stream = []
-        added_stash = []
-        for i, action in enumerate(stream):
-            if i == 0:
-                # is the first action an addition?
-                if getattr(action, 'verb', None) == 'added':
-                    added_stash.append(action)
-                else:
-                    activity_stream.append(action)
-
-            else:
-                # is a subsequent action an addition?
-                if getattr(action, 'verb', None) == 'added':
-                    # if yes, was the previous action also an addition on the same workflow?
-                    prev = stream[i - 1]
-                    if getattr(prev, 'verb', None) == 'added' \
-                            and action.target_object_id == prev.target_object_id:
-                        # if yes, did the two actions happen close together?
-                        if prev.timestamp - action.timestamp < self.threshold:
-                            # if yes, the previous action was added to the stash and
-                            # this action should also be added to the stash
-                            added_stash.append(action)
-                        else:
-                            # if not, this action should start a new stash,
-                            # but first squash, add and delete the existing stash
-                            stash = self.combine(added_stash)
-                            activity_stream.append(stash)
-                            added_stash = []
-                            added_stash.append(action)
-                    else:
-                        # the previous action wasn't an addition
-                        # so this action should start a new stash
-                        added_stash.append(action)
-                else:
-                    # this action isn't an addition, so squash and add the existing stash first
-                    # (if it exists) and then add this action
-                    if len(added_stash) > 0:
-                        stash = self.combine(added_stash)
-                        activity_stream.append(stash)
-                        added_stash = []
-                    activity_stream.append(action)
-
-        return activity_stream
-
-    def combine(self, stash):
-        first = stash[0]
-        if len(stash) == 1:
-            return first
-        else:
-            workflow = first.target
-            action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
-            action.timestamp = first.timestamp
-            return action
 
 
 class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):

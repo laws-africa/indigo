@@ -23,7 +23,7 @@ from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow, TaxonomyTopic, TaskFile
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
@@ -42,20 +42,6 @@ def task_file_response(task_file):
 class TaskViewBase(PlaceViewBase):
     tab = 'tasks'
     permission_required = ('indigo_api.view_task',)
-
-    def record_workflow_actions(self, task, new_workflows):
-        old_workflows = task.workflows.all()
-
-        removed_workflows = set(old_workflows) - set(new_workflows)
-        added_workflows = set(new_workflows) - set(old_workflows)
-
-        for workflow in removed_workflows:
-            action.send(self.request.user, verb='removed', action_object=task,
-                        target=workflow, place_code=task.place.place_code)
-
-        for workflow in added_workflows:
-            action.send(self.request.user, verb='added', action_object=task,
-                        target=workflow, place_code=task.place.place_code)
 
 
 class SingleTaskViewBase(TaskViewBase):
@@ -144,8 +130,6 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         context['task_timeline'] = sorted(
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
-
-        context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
         # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
         context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
@@ -447,33 +431,6 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class TaskChangeWorkflowsView(SingleTaskViewBase, View, SingleObjectMixin):
-    # permissions
-    permission_required = ('indigo_api.change_task',)
-
-    http_method_names = ['post']
-
-    def post(self, request, *args, **kwargs):
-        task = self.get_object()
-        user = self.request.user
-        task.updated_by_user = user
-        ids = self.request.POST.getlist('workflows')
-
-        if ids:
-            workflows = Workflow.objects.filter(country=task.country, locality=task.locality, id__in=ids).all()
-        else:
-            workflows = []
-
-        self.record_workflow_actions(task, workflows)
-        task.workflows.set(workflows)
-
-        return redirect(self.get_redirect_url())
-
-    def get_redirect_url(self):
-        if self.request.GET.get('next'):
-            return self.request.GET.get('next')
-        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
-
 
 class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
@@ -623,9 +580,6 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         if not self.form.cleaned_data.get('state'):
             tasks = tasks.filter(state__in=Task.OPEN_STATES).exclude(state='blocked')
 
-        if self.priority:
-            tasks = tasks.filter(workflows__priority=True)
-
         return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
@@ -633,60 +587,6 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
-
-        if self.priority:
-            workflows = Workflow.objects\
-                .unclosed()\
-                .filter(priority=True)\
-                .select_related('country', 'locality')\
-                .annotate(
-                    n_tasks_open=Subquery(
-                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.OPEN, assigned_to=None)
-                        .values('workflows__pk')
-                        .annotate(cnt=Count(1))
-                        .values('cnt'),
-                        output_field=IntegerField()),
-                    n_tasks_assigned=Subquery(
-                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.OPEN)
-                        .exclude(assigned_to=None)
-                        .values('workflows__pk')
-                        .annotate(cnt=Count(1))
-                        .values('cnt'),
-                        output_field=IntegerField()),
-                    n_tasks_pending_review=Subquery(
-                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.PENDING_REVIEW)
-                        .values('workflows__pk')
-                        .annotate(cnt=Count(1))
-                        .values('cnt'),
-                        output_field=IntegerField()),
-                    n_tasks_done=Subquery(
-                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.DONE)
-                        .values('workflows__pk')
-                        .annotate(cnt=Count(1))
-                        .values('cnt'),
-                        output_field=IntegerField()),
-                    n_tasks_cancelled=Subquery(
-                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.CANCELLED)
-                        .values('workflows__pk')
-                        .annotate(cnt=Count(1))
-                        .values('cnt'),
-                        output_field=IntegerField()),
-                    ).all()
-
-            # sort by due date (desc + nulls last), then by id (asc)
-            def key(x):
-                return [-x.due_date.toordinal() if x.due_date else math.inf, x.pk]
-            context['priority_workflows'] = sorted(workflows, key=key)
-
-            for w in context['priority_workflows']:
-                w.task_counts = [
-                    (state, getattr(w, f'n_tasks_{state}') or 0, state.replace('_', ' '))
-                    for state in ['open', 'assigned', 'pending_review', 'done', 'cancelled']
-                ]
-                w.n_tasks = sum(n for s, n, l in w.task_counts)
-                w.n_tasks_complete = (w.n_tasks_done or 0) + (w.n_tasks_cancelled or 0)
-                w.pct_complete = (w.n_tasks_complete or 0) / (w.n_tasks or 1) * 100.0
-
         return context
 
 

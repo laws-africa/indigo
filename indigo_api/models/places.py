@@ -76,9 +76,6 @@ class Country(models.Model):
     def place_tasks(self):
         return self.tasks.filter(locality=None)
 
-    def place_workflows(self):
-        return self.workflows.filter(locality=None)
-
     @cached_property
     def settings(self):
         """ PlaceSettings object for this country.
@@ -170,9 +167,6 @@ class Locality(models.Model):
 
     def place_tasks(self):
         return self.tasks
-
-    def place_workflows(self):
-        return self.workflows
 
     def as_json(self):
         return {

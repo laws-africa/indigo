@@ -55,35 +55,6 @@
           <p><b>{% trans 'Note:' %}</b> {% trans 'The first (leftmost) sheet will be imported.' %}</p>
         {% endif %}
 
-        {% block topic-notice %}
-          <p class="alert alert-info col-md-6">{% trans "Please note we are phasing out projects; rather choose a topic. You're welcome to choose a project as well during the transition." %}</p>
-        {% endblock %}
-
-        <div class="mb-3">
-          <label for="{{ form.workflow.id_for_label }}">{% trans 'Choose a project for newly created tasks' %}</label>
-
-          {% if form.fields.workflow.choices %}
-            <div class="mb-3">
-              <div class="row">
-                <div class="col-md-6">
-                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="{% trans 'Choose a project' %}">
-                    {% for option in form.workflow %}
-                      {{ option }}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            {% for err in form.workflow.errors %}
-              <div class="form-text text-danger">{{ err }}</div>
-            {% endfor %}
-          {% else %}
-            <div class="text-danger">{% trans 'There are no projects (create one and refresh this page)' %}</div>
-          {% endif %}
-
-          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">{% trans 'Create a new project' %}</a>
-        </div>
-
         {% block topic %}
           <div class="mb-3">
             <label for="{{ form.taxonomy_topic.id_for_label }}">{% trans 'Choose a topic for newly created works' %}</label>

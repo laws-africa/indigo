@@ -222,7 +222,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
     is_consolidation = False
     consolidation_date = None
 
-    workflow = None
     taxonomy_topic = None
     block_conversion_tasks = False
     cancel_conversion_tasks = False
@@ -384,7 +383,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return rows
 
     def create_works(self, table, dry_run, form_data):
-        self.workflow = form_data.get('workflow')
         self.taxonomy_topic = form_data.get('taxonomy_topic')
         self.block_conversion_tasks = form_data.get('block_conversion_tasks')
         self.cancel_conversion_tasks = form_data.get('cancel_conversion_tasks')
@@ -1207,9 +1205,6 @@ Possible reasons:
 
     def update_task(self, task, task_type):
         """ Update the task based on what was chosen in the form. """
-        if self.workflow:
-            task.workflows.set([self.workflow])
-            task.save()
 
         if 'pending-commencement' in task_type:
             # add the `pending commencement` label, if it exists

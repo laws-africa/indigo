@@ -2,7 +2,7 @@ from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.decorators.cache import cache_page
 
-from .views import users, works, documents, tasks, places, workflows
+from .views import users, works, documents, tasks, places
 
 
 urlpatterns = [
@@ -62,7 +62,6 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
     path('places/<str:place>/tasks/<int:pk>/assign-to', tasks.TaskAssignToView.as_view(), name='assign_task_to'),
     path('places/<str:place>/tasks/<int:pk>/unassign', tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),
-    path('places/<str:place>/tasks/<int:pk>/projects', tasks.TaskChangeWorkflowsView.as_view(), name='task_workflows'),
     path('places/<str:place>/tasks/<int:pk>/blocking-tasks', tasks.TaskChangeBlockingTasksView.as_view(), name='task_blocked_by'),
     path('places/<str:place>/tasks/<int:pk>/submit', tasks.TaskChangeStateView.as_view(change='submit'), name='submit_task'),
     path('places/<str:place>/tasks/<int:pk>/finish', tasks.TaskChangeStateView.as_view(change='finish'), name='finish_task'),
@@ -75,16 +74,6 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>/edit-labels', tasks.TaskEditLabelsView.as_view(), name='task_labels'),
     path('places/<str:place>/tasks/<int:pk>/input-file', tasks.TaskFileView.as_view(task_file='input_file'), name='task_input_file'),
     path('places/<str:place>/tasks/<int:pk>/output-file', tasks.TaskFileView.as_view(task_file='output_file'), name='task_output_file'),
-
-    path('places/<str:place>/projects', workflows.WorkflowListView.as_view(), name='workflows'),
-    path('places/<str:place>/projects/new', workflows.WorkflowCreateView.as_view(), name='workflow_create'),
-    path('places/<str:place>/projects/<int:pk>', workflows.WorkflowDetailView.as_view(), name='workflow_detail'),
-    path('places/<str:place>/projects/<int:pk>/edit', workflows.WorkflowEditView.as_view(), name='workflow_edit'),
-    path('places/<str:place>/projects/<int:pk>/tasks', workflows.WorkflowAddTasksView.as_view(), name='workflow_add_tasks'),
-    path('places/<str:place>/projects/<int:pk>/close', workflows.WorkflowCloseView.as_view(), name='workflow_close'),
-    path('places/<str:place>/projects/<int:pk>/reopen', workflows.WorkflowReopenView.as_view(), name='workflow_reopen'),
-    path('places/<str:place>/projects/<int:pk>/delete', workflows.WorkflowDeleteView.as_view(), name='workflow_delete'),
-    path('places/<str:place>/projects/<int:pk>/tasks/<int:task_pk>/remove', workflows.WorkflowRemoveTaskView.as_view(), name='workflow_remove_task'),
 
     path('places/<str:place>/works/new', works.AddWorkView.as_view(), name='new_work'),
     path('places/<str:place>/works/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),

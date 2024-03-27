@@ -294,41 +294,6 @@
           </div>
         </div>
 
-        <div class="card mb-3">
-          <h6 class="card-header">{% trans 'Projects' %}</h6>
-          <div class="card-body">
-            {% with task.workflows.all as workflows %}
-              {% if task.change_task_permission %}
-                <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
-                      id="task-workflow-form" onchange="this.submit();">
-                  {% csrf_token %}
-
-                  <select class="selectpicker" multiple name="workflows"
-                          data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
-                          data-none-selected-text="{% trans 'Choose projects' %}" data-selected-text-format="static"
-                          data-live-search="true" data-size="7">
-
-                    {% for workflow in possible_workflows|dictsort:'title' %}
-                      <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>
-                        #{{ workflow.pk }} – {{ workflow.title }}</option>
-                    {% endfor %}
-                  </select>
-                </form>
-              {% endif %}
-              <ul class="list-unstyled mb-2">
-                {% if workflows %}
-                  {% for workflow in workflows|dictsort:'title' %}
-                    <li>
-                      <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }}
-                        – {{ workflow.title }}</a></li>
-                  {% endfor %}
-                {% else %}
-                  <li><em>{% trans 'None' %}</em></li>
-                {% endif %}
-              </ul>
-            {% endwith %}
-          </div>
-        </div>
 
         <div class="card mb-3">
           <h6 class="card-header">{% trans 'Blocked by' %}</h6>

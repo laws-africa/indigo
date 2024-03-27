@@ -2,51 +2,6 @@
 
 <div class="card mb-3 task-list-card {% if task_border %} task-border-{{ task.state }} {% endif %}" id="task-{{ task.id }}">
   <div class="card-body">
-    <!-- Workflow controls -->
-    {% if workflow_controls %}
-      <form method="POST">
-        {% csrf_token %}
-
-        <div class="dropdown float-end">
-          <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
-          <div class="dropdown-menu">
-            {% if task.state == 'open' and task.submit_task_permission %}
-              <button type="submit"
-                      class="dropdown-item"
-                      formaction="{% url 'submit_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="{{ task.submission_message }}">
-                {% trans 'Submit for review' %}
-              </button>
-            {% endif %}
-            {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
-              <button type="submit"
-                      class="dropdown-item"
-                      formaction="{% url 'unsubmit_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="{% trans 'Are you sure you want to request changes to this task?' %}">
-                {% trans 'Request changes' %}
-              </button>
-            {% endif %}
-            {% if task.state == 'pending_review' and task.close_task_permission %}
-              <button type="submit"
-                      class="dropdown-item"
-                      formaction="{% url 'close_task' place=task.place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="{% trans 'Are you sure you want to approve this task?' %}">
-                {% trans 'Approve' %}
-              </button>
-            {% endif %}
-            {% if workflow.pk %}
-              <button type="submit"
-                      class="dropdown-item"
-                      formaction="{% url 'workflow_remove_task' place=task.place.place_code pk=workflow.pk task_pk=task.pk %}"
-                      data-confirm="{% trans 'Are you sure you want to remove this task?' %}">
-                {% trans 'Remove from project' %}
-              </button>
-            {% endif %}
-          </div>
-      </div>
-    </form>
-    {% endif %}
-
     <!-- card heading -->
     <div class="d-flex align-items-center justify-content-between mb-1">
       <div class="small text-muted">

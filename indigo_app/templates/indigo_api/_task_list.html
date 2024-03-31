@@ -88,6 +88,10 @@
   {% endfor %}
   </tbody>
 </table>
+
+  <nav class="mt-4">
+    {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+  </nav>
 {% else %}
 <div class="card-body">
   <p class="alert alert-info">{% trans 'No tasks found' %}</p>

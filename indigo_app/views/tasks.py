@@ -22,6 +22,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
+from django_htmx.http import push_url
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
@@ -64,7 +65,8 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
+            pass
+            # params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
         if not params.get('sortby'):
             params.setlist('sortby', ['-updated_at'])
 
@@ -72,6 +74,19 @@ class TaskListView(TaskViewBase, ListView):
         self.form.is_valid()
 
         return super().get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.form.data_as_url()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_api/_task_list.html']
+        return super().get_template_names()
 
     def get_base_queryset(self):
         return Task.objects \
@@ -90,11 +105,37 @@ class TaskListView(TaskViewBase, ListView):
         context['total_tasks'] = self.get_base_queryset().count()
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context["work_facets"] = self.form.task_work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)
         Task.decorate_permissions(context['tasks'], self.request.user)
 
+        return context
+
+
+class TaskFacetsView(TaskViewBase, TemplateView):
+    template_name = "indigo_api/task_facets.html"
+
+    def get_base_queryset(self):
+        return Task.objects \
+            .filter(country=self.country, locality=self.locality) \
+            .select_related('document__language', 'document__language__language') \
+            .defer('document__document_xml')
+
+    def get(self, request, *args, **kwargs):
+        self.form = TaskFilterForm(self.country, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form
+        context['task_form'] = self.task_form
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
+        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
         return context
 
 

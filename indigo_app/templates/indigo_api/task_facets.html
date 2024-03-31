@@ -14,6 +14,6 @@
     {{ taxonomy_toc|json_script:"taxonomy_toc" }}
   </div>
 </div>
-{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets form_id="work-filter-form" %}
-{% include "indigo_app/place/_works_facet_list_group.html" with facets=document_facets form_id="work-filter-form" %}
 
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=task_facets form_id="task-filter-form" %}
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets form_id="task-filter-form" %}

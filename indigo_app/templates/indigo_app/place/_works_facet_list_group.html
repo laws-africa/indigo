@@ -9,7 +9,7 @@
               <input id="{{ facet.name }}_{{ forloop.counter0 }}" class="form-check-input facet"
                      type="{{ facet.type }}" name="{{ facet.name }}" value="{{ item.value }}"
                      {% if item.selected %}checked{% endif %}
-                     form="work-filter-form">
+                     form="{{ form_id }}">
               <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">{{ item.label }}</label>
             </div>
             <span class="badge text-bg-light">{{ item.count|default_if_none:'' }}</span>

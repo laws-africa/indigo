@@ -105,7 +105,7 @@ class TaskListView(TaskViewBase, ListView):
         context['total_tasks'] = self.get_base_queryset().count()
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        context["work_facets"] = self.form.task_work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
 
         # warn when submitting task on behalf of another user
@@ -132,7 +132,6 @@ class TaskFacetsView(TaskViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
-        context['task_form'] = self.task_form
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
         context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
@@ -623,11 +622,33 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
 
         return self.form.filter_queryset(tasks)
 
+    def get_base_queryset(self):
+        return Task.objects \
+            .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all()) \
+            .select_related('document__language', 'document__language__language') \
+            .defer('document__document_xml') \
+            .order_by('-updated_at')
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.form.data_as_url()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_api/_task_list.html']
+        return super().get_template_names()
+
     def get_context_data(self, **kwargs):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
         return context
 
 

@@ -200,10 +200,8 @@ class TaskFilterForm(WorkFilterForm):
 
         return queryset
 
-
-    def task_work_facets(self, queryset, taxonomy_toc, places_toc):
-        work_facets = self.work_facets(Work.objects.all(), taxonomy_toc, places_toc)
-        return work_facets
+    def work_facets(self, queryset, taxonomy_toc, places_toc):
+        return super().work_facets(Work.objects.all(), taxonomy_toc, places_toc)
 
     def task_facets(self, queryset):
         facets = []

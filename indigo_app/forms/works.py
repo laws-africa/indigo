@@ -804,7 +804,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         super().__init__(*args, **kwargs)
         doctypes = [(d[1].lower(), d[0]) for d in
                     settings.INDIGO['DOCTYPES'] +
-                    settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
+                    settings.INDIGO['EXTRA_DOCTYPES'].get(getattr(self.country, "code", None), [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
         self.fields['place'].choices = [

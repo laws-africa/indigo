@@ -29,15 +29,6 @@
 
           {% include 'indigo_api/_task_bulk_update_form.html' %}
         </div>
-
-        <div class="text-muted mb-3 p-1">
-          {% blocktrans trimmed count count=paginator.count %}
-            {{ count }} task (of {{ total_tasks }} total)
-          {% plural %}
-            {{ count }} tasks (of {{ total_tasks }} total)
-          {% endblocktrans %}
-        </div>
-
         <div id="task-list">
           {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
         </div>

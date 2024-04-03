@@ -4,7 +4,7 @@
       id="task-filter-form"
       hx-get="{% url 'tasks' place.place_code %}"
       hx-target="#task-list"
-      hx-trigger="submit, change, change from:#task-list target:.facet"
+      hx-trigger="submit, change, change from:#task-list target:.facet delay:1s"
       >
 
   <div class="d-flex flex-row">

@@ -17,7 +17,7 @@
               id="task-filter-form"
               hx-get="{% url 'available_tasks' %}"
               hx-target="#task-list"
-              hx-trigger="submit, change, change from:#task-facets target:.facet" >
+              hx-trigger="submit, change, change from:#task-list target:.facet delay:1s, " >
           <div class="d-flex">
             <div>
               <select class="form-control selectpicker notooltip col-2 ms-2"

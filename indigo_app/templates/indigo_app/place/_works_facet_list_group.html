@@ -12,7 +12,9 @@
                      form="{{ form_id }}">
               <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">{{ item.label }}</label>
             </div>
+          {% if not hide_counts %}
             <span class="badge text-bg-light">{{ item.count|default_if_none:'' }}</span>
+          {% endif %}
           </div>
         {% endfor %}
       </div>

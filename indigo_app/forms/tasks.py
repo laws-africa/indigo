@@ -194,7 +194,7 @@ class TaskFilterForm(WorkFilterForm):
             queryset = queryset.order_by(self.cleaned_data['sortby'])
 
         work_queryset = super().filter_queryset(Work.objects.all(), exclude=exclude)
-        queryset = queryset.filter(work__in=work_queryset)
+        queryset = queryset.filter(Q(work__in=work_queryset) | Q(work__isnull=True))
 
         return queryset
 

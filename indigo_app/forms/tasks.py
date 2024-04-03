@@ -144,7 +144,7 @@ class TaskFilterForm(WorkFilterForm):
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
-    taxonomy_topic = forms.CharField()
+    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
@@ -188,9 +188,7 @@ class TaskFilterForm(WorkFilterForm):
                 .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
 
         if self.cleaned_data.get('taxonomy_topic'):
-            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
-            topics = [topic] + [t for t in topic.get_descendants()]
-            queryset = queryset.filter(work__taxonomy_topics__in=topics)
+            queryset = queryset.filter(work__taxonomy_topics__in=self.cleaned_data['taxonomy_topic'])
 
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data['sortby'])

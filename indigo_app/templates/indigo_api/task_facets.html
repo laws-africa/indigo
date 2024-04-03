@@ -2,7 +2,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div data-vue-component="TaxonomyTOC" data-checkbox="place" data-tree="#places_toc"
-           data-selected="{{ form.place.value|join:' ' }}"></div>
+           data-selected="{{ form.place.value|join:' ' }}" data-form="task-filter-form"></div>
       {{ places_toc|json_script:"places_toc" }}
     </div>
   </div>
@@ -10,7 +10,7 @@
 <div class="card mb-3">
   <div class="card-body">
     <div data-vue-component="TaxonomyTOC" data-checkbox="taxonomy_topic" data-tree="#taxonomy_toc"
-         data-selected="{{ form.taxonomy_topic.value|join:' ' }}"></div>
+         data-selected="{{ form.taxonomy_topic.value|join:' ' }}" data-form="task-filter-form"></div>
     {{ taxonomy_toc|json_script:"taxonomy_toc" }}
   </div>
 </div>

@@ -611,12 +611,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         return super(AvailableTasksView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        tasks = Task.objects \
-            .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all())\
-            .select_related('document__language', 'document__language__language') \
-            .defer('document__document_xml')\
-            .order_by('-updated_at')
-
+        tasks = self.get_base_queryset()
         if not self.form.cleaned_data.get('state'):
             tasks = tasks.filter(state__in=Task.OPEN_STATES).exclude(state='blocked')
 
@@ -649,6 +644,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
+        context['total_tasks'] = self.get_base_queryset().count()
         return context
 
 

@@ -1,13 +1,15 @@
 {% load humanize indigo_app i18n %}
-<div class="text-muted mb-3 p-1">
-  {% blocktrans trimmed count count=paginator.count %}
-    {{ count }} task (of {{ total_tasks }} total)
-  {% plural %}
-    {{ count }} tasks (of {{ total_tasks }} total)
-  {% endblocktrans %}
-</div>
-
 {% if tasks %}
+  {% if paginator %}
+    <div class="text-muted mb-3 p-1">
+      {% blocktrans trimmed count count=paginator.count %}
+        {{ count }} task (of {{ total_tasks }} total)
+      {% plural %}
+        {{ count }} tasks (of {{ total_tasks }} total)
+      {% endblocktrans %}
+    </div>
+  {% endif %}
+
 <table class="table table-striped table-sm mb-0">
   <thead>
     <tr>
@@ -95,10 +97,11 @@
   {% endfor %}
   </tbody>
 </table>
-
+{% if paginator %}
   <nav class="mt-4">
     {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
   </nav>
+{% endif %}
 {% else %}
 <div class="card-body">
   <p class="alert alert-info">{% trans 'No tasks found' %}</p>

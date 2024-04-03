@@ -5,47 +5,38 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-
-  <div class="row">
-    <div class="col-md-3" id="task-facets">
-      {% include "indigo_api/task_facets.html" %}
-    </div>
-    <div class="col-md">
+    <div class="row justify-content-end">
+    <div class="col-md-9">
       <h4>{% trans "Available tasks" %} <span class="badge text-bg-light">{{ paginator.count }}</span></h4>
-      <div class="card">
-        <div class="card-header">
-          <form method="GET"
-                id="task-filter-form"
-                hx-get="{% url 'available_tasks' %}"
-                hx-target="#task-list"
-                hx-trigger="submit, change, change from:#task-facets target:.facet" >
-            <div class="d-flex">
-              <div>
-                <select class="form-control selectpicker notooltip col-2 ms-2"
-                        id="{{ form.country.id_for_label }}" name="{{ form.country.html_name }}"
-                        data-style="btn-outline-success" title="Country"
-                        data-actions-box="true"
-                        data-live-search="true" data-size="7" multiple>
-                  {% for opt in form.country %}
-                    {{ opt }}
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        {% if tasks %}
-          <div id="task-list">
-            {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
-          </div>
-        {% else %}
-          <div class="card-body">
-            <p class="text-center"><em>{% trans "No tasks found." %}</em></p>
-          </div>
-        {% endif %}
-      </div>
     </div>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col-md-9 mb-3 ">
+        <form method="GET"
+              id="task-filter-form"
+              hx-get="{% url 'available_tasks' %}"
+              hx-target="#task-list"
+              hx-trigger="submit, change, change from:#task-facets target:.facet" >
+          <div class="d-flex">
+            <div>
+              <select class="form-control selectpicker notooltip col-2 ms-2"
+                      id="{{ form.country.id_for_label }}" name="{{ form.country.html_name }}"
+                      data-style="btn-outline-success" title="Country"
+                      data-actions-box="true"
+                      data-live-search="true" data-size="7" multiple>
+                {% for opt in form.country %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </form>
+    </div>
+  </div>
+
+  <div id="task-list">
+    {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
   </div>
 </div>
 {% endblock %}

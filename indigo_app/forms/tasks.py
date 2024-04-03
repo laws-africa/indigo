@@ -163,32 +163,37 @@ class TaskFilterForm(WorkFilterForm):
         if self.cleaned_data.get('country'):
             queryset = queryset.filter(country__in=self.cleaned_data['country'])
 
-        if self.cleaned_data.get('type'):
-            queryset = queryset.filter(code__in=self.cleaned_data['type'])
+        if exclude != 'type':
+            if self.cleaned_data.get('type'):
+                queryset = queryset.filter(code__in=self.cleaned_data['type'])
 
-        if self.cleaned_data.get('labels'):
-            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
+        if exclude != 'labels':
+            if self.cleaned_data.get('labels'):
+                queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
-        if self.cleaned_data.get('state'):
-            if 'assigned' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
-                if 'open' not in self.cleaned_data['state']:
-                    queryset = queryset.exclude(state='open', assigned_to=None)
-            elif 'pending_review' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
-                           queryset.filter(state='pending_review')
-            else:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
+        if exclude != 'state':
+            if self.cleaned_data.get('state'):
+                if 'assigned' in self.cleaned_data['state']:
+                    queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
+                    if 'open' not in self.cleaned_data['state']:
+                        queryset = queryset.exclude(state='open', assigned_to=None)
+                elif 'pending_review' in self.cleaned_data['state']:
+                    queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
+                               queryset.filter(state='pending_review')
+                else:
+                    queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
 
-        if self.cleaned_data.get('assigned_to'):
-            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+        if exclude != 'assigned_to':
+            if self.cleaned_data.get('assigned_to'):
+                queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
 
-        if self.cleaned_data.get('submitted_by'):
-            queryset = queryset.filter(state__in=['pending_review', 'closed'])\
-                .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+        if exclude != 'submitted_by':
+            if self.cleaned_data.get('submitted_by'):
+                queryset = queryset.filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
 
-        if self.cleaned_data.get('taxonomy_topic'):
-            queryset = queryset.filter(work__taxonomy_topics__in=self.cleaned_data['taxonomy_topic'])
+        if exclude != 'taxonomy_topic':
+            if self.cleaned_data.get('taxonomy_topic'):
+                queryset = queryset.filter(work__taxonomy_topics__in=self.cleaned_data['taxonomy_topic'])
 
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data['sortby'])
@@ -211,7 +216,7 @@ class TaskFilterForm(WorkFilterForm):
         return facets
 
     def facet_labels(self, facets, qs):
-        qs = self.filter_queryset(qs)
+        qs = self.filter_queryset(qs, exclude='labels')
         count_kwargs = {label.slug: Count('pk', filter=Q(labels=label)) for label in TaskLabel.objects.all()}
         counts = qs.aggregate(**count_kwargs)
 
@@ -223,7 +228,7 @@ class TaskFilterForm(WorkFilterForm):
         facets.append(self.facet("labels", "checkbox", items))
 
     def facet_state(self, facets, qs):
-        qs = self.filter_queryset(qs)
+        qs = self.filter_queryset(qs, exclude='state')
         count_kwargs = {state: Count('pk', filter=Q(state=state)) for state, _ in Task.STATE_CHOICES}
         counts = qs.aggregate(**count_kwargs)
         items = [
@@ -233,7 +238,7 @@ class TaskFilterForm(WorkFilterForm):
         facets.append(self.facet("state", "checkbox", items))
 
     def facet_assigned_to(self, facets, qs):
-        qs = self.filter_queryset(qs)
+        qs = self.filter_queryset(qs, exclude='assigned_to')
         count_kwargs = {str(user.pk): Count('pk', filter=Q(assigned_to=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
         counts = qs.aggregate(**count_kwargs)
         items = [
@@ -243,8 +248,8 @@ class TaskFilterForm(WorkFilterForm):
         facets.append(self.facet("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
-        qs = self.filter_queryset(qs)
-        count_kwargs = {str(user.pk): Count('pk', filter=Q(assigned_to=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
+        qs = self.filter_queryset(qs, exclude='submitted_by')
+        count_kwargs = {str(user.pk): Count('pk', filter=Q(submitted_by_user=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
         counts = qs.aggregate(**count_kwargs)
         items = [
             (user.pk, counts.get(str(user.pk), 0))
@@ -253,7 +258,7 @@ class TaskFilterForm(WorkFilterForm):
         facets.append(self.facet("submitted_by", "checkbox", items))
 
     def facet_task_type(self, facets, qs):
-        qs = self.filter_queryset(qs)
+        qs = self.filter_queryset(qs, exclude='type')
         count_kwargs = {code: Count('pk', filter=Q(code=code)) for code, _ in Task.CODES}
         counts = qs.aggregate(**count_kwargs)
         items = [

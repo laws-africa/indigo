@@ -4,7 +4,7 @@
       id="task-filter-form"
       hx-get="{% url 'tasks' place.place_code %}"
       hx-target="#task-list"
-      hx-trigger="submit, change, change from:#task-facets target:.facet"
+      hx-trigger="submit, change, change from:#task-list target:.facet"
       >
 
   <div class="d-flex flex-row">
@@ -28,10 +28,5 @@
         </select>
       </div>
     </div>
-
-    {% if taxonomy %}
-      <!-- Hidden field to capture and preserve the taxonomy_topic parameter-->
-      {{ form.taxonomy_topic.as_hidden }}
-    {% endif %}
   </div>
 </form>

@@ -102,6 +102,10 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['total_tasks'] = self.get_base_queryset().count()
+        if self.request.htmx:
+            # don't show the place column
+            context['place'] = False
+            context['selectable'] = True
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])

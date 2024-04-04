@@ -43,6 +43,12 @@ class Language(models.Model):
         return cls.objects.get(language__iso_639_2T=code)
 
 
+class CountryManager(models.Manager):
+    def get_queryset(self):
+        # always load the related language model
+        return super().get_queryset().select_related('country')
+
+
 class Country(models.Model):
     """ The countries available in the UI. They aren't enforced by the API.
     """
@@ -55,6 +61,8 @@ class Country(models.Model):
         null=True,
         blank=True
     )
+
+    objects = CountryManager()
 
     class Meta:
         ordering = ['country__name']
@@ -147,6 +155,12 @@ def post_save_country(sender, instance, **kwargs):
         PlaceSettings.objects.create(country=instance)
 
 
+class LocalityManager(models.Manager):
+    def get_queryset(self):
+        # always load the related language model
+        return super().get_queryset().select_related('country', 'country__country')
+
+
 class Locality(models.Model):
     """ The localities available in the UI. They aren't enforced by the API.
     """
@@ -154,6 +168,8 @@ class Locality(models.Model):
                                 verbose_name=_("country"))
     name = models.CharField(_("name"), max_length=512, null=False, blank=False, help_text=_("Local name of this locality"))
     code = models.CharField(_("code"), max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
+
+    objects = LocalityManager()
 
     class Meta:
         ordering = ['name']

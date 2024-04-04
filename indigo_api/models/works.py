@@ -71,7 +71,7 @@ class TaxonomyTopic(MP_Node):
         super().save(*args, **kwargs)
 
     @classmethod
-    def get_toc_tree(cls, query_dict, all_topics=True):
+    def get_toc_tree(cls, query_dict):
         # capture all preserve all filter parameters and add taxonomy_topic
         new_query = query_dict.copy()
         new_query.pop('taxonomy_topic', None)
@@ -88,13 +88,6 @@ class TaxonomyTopic(MP_Node):
         for x in tree:
             fix_up(x)
 
-        if all_topics:
-            tree = [{
-                "title": _("All topics"),
-                "href": f"?{new_query.urlencode()}",
-                "data": {"slug": None},
-                "children": [],
-            }] + tree
         return tree
 
     @classmethod

@@ -65,8 +65,7 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            pass
-            # params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
         if not params.get('sortby'):
             params.setlist('sortby', ['-updated_at'])
 
@@ -132,7 +131,7 @@ class TaskFacetsView(TaskViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
         return context

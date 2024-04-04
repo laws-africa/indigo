@@ -139,20 +139,17 @@ class TaskEditLabelsForm(forms.ModelForm):
 class TaskFilterForm(WorkFilterForm):
     labels = forms.ModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
-    format = forms.ChoiceField(choices=[('columns', _('columns')), ('list', _('list'))])
     assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
-    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
     ])
 
-    def __init__(self, country, *args, **kwargs):
-        self.country = country
-        super().__init__(self.country, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
         self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 

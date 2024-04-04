@@ -148,8 +148,10 @@ class TaskFilterForm(WorkFilterForm):
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
     ])
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, country, locality, *args, **kwargs):
+        super().__init__(country, *args, **kwargs)
+        self.locality = locality
+        self.works_queryset = Work.objects.filter(country=country, locality=locality)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
         self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 
@@ -195,13 +197,10 @@ class TaskFilterForm(WorkFilterForm):
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data['sortby'])
 
-        work_queryset = super().filter_queryset(Work.objects.all(), exclude=exclude)
-        queryset = queryset.filter(Q(work__in=work_queryset) | Q(work__isnull=True))
+        works_queryset = super().filter_queryset(self.works_queryset, exclude=exclude)
+        queryset = queryset.filter(Q(work__in=works_queryset) | Q(work__isnull=True))
 
         return queryset
-
-    def work_facets(self, queryset, taxonomy_toc, places_toc):
-        return super().work_facets(Work.objects.all(), taxonomy_toc, places_toc)
 
     def task_facets(self, queryset):
         facets = []

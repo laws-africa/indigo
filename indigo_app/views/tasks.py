@@ -69,7 +69,7 @@ class TaskListView(TaskViewBase, ListView):
         if not params.get('sortby'):
             params.setlist('sortby', ['-updated_at'])
 
-        self.form = TaskFilterForm(self.country, params)
+        self.form = TaskFilterForm(self.country, self.locality, params)
         self.form.is_valid()
 
         return super().get(request, *args, **kwargs)
@@ -108,7 +108,7 @@ class TaskListView(TaskViewBase, ListView):
             context['selectable'] = True
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
 
         # warn when submitting task on behalf of another user
@@ -128,7 +128,7 @@ class TaskFacetsView(TaskViewBase, TemplateView):
             .defer('document__document_xml')
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(self.country, request.GET)
+        self.form = TaskFilterForm(self.country, self.locality, request.GET)
         self.form.is_valid()
         return super().get(request, *args, **kwargs)
 
@@ -609,7 +609,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     permission_required = ('indigo_api.view_task',)
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(None, request.GET)
+        self.form = TaskFilterForm(None, None, request.GET)
         self.form.is_valid()
         return super(AvailableTasksView, self).get(request, *args, **kwargs)
 
@@ -714,7 +714,7 @@ class TaxonomyTopicTaskDetailView(AbstractAuthedIndigoView, DetailView):
         return self.form.filter_queryset(tasks)
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(None, request.GET)
+        self.form = TaskFilterForm(None, None, request.GET)
         self.form.is_valid()
         return super().get(request, *args, **kwargs)
 

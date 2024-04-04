@@ -812,6 +812,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         ] + [
             (loc.place_code, loc.name) for loc in Locality.objects.all()
         ]
+        self.subtypes = Subtype.objects.all()
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
@@ -913,7 +914,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         if exclude != "subtype":
             subtype_filter = self.cleaned_data.get("subtype", [])
             subtype_qs = Q()
-            subtypes = [s.abbreviation for s in Subtype.objects.all()]
+            subtypes = [s.abbreviation for s in self.subtypes]
             for subtype in subtype_filter:
                 if subtype in subtypes:
                     subtype_qs |= Q(subtype=subtype)

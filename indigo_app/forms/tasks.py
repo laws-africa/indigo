@@ -214,13 +214,10 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_labels(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='labels')
-        count_kwargs = {label.slug: Count('pk', filter=Q(labels=label)) for label in TaskLabel.objects.all()}
-        counts = qs.aggregate(**count_kwargs)
-
+        counts = qs.values('labels__slug').annotate(count=Count('pk')).filter(labels__isnull=False).order_by()
         items = [
-            (label.slug, counts.get(label.slug, 0))
-            for label in TaskLabel.objects.all()
-
+            (c['labels__slug'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("labels", "checkbox", items))
 
@@ -236,21 +233,19 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')
-        count_kwargs = {str(user.pk): Count('pk', filter=Q(assigned_to=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
-        counts = qs.aggregate(**count_kwargs)
+        counts = qs.values('assigned_to').annotate(count=Count('pk')).filter(assigned_to__isnull=False).order_by()
         items = [
-            (user.pk, counts.get(str(user.pk), 0))
-            for user in User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+            (c['assigned_to'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='submitted_by')
-        count_kwargs = {str(user.pk): Count('pk', filter=Q(submitted_by_user=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
-        counts = qs.aggregate(**count_kwargs)
+        counts = qs.values('submitted_by_user').annotate(count=Count('pk')).filter(submitted_by_user__isnull=False).order_by()
         items = [
-            (user.pk, counts.get(str(user.pk), 0))
-            for user in User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+            (c['submitted_by_user'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("submitted_by", "checkbox", items))
 
@@ -259,8 +254,10 @@ class TaskFilterForm(WorkFilterForm):
         count_kwargs = {code: Count('pk', filter=Q(code=code)) for code, _ in Task.CODES}
         counts = qs.aggregate(**count_kwargs)
         items = [
-            (code, counts.get(code, 0))
+            (code, counts[code])
             for code, _ in Task.CODES
+            # don't show zero counts
+            if counts.get(code, 0)
         ]
         facets.append(self.facet("type", "checkbox", items))
 

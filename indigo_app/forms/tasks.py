@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
+from django.http import QueryDict
 
-from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile, Work
+from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work
 from indigo_app.forms.works import WorkFilterForm
-from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class TaskForm(forms.ModelForm):
@@ -148,12 +148,24 @@ class TaskFilterForm(WorkFilterForm):
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
     ])
 
-    def __init__(self, country, locality, *args, **kwargs):
-        super().__init__(country, *args, **kwargs)
+    def __init__(self, country, locality, data, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(data)
+
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
+        if not params.get('sortby'):
+            params.setlist('sortby', ['-updated_at'])
+
+        super().__init__(country, params, *args, **kwargs)
+
         self.locality = locality
-        self.works_queryset = Work.objects.filter(country=country, locality=locality)
-        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
-        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
+        if country:
+            self.works_queryset = Work.objects.filter(country=country, locality=locality)
+        else:
+            self.works_queryset = Work.objects.all()
 
     def filter_queryset(self, queryset, exclude=None):
         if queryset.model is Work:

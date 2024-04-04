@@ -1,6 +1,5 @@
 import datetime
 import json
-import math
 from itertools import chain
 
 from actstream import action
@@ -10,8 +9,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.db.models import Subquery, OuterRef, Count, IntegerField
-from django.http import QueryDict, Http404
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -59,17 +57,7 @@ class TaskListView(TaskViewBase, ListView):
     js_view = 'TaskListView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
-        # allows us to set defaults on the form
-        params = QueryDict(mutable=True)
-        params.update(request.GET)
-
-        # initial state
-        if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
-        if not params.get('sortby'):
-            params.setlist('sortby', ['-updated_at'])
-
-        self.form = TaskFilterForm(self.country, self.locality, params)
+        self.form = TaskFilterForm(self.country, self.locality, request.GET)
         self.form.is_valid()
 
         return super().get(request, *args, **kwargs)
@@ -97,7 +85,7 @@ class TaskListView(TaskViewBase, ListView):
         return self.form.filter_queryset(self.get_base_queryset())
 
     def get_context_data(self, **kwargs):
-        context = super(TaskListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
@@ -115,29 +103,6 @@ class TaskListView(TaskViewBase, ListView):
         Task.decorate_submission_message(context['tasks'], self)
         Task.decorate_permissions(context['tasks'], self.request.user)
 
-        return context
-
-
-class TaskFacetsView(TaskViewBase, TemplateView):
-    template_name = "indigo_api/task_facets.html"
-
-    def get_base_queryset(self):
-        return Task.objects \
-            .filter(country=self.country, locality=self.locality) \
-            .select_related('document__language', 'document__language__language') \
-            .defer('document__document_xml')
-
-    def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(self.country, self.locality, request.GET)
-        self.form.is_valid()
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
-        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
         return context
 
 
@@ -645,7 +610,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
-        context["work_facets"] = self.form.work_facets(self.get_base_queryset(), context['taxonomy_toc'], [])
+        context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset())
         context['total_tasks'] = self.get_base_queryset().count()
         return context

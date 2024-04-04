@@ -208,11 +208,11 @@ class TaskFilterForm(WorkFilterForm):
 
     def task_facets(self, queryset):
         facets = []
-        self.facet_labels(facets, queryset)
         self.facet_state(facets, queryset)
+        self.facet_task_type(facets, queryset)
+        self.facet_labels(facets, queryset)
         self.facet_assigned_to(facets, queryset)
         self.facet_submitted_by(facets, queryset)
-        self.facet_task_type(facets, queryset)
         return facets
 
     def facet_labels(self, facets, qs):

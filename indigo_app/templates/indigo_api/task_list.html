@@ -12,7 +12,8 @@
       <div>
         <div class="d-flex">
           <div class="flex-grow-1">
-            {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True taxonomy=True %}
+            {% url 'tasks' place.place_code as form_url %}
+            {% include 'indigo_api/_task_filter_form.html' %}
           </div>
 
           <div class="ps-3 border-left">

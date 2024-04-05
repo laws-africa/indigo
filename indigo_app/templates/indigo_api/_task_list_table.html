@@ -1,4 +1,5 @@
-{% load i18n %}
+{% load i18n indigo_app %}
+
 {% if tasks %}
   {% if paginator %}
     <div class="text-muted mb-3 p-1">
@@ -14,6 +15,9 @@
     <tr>
       {% block table-header %}
         <th scope="col" colspan="2">{% trans 'Task' %}</th>
+        {% if not hide_assigned_to %}
+          <th scope="col" class="text-nowrap">{% trans 'Assigned to' %}</th>
+        {% endif %}
         {% if place %}
           <th scope="col">{% trans 'Place' %}</th>
         {% endif %}
@@ -60,6 +64,16 @@
             {% endfor %}
           {% endblock %}
         </td>
+
+        {% if not hide_assigned_to %}
+          <td>
+            {% block col-assigned-to %}
+              {% if task.assigned_to %}
+                {% user_profile task.assigned_to %}
+              {% endif %}
+            {% endblock %}
+          </td>
+        {% endif %}
 
         {% if place %}
           <td>

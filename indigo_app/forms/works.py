@@ -723,6 +723,7 @@ class FacetItem:
     value: str
     count: int
     selected: bool
+    icon: str = ''
 
 
 @dataclass

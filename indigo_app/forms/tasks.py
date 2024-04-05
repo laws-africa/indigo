@@ -138,11 +138,10 @@ class TaskEditLabelsForm(forms.ModelForm):
 
 class TaskFilterForm(WorkFilterForm):
     labels = forms.ModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
-    assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
+    state = forms.MultipleChoiceField(label=_('State'), choices=Task.SIMPLE_STATE_CHOICES)
+    assigned_to = forms.MultipleChoiceField(label=_('Assigned to'), choices=[])
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
@@ -155,11 +154,14 @@ class TaskFilterForm(WorkFilterForm):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
+            params.setlist('state', ['open', 'pending_review'])
         if not params.get('sortby'):
             params.setlist('sortby', ['-updated_at'])
 
         super().__init__(country, params, *args, **kwargs)
+
+        # ensure assigned_to supports unassigned
+        self.fields['assigned_to'].choices = [('-', _('(Not assigned)'))] + [(str(u.pk), u.username) for u in User.objects.all()]
 
         self.locality = locality
         if country:
@@ -171,8 +173,12 @@ class TaskFilterForm(WorkFilterForm):
         if queryset.model is Work:
             return super().filter_queryset(queryset, exclude=exclude)
 
-        if self.cleaned_data.get('country'):
-            queryset = queryset.filter(country__in=self.cleaned_data['country'])
+        if exclude != "place":
+            q = Q()
+            for place in self.cleaned_data.get('place', []):
+                country, locality = Country.get_country_locality(place)
+                q |= Q(country=country, locality=locality)
+            queryset = queryset.filter(q)
 
         if exclude != 'type':
             if self.cleaned_data.get('type'):
@@ -184,19 +190,17 @@ class TaskFilterForm(WorkFilterForm):
 
         if exclude != 'state':
             if self.cleaned_data.get('state'):
-                if 'assigned' in self.cleaned_data['state']:
-                    queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
-                    if 'open' not in self.cleaned_data['state']:
-                        queryset = queryset.exclude(state='open', assigned_to=None)
-                elif 'pending_review' in self.cleaned_data['state']:
-                    queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
-                               queryset.filter(state='pending_review')
-                else:
-                    queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
+                queryset = queryset.filter(state__in=self.cleaned_data['state'])
 
         if exclude != 'assigned_to':
             if self.cleaned_data.get('assigned_to'):
-                queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+                options = [x for x in self.cleaned_data['assigned_to'] if x != '-']
+                q = Q()
+                if options:
+                    q |= Q(assigned_to__in=options)
+                if '-' in self.cleaned_data['assigned_to']:
+                    q |= Q(assigned_to__isnull=True)
+                queryset = queryset.filter(q)
 
         if exclude != 'submitted_by':
             if self.cleaned_data.get('submitted_by'):
@@ -214,13 +218,14 @@ class TaskFilterForm(WorkFilterForm):
 
         return queryset
 
-    def task_facets(self, queryset):
+    def task_facets(self, queryset, places_toc):
         facets = []
         self.facet_state(facets, queryset)
+        self.facet_assigned_to(facets, queryset)
         self.facet_task_type(facets, queryset)
         self.facet_labels(facets, queryset)
-        self.facet_assigned_to(facets, queryset)
         self.facet_submitted_by(facets, queryset)
+        self.facet_place(places_toc, queryset)
         return facets
 
     def facet_labels(self, facets, qs):
@@ -234,19 +239,22 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_state(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='state')
-        count_kwargs = {state: Count('pk', filter=Q(state=state)) for state, _ in Task.STATE_CHOICES}
-        counts = qs.aggregate(**count_kwargs)
+        counts = qs.values('state').annotate(count=Count('pk')).order_by()
         items = [
-            (state, counts.get(state, 0))
-            for state, _ in Task.STATE_CHOICES
+            (c['state'], c['count'])
+            for c in counts
         ]
+        items.sort(key=lambda x: Task.STATES.index(x[0]))
         facets.append(self.facet("state", "checkbox", items))
+
+        for item in facets[-1].items:
+            item.icon = f'task-icon-{item.value} text-{item.value} small'
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')
-        counts = qs.values('assigned_to').annotate(count=Count('pk')).filter(assigned_to__isnull=False).order_by()
+        counts = qs.values('assigned_to').annotate(count=Count('pk')).order_by()
         items = [
-            (c['assigned_to'], c['count'])
+            (str(c['assigned_to'] or '-'), c['count'])
             for c in counts
         ]
         facets.append(self.facet("assigned_to", "checkbox", items))

@@ -2,24 +2,13 @@
 
 <form method="GET"
       id="task-filter-form"
-      hx-get="{% url 'tasks' place.place_code %}"
+      hx-get="{{ form_url }}"
       hx-target="#task-list"
       hx-trigger="submit, change, change from:#task-list target:.facet delay:1s"
       >
 
   <div class="d-flex flex-row">
     <div class="d-flex flex-wrap">
-      {% if show_country %}
-        <div class="me-2 mb-2">
-          <select class="narrow selectpicker notooltip" multiple title="{{ form.country.label }}" name="{{ form.country.name }}"
-                  data-style="btn-outline-secondary" data-actions-box="true" data-live-search="true" data-size="7">
-            {% for opt in form.country %}
-              {{ opt }}
-            {% endfor %}
-          </select>
-        </div>
-      {% endif %}
-
       <div class="me-2 mb-2">
         <select class="form-control narrow" name="{{ form.sortby.html_name }}">
           {% for opt in form.sortby %}

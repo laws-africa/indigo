@@ -97,7 +97,7 @@ class TaskListView(TaskViewBase, ListView):
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
-        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset(), [])
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)
@@ -609,9 +609,28 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
+        countries = self.request.user.editor.permitted_countries.all()
+        countries = countries.prefetch_related('country', 'localities')
+        context['places_toc'] = [{
+            'title': country.name,
+            'data': {
+                'slug': country.code,
+                'count': 0,
+                'total': 0,
+            },
+            'children': [{
+                'title': loc.name,
+                'data': {
+                    'slug': loc.place_code,
+                    'count': 0,
+                    'total': 0,
+                },
+                'children': [],
+            } for loc in country.localities.all()]
+        } for country in countries]
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
-        context["task_facets"] = self.form.task_facets(self.get_base_queryset())
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset(), context['places_toc'])
         context['total_tasks'] = self.get_base_queryset().count()
         return context
 

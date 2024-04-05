@@ -142,7 +142,6 @@ class TaskFilterForm(WorkFilterForm):
     assigned_to = forms.MultipleChoiceField(label=_('Assigned to'), choices=[])
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
@@ -174,8 +173,12 @@ class TaskFilterForm(WorkFilterForm):
         if queryset.model is Work:
             return super().filter_queryset(queryset, exclude=exclude)
 
-        if self.cleaned_data.get('country'):
-            queryset = queryset.filter(country__in=self.cleaned_data['country'])
+        if exclude != "place":
+            q = Q()
+            for place in self.cleaned_data.get('place', []):
+                country, locality = Country.get_country_locality(place)
+                q |= Q(country=country, locality=locality)
+            queryset = queryset.filter(q)
 
         if exclude != 'type':
             if self.cleaned_data.get('type'):
@@ -215,13 +218,14 @@ class TaskFilterForm(WorkFilterForm):
 
         return queryset
 
-    def task_facets(self, queryset):
+    def task_facets(self, queryset, places_toc):
         facets = []
         self.facet_state(facets, queryset)
         self.facet_assigned_to(facets, queryset)
         self.facet_task_type(facets, queryset)
         self.facet_labels(facets, queryset)
         self.facet_submitted_by(facets, queryset)
+        self.facet_place(places_toc, queryset)
         return facets
 
     def facet_labels(self, facets, qs):

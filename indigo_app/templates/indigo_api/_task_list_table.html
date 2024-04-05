@@ -15,7 +15,9 @@
     <tr>
       {% block table-header %}
         <th scope="col" colspan="2">{% trans 'Task' %}</th>
-        <th scope="col" class="text-nowrap">{% trans 'Assigned to' %}</th>
+        {% if not hide_assigned_to %}
+          <th scope="col" class="text-nowrap">{% trans 'Assigned to' %}</th>
+        {% endif %}
         {% if place %}
           <th scope="col">{% trans 'Place' %}</th>
         {% endif %}
@@ -63,13 +65,15 @@
           {% endblock %}
         </td>
 
-        <td>
-          {% block col-assigned-to %}
-            {% if task.assigned_to %}
-              {% user_profile task.assigned_to %}
-            {% endif %}
-          {% endblock %}
-        </td>
+        {% if not hide_assigned_to %}
+          <td>
+            {% block col-assigned-to %}
+              {% if task.assigned_to %}
+                {% user_profile task.assigned_to %}
+              {% endif %}
+            {% endblock %}
+          </td>
+        {% endif %}
 
         {% if place %}
           <td>

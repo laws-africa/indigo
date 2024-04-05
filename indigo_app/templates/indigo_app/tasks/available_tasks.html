@@ -5,10 +5,8 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-  <h4>{% trans "Available tasks" %} <span class="badge text-bg-light">{{ paginator.count }}</span></h4>
-
-  <div class="row justify-content-end">
-    <div class="col-md-9 mb-3 ">
+  <div class="row">
+    <div class="col-md-9 offset-3 mb-3">
       {% url 'available_tasks' as form_url %}
       {% include 'indigo_api/_task_filter_form.html' with form_url=form_url %}
     </div>

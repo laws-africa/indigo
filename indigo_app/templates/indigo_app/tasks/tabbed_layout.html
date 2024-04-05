@@ -12,21 +12,12 @@
           <span class="badge text-bg-light">{{ tab_count }}</span>
         {% endif %}
       </a>
-      <a class="nav-item nav-link {% if view.tab == 'priority_tasks' %}active{% endif %}" href="{% url 'priority_tasks' %}">
-        {% trans "Priority tasks" %}
-        {% if view.tab == 'priority_tasks' %}
-          <span class="badge text-bg-light">{{ tab_count }}</span>
-        {% endif %}
-      </a>
       <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
         {% trans "All available tasks" %}
         {% if view.tab == 'available_tasks' %}
           <span class="badge text-bg-light">{{ tab_count }}</span>
         {% endif %}
       </a>
-        <a class="nav-item nav-link {% if view.tab == 'topics' %}active{% endif %}" href="{% url 'taxonomy_task_list' %}">
-          {% trans "Topics" %}
-        </a>
       {% endblock %}
     </nav>
   </div>

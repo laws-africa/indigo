@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
+from django.http import QueryDict
 
-from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile, Work
+from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work
 from indigo_app.forms.works import WorkFilterForm
-from indigo_app.forms.mixins import FormAsUrlMixin
 
 
 class TaskForm(forms.ModelForm):
@@ -139,22 +139,33 @@ class TaskEditLabelsForm(forms.ModelForm):
 class TaskFilterForm(WorkFilterForm):
     labels = forms.ModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
-    format = forms.ChoiceField(choices=[('columns', _('columns')), ('list', _('list'))])
     assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
     country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
-    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
     ])
 
-    def __init__(self, country, *args, **kwargs):
-        self.country = country
-        super().__init__(self.country, *args, **kwargs)
-        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
-        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
+    def __init__(self, country, locality, data, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(data)
+
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
+        if not params.get('sortby'):
+            params.setlist('sortby', ['-updated_at'])
+
+        super().__init__(country, params, *args, **kwargs)
+
+        self.locality = locality
+        if country:
+            self.works_queryset = Work.objects.filter(country=country, locality=locality)
+        else:
+            self.works_queryset = Work.objects.all()
 
     def filter_queryset(self, queryset, exclude=None):
         if queryset.model is Work:
@@ -198,13 +209,10 @@ class TaskFilterForm(WorkFilterForm):
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data['sortby'])
 
-        work_queryset = super().filter_queryset(Work.objects.all(), exclude=exclude)
-        queryset = queryset.filter(Q(work__in=work_queryset) | Q(work__isnull=True))
+        works_queryset = super().filter_queryset(self.works_queryset, exclude=exclude)
+        queryset = queryset.filter(Q(work__in=works_queryset) | Q(work__isnull=True))
 
         return queryset
-
-    def work_facets(self, queryset, taxonomy_toc, places_toc):
-        return super().work_facets(Work.objects.all(), taxonomy_toc, places_toc)
 
     def task_facets(self, queryset):
         facets = []
@@ -217,13 +225,10 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_labels(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='labels')
-        count_kwargs = {label.slug: Count('pk', filter=Q(labels=label)) for label in TaskLabel.objects.all()}
-        counts = qs.aggregate(**count_kwargs)
-
+        counts = qs.values('labels__slug').annotate(count=Count('pk')).filter(labels__isnull=False).order_by()
         items = [
-            (label.slug, counts.get(label.slug, 0))
-            for label in TaskLabel.objects.all()
-
+            (c['labels__slug'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("labels", "checkbox", items))
 
@@ -239,21 +244,19 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')
-        count_kwargs = {str(user.pk): Count('pk', filter=Q(assigned_to=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
-        counts = qs.aggregate(**count_kwargs)
+        counts = qs.values('assigned_to').annotate(count=Count('pk')).filter(assigned_to__isnull=False).order_by()
         items = [
-            (user.pk, counts.get(str(user.pk), 0))
-            for user in User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+            (c['assigned_to'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='submitted_by')
-        count_kwargs = {str(user.pk): Count('pk', filter=Q(submitted_by_user=user)) for user in User.objects.filter(editor__permitted_countries=self.country).all()}
-        counts = qs.aggregate(**count_kwargs)
+        counts = qs.values('submitted_by_user').annotate(count=Count('pk')).filter(submitted_by_user__isnull=False).order_by()
         items = [
-            (user.pk, counts.get(str(user.pk), 0))
-            for user in User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+            (c['submitted_by_user'], c['count'])
+            for c in counts
         ]
         facets.append(self.facet("submitted_by", "checkbox", items))
 
@@ -262,8 +265,10 @@ class TaskFilterForm(WorkFilterForm):
         count_kwargs = {code: Count('pk', filter=Q(code=code)) for code, _ in Task.CODES}
         counts = qs.aggregate(**count_kwargs)
         items = [
-            (code, counts.get(code, 0))
+            (code, counts[code])
             for code, _ in Task.CODES
+            # don't show zero counts
+            if counts.get(code, 0)
         ]
         facets.append(self.facet("type", "checkbox", items))
 

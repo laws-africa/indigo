@@ -48,7 +48,6 @@ urlpatterns = [
     path('places/<str:place>/localities', places.PlaceLocalitiesView.as_view(), name='place_localities'),
 
     path('places/<str:place>/tasks', tasks.TaskListView.as_view(), name='tasks'),
-    path('places/<str:place>/tasks/facets', tasks.TaskFacetsView.as_view(), name='tasks_facets'),
     path('places/<str:place>/tasks/new', tasks.TaskCreateView.as_view(), name='create_task'),
     path('places/<str:place>/tasks/work-chooser', tasks.TaskWorkChooserView.as_view(), name='task_work_chooser'),
     path('places/<str:place>/tasks/form/work', tasks.TaskFormWorkView.as_view(), name='task_form_work'),

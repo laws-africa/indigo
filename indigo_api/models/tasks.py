@@ -62,6 +62,15 @@ class Task(models.Model):
     OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
     UNBLOCKED_STATES = (OPEN, PENDING_REVIEW)
 
+    # these will later replace STATE_CHOICES
+    SIMPLE_STATE_CHOICES = (
+        (OPEN, _('Open')),
+        (PENDING_REVIEW, _('Pending review')),
+        (CANCELLED, _('Cancelled')),
+        (DONE, _('Done')),
+        (BLOCKED, _('Blocked')),
+    )
+
     STATE_CHOICES = [
         (BLOCKED, _('Blocked')),
         (OPEN, _('Open')),

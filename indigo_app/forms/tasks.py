@@ -155,7 +155,7 @@ class TaskFilterForm(WorkFilterForm):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'pending_review', 'blocked'])
+            params.setlist('state', ['open', 'pending_review'])
         if not params.get('sortby'):
             params.setlist('sortby', ['-updated_at'])
 
@@ -240,7 +240,11 @@ class TaskFilterForm(WorkFilterForm):
             (c['state'], c['count'])
             for c in counts
         ]
+        items.sort(key=lambda x: Task.STATES.index(x[0]))
         facets.append(self.facet("state", "checkbox", items))
+
+        for item in facets[-1].items:
+            item.icon = f'task-icon-{item.value} text-{item.value} small'
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')

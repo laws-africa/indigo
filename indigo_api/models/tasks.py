@@ -56,7 +56,7 @@ class Task(models.Model):
     DONE = 'done'
     BLOCKED = 'blocked'
 
-    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE, BLOCKED)
+    STATES = (OPEN, PENDING_REVIEW, BLOCKED, CANCELLED, DONE)
 
     CLOSED_STATES = (CANCELLED, DONE)
     OPEN_STATES = (OPEN, BLOCKED, PENDING_REVIEW)
@@ -66,9 +66,9 @@ class Task(models.Model):
     SIMPLE_STATE_CHOICES = (
         (OPEN, _('Open')),
         (PENDING_REVIEW, _('Pending review')),
+        (BLOCKED, _('Blocked')),
         (CANCELLED, _('Cancelled')),
         (DONE, _('Done')),
-        (BLOCKED, _('Blocked')),
     )
 
     STATE_CHOICES = [

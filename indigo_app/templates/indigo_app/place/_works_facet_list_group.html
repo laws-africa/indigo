@@ -10,7 +10,10 @@
                      type="{{ facet.type }}" name="{{ facet.name }}" value="{{ item.value }}"
                      {% if item.selected %}checked{% endif %}
                      form="{{ form_id }}">
-              <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">{{ item.label }}</label>
+              <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">
+                {% if item.icon %}<i class="fa fa-fw {{ item.icon }}"></i>{% endif %}
+                {{ item.label }}
+              </label>
             </div>
           {% if not hide_counts %}
             <span class="badge text-bg-light">{{ item.count|default_if_none:'' }}</span>

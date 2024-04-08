@@ -413,8 +413,6 @@ class BeautifulElement:
         self.all_descendants_opposite = None
         self.container = None
         self.full_container = None
-        self.visible = None
-        self.visible_descendants = None
 
     def __getattr__(self, item):
         return getattr(self.toc_element, item)

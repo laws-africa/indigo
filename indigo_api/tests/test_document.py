@@ -174,7 +174,7 @@ class DocumentTestCase(TestCase):
 
         # but not all commencements apply to earlier points in time
         description = d.work.commencement_description(commencements=d.commencements_relevant_at_expression_date(),
-                                                      has_uncommenced_provisions=bool(d.work.all_uncommenced_provision_ids(d.expression_date)))
+                                                      has_uncommenced_provisions=d.work.all_uncommenced_provision_ids(d.expression_date, return_bool=True))
         self.assertEqual('commencement', description.type)
         self.assertEqual('single', description.subtype)
         self.assertEqual('Commenced on 1 March 2023 by', description.description)

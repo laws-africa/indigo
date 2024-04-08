@@ -1,0 +1,57 @@
+{% load i18n %}
+
+<div id="commencement-detail-{{ commencement.id }}">
+  <div class="card-body">
+    <div class="float-end mb-3">
+      {# TODO: disable these buttons when a form is open #}
+      {% if perms.indigo_api.delete_commencement %}
+        <button
+            class="btn btn-link text-danger me-2"
+            name="delete"
+            hx-post="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+            hx-target="body"
+            hx-confirm="{% trans 'Really delete this commencement? There is no undo.' %}"
+        >{% trans 'Delete' %}</button>
+      {% endif %}
+      {% if perms.indigo_api.change_commencement %}
+        <button
+            class="btn btn-outline-primary"
+            hx-get="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+            hx-target="#commencement-detail-{{ commencement.id }}"
+        >{% trans 'Edit' %}</button>
+      {% endif %}
+    </div>
+
+    <div class="mt-1">
+      {% if commencement.commencing_work %}
+        <div class="mb-2">
+          <h6 class="mb-0">
+            {% trans 'Commenced by' %}
+            <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+          </h6>
+          <div class="text-muted">{{ commencement.commencing_work.frbr_uri }}</div>
+        </div>
+      {% endif %}
+      {% if commencement.main %}<h6><strong>{% trans 'Main commencement' %}</strong></h6>{% endif %}
+      {% if commencement.all_provisions %}<h6>{% trans 'Commences all provisions' %}</h6>{% endif %}
+      {% if commencement.provisions %}
+        <h6>
+          {% blocktrans trimmed count count=commencement.provisions|length %}
+            {{ count }} provision commenced:
+          {% plural %}
+            {{ count }} provisions commenced:
+          {% endblocktrans %}
+        </h6>
+      {% endif %}
+      {% if commencement.provisions %}
+        <div
+            id="provisions-{{ commencement.id }}"
+            hx-get="{% url 'work_commencement_provisions_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+            hx-trigger="load"
+            hx-target="#provisions-{{ commencement.id }}"
+        >{% trans "Loading provisions…" %}</div>
+      {% endif %}
+      {% if commencement.note %}<h6 class="mt-3">{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
+    </div>
+  </div>
+</div>

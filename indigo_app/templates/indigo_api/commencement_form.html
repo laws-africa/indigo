@@ -1,0 +1,146 @@
+{% load i18n %}
+
+<form
+    hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+    hx-target="body"
+    class="commencement-form"
+>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for err in form.non_field_errors %}
+        <div>{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      {% for err in form.errors %}
+        <div>{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-4">
+        {% include 'indigo_api/commencements/_commencement_form_commencing_work.html' %}
+      </div>
+      <div class="col-4 alert alert-warning">
+        {% trans "Edit the commencing work before editing the provisions, or you will lose your changes." %}
+      </div>
+    </div>
+    <div id="non-commencing-work-data-{{ commencement.id }}">
+      <div class="row mb-3">
+        <div class="col-md-4 col-lg-3">
+          <input
+              type="text"
+              class="form-control me-2"
+              data-provide="datepicker"
+              placeholder="yyyy-mm-dd"
+              pattern="\d{4}-\d\d-\d\d"
+              name="{{ form.date.html_name }}"
+              value="{{ commencement.date|date:"Y-m-d" }}"
+              autocomplete="off"
+          >
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+          <input
+              type="text"
+              class="form-control me-2"
+              placeholder="{% trans 'Example: See section 1 ...' %}"
+              name="{{ form.note.html_name }}"
+              value="{{ commencement.note|default:'' }}"
+          >
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <div class="form-check">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                id="{{ form.main.id_for_label }}-{{ commencement.id }}"
+                name="{{ form.main.html_name }}"
+                value="true"
+                {% if commencement.main %}checked{% endif %}
+                {% if disable_main_commencement %}disabled{% endif %}
+            >
+            <label
+                for="{{ form.main.id_for_label }}-{{ commencement.id }}"
+                class="form-check-label"
+            >{% trans 'Main commencement' %}</label>
+          </div>
+          {% if form.main.errors %}
+            <div class="text-danger">
+              {% for error in form.main.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-6">
+          {% if disable_main_commencement %}
+            <div class="form-text text-muted">
+              {% trans "Another commencement has already been marked as 'main'." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+        <div class="form-check">
+          <input
+              type="checkbox"
+              class="form-check-input all-provisions"
+              id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+              name="{{ form.all_provisions.html_name }}"
+              value="true"
+              {% if commencement.all_provisions %}checked{% endif %}
+              {% if disable_all_provisions %}disabled{% endif %}
+          >
+          <label
+              for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+              class="form-check-label"
+          >{% trans 'Commences all provisions' %}</label>
+        </div>
+        {% if form.all_provisions.errors %}
+          <div class="text-danger">
+            {% for error in form.all_provisions.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+        </div>
+        <div class="col-6">
+          {% if disable_all_provisions %}
+            <div class="form-text text-muted">
+              {% trans "A commencement can only commence all provisions if it's the only one." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
+        <div
+            id="provisions-edit-{{ commencement.id }}"
+            hx-get="{% url 'work_commencement_provisions_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+            hx-trigger="load"
+            hx-target="#provisions-edit-{{ commencement.id }}"
+        >{% trans "Loading provisions…" %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer text-end">
+    <button
+        class="btn btn-link"
+        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}?clear=1"
+        hx-target="#commencement-detail-{{ commencement.id }}"
+        hx-swap="outerHTML"
+    >{% trans 'Cancel' %}</button>
+    <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
+  </div>
+</form>

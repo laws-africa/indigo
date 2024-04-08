@@ -5,8 +5,6 @@
 {% block title %}{% trans 'Commencements' %} – {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>{% trans 'Commencements' %}</h4>
-
   {% if work.commenced and not work.commencement_date %}
     <p class="alert alert-warning">{% trans 'This work has commenced, but the commencement date is unknown.' %}</p>
   {% endif %}
@@ -15,22 +13,16 @@
     <p class="alert alert-info">{% trans 'This work has not commenced.' %}</p>
   {% endif %}
 
-  {% if uncommenced_provisions_count %}
+  {% if has_uncommenced_provisions %}
     <p class="alert alert-warning">
-      {% blocktrans trimmed count count=uncommenced_provisions_count %}
-        This work has {{ count }} <a href="#uncommenced">uncommenced provision</a>.
-      {% plural %}
-        This work has {{ count }} <a href="#uncommenced">uncommenced provisions</a>.
+      {% blocktrans trimmed %}
+        This work has <a href="#uncommenced-provisions">uncommenced provisions</a>.
       {% endblocktrans %}
     </p>
   {% endif %}
 
-  {% if everything_commenced %}
-    <p>{% trans "All provisions have commenced, no additional commencement events are required." %}</p>
-  {% endif %}
-
   <ol class="timeline">
-    {% if perms.indigo_api.add_commencement and not everything_commenced %}
+    {% if perms.indigo_api.add_commencement %}
       <li class="timeline-item card">
         <div class="card-body">
           {% block new-commencement-card %}
@@ -50,131 +42,27 @@
         </div>
       </li>
     {% endif %}
-
     {% for commencement in commencements %}
-      <li class="timeline-item card">
-        <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>{% trans 'Unknown' %}</em>{% endif %}</h6>
-        <div class="card-body">
-          <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
-            {% csrf_token %}
-
-            <div class="float-end">
-              {% if perms.indigo_api.delete_commencement %}
-                <button class="btn btn-link text-danger me-2" type="submit" name="delete" data-confirm="{% trans 'Really delete this commencement?' %}">{% trans 'Delete' %}</button>
-              {% endif %}
-              {% if perms.indigo_api.change_commencement %}
-                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-bs-toggle="collapse">{% trans 'Edit' %}</a>
-              {% endif %}
-            </div>
-
-            <div class="mb-3">
-              <h6>
-                {% if commencement.all_provisions %}
-                  {% trans 'Commenced' %}
-                {% else %}
-                  {% trans 'Commenced in part' %}
-                {% endif %}
-                {% if commencement.commencing_work %}
-                  {% trans 'by' %}
-                  <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
-                {% endif %}
-              </h6>
-              {% if commencement.commencing_work %}
-                <div class="text-muted">{{ commencement.commencing_work.frbr_uri }}</div>
-              {% endif %}
-            </div>
-
-            <div class="commencement-details collapse show">
-              {% if commencement.note %}<h6>{% trans 'Note:' %} {{ commencement.note }}</h6>{% endif %}
-              {% if commencement.main %}<h6>{% trans 'Main commencement' %}</h6>{% endif %}
-              <h6>
-                {% if commencement.all_provisions %}{% trans 'Commences all provisions' %}{% endif %}
-                {% if commencement.provisions %}
-                  {% blocktrans trimmed with provisions=commencement.provisions|length %}
-                    Commences {{ provisions }} of {{ total_provisions_count }} provisions:
-                  {% endblocktrans %}
-                {% endif %}
-              </h6>
-
-              {% if commencement.provisions %}
-                <div class="treelist-wrapper">
-                  <ul>
-                    {% include "indigo_api/_provisions_tree_commenced.html" with provisions=commencement.rich_provisions %}
-                  </ul>
-                </div>
-              {% endif %}
-            </div>
-
-            <div class="mb-3 collapse commencement-form commencement-form-{{ commencement.id }}">
-              <div class="row mb-3">
-                <div class="col-md-4 col-lg-3">
-                  <input type="text" class="form-control commencement-date me-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <div class="col-md-6 col-lg-4">
-                  <input type="text" class="form-control me-2" placeholder="{% trans 'Example: See section 1 ...' %}" name="note" value="{{ commencement.note|default:'' }}" autocomplete="off">
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main"
-                         value="true" name="main"
-                         {% if commencement.main %}checked{% endif %}
-                         {% if has_main_commencement and not commencement.main %}disabled{% endif %}>
-                  <label class="form-check-label" for="commencement-{{ commencement.id }}-main">{% trans 'Main commencement' %}</label>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions"
-                         value="true" name="all_provisions"
-                         {% if commencement.all_provisions %}checked{% endif %}
-                         {% if commencements|length > 1 and not commencement.all_provisions %}disabled{% endif %}>
-                  <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">{% trans 'Commences all provisions' %}</label>
-                </div>
-              </div>
-
-              <div class="mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-                <div class="d-flex align-items-center justify-content-between">
-                  <div>{% trans 'Provisions commenced' %}:</div>
-                  <label class="d-flex align-items-center">
-                    <input type="checkbox"
-                           name="select-all"
-                           class="me-2"
-                    />
-                    {% trans 'Select all provisions' %}
-                  </label>
-                </div>
-                <ul data-id="provisions" class="provisions-list">
-                  {% include "indigo_api/template_parts/provisions_tree_view.html" with provisions=commencement.rich_provisions checked=commencement.provisions %}
-                </ul>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="card-footer text-end commencement-form-{{ commencement.id }} collapse">
-          <button class="btn btn-link" type="reset" form="commencement-{{ commencement.id }}" data-bs-toggle="collapse" data-bs-target=".commencement-form-{{ commencement.id }}">{% trans 'Cancel' %}</button>
-          <button class="btn btn-success" type="submit" form="commencement-{{ commencement.id }}">{% trans 'Save' %}</button>
-        </div>
+      <li class="timeline-item card" id="commencement-{{ commencement.id }}">
+        <h6 class="timeline-date">
+          {% if commencement.date %}
+            {{ commencement.date|date:"Y-m-d" }}
+          {% else %}
+            <em>{% trans 'Unknown' %}</em>
+          {% endif %}
+        </h6>
+        {% include "indigo_api/commencement_detail.html" %}
       </li>
     {% endfor %}
   </ol>
 
-  {% if uncommenced_provisions_count %}
-    <div class="card mt-5">
-      <h5 id="uncommenced" class="card-header">{% trans 'Uncommenced provisions' %} <span class="badge text-bg-warning">{{ uncommenced_provisions_count }}</span></h5>
-      <div class="card-body">
-        <div class="treelist-wrapper">
-          <ul>
-            {% include "indigo_api/_provisions_tree_uncommenced.html" with provisions=provisions %}
-          </ul>
-        </div>
-      </div>
-    </div>
+  {% if has_uncommenced_provisions %}
+    <div
+        id="uncommenced-provisions"
+        hx-get="{% url 'work_uncommenced_provisions' frbr_uri=work.frbr_uri %}"
+        hx-trigger="load"
+        hx-target="#uncommenced-provisions"
+    >{% trans "Loading uncommenced provisions…" %}</div>
   {% endif %}
 
   {% if work.commencements.count and perms.indigo_api.delete_commencement %}
@@ -182,7 +70,18 @@
       {% csrf_token %}
       <h5>{% trans 'Not yet commenced?' %}</h5>
       <p>{% trans 'Remove all commencement detail and mark as not commenced.' %}</p>
-      <button type="submit" class="btn btn-danger" data-confirm="{% trans 'Are you sure?' %}" name="delete">{% trans 'This work has not commenced' %}</button>
+      <button type="submit" class="btn btn-danger" data-confirm="{% trans 'Are you sure? ALL commencement information will be permanently deleted.' %}" name="delete">{% trans 'This work has not commenced' %}</button>
     </form>
   {% endif %}
+
+  <div
+      id="work-chooser-modal"
+      class="modal modal-blur fade"
+      style="display: none"
+      tabindex="-1"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">{% trans "Loading…" %}</div>
+    </div>
+  </div>
 {% endblock %}

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-03-25 10:28\n"
+"PO-Revision-Date: 2024-04-08 11:54\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1307,7 +1307,7 @@ msgstr "Date à laquelle cette œuvre a été vérifiée pour la dernière fois 
 #: templates/indigo_api/_work_form_content.html:537
 #, python-format
 msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
-msgstr "Note de consolidation qui s'applique uniquement à ce travail. Remplace une note de consolidation en %(nom)s si elle est définie."
+msgstr "Note de consolidation qui s'applique uniquement à ce travail. Remplace une note de consolidation en %(name)s si elle est définie."
 
 #: templates/indigo_api/_work_form_content.html:558
 msgid "Disclaimer for this work; it will be shown on all expressions."
@@ -2521,7 +2521,7 @@ msgstr "Commence toutes les dispositions"
 #: templates/indigo_api/work_commencements.html:93
 #, python-format
 msgid "Commences %(provisions)s of %(total_provisions_count)s provisions:"
-msgstr "Commencement %(dispositions)s des %(nombre_total_disposition)s dispositions :"
+msgstr "Commencement %(provisions)s des %(total_provisions_count)s dispositions :"
 
 #: templates/indigo_api/work_commencements.html:117
 msgid "Example: See section 1 ..."
@@ -3084,7 +3084,7 @@ msgstr "Vous n'avez aucune tâche assignée pour le moment."
 #: templates/indigo_app/tasks/_user_tasks.html:23
 #, python-format
 msgid "%(username)s doesn't have any assigned tasks right now."
-msgstr "%(nom d'utilisateur)s n'a aucune tâche assignée pour le moment."
+msgstr "%(username)s n'a aucune tâche assignée pour le moment."
 
 #: templates/indigo_app/tasks/_user_tasks.html:37
 msgid "Tasks waiting for approval"
@@ -3097,7 +3097,7 @@ msgstr "Vous n'avez aucune tâche en attente d'approbation."
 #: templates/indigo_app/tasks/_user_tasks.html:48
 #, python-format
 msgid "%(username)s has no tasks waiting for approval."
-msgstr "%(nom d'utilisateur)s n'a aucune tâche en attente d'approbation."
+msgstr "%(username)s n'a aucune tâche en attente d'approbation."
 
 #: templates/indigo_app/tasks/_user_tasks.html:63
 msgid "Your recently approved tasks"
@@ -3114,7 +3114,7 @@ msgstr "Vous n'avez aucune tâche approuvée."
 #: templates/indigo_app/tasks/_user_tasks.html:77
 #, python-format
 msgid "%(username)s has no tasks that have been approved."
-msgstr "%(nom d'utilisateur)s n'a aucune tâche approuvée."
+msgstr "%(username)s n'a aucune tâche approuvée."
 
 #: templates/indigo_app/tasks/available_tasks.html:4
 #: templates/indigo_app/tasks/available_tasks.html:62

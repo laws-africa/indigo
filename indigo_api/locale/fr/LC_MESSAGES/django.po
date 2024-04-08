@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-03-26 10:55\n"
+"PO-Revision-Date: 2024-04-08 11:54\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1122,12 +1122,12 @@ msgstr "Commencé"
 #: timeline.py:107
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr "Publié en %(nom)s %(numero)s sur %(date)s"
+msgstr "Publié en %(name)s %(number)s sur %(date)s"
 
 #: timeline.py:113
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr "Publié dans %(nom)s le %(date)s"
+msgstr "Publié dans %(name)s le %(date)s"
 
 #: timeline.py:118
 #, python-format

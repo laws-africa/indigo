@@ -65,7 +65,7 @@
 
   la-table-of-contents {
     display: block;
-    max-height: 75vh;
+    max-height: 50vh;
     overflow-y: auto;
   }
 }
@@ -80,4 +80,9 @@
 
 .modal-backdrop {
   z-index: 1030;
+}
+
+.facets-scrollable {
+  max-height: 30vh;
+  overflow-y: auto;
 }

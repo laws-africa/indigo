@@ -2,7 +2,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div data-vue-component="TaxonomyTOC" data-checkbox="place" data-tree="#places_toc"
-           data-selected="{{ form.place.value|join:' ' }}" data-form="work-filter-form"></div>
+           data-selected="{{ form.place.value|join:' ' }}" data-form="task-filter-form"></div>
       {{ places_toc|json_script:"places_toc" }}
     </div>
   </div>
@@ -10,10 +10,10 @@
 <div class="card mb-3">
   <div class="card-body">
     <div data-vue-component="TaxonomyTOC" data-checkbox="taxonomy_topic" data-tree="#taxonomy_toc"
-         data-selected="{{ form.taxonomy_topic.value|join:' ' }}" data-form="work-filter-form"></div>
+         data-selected="{{ form.taxonomy_topic.value|join:' ' }}" data-form="task-filter-form"></div>
     {{ taxonomy_toc|json_script:"taxonomy_toc" }}
   </div>
 </div>
-{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets form_id="work-filter-form" %}
-{% include "indigo_app/place/_works_facet_list_group.html" with facets=document_facets form_id="work-filter-form" %}
 
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=task_facets form_id="task-filter-form" %}
+{% include "indigo_app/place/_works_facet_list_group.html" with facets=work_facets form_id="task-filter-form" hide_counts=True %}

@@ -723,6 +723,7 @@ class FacetItem:
     value: str
     count: int
     selected: bool
+    icon: str = ''
 
 
 @dataclass
@@ -804,7 +805,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         super().__init__(*args, **kwargs)
         doctypes = [(d[1].lower(), d[0]) for d in
                     settings.INDIGO['DOCTYPES'] +
-                    settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
+                    settings.INDIGO['EXTRA_DOCTYPES'].get(getattr(self.country, "code", None), [])]
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
         self.fields['place'].choices = [
@@ -812,6 +813,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         ] + [
             (loc.place_code, loc.name) for loc in Locality.objects.all()
         ]
+        self.subtypes = Subtype.objects.all()
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
@@ -913,7 +915,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         if exclude != "subtype":
             subtype_filter = self.cleaned_data.get("subtype", [])
             subtype_qs = Q()
-            subtypes = [s.abbreviation for s in Subtype.objects.all()]
+            subtypes = [s.abbreviation for s in self.subtypes]
             for subtype in subtype_filter:
                 if subtype in subtypes:
                     subtype_qs |= Q(subtype=subtype)
@@ -1057,7 +1059,13 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             label = next(lab for (val, lab) in self.fields[field].choices if val == value)
         except StopIteration:
             raise ValueError(f"Unknown choice {value} for field {field}")
-        return FacetItem(label, value, count, value in self.cleaned_data.get(field, []))
+        selected = value in self.cleaned_data.get(field, [])
+        if not selected and hasattr(self.fields[field], "queryset"):
+            lookup = self.fields[field].to_field_name or "pk"
+            q = {lookup: value}
+            check_value = self.fields[field].queryset.filter(**q).first()
+            selected = check_value in self.cleaned_data.get(field, [])
+        return FacetItem(label, value, count, selected)
 
     def facet(self, name, type, items):
         items = [self.facet_item(name, value, count) for value, count in items]

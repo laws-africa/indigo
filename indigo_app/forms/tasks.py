@@ -4,10 +4,12 @@ import requests
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
+from django.http import QueryDict
 
-from indigo_api.models import Task, TaskLabel, Country, TaxonomyTopic, TaskFile
-from indigo_app.forms.mixins import FormAsUrlMixin
+from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work
+from indigo_app.forms.works import WorkFilterForm
 
 
 class TaskForm(forms.ModelForm):
@@ -134,63 +136,149 @@ class TaskEditLabelsForm(forms.ModelForm):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
 
 
-class TaskFilterForm(forms.Form, FormAsUrlMixin):
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(label=_('State'), choices=Task.STATE_CHOICES)
-    format = forms.ChoiceField(choices=[('columns', _('columns')), ('list', _('list'))])
-    assigned_to = forms.ModelMultipleChoiceField(label=_('Assigned to'), queryset=User.objects)
+class TaskFilterForm(WorkFilterForm):
+    labels = forms.ModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
+    state = forms.MultipleChoiceField(label=_('State'), choices=Task.SIMPLE_STATE_CHOICES)
+    assigned_to = forms.MultipleChoiceField(label=_('Assigned to'), choices=[])
     submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
-    country = forms.ModelMultipleChoiceField(queryset=Country.objects.select_related('country'))
-    taxonomy_topic = forms.CharField()
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
         ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
     ])
 
-    def __init__(self, country, *args, **kwargs):
-        self.country = country
-        super().__init__(*args, **kwargs)
-        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
-        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
+    def __init__(self, country, locality, data, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(data)
 
-    def filter_queryset(self, queryset):
-        if self.cleaned_data.get('country'):
-            queryset = queryset.filter(country__in=self.cleaned_data['country'])
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'pending_review'])
+        if not params.get('sortby'):
+            params.setlist('sortby', ['-updated_at'])
 
-        if self.cleaned_data.get('type'):
-            queryset = queryset.filter(code__in=self.cleaned_data['type'])
+        super().__init__(country, params, *args, **kwargs)
 
-        if self.cleaned_data.get('labels'):
-            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
+        # ensure assigned_to supports unassigned
+        self.fields['assigned_to'].choices = [('-', _('(Not assigned)'))] + [(str(u.pk), u.username) for u in User.objects.all()]
 
-        if self.cleaned_data.get('state'):
-            if 'assigned' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
-                if 'open' not in self.cleaned_data['state']:
-                    queryset = queryset.exclude(state='open', assigned_to=None)
-            elif 'pending_review' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
-                           queryset.filter(state='pending_review')
-            else:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
+        self.locality = locality
+        if country:
+            self.works_queryset = Work.objects.filter(country=country, locality=locality)
+        else:
+            self.works_queryset = Work.objects.all()
 
-        if self.cleaned_data.get('assigned_to'):
-            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+    def filter_queryset(self, queryset, exclude=None):
+        if queryset.model is Work:
+            return super().filter_queryset(queryset, exclude=exclude)
 
-        if self.cleaned_data.get('submitted_by'):
-            queryset = queryset.filter(state__in=['pending_review', 'closed'])\
-                .filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+        if exclude != "place":
+            q = Q()
+            for place in self.cleaned_data.get('place', []):
+                country, locality = Country.get_country_locality(place)
+                q |= Q(country=country, locality=locality)
+            queryset = queryset.filter(q)
 
-        if self.cleaned_data.get('taxonomy_topic'):
-            topic = TaxonomyTopic.objects.filter(slug=self.cleaned_data['taxonomy_topic']).first()
-            topics = [topic] + [t for t in topic.get_descendants()]
-            queryset = queryset.filter(work__taxonomy_topics__in=topics)
+        if exclude != 'type':
+            if self.cleaned_data.get('type'):
+                queryset = queryset.filter(code__in=self.cleaned_data['type'])
+
+        if exclude != 'labels':
+            if self.cleaned_data.get('labels'):
+                queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
+
+        if exclude != 'state':
+            if self.cleaned_data.get('state'):
+                queryset = queryset.filter(state__in=self.cleaned_data['state'])
+
+        if exclude != 'assigned_to':
+            if self.cleaned_data.get('assigned_to'):
+                options = [x for x in self.cleaned_data['assigned_to'] if x != '-']
+                q = Q()
+                if options:
+                    q |= Q(assigned_to__in=options)
+                if '-' in self.cleaned_data['assigned_to']:
+                    q |= Q(assigned_to__isnull=True)
+                queryset = queryset.filter(q)
+
+        if exclude != 'submitted_by':
+            if self.cleaned_data.get('submitted_by'):
+                queryset = queryset.filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+
+        if exclude != 'taxonomy_topic':
+            if self.cleaned_data.get('taxonomy_topic'):
+                queryset = queryset.filter(work__taxonomy_topics__in=self.cleaned_data['taxonomy_topic'])
 
         if self.cleaned_data.get('sortby'):
             queryset = queryset.order_by(self.cleaned_data['sortby'])
 
+        works_queryset = super().filter_queryset(self.works_queryset, exclude=exclude)
+        queryset = queryset.filter(Q(work__in=works_queryset) | Q(work__isnull=True))
+
         return queryset
+
+    def task_facets(self, queryset, places_toc):
+        facets = []
+        self.facet_state(facets, queryset)
+        self.facet_assigned_to(facets, queryset)
+        self.facet_task_type(facets, queryset)
+        self.facet_labels(facets, queryset)
+        self.facet_submitted_by(facets, queryset)
+        self.facet_place(places_toc, queryset)
+        return facets
+
+    def facet_labels(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude='labels')
+        counts = qs.values('labels__slug').annotate(count=Count('pk')).filter(labels__isnull=False).order_by()
+        items = [
+            (c['labels__slug'], c['count'])
+            for c in counts
+        ]
+        facets.append(self.facet("labels", "checkbox", items))
+
+    def facet_state(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude='state')
+        counts = qs.values('state').annotate(count=Count('pk')).order_by()
+        items = [
+            (c['state'], c['count'])
+            for c in counts
+        ]
+        items.sort(key=lambda x: Task.STATES.index(x[0]))
+        facets.append(self.facet("state", "checkbox", items))
+
+        for item in facets[-1].items:
+            item.icon = f'task-icon-{item.value} text-{item.value} small'
+
+    def facet_assigned_to(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude='assigned_to')
+        counts = qs.values('assigned_to').annotate(count=Count('pk')).order_by()
+        items = [
+            (str(c['assigned_to'] or '-'), c['count'])
+            for c in counts
+        ]
+        facets.append(self.facet("assigned_to", "checkbox", items))
+
+    def facet_submitted_by(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude='submitted_by')
+        counts = qs.values('submitted_by_user').annotate(count=Count('pk')).filter(submitted_by_user__isnull=False).order_by()
+        items = [
+            (c['submitted_by_user'], c['count'])
+            for c in counts
+        ]
+        facets.append(self.facet("submitted_by", "checkbox", items))
+
+    def facet_task_type(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude='type')
+        count_kwargs = {code: Count('pk', filter=Q(code=code)) for code, _ in Task.CODES}
+        counts = qs.aggregate(**count_kwargs)
+        items = [
+            (code, counts[code])
+            for code, _ in Task.CODES
+            # don't show zero counts
+            if counts.get(code, 0)
+        ]
+        facets.append(self.facet("type", "checkbox", items))
 
 
 class BulkTaskUpdateForm(forms.Form):

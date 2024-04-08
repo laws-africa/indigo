@@ -1,6 +1,5 @@
 import datetime
 import json
-import math
 from itertools import chain
 
 from actstream import action
@@ -10,8 +9,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.db.models import Subquery, OuterRef, Count, IntegerField
-from django.http import QueryDict, Http404
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
@@ -22,6 +20,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
+from django_htmx.http import push_url
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
@@ -58,20 +57,23 @@ class TaskListView(TaskViewBase, ListView):
     js_view = 'TaskListView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
-        # allows us to set defaults on the form
-        params = QueryDict(mutable=True)
-        params.update(request.GET)
-
-        # initial state
-        if not params.get('state'):
-            params.setlist('state', ['open', 'assigned', 'pending_review', 'blocked'])
-        if not params.get('sortby'):
-            params.setlist('sortby', ['-updated_at'])
-
-        self.form = TaskFilterForm(self.country, params)
+        self.form = TaskFilterForm(self.country, self.locality, request.GET)
         self.form.is_valid()
 
         return super().get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.form.data_as_url()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_api/_task_list.html']
+        return super().get_template_names()
 
     def get_base_queryset(self):
         return Task.objects \
@@ -83,13 +85,19 @@ class TaskListView(TaskViewBase, ListView):
         return self.form.filter_queryset(self.get_base_queryset())
 
     def get_context_data(self, **kwargs):
-        context = super(TaskListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['total_tasks'] = self.get_base_queryset().count()
+        if self.request.htmx:
+            # don't show the place column
+            context['place'] = False
+            context['selectable'] = True
 
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset(), [])
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)
@@ -566,27 +574,62 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     permission_required = ('indigo_api.view_task',)
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(None, request.GET)
+        self.form = TaskFilterForm(None, None, request.GET)
         self.form.is_valid()
-        return super(AvailableTasksView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        tasks = Task.objects \
-            .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all())\
+        return self.form.filter_queryset(self.get_base_queryset())
+
+    def get_base_queryset(self):
+        return Task.objects \
+            .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all()) \
             .select_related('document__language', 'document__language__language') \
-            .defer('document__document_xml')\
+            .defer('document__document_xml') \
             .order_by('-updated_at')
 
-        if not self.form.cleaned_data.get('state'):
-            tasks = tasks.filter(state__in=Task.OPEN_STATES).exclude(state='blocked')
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.form.data_as_url()}"
+            resp = push_url(resp, url)
+        return resp
 
-        return self.form.filter_queryset(tasks)
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_api/_task_list.html']
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
+        countries = self.request.user.editor.permitted_countries.all()
+        countries = countries.prefetch_related('country', 'localities')
+        context['places_toc'] = [{
+            'title': country.name,
+            'data': {
+                'slug': country.code,
+                'count': 0,
+                'total': 0,
+            },
+            'children': [{
+                'title': loc.name,
+                'data': {
+                    'slug': loc.place_code,
+                    'count': 0,
+                    'total': 0,
+                },
+                'children': [],
+            } for loc in country.localities.all()]
+        } for country in countries]
         context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
+        context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
+        context["task_facets"] = self.form.task_facets(self.get_base_queryset(), context['places_toc'])
+        context['total_tasks'] = self.get_base_queryset().count()
+        context["hide_assigned_to"] = True
+        context["place"] = True
         return context
 
 
@@ -609,76 +652,3 @@ class TaskAssigneesView(TaskViewBase, TemplateView):
             'potential_assignees': users,
             'unassign': 'unassign' in request.POST,
         })
-
-
-class TaxonomyTopicTaskListView(AbstractAuthedIndigoView, TemplateView):
-    authentication_required = True
-    template_name = 'indigo_app/tasks/taxonomy_task_list.html'
-    tab = 'topics'
-    permission_required = ('indigo_api.view_task',)
-    context_object_name = 'topics'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['taxonomy_toc'] = self.get_tree()
-        return context
-
-    def get_tree(self):
-        tree = TaxonomyTopic.dump_bulk()
-        def fix_up(item):
-            item["title"] = item["data"]["name"]
-            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
-            for kid in item.get("children", []):
-                fix_up(kid)
-
-        for item in tree:
-            fix_up(item)
-
-        return tree
-
-
-class TaxonomyTopicTaskDetailView(AbstractAuthedIndigoView, DetailView):
-    authentication_required = True
-    template_name = 'indigo_app/tasks/taxonomy_task_detail.html'
-    tab = 'topics'
-    permission_required = ('indigo_api.view_task',)
-    context_object_name = 'topic'
-    model = TaxonomyTopic
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
-
-    def get_tasks(self):
-        topics = [self.object] + [t for t in self.object.get_descendants()]
-        tasks = Task.objects.filter(work__taxonomy_topics__in=topics)
-        return self.form.filter_queryset(tasks)
-
-    def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(None, request.GET)
-        self.form.is_valid()
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        self.object.n_tasks = self.get_tasks().count()
-        self.object.n_done = self.get_tasks().closed().count()
-        self.object.pct_done = self.object.n_done / self.object.n_tasks * 100.0 if self.object.n_tasks else 0.0
-
-        context['form'] = self.form
-        context['tasks'] = tasks = self.get_tasks()
-        context['task_groups'] = Task.task_columns(['open',  'pending_review', 'assigned'], tasks)
-        context['taxonomy_toc'] = self.get_tree()
-        return context
-
-    def get_tree(self):
-        tree = TaxonomyTopic.dump_bulk()
-
-        def fix_up(item):
-            item["title"] = item["data"]["name"]
-            item["href"] = reverse('taxonomy_task_detail', kwargs={'slug': item["data"]["slug"]})
-            for kid in item.get("children", []):
-                fix_up(kid)
-
-        for item in tree:
-            fix_up(item)
-
-        return tree

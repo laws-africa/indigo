@@ -563,7 +563,7 @@ class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET, all_topics=False)
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
         if self.country.place_code == 'all':
             # dump the places tree for the places the user has permissions for

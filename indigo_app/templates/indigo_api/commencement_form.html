@@ -93,28 +93,28 @@
       </div>
       <div class="row mb-3">
         <div class="col-4">
-        <div class="form-check">
-          <input
-              type="checkbox"
-              class="form-check-input all-provisions"
-              id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
-              name="{{ form.all_provisions.html_name }}"
-              value="true"
-              {% if commencement.all_provisions %}checked{% endif %}
-              {% if disable_all_provisions %}disabled{% endif %}
-          >
-          <label
-              for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
-              class="form-check-label"
-          >{% trans 'Commences all provisions' %}</label>
-        </div>
-        {% if form.all_provisions.errors %}
-          <div class="text-danger">
-            {% for error in form.all_provisions.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+          <div class="form-check">
+            <input
+                type="checkbox"
+                class="form-check-input all-provisions"
+                id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+                name="{{ form.all_provisions.html_name }}"
+                value="true"
+                {% if commencement.all_provisions %}checked{% endif %}
+                {% if disable_all_provisions %}disabled{% endif %}
+            >
+            <label
+                for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+                class="form-check-label"
+            >{% trans 'Commences all provisions' %}</label>
           </div>
-        {% endif %}
+          {% if form.all_provisions.errors %}
+            <div class="text-danger">
+              {% for error in form.all_provisions.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         <div class="col-6">
           {% if disable_all_provisions %}

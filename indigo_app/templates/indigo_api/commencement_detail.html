@@ -42,8 +42,6 @@
             {{ count }} provisions commenced:
           {% endblocktrans %}
         </h6>
-      {% endif %}
-      {% if commencement.provisions %}
         <div
             id="provisions-{{ commencement.id }}"
             hx-get="{% url 'work_commencement_provisions_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"

@@ -96,8 +96,7 @@ urlpatterns = [
 
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/$', works.WorkCommencementsView.as_view(), name='work_commencements'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/uncommenced-provisions$', works.WorkUncommencedProvisionsDetailView.as_view(), name='work_uncommenced_provisions'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.AddWorkCommencementView.as_view(), name='new_work_commencement'),
-    # re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<commencement_id>\d+)$', works.WorkCommencementUpdateView.as_view(), name='work_commencement_detail'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/new$', works.WorkCommencementAddView.as_view(), name='work_commencement_add'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)$', works.WorkCommencementDetailView.as_view(), name='work_commencement_detail'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)/provisions-detail$', works.WorkCommencementProvisionsDetailView.as_view(), name='work_commencement_provisions_detail'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)/provisions-edit$', works.WorkCommencementProvisionsEditView.as_view(), name='work_commencement_provisions_edit'),

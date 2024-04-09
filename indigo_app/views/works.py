@@ -475,6 +475,27 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         return reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class WorkCommencementAddView(WorkDependentView, CreateView):
+    model = Commencement
+    pk_url_kwarg = 'pk'
+    form_class = CommencementForm
+    context_object_name = 'commencement'
+    permission_required = ('indigo_api.add_commencement',)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["work"] = self.work
+        kwargs["provisions"] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.commenced_work = self.work
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
+
+
 class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView):
     template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
 
@@ -494,46 +515,6 @@ class WorkUncommencedView(WorkDependentView, View):
             obj.delete()
 
         return redirect('work_commencements', frbr_uri=self.kwargs['frbr_uri'])
-
-
-class AddWorkCommencementView(WorkDependentView, CreateView):
-    """ View to add a new commencement.
-    """
-    model = Commencement
-    permission_required = ('indigo_api.add_commencement',)
-    form_class = NewCommencementForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['instance'] = Commencement(
-            commenced_work=self.work,
-            created_by_user=self.request.user,
-            updated_by_user=self.request.user)
-        return kwargs
-
-    def form_valid(self, form):
-        self.object = form.save()
-
-        # useful defaults for new commencements
-        if not self.work.commencements.filter(main=True).exists():
-            self.object.main = True
-
-        if not self.work.commencements.exists():
-            self.object.all_provisions = True
-
-        # make necessary changes to work, including updating updated_by_user
-        self.object.rationalise(self.request.user)
-        self.object.save()
-        return redirect(self.get_success_url())
-
-    def form_invalid(self, form):
-        return redirect(self.get_success_url())
-
-    def get_success_url(self):
-        url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
-        if self.object and self.object.id:
-            url = url + "#commencement-%s" % self.object.id
-        return url
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):

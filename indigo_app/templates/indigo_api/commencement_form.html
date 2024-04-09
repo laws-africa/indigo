@@ -137,9 +137,8 @@
   <div class="card-footer text-end">
     <button
         class="btn btn-link"
-        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}?clear=1"
-        hx-target="#commencement-detail-{{ commencement.id }}"
-        hx-swap="outerHTML"
+        hx-get="{% url 'work_commencements' frbr_uri=work.frbr_uri %}"
+        hx-target="body"
     >{% trans 'Cancel' %}</button>
     <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
   </div>

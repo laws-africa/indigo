@@ -46,7 +46,12 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
 
 @register.simple_tag
 def has_uncommenced_provisions(document):
-    return bool(document.work.all_uncommenced_provision_ids(document.expression_date))
+    return document.work.all_uncommenced_provision_ids(document.expression_date, return_bool=True)
+
+
+@register.simple_tag
+def aligned(provision, commenced):
+    return commenced and provision.commenced or not commenced and not provision.commenced
 
 
 @register.simple_tag

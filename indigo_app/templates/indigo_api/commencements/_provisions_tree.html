@@ -1,0 +1,25 @@
+{% load indigo i18n %}
+
+{% for prov in provisions %}
+  <li>
+    <div class="item-indent">
+      {% if prov.commenced %}
+        <input type="checkbox" disabled checked>
+      {% endif %}
+    </div>
+    <div class="content">
+        {% aligned prov commenced as aligned %}
+        <span class="{% if aligned %}text-body{% else %}text-black-50{% endif %}">
+          {{ prov.title|default:prov.id }}
+          {% if aligned and prov.all_descendants_same %}
+            <em>{% trans '(and all subprovisions)' %}</em>
+          {% endif %}
+        </span>
+      {% if prov.children and not prov.all_descendants_same %}
+        <ul>
+          {% include "indigo_api/commencements/_provisions_tree.html" with provisions=prov.children commenced=commenced %}
+        </ul>
+      {% endif %}
+    </div>
+  </li>
+{% endfor %}

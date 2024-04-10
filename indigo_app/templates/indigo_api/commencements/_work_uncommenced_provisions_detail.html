@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if uncommenced_provisions_count %}
+  <div class="card mt-5">
+    <h5 class="card-header">
+      {% trans 'Uncommenced provisions' %}
+      <span class="badge text-bg-warning">{{ uncommenced_provisions_count }}</span>
+    </h5>
+    <div class="card-body">
+      <div class="treelist-wrapper">
+        <ul>
+          {% include "indigo_api/commencements/_provisions_tree.html" with provisions=provisions commenced=False %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif %}

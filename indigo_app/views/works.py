@@ -33,8 +33,8 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
-    NewCommencementForm, FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
-    ConsolidationsBaseFormset
+    FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
+    ConsolidationsBaseFormset, CommencementsBaseFormset
 
 from .base import PlaceViewBase, AbstractAuthedIndigoView
 
@@ -1474,6 +1474,75 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
 
 
 class WorkFormCommencementsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_commencements_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        commencement = self.request.POST.get("commencements")
+        deleting = self.request.GET.get("delete")
+        commencement_work_id = None
+        prefix = None
+
+        if commencement:
+            commencement_work_id = commencement
+            prefix = "commencements"
+        elif deleting:
+            prefix = deleting
+
+        context_data = super().get_context_data(**kwargs)
+        formset = CommencementsBaseFormset(self.request.POST,
+                                           # user=self.request.user,
+                                           # work=self.work,
+                                           prefix=prefix,
+                                           form_kwargs={"work": self.work,
+                                                        "user": self.request.user})
+        initial = []
+        if formset.is_valid():
+            for form in formset:
+                delete = form.cleaned_data.get('DELETE')
+                if delete:
+                    if not form.cleaned_data.get('id'):
+                        continue
+                initial.append({
+                    "commenced_work": form.cleaned_data["commenced_work"],
+                    "commencing_work": form.cleaned_data["commencing_work"],
+                    "note": form.cleaned_data["note"],
+                    "date": form.cleaned_data["date"],
+                    "id": form.cleaned_data["id"],
+                    "DELETE": form.cleaned_data["DELETE"],
+                })
+            if commencement_work_id:
+                commenced_works = {form.cleaned_data["commenced_work"] for form in formset}
+                work = Work.objects.filter(pk=commencement_work_id).first()
+                if work:
+                    if prefix == "commencements_made":
+                        initial.append({
+                            "commenced_work": work,
+                            "commencing_work": self.work,
+                            "date": self.work.commencement_date if work not in commenced_works else None,
+                        })
+
+        else:
+            context_data['formset'] = formset
+            context_data["prefix"] = prefix
+
+            return context_data
+
+        context_data['formset'] = CommencementsBaseFormset(
+            # user=self.request.user,
+            # work=self.work,
+            prefix=prefix,
+            initial=initial,
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
+        )
+        context_data["prefix"] = prefix
+        return context_data
+
+
+class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_commencements_made_form.html'
 
     def post(self, request, *args, **kwargs):

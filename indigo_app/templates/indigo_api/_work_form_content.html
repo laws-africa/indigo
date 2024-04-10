@@ -37,6 +37,16 @@
     </div>
   {% endif %}
 
+  {% if form.commencements_formset.non_form_errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for error in form.commencements_formset.non_form_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   {% if form.commencements_made_formset.non_form_errors %}
     <div class="alert alert-danger">
       <ul>
@@ -404,6 +414,18 @@
         </div>
       </div>
     {% endblock work-form-commencement %}
+
+    {% block work-form-commencements %}
+      {% if work.pk %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="work-form-commencements">
+              {% include 'indigo_api/_work_form_commencements.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock work-form-commencements %}
 
     {% block work-form-commencements_made %}
       {% if work.pk %}

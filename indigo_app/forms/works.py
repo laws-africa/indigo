@@ -175,6 +175,29 @@ class WorkForm(forms.ModelForm):
             self.amendments_made_formset = AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
             self.formsets.append(self.amendments_made_formset)
 
+            commencements_formset_kwargs = {
+                "work": self.instance,
+                "user": self.user,
+                "form_kwargs": {
+                    "work": self.instance,
+                    "user": self.user,
+                },
+                "prefix": "commencements",
+                "initial": [{
+                    "commenced_work": self.instance,
+                    "commencing_work": commencement.commencing_work,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in self.instance.commencements.all()],
+            }
+
+            if self.is_bound:
+                commencements_formset_kwargs["data"] = self.data
+            self.commencements_formset = CommencementsBaseFormset(**commencements_formset_kwargs)
+            self.formsets.append(self.commencements_formset)
+
             commencements_made_formset_kwargs = {
                 "work": self.instance,
                 "user": self.user,
@@ -657,6 +680,42 @@ CommencementsFormset = formset_factory(
     can_delete=True,
     formset=BasePartialWorkFormSet,
 )
+
+
+class CommencementsBaseFormset(CommencementsFormset):
+    def clean(self):
+        # TODO: identical to CommencementsMadeBaseFormset except validation message
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            commencing_work = form.cleaned_data.get('commencing_work')
+            commenced_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (commencing_work, commenced_work, date) in seen:
+                raise ValidationError(_("Commencing work and date must be unique together."))
+            seen.add((commencing_work, commenced_work, date))
+
+    def save(self, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            super().save(*args, **kwargs)
+
+            n_commencements = self.work.commencements.count()
+            if n_commencements > 1:
+                for c in self.work.commencements.all():
+                    if c.all_provisions:
+                        c.all_provisions = False
+                        c.save()
+            has_main_commencement = bool(self.work.main_commencement)
+            if not has_main_commencement:
+                # update the first commencement to be the main one
+                first = self.work.commencements.first()
+                first.main = True
+                first.save()
 
 
 class CommencementsMadeBaseFormset(CommencementsFormset):

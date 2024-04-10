@@ -35,6 +35,24 @@
             >{% trans 'Clear' %}</button>
           </div>
         {% endif %}
+        <div class="mt-2">
+          {% url 'work_form_commencements' work.frbr_uri as commencements_url %}
+          <button
+              class="btn btn-outline-primary"
+              type="button"
+              hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ commencements_url|urlencode }}&target={{ "#work-form-"|add:prefix|add:"-formset"|urlencode }}&field={{ form.prefix }}-commencing_work&include={{ "#work-form-"|add:prefix|add:"-formset"|urlencode }}&method=hx-post"
+              hx-target="#work-chooser-modal"
+              hx-trigger="click"
+              data-bs-toggle="modal"
+              data-bs-target="#work-chooser-modal"
+          >
+            {% if form.commencing_work.value and not form.clear_commencing_work.value %}
+              {% trans 'Change commencing work' %}
+            {% else %}
+              {% trans 'Choose commencing work' %}
+            {% endif %}
+          </button>
+        </div>
         {{ form.id.as_hidden }}
         {% if not form.clear_commencing_work.value %}
           {{ form.commencing_work.as_hidden }}

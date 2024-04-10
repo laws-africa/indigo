@@ -642,7 +642,8 @@ class CommencementsPartialForm(BasePartialWorkForm):
 
     @cached_property
     def commencing_work_obj(self):
-        return Work.objects.filter(pk=self['commencing_work'].value()).first()
+        if self['commencing_work'].value():
+            return Work.objects.filter(pk=self['commencing_work'].value()).first()
 
     @cached_property
     def commenced_work_obj(self):

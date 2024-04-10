@@ -1482,7 +1482,7 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data["prefix"] = prefix = "commencements"
-        deleting = self.request.GET.get("delete")
+        adding = self.request.GET.get("add") is not None
         formset = CommencementsBaseFormset(self.request.POST,
                                            prefix=prefix,
                                            form_kwargs={"work": self.work,
@@ -1499,9 +1499,10 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
             "date": form.cleaned_data["date"],
             "id": form.cleaned_data["id"],
             "DELETE": form.cleaned_data["DELETE"],
+            "clear_commencing_work": form.cleaned_data["clear_commencing_work"],
         } for form in formset]
 
-        if not deleting:
+        if adding:
             # add a blank one
             initial.append({"commenced_work": self.work})
 

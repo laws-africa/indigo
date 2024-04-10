@@ -13,7 +13,7 @@
         <button
             class="btn btn-outline-primary"
             type="button"
-            hx-post="{% url 'work_form_commencements' work.frbr_uri %}"
+            hx-post="{% url 'work_form_commencements' work.frbr_uri %}?add"
             hx-target="#work-form-commencements-formset"
             hx-include="#work-form-commencements"
             hx-trigger="click"

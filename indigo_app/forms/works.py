@@ -639,6 +639,7 @@ class CommencementsPartialForm(BasePartialWorkForm):
     note = forms.CharField(required=False, widget=forms.TextInput)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    clear_commencing_work = forms.BooleanField(required=False)
 
     @cached_property
     def commencing_work_obj(self):

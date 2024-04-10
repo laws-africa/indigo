@@ -15,15 +15,30 @@
 {% for form in formset %}
   <div class="{% if form.DELETE.value  %}d-none{% endif %}">
     {% if forloop.counter > 1 %}<hr>{% endif %}
-    <div class="row align-items-center ">
+    <div class="row align-items-center">
       <div class="col">
-      {% if form.commencing_work_obj %}
-        <a href="{% url 'work' form.commencing_work_obj.frbr_uri %}" target="_blank">{{ form.commencing_work_obj.title }}</a>
-        <br />
-        <span>{{ form.commencing_work_obj.frbr_uri }}</span>
-      {% endif %}
+        {% if form.commencing_work.value and not form.clear_commencing_work.value %}
+          <div class="mt-2">
+            <a href="{% url 'work' form.commencing_work_obj.frbr_uri %}" target="_blank">{{ form.commencing_work_obj.title }}</a>
+            <br>
+            <span class="text-muted">{{ form.commencing_work_obj.frbr_uri }}</span>
+          </div>
+          <div class="mt-2">
+            <button
+                class="btn btn-outline-danger"
+                hx-post="{% url 'work_form_commencements' work.frbr_uri %}"
+                hx-target="#work-form-{{ prefix }}-formset"
+                hx-include="#work-form-{{ prefix }}-formset"
+                type="button"
+                name="{{ form.clear_commencing_work.html_name }}"
+                value="1"
+            >{% trans 'Clear' %}</button>
+          </div>
+        {% endif %}
         {{ form.id.as_hidden }}
-        {{ form.commencing_work.as_hidden }}
+        {% if not form.clear_commencing_work.value %}
+          {{ form.commencing_work.as_hidden }}
+        {% endif %}
         {{ form.commenced_work.as_hidden }}
         {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}
@@ -42,13 +57,15 @@
 
       <div class="col">
         {% if not form.DELETE.value %}
-          <button hx-post="{% url 'work_form_commencements' work.frbr_uri %}?delete={{ prefix }}"
-                  hx-target="#work-form-{{ prefix }}-formset"
-                  hx-include="#work-form-{{ prefix }}-formset"
-                  type="button"
-                  name="{{ form.DELETE.html_name }}"
-                  value="1"
-                  class="btn btn-outline-danger">
+          <button
+              class="btn btn-outline-danger"
+              hx-post="{% url 'work_form_commencements' work.frbr_uri %}"
+              hx-target="#work-form-{{ prefix }}-formset"
+              hx-include="#work-form-{{ prefix }}-formset"
+              type="button"
+              name="{{ form.DELETE.html_name }}"
+              value="1"
+          >
             {% trans 'Remove' %}
           </button>
         {% endif %}

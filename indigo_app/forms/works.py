@@ -24,7 +24,7 @@ class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
         fields = (
-            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
+            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
             'stub', 'principal', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
@@ -60,11 +60,6 @@ class WorkForm(forms.ModelForm):
     # page.
     no_render_properties = []
 
-    # commencement details
-    commencement_date = forms.DateField(required=False)
-    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
-    commencement_note = forms.CharField(max_length=1024, required=False)
-
     def __init__(self, country, locality, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
@@ -85,11 +80,6 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
-            self.fields['commencement_date'].initial = self.instance.commencement_date
-            self.fields['commencement_note'].initial = self.instance.commencement_note
-            if hasattr(self.instance.main_commencement, 'commencing_work'):
-                if self.instance.main_commencement.commencing_work:
-                    self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -292,8 +282,8 @@ class WorkForm(forms.ModelForm):
         work = super().save(commit)
         self.save_properties()
         self.save_publication_document()
-        self.save_commencement()
         self.save_formsets()
+        self.save_commenced()
         return work
 
     def save_properties(self):
@@ -348,34 +338,10 @@ class WorkForm(forms.ModelForm):
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
 
-    def save_commencement(self):
-        work = self.instance
-
-        # if there are multiple commencement objects, then just ignore these elements,
-        # the user must edit the commencements in the commencements view
-        if work.commencements.count() > 1:
-            return
-
-        # if the work has either been created as uncommenced or edited not to commence, delete all existing commencements
-        if not work.commenced:
-            for obj in work.commencements.all():
-                obj.delete()
-
-        else:
-            # if the work has either been created as commenced or edited to commence, update / create the commencement
-            commencement, created = Commencement.objects.get_or_create(
-                defaults={'created_by_user': work.updated_by_user},
-                commenced_work=work
-            )
-            commencement.updated_by_user = work.updated_by_user
-            commencement.commencing_work = self.cleaned_data['commencing_work']
-            commencement.note = self.cleaned_data['commencement_note']
-            commencement.date = self.cleaned_data['commencement_date']
-            if created:
-                commencement.all_provisions = True
-            # this is safe because we know there are no other commencement objects
-            commencement.main = True
-            commencement.save()
+    def save_commenced(self):
+        if not self.instance.commenced and self.instance.commencements.exists():
+            self.instance.commenced = True
+            self.instance.save()
 
 
 class BasePartialWorkFormSet(forms.BaseFormSet):

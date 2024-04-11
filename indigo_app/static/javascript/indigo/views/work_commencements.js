@@ -49,7 +49,7 @@
     },
 
     onSelectAll: function (e) {
-      for (const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
+      for (const checkbox of e.target.closest("div[class='provisions-wrapper']").querySelectorAll(".commencement-form input[name='provisions']")) {
         checkbox.checked = e.target.checked;
       }
     }

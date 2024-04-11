@@ -1,9 +1,8 @@
 {% load i18n %}
 
 {% if commencement.rich_provisions %}
-  <div id="provisions-edit-{{ commencement.id }}">
-    <div class="d-flex justify-content-between">
-      <div>{% trans 'Provisions commenced' %}:</div>
+  <div id="provisions-edit-{{ commencement.id }}" class="provisions-wrapper">
+    <div class="mt-2">
       <div>
         <input
             type="checkbox"
@@ -22,7 +21,7 @@
     </ul>
   </div>
 {% else %}
-  <div>{% trans 'Provisions commenced' %}:</div>
+  <div class="mt-1">{% trans 'Provisions commenced' %}:</div>
   <div class="alert alert-info">
     <p class="mb-1">{% trans "Available provisions will appear here once the content has been marked up." %}</p>
     <p class="mb-1">{% trans "Wait until the content has been finalised before selecting provisions." %}</p>

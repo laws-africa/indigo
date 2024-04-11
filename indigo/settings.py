@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'django_comments',
 
     'django_htmx',
+    'drf_spectacular',
 )
 
 MIDDLEWARE = (
@@ -341,6 +342,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'indigo_api.utils.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -355,6 +357,12 @@ INDIGO_SOCIAL = {
     'badges': 'indigo_social.default_badges',
     # when a user signs up, grant them these badges automatically
     'new_user_badges': ['contributor'],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": f'{INDIGO_ORGANISATION} API',
+    "DESCRIPTION": "Read-only API for this website.",
+    "VERSION": "v3",
 }
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

@@ -286,7 +286,9 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 class TaxonomyTopicSerializer(serializers.BaseSerializer):
     """ Smart(er) serializer that loads the entire tree once. """
 
-    fields = ['name', 'slug', 'id']
+    # TODO
+    fields = {}
+    _fields = ['name', 'slug', 'id']
 
     def to_representation(self, instance):
         data = TaxonomyTopic.dump_bulk(instance)[0]
@@ -295,7 +297,7 @@ class TaxonomyTopicSerializer(serializers.BaseSerializer):
             data = node['data']
             data['id'] = node['id']
             for key in list(data.keys()):
-                if key not in self.fields:
+                if key not in self._fields:
                     del data[key]
             data['children'] = [fix(n) for n in node.get('children', [])]
             return data

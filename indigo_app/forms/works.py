@@ -657,6 +657,8 @@ class CommencementsBaseFormset(CommencementsFormset):
     def save(self, *args, **kwargs):
         if self.is_valid() and self.has_changed():
             super().save(*args, **kwargs)
+            # some commencements may have been deleted during super save
+            self.work.refresh_from_db()
 
             n_commencements = self.work.commencements.count()
             if n_commencements > 1:
@@ -664,12 +666,18 @@ class CommencementsBaseFormset(CommencementsFormset):
                     if c.all_provisions:
                         c.all_provisions = False
                         c.save()
+            elif n_commencements == 1:
+                only_commencement = self.work.commencements.first()
+                only_commencement.main = True
+                only_commencement.all_provisions = True
+                only_commencement.save()
             has_main_commencement = bool(self.work.main_commencement)
             if not has_main_commencement:
-                # update the first commencement to be the main one
+                # update the first commencement to be the main one, if there is one
                 first = self.work.commencements.first()
-                first.main = True
-                first.save()
+                if first:
+                    first.main = True
+                    first.save()
 
 
 class CommencementsMadeBaseFormset(CommencementsFormset):

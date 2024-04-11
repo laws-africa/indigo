@@ -446,6 +446,12 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
 
+    def post(self, request, *args, **kwargs):
+        # if a brand new commencement has editing cancelled, we need to re-render the whole page
+        if 'cancel' in request.POST:
+            return redirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['disable_main_commencement'] = self.work.main_commencement and not self.object.main

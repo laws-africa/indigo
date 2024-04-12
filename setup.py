@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import re
 
 here = path.abspath(path.dirname(__file__))
 
@@ -8,8 +9,10 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open(path.join(here, 'VERSION')) as f:
-    version = f.read().strip()
+with open(path.join(here, 'indigo/version.py')) as f:
+    # find __version__ = XXX in the file and get it
+    match = re.search(r'^__version__ = "([^"]+)"$', f.read(), re.MULTILINE)
+    version = match.group(1)
 
 
 setup(

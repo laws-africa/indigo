@@ -11,17 +11,15 @@ import os
 import logging
 from urllib.parse import urlparse
 
-from django.utils.translation import gettext_lazy as _
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
+from .version import __version__
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'true') == 'true'
@@ -361,7 +359,8 @@ INDIGO_SOCIAL = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": f'{INDIGO_ORGANISATION} API',
+    "TITLE": f'{INDIGO_ORGANISATION} Content API',
+    "VERSION": __version__,
     "DESCRIPTION": "Read-only Content API",
 }
 

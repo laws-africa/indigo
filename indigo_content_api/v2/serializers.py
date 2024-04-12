@@ -1,6 +1,8 @@
 from itertools import groupby
+from typing import List
 
-from drf_spectacular.utils import extend_schema_serializer
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_serializer, extend_schema_field
 from rest_framework import serializers
 
 from cobalt import datestring
@@ -49,6 +51,7 @@ class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
         fields = ('url', 'filename', 'mime_type', 'size')
         read_only_fields = fields
 
+    @extend_schema_field(OpenApiTypes.URI)
     def get_url(self, instance):
         uri = self.published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
@@ -60,6 +63,7 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         # Don't include the trusted_url field
         fields = ('url', 'filename', 'mime_type', 'size')
 
+    @extend_schema_field(OpenApiTypes.URI)
     def get_url(self, instance):
         if instance.trusted_url:
             return instance.trusted_url
@@ -158,6 +162,38 @@ class TimelineSerializer(serializers.Serializer):
         return fields
 
 
+class LinkSerializer(serializers.Serializer):
+    """A link related to this object."""
+    rel = serializers.CharField()
+    title = serializers.CharField()
+    href = serializers.URLField()
+    media_type = serializers.CharField(required=False)
+
+    class Meta:
+        fields = ('rel', 'title', 'href')
+        read_only_fields = fields
+
+
+class ParentWorkSerializer(serializers.Serializer):
+    """Details of the parent work."""
+    frbr_uri = serializers.CharField()
+    title = serializers.CharField()
+
+    class Meta:
+        fields = ('frbr_uri', 'title')
+        read_only_fields = fields
+
+
+class PointInTimeSerializer(serializers.Serializer):
+    """Details of a point in time for a work."""
+    date = serializers.DateField()
+    expressions = ExpressionSerializer(many=True)
+
+    class Meta:
+        fields = ('date', 'expressions')
+        read_only_fields = fields
+
+
 @extend_schema_serializer(component_name="WorkExpression")
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Details of a published work expression (document). """
@@ -195,6 +231,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
         )
         read_only_fields = fields
 
+    @extend_schema_field(PointInTimeSerializer(many=True))
     def get_points_in_time(self, doc):
         result = []
 
@@ -207,6 +244,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
 
         return result
 
+    @extend_schema_field(PublicationDocumentSerializer)
     def get_publication_document(self, doc):
         try:
             pub_doc = doc.work.publication_document
@@ -217,13 +255,15 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             context={'document': doc, 'request': self.context['request']}
         ).to_representation(pub_doc)
 
+    @extend_schema_field(serializers.URLField)
     def get_url(self, doc):
         return self.context.get('url', self.published_doc_url(doc, self.context['request']))
 
-    def get_taxonomy_topics(self, doc):
+    def get_taxonomy_topics(self, doc) -> List[str]:
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomy_topics(doc.work)
 
+    @extend_schema_field(ParentWorkSerializer)
     def get_parent_work(self, doc):
         if doc.work.parent_work:
             return {
@@ -231,9 +271,10 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
                 'title': doc.work.parent_work.title,
             }
 
-    def get_aliases(self, doc):
+    def get_aliases(self, doc) -> List[str]:
         return [x.alias for x in doc.work.aliases.all()]
 
+    @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, doc):
         if not doc.draft:
             url = self.get_url(doc)
@@ -298,9 +339,11 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         )
         read_only_fields = fields
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_frbr_uri_code(self, instance):
         return '%s-%s' % (instance.country.code, instance.code)
 
+    @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, instance):
         return [
             {
@@ -329,6 +372,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         )
         read_only_fields = fields
 
+    @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, instance):
         return [
             {

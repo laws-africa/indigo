@@ -19,5 +19,5 @@ urlpatterns = [
         name="v3_schema",
     ),
     path("schema/swagger-ui", SpectacularSwaggerView.as_view(url_name="indigo_content_api:v3_schema")),
-    path("schema/redoc", SpectacularRedocView.as_view(url_name="indigo-content-api:v3_schema")),
+    path("schema/redoc", SpectacularRedocView.as_view(url_name="indigo_content_api:v3_schema")),
 ]

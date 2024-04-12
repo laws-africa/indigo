@@ -18,13 +18,13 @@ class PublishedDocUrlMixin:
         eg. /api/v2/akn/za/act/2005/01/eng@2006-02-03
         """
         uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
-        uri = reverse_content_api('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+        uri = reverse_content_api('indigo_content_api:published-document-detail', request=request, kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
 
     def place_url(self, request, code):
         if self.prefix:
             code = 'akn/' + code
-        return reverse_content_api('published-document-detail', request=request, kwargs={'frbr_uri': code})
+        return reverse_content_api('indigo_content_api:published-document-detail', request=request, kwargs={'frbr_uri': code})
 
 
 class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):
@@ -65,7 +65,8 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
 
         # the publication document is linked to the work, not the expression
         uri = (instance.work.work_uri.work_uri())[1:]
-        return reverse_content_api('published-document-publication', request=self.context['request'],
+        return reverse_content_api('indigo_content_api:published-document-publication',
+                                   request=self.context['request'],
                                    kwargs={'frbr_uri': uri, 'filename': instance.filename})
 
 

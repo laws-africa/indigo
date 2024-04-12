@@ -5,7 +5,6 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-from rest_framework.versioning import NamespaceVersioning
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
@@ -35,7 +34,6 @@ class ContentAPIBase(object):
     """
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
-    versioning_class = NamespaceVersioning
 
 
 class PlaceAPIBase(ContentAPIBase):

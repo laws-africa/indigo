@@ -340,6 +340,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'DEFAULT_PAGINATION_CLASS': 'indigo_api.utils.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -361,8 +362,7 @@ INDIGO_SOCIAL = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": f'{INDIGO_ORGANISATION} API',
-    "DESCRIPTION": "Read-only API for this website.",
-    "VERSION": "v3",
+    "DESCRIPTION": "Read-only Content API",
 }
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

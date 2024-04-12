@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
 
 from cobalt import FrbrUri
 
@@ -115,23 +117,29 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
     serializer_class = CountrySerializer
 
 
+@extend_schema(
+    operation_id="frbr_uri_retrieve",
+    external_docs={
+        "url": "https://developers.laws.africa/",
+        "description": "Laws.Africa Developer's Guide"
+    }
+)
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,
                                   mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
     """
-    The public read-only API for viewing and listing published documents by FRBR URI.
+    FRBR-based listing and detail APIs for published documents.
 
-    This handles both listing many documents based on a URI prefix, and
-    returning details for a single document. The default content type
-    is JSON.
+    This API handles both listing many documents based on an FRBR URI prefix, and returning details for a single
+    document. The default content type is JSON.
 
     For example:
 
     * ``/akn/za/``: list all published documents for South Africa.
-    * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/akn/za/act/1994.epub``: all the acts from 1994 as an ePUB
+    * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992.
+    * ``/akn/za/act/1994.json``: all the acts from 1994 in JSON format.
 
     """
 
@@ -331,10 +339,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
                                  mixins.RetrieveModelMixin,
                                  mixins.ListModelMixin,
                                  viewsets.GenericViewSet):
-    """ View to return media attached to a document or work,
-    either as a list or an individual file.
-
-    Also handles the special-cased /media/publication/publication-document.pdf
+    """ API for fetching media files (usually images) embedded in a document.
     """
 
     queryset = Attachment.objects
@@ -347,6 +352,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.get_document())
 
+    @extend_schema(responses={200: OpenApiTypes.BINARY})
     def get_file(self, request, filename, *args, **kwargs):
         """ Download a media file.
         """
@@ -357,8 +363,9 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             raise Http404()
         return view_attachment(attachment)
 
+    @extend_schema(responses={200: OpenApiTypes.BINARY})
     def get_publication_document(self, request, filename, *args, **kwargs):
-        """ Download the media publication file for a work.
+        """ Download the original publication file for a work.
         """
         work = self.get_document().work
 
@@ -368,8 +375,12 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
         raise Http404()
 
 
+@extend_schema(responses=TaxonomyTopicSerializer)
 class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):
-    queryset = TaxonomyTopic.get_public_root_nodes()
+    """API endpoint for listing taxonomy topics. Taxonomy topics are a tree structure of topics that are applied to
+    documents to categorise them.
+    """
+    queryset = TaxonomyTopic.objects.none()
     serializer_class = TaxonomyTopicSerializer
     lookup_field = 'slug'
 

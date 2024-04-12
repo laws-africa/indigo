@@ -1,5 +1,6 @@
 from itertools import groupby
 
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
 from cobalt import datestring
@@ -101,11 +102,9 @@ class PublishedDocumentTimelineSerializer(serializers.Serializer, PublishedDocUr
         return doc.work.get_serialized_timeline()
 
 
+@extend_schema_serializer(component_name="WorkExpression")
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
-    """ Serializer for published documents.
-
-    Inherits most fields from the base document serializer.
-    """
+    """ Details of a published work expression (document). """
     url = serializers.SerializerMethodField()
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
@@ -284,11 +283,15 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         ]
 
 
-class TaxonomyTopicSerializer(serializers.BaseSerializer):
-    """ Smart(er) serializer that loads the entire tree once. """
+class TaxonomyTopicSerializer(serializers.ModelSerializer):
+    """ Details of an entry in the taxonomy topic tree. """
+    # fake field for drf-spectacular
+    children = serializers.SerializerMethodField()
 
-    # TODO
-    fields = {}
+    class Meta:
+        model = TaxonomyTopic
+        fields = ('name', 'slug', 'id', 'children')
+
     _fields = ['name', 'slug', 'id']
 
     def to_representation(self, instance):
@@ -303,3 +306,9 @@ class TaxonomyTopicSerializer(serializers.BaseSerializer):
             data['children'] = [fix(n) for n in node.get('children', [])]
             return data
         return fix(data)
+
+    def get_fields(self):
+        # add children field to definition for use with drf-spectacular
+        fields = super().get_fields()
+        fields['children'] = TaxonomyTopicSerializer(many=True)
+        return fields

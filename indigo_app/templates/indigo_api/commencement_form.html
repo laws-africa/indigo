@@ -30,14 +30,10 @@
         <label for="{{ form.date.id_for_label }}" class="col-2 col-form-label">{{ form.date.label }}</label>
         <div class="col-4">
           <input
-              type="text"
-              class="form-control me-2"
-              data-provide="datepicker"
-              placeholder="yyyy-mm-dd"
-              pattern="\d{4}-\d\d-\d\d"
+              type="date"
+              class="form-control"
               name="{{ form.date.html_name }}"
-              value="{{ commencement.date|date:"Y-m-d" }}"
-              autocomplete="off"
+              value="{{ form.date.value|date:"Y-m-d" }}"
           >
         </div>
       </div>

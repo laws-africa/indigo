@@ -29,6 +29,7 @@ class TaxonomyTopicPublishedDocumentsView(ContentAPIBase, ListModelMixin, Generi
     """ List of work expressions for a taxonomy topic."""
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
     filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+    taxonomy_topic = None
 
     def get_serializer_class(self):
         return PublishedDocumentDetailViewV3.serializer_class

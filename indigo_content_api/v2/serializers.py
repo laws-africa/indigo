@@ -83,6 +83,7 @@ class AmendmentSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+@extend_schema_serializer(component_name="Commencements", many=False)
 class PublishedDocumentCommencementsSerializer(serializers.Serializer, PublishedDocUrlMixin):
     commencements = CommencementSerializer(many=True, source='work.commencements')
 
@@ -91,15 +92,70 @@ class PublishedDocumentCommencementsSerializer(serializers.Serializer, Published
         read_only_fields = fields
 
 
-class PublishedDocumentTimelineSerializer(serializers.Serializer, PublishedDocUrlMixin):
+# matches indigo.analysis.toc.base.TOCElement
+class TOCEntrySerializer(serializers.Serializer):
+    """An entry in a document's Table of Contents (TOC)."""
+    type = serializers.CharField()
+    component = serializers.CharField()
+    title = serializers.CharField()
+    basic_unit = serializers.BooleanField()
+    num = serializers.CharField()
+    id = serializers.CharField()
+    heading = serializers.CharField()
+    children = serializers.SerializerMethodField()
+    url = serializers.URLField()
+
+    class Meta:
+        fields = ('type', 'component', 'title', 'basic_unit', 'num', 'id', 'heading', 'children')
+        read_only_fields = fields
+
+    def get_fields(self):
+        # adjust field definition for use with drf-spectacular
+        fields = super().get_fields()
+        fields['children'] = TOCEntrySerializer(many=True)
+        return fields
+
+
+@extend_schema_serializer(many=False)
+class TOCSerializer(serializers.Serializer):
+    toc = TOCEntrySerializer(many=True)
+
+
+# matches indigo_api.timeline.TimelineEvent
+class TimelineEventSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    description = serializers.CharField()
+    by_frbr_uri = serializers.CharField()
+    by_title = serializers.CharField()
+    note = serializers.CharField()
+
+    class Meta:
+        fields = ('type', 'description', 'by_frbr_uri', 'by_title', 'note')
+        read_only_fields = fields
+
+
+# matches indigo_api.timeline.TimelineEntry
+class TimelineEntrySerializer(serializers.Serializer):
+    date = serializers.DateField()
+    events = TimelineEventSerializer(many=True)
+
+
+@extend_schema_serializer(many=False)
+class TimelineSerializer(serializers.Serializer):
     timeline = serializers.SerializerMethodField()
 
     class Meta:
         fields = ('timeline',)
         read_only_fields = fields
 
-    def get_timeline(self, doc):
-        return doc.work.get_serialized_timeline()
+    def to_representation(self, doc):
+        return {"timeline": doc.work.get_serialized_timeline()}
+
+    def get_fields(self):
+        # adjust field definition for use with drf-spectacular
+        fields = super().get_fields()
+        fields['timeline'] = TimelineEntrySerializer(many=True)
+        return fields
 
 
 @extend_schema_serializer(component_name="WorkExpression")

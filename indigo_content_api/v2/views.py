@@ -18,8 +18,8 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
 from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
-    TaxonomyTopicSerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
-    PublishedDocumentTimelineSerializer
+    TaxonomyTopicSerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer, \
+    TimelineSerializer, TOCSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -298,18 +298,25 @@ class PublishedDocumentExtraDetailViewBase(DocumentViewMixin, FrbrUriViewMixin, 
         return Response(self.get_serializer(self.get_document()).data)
 
 
+@extend_schema(operation_id="commencements_retrieve")
 class PublishedDocumentCommencementsView(PublishedDocumentExtraDetailViewBase):
     """ API that returns a description of the commencements details timeline for a work. """
     serializer_class = PublishedDocumentCommencementsSerializer
+    pagination_class = None
 
 
+@extend_schema(operation_id="timeline_retrieve")
 class PublishedDocumentTimelineView(PublishedDocumentExtraDetailViewBase):
-    """ API that returns a description of the event timeline for a work. """
-    serializer_class = PublishedDocumentTimelineSerializer
+    """ API that returns the event timeline for a work. """
+    serializer_class = TimelineSerializer
+    pagination_class = None
 
 
+@extend_schema(operation_id="toc_retrieve", responses=TOCSerializer)
 class PublishedDocumentTOCView(PublishedDocumentExtraDetailViewBase, PublishedDocUrlMixin):
     """ API that returns a description of the table of contents (TOC) for a work. """
+    pagination_class = None
+
     def list(self, request, **kwargs):
         document = self.get_document()
         uri = document.doc.frbr_uri

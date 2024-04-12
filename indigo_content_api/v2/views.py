@@ -59,6 +59,8 @@ class FrbrUriViewMixin(PlaceAPIBase):
 
     This parses the FRBR URI, ensures it is valid, and stores it in .frbr_uri.
     """
+    document_queryset = Document.objects.undeleted().published().no_xml()
+
     def initial(self, request, **kwargs):
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
@@ -288,24 +290,27 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return super().handle_exception(exc)
 
 
-class PublishedDocumentCommencementsView(PublishedDocumentDetailView):
+class PublishedDocumentExtraDetailViewBase(DocumentViewMixin, FrbrUriViewMixin, viewsets.GenericViewSet):
+    """ Base view for views that provide extra details for a document, driven by the FRBR URI."""
+    renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+
+    def list(self, request, **kwargs):
+        return Response(self.get_serializer(self.get_document()).data)
+
+
+class PublishedDocumentCommencementsView(PublishedDocumentExtraDetailViewBase):
+    """ API that returns a description of the commencements details timeline for a work. """
     serializer_class = PublishedDocumentCommencementsSerializer
-    renderer_classes = (renderers.JSONRenderer,)
 
 
-class PublishedDocumentTimelineView(PublishedDocumentCommencementsView):
+class PublishedDocumentTimelineView(PublishedDocumentExtraDetailViewBase):
+    """ API that returns a description of the event timeline for a work. """
     serializer_class = PublishedDocumentTimelineSerializer
 
 
-class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, PublishedDocUrlMixin):
-    """ View that returns the TOC for a document.
-    """
-    renderer_classes = (renderers.JSONRenderer,)
-    document_queryset = Document.objects \
-        .undeleted() \
-        .published()
-
-    def get(self, request, **kwargs):
+class PublishedDocumentTOCView(PublishedDocumentExtraDetailViewBase, PublishedDocUrlMixin):
+    """ API that returns a description of the table of contents (TOC) for a work. """
+    def list(self, request, **kwargs):
         document = self.get_document()
         uri = document.doc.frbr_uri
         uri.expression_date = self.frbr_uri.expression_date
@@ -336,7 +341,6 @@ class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.Retri
 
 
 class PublishedDocumentMediaView(FrbrUriViewMixin,
-                                 mixins.RetrieveModelMixin,
                                  mixins.ListModelMixin,
                                  viewsets.GenericViewSet):
     """ API for fetching media files (usually images) embedded in a document.

@@ -230,33 +230,43 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
-    frbr_uri = serializers.CharField(read_only=True)
+    frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
     draft = serializers.BooleanField(default=True)
-    language = serializers.CharField(source='language.code', required=True)
-    expression_frbr_uri = serializers.CharField(read_only=True)
+    language = serializers.CharField(source='language.code', required=True,
+                                     help_text="Three letter ISO-639-2 language code for this work expression.")
+    expression_frbr_uri = serializers.CharField(read_only=True,
+                                                help_text="FRBR URI that uniquely identifies this work expression.")
 
     # if a title isn't given, it's taken from the associated work
-    title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+    title = serializers.CharField(required=False, allow_blank=False, allow_null=False,
+                                  help_text="Short title of the work, in the expression language.")
 
     # taken from the work
-    publication_name = serializers.CharField(read_only=True)
-    publication_number = serializers.CharField(read_only=True)
-    publication_date = serializers.DateField(read_only=True)
-    commencement_date = serializers.DateField(read_only=True)
-    commencement_note = serializers.CharField(read_only=True)
-    assent_date = serializers.DateField(read_only=True)
-    numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
-    type_name = serializers.CharField(read_only=True, source='work.friendly_type')
+    publication_name = serializers.CharField(
+        read_only=True, help_text="Name of the publication in which the work was originally published.")
+    publication_number = serializers.CharField(
+        read_only=True, help_text="Number of the publication in which the work was originally published.")
+    publication_date = serializers.DateField(read_only=True, help_text="Date of original publication of the work.")
+    commencement_date = serializers.DateField(read_only=True, help_text="Date on which the bulk of the work commences.")
+    commencement_note = serializers.CharField(read_only=True,
+                                              help_text="Additional information about the commencement.")
+    assent_date = serializers.DateField(read_only=True, help_text="Date when the work was assented to.")
+    numbered_title = serializers.CharField(
+        read_only=True, source='work.numbered_title',
+        help_text="Alternative title for the work, using the document type and number.")
+    type_name = serializers.CharField(read_only=True, source='work.friendly_type',
+                                      help_text="Human-friendly version of doctype and/or subtype.")
 
-    amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
+    amendments = AmendmentEventSerializer(
+        many=True, read_only=True, source='amendment_events',
+        help_text="List of amendments that have been applied to create this expression of the work.")
 
-    """ List of amended versions of this document """
-    repeal = RepealSerializer(read_only=True)
-    """ Repeal information, inherited from the work. """
+    repeal = RepealSerializer(read_only=True,
+                              help_text="Description of the repeal of this work, if it has been repealed.")
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)

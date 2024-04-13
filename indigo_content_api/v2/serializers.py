@@ -58,6 +58,7 @@ class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
 
 
 class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
+    """Details of the original publication document for a work."""
     class Meta:
         model = PublicationDocument
         # Don't include the trusted_url field
@@ -197,18 +198,34 @@ class PointInTimeSerializer(serializers.Serializer):
 @extend_schema_serializer(component_name="WorkExpression")
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Details of a published work expression (document). """
-    url = serializers.SerializerMethodField()
+    country = serializers.CharField(help_text="ISO 3166-1 alpha-2 country code that this work belongs to.")
+    locality = serializers.CharField(help_text="The code of the locality within the country.", required=False)
+    nature = serializers.CharField(help_text="Doctype component of the work FRBR URI.")
+    subtype = serializers.CharField(help_text="Subtype component of the work FRBR URI.", required=False)
+    date = serializers.CharField(
+        help_text="Date component of the work FRBR URI, in ISO8601 format. YYYY, YYYY-MM or YYYY-MM-DD.")
+    year = serializers.CharField(help_text="Year portion of the FRBR date component the work FRBR URI.")
+    actor = serializers.CharField(help_text="Actor component of the work FRBR URI.", required=False)
+    number = serializers.CharField(help_text="Number component of the work FRBR URI.")
+
+    url = serializers.SerializerMethodField(help_text="Detail URL for this work expression.")
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
     taxonomy_topics = serializers.SerializerMethodField()
-    as_at_date = serializers.DateField(source='work.as_at_date')
-    commenced = serializers.BooleanField(source='work.commenced')
-    commencements = CommencementSerializer(many=True, source='work.commencements')
-    work_amendments = AmendmentSerializer(many=True, source='work.amendments')
+    as_at_date = serializers.DateField(source='work.as_at_date',
+                                       help_text="The date at which this work is known to be up-to-date.")
+    commenced = serializers.BooleanField(source='work.commenced', help_text="Whether this work has commenced.")
+    commencements = CommencementSerializer(many=True, source='work.commencements',
+                                           help_text="Details of the commencements which apply to this work.")
+    work_amendments = AmendmentSerializer(many=True, source='work.amendments',
+                                          help_text="Details of all amendments to this work.")
     parent_work = serializers.SerializerMethodField()
-    custom_properties = serializers.JSONField(source='work.labeled_properties')
-    stub = serializers.BooleanField(source='work.stub')
-    principal = serializers.BooleanField(source='work.principal')
+    custom_properties = serializers.JSONField(source='work.labeled_properties',
+                                              help_text="Custom key-value pairs for this work.")
+    stub = serializers.BooleanField(source='work.stub', help_text="A stub work has no content, only metadata.")
+    principal = serializers.BooleanField(
+        source='work.principal',
+        help_text="A principal work is a main work and not just a repealing, commencing or amending work.")
     aliases = serializers.SerializerMethodField()
 
     class Meta:
@@ -233,6 +250,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
 
     @extend_schema_field(PointInTimeSerializer(many=True))
     def get_points_in_time(self, doc):
+        """Available historical versions of this work."""
         result = []
 
         expressions = doc.work.expressions().published()
@@ -260,6 +278,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
         return self.context.get('url', self.published_doc_url(doc, self.context['request']))
 
     def get_taxonomy_topics(self, doc) -> List[str]:
+        """Slugs of the taxonomy topics applicable to this work."""
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomy_topics(doc.work)
 
@@ -272,10 +291,12 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             }
 
     def get_aliases(self, doc) -> List[str]:
+        """Well-known alternative names for this work."""
         return [x.alias for x in doc.work.aliases.all()]
 
     @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, doc):
+        """A list of alternate links for this document."""
         if not doc.draft:
             url = self.get_url(doc)
             return [
@@ -345,6 +366,7 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 
     @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, instance):
+        """A list of alternate links for this locality."""
         return [
             {
                 "rel": "works",
@@ -374,6 +396,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 
     @extend_schema_field(LinkSerializer(many=True))
     def get_links(self, instance):
+        """A list of alternate links for this country."""
         return [
             {
                 "rel": "works",

@@ -232,8 +232,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
-    links = serializers.SerializerMethodField()
-    """ List of alternate links. """
+    links = serializers.SerializerMethodField(help_text="A list of alternate links for this document.")
 
     draft = serializers.BooleanField(default=True)
     language = serializers.CharField(source='language.code', required=True,

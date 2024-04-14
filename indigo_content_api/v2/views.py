@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 
 from cobalt import FrbrUri
@@ -124,7 +124,14 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
     external_docs={
         "url": "https://developers.laws.africa/",
         "description": "Laws.Africa Developer's Guide"
-    }
+    },
+    parameters=[
+        OpenApiParameter(
+            "frbr_uri", OpenApiTypes.STR, 'path', required=True,
+            description="The FRBR URI of the work or work expression, without the first slash, such as akn/za/act/1994/2/",
+            allow_blank=False
+        )
+    ],
 )
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,

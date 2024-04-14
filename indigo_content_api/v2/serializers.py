@@ -12,6 +12,7 @@ from indigo_api.models import Document, Attachment, Country, Locality, Publicati
 from indigo_api.serializers import \
     DocumentSerializer, AttachmentSerializer, CommencementSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase
+from indigo_api.timeline import TimelineEventType
 from indigo_content_api.reverse import reverse_content_api
 
 
@@ -127,16 +128,17 @@ class TOCEntrySerializer(serializers.Serializer):
 
 @extend_schema_serializer(many=False)
 class TOCSerializer(serializers.Serializer):
+    """Table of Contents for a document."""
     toc = TOCEntrySerializer(many=True)
 
 
 # matches indigo_api.timeline.TimelineEvent
 class TimelineEventSerializer(serializers.Serializer):
-    type = serializers.CharField()
-    description = serializers.CharField()
-    by_frbr_uri = serializers.CharField()
-    by_title = serializers.CharField()
-    note = serializers.CharField()
+    type = serializers.ChoiceField(TimelineEventType.choices, help_text="Type of the event.")
+    description = serializers.CharField(help_text="Human-friendly description of the event.")
+    by_frbr_uri = serializers.CharField(help_text="FRBR URI of the related work (if any) that caused this event.")
+    by_title = serializers.CharField(help_text="Title of the related work (if any) that caused this event.")
+    note = serializers.CharField(help_text="Additional human-friendly details associated with this event.")
 
     class Meta:
         fields = ('type', 'description', 'by_frbr_uri', 'by_title', 'note')

@@ -1,6 +1,7 @@
 import logging
 import os.path
 from itertools import groupby
+from typing import List
 
 from actstream.signals import action
 from collections import OrderedDict
@@ -104,16 +105,12 @@ class AmendmentEventSerializer(serializers.Serializer):
 
 
 class RepealSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.RepealEvent`, for use describing
-    the repeal on a published document.
-    """
+    """ Describes the repeal event for a work. """
+    # Matches :class:`cobalt.RepealEvent`
 
-    date = serializers.DateField()
-    """ Date that the repeal took place """
-    repealing_title = serializers.CharField()
-    """ Title of repealing document """
-    repealing_uri = serializers.CharField()
-    """ FRBR URI of repealing document """
+    date = serializers.DateField(help_text="Effective date of the repeal.")
+    repealing_title = serializers.CharField(help_text="Title of the repealing work.")
+    repealing_uri = serializers.CharField(help_text="FRBR URI of the repealin work.")
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -565,8 +562,13 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 
 
 class CommencementSerializer(serializers.ModelSerializer):
-    commencing_title = serializers.CharField(source="commencing_work.title", default=None)
-    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri", default=None)
+    """Details of a commencement event."""
+    commencing_title = serializers.CharField(source="commencing_work.title", default=None,
+                                             help_text="Title of the commencing work.")
+    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri", default=None,
+                                                help_text="FRBR URI of the commencing work.")
+    provisions = serializers.SerializerMethodField(
+        help_text="A list of the element ids of the provisions that come into force with this commencement")
 
     class Meta:
         model = Commencement
@@ -576,6 +578,9 @@ class CommencementSerializer(serializers.ModelSerializer):
             'note',
         )
         read_only_fields = fields
+
+    def get_provisions(self, instance) -> List[str]:
+        return instance.provisions
 
 
 class WorkSerializer(serializers.ModelSerializer):

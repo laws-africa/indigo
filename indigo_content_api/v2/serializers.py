@@ -31,11 +31,12 @@ class PublishedDocUrlMixin:
 
 
 class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):
-    url = serializers.SerializerMethodField()
-    language = serializers.CharField(source='language.code')
-    expression_frbr_uri = serializers.CharField()
-    expression_date = serializers.DateField()
-    title = serializers.CharField()
+    """Details of an expression of a work."""
+    url = serializers.SerializerMethodField(help_text="URL for full details of this work expression.")
+    language = serializers.CharField(source='language.code', help_text="Three letter ISO-639-2 language code")
+    expression_frbr_uri = serializers.CharField(help_text="FRBR URI of this expression.")
+    expression_date = serializers.DateField(help_text="Date of this expression")
+    title = serializers.CharField(help_text="Title of this expression, which may be different to the title of the work.")
 
     class Meta:
         fields = ('url', 'language', 'expression_frbr_uri', 'title', 'expression_date')
@@ -78,8 +79,8 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
 
 
 class AmendmentSerializer(serializers.ModelSerializer):
-    amending_title = serializers.CharField(source='amending_work.title')
-    amending_uri = serializers.CharField(source='amending_work.frbr_uri')
+    amending_title = serializers.CharField(source='amending_work.title', help_text="Title of the amending work.")
+    amending_uri = serializers.CharField(source='amending_work.frbr_uri', help_text="FRBR URI of the amending work.")
 
     class Meta:
         model = Amendment
@@ -101,15 +102,17 @@ class PublishedDocumentCommencementsSerializer(serializers.Serializer, Published
 # matches indigo.analysis.toc.base.TOCElement
 class TOCEntrySerializer(serializers.Serializer):
     """An entry in a document's Table of Contents (TOC)."""
-    type = serializers.CharField()
-    component = serializers.CharField()
-    title = serializers.CharField()
-    basic_unit = serializers.BooleanField()
-    num = serializers.CharField()
-    id = serializers.CharField()
-    heading = serializers.CharField()
+    type = serializers.CharField(help_text="Type of entry, one of the AKN hierarchical elements.")
+    component = serializers.CharField(
+        help_text="Component name (after the ! in the FRBR URI) of the component that this entry is a part of.")
+    title = serializers.CharField(
+        help_text="Friendly title of this entry, taking heading, type and number into account.")
+    basic_unit = serializers.BooleanField(help_text="Is this a basic unit in the country's local tradition?")
+    num = serializers.CharField(help_text="Text of the AKN num element.")
+    id = serializers.CharField(help_text="eId of this entry, if it has one.")
+    heading = serializers.CharField(help_text="Text of the AKN heading element, if it has one.")
     children = serializers.SerializerMethodField()
-    url = serializers.URLField()
+    url = serializers.URLField(help_text="URL for content for this element.")
 
     class Meta:
         fields = ('type', 'component', 'title', 'basic_unit', 'num', 'id', 'heading', 'children')
@@ -142,8 +145,9 @@ class TimelineEventSerializer(serializers.Serializer):
 
 # matches indigo_api.timeline.TimelineEntry
 class TimelineEntrySerializer(serializers.Serializer):
-    date = serializers.DateField()
-    events = TimelineEventSerializer(many=True)
+    """An entry in a work's timeline."""
+    date = serializers.DateField(help_text="Date of the events.")
+    events = TimelineEventSerializer(many=True, help_text="The events at this date.")
 
 
 @extend_schema_serializer(many=False)
@@ -166,10 +170,10 @@ class TimelineSerializer(serializers.Serializer):
 
 class LinkSerializer(serializers.Serializer):
     """A link related to this object."""
-    rel = serializers.CharField()
-    title = serializers.CharField()
+    rel = serializers.CharField(help_text="The relationship of the link to the object.")
+    title = serializers.CharField(help_text="Title of the link.")
     href = serializers.URLField()
-    media_type = serializers.CharField(required=False)
+    media_type = serializers.CharField(required=False, help_text="Mime type for the link.")
 
     class Meta:
         fields = ('rel', 'title', 'href')
@@ -178,8 +182,8 @@ class LinkSerializer(serializers.Serializer):
 
 class RelatedWorkSerializer(serializers.Serializer):
     """Details of a related work."""
-    frbr_uri = serializers.CharField()
-    title = serializers.CharField()
+    frbr_uri = serializers.CharField(help_text="FRBR URI of the work")
+    title = serializers.CharField(help_text="Title of the work")
 
     class Meta:
         fields = ('frbr_uri', 'title')
@@ -345,8 +349,8 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
 
 
 class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
-    frbr_uri_code = serializers.SerializerMethodField()
-    links = serializers.SerializerMethodField()
+    frbr_uri_code = serializers.SerializerMethodField(help_text="Complete FRBR URI code for this locality.")
+    links = serializers.SerializerMethodField(help_text="A list of alternate links for this locality.")
     prefix = True
 
     class Meta:
@@ -376,8 +380,8 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 
 
 class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
-    frbr_uri_code = serializers.CharField(source='code', read_only=True)
-    localities = LocalitySerializer(many=True)
+    frbr_uri_code = serializers.CharField(source='code', read_only=True, help_text="FRBR URI country code.")
+    localities = LocalitySerializer(many=True, help_text="Localities within this country.")
     links = serializers.SerializerMethodField(help_text="A list of alternate links for this country.")
     prefix = True
 
@@ -406,7 +410,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 class TaxonomyTopicSerializer(serializers.ModelSerializer):
     """ Details of an entry in the taxonomy topic tree. """
     # fake field for drf-spectacular
-    children = serializers.SerializerMethodField()
+    children = serializers.SerializerMethodField(help_text="Children of this taxonomy topic.")
 
     class Meta:
         model = TaxonomyTopic

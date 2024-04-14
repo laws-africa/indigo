@@ -119,19 +119,19 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
     serializer_class = CountrySerializer
 
 
+open_api_frbr_uri_param = OpenApiParameter(
+    "frbr_uri", OpenApiTypes.STR, 'path', required=True,
+    description="The FRBR URI of the work or work expression, without the first slash, such as akn/za/act/1994/2/",
+)
+
+
 @extend_schema(
-    operation_id="frbr_uri_retrieve",
+    summary="List or retrieve a published document",
     external_docs={
         "url": "https://developers.laws.africa/",
         "description": "Laws.Africa Developer's Guide"
     },
-    parameters=[
-        OpenApiParameter(
-            "frbr_uri", OpenApiTypes.STR, 'path', required=True,
-            description="The FRBR URI of the work or work expression, without the first slash, such as akn/za/act/1994/2/",
-            allow_blank=False
-        )
-    ],
+    parameters=[open_api_frbr_uri_param],
 )
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,
@@ -305,21 +305,21 @@ class PublishedDocumentExtraDetailViewBase(DocumentViewMixin, FrbrUriViewMixin, 
         return Response(self.get_serializer(self.get_document()).data)
 
 
-@extend_schema(operation_id="commencements_retrieve")
+@extend_schema(summary="Get commencements", parameters=[open_api_frbr_uri_param])
 class PublishedDocumentCommencementsView(PublishedDocumentExtraDetailViewBase):
     """ API that returns a description of the commencements details timeline for a work. """
     serializer_class = PublishedDocumentCommencementsSerializer
     pagination_class = None
 
 
-@extend_schema(operation_id="timeline_retrieve")
+@extend_schema(summary="Get work timeline", parameters=[open_api_frbr_uri_param])
 class PublishedDocumentTimelineView(PublishedDocumentExtraDetailViewBase):
     """ API that returns the event timeline for a work. """
     serializer_class = TimelineSerializer
     pagination_class = None
 
 
-@extend_schema(operation_id="toc_retrieve", responses=TOCSerializer)
+@extend_schema(summary="Get a Table of Contents (TOC)", responses=TOCSerializer, parameters=[open_api_frbr_uri_param])
 class PublishedDocumentTOCView(PublishedDocumentExtraDetailViewBase, PublishedDocUrlMixin):
     """ API that returns a description of the table of contents (TOC) for a work. """
     pagination_class = None
@@ -354,6 +354,7 @@ class PublishedDocumentTOCView(PublishedDocumentExtraDetailViewBase, PublishedDo
         return toc
 
 
+@extend_schema(parameters=[open_api_frbr_uri_param])
 class PublishedDocumentMediaView(FrbrUriViewMixin,
                                  mixins.ListModelMixin,
                                  viewsets.GenericViewSet):

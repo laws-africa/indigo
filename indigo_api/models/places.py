@@ -71,10 +71,12 @@ class Country(models.Model):
 
     @property
     def code(self) -> str:
+        """ISO 3166-1 alpha-2 country code."""
         return self.country.iso.lower()
 
     @property
     def name(self) -> str:
+        """Name of the country in English."""
         return self.country.name
 
     @property

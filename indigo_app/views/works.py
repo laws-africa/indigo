@@ -467,9 +467,6 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
-        # TODO: is there a neater way of doing this?
-        if self.request.GET.get('commencing_work') or self.request.GET.get('clear_commencing_work'):
-            kwargs['data'] = self.request.GET
         return kwargs
 
     def form_valid(self, form):
@@ -484,6 +481,11 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         # re-render the whole page (updated provisions)
         # TODO: navigate to the commencement on the page, e.g. works/…/commencements/#commencement-1076
         return reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri})
+
+
+class WorkCommencementCommencingWorkEditView(WorkCommencementEditView):
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
 
 
 class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, FormView):

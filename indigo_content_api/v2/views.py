@@ -126,7 +126,7 @@ open_api_frbr_uri_param = OpenApiParameter(
 
 
 @extend_schema(
-    summary="List or retrieve a published document",
+    summary="List or retrieve work expressions by FRBR URI.",
     external_docs={
         "url": "https://developers.laws.africa/",
         "description": "Laws.Africa Developer's Guide"
@@ -218,8 +218,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         raise Http404
 
     def list(self, request):
-        """ Return details on many documents.
-        """
         if self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
             # NB: don't try to sort in the db, that's already sorting to
             # return the latest expression of each doc. Sort here instead.

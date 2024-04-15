@@ -362,6 +362,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": f'{INDIGO_ORGANISATION} Content API',
     "VERSION": __version__,
     "DESCRIPTION": "Read-only Content API",
+    "PREPROCESSING_HOOKS": ["indigo_content_api.schema.preprocess"],
 }
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

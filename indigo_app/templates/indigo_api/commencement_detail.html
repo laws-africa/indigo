@@ -2,7 +2,7 @@
 
 <div id="commencement-detail-{{ commencement.id }}">
   <div class="card-body">
-    <div class="float-end mb-3">
+    <div class="d-flex float-end mb-3">
       {% if perms.indigo_api.delete_commencement %}
         <form
             method="post"
@@ -10,7 +10,7 @@
         >
           {% csrf_token %}
           <button
-              class="btn btn-link text-danger me-2"
+              class="btn btn-link text-danger"
               name="delete"
               data-confirm="{% trans 'Really delete this commencement? There is no undo.' %}"
           >{% trans 'Delete' %}</button>

@@ -256,6 +256,7 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
 
 
 class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
+    frbr_uri_code = serializers.CharField(source='code', read_only=True)
     localities = LocalitySerializer(many=True)
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
@@ -266,6 +267,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         fields = (
             'code',
             'name',
+            'frbr_uri_code',
             'localities',
             'links',
         )

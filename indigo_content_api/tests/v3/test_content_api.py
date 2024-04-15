@@ -68,6 +68,12 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
              ]}
         ], response.data['timeline'])
 
+    def test_work_expressions_global(self):
+        response = self.client.get(self.api_path + '/work-expressions.json')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('application/json', response.accepted_media_type)
+        self.assertGreaterEqual(len(response.data['results']), 1)
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

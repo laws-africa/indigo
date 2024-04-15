@@ -30,8 +30,13 @@
         <label for="{{ form.date.id_for_label }}" class="col-2 col-form-label">{{ form.date.label }}</label>
         <div class="col-4">
           <input
+              hx-post="{% url 'work_commencement_provisions_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+              hx-trigger="load, change"
+              hx-target="#provisions-edit-{{ commencement.id }}"
+              hx-include="provisions-edit-{{ commencement.id }}"
               type="date"
               class="form-control"
+              id="{{ form.date.id_for_label }}"
               name="{{ form.date.html_name }}"
               value="{{ form.date.value|date:"Y-m-d" }}"
           >
@@ -114,10 +119,12 @@
         <div
             class="col-6 mt-1"
             id="provisions-edit-{{ commencement.id }}"
-            hx-get="{% url 'work_commencement_provisions_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
-            hx-trigger="load"
-            hx-target="#provisions-edit-{{ commencement.id }}"
-        >{% trans "Loading provisions…" %}</div>
+        >
+          {% for provision in commencement.provisions %}
+            <input type="hidden" name="{{ form.provisions.html_name }}" value="{{ provision }}">
+          {% endfor %}
+          {% trans "Loading provisions…" %}
+        </div>
       </div>
     </div>
   </div>

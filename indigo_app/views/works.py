@@ -481,6 +481,29 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         return reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, FormView):
+    template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
+    permission_required = ('indigo_api.edit_commencement',)
+    form_class = CommencementForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['work'] = self.work
+        kwargs['provisions'] = list(descend_toc_pre_order(kwargs['work'].all_commenceable_provisions()))
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
+
+    @property
+    def work(self):
+        # TODO: rather inherit from something else (WorkDependentView?) -- figure out inheritance order
+        return Work.objects.get(frbr_uri=self.kwargs['frbr_uri'])
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+
 class WorkCommencementAddView(WorkDependentView, CreateView):
     model = Commencement
     pk_url_kwarg = 'pk'
@@ -500,10 +523,6 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
 
     def get_success_url(self):
         return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
-
-
-class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView):
-    template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
 
 
 class WorkUncommencedView(WorkDependentView, View):

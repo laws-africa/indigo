@@ -578,10 +578,10 @@ class CommencementForm(forms.ModelForm):
         model = Commencement
         fields = ('date', 'all_provisions', 'provisions', 'main', 'note', 'commencing_work')
 
-    def __init__(self, work, provisions, *args, **kwargs):
+    def __init__(self, work, *args, provisions=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.work = work
-        self.provisions = provisions
+        self.provisions = provisions or []
         self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
 
     def clean_main(self):

@@ -527,7 +527,6 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["work"] = self.work
-        kwargs["provisions"] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
 
     def form_valid(self, form):

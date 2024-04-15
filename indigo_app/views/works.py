@@ -415,17 +415,22 @@ class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['commencement'].rich_provisions = self.decorate_commencement_provisions(context['commencement'])
+        context['commencement'].rich_provisions = self.decorate_commencement_provisions(context['commencement'], date=self.get_date(context))
         return context
 
-    def decorate_commencement_provisions(self, commencement):
+    def get_date(self, context):
+        # just use the commencement's date (the default if no date is specified) for the read-only view
+        return None
+
+    def decorate_commencement_provisions(self, commencement, date=None):
+        date = date or commencement.date
         beautifier = plugins.for_locale(
             'commencements-beautifier', commencement.commenced_work.country.code, None,
             commencement.commenced_work.locality.code if commencement.commenced_work.locality else None,
         )
         # provisions from all documents up to the commencement's date
         # (expensive but needs to be worked out for each commencement)
-        provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
+        provisions = commencement.commenced_work.all_commenceable_provisions(date)
         # provisions commenced by everything else
         other_commencements = commencement.commenced_work.commencements.exclude(pk=commencement.pk)
         commenced_provision_ids = set(p_id for comm in other_commencements for p_id in comm.provisions)
@@ -491,6 +496,12 @@ class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, F
         kwargs['work'] = self.work
         kwargs['provisions'] = list(descend_toc_pre_order(kwargs['work'].all_commenceable_provisions()))
         return kwargs
+
+    def get_date(self, context):
+        # get the currently selected date from the form -- different provisions may be available
+        form = context['form']
+        form.is_valid()
+        return form.cleaned_data.get('date')
 
     def get_success_url(self):
         return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})

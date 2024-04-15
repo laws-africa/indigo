@@ -21,9 +21,6 @@
       <div class="col-4">
         {% include 'indigo_api/commencements/_commencement_form_commencing_work.html' %}
       </div>
-      <div class="col-4 alert alert-warning">
-        {% trans "Edit the commencing work before editing the provisions, or you will lose your changes." %}
-      </div>
     </div>
     <div id="non-commencing-work-data-{{ commencement.id }}">
       <div class="row mb-3">
@@ -38,7 +35,7 @@
               class="form-control"
               id="{{ form.date.id_for_label }}"
               name="{{ form.date.html_name }}"
-              value="{{ form.date.value|date:"Y-m-d" }}"
+              value="{{ commencement.date|date:"Y-m-d" }}"
           >
         </div>
       </div>

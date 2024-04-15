@@ -4,15 +4,16 @@
   <div id="provisions-edit-{{ commencement.id }}" class="provisions-wrapper">
     <div class="mt-2">
       <div>
-        {# TODO: don't lose checkbox when re-rendering #}
         <input
             type="checkbox"
             class="form-check-input me-1"
-            id="select-all-provisions-{{ commencement.id }}"
-            name="select-all"
+            id="{{ form.provisions_select_all.id_for_label }}-{{ commencement.id }}"
+            name="{{ form.provisions_select_all.html_name }}"
+            value="1"
+            {% if form.provisions_select_all.value %}checked{% endif %}
         >
         <label
-            for="select-all-provisions-{{ commencement.id }}"
+            for="{{ form.provisions_select_all.id_for_label }}-{{ commencement.id }}"
             class="form-check-label"
         >{% trans 'Select all provisions' %}</label>
       </div>

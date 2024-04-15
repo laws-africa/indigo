@@ -570,6 +570,7 @@ class NewCommencementForm(forms.ModelForm):
 
 class CommencementForm(forms.ModelForm):
     provisions = forms.MultipleChoiceField(required=False)
+    provisions_select_all = forms.BooleanField(required=False)
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
     clear_commencing_work = forms.BooleanField(required=False)
 

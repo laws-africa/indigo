@@ -120,6 +120,9 @@
           {% for provision in commencement.provisions %}
             <input type="hidden" name="{{ form.provisions.html_name }}" value="{{ provision }}">
           {% endfor %}
+          {% if form.provisions_select_all.value %}
+            <input type="hidden" name="{{ form.provisions_select_all.html_name }}" value="1">
+          {% endif %}
           {% trans "Loading provisions…" %}
         </div>
       </div>

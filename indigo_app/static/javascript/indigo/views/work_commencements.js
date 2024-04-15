@@ -13,7 +13,7 @@
       'click .all-provisions': 'allProvisionsChanged',
       'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
       'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick',
-      'change .commencement-form input[name="select-all"]' : "onSelectAll",
+      'change .commencement-form input[name="provisions_select_all"]' : "onSelectAll",
     },
 
     initialize: function() {

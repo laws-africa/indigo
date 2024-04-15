@@ -363,6 +363,7 @@ class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # TODO: only get all_uncommenced_provision_ids once? decorate_work_provisions() gets all_commenceable_provisions again
         context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
         # only decorate provisions if there are uncommenced provisions
         if context['uncommenced_provisions_count']:
@@ -375,6 +376,7 @@ class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
             self.work.locality.code if self.work.locality else None,
         )
         commencements = self.work.commencements.all().reverse()
+        # TODO: avoid calling this again?
         provisions = self.work.all_commenceable_provisions()
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
         return beautifier.decorate_provisions(provisions, commenced_provision_ids)
@@ -430,6 +432,7 @@ class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView)
         )
         # provisions from all documents up to the commencement's date
         # (expensive but needs to be worked out for each commencement)
+        # TODO: get provisions from a form instead?
         provisions = commencement.commenced_work.all_commenceable_provisions(date)
         # provisions commenced by everything else
         other_commencements = commencement.commenced_work.commencements.exclude(pk=commencement.pk)
@@ -466,6 +469,7 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
+        # TODO: include date here, use again later?
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
 
@@ -496,6 +500,7 @@ class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, F
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
+        # TODO: include date here, use again later?
         kwargs['provisions'] = list(descend_toc_pre_order(kwargs['work'].all_commenceable_provisions()))
         return kwargs
 

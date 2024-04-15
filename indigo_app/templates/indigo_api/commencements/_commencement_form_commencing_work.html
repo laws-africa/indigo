@@ -11,12 +11,12 @@
   </div>
 {% endif %}
 <div>
-  {% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id as edit_url %}
+  {% url 'work_commencement_commencing_work_edit' frbr_uri=work.frbr_uri pk=commencement.id as edit_url %}
   {% with commencement_id=commencement.id|safe %}
     <button
         class="btn btn-outline-primary"
         type="button"
-        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#"|add:request.htmx.target|urlencode }}&field=commencing_work&include={{ "#non-commencing-work-data-"|add:commencement_id|urlencode }}&method=hx-get"
+        hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#"|add:request.htmx.target|urlencode }}&field=commencing_work&include={{ "#non-commencing-work-data-"|add:commencement_id|urlencode }}&method=hx-post"
         hx-target="#work-chooser-modal"
         hx-trigger="click"
         data-bs-toggle="modal"

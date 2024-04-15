@@ -363,6 +363,7 @@ class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # TODO: only get all_uncommenced_provision_ids once? decorate_work_provisions() gets all_commenceable_provisions again
         context['uncommenced_provisions_count'] = len(self.work.all_uncommenced_provision_ids())
         # only decorate provisions if there are uncommenced provisions
         if context['uncommenced_provisions_count']:
@@ -375,6 +376,7 @@ class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
             self.work.locality.code if self.work.locality else None,
         )
         commencements = self.work.commencements.all().reverse()
+        # TODO: avoid calling this again?
         provisions = self.work.all_commenceable_provisions()
         commenced_provision_ids = [p_id for c in commencements for p_id in c.provisions]
         return beautifier.decorate_provisions(provisions, commenced_provision_ids)
@@ -415,17 +417,23 @@ class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['commencement'].rich_provisions = self.decorate_commencement_provisions(context['commencement'])
+        context['commencement'].rich_provisions = self.decorate_commencement_provisions(context['commencement'], date=self.get_date(context))
         return context
 
-    def decorate_commencement_provisions(self, commencement):
+    def get_date(self, context):
+        # just use the commencement's date (the default if no date is specified) for the read-only view
+        return None
+
+    def decorate_commencement_provisions(self, commencement, date=None):
+        date = date or commencement.date
         beautifier = plugins.for_locale(
             'commencements-beautifier', commencement.commenced_work.country.code, None,
             commencement.commenced_work.locality.code if commencement.commenced_work.locality else None,
         )
         # provisions from all documents up to the commencement's date
         # (expensive but needs to be worked out for each commencement)
-        provisions = commencement.commenced_work.all_commenceable_provisions(commencement.date)
+        # TODO: get provisions from a form instead?
+        provisions = commencement.commenced_work.all_commenceable_provisions(date)
         # provisions commenced by everything else
         other_commencements = commencement.commenced_work.commencements.exclude(pk=commencement.pk)
         commenced_provision_ids = set(p_id for comm in other_commencements for p_id in comm.provisions)
@@ -446,6 +454,12 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
 
+    def post(self, request, *args, **kwargs):
+        # if a brand new commencement has editing cancelled, we need to re-render the whole page
+        if 'cancel' in request.POST:
+            return redirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['disable_main_commencement'] = self.work.main_commencement and not self.object.main
@@ -455,10 +469,8 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
+        # TODO: include date here, use again later?
         kwargs['provisions'] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
-        # TODO: is there a neater way of doing this?
-        if self.request.GET.get('commencing_work') or self.request.GET.get('clear_commencing_work'):
-            kwargs['data'] = self.request.GET
         return kwargs
 
     def form_valid(self, form):
@@ -475,6 +487,41 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
         return reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
+class WorkCommencementCommencingWorkEditView(WorkCommencementEditView):
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+
+class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, FormView):
+    template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
+    permission_required = ('indigo_api.edit_commencement',)
+    form_class = CommencementForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['work'] = self.work
+        # TODO: include date here, use again later?
+        kwargs['provisions'] = list(descend_toc_pre_order(kwargs['work'].all_commenceable_provisions()))
+        return kwargs
+
+    def get_date(self, context):
+        # get the currently selected date from the form -- different provisions may be available
+        form = context['form']
+        form.is_valid()
+        return form.cleaned_data.get('date')
+
+    def get_success_url(self):
+        return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
+
+    @property
+    def work(self):
+        # TODO: rather inherit from something else (WorkDependentView?) -- figure out inheritance order
+        return Work.objects.get(frbr_uri=self.kwargs['frbr_uri'])
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+
 class WorkCommencementAddView(WorkDependentView, CreateView):
     model = Commencement
     pk_url_kwarg = 'pk'
@@ -485,7 +532,6 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["work"] = self.work
-        kwargs["provisions"] = list(descend_toc_pre_order(self.work.all_commenceable_provisions()))
         return kwargs
 
     def form_valid(self, form):
@@ -494,10 +540,6 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
 
     def get_success_url(self):
         return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})
-
-
-class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView):
-    template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
 
 
 class WorkUncommencedView(WorkDependentView, View):

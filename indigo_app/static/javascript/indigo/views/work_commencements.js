@@ -13,7 +13,7 @@
       'click .all-provisions': 'allProvisionsChanged',
       'change .commencement-form input[name="provisions"]' : 'handleCheckboxesChange',
       'click .commencement-form .expand-collapse-button' : 'onExpandCollapseClick',
-      'change .commencement-form input[name="select-all"]' : "onSelectAll",
+      'change .commencement-form input[name="provisions_select_all"]' : "onSelectAll",
     },
 
     initialize: function() {
@@ -49,7 +49,7 @@
     },
 
     onSelectAll: function (e) {
-      for (const checkbox of document.querySelectorAll(".commencement-form input[name='provisions']")) {
+      for (const checkbox of e.target.closest("div[class='provisions-wrapper']").querySelectorAll(".commencement-form input[name='provisions']")) {
         checkbox.checked = e.target.checked;
       }
     }

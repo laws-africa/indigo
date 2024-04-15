@@ -2,16 +2,19 @@
 
 <div id="commencement-detail-{{ commencement.id }}">
   <div class="card-body">
-    <div class="float-end mb-3">
-      {# TODO: disable these buttons when a form is open #}
+    <div class="d-flex float-end mb-3">
       {% if perms.indigo_api.delete_commencement %}
-        <button
-            class="btn btn-link text-danger me-2"
-            name="delete"
-            hx-post="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-            hx-target="body"
-            hx-confirm="{% trans 'Really delete this commencement? There is no undo.' %}"
-        >{% trans 'Delete' %}</button>
+        <form
+            method="post"
+            action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+        >
+          {% csrf_token %}
+          <button
+              class="btn btn-link text-danger"
+              name="delete"
+              data-confirm="{% trans 'Really delete this commencement? There is no undo.' %}"
+          >{% trans 'Delete' %}</button>
+        </form>
       {% endif %}
       {% if perms.indigo_api.change_commencement %}
         <button

@@ -24,7 +24,7 @@ class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
         fields = (
-            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
+            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
             'stub', 'principal', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
@@ -60,11 +60,6 @@ class WorkForm(forms.ModelForm):
     # page.
     no_render_properties = []
 
-    # commencement details
-    commencement_date = forms.DateField(required=False)
-    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
-    commencement_note = forms.CharField(max_length=1024, required=False)
-
     def __init__(self, country, locality, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.country = country
@@ -85,11 +80,6 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
-            self.fields['commencement_date'].initial = self.instance.commencement_date
-            self.fields['commencement_note'].initial = self.instance.commencement_note
-            if hasattr(self.instance.main_commencement, 'commencing_work'):
-                if self.instance.main_commencement.commencing_work:
-                    self.fields['commencing_work'].initial = self.instance.main_commencement.commencing_work.pk
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -174,6 +164,29 @@ class WorkForm(forms.ModelForm):
                 amendments_made_formset_kwargs["data"] = self.data
             self.amendments_made_formset = AmendmentsBaseFormSet(**amendments_made_formset_kwargs)
             self.formsets.append(self.amendments_made_formset)
+
+            commencements_formset_kwargs = {
+                "work": self.instance,
+                "user": self.user,
+                "form_kwargs": {
+                    "work": self.instance,
+                    "user": self.user,
+                },
+                "prefix": "commencements",
+                "initial": [{
+                    "commenced_work": self.instance,
+                    "commencing_work": commencement.commencing_work,
+                    "note": commencement.note,
+                    "date": commencement.date,
+                    "id": commencement.id,
+                }
+                    for commencement in self.instance.commencements.all()],
+            }
+
+            if self.is_bound:
+                commencements_formset_kwargs["data"] = self.data
+            self.commencements_formset = CommencementsBaseFormset(**commencements_formset_kwargs)
+            self.formsets.append(self.commencements_formset)
 
             commencements_made_formset_kwargs = {
                 "work": self.instance,
@@ -269,8 +282,8 @@ class WorkForm(forms.ModelForm):
         work = super().save(commit)
         self.save_properties()
         self.save_publication_document()
-        self.save_commencement()
         self.save_formsets()
+        self.save_commenced()
         return work
 
     def save_properties(self):
@@ -325,34 +338,10 @@ class WorkForm(forms.ModelForm):
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
 
-    def save_commencement(self):
-        work = self.instance
-
-        # if there are multiple commencement objects, then just ignore these elements,
-        # the user must edit the commencements in the commencements view
-        if work.commencements.count() > 1:
-            return
-
-        # if the work has either been created as uncommenced or edited not to commence, delete all existing commencements
-        if not work.commenced:
-            for obj in work.commencements.all():
-                obj.delete()
-
-        else:
-            # if the work has either been created as commenced or edited to commence, update / create the commencement
-            commencement, created = Commencement.objects.get_or_create(
-                defaults={'created_by_user': work.updated_by_user},
-                commenced_work=work
-            )
-            commencement.updated_by_user = work.updated_by_user
-            commencement.commencing_work = self.cleaned_data['commencing_work']
-            commencement.note = self.cleaned_data['commencement_note']
-            commencement.date = self.cleaned_data['commencement_date']
-            if created:
-                commencement.all_provisions = True
-            # this is safe because we know there are no other commencement objects
-            commencement.main = True
-            commencement.save()
+    def save_commenced(self):
+        if not self.instance.commenced and self.instance.commencements.exists():
+            self.instance.commenced = True
+            self.instance.save()
 
 
 class BasePartialWorkFormSet(forms.BaseFormSet):
@@ -603,10 +592,12 @@ class CommencementsPartialForm(BasePartialWorkForm):
     note = forms.CharField(required=False, widget=forms.TextInput)
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    clear_commencing_work = forms.BooleanField(required=False)
 
     @cached_property
     def commencing_work_obj(self):
-        return Work.objects.filter(pk=self['commencing_work'].value()).first()
+        if self['commencing_work'].value():
+            return Work.objects.filter(pk=self['commencing_work'].value()).first()
 
     @cached_property
     def commenced_work_obj(self):
@@ -644,6 +635,50 @@ CommencementsFormset = formset_factory(
     can_delete=True,
     formset=BasePartialWorkFormSet,
 )
+
+
+class CommencementsBaseFormset(CommencementsFormset):
+    def clean(self):
+        # TODO: identical to CommencementsMadeBaseFormset except validation message
+        super().clean()
+        if any(self.errors):
+            return
+        # check if commencing work and date are unique together
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE'):
+                continue
+            commencing_work = form.cleaned_data.get('commencing_work')
+            commenced_work = form.cleaned_data.get('commenced_work')
+            date = form.cleaned_data.get('date')
+            if (commencing_work, commenced_work, date) in seen:
+                raise ValidationError(_("Commencing work and date must be unique together."))
+            seen.add((commencing_work, commenced_work, date))
+
+    def save(self, *args, **kwargs):
+        if self.is_valid() and self.has_changed():
+            super().save(*args, **kwargs)
+            # some commencements may have been deleted during super save
+            self.work.refresh_from_db()
+
+            n_commencements = self.work.commencements.count()
+            if n_commencements > 1:
+                for c in self.work.commencements.all():
+                    if c.all_provisions:
+                        c.all_provisions = False
+                        c.save()
+            elif n_commencements == 1:
+                only_commencement = self.work.commencements.first()
+                only_commencement.main = True
+                only_commencement.all_provisions = True
+                only_commencement.save()
+            has_main_commencement = bool(self.work.main_commencement)
+            if not has_main_commencement:
+                # update the first commencement to be the main one, if there is one
+                first = self.work.commencements.first()
+                if first:
+                    first.main = True
+                    first.save()
 
 
 class CommencementsMadeBaseFormset(CommencementsFormset):

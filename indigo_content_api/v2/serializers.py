@@ -194,8 +194,8 @@ class RelatedWorkSerializer(serializers.Serializer):
 
 class PointInTimeSerializer(serializers.Serializer):
     """Details of a point in time for a work."""
-    date = serializers.DateField()
-    expressions = ExpressionSerializer(many=True)
+    date = serializers.DateField(help_text="Date of this point in time.")
+    expressions = ExpressionSerializer(many=True, help_text="Expressions available at this point in time.")
 
     class Meta:
         fields = ('date', 'expressions')

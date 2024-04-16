@@ -1,12 +1,22 @@
 from dataclasses import dataclass, field
 
+from django.db.models import TextChoices
 from django.utils.formats import date_format
 from django.utils.translation import gettext as _
 
 
+class TimelineEventType(TextChoices):
+    AMENDMENT = 'amendment'
+    ASSENT = 'assent'
+    COMMENCEMENT = 'commencement'
+    CONSOLIDATION = 'consolidation'
+    PUBLICATION = 'publication'
+    REPEAL = 'repeal'
+
+
 @dataclass
 class TimelineEvent:
-    type: str = ''
+    type: TimelineEventType = ''
     description: str = ''
     by_frbr_uri: str = ''
     by_title: str = ''
@@ -16,7 +26,7 @@ class TimelineEvent:
 
 @dataclass
 class TimelineCommencementEvent(TimelineEvent):
-    type: str = 'commencement'
+    type: str = TimelineEventType.COMMENCEMENT
     subtype: str = ''
     by_work: object = None
     date: object = None
@@ -92,7 +102,7 @@ def describe_publication_event(work, with_date=True, friendly_date=True, placeho
         If `placeholder` is True, return a minimum placeholder string as the TimelineEvent's `description`.
         Otherwise, only return a TimelineEvent at all if at least one piece of publication information is available.
     """
-    event = TimelineEvent(type='publication')
+    event = TimelineEvent(TimelineEventType.PUBLICATION)
 
     name = work.publication_name
     number = work.publication_number
@@ -176,7 +186,7 @@ def get_timeline(work):
 
         # assent
         if date == work.assent_date:
-            entry.events.append(TimelineEvent(type='assent', description=_('Assented to')))
+            entry.events.append(TimelineEvent(TimelineEventType.ASSENT, description=_('Assented to')))
         # publication
         if date == work.publication_date:
             entry.events.append(describe_publication_event(work, with_date=False, placeholder=True))
@@ -184,7 +194,7 @@ def get_timeline(work):
         # amendment
         for amendment in amendments:
             description = TimelineEvent(
-                type='amendment', description=_('Amended by'), related=amendment,
+                TimelineEventType.AMENDMENT, description=_('Amended by'), related=amendment,
                 by_frbr_uri=amendment.amending_work.frbr_uri,
                 by_title=amendment.amending_work.title)
 
@@ -206,11 +216,11 @@ def get_timeline(work):
         # consolidation
         for consolidation in consolidations:
             entry.events.append(TimelineEvent(
-                type='consolidation', description=_('Consolidation'), related=consolidation))
+                TimelineEventType.CONSOLIDATION, description=_('Consolidation'), related=consolidation))
         # repeal
         if date == work.repealed_date:
             entry.events.append(TimelineEvent(
-                type='repeal', description=_('Repealed by'), by_frbr_uri=work.repealed_by.frbr_uri,
+                TimelineEventType.REPEAL, description=_('Repealed by'), by_frbr_uri=work.repealed_by.frbr_uri,
                 by_title=work.repealed_by.title))
 
         entries.append(entry)

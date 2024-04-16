@@ -2,10 +2,7 @@ from indigo_content_api.v2.serializers import PublishedDocumentSerializer as Pub
 
 
 class PublishedDocumentSerializerV3(PublishedDocumentSerializerV2):
-    """ Serializer for published documents.
-    Inherits most fields from the v2 published document serializer.
-    - Excludes detailed commencement information.
-    """
+    # Excludes detailed commencement information.
     commencements = None
 
     class Meta:

@@ -11,17 +11,15 @@ import os
 import logging
 from urllib.parse import urlparse
 
-from django.utils.translation import gettext_lazy as _
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
+from .version import __version__
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'true') == 'true'
@@ -96,6 +94,7 @@ INSTALLED_APPS = (
     'django_comments',
 
     'django_htmx',
+    'drf_spectacular',
 )
 
 MIDDLEWARE = (
@@ -339,8 +338,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'DEFAULT_PAGINATION_CLASS': 'indigo_api.utils.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -355,6 +356,12 @@ INDIGO_SOCIAL = {
     'badges': 'indigo_social.default_badges',
     # when a user signs up, grant them these badges automatically
     'new_user_badges': ['contributor'],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": f'{INDIGO_ORGANISATION} Content API',
+    "VERSION": __version__,
+    "DESCRIPTION": "Read-only Content API",
 }
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

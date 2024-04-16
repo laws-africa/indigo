@@ -27,7 +27,7 @@
         <div class="card-body">
           {% block new-commencement-card %}
             <button
-                class="btn btn-outline-primary"
+                class="btn btn-success"
                 hx-post="{% url 'work_commencement_add' frbr_uri=work.frbr_uri %}"
                 hx-target="#commencement-new"
             >{% trans 'Add a commencement' %}</button>

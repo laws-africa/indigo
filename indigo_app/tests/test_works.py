@@ -439,12 +439,13 @@ class WorksWebTest(WebTest):
         form['work-commenced'] = True
         form.submit()
         work = Work.objects.get(frbr_uri='/akn/za/act/2020/5')
-        commencement = Commencement.objects.get(commenced_work=work)
+        # we no longer create a blank commencement object when the work is simply commenced without any other details
+        # commencement = Commencement.objects.get(commenced_work=work)
         self.assertTrue(work.commenced)
-        self.assertIsNone(commencement.commencing_work)
-        self.assertIsNone(commencement.date)
-        self.assertTrue(commencement.main)
-        self.assertTrue(commencement.all_provisions)
+        # self.assertIsNone(commencement.commencing_work)
+        # self.assertIsNone(commencement.date)
+        # self.assertTrue(commencement.main)
+        # self.assertTrue(commencement.all_provisions)
 
     def test_create_uncommenced_work(self):
         form = self.app.get('/places/za/works/new').forms['edit-work-form']

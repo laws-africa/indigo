@@ -554,31 +554,20 @@ class FindPubDocForm(forms.Form):
     mimetype = forms.CharField(required=False, widget=forms.HiddenInput())
 
 
-class NewCommencementForm(forms.ModelForm):
-    commencing_work = forms.ModelChoiceField(Work.objects, required=False)
-
-    class Meta:
-        model = Commencement
-        fields = ('date', 'commencing_work')
-
-    def clean(self):
-        super().clean()
-        if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
-            # create one for now
-            self.cleaned_data['date'] = date.today()
-
-
 class CommencementForm(forms.ModelForm):
     provisions = forms.MultipleChoiceField(required=False)
+    provisions_select_all = forms.BooleanField(required=False)
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    clear_commencing_work = forms.BooleanField(required=False)
 
     class Meta:
         model = Commencement
-        fields = ('date', 'all_provisions', 'provisions', 'main', 'note')
+        fields = ('date', 'all_provisions', 'provisions', 'main', 'note', 'commencing_work')
 
-    def __init__(self, work, provisions, *args, **kwargs):
+    def __init__(self, work, *args, provisions=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.work = work
-        self.provisions = provisions
+        self.provisions = provisions or []
         self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
 
     def clean_main(self):

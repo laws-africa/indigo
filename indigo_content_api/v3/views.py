@@ -4,6 +4,8 @@ from django.http import Http404
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from indigo_api.models import TaxonomyTopic, Work, Country
 from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase
@@ -20,7 +22,9 @@ class PlaceViewSet(ContentAPIBase, mixins.ListModelMixin, mixins.RetrieveModelMi
     """ Places that the content API supports. """
     queryset = Country.objects.prefetch_related('localities', 'country')
     serializer_class = PlaceSerializer
+    # these are both for drf-spectacular
     lookup_url_kwarg = 'frbr_uri_code'
+    lookup_field = 'code'
 
     def get_object(self):
         country, locality = Country.get_country_locality(self.kwargs['frbr_uri_code'])

@@ -2,7 +2,7 @@
 
   <li class="provisions-list__item">
     <div class="provisions-list__item__body">
-      <input type="checkbox" class="me-2" id="{{ prov.id }}"
+      <input type="checkbox" class="me-2" id="{{ prov.id }}-{{ commencement.pk }}"
           {% if prov.disabled %}
              disabled
           {% else %}
@@ -10,7 +10,7 @@
              {% if prov.id in checked %}checked{% endif %}
           {% endif %}
       >
-      <label for="{{ prov.id }}" class="provision-title">
+      <label for="{{ prov.id }}-{{ commencement.pk }}" class="provision-title">
         {{ prov.title }}
       </label>
       {% if prov.children %}

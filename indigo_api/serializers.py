@@ -110,7 +110,7 @@ class RepealSerializer(serializers.Serializer):
 
     date = serializers.DateField(help_text="Effective date of the repeal.")
     repealing_title = serializers.CharField(help_text="Title of the repealing work.")
-    repealing_uri = serializers.CharField(help_text="FRBR URI of the repealin work.")
+    repealing_uri = serializers.CharField(help_text="FRBR URI of the repealing work.")
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

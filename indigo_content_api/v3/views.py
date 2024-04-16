@@ -13,6 +13,18 @@ class PublishedDocumentDetailViewV3(PublishedDocumentDetailViewV2):
     serializer_class = PublishedDocumentSerializerV3
 
 
+class WorkExpressionsViewSet(ContentAPIBase, ListModelMixin, GenericViewSet):
+    """ List of work expressions across all places. """
+    filter_backends = PublishedDocumentDetailViewV3.filter_backends
+    filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+
+    def get_serializer_class(self):
+        return PublishedDocumentDetailViewV3.serializer_class
+
+    def get_queryset(self):
+        return PublishedDocumentDetailViewV3.queryset
+
+
 class TaxonomyTopicPublishedDocumentsView(ContentAPIBase, ListModelMixin, GenericViewSet):
     """ List of work expressions for a taxonomy topic."""
     filter_backends = PublishedDocumentDetailViewV3.filter_backends

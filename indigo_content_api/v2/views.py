@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from cobalt import FrbrUri
@@ -17,9 +17,9 @@ from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, 
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
-    TaxonomyTopicSerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer, \
-    TimelineSerializer, TOCSerializer
+from .serializers import MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomyTopicSerializer, \
+    PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer, \
+    TimelineSerializer, TOCSerializer, PlaceSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -112,11 +112,12 @@ class FrbrUriViewMixin(PlaceAPIBase):
         return self.document_queryset
 
 
+@extend_schema(deprecated=True)
 class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ List of countries that the content API supports.
+    """ List of countries that the content API supports. Deprecated, use places API endpoint instead.
     """
     queryset = Country.objects.prefetch_related('localities', 'country')
-    serializer_class = CountrySerializer
+    serializer_class = PlaceSerializer
 
 
 open_api_frbr_uri_param = OpenApiParameter(
@@ -126,7 +127,7 @@ open_api_frbr_uri_param = OpenApiParameter(
 
 
 @extend_schema(
-    summary="List or retrieve work expressions by FRBR URI.",
+    summary="Retrieve a work expression by FRBR URI.",
     external_docs={
         "url": "https://developers.laws.africa/",
         "description": "Laws.Africa Developer's Guide"
@@ -139,17 +140,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
     """
-    FRBR-based listing and detail APIs for published documents.
+    Get details of a work expression (or a partion of one) using either a work or expression FRBR URI.
 
-    This API handles both listing many documents based on an FRBR URI prefix, and returning details for a single
-    document. The default content type is JSON.
-
-    For example:
-
-    * ``/akn/za/``: list all published documents for South Africa.
-    * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992.
-    * ``/akn/za/act/1994.json``: all the acts from 1994 in JSON format.
-
+    * ``/akn/za/act/1994/2.json``: Act 2 of 1992 in JSON format.
+    * ``/akn/za/act/1994/2/eng@1994-01-01.json``: Act 2 of 1992, English version at 1994-01-01, in JSON format.
     """
 
     # only published documents

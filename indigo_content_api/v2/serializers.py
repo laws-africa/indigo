@@ -381,10 +381,10 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
         ]
 
 
-class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
-    frbr_uri_code = serializers.CharField(source='code', read_only=True, help_text="FRBR URI country code.")
-    localities = LocalitySerializer(many=True, help_text="Localities within this country.")
-    links = serializers.SerializerMethodField(help_text="A list of alternate links for this country.")
+class PlaceSerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
+    frbr_uri_code = serializers.CharField(help_text="FRBR URI code for this place.", source='place_code')
+    localities = LocalitySerializer(many=True, help_text="Localities within this place.", required=False)
+    links = serializers.SerializerMethodField(help_text="A list of alternate links for this place.")
     prefix = True
 
     class Meta:
@@ -404,7 +404,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": self.place_url(self.context['request'], f"{instance.code}/"),
+                "href": self.place_url(self.context['request'], f"{instance.place_code}/"),
             },
         ]
 

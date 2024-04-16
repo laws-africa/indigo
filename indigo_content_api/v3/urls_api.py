@@ -1,10 +1,13 @@
 from django.urls import include, path, re_path
 
 from indigo_content_api.v2.urls_api import urlpatterns_base, router
-from indigo_content_api.v3.views import PublishedDocumentDetailViewV3, TaxonomyTopicPublishedDocumentsView, \
-    WorkExpressionsViewSet
+from indigo_content_api.v3.views import PublishedDocumentDetailViewV3, TaxonomyTopicWorkExpressionsView, \
+    WorkExpressionsViewSet, PlaceViewSet, PlaceWorkExpressionsView
 
-router.register(r'taxonomy-topics/(?P<slug>[^/.]+)/work-expressions', TaxonomyTopicPublishedDocumentsView, basename='taxonomy_topic-work-expressions')
+# places will replace countries in the future
+router.register(r'places', PlaceViewSet, basename='place')
+router.register(r'places/(?P<frbr_uri_code>[^/.]+)/work-expressions', PlaceWorkExpressionsView, basename='places-work-expressions')
+router.register(r'taxonomy-topics/(?P<slug>[^/.]+)/work-expressions', TaxonomyTopicWorkExpressionsView, basename='taxonomy_topic-work-expressions')
 router.register('work-expressions', WorkExpressionsViewSet, basename='work_expression')
 
 urlpatterns = urlpatterns_base + [

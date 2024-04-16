@@ -691,6 +691,36 @@ class ContentAPIV2TestMixin:
             response.data['publication_document']['url'],
             f'http://{self.api_host}{self.api_path}/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
+    def test_timeline(self):
+        response = self.client.get(self.api_path + '/akn/za/act/2010/1/timeline.json')
+        self.assertEqual(response.status_code, 200)
+        timeline = response.json()['timeline']
+        self.assertEqual([{
+            'date': '2012-02-02',
+            'events': [
+                {'type': 'amendment', 'description': 'Amended by', 'by_frbr_uri': '/akn/za/act/2010/1',
+                 'by_title': 'Act with amendments', 'note': ''}]
+        }, {
+            'date': '2011-01-01',
+            'events': [
+                {'type': 'amendment', 'description': 'Amended by', 'by_frbr_uri': '/akn/za/act/2010/1',
+                 'by_title': 'Act with amendments', 'note': ''}]
+        }, {
+            'date': '2010-06-01',
+            'events': [
+                {'type': 'commencement', 'description': 'Commenced', 'by_frbr_uri': '', 'by_title': '',
+                 'note': 'Note: A note'}]
+        }, {
+            'date': '2010-05-01',
+            'events': [
+                {'type': 'publication', 'description': 'Published', 'by_frbr_uri': '', 'by_title': '', 'note': ''}]
+        }, {
+            'date': '2010-04-01',
+            'events': [
+                {'type': 'assent', 'description': 'Assented to', 'by_frbr_uri': '', 'by_title': '',
+                 'note': ''}]
+        }], timeline)
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

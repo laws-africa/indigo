@@ -4,8 +4,6 @@ from django.http import Http404
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
 from indigo_api.models import TaxonomyTopic, Work, Country
 from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase

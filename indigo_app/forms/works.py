@@ -283,7 +283,7 @@ class WorkForm(forms.ModelForm):
         self.save_properties()
         self.save_publication_document()
         self.save_formsets()
-        self.save_commenced()
+        # self.save_commenced()
         return work
 
     def save_properties(self):
@@ -338,10 +338,10 @@ class WorkForm(forms.ModelForm):
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
 
-    def save_commenced(self):
-        if not self.instance.commenced and self.instance.commencements.exists():
-            self.instance.commenced = True
-            self.instance.save()
+    # def save_commenced(self):
+    #     if not self.instance.commenced and self.instance.commencements.exists():
+    #         self.instance.commenced = True
+    #         self.instance.save()
 
 
 class BasePartialWorkFormSet(forms.BaseFormSet):

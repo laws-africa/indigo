@@ -763,7 +763,7 @@ class Commencement(models.Model):
         verbose_name = _("commencement")
         verbose_name_plural = _("commencements")
 
-    def rationalise(self, user):
+    def update_commenced_work(self, user):
         work = self.commenced_work
         if not work.commenced:
             work.commenced = True
@@ -774,6 +774,11 @@ class Commencement(models.Model):
         """ The commenced work's documents (expressions) at this date.
         """
         return self.commenced_work.expressions().filter(expression_date=self.date)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        self.update_commenced_work(self.updated_by_user or self.created_by_user)
 
 
 @receiver(signals.post_save, sender=Commencement)

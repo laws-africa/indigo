@@ -476,9 +476,9 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         self.object = form.save()
-        # make necessary changes to work, including updating updated_by_user
-        self.object.rationalise(self.request.user)
-        self.object.save()
+        # # make necessary changes to work, including updating updated_by_user
+        # self.object.rationalise(self.request.user)
+        # self.object.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):

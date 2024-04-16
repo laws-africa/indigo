@@ -70,11 +70,13 @@ class Country(models.Model):
         verbose_name_plural = _("countries")
 
     @property
-    def code(self):
+    def code(self) -> str:
+        """ISO 3166-1 alpha-2 country code."""
         return self.country.iso.lower()
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """Name of the country in English."""
         return self.country.name
 
     @property

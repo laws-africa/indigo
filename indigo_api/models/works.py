@@ -42,9 +42,12 @@ class WorkManager(models.Manager):
 
 
 class TaxonomyTopic(MP_Node):
-    name = models.CharField(_("name"), max_length=512, null=False, blank=False)
-    slug = models.SlugField(_("slug"), max_length=4096, null=False, unique=True, blank=False)
-    description = models.TextField(_("description"), null=True, blank=True)
+    name = models.CharField(_("name"), max_length=512, null=False, blank=False,
+                            help_text=_("Name of the taxonomy topic"))
+    slug = models.SlugField(_("slug"), max_length=4096, null=False, unique=True, blank=False,
+                            help_text=_("Unique short name (code) for the topic."))
+    description = models.TextField(_("description"), null=True, blank=True,
+                                   help_text=_("Description of the topic"))
     public = models.BooleanField(_("public"), default=True)
     project = models.BooleanField(_("project"), default=False)
     node_order_by = ['name']

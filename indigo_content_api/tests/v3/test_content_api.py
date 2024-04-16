@@ -74,6 +74,12 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         self.assertEqual('application/json', response.accepted_media_type)
         self.assertGreaterEqual(len(response.data['results']), 1)
 
+    def test_place_work_expressions(self):
+        response = self.client.get(self.api_path + '/places/za/work-expressions.json')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('application/json', response.accepted_media_type)
+        self.assertGreaterEqual(len(response.data['results']), 1)
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

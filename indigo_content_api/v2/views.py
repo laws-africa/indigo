@@ -5,9 +5,10 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-from rest_framework.versioning import NamespaceVersioning
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from cobalt import FrbrUri
 
@@ -16,9 +17,9 @@ from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, 
 from indigo_api.views.attachments import view_attachment
 from indigo_api.views.documents import DocumentViewMixin
 from indigo_app.views.works import publication_document_response
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, \
-    TaxonomyTopicSerializer, PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer,\
-    PublishedDocumentTimelineSerializer
+from .serializers import MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomyTopicSerializer, \
+    PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer, \
+    TimelineSerializer, TOCSerializer, PlaceSerializer
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -35,7 +36,6 @@ class ContentAPIBase(object):
     """
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
-    versioning_class = NamespaceVersioning
 
 
 class PlaceAPIBase(ContentAPIBase):
@@ -59,6 +59,8 @@ class FrbrUriViewMixin(PlaceAPIBase):
 
     This parses the FRBR URI, ensures it is valid, and stores it in .frbr_uri.
     """
+    document_queryset = Document.objects.undeleted().published().no_xml()
+
     def initial(self, request, **kwargs):
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
@@ -110,31 +112,38 @@ class FrbrUriViewMixin(PlaceAPIBase):
         return self.document_queryset
 
 
+@extend_schema(deprecated=True)
 class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ List of countries that the content API supports.
+    """ List of countries that the content API supports. Deprecated, use places API endpoint instead.
     """
     queryset = Country.objects.prefetch_related('localities', 'country')
-    serializer_class = CountrySerializer
+    serializer_class = PlaceSerializer
 
 
+open_api_frbr_uri_param = OpenApiParameter(
+    "frbr_uri", OpenApiTypes.STR, 'path', required=True,
+    description="The FRBR URI of the work or work expression, without the first slash, such as akn/za/act/1994/2/",
+)
+
+
+@extend_schema(
+    summary="Retrieve a work expression by FRBR URI.",
+    external_docs={
+        "url": "https://developers.laws.africa/",
+        "description": "Laws.Africa Developer's Guide"
+    },
+    parameters=[open_api_frbr_uri_param],
+)
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,
                                   mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
     """
-    The public read-only API for viewing and listing published documents by FRBR URI.
+    Get details of a work expression (or a partion of one) using either a work or expression FRBR URI.
 
-    This handles both listing many documents based on a URI prefix, and
-    returning details for a single document. The default content type
-    is JSON.
-
-    For example:
-
-    * ``/akn/za/``: list all published documents for South Africa.
-    * ``/akn/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/akn/za/act/1994.epub``: all the acts from 1994 as an ePUB
-
+    * ``/akn/za/act/1994/2.json``: Act 2 of 1992 in JSON format.
+    * ``/akn/za/act/1994/2/eng@1994-01-01.json``: Act 2 of 1992, English version at 1994-01-01, in JSON format.
     """
 
     # only published documents
@@ -203,8 +212,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         raise Http404
 
     def list(self, request):
-        """ Return details on many documents.
-        """
         if self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
             # NB: don't try to sort in the db, that's already sorting to
             # return the latest expression of each doc. Sort here instead.
@@ -282,24 +289,34 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return super().handle_exception(exc)
 
 
-class PublishedDocumentCommencementsView(PublishedDocumentDetailView):
+class PublishedDocumentExtraDetailViewBase(DocumentViewMixin, FrbrUriViewMixin, viewsets.GenericViewSet):
+    """ Base view for views that provide extra details for a document, driven by the FRBR URI."""
+    renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+
+    def list(self, request, **kwargs):
+        return Response(self.get_serializer(self.get_document()).data)
+
+
+@extend_schema(summary="Get commencements", parameters=[open_api_frbr_uri_param])
+class PublishedDocumentCommencementsView(PublishedDocumentExtraDetailViewBase):
+    """ API that returns a description of the commencements details timeline for a work. """
     serializer_class = PublishedDocumentCommencementsSerializer
-    renderer_classes = (renderers.JSONRenderer,)
+    pagination_class = None
 
 
-class PublishedDocumentTimelineView(PublishedDocumentCommencementsView):
-    serializer_class = PublishedDocumentTimelineSerializer
+@extend_schema(summary="Get work timeline", parameters=[open_api_frbr_uri_param])
+class PublishedDocumentTimelineView(PublishedDocumentExtraDetailViewBase):
+    """ API that returns the event timeline for a work. """
+    serializer_class = TimelineSerializer
+    pagination_class = None
 
 
-class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, PublishedDocUrlMixin):
-    """ View that returns the TOC for a document.
-    """
-    renderer_classes = (renderers.JSONRenderer,)
-    document_queryset = Document.objects \
-        .undeleted() \
-        .published()
+@extend_schema(summary="Get a Table of Contents (TOC)", responses=TOCSerializer, parameters=[open_api_frbr_uri_param])
+class PublishedDocumentTOCView(PublishedDocumentExtraDetailViewBase, PublishedDocUrlMixin):
+    """ API that returns a description of the table of contents (TOC) for a work. """
+    pagination_class = None
 
-    def get(self, request, **kwargs):
+    def list(self, request, **kwargs):
         document = self.get_document()
         uri = document.doc.frbr_uri
         uri.expression_date = self.frbr_uri.expression_date
@@ -329,14 +346,11 @@ class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.Retri
         return toc
 
 
+@extend_schema(parameters=[open_api_frbr_uri_param])
 class PublishedDocumentMediaView(FrbrUriViewMixin,
-                                 mixins.RetrieveModelMixin,
                                  mixins.ListModelMixin,
                                  viewsets.GenericViewSet):
-    """ View to return media attached to a document or work,
-    either as a list or an individual file.
-
-    Also handles the special-cased /media/publication/publication-document.pdf
+    """ API for fetching media files (usually images) embedded in a document.
     """
 
     queryset = Attachment.objects
@@ -349,6 +363,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.get_document())
 
+    @extend_schema(responses={200: OpenApiTypes.BINARY})
     def get_file(self, request, filename, *args, **kwargs):
         """ Download a media file.
         """
@@ -359,8 +374,9 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             raise Http404()
         return view_attachment(attachment)
 
+    @extend_schema(responses={200: OpenApiTypes.BINARY})
     def get_publication_document(self, request, filename, *args, **kwargs):
-        """ Download the media publication file for a work.
+        """ Download the original publication file for a work.
         """
         work = self.get_document().work
 
@@ -370,8 +386,13 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
         raise Http404()
 
 
+@extend_schema(responses=TaxonomyTopicSerializer)
 class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):
-    queryset = TaxonomyTopic.get_public_root_nodes()
+    """API endpoint for listing taxonomy topics. Taxonomy topics are a tree structure of topics that are applied to
+    documents to categorise them.
+    """
+    # for drf-spectacular; the actual queryset is determined in get_queryset
+    queryset = TaxonomyTopic.objects.none()
     serializer_class = TaxonomyTopicSerializer
     lookup_field = 'slug'
 

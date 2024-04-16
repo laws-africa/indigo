@@ -69,7 +69,7 @@ An example `Dockerfile` and `docker-compose.yml` are provided as a starting poin
 ## Releasing a New Version
 
 1. Run the tests!
-2. Update VERSION appropriately
+2. Update `__version__` in `indigo/version.py` appropriately
 3. Update `docs/changelog.rst`
 4. Commit changes
 5. Tag: `git tag vX.X.X` and push to github `git push; git push --tags`

@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import re
 
 here = path.abspath(path.dirname(__file__))
 
@@ -8,8 +9,10 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open(path.join(here, 'VERSION')) as f:
-    version = f.read().strip()
+with open(path.join(here, 'indigo/version.py')) as f:
+    # find __version__ = XXX in the file and get it
+    match = re.search(r'^__version__ = "([^"]+)"$', f.read(), re.MULTILINE)
+    version = match.group(1)
 
 
 setup(
@@ -71,6 +74,7 @@ setup(
         'djangorestframework>=3.11.0,<3.12.0',  # v3.12.0: The authtoken model no longer exposes
                                                 # the pk in the admin URL. [#7341]
         'docpipe @ git+https://github.com/laws-africa/docpipe@b3242675119546057c858549cd1739f76cce399c',
+        'drf-spectacular==0.27.2',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',

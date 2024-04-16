@@ -1,6 +1,7 @@
 import logging
 import os.path
 from itertools import groupby
+from typing import List
 
 from actstream.signals import action
 from collections import OrderedDict
@@ -104,16 +105,12 @@ class AmendmentEventSerializer(serializers.Serializer):
 
 
 class RepealSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.RepealEvent`, for use describing
-    the repeal on a published document.
-    """
+    """ Describes the repeal event for a work. """
+    # Matches :class:`cobalt.RepealEvent`
 
-    date = serializers.DateField()
-    """ Date that the repeal took place """
-    repealing_title = serializers.CharField()
-    """ Title of repealing document """
-    repealing_uri = serializers.CharField()
-    """ FRBR URI of repealing document """
+    date = serializers.DateField(help_text="Effective date of the repeal.")
+    repealing_title = serializers.CharField(help_text="Title of the repealing work.")
+    repealing_uri = serializers.CharField(help_text="FRBR URI of the repealing work.")
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -230,33 +227,42 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
-    frbr_uri = serializers.CharField(read_only=True)
+    frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
-    links = serializers.SerializerMethodField()
-    """ List of alternate links. """
+    links = serializers.SerializerMethodField(help_text="A list of alternate links for this document.")
 
     draft = serializers.BooleanField(default=True)
-    language = serializers.CharField(source='language.code', required=True)
-    expression_frbr_uri = serializers.CharField(read_only=True)
+    language = serializers.CharField(source='language.code', required=True,
+                                     help_text="Three letter ISO-639-2 language code for this work expression.")
+    expression_frbr_uri = serializers.CharField(read_only=True,
+                                                help_text="FRBR URI that uniquely identifies this work expression.")
 
     # if a title isn't given, it's taken from the associated work
-    title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+    title = serializers.CharField(required=False, allow_blank=False, allow_null=False,
+                                  help_text="Short title of the work, in the expression language.")
 
     # taken from the work
-    publication_name = serializers.CharField(read_only=True)
-    publication_number = serializers.CharField(read_only=True)
-    publication_date = serializers.DateField(read_only=True)
-    commencement_date = serializers.DateField(read_only=True)
-    commencement_note = serializers.CharField(read_only=True)
-    assent_date = serializers.DateField(read_only=True)
-    numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
-    type_name = serializers.CharField(read_only=True, source='work.friendly_type')
+    publication_name = serializers.CharField(
+        read_only=True, help_text="Name of the publication in which the work was originally published.")
+    publication_number = serializers.CharField(
+        read_only=True, help_text="Number of the publication in which the work was originally published.")
+    publication_date = serializers.DateField(read_only=True, help_text="Date of original publication of the work.")
+    commencement_date = serializers.DateField(read_only=True, help_text="Date on which the bulk of the work commences.")
+    commencement_note = serializers.CharField(read_only=True,
+                                              help_text="Additional information about the commencement.")
+    assent_date = serializers.DateField(read_only=True, help_text="Date when the work was assented to.")
+    numbered_title = serializers.CharField(
+        read_only=True, source='work.numbered_title',
+        help_text="Alternative title for the work, using the document type and number.")
+    type_name = serializers.CharField(read_only=True, source='work.friendly_type',
+                                      help_text="Human-friendly version of doctype and/or subtype.")
 
-    amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
+    amendments = AmendmentEventSerializer(
+        many=True, read_only=True, source='amendment_events',
+        help_text="List of amendments that have been applied to create this expression of the work.")
 
-    """ List of amended versions of this document """
-    repeal = RepealSerializer(read_only=True)
-    """ Repeal information, inherited from the work. """
+    repeal = RepealSerializer(read_only=True,
+                              help_text="Description of the repeal of this work, if it has been repealed.")
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -556,8 +562,13 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 
 
 class CommencementSerializer(serializers.ModelSerializer):
-    commencing_title = serializers.CharField(source="commencing_work.title", default=None)
-    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri", default=None)
+    """Details of a commencement event."""
+    commencing_title = serializers.CharField(source="commencing_work.title", default=None,
+                                             help_text="Title of the commencing work.")
+    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri", default=None,
+                                                help_text="FRBR URI of the commencing work.")
+    provisions = serializers.SerializerMethodField(
+        help_text="A list of the element ids of the provisions that come into force with this commencement")
 
     class Meta:
         model = Commencement
@@ -567,6 +578,9 @@ class CommencementSerializer(serializers.ModelSerializer):
             'note',
         )
         read_only_fields = fields
+
+    def get_provisions(self, instance) -> List[str]:
+        return instance.provisions
 
 
 class WorkSerializer(serializers.ModelSerializer):

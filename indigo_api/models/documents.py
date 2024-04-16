@@ -331,8 +331,10 @@ class Document(DocumentMixin, models.Model):
 
     deleted = models.BooleanField(_("deleted"), default=False, help_text=_("Has this document been deleted?"))
 
-    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True,
+                                      help_text=_("Timestamp of when the expression was first created."))
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True,
+                                      help_text=_("Timestamp of when the expression was last updated."))
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("created by"))
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("updated by"))

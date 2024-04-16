@@ -391,6 +391,7 @@ class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):
     """API endpoint for listing taxonomy topics. Taxonomy topics are a tree structure of topics that are applied to
     documents to categorise them.
     """
+    # for drf-spectacular; the actual queryset is determined in get_queryset
     queryset = TaxonomyTopic.objects.none()
     serializer_class = TaxonomyTopicSerializer
     lookup_field = 'slug'

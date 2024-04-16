@@ -33,9 +33,9 @@
   {% if commencement.commencing_work and not form.clear_commencing_work.value %}
     <button
         class="btn btn-outline-danger ms-2"
-        hx-get="{{ edit_url }}"
-        hx-target="#commencement-detail-{{ commencement.id }}"
-        hx-include="#commencement-detail-{{ commencement.id }}"
+        hx-post="{{ edit_url }}"
+        hx-target="#{{ request.htmx.target }}"
+        hx-include="#{{ request.htmx.target }}"
         name="{{ form.clear_commencing_work.html_name }}"
         value="1"
     >{% trans 'Clear' %}</button>

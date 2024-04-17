@@ -536,6 +536,7 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
 
     def form_valid(self, form):
         form.instance.commenced_work = self.work
+        form.instance.created_by_user = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):

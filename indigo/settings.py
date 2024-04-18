@@ -151,7 +151,17 @@ INDIGO = {
     'EXTRA_DOCTYPES': {},
 
     # disable entire site except for superusers and the content API
-    'MAINTENANCE_MODE': bool(os.environ.get("INDIGO_MAINTENANCE_MODE"))
+    'MAINTENANCE_MODE': bool(os.environ.get("INDIGO_MAINTENANCE_MODE")),
+
+    'CONTENT_API': {
+        # URL prefix for where the API is mounted
+        'API_PREFIX': 'api/',
+        # django URL files to include for each API version
+        'URLCONF': {
+            'v2': 'indigo_content_api.v2.urls_api',
+            'v3': 'indigo_content_api.v3.urls_api',
+        }
+    }
 }
 
 # Database

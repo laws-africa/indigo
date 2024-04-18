@@ -58,7 +58,7 @@ msgstr "Il s'agit de la version de ce document telle qu'elle était à %(start)s
 #: models/documents.py:287
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr "Ceci est la version de ce document tel qu'il était à %(début)s."
+msgstr "Ceci est la version de ce document tel qu'il était à %(start)s."
 
 #: models/documents.py:297 models/documents.py:612 models/documents.py:663
 #: models/documents.py:727 models/tasks.py:132
@@ -1072,12 +1072,12 @@ msgstr "a commencé le <i>(date inconnue)</i>"
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr "par <a href=\"%(uri du resolveur)s\">%(Titre numéroté)s</a>"
+msgstr "par <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:36
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr "par <a href=\"%(uri du resolveur)s\">%(titre)s</a>"
+msgstr "par <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:42
 msgid "Note:"

@@ -766,17 +766,21 @@ class Commencement(models.Model):
         verbose_name = _("commencement")
         verbose_name_plural = _("commencements")
 
-    def rationalise(self, user):
-        work = self.commenced_work
-        if not work.commenced:
-            work.commenced = True
-        work.updated_by_user = user
-        work.save()
-
     def expressions(self):
         """ The commenced work's documents (expressions) at this date.
         """
         return self.commenced_work.expressions().filter(expression_date=self.date)
+
+    def update_commenced_work(self):
+        # if a commencement on a work exists, the work cannot be uncommenced
+        if not self.commenced_work.commenced:
+            self.commenced_work.commenced = True
+            self.commenced_work.updated_by_user = self.updated_by_user or self.created_by_user
+            self.commenced_work.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_commenced_work()
 
 
 @receiver(signals.post_save, sender=Commencement)

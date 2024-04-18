@@ -699,12 +699,6 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
             row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
 
         if not self.dry_run:
-            if row.status == 'duplicate' and not row.work.commenced:
-                # follow 'rationalise' logic from Commencement model
-                row.work.commenced = True
-                row.work.updated_by_user = self.user
-                row.work.save()
-
             Commencement.objects.get_or_create(
                 commenced_work=row.work,
                 commencing_work=commencing_work,
@@ -739,12 +733,6 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 work_row.notes.remove('Uncommenced')
 
         if not self.dry_run:
-            if not commenced_work.commenced:
-                # follow 'rationalise' logic from Commencement model
-                commenced_work.commenced = True
-                commenced_work.updated_by_user = self.user
-                commenced_work.save()
-
             Commencement.objects.get_or_create(
                 commenced_work=commenced_work,
                 commencing_work=row.work,
@@ -1345,10 +1333,8 @@ class BaseBulkUpdater(BaseBulkCreator):
             if not self.dry_run:
                 self.create_or_update_commencement(work, val)
 
-                # update work to 'commenced' or 'uncommenced' if needed
-                if val and not work.commenced:
-                    work.commenced = True
-                elif not val and work.commenced:
+                # mark the work as uncommenced if needed
+                if not val and work.commenced:
                     work.commenced = False
 
             return True

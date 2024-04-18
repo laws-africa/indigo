@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from indigo_api.models import Document, Work, Country, Amendment, ArbitraryExpressionDate
+from indigo_api.models import Document, Work, Country, Amendment, ArbitraryExpressionDate, Commencement
 
 
 class WorkTestCase(TestCase):
@@ -178,3 +178,15 @@ class WorkTestCase(TestCase):
         self.assertEqual([],
             self.work.possible_expression_dates()
         )
+
+    def test_update_uncommenced_work(self):
+        # start state: an uncommenced work
+        uncommenced_work = Work.objects.create(frbr_uri='/akn/za/act/2024/1', country_id=1)
+        self.assertFalse(uncommenced_work.commenced)
+
+        # later: a commencement notice and a commencement are created
+        commencement_notice = Work.objects.create(frbr_uri='/akn/za/act/gn/2024/10', country_id=1)
+        Commencement.objects.create(commenced_work=uncommenced_work, commencing_work=commencement_notice)
+
+        # the work should now be commenced
+        self.assertTrue(uncommenced_work.commenced)

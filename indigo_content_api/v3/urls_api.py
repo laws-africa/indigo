@@ -9,6 +9,6 @@ urlpatterns_extra = [
     re_path(r'^(?P<frbr_uri>akn/[a-z]{2}[-/].*)$', PublishedDocumentDetailViewV3.as_view({'get': 'get'}), name='published-document-detail'),
 ]
 
-urlpatterns = urlpatterns_base + urlpatterns_extra + [
+urlpatterns = urlpatterns_base + [
     path('', include(get_router().urls)),
-]
+] + urlpatterns_extra

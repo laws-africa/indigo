@@ -34,7 +34,7 @@ from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
     FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
-    ConsolidationsBaseFormset
+    ConsolidationsBaseFormset, CommencementsBaseFormset
 
 from .base import PlaceViewBase, AbstractAuthedIndigoView
 
@@ -1172,29 +1172,6 @@ class WorkFormParentView(PartialWorkFormView):
             fields = ('parent_work',)
 
 
-class WorkFormCommencementView(PartialWorkFormView):
-    """Just the commencing work part of the work form to re-render the form when the user changes the commencing
-     work through HTMX.
-    """
-    template_name = 'indigo_api/_work_commencement_form.html'
-
-    class Form(forms.ModelForm):
-        commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
-        prefix = 'work'
-
-        class Meta:
-            model = Work
-            fields = ('commencing_work',)
-
-    def refreshed_form(self, form, work):
-        return self.Form(initial={"commencing_work": form.cleaned_data["commencing_work"]}, instance=work)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["commencing_work"] = context["form"].initial["commencing_work"]
-        return context
-
-
 class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
     template_name = 'indigo_api/_work_possible_duplicates.html'
 
@@ -1516,6 +1493,49 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
 
 
 class WorkFormCommencementsView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_commencements_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["prefix"] = prefix = "commencements"
+        adding = self.request.GET.get("add") is not None
+        formset = CommencementsBaseFormset(self.request.POST,
+                                           prefix=prefix,
+                                           form_kwargs={"work": self.work,
+                                                        "user": self.request.user})
+        if not formset.is_valid():
+            # re-render the busted formset
+            context_data["formset"] = formset
+            return context_data
+
+        initial = [{
+            "commenced_work": form.cleaned_data["commenced_work"],
+            "commencing_work": form.cleaned_data["commencing_work"],
+            "note": form.cleaned_data["note"],
+            "date": form.cleaned_data["date"],
+            "id": form.cleaned_data["id"],
+            "DELETE": form.cleaned_data["DELETE"],
+            "clear_commencing_work": form.cleaned_data["clear_commencing_work"],
+        } for form in formset]
+
+        if adding:
+            # add a blank one
+            initial.append({"commenced_work": self.work})
+
+        context_data["formset"] = CommencementsBaseFormset(
+            prefix=prefix,
+            initial=initial,
+            form_kwargs={"work": self.work,
+                         "user": self.request.user}
+        )
+
+        return context_data
+
+
+class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
     template_name = 'indigo_api/_work_form_commencements_made_form.html'
 
     def post(self, request, *args, **kwargs):

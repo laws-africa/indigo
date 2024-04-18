@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils.translation import override
 
 from indigo.analysis.work_detail import BaseWorkDetail
 from indigo_api.models import Work, Country
@@ -18,6 +19,9 @@ class BaseWorkDetailTestCase(TestCase):
             frbr_uri="/akn/za/act/1999/32"
         )
         self.assertEqual('Act 32 of 1999', self.plugin.work_numbered_title(work))
+        with override('fr', deactivate=True):
+            self.assertEqual('Loi 32 de 1999', self.plugin.work_numbered_title(work))
+
 
     def test_numbered_title_caps(self):
         work = Work.objects.create(

@@ -1523,7 +1523,11 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
 
         if adding:
             # add a blank one
-            initial.append({"commenced_work": self.work})
+            blank_kwargs = {"commenced_work": self.work}
+            # use the publication date if it's the first one being added
+            if not initial:
+                blank_kwargs['date'] = self.work.publication_date
+            initial.append(blank_kwargs)
 
         context_data["formset"] = CommencementsBaseFormset(
             prefix=prefix,

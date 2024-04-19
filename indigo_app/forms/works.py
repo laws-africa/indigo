@@ -752,6 +752,12 @@ class Facet:
     items: List[FacetItem] = field(default_factory=list)
 
 
+class PermissiveMultipleChoiceField(forms.MultipleChoiceField):
+    def valid_value(self, value):
+        # Override this method to skip choice validation and accept any input.
+        return True
+
+
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
@@ -815,6 +821,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     ])
     taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
     frbr_uris = forms.CharField(required=False)
+    frbr_date = PermissiveMultipleChoiceField(label=_("Date"), required=False)
 
     advanced_filters = ['assent_date_start', 'publication_date_start', 'repealed_date_start', 'amendment_date_start', 'commencement_date_start', 'frbr_uris']
 
@@ -865,6 +872,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
                 country, locality = Country.get_country_locality(place)
                 q |= Q(country=country, locality=locality)
             queryset = queryset.filter(q)
+
+        if exclude != "frbr_date":
+            if self.cleaned_data.get('frbr_date'):
+                queryset = queryset.filter(date__in=self.cleaned_data['frbr_date'])
 
         # filter by work in progress
         if exclude != "work_in_progress":
@@ -1094,6 +1105,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         self.facet_subtype(work_facets, queryset)
         self.facet_work_in_progress(work_facets, queryset)
         self.facet_principal(work_facets, queryset)
+        self.facet_frbr_date(work_facets, queryset)
         self.facet_stub(work_facets, queryset)
         self.facet_tasks(work_facets, queryset)
         self.facet_publication_document(work_facets, queryset)
@@ -1111,6 +1123,14 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         self.facet_points_in_time(doc_facets, queryset)
         self.facet_point_in_time_status(doc_facets, queryset)
         return doc_facets
+
+    def facet_frbr_date(self, facets, qs):
+        qs = self.filter_queryset(qs, exclude="frbr_date")
+        counts = {c["date"]: c["count"] for c in qs.values("date").annotate(count=Count("date")).order_by()}
+        # inject the choices into the form field
+        counts = sorted(counts.items(), key=lambda x: x[0], reverse=True)
+        self.fields["frbr_date"].choices = [(d, d) for d, c in counts]
+        facets.append(self.facet("frbr_date", "checkbox", counts))
 
     def facet_subtype(self, facets, qs):
         # count doctypes, subtypes in the current place first, so these are always shown as an option

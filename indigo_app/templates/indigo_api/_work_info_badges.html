@@ -1,14 +1,20 @@
 {% load i18n %}
 
 {# TODO: add more? use icons instead / as well? #}
+{% if work.principal %}
+  <span class="badge text-bg-success">{% trans 'principal' %}</span>
+{% endif %}
+{% if work.repealed_date %}
+  <span class="badge text-bg-danger">{% trans 'repealed' %}</span>
+{% endif %}
 {% if work.stub %}
   <span class="badge text-bg-info">{% trans 'stub' %}</span>
 {% endif %}
-{% if work.repealed_date %}
-  <span class="badge text-bg-info">{% trans 'repealed' %}</span>
+{% if work.parent_work_id %}
+  <span class="badge text-bg-info">{% trans 'subsidiary' %}</span>
 {% endif %}
 {% if not work.commenced %}
-  <span class="badge text-bg-info">{% trans 'not commenced' %}</span>
+  <span class="badge text-bg-warning">{% trans 'not commenced' %}</span>
 {% elif not work.commencement_date %}
   <span class="badge text-bg-info">{% trans 'commencement date unknown' %}</span>
 {% endif %}

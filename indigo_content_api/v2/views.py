@@ -132,7 +132,22 @@ open_api_frbr_uri_param = OpenApiParameter(
         "url": "https://developers.laws.africa/",
         "description": "Laws.Africa Developer's Guide"
     },
-    parameters=[open_api_frbr_uri_param],
+    parameters=[
+        open_api_frbr_uri_param,
+        OpenApiParameter(
+            "resolver", OpenApiTypes.STR, 'query', required=False,
+            description="The fully-qualified URL to use when resolving references to other Akoma Ntoso documents. " +
+                        "Use no or none to disable. Defaults to using the system resolver. Only applicable to the " +
+                        "html format."),
+        OpenApiParameter(
+            "media-url", OpenApiTypes.STR, 'query', required=False,
+            description="The fully-qualified URL prefix to use when generating links to embedded media, such as " +
+                        "images. Only applicable to the html format."),
+        OpenApiParameter(
+            "coverpage", OpenApiTypes.STR, 'query', required=False,
+            description="Should the response include a generated coverpage? Use 1 for true, anything else for false. " +
+                        "Default: 1. Only applicable to the html format."),
+    ],
 )
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,

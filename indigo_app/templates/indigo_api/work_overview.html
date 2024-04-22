@@ -168,9 +168,9 @@
                   <li>
                     <span class="float-end">
                       {% blocktrans trimmed count count=user.task_count %}
-                        {{ user.task_count }} task
+                        {{ count }} task
                       {% plural %}
-                        {{ user.task_count }} tasks
+                        {{ count }} tasks
                       {% endblocktrans %}
                     </span>
                     {% user_profile user %}

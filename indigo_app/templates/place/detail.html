@@ -131,7 +131,7 @@
                       </div>
                     </div>
                     <div class="col-2">
-                      <a href="{% url 'tasks' place=place.place_code %}?state={{ item.state }}&format=columns">{{ item.count }}</a>
+                      <a href="{% url 'tasks' place=place.place_code %}?state={{ item.state }}">{{ item.count }}</a>
                     </div>
                   </div>
                 {% endif %}
@@ -152,7 +152,7 @@
                         </div>
                       </div>
                       <div class="col-2">
-                        <a href="{% url 'tasks' place=place.place_code %}?state=open&state=assigned&state=pending_review&format=columns&labels={{ item.slug }}">{{ item.count }}</a>
+                        <a href="{% url 'tasks' place=place.place_code %}?state=open&state=assigned&state=pending_review&labels={{ item.slug }}">{{ item.count }}</a>
                       </div>
                     </div>
                   {% endif %}

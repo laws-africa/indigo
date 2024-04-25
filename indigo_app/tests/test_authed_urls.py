@@ -14,10 +14,15 @@ help\Z
 terms\Z
 \Z
 
-accounts/social/connections/\Z
+accounts/3rdparty/\Z
+accounts/3rdparty/signup/\Z
+accounts/3rdparty/login/error/\Z
+accounts/3rdparty/login/cancelled/\Z
+accounts/3rdparty/connections/\Z
 accounts/social/signup/\Z
 accounts/social/login/error/\Z
 accounts/social/login/cancelled/\Z
+accounts/social/connections/\Z
 accounts/password/reset/key/done/\Z
 accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$
 accounts/password/reset/done/\Z

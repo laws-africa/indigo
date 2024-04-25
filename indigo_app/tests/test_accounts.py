@@ -48,7 +48,7 @@ class LibraryTest(testcases.TestCase):
         response = self.client.get('/accounts/email/')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get('/accounts/social/connections/')
+        response = self.client.get('/accounts/3rdparty/')
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get('/accounts/profile/api/')

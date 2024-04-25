@@ -14,7 +14,7 @@ help\Z
 terms\Z
 \Z
 
-accounts/social/connections/\Z
+accounts/3rdparty/\Z
 accounts/social/signup/\Z
 accounts/social/login/error/\Z
 accounts/social/login/cancelled/\Z

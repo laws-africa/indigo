@@ -1,3 +1,8 @@
+project_id: "2"
+api_token_env: "CROWDIN_API_TOKEN"
+preserve_hierarchy: true
+localization_branch_name: "l10n_master"
+
 files:
   - source: /indigo/locale/en/LC_MESSAGES/django.po
     translation: /indigo/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%

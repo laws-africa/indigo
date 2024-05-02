@@ -491,7 +491,7 @@ class WorkCommencementCommencingWorkEditView(WorkCommencementEditView):
 
 class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, FormView):
     template_name = 'indigo_api/commencements/_commencement_provisions_edit.html'
-    permission_required = ('indigo_api.edit_commencement',)
+    permission_required = ('indigo_api.change_commencement',)
     form_class = CommencementForm
 
     def get_form_kwargs(self):

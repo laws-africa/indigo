@@ -100,8 +100,8 @@
 
       this.$el
           .find('.button-container')
-          .append('<button class="btn btn-primary btn-sm save">Save</button>')
-          .append('<button class="btn btn-outline-secondary btn-sm unedit float-end">Cancel</button>')
+          .append('<button class="btn btn-primary btn-sm save">' + $t('Save') + '</button>')
+          .append('<button class="btn btn-outline-secondary btn-sm unedit float-end">' + $t('Cancel') + '</button>')
           .end()
           .find('.content')
           .replaceWith($textarea);
@@ -115,7 +115,7 @@
     },
 
     close: function(e) {
-      if (confirm('Are you sure you want to resolve this?')) {
+      if (confirm($t('Are you sure you want to resolve this?'))) {
         this.model.set('closed', true);
         this.model.save();
       }
@@ -228,8 +228,8 @@
 
       if (Indigo.user.hasPerm('indigo_api.add_annotation')) {
         $('<div class="annotation reply-container">')
-            .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-            .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
+            .append('<textarea class="form-control reply-box" placeholder="' + $t('Reply') + '...">')
+            .append('<button class="btn btn-primary btn-sm post hidden" disabled>' + $t('Reply') + '</button>')
             .appendTo(this.el);
       }
     },

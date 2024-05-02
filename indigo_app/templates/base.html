@@ -1,4 +1,4 @@
-{% load pipeline sass_tags static account django_htmx %}
+{% load pipeline sass_tags static account django_htmx i18n %}
 
 <!DOCTYPE html>
 <html>
@@ -81,6 +81,7 @@
       if (!window.Indigo) window.Indigo = {};
       if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
 
+      window.Indigo.i18n = {{ JS_I18N|safe }};
       window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
       {% if user.is_authenticated %}
       window.Indigo.Preloads.user = {{ USER_JSON|safe }};

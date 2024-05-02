@@ -9,3 +9,5 @@ files:
     translation: /indigo_social/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
   - source: /indigo_za/locale/en/LC_MESSAGES/django.po
     translation: /indigo_za/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
+  - source: /indigo_app/static/i18n/indigo_app-en.json
+    translation: /indigo_app/static/i18n/indigo_app-%two_letters_code%.json

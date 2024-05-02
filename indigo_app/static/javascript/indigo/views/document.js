@@ -260,14 +260,14 @@
     },
 
     saveAndPublish: function() {
-      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm('Publish this document to users?')) {
+      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Publish this document to users?'))) {
         this.document.set('draft', false);
         this.save();
       }
     },
 
     saveAndUnpublish: function() {
-      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm('Hide this document from users?')) {
+      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Hide this document from users?'))) {
         this.document.set('draft', true);
         this.save();
       }
@@ -313,11 +313,11 @@
 
     delete: function() {
       if (!this.document.get('draft')) {
-        alert('You cannot delete published documents. Please mark the document as a draft and try again.');
+        alert($t('You cannot delete published documents. Please mark the document as a draft and try again.'));
         return;
       }
 
-      if (confirm('Are you sure you want to delete this document?')) {
+      if (confirm($t('Are you sure you want to delete this document?'))) {
         var frbr_uri = this.document.work.get('frbr_uri');
 
         Indigo.progressView.peg();

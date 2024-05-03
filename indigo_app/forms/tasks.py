@@ -235,6 +235,7 @@ class TaskFilterForm(WorkFilterForm):
             (c['labels__slug'], c['count'])
             for c in counts
         ]
+        items.sort(key=lambda x: x[0])
         facets.append(self.facet("labels", "checkbox", items))
 
     def facet_state(self, facets, qs):
@@ -257,6 +258,7 @@ class TaskFilterForm(WorkFilterForm):
             (str(c['assigned_to'] or '-'), c['count'])
             for c in counts
         ]
+        items.sort(key=lambda x: x[0])
         facets.append(self.facet("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
@@ -266,6 +268,7 @@ class TaskFilterForm(WorkFilterForm):
             (c['submitted_by_user'], c['count'])
             for c in counts
         ]
+        items.sort(key=lambda x: x[0])
         facets.append(self.facet("submitted_by", "checkbox", items))
 
     def facet_task_type(self, facets, qs):
@@ -278,6 +281,7 @@ class TaskFilterForm(WorkFilterForm):
             # don't show zero counts
             if counts.get(code, 0)
         ]
+        items.sort(key=lambda x: x[0])
         facets.append(self.facet("type", "checkbox", items))
 
 

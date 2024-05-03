@@ -1,19 +1,4 @@
-{% extends "indigo_app/tasks/tabbed_layout.html" %}
-{% load humanize indigo_app i18n %}
+{% extends "indigo_app/tasks/all_tasks.html" %}
+{% load i18n %}
 
 {% block title %}{% trans "Available tasks" %}{% endblock %}
-
-{% block content %}
-<div class="container-fluid mt-3">
-  <div class="row">
-    <div class="col-md-9 offset-3 mb-3">
-      {% url 'available_tasks' as form_url %}
-      {% include 'indigo_api/_task_filter_form.html' with form_url=form_url %}
-    </div>
-  </div>
-
-  <div id="task-list">
-    {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
-  </div>
-</div>
-{% endblock %}

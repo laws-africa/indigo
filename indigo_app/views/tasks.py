@@ -563,13 +563,13 @@ class UserTasksView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class AvailableTasksView(AbstractAuthedIndigoView, ListView):
+class AllTasksView(AbstractAuthedIndigoView, ListView):
     authentication_required = True
-    template_name = 'indigo_app/tasks/available_tasks.html'
+    template_name = 'indigo_app/tasks/all_tasks.html'
     context_object_name = 'tasks'
     paginate_by = 50
     paginate_orphans = 4
-    tab = 'available_tasks'
+    tab = 'all_tasks'
     priority = False
     permission_required = ('indigo_api.view_task',)
 
@@ -583,7 +583,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
 
     def get_base_queryset(self):
         return Task.objects \
-            .filter(assigned_to=None, country__in=self.request.user.editor.permitted_countries.all()) \
+            .filter(country__in=self.request.user.editor.permitted_countries.all()) \
             .select_related('document__language', 'document__language__language') \
             .defer('document__document_xml') \
             .order_by('-updated_at')
@@ -602,7 +602,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
-        context = super(AvailableTasksView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
         countries = self.request.user.editor.permitted_countries.all()
@@ -631,6 +631,14 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         context["hide_assigned_to"] = True
         context["place"] = True
         return context
+
+
+class AvailableTasksView(AllTasksView):
+    template_name = 'indigo_app/tasks/available_tasks.html'
+    tab = 'available_tasks'
+
+    def get_base_queryset(self):
+        return super().get_base_queryset().filter(assigned_to=None)
 
 
 class TaskAssigneesView(TaskViewBase, TemplateView):

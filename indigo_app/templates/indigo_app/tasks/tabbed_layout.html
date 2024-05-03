@@ -6,18 +6,24 @@
   <div class="container">
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
-      <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">
-        {% trans "My tasks" %}
-        {% if view.tab == 'my_tasks' %}
-          <span class="badge text-bg-light">{{ tab_count }}</span>
-        {% endif %}
-      </a>
-      <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
-        {% trans "All available tasks" %}
-        {% if view.tab == 'available_tasks' %}
-          <span class="badge text-bg-light">{{ tab_count }}</span>
-        {% endif %}
-      </a>
+        <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">
+          {% trans "My tasks" %}
+          {% if view.tab == 'my_tasks' %}
+            <span class="badge text-bg-light">{{ tab_count }}</span>
+          {% endif %}
+        </a>
+        <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
+          {% trans "All available tasks" %}
+          {% if view.tab == 'available_tasks' %}
+            <span class="badge text-bg-light">{{ tab_count }}</span>
+          {% endif %}
+        </a>
+        <a class="nav-item nav-link {% if view.tab == 'all_tasks' %}active{% endif %}" href="{% url 'all_tasks' %}">
+          {% trans "All tasks" %}
+          {% if view.tab == 'all_tasks' %}
+            <span class="badge text-bg-light">{{ tab_count }}</span>
+          {% endif %}
+        </a>
       {% endblock %}
     </nav>
   </div>

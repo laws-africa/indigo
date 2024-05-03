@@ -7,8 +7,7 @@
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-md-9 offset-3 mb-3">
-      {% url 'available_tasks' as form_url %}
-      {% include 'indigo_api/_task_filter_form.html' with form_url=form_url %}
+      {% include 'indigo_api/_task_filter_form.html' %}
     </div>
   </div>
 

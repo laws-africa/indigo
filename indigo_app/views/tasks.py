@@ -604,6 +604,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
+        context['form_url'] = reverse('all_tasks')
         context['tab_count'] = context['paginator'].count
         countries = self.request.user.editor.permitted_countries.all()
         countries = countries.prefetch_related('country', 'localities')
@@ -639,6 +640,11 @@ class AvailableTasksView(AllTasksView):
 
     def get_base_queryset(self):
         return super().get_base_queryset().filter(assigned_to=None)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_url'] = reverse('available_tasks')
+        return context
 
 
 class TaskAssigneesView(TaskViewBase, TemplateView):

@@ -127,7 +127,7 @@
       var index = $(e.target).closest('li').data('index');
       var attachment = this.model.at(index);
 
-      if (confirm("Really delete this attachment?")) {
+      if (confirm($t("Really delete this attachment?"))) {
         // save the URL, which is derived from the collection, before we remove
         // it from the collection
         attachment.url = attachment.url();

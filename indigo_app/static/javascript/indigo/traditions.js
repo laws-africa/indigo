@@ -167,21 +167,21 @@
       // TODO: support translation for titles
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
-        akomaNtoso  : function(i) { return "Entire document"; },
+        akomaNtoso  : function(i) { return $t("Entire document"); },
         chapter     : function(i) { return "Ch. " + i.num + " – " + i.heading; },
-        conclusions : function(i) { return "Conclusions"; },
-        coverpage   : function(i) { return "Coverpage"; },
+        conclusions : function(i) { return $t("Conclusions"); },
+        coverpage   : function(i) { return $t("Coverpage"); },
         part        : function(i) {
                                     if (i.heading) {
-                                      return "Part " + i.num + " – " + i.heading;
+                                      return $t("Part ") + i.num + " – " + i.heading;
                                     } else {
-                                      return "Part " + i.num;
+                                      return $t("Part ") + i.num;
                                     }
         },
         subpart     : function(i) { return (i.num ? i.num + " – " : '') + i.heading; },
-        preamble    : function(i) { return "Preamble"; },
-        preface     : function(i) { return "Preface"; },
-        attachments  : function(i) { return "Schedules"; },
+        preamble    : function(i) { return $t("Preamble"); },
+        preface     : function(i) { return $t("Preface"); },
+        attachments  : function(i) { return $t("Schedules"); },
         attachment   : function(i) {
           if (i.heading) {
             return i.heading;
@@ -199,7 +199,7 @@
           return name.slice(0, 1).toLocaleUpperCase() + name.slice(1);
         },
         debateSection: function(i) {
-          return (i.num || i.heading ? i.num + (i.num && i.heading ? " – " : '') + i.heading : 'Debate section');
+          return (i.num || i.heading ? i.num + (i.num && i.heading ? " – " : '') + i.heading : $t('Debate section'));
         },
         article      : function(i) {
           return "Art. " + i.num + (i.heading ? " – " + i.heading : '');

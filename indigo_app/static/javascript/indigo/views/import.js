@@ -297,7 +297,7 @@
           error = xhr.responseJSON.file || xhr.responseJSON[0] || message;
         }
 
-        self.$el.find('.alert').show().text("We couldn't import the file: " + error);
+        self.$el.find('.alert').show().text($t("We couldn't import the file: ") + error);
       });
     },
 

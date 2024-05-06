@@ -69,7 +69,7 @@
     },
 
     delete: function(e) {
-      if (confirm("Are you sure?")) {
+      if (confirm($t("Are you sure?"))) {
         this.remove();
         this.model.destroy();
       }

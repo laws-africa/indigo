@@ -106,10 +106,10 @@
       if (this.locked) {
         saveButtonGroup.innerHTML =
           items[0].is_self ?
-            ('<div>You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
-            ('Editing has been locked by ' + items[0].user.display_name + '.</div>');
+            (`<div>${$t('You must')} <a href="#" onclick="window.location.reload();">${$t('refresh')}</a><br>${$t('before making changes')}.`) :
+            ($t('Editing has been locked by ') + items[0].user.display_name + '.</div>');
       } else if (this.outdated) {
-        saveButtonGroup.innerHTML = '<div>The document has changed. You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.';
+        saveButtonGroup.innerHTML = `<div>${$t('The document has changed. You must')} <a href="#" onclick="window.location.reload();">${$t('refresh')}</a><br>${$t('before making changes')}.`;
       }
 
       // exclude us

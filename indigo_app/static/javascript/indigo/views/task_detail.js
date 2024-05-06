@@ -33,18 +33,18 @@
       this.$('#task-comment-form #id_submit').attr('disabled', text.length === 0);
 
       if (text.length > 0) {
-        this.$('#btn_request_changes').val('Comment and request changes');
-        this.$('#btn_approve').val('Comment and approve');
-        this.$('#btn_reopen').val('Comment and reopen');
-        this.$('#btn_finish').val('Comment and finish');
-        this.$('#btn_submit_for_review').val('Comment and submit for review');
+        this.$('#btn_request_changes').val($t('Comment and request changes'));
+        this.$('#btn_approve').val($t('Comment and approve'));
+        this.$('#btn_reopen').val($t('Comment and reopen'));
+        this.$('#btn_finish').val($t('Comment and finish'));
+        this.$('#btn_submit_for_review').val($t('Comment and submit for review'));
 
       } else {
-        this.$('#btn_request_changes').val('Request changes');
-        this.$('#btn_approve').val('Approve');
-        this.$('#btn_reopen').val('Reopen');
-        this.$('#btn_finish').val('Finish');
-        this.$('#btn_submit_for_review').val('Submit for review');
+        this.$('#btn_request_changes').val($t('Request changes'));
+        this.$('#btn_approve').val($t('Approve'));
+        this.$('#btn_reopen').val($t('Reopen'));
+        this.$('#btn_finish').val($t('Finish'));
+        this.$('#btn_submit_for_review').val($t('Submit for review'));
       }
     },
   });

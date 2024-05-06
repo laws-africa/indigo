@@ -181,7 +181,7 @@
 
       // should we delete the item?
       if (!content.trim() && fragmentRule !== 'akomaNtoso') {
-        if (confirm('Go ahead and delete this section from the document?')) {
+        if (confirm($t('Go ahead and delete this section from the document?'))) {
           this.parent.removeFragment(this.fragment);
         }
         return;
@@ -464,7 +464,7 @@
           table = document.getElementById($btn.data('table-id'));
 
       if (!this.tableEditor.canEditTable(table)) {
-        alert('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.');
+        alert($t('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.'));
       } else {
         this.tableEditor.editTable(table);
         // disable other table edit buttons
@@ -686,7 +686,7 @@
     },
 
     canCancelEdits: function() {
-      return (!this.sourceEditor.editing || confirm("You will lose your changes, are you sure?"));
+      return (!this.sourceEditor.editing || confirm($t("You will lose your changes, are you sure?")));
     },
 
     // Save the content of the editor, returns a Deferred

@@ -2,6 +2,9 @@ from django.conf import settings
 
 import json
 
+from django.utils.translation import get_language
+from django.templatetags.static import static
+
 
 def general(request):
     """
@@ -16,6 +19,7 @@ def general(request):
         'USER_JSON': serialise_user(request),
         'MAINTENANCE_MODE': settings.INDIGO['MAINTENANCE_MODE'],
         'SENTRY_DSN': settings.SENTRY_DSN,
+        'JS_I18N': json.dumps(js_i18n(request)),
     }
 
 
@@ -41,3 +45,22 @@ def serialise_user(request):
         data = UserDetailsSerializer(context={'request': request}).to_representation(request.user)
 
     return json.dumps(data)
+
+
+def js_i18n(request):
+    """ Configuration for i18next for javascript translations."""
+    paths = {
+        f'{ns}-{code}': static(f'i18n/{ns}-{code}.json')
+        for code, name in settings.LANGUAGES
+        for ns in settings.INDIGO['JS_I18N_NAMESPACES']
+    }
+
+    return {
+        'loadPaths': paths,
+        'ns': 'indigo_app',
+        'lng': get_language(),
+        'fallbackLng': 'en',
+        'returnEmptyString': False,
+        'keySeparator': False,
+        'debug': settings.DEBUG,
+    }

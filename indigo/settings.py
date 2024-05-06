@@ -161,7 +161,10 @@ INDIGO = {
             'v2': 'indigo_content_api.v2.urls_api',
             'v3': 'indigo_content_api.v3.urls_api',
         }
-    }
+    },
+
+    # namespaces to look for translation packs for javascript translation via i18next
+    'JS_I18N_NAMESPACES': ['indigo_app'],
 }
 
 # Database

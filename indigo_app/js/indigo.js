@@ -14,6 +14,8 @@ import './compat-imports';
 import { relativeTimestamps } from './timestamps';
 import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
+import i18next from 'i18next';
+import HttpApi from 'i18next-http-backend';
 
 customElements.define('la-akoma-ntoso', LaAkomaNtoso);
 customElements.define('la-gutter', LaGutter);
@@ -30,6 +32,7 @@ class IndigoApp {
     this.components = [];
     this.componentLibrary = {};
     this.Vue = getVue();
+    this.setupI18n();
     this.setupHtmx();
 
     for (const [name, component] of Object.entries(components)) {
@@ -43,6 +46,17 @@ class IndigoApp {
     this.createVueComponents(document.body);
     this.disableWith();
     window.dispatchEvent(new Event('indigo.components-created'));
+  }
+
+  setupI18n () {
+    const opts = window.Indigo.i18n;
+    opts.backend = {};
+    opts.backend.loadPath = function (languages, namespaces) {
+      return opts.loadPaths[namespaces[0] + '-' + languages[0]];
+    };
+    i18next.use(HttpApi).init(opts);
+    // setup a global translation function
+    window.$t = i18next.t.bind(i18next);
   }
 
   setupHtmx () {

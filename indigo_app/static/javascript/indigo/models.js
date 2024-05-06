@@ -233,10 +233,10 @@
     validate: function(attrs, options) {
       var errors = {};
 
-      if (!attrs.title) errors.title = 'A title must be specified';
-      if (!attrs.country) errors.country = 'A country must be specified';
-      if (!attrs.date) errors.date = 'A year (or date) must be specified';
-      if (!attrs.number) errors.number = 'A number must be specified';
+      if (!attrs.title) errors.title = $t('A title must be specified');
+      if (!attrs.country) errors.country = $t('A country must be specified');
+      if (!attrs.date) errors.date = $t('A year (or date) must be specified');
+      if (!attrs.number) errors.number = $t('A number must be specified');
 
       if (!_.isEmpty(errors)) return errors;
     },

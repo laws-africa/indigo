@@ -113,7 +113,7 @@
 
     discardChanges: function(e, force) {
       if (!this.editing || !this.table) return;
-      if (!force && !confirm("You'll lose your changes, are you sure?")) return;
+      if (!force && !confirm($t("You'll lose your changes, are you sure?"))) return;
 
       var editable = this.editable,
           originalTable = this.originalTable;

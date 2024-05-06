@@ -88,7 +88,7 @@
             var content = issue.get('description');
 
             if (issue.get('suggestion')) {
-              content = content + "<br><br><b>Tip:</b> " + issue.get('suggestion');
+              content = content + "<br><br><b>" + $t('Tip') + ":</b> " + issue.get('suggestion');
             }
 
             gutter.append(node);

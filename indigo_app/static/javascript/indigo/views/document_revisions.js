@@ -73,7 +73,7 @@
     restore: function(e) {
       e.preventDefault();
 
-      if (confirm("Are you sure you want to restore back to this point?")) {
+      if (confirm($t("Are you sure you want to restore back to this point?"))) {
         var $revision = $(e.target).closest('.revision');
         if ($revision.data('index') == '0') {
           // last saved revision, just reload page

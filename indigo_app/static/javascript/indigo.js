@@ -43,7 +43,7 @@ function bootstrapIndigo(exports) {
         }
       } else if (xhr.status == 400) {
         var details;
-        msg = "There was a problem with your request";
+        msg = $t("There was a problem with your request");
 
         if (xhr.responseJSON && _.isObject(xhr.responseJSON)) {
           details = "<ul>";
@@ -159,7 +159,7 @@ function bootstrapIndigo(exports) {
   $(window).on('beforeunload', function(e) {
     if (Indigo.view && Indigo.view.isDirty && Indigo.view.isDirty()) {
       e.preventDefault();
-      return 'You will lose your changes!';
+      return $t('You will lose your changes!');
     }
   });
 

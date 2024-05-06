@@ -220,7 +220,7 @@
 
     detectUnsupportedBrowsers: function() {
       if (!('XSLTProcessor' in window)) {
-        alert("Your browser is not supported by Indigo. Please use Chrome, Firefox, Safari or Edge instead.");
+        alert($t("Your browser is not supported by Indigo. Please use Chrome, Firefox, Safari or Edge instead."));
       }
     },
 

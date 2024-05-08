@@ -1093,6 +1093,8 @@ class WorkPopupView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context['overview_data'] = get_work_overview_data(self.work)
+
         # is there a portion?
         if self.frbr_uri.portion:
             # get a document to use

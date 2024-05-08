@@ -75,18 +75,10 @@
     <div class="col-9">
       {% block primary-info %}
         <div class="card">
-          <div class="card-body">
+          <div class="card-body key-value-pairs-horizontal">
             {% block primary-info-detail %}
               {% include 'indigo_app/place/_work_detail_overview.html' %}
               <div class="row">
-                {% if work.parent_work %}
-                  <dt class="col-2">{% trans 'Primary work' %}</dt>
-                  <dd class="col-10">
-                    <div>
-                      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-                    </div>
-                  </dd>
-                {% endif %}
                 {% with work.child_works.all as kids %}
                   {% if kids|length > 0 %}
                     <dt class="col-2">{% trans 'Subsidiary works' %}</dt>

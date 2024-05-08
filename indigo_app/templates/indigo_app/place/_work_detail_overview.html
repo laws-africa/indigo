@@ -1,13 +1,13 @@
 {% load indigo i18n %}
 
-<dl class="row mb-0">
+<dl class="key-value-pairs mb-0">
   {% block overview-list %}
     {% block overview-data %}
       {% for entry in overview_data %}
-        <dt class="col-2">
+        <dt>
           {{ entry.key }}
         </dt>
-        <dd class="col-10">
+        <dd>
           <div>
             {% if entry.overridden %}{% include 'indigo_app/place/_overridden.html' %}{% endif %}
             {{ entry.value }}
@@ -24,13 +24,22 @@
       {% endfor %}
     {% endblock %}
 
+    {% if work.parent_work %}
+      <dt>{% trans 'Primary work' %}</dt>
+      <dd>
+        <div>
+          <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+        </div>
+      </dd>
+    {% endif %}
+
     {% block overview-aliases  %}
       {% with work.aliases.all as aliases %}
         {% if aliases %}
-          <dt class="col-2">
+          <dt>
             {% trans "Aliases" %}
           </dt>
-          <dd class="col-10">
+          <dd>
             {% for alias in aliases %}
               <div>{{ alias }}</div>
             {% endfor %}
@@ -42,10 +51,10 @@
     {% block overview-taxonomies  %}
       {% with work.taxonomy_topics.all as topics %}
         {% if topics %}
-          <dt class="col-2">
+          <dt>
             {% trans "Topics" %}
           </dt>
-          <dd class="col-10">
+          <dd>
             {% for topic in topics %}
               <div>
                 {% for item in topic.get_ancestors %}

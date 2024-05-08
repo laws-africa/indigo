@@ -23,3 +23,18 @@
 .fa-rotate-315 {
   transform: rotate(315deg);
 }
+
+// a variant of DL for key-value pairs that dynamically switches from horizontal to vertical
+.key-value-pairs-horizontal dl.key-value-pairs {
+  @include make-row();
+
+  & > dt {
+    @include make-col-ready();
+    @include make-col(2);
+  }
+
+  & > dd {
+    @include make-col-ready();
+    @include make-col(10);
+  }
+}

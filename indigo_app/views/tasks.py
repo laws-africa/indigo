@@ -629,7 +629,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
         context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset(), context['places_toc'])
         context['total_tasks'] = self.get_base_queryset().count()
-        context["hide_assigned_to"] = True
+        context["hide_assigned_to"] = False
         context["place"] = True
         return context
 
@@ -644,6 +644,7 @@ class AvailableTasksView(AllTasksView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_url'] = reverse('available_tasks')
+        context["hide_assigned_to"] = True
         return context
 
 

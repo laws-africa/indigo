@@ -69,7 +69,7 @@ class TaxonomyTopic(MP_Node):
         return cls.objects.filter(slug=value).first()
 
     def save(self, *args, **kwargs):
-        parent = self.get_parent()
+        parent = self.get_parent(update=True)
         self.slug = (f"{parent.slug}-" if parent else "") + slugify(self.name)
         super().save(*args, **kwargs)
 

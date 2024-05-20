@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-04-08 11:54\n"
+"PO-Revision-Date: 2024-05-20 08:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /[laws-africa.indigo] master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 141\n"
+"X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 206\n"
 
 #: forms/documents.py:29
 msgid "Invalid json data"
@@ -625,7 +625,7 @@ msgstr "Réinitialiser le mot de passe"
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr "Le lien de réinitialisation du mot de passe n'est pas valide, peut-être parce qu'il a déjà été utilisé. Veuillez demander une <a href=\"%(passwd_reset_url)s\">nouvelle réinitialisation du mot de passe</a>."
+msgstr "Le lien de réinitialisation du mot de passe n'est pas valide, peut-être parce qu'il a déjà été utilisé. Veuillez demander une <a href=\"%(mot_de_passe_réinitialiser)>nouvelle réinitialisation du mot de passe</a>."
 
 #: templates/account/password_reset_from_key.html:27
 msgid "New Password"
@@ -784,7 +784,7 @@ msgstr "commenté"
 #: templates/indigo_api/_task_detail.html:130
 #, python-format
 msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
-msgstr "Voici <a href=\"%(item_url)s\">%(title)s</a> tel qu'il apparaît actuellement"
+msgstr "Voici <a href=\"%(url de l'article)\">%(titre)s</a> tel qu'il apparaît actuellement"
 
 #: templates/indigo_api/_task_detail.html:136
 #, python-format
@@ -824,7 +824,7 @@ msgstr "Finition"
 #: templates/indigo_api/_task_detail.html:228
 #, python-format
 msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
-msgstr "Veuillez <a href=\"%(login_url)s\">vous connecter</a> pour laisser un commentaire."
+msgstr "Veuillez <a href=\"%(url_de_connexion)s\">vous connecter</a> pour laisser un commentaire."
 
 #: templates/indigo_api/_task_detail.html:272
 msgid "Labels"
@@ -1324,7 +1324,7 @@ msgstr "Pays et localité (avancé)"
 #: templates/indigo_api/_work_form_content.html:612
 #, python-format
 msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
-msgstr "Ce travail ne peut pas être supprimé tant que <a href=\"%(amendments_url)s\">documents liés</a> et <a href=\"%(related_url)s\">travaux liés</a> existent."
+msgstr "Ce travail ne peut pas être supprimé tant que <la refeerence=\"%(url_de_modification)s\">documents liés</a> et <la reference=\"%(url_connexe)s\">travaux liés</a> existent."
 
 #: templates/indigo_api/_work_form_content.html:619
 msgid "Are you sure you want to delete this work?"
@@ -1755,17 +1755,17 @@ msgstr "Dans ce document"
 #: templates/indigo_api/document/_italics_terms.html:18
 #, python-format
 msgid "In %(country)s"
-msgstr "En %(country)s"
+msgstr "En %(pays)"
 
 #: templates/indigo_api/document/_italics_terms.html:31
 #, python-format
 msgid "Terms that will be italicised in %(country)s:"
-msgstr "Termes qui seront en italique en %(country)s:"
+msgstr "Termes qui seront en italique en %(pays):"
 
 #: templates/indigo_api/document/_italics_terms.html:42
 #, python-format
 msgid "No terms have been selected to be italicised in %(country)s."
-msgstr "Aucun terme n'a été sélectionné pour être mis en italique dans %(country)s."
+msgstr "Aucun terme n'a été sélectionné pour être mis en italique dans %(le pays)."
 
 #: templates/indigo_api/document/_italics_terms.html:49
 msgid "Remove italics"
@@ -2382,12 +2382,12 @@ msgstr "Instructions"
 #: templates/indigo_api/work_batch_create.html:432
 #, python-format
 msgid "Make a copy of the <a href=\"%(template_href)s\" target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
-msgstr "Faites une copie du modèle d'index <a href=\"%(template_href)s\" target=\"_blank\">Législation</a>: 'Fichier | Faire une copie'."
+msgstr "Faites une copie du modèle d'index <la reference=\"%(reference_du_modele)\" cible=\"_vide\">Législation</a>: 'Fichier | Faire une copie'."
 
 #: templates/indigo_api/work_batch_create.html:437
 #, python-format
 msgid "Record the Spreadsheet URL under <a href=\"%(place_url)s\" target=\"_blank\">Settings</a>."
-msgstr "Enregistrez l'URL de la feuille de calcul sous <a href=\"%(place_url)s\" target=\"_blank\">Paramètres</a>."
+msgstr "Enregistrez l'URL de la feuille de calcul sous <la reference=\"%(lieu_url)s\" cible=\"_vide\">Paramètres</a>."
 
 #: templates/indigo_api/work_batch_create.html:442
 #, python-format
@@ -3182,7 +3182,7 @@ msgstr "Pour continuer, veuillez accepter les conditions d'utilisation"
 #: templates/indigo_app/user_account/accept_terms.html:16
 #, python-format
 msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
-msgstr "J'ai lu et j'accepte les <a href=\"%(url)s\" target=\"_blank\">Conditions d'utilisation</a>."
+msgstr "J'ai lu et j'accepte les <la reference\"%(url)s\" la cible=\"_vide\">Conditions d'utilisation</a>."
 
 #: templates/indigo_app/user_account/accept_terms.html:30
 msgid "Continue"

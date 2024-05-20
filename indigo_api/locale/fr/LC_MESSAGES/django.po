@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-04-08 11:54\n"
+"PO-Revision-Date: 2024-05-20 08:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /[laws-africa.indigo] master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 139\n"
+"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 204\n"
 
 #: admin.py:89
 msgid "Updated run time to now for selected tasks."
@@ -58,7 +58,7 @@ msgstr "Il s'agit de la version de ce document telle qu'elle était à %(start)s
 #: models/documents.py:287
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr "Ceci est la version de ce document tel qu'il était à %(start)s."
+msgstr "Ceci est la version de ce document tel qu'il était à %(début)s."
 
 #: models/documents.py:297 models/documents.py:612 models/documents.py:663
 #: models/documents.py:727 models/tasks.py:132
@@ -1072,12 +1072,12 @@ msgstr "a commencé le <i>(date inconnue)</i>"
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr "par <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "par <a href=\"%(uri du resolveur)s\">%(Titre numéroté)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:36
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr "par <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "par <a href=\"%(uri du resolveur)s\">%(titre)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:42
 msgid "Note:"

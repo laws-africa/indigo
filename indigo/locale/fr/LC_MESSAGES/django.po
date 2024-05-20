@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-20 10:09\n"
+"PO-Revision-Date: 2024-05-20 10:13\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -138,7 +138,7 @@ msgstr "La date \"commence le\" manque"
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
 "If it should be linked, please do so manually."
-msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(numero de ligne)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
+msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(row_num)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
 "Si elle doit être liée, veuillez le faire manuellement."
 
 #: bulk_creator.py:1021

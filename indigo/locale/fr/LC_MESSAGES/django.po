@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-20 10:00\n"
+"PO-Revision-Date: 2024-05-20 10:09\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -69,7 +69,7 @@ msgstr "Chapitre %(cap)s"
 #: analysis/work_detail/base.py:51
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr "Types, nombres d'année"
+msgstr "%(type)s %(nombre)s d'(année)s"
 
 #: bulk_creator.py:300
 #, python-format
@@ -269,7 +269,7 @@ msgstr "On dirait que cette œuvre abroge %(title)s (%(numbered_title)s), mais i
 #, python-format
 msgid "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n\n"
 "Please link it manually."
-msgstr "On dirait que cette œuvre ait été abrogé par %(les titre)s (%(titres numérotés)s), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr "On dirait que cette œuvre ait été abrogé par %(title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement.\n\n"
 "Veuillez le lier manuellement."
 
 #: bulk_creator.py:1137
@@ -329,7 +329,7 @@ msgid "It looks like this work has the following taxonomy: \"%(topics)s\" (see r
 "Possible reasons:\n"
 "– a typo in the spreadsheet\n"
 "– the taxonomy doesn't exist on the system."
-msgstr "On dirait que cette œuvre a la taxonomie suivante : \"%(sujet)s\" (voir la ligne %(numéro de ligne)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
+msgstr "On dirait que cette œuvre a la taxonomie suivante : \"%(topics)s\" (voir la ligne %(row_num)s de la feuille de calcul), mais il ne peut pas être lié automatiquement.\n\n"
 "Raisons possibles :\n"
 "– une faute de frappe dans la feuille de calcul\n"
 "– la taxonomie n'existe pas sur le système."

@@ -130,4 +130,4 @@ grammar ProvisionRefs
   comma       <- [,;]
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]
-  WS          <- " " / "\t"
+  WS          <- " " / "\t" / "\n"

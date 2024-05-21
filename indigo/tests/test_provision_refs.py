@@ -1371,6 +1371,19 @@ class ProvisionRefsMatcherTestCase(TestCase):
             ExtractedCitation("Act No. 1 of 2009", 0, 9, "/akn/za/act/2009/1", 2, '', '.'),
         ], self.finder.citations)
 
+    def test_markup_text_newlines(self):
+        text = """According to section 26\nand 26(a)\nof Act No. 1 of 2009."""
+        self.finder.setup(self.frbr_uri, text=text)
+        self.finder.citations = [
+            ExtractedCitation("Act No. 1 of 2009", 54, 62, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
+        ]
+        self.finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("Act No. 1 of 2009", 54, 62, "/akn/za/act/2009/1", 0, 'of Act No. ', '.'),
+            ExtractedCitation("26", 21, 23, "/akn/za/act/2009/1/~sec_26", 0, 'According to section ', '\nand 26(a)\nof Act No. 1 of 200' ),
+            ExtractedCitation("26(a)", 28, 33, "/akn/za/act/2009/1/~sec_26__subsec_a", 0, 'According to section 26\nand ', '\nof Act No. 1 of 2009.'),
+        ], self.finder.citations)
+
 
 class ProvisionRefsGrammarTest(TestCase):
     maxDiff = None
@@ -1386,6 +1399,24 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual(result.end, 9)
 
         result = parse_provision_refs("paragraph (a)")
+        self.assertEqual([
+            MainProvisionRef(
+                "paragraph",
+                ProvisionRef("(a)", 10, 13)
+            )
+        ], result.references)
+
+    def test_single_whitespace(self):
+        result = parse_provision_refs("Section 1\n")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1", 8, 9)
+            )
+        ], result.references)
+        self.assertEqual(result.end, 9)
+
+        result = parse_provision_refs("paragraph (a)\n")
         self.assertEqual([
             MainProvisionRef(
                 "paragraph",
@@ -1471,6 +1502,37 @@ class ProvisionRefsGrammarTest(TestCase):
                 ProvisionRef("32", 74, 76, None,
                     ProvisionRef("(a)", 76, 79),
                 ),
+            )
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_mixed_newlines(self):
+        result = parse_provision_refs("Section 1.2(1)(a),\n(c) to (e), (f)(ii)\nand (2), and (3)\n(g),(h)\nand section 32(a)\n")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1.2", 8, 11, None,
+                             ProvisionRef("(1)", 11, 14, None,
+                                          ProvisionRef("(a)", 14, 17)
+                                          ),
+                             ), [
+                    ProvisionRef("(c)", 19, 22, "and_or"),
+                    ProvisionRef("(e)", 26, 29, "range"),
+                    ProvisionRef("(f)", 31, 34, "and_or",
+                                 ProvisionRef("(ii)", 34, 38),
+                                 ),
+                    ProvisionRef("(2)", 43, 46, "and_or"),
+                    ProvisionRef("(3)", 52, 55, "and_or",
+                                 ProvisionRef("(g)", 56, 59),
+                                 ),
+                    ProvisionRef("(h)", 60, 63, "and_or"),
+                ]
+            ),
+            MainProvisionRef(
+                "section",
+                ProvisionRef("32", 76, 78, None,
+                             ProvisionRef("(a)", 78, 81),
+                             ),
             )
         ], result.references)
         self.assertIsNone(result.target)
@@ -1632,6 +1694,14 @@ class ProvisionRefsGrammarTest(TestCase):
         result = parse_provision_refs("Section 2, of the Act with junk")
         self.assertEqual("the_act", result.target)
         self.assertEqual(result.end, 21)
+
+        result = parse_provision_refs("Section 2,\nof the Act with junk")
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 21)
+
+        result = parse_provision_refs("Section 2\nof the Act with junk")
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 20)
 
     def test_target_truncated(self):
         # the remainder of the text is wrapped in another tag

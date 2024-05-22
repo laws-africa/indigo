@@ -560,6 +560,8 @@ class ProvisionRefsMatcher(CitationMatcher):
         # only consider citations on this page
         # TODO: we could also look at citations in previous or later pages, and ignore offsets
         citations = [c for c in self.citations if c.target_id == self.pagenum]
+        # sort by start position, then end position
+        citations.sort(key=lambda c: (c.start, c.end))
 
         frbr_uri = None
         if target == "thereof":

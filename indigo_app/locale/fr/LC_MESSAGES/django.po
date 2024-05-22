@@ -3182,7 +3182,7 @@ msgstr "Pour continuer, veuillez accepter les conditions d'utilisation"
 #: templates/indigo_app/user_account/accept_terms.html:16
 #, python-format
 msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
-msgstr "J'ai lu et j'accepte les <la reference\"%(url)s\" la cible=\"_vide\">Conditions d'utilisation</a>."
+msgstr "J'ai lu et j'accepte les <a href=\"%(url)s\" target=\"_blank\">Conditions d'utilisation</a>."
 
 #: templates/indigo_app/user_account/accept_terms.html:30
 msgid "Continue"

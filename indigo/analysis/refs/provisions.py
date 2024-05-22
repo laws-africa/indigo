@@ -335,6 +335,7 @@ class ProvisionRefsMatcher(CitationMatcher):
     resolver = ProvisionRefsResolver()
     target_root_cache = None
     document_queryset = None
+    max_ref_to_target = 75
 
     def setup(self, *args, **kwargs):
         from indigo_api.models import Document
@@ -568,14 +569,20 @@ class ProvisionRefsMatcher(CitationMatcher):
             # look backwards - find the first citation before the start of this match
             for c in reversed(citations):
                 if c.end < match.start():
+                    # don't cross the end of a sentence or look too far behind
+                    if '. ' in match.string[c.end:match.start()] or match.start() - c.end > self.max_ref_to_target:
+                        break
                     frbr_uri = c.href
                     break
 
         elif target == "of":
             # it's 'of', look forwards
-            # find the first citation after the end of this match
+            # find the first citation after the end of this match, but don't cross the end of a sentence or look too far.
             for c in citations:
                 if c.start > match.end():
+                    # don't cross the end of a sentence or look too far ahead
+                    if '. ' in match.string[match.end():c.start] or c.start - match.end() > self.max_ref_to_target:
+                        break
                     frbr_uri = c.href
                     break
 

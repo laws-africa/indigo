@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-20 11:12\n"
+"PO-Revision-Date: 2024-05-22 10:39\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1755,17 +1755,17 @@ msgstr "Dans ce document"
 #: templates/indigo_api/document/_italics_terms.html:18
 #, python-format
 msgid "In %(country)s"
-msgstr "En %(pays)"
+msgstr "En %(country)s"
 
 #: templates/indigo_api/document/_italics_terms.html:31
 #, python-format
 msgid "Terms that will be italicised in %(country)s:"
-msgstr "Termes qui seront en italique en %(pays):"
+msgstr "Termes qui seront en italique en %(country)s:"
 
 #: templates/indigo_api/document/_italics_terms.html:42
 #, python-format
 msgid "No terms have been selected to be italicised in %(country)s."
-msgstr "Aucun terme n'a été sélectionné pour être mis en italique dans %(le pays)."
+msgstr "Aucun terme n'a été sélectionné pour être mis en italique dans %(country)s."
 
 #: templates/indigo_api/document/_italics_terms.html:49
 msgid "Remove italics"

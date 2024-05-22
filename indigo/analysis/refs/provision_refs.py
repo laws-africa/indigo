@@ -2632,6 +2632,21 @@ class Grammar(object):
                     self._expected.append(('ProvisionRefs::WS', '"\\t"'))
             if address0 is FAILURE:
                 self._offset = index1
+                chunk2, max2 = None, self._offset + 1
+                if max2 <= self._input_size:
+                    chunk2 = self._input[self._offset:max2]
+                if chunk2 == '\n':
+                    address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset, [])
+                    self._offset = self._offset + 1
+                else:
+                    address0 = FAILURE
+                    if self._offset > self._failure:
+                        self._failure = self._offset
+                        self._expected = []
+                    if self._offset == self._failure:
+                        self._expected.append(('ProvisionRefs::WS', '"\\n"'))
+                if address0 is FAILURE:
+                    self._offset = index1
         self._cache['WS'][index0] = (address0, self._offset)
         return address0
 

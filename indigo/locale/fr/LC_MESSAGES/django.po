@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-20 10:14\n"
+"PO-Revision-Date: 2024-05-22 11:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -69,7 +69,7 @@ msgstr "Chapitre %(cap)s"
 #: analysis/work_detail/base.py:51
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr "%(type)s %(nombre)s d'(année)s"
+msgstr "%(type)s %(number)s Sur %(year)s"
 
 #: bulk_creator.py:300
 #, python-format

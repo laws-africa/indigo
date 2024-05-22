@@ -1,6 +1,10 @@
 env
 venv
+.env/
+.venv/
 .idea/
+build/
+dist/
 *.pyc
 .webassets-cache
 attachments/

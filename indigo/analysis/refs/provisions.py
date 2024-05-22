@@ -343,6 +343,15 @@ class ProvisionRefsMatcher(CitationMatcher):
         self.document_queryset = Document.objects.undeleted().published()
         self.matches = []
 
+    def run_text_extraction(self, text):
+        # We override this method so that once we've found one match in a page of text, we stop looking,
+        # because parse_all_refs will find all the matches in the text from the first match onwards.
+        # Otherwise we end up with duplicate matches.
+        for match in self.find_text_matches(text):
+            if self.is_text_match_valid(text, match):
+                self.handle_text_match(text, match)
+                break
+
     def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
         """Find all the starting points and use the grammar to find non-overlapping references."""
         parses = []

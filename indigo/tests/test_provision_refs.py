@@ -1406,6 +1406,23 @@ class ProvisionRefsMatcherTestCase(TestCase):
             ExtractedCitation("26(a)", 28, 33, "/akn/za/act/2009/1/~sec_26__subsec_a", 0, 'According to section 26\nand ', '\nof Act No. 1 of 2009.'),
         ], self.finder.citations)
 
+    def test_markup_text_no_dups(self):
+        text = """Interpretation of section 26 of Act 1 of 2009 and Section 26(a) of Act 1 of 2009 deals with..."""
+        self.finder.setup(self.frbr_uri, text=text)
+        self.finder.citations = [
+            ExtractedCitation("the Act", 32, 45, "/akn/za/act/2009/1", 0, ' of ', ' and '),
+            ExtractedCitation("the Act", 68, 81, "/akn/za/act/2009/1", 0, ' of ', ' deals '),
+        ]
+        self.finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("the Act", 32, 45, "/akn/za/act/2009/1", 0, ' of ', ' and '),
+            ExtractedCitation("the Act", 68, 81, "/akn/za/act/2009/1", 0, ' of ', ' deals '),
+            ExtractedCitation('26(a)', 58, 63, '/akn/za/act/2009/1/~sec_26__subsec_a', 0,
+                              ' of Act 1 of 2009 and Section ', ' of Act 1 of 2009 deals with..'),
+            ExtractedCitation('26', 26, 28, '/akn/za/act/2009/1/~sec_26', 0,
+                              'Interpretation of section ', ' of Act 1 of 2009 and Section '),
+        ], self.finder.citations)
+
     def test_markup_text_dont_cross_sentences(self):
         text = 'Section 26 of the Education Act says interesting things. Section 1 of Act 1 of 2009 is also interesting.'
         self.finder.setup(self.frbr_uri, text=text)

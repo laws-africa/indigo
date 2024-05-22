@@ -405,7 +405,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         :return: Element the rightmost newly marked up node, to continue matching in that node's tail
         """
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target_from_node(node, match, in_tail, parse_result.target)
+        target_frbr_uri, target_root = self.get_target_from_node(node, match, in_tail, parse_result)
         if target_root is None:
             # no target, so we can't do anything
             return None
@@ -497,7 +497,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                 curr = curr.child
         return eId, last
 
-    def get_target_from_node(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
+    def get_target_from_node(self, node: Element, match: re.Match, in_tail: bool, parse_result: ParseResult) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
         appropriate root XML element of the document to use to resolve the references. If the target element
         is local to the current node, the returned target_frbr_uri is None.
@@ -507,38 +507,77 @@ class ProvisionRefsMatcher(CitationMatcher):
         - section 26(a) and (c) of Act 5 of 2009, ...
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
-        if not target or target == "this":
+        if not parse_result.target or parse_result.target == "this":
             # refs are to the local node, and we may look above that if necessary
             return None, node
 
-        if target == "the_act":
+        if parse_result.target == "the_act":
             # assume this is subleg and this refers to the parent work
             return self.find_parent_document_target()
 
         def candidates():
             # this yields candidate notes to look at, either forwards or backwards, until the first useful one is found
             # or we run out
-            if target == "thereof":
+            chars_from_ref = 0
+            if parse_result.target == "thereof":
                 # look backwards
                 if in_tail:
+                    text = node.tail[:match.start()]
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
                     prev = node
                 else:
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
+                    text = node.text[:match.start()]
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     prev = node.getprevious()
                 while prev is not None:
+                    # don't cross a sentence boundary or look too far: tail
+                    text = prev.tail or ''
+                    chars_from_ref += len(text)
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
+
                     yield prev
+
+                    # don't cross a sentence boundary or look too far: text of the node we just yielded
+                    text = ''.join(prev.itertext())
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     prev = prev.getprevious()
             else:
                 # it's 'of', look forwards
                 if in_tail:
+                    text = node.tail[parse_result.end:]
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
                     nxt = node.getnext()
                 else:
                     # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    text = node.text[parse_result.end:]
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     nxt = next(node.iterchildren(), None)
                 while nxt is not None:
                     yield nxt
+                    text = ''.join(nxt.itertext()) + (nxt.tail or '')
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     nxt = nxt.getnext()
 
         for el in candidates():

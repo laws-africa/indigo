@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-22 11:40\n"
+"PO-Revision-Date: 2024-05-22 14:10\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2382,7 +2382,7 @@ msgstr "Instructions"
 #: templates/indigo_api/work_batch_create.html:432
 #, python-format
 msgid "Make a copy of the <a href=\"%(template_href)s\" target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
-msgstr "Faites une copie du modèle d'index <la reference=\"%(reference_du_modele)\" cible=\"_vide\">Législation</a>: 'Fichier | Faire une copie'."
+msgstr "Faites une copie du modèle d'index <a href=\"%(template_href)s\" target=\"_blank\">Législation</a>: 'Fichier | Faire une copie'."
 
 #: templates/indigo_api/work_batch_create.html:437
 #, python-format

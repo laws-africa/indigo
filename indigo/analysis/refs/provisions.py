@@ -335,12 +335,22 @@ class ProvisionRefsMatcher(CitationMatcher):
     resolver = ProvisionRefsResolver()
     target_root_cache = None
     document_queryset = None
+    max_ref_to_target = 75
 
     def setup(self, *args, **kwargs):
         from indigo_api.models import Document
         super().setup(*args, **kwargs)
         self.document_queryset = Document.objects.undeleted().published()
         self.matches = []
+
+    def run_text_extraction(self, text):
+        # We override this method so that once we've found one match in a page of text, we stop looking,
+        # because parse_all_refs will find all the matches in the text from the first match onwards.
+        # Otherwise we end up with duplicate matches.
+        for match in self.find_text_matches(text):
+            if self.is_text_match_valid(text, match):
+                self.handle_text_match(text, match)
+                break
 
     def parse_all_refs(self, match) -> List[Tuple[re.Match, ParseResult]]:
         """Find all the starting points and use the grammar to find non-overlapping references."""
@@ -404,7 +414,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         :return: Element the rightmost newly marked up node, to continue matching in that node's tail
         """
         # work out if the target document is this one, or another one
-        target_frbr_uri, target_root = self.get_target_from_node(node, match, in_tail, parse_result.target)
+        target_frbr_uri, target_root = self.get_target_from_node(node, match, in_tail, parse_result)
         if target_root is None:
             # no target, so we can't do anything
             return None
@@ -496,7 +506,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                 curr = curr.child
         return eId, last
 
-    def get_target_from_node(self, node: Element, match: re.Match, in_tail: bool, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
+    def get_target_from_node(self, node: Element, match: re.Match, in_tail: bool, parse_result: ParseResult) -> (Union[str, None], Union[Element, None]):
         """Work out if the target document is this one, or a remote one, and return the target_frbr_uri and the
         appropriate root XML element of the document to use to resolve the references. If the target element
         is local to the current node, the returned target_frbr_uri is None.
@@ -506,38 +516,75 @@ class ProvisionRefsMatcher(CitationMatcher):
         - section 26(a) and (c) of Act 5 of 2009, ...
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
-        if not target or target == "this":
+        if not parse_result.target or parse_result.target == "this":
             # refs are to the local node, and we may look above that if necessary
             return None, node
 
-        if target == "the_act":
+        if parse_result.target == "the_act":
             # assume this is subleg and this refers to the parent work
             return self.find_parent_document_target()
 
         def candidates():
             # this yields candidate notes to look at, either forwards or backwards, until the first useful one is found
             # or we run out
-            if target == "thereof":
+            chars_from_ref = 0
+            if parse_result.target == "thereof":
                 # look backwards
                 if in_tail:
+                    text = node.tail
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
                     prev = node
                 else:
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
+                    text = node.text
                     prev = node.getprevious()
+
+                # don't cross a sentence boundary or look too far
+                text = text[:match.start()]
+                chars_from_ref += len(text)
+                if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                    return
+
                 while prev is not None:
+                    # don't cross a sentence boundary or look too far: tail
+                    text = prev.tail or ''
+                    chars_from_ref += len(text)
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
+
                     yield prev
+
+                    # don't cross a sentence boundary or look too far: text of the node we just yielded
+                    text = ''.join(prev.itertext())
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     prev = prev.getprevious()
             else:
                 # it's 'of', look forwards
                 if in_tail:
                     # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    text = node.tail
                     nxt = node.getnext()
                 else:
                     # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    text = node.text
                     nxt = next(node.iterchildren(), None)
+
+                text = text[parse_result.end:]
+                chars_from_ref += len(text)
+                # don't cross a sentence boundary or look too far
+                if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                    return
+
                 while nxt is not None:
                     yield nxt
+                    text = ''.join(nxt.itertext()) + (nxt.tail or '')
+                    chars_from_ref += len(text)
+                    # don't cross a sentence boundary or look too far
+                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                        return
                     nxt = nxt.getnext()
 
         for el in candidates():
@@ -560,21 +607,27 @@ class ProvisionRefsMatcher(CitationMatcher):
         # only consider citations on this page
         # TODO: we could also look at citations in previous or later pages, and ignore offsets
         citations = [c for c in self.citations if c.target_id == self.pagenum]
+        # sort by start position, then end position
+        citations.sort(key=lambda c: (c.start, c.end))
 
         frbr_uri = None
         if target == "thereof":
             # look backwards - find the first citation before the start of this match
             for c in reversed(citations):
                 if c.end < match.start():
-                    frbr_uri = c.href
+                    # don't cross the end of a sentence or look too far behind
+                    if not ('. ' in match.string[c.end:match.start()] or match.start() - c.end > self.max_ref_to_target):
+                        frbr_uri = c.href
                     break
 
         elif target == "of":
             # it's 'of', look forwards
-            # find the first citation after the end of this match
+            # find the first citation after the end of this match, but don't cross the end of a sentence or look too far.
             for c in citations:
                 if c.start > match.end():
-                    frbr_uri = c.href
+                    # don't cross the end of a sentence or look too far ahead
+                    if not ('. ' in match.string[match.end():c.start] or c.start - match.end() > self.max_ref_to_target):
+                        frbr_uri = c.href
                     break
 
         if frbr_uri:

@@ -69,7 +69,7 @@ msgstr "Chapitre %(cap)s"
 #: analysis/work_detail/base.py:51
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr "%(type)s %(number)s Sur %(year)s"
+msgstr "%(type)s %(number)s de %(year)s"
 
 #: bulk_creator.py:300
 #, python-format

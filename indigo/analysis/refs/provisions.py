@@ -531,21 +531,20 @@ class ProvisionRefsMatcher(CitationMatcher):
             if parse_result.target == "thereof":
                 # look backwards
                 if in_tail:
-                    text = node.tail[:match.start()]
-                    chars_from_ref += len(text)
-                    # don't cross a sentence boundary or look too far
-                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
-                        return
+                    text = node.tail
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26 thereof, ...</p>
                     prev = node
                 else:
                     # eg. <p>Considering <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <b>section 26</b> thereof, ...</p>
-                    text = node.text[:match.start()]
-                    chars_from_ref += len(text)
-                    # don't cross a sentence boundary or look too far
-                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
-                        return
+                    text = node.text
                     prev = node.getprevious()
+
+                # don't cross a sentence boundary or look too far
+                text = text[:match.start()]
+                chars_from_ref += len(text)
+                if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                    return
+
                 while prev is not None:
                     # don't cross a sentence boundary or look too far: tail
                     text = prev.tail or ''
@@ -565,21 +564,20 @@ class ProvisionRefsMatcher(CitationMatcher):
             else:
                 # it's 'of', look forwards
                 if in_tail:
-                    text = node.tail[parse_result.end:]
-                    chars_from_ref += len(text)
-                    # don't cross a sentence boundary or look too far
-                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
-                        return
                     # eg. <p>The term <term>dog</term> from section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
+                    text = node.tail
                     nxt = node.getnext()
                 else:
                     # eg. <p>See section 26 of <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref>, ...</p>
-                    text = node.text[parse_result.end:]
-                    chars_from_ref += len(text)
-                    # don't cross a sentence boundary or look too far
-                    if '. ' in text or chars_from_ref > self.max_ref_to_target:
-                        return
+                    text = node.text
                     nxt = next(node.iterchildren(), None)
+
+                text = text[parse_result.end:]
+                chars_from_ref += len(text)
+                # don't cross a sentence boundary or look too far
+                if '. ' in text or chars_from_ref > self.max_ref_to_target:
+                    return
+
                 while nxt is not None:
                     yield nxt
                     text = ''.join(nxt.itertext()) + (nxt.tail or '')
@@ -618,9 +616,8 @@ class ProvisionRefsMatcher(CitationMatcher):
             for c in reversed(citations):
                 if c.end < match.start():
                     # don't cross the end of a sentence or look too far behind
-                    if '. ' in match.string[c.end:match.start()] or match.start() - c.end > self.max_ref_to_target:
-                        break
-                    frbr_uri = c.href
+                    if not ('. ' in match.string[c.end:match.start()] or match.start() - c.end > self.max_ref_to_target):
+                        frbr_uri = c.href
                     break
 
         elif target == "of":
@@ -629,9 +626,8 @@ class ProvisionRefsMatcher(CitationMatcher):
             for c in citations:
                 if c.start > match.end():
                     # don't cross the end of a sentence or look too far ahead
-                    if '. ' in match.string[match.end():c.start] or c.start - match.end() > self.max_ref_to_target:
-                        break
-                    frbr_uri = c.href
+                    if not ('. ' in match.string[match.end():c.start] or c.start - match.end() > self.max_ref_to_target):
+                        frbr_uri = c.href
                     break
 
         if frbr_uri:

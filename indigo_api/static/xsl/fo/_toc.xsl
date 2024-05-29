@@ -23,6 +23,9 @@
 
   <xsl:template match="akn:tocItem">
     <fo:block margin-top="{$para-spacing}" text-align-last="justify">
+      <xsl:if test="@class='keep-with-next'">
+        <xsl:attribute name="keep-with-next">always</xsl:attribute>
+      </xsl:if>
       <fo:inline>
         <fo:basic-link internal-destination="{@id}">
           <xsl:apply-templates/>

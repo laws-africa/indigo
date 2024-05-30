@@ -25,7 +25,7 @@ from django_htmx.http import push_url
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskUnblockForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
 
@@ -439,7 +439,6 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-
 class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
@@ -491,7 +490,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
     permission_required = ('indigo_api.change_task',)
 
     def get_form_kwargs(self):
-        kwargs = super(TaskBulkUpdateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['country'] = self.country
         return kwargs
 
@@ -517,16 +516,35 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
             elif assignee:
                 messages.success(self.request, _("Assigned %(count)d task%(plural)s to %(user)s") % {"count": count, "plural": plural, "user": user_display(assignee)})
 
-        return redirect(self.get_redirect_url())
+        return redirect(self.request.headers["Referer"])
 
     def form_invalid(self, form):
         messages.error(self.request, _("Computer says no."))
-        return redirect(self.get_redirect_url())
+        return redirect(self.request.headers["Referer"])
 
-    def get_redirect_url(self):
-        if self.request.GET.get('next'):
-            return self.request.GET.get('next')
-        return reverse('tasks', kwargs={'place': self.kwargs['place']})
+
+class TaskBulkUnblockView(TaskViewBase, BaseFormView):
+    http_method_names = ['post']
+    form_class = BulkTaskUnblockForm
+    permission_required = ('indigo_api.change_task',)
+
+    def form_valid(self, form):
+        success_count = 0
+        unsuccess_count = 0
+        for task in form.cleaned_data['tasks']:
+            if not task.blocked_by.exists():
+                success_count += 1
+                task.unblock(self.request.user)
+            else:
+                unsuccess_count += 1
+        if success_count > 0:
+            plural = 's' if success_count > 1 else ''
+            messages.success(self.request, _("Unblocked %(count)d task%(plural)s") % {"count": success_count, "plural": plural})
+        if unsuccess_count > 0:
+            plural = 's' if unsuccess_count > 1 else ''
+            messages.error(self.request, _("Couldn't unblock %(count)d task%(plural)s with a blocking task") % {"count": unsuccess_count, "plural": plural})
+
+        return redirect(self.request.headers["Referer"])
 
 
 class UserTasksView(AbstractAuthedIndigoView, TemplateView):

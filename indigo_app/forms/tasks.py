@@ -306,3 +306,7 @@ class BulkTaskUpdateForm(forms.Form):
             del self.errors['assigned_to']
             self.cleaned_data['assigned_to'] = None
             self.unassign = True
+
+
+class BulkTaskUnblockForm(forms.Form):
+    tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)

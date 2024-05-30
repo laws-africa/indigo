@@ -1,12 +1,12 @@
 {% load i18n %}
 
 <form id="bulk-task-update-form" class="d-none" method="POST"
-      action="{% url 'bulk_task_update' place=place.place_code %}?next={{ request.get_full_path|urlencode }}"
+      action="{% url 'bulk_task_update' place=place.place_code %}"
       data-assignees-url="{% url 'task_assignees_menu' place=place.place_code %}">
   {% csrf_token %}
 
   <div class="row align-items-end">
-    <div class="col-3">
+    <div class="col-2">
       <div class="dropdown">
         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
           {% trans 'Assign to' %}
@@ -14,8 +14,13 @@
         <div class="dropdown-menu"></div>
       </div>
     </div>
-    <div class="col-3 offset-6 text-end">
-      <button type="submit" class="btn btn-success">{% trans 'Update selected tasks' %}</button>
+    <div class="col-2">
+      <button
+          class="btn btn-outline-secondary"
+          type="submit"
+          formaction="{% url 'bulk_task_unblock' place=place.place_code %}"
+          data-disable-with="{% trans 'Unblocking' %}"
+      >{% trans 'Unblock' %}</button>
     </div>
   </div>
 </form>

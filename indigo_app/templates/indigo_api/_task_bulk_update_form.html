@@ -5,22 +5,18 @@
       data-assignees-url="{% url 'task_assignees_menu' place=place.place_code %}">
   {% csrf_token %}
 
-  <div class="row align-items-end">
-    <div class="col-2">
-      <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          {% trans 'Assign to' %}
-        </button>
-        <div class="dropdown-menu"></div>
-      </div>
+  <div class="d-flex">
+    <div class="dropdown">
+      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {% trans 'Assign to' %}
+      </button>
+      <div class="dropdown-menu"></div>
     </div>
-    <div class="col-2">
-      <button
-          class="btn btn-outline-secondary"
-          type="submit"
-          formaction="{% url 'bulk_task_unblock' place=place.place_code %}"
-          data-disable-with="{% trans 'Unblocking' %}"
-      >{% trans 'Unblock' %}</button>
-    </div>
+    <button
+        class="btn btn-outline-secondary ms-1"
+        type="submit"
+        formaction="{% url 'bulk_task_unblock' place=place.place_code %}"
+        data-disable-with="{% trans 'Unblocking' %}"
+    >{% trans 'Unblock' %}</button>
   </div>
 </form>

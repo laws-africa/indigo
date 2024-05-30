@@ -532,7 +532,7 @@ class TaskBulkUnblockView(TaskViewBase, BaseFormView):
         success_count = 0
         unsuccess_count = 0
         for task in form.cleaned_data['tasks']:
-            if not task.blocked_by.exists():
+            if has_transition_perm(task.unblock, self.request.user):
                 success_count += 1
                 task.unblock(self.request.user)
             else:
@@ -542,7 +542,7 @@ class TaskBulkUnblockView(TaskViewBase, BaseFormView):
             messages.success(self.request, _("Unblocked %(count)d task%(plural)s") % {"count": success_count, "plural": plural})
         if unsuccess_count > 0:
             plural = 's' if unsuccess_count > 1 else ''
-            messages.error(self.request, _("Couldn't unblock %(count)d task%(plural)s with a blocking task") % {"count": unsuccess_count, "plural": plural})
+            messages.error(self.request, _("Couldn't unblock %(count)d task%(plural)s (not blocked or blocked by another task)") % {"count": unsuccess_count, "plural": plural})
 
         return redirect(self.request.headers["Referer"])
 

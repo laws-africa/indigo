@@ -555,6 +555,9 @@ def post_task_transition(sender, instance, name, **kwargs):
                         action_object=instance,
                         place_code=instance.place.place_code,
                         comment=comment)
+        # re-block any task that is blocked_by any other tasks (after sending the 'reopened' action)
+        if name == 'reopen' and instance.blocked_by.exists():
+            instance.block(user)
 
 
 class TaskLabel(models.Model):

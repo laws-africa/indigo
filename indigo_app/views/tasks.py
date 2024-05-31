@@ -25,7 +25,7 @@ from django_htmx.http import push_url
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskUnblockForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskStateChangeForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
 
@@ -523,28 +523,40 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return redirect(self.request.headers["Referer"])
 
 
-class TaskBulkUnblockView(TaskViewBase, BaseFormView):
+class TaskBulkChangeStateView(TaskViewBase, BaseFormView):
     http_method_names = ['post']
-    form_class = BulkTaskUnblockForm
+    form_class = BulkTaskStateChangeForm
     permission_required = ('indigo_api.change_task',)
+    change = None
 
     def form_valid(self, form):
         success_count = 0
         unsuccess_count = 0
         for task in form.cleaned_data['tasks']:
-            if has_transition_perm(task.unblock, self.request.user):
+            state_change = getattr(task, self.change)
+            if has_transition_perm(state_change, self.request.user):
                 success_count += 1
-                task.unblock(self.request.user)
+                state_change(self.request.user)
             else:
                 unsuccess_count += 1
         if success_count > 0:
             plural = 's' if success_count > 1 else ''
-            messages.success(self.request, _("Unblocked %(count)d task%(plural)s") % {"count": success_count, "plural": plural})
+            messages.success(self.request, _("%(verb)s %(count)d task%(plural)s") %
+                             {"verb": Task.VERBS[self.change], "count": success_count, "plural": plural})
         if unsuccess_count > 0:
             plural = 's' if unsuccess_count > 1 else ''
-            messages.error(self.request, _("Couldn't unblock %(count)d task%(plural)s (not blocked or blocked by another task)") % {"count": unsuccess_count, "plural": plural})
+            messages.error(self.request, _("Couldn't %(verb)s %(count)d task%(plural)s")
+                           % {"verb": self.change, "count": unsuccess_count, "plural": plural})
 
         return redirect(self.request.headers["Referer"])
+
+
+class TaskBulkUnblockView(TaskBulkChangeStateView):
+    change = 'unblock'
+
+
+class TaskBulkBlockView(TaskBulkChangeStateView):
+    change = 'block'
 
 
 class UserTasksView(AbstractAuthedIndigoView, TemplateView):

@@ -308,5 +308,5 @@ class BulkTaskUpdateForm(forms.Form):
             self.unassign = True
 
 
-class BulkTaskUnblockForm(forms.Form):
+class BulkTaskStateChangeForm(forms.Form):
     tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)

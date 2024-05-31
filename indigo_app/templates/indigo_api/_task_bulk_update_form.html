@@ -16,7 +16,13 @@
         class="btn btn-outline-secondary ms-1"
         type="submit"
         formaction="{% url 'bulk_task_unblock' place=place.place_code %}"
-        data-disable-with="{% trans 'Unblocking' %}"
+        data-disable-with="{% trans 'Updating' %}"
     >{% trans 'Unblock' %}</button>
+    <button
+        class="btn btn-outline-secondary ms-1"
+        type="submit"
+        formaction="{% url 'bulk_task_block' place=place.place_code %}"
+        data-disable-with="{% trans 'Updating' %}"
+    >{% trans 'Block' %}</button>
   </div>
 </form>

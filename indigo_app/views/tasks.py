@@ -495,7 +495,6 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return kwargs
 
     def form_valid(self, form):
-        # TODO: add ability to bulk change state (specifically to `blocked`)
         assignee = form.cleaned_data.get('assigned_to')
         tasks = form.cleaned_data['tasks']
         count = 0
@@ -542,21 +541,13 @@ class TaskBulkChangeStateView(TaskViewBase, BaseFormView):
         if success_count > 0:
             plural = 's' if success_count > 1 else ''
             messages.success(self.request, _("%(verb)s %(count)d task%(plural)s") %
-                             {"verb": Task.VERBS[self.change], "count": success_count, "plural": plural})
+                             {"verb": Task.VERBS[self.change].capitalize(), "count": success_count, "plural": plural})
         if unsuccess_count > 0:
             plural = 's' if unsuccess_count > 1 else ''
             messages.error(self.request, _("Couldn't %(verb)s %(count)d task%(plural)s")
                            % {"verb": self.change, "count": unsuccess_count, "plural": plural})
 
         return redirect(self.request.headers["Referer"])
-
-
-class TaskBulkUnblockView(TaskBulkChangeStateView):
-    change = 'unblock'
-
-
-class TaskBulkBlockView(TaskBulkChangeStateView):
-    change = 'block'
 
 
 class UserTasksView(AbstractAuthedIndigoView, TemplateView):

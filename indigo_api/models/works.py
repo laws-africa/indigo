@@ -794,9 +794,16 @@ def post_save_commencement(sender, instance, **kwargs):
                     place_code=instance.commenced_work.place.place_code)
 
 
+class AmendmentManager(models.Manager):
+    def approved(self):
+        return self.filter(amending_work__work_in_progress=False, amended_work__work_in_progress=False)
+
+
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """
+    objects = AmendmentManager()
+
     amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amended work"),
                                      help_text=_("Work being amended"), related_name='amendments')
     amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amending work"),

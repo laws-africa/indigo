@@ -150,13 +150,13 @@ def describe_publication_event(work, with_date=True, friendly_date=True, placeho
         return event
 
 
-def get_timeline(work):
+def get_timeline(work, only_approved_events=False):
     """ Returns a list of TimelineEvent objects, each describing a date on the timeline of a work.
     """
     from indigo_api.models import Amendment
     entries = []
 
-    all_amendments = work.amendments.all()
+    all_amendments = work.amendments.approved() if only_approved_events else work.amendments.all()
     all_commencements = work.commencements.all()
     all_consolidations = work.arbitrary_expression_dates.all()
 
@@ -232,4 +232,4 @@ def get_timeline(work):
 
 
 def get_serialized_timeline(work):
-    return [entry.serialized() for entry in get_timeline(work)]
+    return [entry.serialized() for entry in get_timeline(work, only_approved_events=True)]

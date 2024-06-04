@@ -34,11 +34,13 @@ class WorkManager(models.Manager):
 
     def get_queryset(self):
         # defer expensive or unnecessary fields
-        return super(WorkManager, self) \
-            .get_queryset() \
+        return super().get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
                             'country__country', 'locality', 'publication_document') \
             .prefetch_related('commencements')
+
+    def approved(self):
+        return self.get_queryset().exclude(work_in_progress=True)
 
 
 class TaxonomyTopic(MP_Node):
@@ -730,7 +732,7 @@ class PublicationDocument(models.Model):
 class CommencementManager(models.Manager):
     def approved(self):
         # exclude WIP=True commencing works rather than filtering on WIP=False because commencing_work is optional
-        return self.exclude(commencing_work__work_in_progress=True)
+        return self.filter(commenced_work__work_in_progress=False).exclude(commencing_work__work_in_progress=True)
 
 
 class Commencement(models.Model):
@@ -804,7 +806,7 @@ def post_save_commencement(sender, instance, **kwargs):
 
 class AmendmentManager(models.Manager):
     def approved(self):
-        return self.filter(amending_work__work_in_progress=False)
+        return self.filter(amending_work__work_in_progress=False, amended_work__work_in_progress=False)
 
 
 class Amendment(models.Model):

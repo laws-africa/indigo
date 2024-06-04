@@ -157,13 +157,17 @@ def get_timeline(work, only_approved_events=False):
     entries = []
 
     all_amendments = work.amendments.approved() if only_approved_events else work.amendments.all()
-    all_commencements = work.commencements.all()
+    all_commencements = work.commencements.approved() if only_approved_events else work.commencements.all()
+    # consolidations can't be approved or not, as there's no related work
     all_consolidations = work.arbitrary_expression_dates.all()
+    repealed_date = work.repealed_date
+    if only_approved_events and work.repealed_by and work.repealed_by.work_in_progress:
+        repealed_date = None
 
     amendment_dates = [c.date for c in all_amendments]
     commencement_dates = [c.date for c in all_commencements]
     consolidation_dates = [c.date for c in all_consolidations]
-    other_dates = [work.assent_date, work.publication_date, work.repealed_date]
+    other_dates = [work.assent_date, work.publication_date, repealed_date]
     # don't include None
     all_dates = [e for e in amendment_dates + commencement_dates + consolidation_dates + other_dates if e]
     all_dates = set(all_dates)

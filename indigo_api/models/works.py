@@ -34,11 +34,13 @@ class WorkManager(models.Manager):
 
     def get_queryset(self):
         # defer expensive or unnecessary fields
-        return super(WorkManager, self) \
-            .get_queryset() \
+        return super().get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
                             'country__country', 'locality', 'publication_document') \
             .prefetch_related('commencements')
+
+    def approved(self):
+        return self.exclude(work_in_progress=True)
 
 
 class TaxonomyTopic(MP_Node):
@@ -727,10 +729,18 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
+class CommencementManager(models.Manager):
+    def approved(self):
+        # exclude WIP=True commencing works rather than filtering on WIP=False because commencing_work is optional
+        return self.filter(commenced_work__work_in_progress=False).exclude(commencing_work__work_in_progress=True)
+
+
 class Commencement(models.Model):
     """ The commencement details of (provisions of) a work,
     optionally performed by a commencing work or a provision of the work itself.
     """
+    objects = CommencementManager()
+
     commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("commenced work"),
                                        help_text=_("Principal work being commenced"), related_name="commencements")
     commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, verbose_name=_("commencing work"),
@@ -794,9 +804,16 @@ def post_save_commencement(sender, instance, **kwargs):
                     place_code=instance.commenced_work.place.place_code)
 
 
+class AmendmentManager(models.Manager):
+    def approved(self):
+        return self.filter(amending_work__work_in_progress=False, amended_work__work_in_progress=False)
+
+
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """
+    objects = AmendmentManager()
+
     amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amended work"),
                                      help_text=_("Work being amended"), related_name='amendments')
     amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amending work"),

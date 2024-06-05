@@ -40,7 +40,7 @@ class WorkManager(models.Manager):
             .prefetch_related('commencements')
 
     def approved(self):
-        return self.get_queryset().exclude(work_in_progress=True)
+        return self.exclude(work_in_progress=True)
 
 
 class TaxonomyTopic(MP_Node):

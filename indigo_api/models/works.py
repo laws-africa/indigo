@@ -17,7 +17,7 @@ from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
-from indigo_api.signals import work_approved, work_unapproved
+from indigo_api.signals import work_approved
 from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
 
 
@@ -649,7 +649,6 @@ class Work(WorkMixin, models.Model):
         self.approved_at = None
         self.save_with_revision(user)
         action.send(user, verb='unapproved', action_object=self, place_code=self.place.place_code)
-        work_unapproved.send(sender=self.__class__, work=self)
 
         # unpublish all documents
         for document in self.document_set.published():

@@ -11,11 +11,6 @@ work_approved = Signal()
 """
 
 
-work_unapproved = Signal()
-""" A user has unapproved a work (marked it as a work in progress).
-"""
-
-
 document_published = Signal(providing_args=["document", "request"])
 """ A user has changed a document from draft to published.
 """

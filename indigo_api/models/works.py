@@ -37,8 +37,7 @@ class WorkManager(models.Manager):
         return super(WorkManager, self) \
             .get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
-                            'country__country', 'locality', 'publication_document') \
-            .prefetch_related('commencements')
+                            'country__country', 'locality', 'publication_document')
 
 
 class TaxonomyTopic(MP_Node):

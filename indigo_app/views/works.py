@@ -126,6 +126,11 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         return self.object
 
 
+class WorkViewCommencementBase(WorkViewBase):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('commencements')
+
+
 class WorkDependentView(WorkViewBase):
     """ Base for views that hang off a work URL, using the frbr_uri URL kwarg.
 
@@ -347,7 +352,7 @@ class WorkCommentsView(WorkViewBase, DetailView):
     template_name = 'indigo_api/_work_comments.html'
 
 
-class WorkCommencementsView(WorkViewBase, DetailView):
+class WorkCommencementsView(WorkViewCommencementBase, DetailView):
     template_name_suffix = '_commencements'
     tab = 'commencements'
 
@@ -358,7 +363,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         return context
 
 
-class WorkUncommencedProvisionsDetailView(WorkViewBase, DetailView):
+class WorkUncommencedProvisionsDetailView(WorkViewCommencementBase, DetailView):
     template_name = 'indigo_api/commencements/_work_uncommenced_provisions_detail.html'
 
     def get_context_data(self, **kwargs):

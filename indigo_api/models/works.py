@@ -812,6 +812,7 @@ class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """
     objects = AmendmentManager()
+
     amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amended work"),
                                      help_text=_("Work being amended"), related_name='amendments')
     amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("amending work"),

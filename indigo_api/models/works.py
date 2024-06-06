@@ -36,8 +36,7 @@ class WorkManager(models.Manager):
         # defer expensive or unnecessary fields
         return super().get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
-                            'country__country', 'locality', 'publication_document') \
-            .prefetch_related('commencements')
+                            'country__country', 'locality', 'publication_document')
 
     def approved(self):
         return self.exclude(work_in_progress=True)

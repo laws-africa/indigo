@@ -51,5 +51,7 @@ jobs:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
       run: |
         PATH=/usr/share/fop-2.5/fop:$PATH
+        python manage.py compilescss
+        python manage.py collectstatic --noinput -i docs -i \*.scss
         coverage run manage.py test
         jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js

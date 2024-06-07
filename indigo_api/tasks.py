@@ -4,11 +4,13 @@ from datetime import timedelta
 import logging
 
 import sentry_sdk
-from sentry_sdk.tracing import Transaction, TRANSACTION_SOURCE_TASK
+from sentry_sdk.tracing import TRANSACTION_SOURCE_TASK
 from background_task import background
+from background_task.signals import task_error
 from background_task.tasks import DBTaskRunner, logger, tasks
 from background_task.models import Task
 from django.db.utils import OperationalError
+from django.dispatch import receiver
 
 from indigo_api.models import Document
 
@@ -51,6 +53,17 @@ class PatchedDBTaskRunner(DBTaskRunner):
 
 # use the patched runner
 tasks._runner = PatchedDBTaskRunner()
+
+
+@receiver(task_error)
+def on_task_error(*args, **kwargs):
+    # report the exception to Sentry
+    hub = sentry_sdk.Hub.current
+    hub.capture_exception()
+
+    # now mark the current transaction as handled, otherwise it'll be reported twice
+    if hub.scope and hub.scope.transaction:
+        hub.scope.transaction.timestamp = -1
 
 
 @background(queue="indigo", remove_existing_tasks=True)

@@ -1,11 +1,12 @@
 import logging
+import math
 import os
 import re
 import shutil
 import tempfile
 from collections import defaultdict
+from urllib.parse import unquote
 
-import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
@@ -332,13 +333,16 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
             href = ref.attrib['href']
             text = ''.join(ref.xpath('.//text()'))
-            # add resolver before /akn/etc links
-            if href.startswith('/'):
-                ref.attrib['href'] = self.resolver_url + href
             # remove links that will break FOP
-            elif href == 'https://' or href == 'mailto:':
-                log.info(f'Removing empty "https://" or "mailto:" link from the text {text}')
+            bad_href_re = re.compile(r'\W')
+            bad_href_match = re.match(bad_href_re, unquote(href))
+            if href == 'https://' or href == 'mailto:' or bad_href_match:
+                log.info(f'Removing bad href "{href}" from the text "{text}"')
                 del ref.attrib['href']
+
+            # add resolver before /akn/etc links
+            elif href.startswith('/'):
+                ref.attrib['href'] = self.resolver_url + href
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.

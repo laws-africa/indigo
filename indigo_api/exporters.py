@@ -150,6 +150,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     # list of countries that shouldn't be included in the coverpage
     dont_include_countries = []
     base_xsl_fo_dir = os.path.join(os.path.dirname(__file__), 'static', 'xsl', 'fo')
+    inline_glyphs = ['☐']
 
     def render(self, document, element=None):
         # we don't support rendering partial PDFs
@@ -176,6 +177,8 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             self.resize_tables(document.doc)
             # write the XML to file
             xml = etree.tostring(document.doc.main, encoding='unicode')
+            # any final adjustments to the XML string
+            xml = self.final_tweaks(xml)
             xml_file = os.path.join(tmpdir, 'raw.xml')
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
@@ -490,6 +493,12 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             f.seek(0)
             f.write(out)
 
+    def final_tweaks(self, xml_str):
+        # inline glyphs
+        # TODO: do this in the XML rather than as a string replacement?
+        for glyph in self.inline_glyphs:
+            xml_str = xml_str.replace(glyph, f'<span class="inline-glyph">{glyph}</span>')
+        return xml_str
 
 class EPUBExporter(HTMLExporter):
     """ Helper to render documents as ePubs.

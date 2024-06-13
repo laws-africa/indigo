@@ -9,6 +9,7 @@
   <xsl:variable name="font-fam">PT Serif</xsl:variable>
   <xsl:variable name="font-fam-frontmatter">PT Sans</xsl:variable>
   <xsl:variable name="font-fam-headings">PT Sans</xsl:variable>
+  <xsl:variable name="font-fam-inline-glyph">DejaVu Sans</xsl:variable>
   <xsl:variable name="fontsize">9pt</xsl:variable>
   <!-- 15.3pt -->
   <xsl:variable name="fontsize-h1">

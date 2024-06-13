@@ -5,6 +5,13 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+  <!-- render ☐ ballot box and friends in a friendly font (see PDFExporter.inline_glyphs -->
+  <xsl:template match="akn:span[@class='inline-glyph']">
+    <fo:inline font-family="{$font-fam-inline-glyph}">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+
   <xsl:template match="akn:b">
     <fo:inline font-weight="bold">
       <xsl:apply-templates/>

@@ -32,7 +32,7 @@
                 <p eId="part_0__table_1__p_11">Content 4A &amp; 4B</p>
               </td>
               <td style="width:20%;">
-                <p eId="part_0__table_1__p_12">Content 5 (final column) with a 20% width — the rest should be automatically calculated to 16%</p>
+                <p eId="part_0__table_1__p_12">Content 5 (position 6 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
               </td>
             </tr>
           </table>
@@ -59,7 +59,7 @@
             </tr>
             <tr>
               <td style="width:20%;">
-                <p eId="part_0__table_1__p_12">Content 3 with a 20% width — the rest should be automatically calculated to 16%</p>
+                <p eId="part_0__table_1__p_12">Content 3 (position 3 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
               </td>
               <td colspan="2">
                 <p eId="part_0__table_1__p_11">Content 4A &amp; 4B</p>
@@ -92,7 +92,7 @@
                 <p eId="part_0__table_1__p_11">Content 1A &amp; 1B</p>
               </td>
               <td style="width:20%;">
-                <p eId="part_0__table_1__p_12">Content 2 with a 20% width — the rest should be automatically calculated to 16%</p>
+                <p eId="part_0__table_1__p_12">Content 2 (position 3 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
               </td>
             </tr>
           </table>
@@ -122,7 +122,67 @@
                 <p eId="part_0__table_1__p_11">Content 1A &amp; 1B</p>
               </td>
               <td style="width:20%;">
-                <p eId="part_0__table_1__p_12">Content 3 with a 20% width — the rest should be automatically calculated to 16%</p>
+                <p eId="part_0__table_1__p_12">Content 3 (position 4 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_1">
+            <tr>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_6">Content 1</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_6">Content 2</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_7">Content 3A</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_8">Content 3B</p>
+              </td>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_9">Content 4</p>
+              </td>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_10">Content 5</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:20%;">
+                <p eId="part_0__table_1__p_12">Content 2 (position 2 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
+              </td>
+              <td colspan="2">
+                <p eId="part_0__table_1__p_11">Content 3A &amp; 3B</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_1">
+            <tr>
+              <td>
+                <p eId="part_0__table_1__p_6">Content 1A</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_6">Content 1B</p>
+              </td>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_7">Content 2</p>
+              </td>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_8">Content 3</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_9">Content 4</p>
+              </td>
+              <td rowspan="2">
+                <p eId="part_0__table_1__p_10">Content 5</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="part_0__table_1__p_11">Content 1A &amp; 1B</p>
+              </td>
+              <td style="width:20%;">
+                <p eId="part_0__table_1__p_12">Content 4 (position 5 out of 6) with a 20% width — the rest should be automatically calculated to 16%</p>
               </td>
             </tr>
           </table>

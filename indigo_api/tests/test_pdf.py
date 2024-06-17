@@ -95,3 +95,6 @@ class PDFExporterTestCase(TestCase):
 
     def test_tables_alignment(self):
         self.adjust_xml('alignment', self.exporter.resize_tables, subdirectory='tables')
+
+    def test_tables_borders(self):
+        self.adjust_xml('borders', self.exporter.resize_tables, subdirectory='tables')

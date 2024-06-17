@@ -492,6 +492,10 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                         elif 'akn--text-center' in cell_class:
                             cell.set('style', 'center')
 
+            # set the table class to 'border', unless it has any cell with .akn--no-border
+            if not list(table.xpath('.//a:*[contains(@class, "akn--no-border")]', namespaces={'a': doc.namespace})):
+                table.set('class', 'border')
+
     def map_table(self, table, doc):
         """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.
 

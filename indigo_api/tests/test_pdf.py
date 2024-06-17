@@ -84,5 +84,8 @@ class PDFExporterTestCase(TestCase):
     def test_adjust_refs(self):
         self.adjust_xml('links', self.exporter.adjust_refs)
 
+    def test_tables_column_widths_basic(self):
+        self.adjust_xml('column_widths_basic', self.exporter.resize_tables, subdirectory='tables')
+
     def test_tables_column_widths_rowspan(self):
         self.adjust_xml('column_widths_rowspan', self.exporter.resize_tables, subdirectory='tables')

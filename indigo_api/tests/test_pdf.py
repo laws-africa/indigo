@@ -81,6 +81,9 @@ class PDFExporterTestCase(TestCase):
     def test_swahili(self):
         self.run_and_compare('swahili')
 
+    def test_tables(self):
+        self.run_and_compare('tables')
+
     def test_adjust_refs(self):
         self.adjust_xml('links', self.exporter.adjust_refs)
 

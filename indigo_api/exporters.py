@@ -397,10 +397,24 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 for x in range(missing_cells):
                     log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
                     row.append(doc.maker('td'))
+                    # update the matrix
+                    matrix[y][len(matrix[y])] = True
 
             # add colgroup element with each column and its width
             column_widths = [0 for _ in range(n_cols)]
-            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+            # offset also needs to take rowspans into account: update the matrix to be False for co-ordinates where
+            # a cell is not expected because of a rowspan on a previous cell
+            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
+                for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
+                    offset = 0
+                    if not matrix[y][x]:
+                        offset += 1
+                    rowspan = int(cell.get('rowspan', '1'))
+                    if rowspan > 1:
+                        for r in range(rowspan - 1):
+                            matrix[y + 1 + r][x + offset] = False
+
+            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
                 # lets us derive the column from the current cell and all previously spanned columns in each row
                 offset = 0
                 for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
@@ -408,6 +422,13 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     # (assumes that if there is a colspan it's a positive integer)
                     colspan = int(cell.get('colspan', '1'))
                     offset += colspan - 1
+                    # also increase offset if rowspan(s) in a previous row affect this row
+                    current_column = x
+                    while not matrix[y][current_column]:
+                        offset += 1
+                        # don't double-count them
+                        matrix[y][current_column] = True
+                        current_column += 1
                     if colspan > 1:
                         continue
 
@@ -466,9 +487,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     x += 1
 
                 # mark matrix elements occupied by current cell with true
-                for x in range(x, x + int(cell.get('colspan', 1))):
+                for xx in range(x, x + int(cell.get('colspan', 1))):
                     for yy in range(y, y + int(cell.get('rowspan', 1))):
-                        matrix[yy][x] = True
+                        matrix[yy][xx] = True
 
         return matrix
 
@@ -499,6 +520,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         for glyph in self.inline_glyphs:
             xml_str = xml_str.replace(glyph, f'<span class="inline-glyph">{glyph}</span>')
         return xml_str
+
 
 class EPUBExporter(HTMLExporter):
     """ Helper to render documents as ePubs.

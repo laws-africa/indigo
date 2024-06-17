@@ -422,13 +422,15 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     # (assumes that if there is a colspan it's a positive integer)
                     colspan = int(cell.get('colspan', '1'))
                     offset += colspan - 1
-                    # also increase offset if rowspan(s) in a previous row affect this row
-                    current_column = x
-                    while not matrix[y][current_column]:
-                        offset += 1
-                        # don't double-count them
-                        matrix[y][current_column] = True
-                        current_column += 1
+                    # also increase offset if rowspan(s) in a previous row affect this row (indicated by a 'False' cell)
+                    for col in range(n_cols):
+                        # only check cells up to where we are currently
+                        if col > x + offset:
+                            break
+                        if not matrix[y][col]:
+                            offset += 1
+                            # only count each 'False' cell once
+                            matrix[y][col] = True
                     if colspan > 1:
                         continue
 

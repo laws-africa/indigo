@@ -1,0 +1,31 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <part eId="part_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <table eId="part_0__table_1">
+            <tr>
+              <th>
+                <p eId="part_0__table_1__p_1">Heading 1</p>
+              </th>
+              <th class="akn--text-right">
+                <p eId="part_0__table_1__p_2">Heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td class="akn--text-center">
+                <p eId="part_0__table_1__p_3">Content 1</p>
+              </td>
+              <td class="akn--text-right">
+                <p eId="part_0__table_1__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+        </content>
+      </part>
+    </body>
+  </act>
+</akomaNtoso>

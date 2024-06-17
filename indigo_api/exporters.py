@@ -482,6 +482,16 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     # only check the first row
                     break
 
+            # honour alignment
+            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                for cell in row.xpath('a:th|a:td', namespaces={'a': doc.namespace}):
+                    cell_class = cell.get('class')
+                    if cell_class:
+                        if 'akn--text-right' in cell_class:
+                            cell.set('style', 'right')
+                        elif 'akn--text-center' in cell_class:
+                            cell.set('style', 'center')
+
     def map_table(self, table, doc):
         """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.
 

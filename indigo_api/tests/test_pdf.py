@@ -92,3 +92,6 @@ class PDFExporterTestCase(TestCase):
 
     def test_tables_header_row(self):
         self.adjust_xml('header_row', self.exporter.resize_tables, subdirectory='tables')
+
+    def test_tables_alignment(self):
+        self.adjust_xml('alignment', self.exporter.resize_tables, subdirectory='tables')

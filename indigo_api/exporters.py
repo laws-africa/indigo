@@ -469,6 +469,19 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             # insert the colgroup at the top of the table
             table.insert(0, colgroup)
 
+            # mark a table's first row as a table header if:
+            # - all cells in it are header cells (th)
+            # - the table has at least one other row (to go into the table body in FOP)
+            # - no cells have a rowspan (FOP can't repeat half a row at the top of a page)
+            # TODO: support multi-row table headers if the spanned rows are all headings too
+            if n_rows > 1:
+                for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                    cells = row.xpath('./a:*', namespaces={'a': doc.namespace})
+                    if all(cell.tag == f'{{{doc.namespace}}}th' for cell in cells) and not any(int(cell.get('rowspan', 1)) > 1 for cell in cells):
+                        row.set('style', 'header-row')
+                    # only check the first row
+                    break
+
     def map_table(self, table, doc):
         """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.
 

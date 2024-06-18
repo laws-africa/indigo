@@ -136,6 +136,11 @@ class Notifier(object):
         }
         real_context.update(context)
 
+        # don't sent notifications to inactive users
+        if recipient_user and not recipient_user.is_active:
+            log.info("NOT sending templated email {} to INACTIVE USER {} (id {})".format(template_name, recipient_user, recipient_user.pk))
+            return
+
         log.info("Sending templated email {} to {}".format(template_name, recipient_user))
 
         with override(recipient_user.editor.language):
@@ -210,7 +215,7 @@ def notify_user_badge_earned(badge_id):
     try:
         notifier.notify_badge_awarded(BadgeAward.objects.get(pk=badge_id))
     except BadgeAward.DoesNotExist:
-        log.warning("Badge with id {} doesn't exist, ignoring".format(badge_id))        
+        log.warning("Badge with id {} doesn't exist, ignoring".format(badge_id))
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):

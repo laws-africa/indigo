@@ -451,7 +451,9 @@ class Task(models.Model):
                 # won't be linked anymore)
                 action_verb = 'partially unblocked'
 
-                if task.code in ['convert-document'] and blocked_task.code in ['import-content']:
+                # unblock related import tasks (if they can be)
+                if task.code in ['convert-document'] and blocked_task.code in ['import-content'] \
+                        and blocked_task.may_unblock(user):
                     blocked_task.unblock(user)
                     action_verb = self.VERBS['unblock']
 

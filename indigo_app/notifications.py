@@ -136,7 +136,7 @@ class Notifier(object):
         }
         real_context.update(context)
 
-        # don't sent notifications to inactive users
+        # don't send notifications to inactive users
         if recipient_user and not recipient_user.is_active:
             log.info("NOT sending templated email {} to INACTIVE USER {} (id {})".format(template_name, recipient_user, recipient_user.pk))
             return

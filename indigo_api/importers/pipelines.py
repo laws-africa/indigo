@@ -144,19 +144,6 @@ class NormaliseQuotes(Stage):
         context.text = text
 
 
-class Unhyphenate(Stage):
-    """ Change "hyphen- ated" to "hyphenated".
-
-    This happens particularly when importing from HTML with <br> used in the middle,
-    which we change to a space.
-
-    Reads: context.text
-    Writes: context.text
-    """
-    def __call__(self, context):
-        context.text = re.sub(r'([a-z])- ([a-z])', '\\1\\2', context.text)
-
-
 class ExpandLigatures(Stage):
     """ Replace ligatures with separate characters, eg. ﬁ -> fi.
 
@@ -176,6 +163,5 @@ class ExpandLigatures(Stage):
 # commonly used text cleanup stages
 text_cleanup = Pipeline([
     NormaliseQuotes(),
-    Unhyphenate(),
     ExpandLigatures(),
 ])

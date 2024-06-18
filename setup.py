@@ -53,7 +53,7 @@ setup(
         'django-activity-stream>=0.10.0',
         'django-allauth[socialaccount]>=0.62.0',
         'django-background-tasks>=1.2.5',
-        'django-compressor>=3.1',
+        'django-compressor>=3.1,<=4.4',
         'django-cors-headers>=3.11.0',
         'django-countries-plus<=2.0.0',
         'django-jsonfield>=1.4.1',

@@ -13,7 +13,7 @@ $(function() {
     }
   }
 
-  $('body').on('click', 'a[data-confirm], button[data-confirm]', handleConfirm);
+  $('body').on('click', 'a[data-confirm], button[data-confirm], input[data-confirm]', handleConfirm);
 
   /* Handle forms submitted via ajax */
   function submitFormAjax(e) {

@@ -9,6 +9,7 @@
   <xsl:variable name="font-fam">PT Serif</xsl:variable>
   <xsl:variable name="font-fam-frontmatter">PT Sans</xsl:variable>
   <xsl:variable name="font-fam-headings">PT Sans</xsl:variable>
+  <xsl:variable name="font-fam-inline-glyph">DejaVu Sans</xsl:variable>
   <xsl:variable name="fontsize">9pt</xsl:variable>
   <!-- 15.3pt -->
   <xsl:variable name="fontsize-h1">
@@ -54,6 +55,7 @@
   <xsl:variable name="accent-colour">#D04242</xsl:variable>
   <xsl:variable name="white">#FFFFFF</xsl:variable>
   <xsl:variable name="warning-colour">#7C2727</xsl:variable>
-  <xsl:variable name="table-border-colour">#DDDDDD</xsl:variable>
+  <xsl:variable name="table-border-outer">solid 1pt</xsl:variable>
+  <xsl:variable name="table-border-inner">solid 0.5pt</xsl:variable>
 
 </xsl:stylesheet>

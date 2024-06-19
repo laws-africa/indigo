@@ -1,0 +1,136 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <table eId="part_0__table_1" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_0__table_1__p_1">Heading 1</p>
+              </th>
+              <th class="akn--text-right" style="right">
+                <p eId="part_0__table_1__p_2">Heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td class="akn--text-center" style="center">
+                <p eId="part_0__table_1__p_3">Content 1</p>
+              </td>
+              <td class="akn--text-right" style="right">
+                <p eId="part_0__table_1__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_1" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_0__table_1__p_1">Heading 1</p>
+              </th>
+              <th>
+                <p eId="part_0__table_1__p_2">Heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_0__table_1__p_3">Content 1</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_2">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_0__table_2__p_1">Heading 1</p>
+              </th>
+              <th>
+                <p eId="part_0__table_2__p_2">Heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td class="akn--no-border">
+                <p eId="part_0__table_2__p_3">Content 1, no border (for the whole table)</p>
+              </td>
+              <td>
+                <p eId="part_0__table_2__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_1" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_0__table_1__p_1">Heading 1, header row</p>
+              </th>
+              <th>
+                <p eId="part_0__table_1__p_2">Heading 2, header row</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_0__table_1__p_3">Content 1</p>
+              </td>
+              <td>
+                <p eId="part_0__table_1__p_4">Content 2</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_0__table_2" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr>
+              <th>
+                <p eId="part_0__table_2__p_1">Heading 1, no header row because no body</p>
+              </th>
+              <th>
+                <p eId="part_0__table_2__p_2">Heading 2, no header row because no body</p>
+              </th>
+            </tr>
+          </table>
+          <table eId="part_0__table_3" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_0__table_3__p_1">Heading 1, header row</p>
+              </th>
+              <th>
+                <p eId="part_0__table_3__p_2">Heading 2, header row</p>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <p eId="part_0__table_3__p_3">Heading 1, body (not the first row)</p>
+              </th>
+              <th>
+                <p eId="part_0__table_3__p_4">Heading 2, body (not the first row)</p>
+              </th>
+            </tr>
+          </table>
+          <table eId="part_0__table_4" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr>
+              <th rowspan="2" colspan="1">
+                <p eId="part_0__table_4__p_1">Heading 1, spanning two rows, won't be marked as a header row for the time being</p>
+              </th>
+              <th>
+                <p eId="part_0__table_4__p_2">Heading 2A</p>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <p eId="part_0__table_4__p_3">Heading 2B</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_0__table_4__p_4">Content 1</p>
+              </td>
+              <td>
+                <p eId="part_0__table_4__p_5">Content 2</p>
+              </td>
+            </tr>
+          </table>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

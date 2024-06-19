@@ -1,11 +1,12 @@
 import logging
+import math
 import os
 import re
 import shutil
 import tempfile
 from collections import defaultdict
+from urllib.parse import unquote
 
-import math
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
@@ -149,6 +150,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     # list of countries that shouldn't be included in the coverpage
     dont_include_countries = []
     base_xsl_fo_dir = os.path.join(os.path.dirname(__file__), 'static', 'xsl', 'fo')
+    inline_glyphs = ['☐']
 
     def render(self, document, element=None):
         # we don't support rendering partial PDFs
@@ -175,6 +177,8 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             self.resize_tables(document.doc)
             # write the XML to file
             xml = etree.tostring(document.doc.main, encoding='unicode')
+            # any final adjustments to the XML string
+            xml = self.final_tweaks(xml)
             xml_file = os.path.join(tmpdir, 'raw.xml')
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
@@ -332,13 +336,16 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
             href = ref.attrib['href']
             text = ''.join(ref.xpath('.//text()'))
-            # add resolver before /akn/etc links
-            if href.startswith('/'):
-                ref.attrib['href'] = self.resolver_url + href
             # remove links that will break FOP
-            elif href == 'https://' or href == 'mailto:':
-                log.info(f'Removing empty "https://" or "mailto:" link from the text {text}')
+            bad_href_re = re.compile(r'\W')
+            bad_href_match = re.match(bad_href_re, unquote(href))
+            if href == 'https://' or href == 'mailto:' or bad_href_match:
+                log.info(f'Removing bad href "{href}" from the text "{text}"')
                 del ref.attrib['href']
+
+            # add resolver before /akn/etc links
+            elif href.startswith('/'):
+                ref.attrib['href'] = self.resolver_url + href
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.
@@ -390,10 +397,24 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 for x in range(missing_cells):
                     log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
                     row.append(doc.maker('td'))
+                    # update the matrix
+                    matrix[y][len(matrix[y])] = True
 
             # add colgroup element with each column and its width
             column_widths = [0 for _ in range(n_cols)]
-            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+            # offset also needs to take rowspans into account: update the matrix to be False for co-ordinates where
+            # a cell is not expected because of a rowspan on a previous cell
+            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
+                for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
+                    offset = 0
+                    if not matrix[y][x]:
+                        offset += 1
+                    rowspan = int(cell.get('rowspan', '1'))
+                    if rowspan > 1:
+                        for r in range(rowspan - 1):
+                            matrix[y + 1 + r][x + offset] = False
+
+            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
                 # lets us derive the column from the current cell and all previously spanned columns in each row
                 offset = 0
                 for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
@@ -401,6 +422,15 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     # (assumes that if there is a colspan it's a positive integer)
                     colspan = int(cell.get('colspan', '1'))
                     offset += colspan - 1
+                    # also increase offset if rowspan(s) in a previous row affect this row (indicated by a 'False' cell)
+                    for col in range(n_cols):
+                        # only check cells up to where we are currently
+                        if col > x + offset:
+                            break
+                        if not matrix[y][col]:
+                            offset += 1
+                            # only count each 'False' cell once
+                            matrix[y][col] = True
                     if colspan > 1:
                         continue
 
@@ -439,6 +469,33 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             # insert the colgroup at the top of the table
             table.insert(0, colgroup)
 
+            # mark a table's first row as a table header if:
+            # - all cells in it are header cells (th)
+            # - the table has at least one other row (to go into the table body in FOP)
+            # - no cells have a rowspan (FOP can't repeat half a row at the top of a page)
+            # TODO: support multi-row table headers if the spanned rows are all headings too
+            if n_rows > 1:
+                for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                    cells = row.xpath('./a:*', namespaces={'a': doc.namespace})
+                    if all(cell.tag == f'{{{doc.namespace}}}th' for cell in cells) and not any(int(cell.get('rowspan', 1)) > 1 for cell in cells):
+                        row.set('style', 'header-row')
+                    # only check the first row
+                    break
+
+            # honour alignment
+            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                for cell in row.xpath('a:th|a:td', namespaces={'a': doc.namespace}):
+                    cell_class = cell.get('class')
+                    if cell_class:
+                        if 'akn--text-right' in cell_class:
+                            cell.set('style', 'right')
+                        elif 'akn--text-center' in cell_class:
+                            cell.set('style', 'center')
+
+            # set the table class to 'border', unless it has any cell with .akn--no-border
+            if not list(table.xpath('.//a:*[contains(@class, "akn--no-border")]', namespaces={'a': doc.namespace})):
+                table.set('class', 'border')
+
     def map_table(self, table, doc):
         """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.
 
@@ -459,9 +516,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     x += 1
 
                 # mark matrix elements occupied by current cell with true
-                for x in range(x, x + int(cell.get('colspan', 1))):
+                for xx in range(x, x + int(cell.get('colspan', 1))):
                     for yy in range(y, y + int(cell.get('rowspan', 1))):
-                        matrix[yy][x] = True
+                        matrix[yy][xx] = True
 
         return matrix
 
@@ -485,6 +542,13 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             f.truncate(0)
             f.seek(0)
             f.write(out)
+
+    def final_tweaks(self, xml_str):
+        # inline glyphs
+        # TODO: do this in the XML rather than as a string replacement?
+        for glyph in self.inline_glyphs:
+            xml_str = xml_str.replace(glyph, f'<span class="inline-glyph">{glyph}</span>')
+        return xml_str
 
 
 class EPUBExporter(HTMLExporter):

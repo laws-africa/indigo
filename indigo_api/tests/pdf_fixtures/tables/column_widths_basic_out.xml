@@ -1,0 +1,824 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <part eId="part_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <table eId="part_1__table_1" class="border">
+            <colgroup><col width="12.121212121212121%"/><col width="57.57575757575758%"/><col width="27.272727272727273%"/><col width="3.0303030303030303%"/></colgroup><tr>
+              <th rowspan="1" colspan="2" style="width:43.9462%">
+                <p eId="part_1__table_1__p_1">2 columns spanned</p>
+              </th>
+              <td style="width:27.2255%">
+                <p eId="part_1__table_1__p_2">hello</p>
+              </td>
+              <td style="width:3.18991%">
+                <p eId="part_1__table_1__p_3"/>
+              </td>
+            </tr>
+            <tr>
+              <th style="width:12.2404%">
+                <p eId="part_1__table_1__p_4">heading 1</p>
+              </th>
+              <th style="width:57.7893%">
+                <p eId="part_1__table_1__p_5">heading B</p>
+              </th>
+              <th rowspan="1" colspan="2" style="width:29.6935%">
+                <p eId="part_1__table_1__p_6">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:12.2404%">
+                <p eId="part_1__table_1__p_7">cell 1</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_1__p_8">content</p>
+              </td>
+              <td rowspan="2" colspan="1" style="width:27.2255%">
+                <p eId="part_1__table_1__p_9">2 rows spanned</p>
+              </td>
+              <td rowspan="2" style="width:3.18991%">
+                <p eId="part_1__table_1__p_10"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:12.2404%">
+                <p eId="part_1__table_1__p_11">cell 3</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_1__p_12">content</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_2" class="border">
+            <colgroup><col width="14.0%"/><col width="57.0%"/><col width="29.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_2__p_1">heading 1 missing width</p>
+              </th>
+              <th style="width: 57.7893%;">
+                <p eId="part_1__table_2__p_2">heading B</p>
+              </th>
+              <th style="width:29.6935%">
+                <p eId="part_1__table_2__p_3">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_2__p_4">cell 1 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_2__p_5">content</p>
+              </td>
+              <td rowspan="2" colspan="1" style="width:29.6935%">
+                <p eId="part_1__table_2__p_6">2 rows spanned</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_2__p_7">cell 3 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_2__p_8">content</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_3" class="border">
+            <colgroup><col width="14.0%"/><col width="57.0%"/><col width="29.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_3__p_1">heading 1 missing width</p>
+              </th>
+              <th style="width: 57.7893%;">
+                <p eId="part_1__table_3__p_2">heading B</p>
+              </th>
+              <th>
+                <p eId="part_1__table_3__p_3">heading 2 missing width</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_3__p_4">cell 1 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_3__p_5">content</p>
+              </td>
+              <td rowspan="2" colspan="1" style="width:29.6935%">
+                <p eId="part_1__table_3__p_6">2 rows spanned</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_3__p_7">cell 3 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_3__p_8">content</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_4" class="border">
+            <colgroup><col width="21.212121212121215%"/><col width="57.57575757575758%"/><col width="21.212121212121215%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_4__p_1">heading 1 missing width</p>
+              </th>
+              <th style="width: 57.7893%;">
+                <p eId="part_1__table_4__p_2">heading B</p>
+              </th>
+              <th>
+                <p eId="part_1__table_4__p_3">heading 2 missing width</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_4__p_4">cell 1 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_4__p_5">content</p>
+              </td>
+              <td rowspan="2" colspan="1">
+                <p eId="part_1__table_4__p_6">2 rows spanned</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_4__p_7">cell 3 missing width</p>
+              </td>
+              <td style="width:57.7893%">
+                <p eId="part_1__table_4__p_8">content</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_5" class="border">
+            <colgroup><col width="16.49484536082474%"/><col width="34.020618556701024%"/><col width="15.463917525773194%"/><col width="30.92783505154639%"/><col width="3.092783505154639%"/></colgroup><tr style="header-row">
+              <th style="width: 16.3205%;">
+                <p eId="part_1__table_5__p_1">c1</p>
+              </th>
+              <th colspan="2" style="width: 49.3323%;">
+                <p eId="part_1__table_5__p_2">c2, 3</p>
+              </th>
+              <th style="width: 30.7864%;">
+                <p eId="part_1__table_5__p_3">c4</p>
+              </th>
+              <th style="width: 3.41246%;">
+                <p eId="part_1__table_5__p_4">c5</p>
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:49.9258%">
+                <p eId="part_1__table_5__p_5">c1, 2</p>
+              </td>
+              <td style="width:15.727%">
+                <p eId="part_1__table_5__p_6">c3</p>
+              </td>
+              <td style="width:30.7864%">
+                <p eId="part_1__table_5__p_7">c4</p>
+              </td>
+              <td style="width:3.41246%">
+                <p eId="part_1__table_5__p_8">c5</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:16.3205%">
+                <p eId="part_1__table_5__p_9">c1</p>
+              </td>
+              <td style="width:33.6053%">
+                <p eId="part_1__table_5__p_10">c2</p>
+              </td>
+              <td colspan="2" style="width:46.5134%">
+                <p eId="part_1__table_5__p_11">c3, 4</p>
+              </td>
+              <td style="width:3.41246%">
+                <p eId="part_1__table_5__p_12">c5</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:16.3205%">
+                <p eId="part_1__table_5__p_13">c1</p>
+              </td>
+              <td style="width:33.6053%">
+                <p eId="part_1__table_5__p_14">c2</p>
+              </td>
+              <td style="width:15.727%">
+                <p eId="part_1__table_5__p_15">c3</p>
+              </td>
+              <td colspan="2" style="width:34.1988%">
+                <p eId="part_1__table_5__p_16">c4, 5</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_6" class="border">
+            <colgroup><col width="16.0%"/><col width="33.0%"/><col width="18.0%"/><col width="30.0%"/><col width="3.0%"/></colgroup><tr style="header-row">
+              <th style="width:16.3205%">
+                <p eId="part_1__table_6__p_1">c1</p>
+              </th>
+              <th style="width:49.3323%" rowspan="1" colspan="3">
+                <p eId="part_1__table_6__p_2">c2-4</p>
+              </th>
+              <th style="width:3.41246%">
+                <p eId="part_1__table_6__p_3">c5</p>
+              </th>
+            </tr>
+            <tr>
+              <td rowspan="1" colspan="3" style="width:49.9258%">
+                <p eId="part_1__table_6__p_4">c1-3</p>
+              </td>
+              <td style="width:30.7864%">
+                <p eId="part_1__table_6__p_5">c4</p>
+              </td>
+              <td style="width:3.41246%">
+                <p eId="part_1__table_6__p_6">c5</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:16.3205%">
+                <p eId="part_1__table_6__p_7">c1</p>
+              </td>
+              <td style="width:33.6053%">
+                <p eId="part_1__table_6__p_8">c2</p>
+              </td>
+              <td rowspan="1" colspan="3" style="width:46.5134%">
+                <p eId="part_1__table_6__p_9">c3-5</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_7" class="border">
+            <colgroup><col width="16.161616161616163%"/><col width="25.252525252525253%"/><col width="25.252525252525253%"/><col width="30.303030303030305%"/><col width="3.0303030303030303%"/></colgroup><tr style="header-row">
+              <th style="width:16.3205%">
+                <p eId="part_1__table_7__p_1">c1</p>
+              </th>
+              <th style="width:49.3323%" rowspan="1" colspan="3">
+                <p eId="part_1__table_7__p_2">c2-4</p>
+              </th>
+              <th style="width:3.41246%">
+                <p eId="part_1__table_7__p_3">c5</p>
+              </th>
+            </tr>
+            <tr>
+              <td rowspan="1" colspan="3" style="width:49.9258%">
+                <p eId="part_1__table_7__p_4">c1-3</p>
+              </td>
+              <td style="width:30.7864%">
+                <p eId="part_1__table_7__p_5">c4</p>
+              </td>
+              <td style="width:3.41246%">
+                <p eId="part_1__table_7__p_6">c5</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:16.3205%">
+                <p eId="part_1__table_7__p_7">c1</p>
+              </td>
+              <td rowspan="1" colspan="4" style="width:46.5134%">
+                <p eId="part_1__table_7__p_8">c2-5</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_8" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_8__p_1">no width, 2 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_8__p_2">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_8__p_3">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_8__p_4">cell 2</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_9" class="border">
+            <colgroup><col width="33.333333333333336%"/><col width="33.333333333333336%"/><col width="33.333333333333336%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_9__p_1">no width, 3 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_9__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_9__p_3">heading 3</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_9__p_4">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_9__p_5">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_9__p_6">cell 3</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_10" class="border">
+            <colgroup><col width="25.0%"/><col width="25.0%"/><col width="25.0%"/><col width="25.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_10__p_1">no width, 4 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_10__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_10__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_10__p_4">heading 4</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_10__p_5">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_10__p_6">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_10__p_7">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_10__p_8">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_11" class="border">
+            <colgroup><col width="20.0%"/><col width="20.0%"/><col width="20.0%"/><col width="20.0%"/><col width="20.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_11__p_1">no width, 5 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_11__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_11__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_11__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_11__p_5">heading 5</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_11__p_6">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_11__p_7">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_11__p_8">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_11__p_9">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_11__p_10">cell 5</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_12" class="border">
+            <colgroup><col width="16.666666666666668%"/><col width="16.666666666666668%"/><col width="16.666666666666668%"/><col width="16.666666666666668%"/><col width="16.666666666666668%"/><col width="16.666666666666668%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_12__p_1">no width, 6 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_12__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_12__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_12__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_12__p_5">heading 5</p>
+              </th>
+              <th>
+                <p eId="part_1__table_12__p_6">heading 6</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_12__p_7">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_12__p_8">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_12__p_9">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_12__p_10">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_12__p_11">cell 5</p>
+              </td>
+              <td>
+                <p eId="part_1__table_12__p_12">cell 6</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_13" class="border">
+            <colgroup><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_13__p_1">no width, 7 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_5">heading 5</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_6">heading 6</p>
+              </th>
+              <th>
+                <p eId="part_1__table_13__p_7">heading 7</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_13__p_8">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_9">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_10">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_11">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_12">cell 5</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_13">cell 6</p>
+              </td>
+              <td>
+                <p eId="part_1__table_13__p_14">cell 7</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_14" class="border">
+            <colgroup><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/><col width="12.5%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_14__p_1">no width, 8 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_5">heading 5</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_6">heading 6</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_7">heading 7</p>
+              </th>
+              <th>
+                <p eId="part_1__table_14__p_8">heading 8</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_14__p_9">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_10">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_11">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_12">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_13">cell 5</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_14">cell 6</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_15">cell 7</p>
+              </td>
+              <td>
+                <p eId="part_1__table_14__p_16">cell 8</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_15" class="border">
+            <colgroup><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/><col width="11.111111111111112%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_15__p_1">no width, 9 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_5">heading 5</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_6">heading 6</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_7">heading 7</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_8">heading 8</p>
+              </th>
+              <th>
+                <p eId="part_1__table_15__p_9">heading 9</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_15__p_10">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_11">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_12">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_13">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_14">cell 5</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_15">cell 6</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_16">cell 7</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_17">cell 8</p>
+              </td>
+              <td>
+                <p eId="part_1__table_15__p_18">cell 9</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_16" class="border">
+            <colgroup><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="part_1__table_16__p_1">no width, 10 columns</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_2">heading 2</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_3">heading 3</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_4">heading 4</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_5">heading 5</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_6">heading 6</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_7">heading 7</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_8">heading 8</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_9">heading 9</p>
+              </th>
+              <th>
+                <p eId="part_1__table_16__p_10">heading 10</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="part_1__table_16__p_11">cell 1</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_12">cell 2</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_13">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_14">cell 4</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_15">cell 5</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_16">cell 6</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_17">cell 7</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_18">cell 8</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_19">cell 9</p>
+              </td>
+              <td>
+                <p eId="part_1__table_16__p_20">cell 10</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_17" class="border">
+            <colgroup><col width="33.333333333333336%"/><col width="33.333333333333336%"/><col width="33.333333333333336%"/></colgroup><tr style="header-row">
+              <th style="width: 41px;">
+                <p eId="part_1__table_17__p_1">heading 1</p>
+              </th>
+              <th>
+                <p eId="part_1__table_17__p_2">heading 1A</p>
+              </th>
+              <th style="width: 80%;">
+                <p eId="part_1__table_17__p_3">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:40%">
+                <p eId="part_1__table_17__p_4">cell 3</p>
+              </td>
+              <td>
+                <p eId="part_1__table_17__p_5">cell 3A</p>
+              </td>
+              <td style="width:58px">
+                <p eId="part_1__table_17__p_6">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_18" class="border">
+            <colgroup><col width="33.333333333333336%"/><col width="66.66666666666667%"/></colgroup><tr style="header-row">
+              <th style="width: 41px;">
+                <p eId="part_1__table_18__p_1">heading 1</p>
+              </th>
+              <th style="width: 80%;">
+                <p eId="part_1__table_18__p_2">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:40%">
+                <p eId="part_1__table_18__p_3">cell 3</p>
+              </td>
+              <td style="width:58px">
+                <p eId="part_1__table_18__p_4">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_19" class="border">
+            <colgroup><col width="33.333333333333336%"/><col width="33.333333333333336%"/><col width="33.333333333333336%"/></colgroup><tr style="header-row">
+              <th style="width: 164px;">
+                <p eId="part_1__table_19__p_1">PARAMETER</p>
+              </th>
+              <th style="width: 79px;">
+                <p eId="part_1__table_19__p_2"/>
+              </th>
+              <th style="width: 195px;">
+                <p eId="part_1__table_19__p_3">WEIGHT (%)</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:164px">
+                <p eId="part_1__table_19__p_4">Equal Share</p>
+              </td>
+              <td style="width:79px">
+                <p eId="part_1__table_19__p_5">q</p>
+              </td>
+              <td style="width:195px">
+                <p eId="part_1__table_19__p_6">47</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:164px">
+                <p eId="part_1__table_19__p_7">Population</p>
+              </td>
+              <td style="width:79px">
+                <p eId="part_1__table_19__p_8">s</p>
+              </td>
+              <td style="width:195px">
+                <p eId="part_1__table_19__p_9">45</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:164px">
+                <p eId="part_1__table_19__p_10">Size of County</p>
+              </td>
+              <td style="width:79px">
+                <p eId="part_1__table_19__p_11">r</p>
+              </td>
+              <td style="width:195px">
+                <p eId="part_1__table_19__p_12">8</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_20" class="border">
+            <colgroup><col width="41.41414141414142%"/><col width="58.58585858585859%"/></colgroup><tr style="header-row">
+              <th style="width: 41px;">
+                <p eId="part_1__table_20__p_1">heading 1</p>
+              </th>
+              <th style="width: 58%;">
+                <p eId="part_1__table_20__p_2">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:41%">
+                <p eId="part_1__table_20__p_3">cell 3</p>
+              </td>
+              <td style="width:58px">
+                <p eId="part_1__table_20__p_4">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_21" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th style="width: 41px;">
+                <p eId="part_1__table_21__p_1">heading 1</p>
+              </th>
+              <th style="width: 58%;">
+                <p eId="part_1__table_21__p_2">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:58%">
+                <p eId="part_1__table_21__p_3">cell 3</p>
+              </td>
+              <td style="width:58px">
+                <p eId="part_1__table_21__p_4">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_22" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th style="width: 41px;">
+                <p eId="part_1__table_22__p_1">heading 1</p>
+              </th>
+              <th style="width: 58px;">
+                <p eId="part_1__table_22__p_2">heading 2</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:41px">
+                <p eId="part_1__table_22__p_3">cell 3</p>
+              </td>
+              <td style="width:58px">
+                <p eId="part_1__table_22__p_4">cell 4</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="part_1__table_23" class="border">
+            <colgroup><col width="21.212121212121215%"/><col width="57.57575757575758%"/><col width="21.212121212121215%"/></colgroup><tr style="header-row">
+              <th style="width:21%">
+                <p eId="part_1__table_23__p_1">21</p>
+              </th>
+              <th style="width:57%">
+                <p eId="part_1__table_23__p_2">57</p>
+              </th>
+              <th style="width:21%">
+                <p eId="part_1__table_23__p_3">21</p>
+              </th>
+            </tr>
+            <tr>
+              <td style="width:21%">
+                <p eId="part_1__table_23__p_4">21</p>
+              </td>
+              <td style="width:57%">
+                <p eId="part_1__table_23__p_5">57</p>
+              </td>
+              <td style="width:21%">
+                <p eId="part_1__table_23__p_6">21</p>
+              </td>
+            </tr>
+          </table>
+        </content>
+      </part>
+    </body>
+  </act>
+</akomaNtoso>

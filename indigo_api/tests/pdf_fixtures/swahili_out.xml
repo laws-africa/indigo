@@ -12450,39 +12450,39 @@
           <fo:block>
             <fo:block margin-top="0.8em">(Imetajwa katika ibara 98(1)(a))</fo:block>
             <fo:block margin-top="0.8em">(Sheria ambazo mabadiliko yake yahitaji kuungwa mkono na theluthi mbili ya Wabunge wote)</fo:block>
-            <fo:table keep-together.within-page="1" margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%">
+            <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%">
               <fo:table-body>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sura ya 500, R.L. Sheria ya Kultiibitisha Tanganyika ............</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Kuwa Jamhuri ya Mwaka 1962</fo:block>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sura ya 298, Sheria ya Utumishi Serikalini ............................</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Ibara ya 22, 23 na 24.</fo:block>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sura ya 237, Sheria ya Utumishi katika Idara ya Mahakama ..........................................................................................</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Ibara ya 22, 23</fo:block>
                       <fo:block margin-top="0.8em">na 24</fo:block>
@@ -12490,48 +12490,48 @@
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sura ya 357, Sheria ya Uraia ...............................................</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sheria yote.</fo:block>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Kiambatisho B kwa Sura ya 2;</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em"/>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sheria ya Kuthibitisha Mapatano ya Muungano wa</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em"/>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
                 <fo:table-row>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Tanganyika na Zanzibar, ya mwaka 1964 ..............................</fo:block>
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell padding="6pt" border-color="#DDDDDD" border-style="solid">
+                  <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
                     <fo:block font-weight="normal" text-align="start" start-indent="0">
                       <fo:block margin-top="0.8em">Sheria yoyote.</fo:block>
                     </fo:block>

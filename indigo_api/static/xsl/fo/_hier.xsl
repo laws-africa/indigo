@@ -220,8 +220,8 @@
     <fo:block-container>
       <fo:list-block start-indent="0" margin-top="{$para-spacing}*2">
         <fo:list-item id="{@eId}">
-          <fo:list-item-label>
-            <fo:block font-weight="bold" font-size="{$fontsize-h3}">
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block font-weight="bold" font-size="{$fontsize-h3}" text-align="right">
               <!-- optionally include startQuote character with num -->
               <xsl:choose>
                 <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*) and akn:num">
@@ -284,8 +284,8 @@
     <fo:block-container>
       <fo:list-block start-indent="0">
         <fo:list-item id="{@eId}">
-          <fo:list-item-label>
-            <fo:block margin-top="{$para-spacing}">
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block margin-top="{$para-spacing}" text-align="right">
               <!-- optionally include startQuote character with num -->
               <xsl:choose>
                 <xsl:when test="parent::akn:embeddedStructure and not(preceding-sibling::*) and akn:num">

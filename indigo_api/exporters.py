@@ -257,7 +257,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         return self.find_template(document, prefix='export/pdf_frontmatter_', suffix='.xml')
 
     def get_frontmatter_context(self, document):
-        toc = document.table_of_contents()
+        toc = self.get_base_toc(document)
         for e in descend_toc_pre_order(toc):
             if e.basic_unit or e.type in ['component', 'attachment']:
                 e.children = []
@@ -270,6 +270,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'include_country': document.country not in self.dont_include_countries,
             'place_string': self.get_place_string(document),
         }
+
+    def get_base_toc(self, document):
+        return document.table_of_contents()
 
     def stash_assets(self, document, tmpdir):
         """ Stash assets that are either hard-coded into our templates, or provided by Django. These are stashed

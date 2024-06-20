@@ -373,9 +373,12 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
             # a cell can't span more rows than actually come after it
+            # there should also never be a completely empty row -- check for this first
+            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
+                if not row.xpath('a:td|a:th', namespaces={'a': doc.namespace}):
+                    table.remove(row)
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
-
                 for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
                     rowspan = int(cell.get('rowspan', 1))
                     if rowspan > 1:

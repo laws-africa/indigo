@@ -101,3 +101,6 @@ class PDFExporterTestCase(TestCase):
 
     def test_tables_borders(self):
         self.adjust_xml('borders', self.exporter.resize_tables, subdirectory='tables')
+
+    def test_tables_bad_spans(self):
+        self.adjust_xml('bad_spans', self.exporter.resize_tables, subdirectory='tables')

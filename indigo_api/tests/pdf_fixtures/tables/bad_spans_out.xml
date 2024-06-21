@@ -1,0 +1,43 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <part eId="part_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <table eId="att_1__table_2" class="border">
+            <colgroup><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/></colgroup><tr>
+              <td rowspan="5">
+                <p eId="att_1__table_2__p_1">Nature of ownership<br/>or control the<br/>beneficial owner has<br/>in the company ,<br/>whether individually<br/>or jointly*</p>
+              </td>
+              <td rowspan="2" colspan="3">
+                <p eId="att_1__table_2__p_2">.The percentage of issued shares a person holds in the company - Directly.........%of shares<br/>-Indirectly.........%of shares</p>
+              </td>
+            <td/><td/><td/></tr>
+            <tr>
+              <td colspan="3">
+                <p eId="att_1__table_2__p_3">The percentage of voting rights a person holds in the company <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
+              </td>
+            </tr>
+            <tr>
+              <td rowspan="2" colspan="3">
+                <p eId="att_1__table_2__p_4">.A person holds a right to appoint or remove a majority of the members of the board of directors of the company : <br/>- Directly<br/>-Indirectly</p>
+              </td>
+            <td/><td/><td/></tr>
+            <tr>
+              <td colspan="3">
+                <p eId="att_1__table_2__p_5">A person exercises significant influence or control over the company.<br/>- Directly<br/>-Indirectly</p>
+              </td>
+            </tr>
+            <tr>
+              <td rowspan="1" colspan="3" style="width:54.078%">
+                <p eId="att_1__table_2__p_6">.A person holds the highest percentage of the issued<br/>shares but does not meet the above<br/>four criteria . <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
+              </td>
+            <td/><td/><td/></tr>
+          </table>
+        </content>
+      </part>
+    </body>
+  </act>
+</akomaNtoso>

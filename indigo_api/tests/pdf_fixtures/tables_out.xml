@@ -43,11 +43,89 @@
           <fo:block-container>
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_1">
-                <fo:list-item-label>
-                  <fo:block font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
+                <fo:list-item-label end-indent="label-end()">
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Heading</fo:block>
+                  <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%" border="solid 1pt">
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="14.285714285714286%"/>
+                    <fo:table-body>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-rows-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Nature of ownership<fo:block/>or control the<fo:block/>beneficial owner has<fo:block/>in the company ,<fo:block/>whether individually<fo:block/>or jointly*</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3" number-rows-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">.The percentage of issued shares a person holds in the company - Directly.........%of shares<fo:block/>-Indirectly.........%of shares</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">The percentage of voting rights a person holds in the company <fo:block/>- Directly.........%of shares<fo:block/>-Indirectly.........%of shares</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3" number-rows-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">.A person holds a right to appoint or remove a majority of the members of the board of directors of the company : <fo:block/>- Directly<fo:block/>-Indirectly</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">A person exercises significant influence or control over the company.<fo:block/>- Directly<fo:block/>-Indirectly</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3" number-rows-spanned="1">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">.A person holds the highest percentage of the issued<fo:block/>shares but does not meet the above<fo:block/>four criteria . <fo:block/>- Directly.........%of shares<fo:block/>-Indirectly.........%of shares</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
                   <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%" border="solid 1pt">
                     <fo:table-column column-width="50.0%" border-right="solid 0.5pt"/>
                     <fo:table-column column-width="50.0%"/>

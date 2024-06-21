@@ -45,7 +45,7 @@
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_1">
                 <fo:list-item-label end-indent="label-end()">
-                  <fo:block text-align="right" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">A section with a very long heading, so long in fact that it will wrap over a line if it has enough words in it</fo:block>
@@ -58,7 +58,7 @@
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_2">
                 <fo:list-item-label end-indent="label-end()">
-                  <fo:block text-align="right" font-size="9pt * 1.14&#10;  " font-weight="bold">2.</fo:block>
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">2.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold"> </fo:block>
@@ -66,7 +66,7 @@
                     <fo:list-block start-indent="0">
                       <fo:list-item id="sec_2__subsec_1">
                         <fo:list-item-label end-indent="label-end()">
-                          <fo:block text-align="right" margin-top="0.8em">(1)</fo:block>
+                          <fo:block text-align="end" margin-top="0.8em">(1)</fo:block>
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em" keep-with-next="always">Section 2 has no heading!</fo:block>
@@ -74,7 +74,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_1__para_a">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(a)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(a)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">And subsec one has a para (a)</fo:block>
@@ -87,7 +87,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_1__para_b">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(b)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(b)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">As well as a para (b)</fo:block>
@@ -103,7 +103,7 @@
                     <fo:list-block start-indent="0">
                       <fo:list-item id="sec_2__subsec_2">
                         <fo:list-item-label end-indent="label-end()">
-                          <fo:block text-align="right" margin-top="0.8em">(2)</fo:block>
+                          <fo:block text-align="end" margin-top="0.8em">(2)</fo:block>
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em">But it does have two subsections.</fo:block>
@@ -112,7 +112,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_2__list_1__item_a">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(a)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(a)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">item a; and</fo:block>
@@ -124,7 +124,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_2__list_1__item_b">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(b)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(b)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">item b.</fo:block>
@@ -140,7 +140,7 @@
                     <fo:list-block start-indent="0">
                       <fo:list-item id="sec_2__subsec_3">
                         <fo:list-item-label end-indent="label-end()">
-                          <fo:block text-align="right" margin-top="0.8em">(3)</fo:block>
+                          <fo:block text-align="end" margin-top="0.8em">(3)</fo:block>
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em">It actually has three subsections.</fo:block>
@@ -149,7 +149,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_3__list_1__item_a">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(a)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(a)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">item a; and</fo:block>
@@ -161,7 +161,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_2__subsec_3__list_1__item_b">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(b)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(b)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em">item b,</fo:block>
@@ -182,7 +182,7 @@
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_3">
                 <fo:list-item-label end-indent="label-end()">
-                  <fo:block text-align="right" font-size="9pt * 1.14&#10;  " font-weight="bold">3.</fo:block>
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">3.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Intros and wraps</fo:block>
@@ -191,7 +191,7 @@
                     <fo:list-block start-indent="0">
                       <fo:list-item id="sec_3__subsec_1">
                         <fo:list-item-label end-indent="label-end()">
-                          <fo:block text-align="right" margin-top="0.8em">(1)</fo:block>
+                          <fo:block text-align="end" margin-top="0.8em">(1)</fo:block>
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em">Subsec 1</fo:block>
@@ -203,7 +203,7 @@
                     <fo:list-block start-indent="0">
                       <fo:list-item id="sec_3__subsec_2">
                         <fo:list-item-label end-indent="label-end()">
-                          <fo:block text-align="right" margin-top="0.8em">(2)</fo:block>
+                          <fo:block text-align="end" margin-top="0.8em">(2)</fo:block>
                         </fo:list-item-label>
                         <fo:list-item-body start-indent="3em">
                           <fo:block margin-top="0.8em" keep-with-next="always">And subsec 2:</fo:block>
@@ -211,7 +211,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_3__subsec_2__para_a">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(a)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(a)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em" keep-with-next="always">And para a:</fo:block>
@@ -219,7 +219,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_a__subpara_i">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">i</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">i</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
@@ -231,7 +231,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_a__subpara_ii">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">ii</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">ii</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara ii,</fo:block>
@@ -248,7 +248,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_3__subsec_2__para_b">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(b)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(b)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em" keep-with-next="always">And para b:</fo:block>
@@ -256,7 +256,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_b__subpara_i">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">i</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">i</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
@@ -269,7 +269,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_b__subpara_ii">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">ii</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">ii</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara ii,</fo:block>
@@ -286,7 +286,7 @@
                             <fo:list-block start-indent="0">
                               <fo:list-item id="sec_3__subsec_2__para_c">
                                 <fo:list-item-label end-indent="label-end()">
-                                  <fo:block text-align="right" margin-top="0.8em">(c)</fo:block>
+                                  <fo:block text-align="end" margin-top="0.8em">(c)</fo:block>
                                 </fo:list-item-label>
                                 <fo:list-item-body start-indent="3em">
                                   <fo:block margin-top="0.8em" keep-with-next="always">Also a thrid para</fo:block>
@@ -294,7 +294,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_c__subpara_i">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">i</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">i</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara i; and</fo:block>
@@ -306,7 +306,7 @@
                                     <fo:list-block start-indent="0">
                                       <fo:list-item id="sec_3__subsec_2__para_c__subpara_ii">
                                         <fo:list-item-label end-indent="label-end()">
-                                          <fo:block text-align="right" margin-top="0.8em">ii</fo:block>
+                                          <fo:block text-align="end" margin-top="0.8em">ii</fo:block>
                                         </fo:list-item-label>
                                         <fo:list-item-body start-indent="3em">
                                           <fo:block margin-top="0.8em">and a subpara ii.</fo:block>
@@ -331,7 +331,7 @@
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_4">
                 <fo:list-item-label end-indent="label-end()">
-                  <fo:block text-align="right" font-size="9pt * 1.14&#10;  " font-weight="bold">4.</fo:block>
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">4.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Section without a body</fo:block>

@@ -44,7 +44,7 @@
             <fo:list-block margin-top="0.8em*2" start-indent="0">
               <fo:list-item id="sec_1">
                 <fo:list-item-label end-indent="label-end()">
-                  <fo:block text-align="right" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
                 </fo:list-item-label>
                 <fo:list-item-body start-indent="3em">
                   <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Heading</fo:block>

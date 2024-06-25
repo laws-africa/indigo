@@ -31,7 +31,6 @@ class ContributorBadge(PermissionBadge):
         'indigo_api.view_annotation', 'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
         'indigo_api.view_work', 'indigo_api.view_document', 'indigo_api.view_commencement',
         'indigo_api.view_task', 'indigo_api.add_task',
-        'indigo_api.view_workflow', 'indigo_api.view_taxonomyvocabulary', 'indigo_api.view_vocabularytopic',
         'indigo_api.view_amendment', 'indigo_api.view_arbitraryexpressiondate', 'indigo_api.view_country',
     )
 
@@ -84,7 +83,6 @@ class ReviewerBadge(PermissionBadge):
         'indigo_api.add_commencement', 'indigo_api.change_commencement', 'indigo_api.delete_commencement',
         'indigo_api.review_document', 'indigo_api.delete_document', 'indigo_api.publish_document',
         'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task',
-        'indigo_api.add_workflow', 'indigo_api.change_workflow', 'indigo_api.close_workflow', 'indigo_api.delete_workflow',
     )
 
 
@@ -102,8 +100,7 @@ class TaxonomistBadge(PermissionBadge):
     group_name = name + ' Badge'
     description = 'Can manage taxonomies'
     permissions = (
-        'indigo_api.add_taxonomyvocabulary', 'indigo_api.change_taxonomyvocabulary', 'indigo_api.delete_taxonomyvocabulary',
-        'indigo_api.add_vocabularytopic', 'indigo_api.change_vocabularytopic', 'indigo_api.delete_vocabularytopic',
+        'indigo_api.add_taxonomytopic', 'indigo_api.change_taxonomytopic', 'indigo_api.delete_taxonomytopic',
     )
 
 

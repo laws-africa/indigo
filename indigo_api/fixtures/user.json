@@ -132,5 +132,18 @@
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "date_joined": "2012-01-13 00:14:00+00:00"
         }
+    },
+    {
+        "model": "indigo_app.editor",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "country": 1,
+            "accepted_terms": true,
+            "language": "en-us",
+            "permitted_countries": [
+                1
+            ]
+        }
     }
 ]

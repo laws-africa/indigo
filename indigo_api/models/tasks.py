@@ -193,12 +193,17 @@ class Task(models.Model):
     def can_assign_to(self, user):
         """ Can this task be assigned to this user?
         """
-        return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
+        return user.editor.permitted_countries.filter(pk=self.country.pk).exists() and user.is_active
+
+    def set_assigned_to(self, user):
+        """ Set self.assigned_to to the user (may be None), without saving,
+            and only if the task can be assigned to the user."""
+        self.assigned_to = user if user and self.can_assign_to(user) else None
 
     def assign_to(self, assignee, assigned_by):
         """ Assign this task to assignee (may be None)
         """
-        self.assigned_to = assignee
+        self.set_assigned_to(assignee)
         self.save()
         if assigned_by == self.assigned_to:
             action.send(self.assigned_to, verb='picked up', action_object=self,
@@ -295,7 +300,7 @@ class Task(models.Model):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.submitted_by_user = self.assigned_to
-        self.assigned_to = self.reviewed_by_user
+        self.set_assigned_to(self.reviewed_by_user)
 
     # cancel
     def may_cancel(self, user):
@@ -340,7 +345,7 @@ class Task(models.Model):
         if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
         self.reviewed_by_user = self.assigned_to
-        self.assigned_to = self.submitted_by_user
+        self.set_assigned_to(self.submitted_by_user)
         self.changes_requested = True
 
     # close

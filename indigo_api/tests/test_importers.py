@@ -1470,4 +1470,4 @@ permit; and
     def test_whitespace_subsections2(self):
         self.assertEqual(self.pipeline_text(
             "report on the im- plementation"),
-            "report on the implementation")
+            "report on the im- plementation")

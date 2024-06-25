@@ -656,7 +656,7 @@ CHAPTER 1 - INTERPRETATION, PURPOSE AND APPLICATION
 
         PARAGRAPH (a)
 
-          an advanced electronic signature, as defined in the Electronic Communications and Transactions Act; or
+          an advanced electronic signature, as defined in the Electronic Communica- tions and Transactions Act; or
 
         PARAGRAPH (b)
 
@@ -1842,7 +1842,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          goods to the consumer in terms of an agreement arising out of direct marketing, and the consumer has rescinded that agreement during the coolingoff period, in accordance with section 16;
+          goods to the consumer in terms of an agreement arising out of direct marketing, and the consumer has rescinded that agreement during the cooling- off period, in accordance with section 16;
 
         PARAGRAPH (b)
 
@@ -2066,7 +2066,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (b)
 
-          the organisation, form and style of the notice, document or visual representation;
+          the organisation, form and style of the notice, document or visual representa- tion;
 
         PARAGRAPH (c)
 
@@ -2200,7 +2200,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (c)
 
-          is contained in any sign, advertisement, catalogue, brochure, circular, wine list, invoice, business letter, business paper or other commercial communication on the basis of which a consumer may request or order the goods.
+          is contained in any sign, advertisement, catalogue, brochure, circular, wine list, invoice, business letter, business paper or other commercial communica- tion on the basis of which a consumer may request or order the goods.
 
       SUBSECTION (2)
 
@@ -2784,7 +2784,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (d)
 
-          “promotional competition” means any competition, game, scheme, arrangement, system, plan or device for distributing prizes by lot or chance if—
+          “promotional competition” means any competition, game, scheme, ar- rangement, system, plan or device for distributing prizes by lot or chance if—
 
           SUBPARAGRAPH (i)
 
@@ -2998,11 +2998,11 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
         PARAGRAPH (a)
 
-          a monetary threshold for the purpose of excluding competitions with lowvalue prizes from the definition of “promotional competition”;
+          a monetary threshold for the purpose of excluding competitions with low- value prizes from the definition of “promotional competition”;
 
         PARAGRAPH (b)
 
-          minimum standards and forms for keeping records associated with promotional competitions; and
+          minimum standards and forms for keeping records associated with promo- tional competitions; and
 
         PARAGRAPH (c)
 
@@ -3222,7 +3222,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (i)
 
-            have ingredients, performance characteristics, accessories, uses, benefits, qualities, sponsorship or approval that they do not have;
+            have ingredients, performance characteristics, accessories, uses, ben- efits, qualities, sponsorship or approval that they do not have;
 
           SUBPARAGRAPH (ii)
 
@@ -3458,7 +3458,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (ii)
 
-            the purchase of any goods in exchange for which the seller of those goods offers to repurchase the participant’s products under reasonable commercial terms; or
+            the purchase of any goods in exchange for which the seller of those goods offers to repurchase the participant’s products under reasonable commer- cial terms; or
 
           SUBPARAGRAPH (iii)
 
@@ -3804,7 +3804,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (i)
 
-            the term, condition or notice is unfair, unreasonable, unjust or unconscionable; or
+            the term, condition or notice is unfair, unreasonable, unjust or uncon- scionable; or
 
           SUBPARAGRAPH (ii)
 
@@ -4026,7 +4026,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (ii)
 
-            an undertaking to sign in advance any documentation relating to enforcement of the agreement, irrespective of whether such documentation is complete or incomplete at the time it is signed; or
+            an undertaking to sign in advance any documentation relating to enforcement of the agreement, irrespective of whether such documenta- tion is complete or incomplete at the time it is signed; or
 
           SUBPARAGRAPH (iii)
 
@@ -4220,7 +4220,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (i)
 
-            any material imperfection in the manufacture of the goods or components, or in performance of the services, that renders the goods or results of the service less acceptable than persons generally would be reasonably entitled to expect in the circumstances; or
+            any material imperfection in the manufacture of the goods or compo- nents, or in performance of the services, that renders the goods or results of the service less acceptable than persons generally would be reasonably entitled to expect in the circumstances; or
 
           SUBPARAGRAPH (ii)
 
@@ -4484,7 +4484,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           any person who in the ordinary course of business produces, imports or distributes any such goods as part of the supply chain by which those goods
 
-        reach the consumer, must in turn accept the return of any such goods, components, remnants, containers or packaging from any supplier contemplated in paragraph (a).
+        reach the consumer, must in turn accept the return of any such goods, components, remnants, containers or packaging from any supplier contem- plated in paragraph (a).
 
       SUBSECTION (2)
 
@@ -4620,7 +4620,7 @@ CHAPTER 2 - FUNDAMENTAL CONSUMER RIGHTS
 
           SUBPARAGRAPH (iv)
 
-            the latest date on which a person suffered any economic loss contemplated in subsection (5)(d).
+            the latest date on which a person suffered any economic loss contem- plated in subsection (5)(d).
 
       SUBSECTION (5)
 
@@ -5780,7 +5780,7 @@ CHAPTER 5 - NATIONAL CONSUMER PROTECTION INSTITUTIONS
 
         PARAGRAPH (a)
 
-          may engage with that provincial consumer protection authority in cooperative activities of research, publication, education, staff development and training; and
+          may engage with that provincial consumer protection authority in co- operative activities of research, publication, education, staff development and training; and
 
         PARAGRAPH (b)
 
@@ -6216,7 +6216,7 @@ CHAPTER 5 - NATIONAL CONSUMER PROTECTION INSTITUTIONS
 
       PARAGRAPH (a)
 
-        implementing education and information measures to develop public awareness of the provisions of this Act; and
+        implementing education and information measures to develop public aware- ness of the provisions of this Act; and
 
       PARAGRAPH (b)
 
@@ -6502,7 +6502,7 @@ CHAPTER 6 - ENFORCEMENT OF ACT
 
         PARAGRAPH (a)
 
-          a person is not obliged to answer any question if the answer is selfincriminating; and
+          a person is not obliged to answer any question if the answer is self- incriminating; and
 
         PARAGRAPH (b)
 
@@ -7514,7 +7514,7 @@ SCHEDULE Schedule 2
 
         SUBPARAGRAPH (i)
 
-          any particular municipality other than a high capacity municipality as defined in terms of the Local Government: Municipal Finance Management Act, 2003 (Act No. 56 of 2003); or
+          any particular municipality other than a high capacity municipality as defined in terms of the Local Government: Municipal Finance Manage- ment Act, 2003 (Act No. 56 of 2003); or
 
         SUBPARAGRAPH (ii)
 
@@ -7565,14 +7565,14 @@ SCHEDULE Schedule 2
               14
 
             TC{style width: 74%}
-              Only subsections (1)(b) to (d) and (2) apply with respect to the expiry and possible renewal of the agreement, on or after the general effective date.
+              Only subsections (1)(b) to (d) and (2) apply with respect to the ex- piry and possible renewal of the agreement, on or after the general effective date.
 
           TR
             TC{style width: 25%}
               18 to 21
 
             TC{style width: 74%}
-              Apply only with respect to goods that are deliverable or delivered to the consumer in terms of the agreement, on or after the general effective date.
+              Apply only with respect to goods that are deliverable or delivered to the consumer in terms of the agreement, on or after the general effec- tive date.
 
           TR
             TC{style width: 25%}
@@ -7614,7 +7614,7 @@ SCHEDULE Schedule 2
               53 to 58
 
             TC{style width: 74%}
-              Apply only with respect to any goods or services supplied to the consumer in terms of the agreement, on or after the general effective date.
+              Apply only with respect to any goods or services supplied to the con- sumer in terms of the agreement, on or after the general effective date.
 
           TR
             TC{style width: 25%}
@@ -7635,7 +7635,7 @@ SCHEDULE Schedule 2
               65
 
             TC{style width: 74%}
-              Applies only with respect to an amount paid or payable by the consumer, or to property that comes into the possession of the supplier, on or after the general effective date.
+              Applies only with respect to an amount paid or payable by the con- sumer, or to property that comes into the possession of the supplier, on or after the general effective date.
 
     SUBPARAGRAPH (3)
 

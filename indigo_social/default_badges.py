@@ -77,7 +77,7 @@ class ReviewerBadge(PermissionBadge):
     slug = 'reviewer'
     name = 'Reviewer'
     group_name = name + ' Badge'
-    description = 'Can review works and tasks and delete documents and works, as well as working with workflows'
+    description = 'Can review works and tasks and delete documents and works'
     permissions = (
         'indigo_api.delete_work', 'indigo_api.review_work',
         'indigo_api.add_commencement', 'indigo_api.change_commencement', 'indigo_api.delete_commencement',

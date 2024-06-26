@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 
 from indigo.plugins import plugins
-from indigo_api.models import Country, PublicationDocument, Task, Work, Workflow
+from indigo_api.models import Country, PublicationDocument, Task, Work
 
 
 class Command(BaseCommand):
@@ -67,27 +67,6 @@ Otherwise, find it and upload it manually.'''
             task.created_by_user = user
             if not self.dry_run:
                 task.save()
-
-            workflow_review_title = 'Link publication documents'
-            try:
-                workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
-
-            except Workflow.DoesNotExist:
-                self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
-
-                workflow = Workflow()
-                workflow.title = workflow_review_title
-                workflow.description = 'These works\' publication documents could not be automatically linked.'
-                workflow.country = task.country
-                workflow.locality = task.locality
-                workflow.created_by_user = user
-                if not self.dry_run:
-                    workflow.save()
-
-            if not self.dry_run:
-                workflow.tasks.add(task)
-                workflow.updated_by_user = user
-                workflow.save()
 
     def get_publication_document(self, params, work, user):
         finder = plugins.for_work('publications', work)

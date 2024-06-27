@@ -38,6 +38,515 @@
               </td>
             </tr>
           </table>
+          <table eId="att_2__table_1">
+            <tr>
+              <td colspan="4">
+                <p eId="att_2__table_1__p_1"><b>Address of Department</b></p>
+                <p eId="att_2__table_1__p_2"><i>(To be completed by an official)</i></p>
+              </td>
+              <td colspan="4">
+                <p eId="att_2__table_1__p_3"/>
+              </td>
+              <td rowspan="14">
+                <p eId="att_2__table_1__p_4"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <p eId="att_2__table_1__p_5"><b>Reference number</b></p>
+                <p eId="att_2__table_1__p_6"><i>(To be completed by an official)</i></p>
+              </td>
+              <td colspan="4">
+                <p eId="att_2__table_1__p_7"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="8">
+                <p eId="att_2__table_1__p_8"><i>Complete this form by using BLOCK letters and by ticking the appropriate boxes.</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="8" class="akn--text-center">
+                <p eId="att_2__table_1__p_9"><b>Part A: Applications in terms of the Act</b></p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:54.4725%">
+                <p eId="att_2__table_1__p_10"><b>Land development</b></p>
+                <p eId="att_2__table_1__p_11"><i>Section 53(2) of the Act and regulations 10(4) and 12)</i></p>
+              </td>
+              <td style="width:4.12844%">
+                <p eId="att_2__table_1__p_12">Y</p>
+              </td>
+              <td style="width:3.7844%">
+                <p eId="att_2__table_1__p_13">N</p>
+              </td>
+              <td colspan="5" style="width:35.0917%">
+                <p eId="att_2__table_1__p_14">If yes, complete all parts, except part H, of this application form.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:54.4725%">
+                <p eId="att_2__table_1__p_15"><b>Amendment of land development approval </b></p>
+                <p eId="att_2__table_1__p_16"><i>(Section 53(2) of the Act and regulations 10(5) and 12)</i></p>
+              </td>
+              <td style="width:4.12844%">
+                <p eId="att_2__table_1__p_17">Y</p>
+              </td>
+              <td style="width:3.7844%">
+                <p eId="att_2__table_1__p_18">N</p>
+              </td>
+              <td colspan="5" style="width:35.0917%">
+                <p eId="att_2__table_1__p_19">If yes, complete all parts, except part H, of this application form.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:54.4725%">
+                <p eId="att_2__table_1__p_20"><b>Extension of validity period </b></p>
+                <p eId="att_2__table_1__p_21"><i>(Section 57(2) of the Act and regulation 28)</i></p>
+              </td>
+              <td style="width:4.12844%">
+                <p eId="att_2__table_1__p_22">Y</p>
+              </td>
+              <td style="width:3.7844%">
+                <p eId="att_2__table_1__p_23">N</p>
+              </td>
+              <td colspan="5" style="width:35.0917%">
+                <p eId="att_2__table_1__p_24">If yes, complete all parts, except part G, of this application form.</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="8" class="akn--text-center">
+                <p eId="att_2__table_1__p_25"><b>Part B: Applicant details</b></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:58.7156%">
+                <p eId="att_2__table_1__p_26">First name(s)</p>
+              </td>
+              <td colspan="6" style="width:39.2202%">
+                <p eId="att_2__table_1__p_27"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:58.7156%">
+                <p eId="att_2__table_1__p_28">Surname</p>
+              </td>
+              <td colspan="6" style="width:39.2202%">
+                <p eId="att_2__table_1__p_29"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:58.7156%">
+                <p eId="att_2__table_1__p_30">Company name (If applicable)</p>
+              </td>
+              <td colspan="6" style="width:39.2202%">
+                <p eId="att_2__table_1__p_31"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:58.7156%">
+                <p eId="att_2__table_1__p_32">Postal address</p>
+              </td>
+              <td colspan="3" style="width:3.89908%">
+                <p eId="att_2__table_1__p_33"/>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_1__p_34">Postal code</p>
+              </td>
+              <td>
+                <p eId="att_2__table_1__p_35"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="width:58.7156%">
+                <p eId="att_2__table_1__p_36">E-mail</p>
+              </td>
+              <td colspan="6" style="width:39.2202%">
+                <p eId="att_2__table_1__p_37"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_2__table_1__p_38">Tel.</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_1__p_39">Fax</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_1__p_40"/>
+              </td>
+              <td>
+                <p eId="att_2__table_1__p_41">Cell.</p>
+              </td>
+              <td>
+                <p eId="att_2__table_1__p_42"/>
+              </td>
+            </tr>
+          </table>
+          <table eId="att_2__table_2">
+            <tr>
+              <td colspan="16" class="akn--text-center">
+                <p eId="att_2__table_2__p_1"><b>Part C: Details of owner(s)</b><i>(If different from applicant)</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:32.7982%">
+                <p eId="att_2__table_2__p_2">Full name(s)</p>
+              </td>
+              <td colspan="15" style="width:61.9266%">
+                <p eId="att_2__table_2__p_3"/>
+              </td>
+            </tr>
+            <tr>
+              <td rowspan="2" style="width:32.7982%">
+                <p eId="att_2__table_2__p_4">Physical address(es)</p>
+              </td>
+              <td colspan="11" rowspan="2" style="width:34.633%">
+                <p eId="att_2__table_2__p_5"/>
+              </td>
+              <td colspan="4">
+                <p eId="att_2__table_2__p_6"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_2__table_2__p_7"/>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_8">Postal code</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_9"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:32.7982%">
+                <p eId="att_2__table_2__p_10">E-mail</p>
+              </td>
+              <td colspan="15" style="width:61.9266%">
+                <p eId="att_2__table_2__p_11"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5" style="width:18.1193%">
+                <p eId="att_2__table_2__p_12">Tel.</p>
+              </td>
+              <td style="width:20.9862%">
+                <p eId="att_2__table_2__p_13"/>
+              </td>
+              <td colspan="7">
+                <p eId="att_2__table_2__p_14">Fax</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_15">Cell.</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_16"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="16" class="akn--text-center">
+                <p eId="att_2__table_2__p_17"><b>Part D: Property details </b><i>(In accordance with title deed)</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_18">Property description <i>(Number(s) of Erf/ Erven/Portion(s) or Farm(s))</i></p>
+              </td>
+              <td colspan="14">
+                <p eId="att_2__table_2__p_19"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_20">Physical address</p>
+              </td>
+              <td colspan="11">
+                <p eId="att_2__table_2__p_21"/>
+              </td>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_22">Town/City</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_23"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_24">Current zoning</p>
+              </td>
+              <td colspan="7">
+                <p eId="att_2__table_2__p_25"/>
+              </td>
+              <td colspan="3">
+                <p eId="att_2__table_2__p_26">Extent</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_27">m²/ ha</p>
+              </td>
+              <td colspan="3">
+                <p eId="att_2__table_2__p_28">Are there existing buildings?</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_29">Y</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_30">N</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_31">Current land use</p>
+              </td>
+              <td colspan="14">
+                <p eId="att_2__table_2__p_32"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_33">Title deed number and date</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_34">T</p>
+              </td>
+              <td colspan="13">
+                <p eId="att_2__table_2__p_35"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_36">Any restrictive conditions?</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_37">Y</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_38">N</p>
+              </td>
+              <td colspan="6">
+                <p eId="att_2__table_2__p_39">If yes, list conditions</p>
+              </td>
+              <td colspan="6">
+                <p eId="att_2__table_2__p_40"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_2__table_2__p_41">Is the property encumbered by a bond?</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_42">Y</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_43">N</p>
+              </td>
+              <td colspan="6">
+                <p eId="att_2__table_2__p_44">If yes, list bondholder(s)</p>
+              </td>
+              <td colspan="6">
+                <p eId="att_2__table_2__p_45"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="16" class="akn--text-center">
+                <p eId="att_2__table_2__p_46"><b>Part E: Pre-application consultation</b><i> (regulation 11)</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="7">
+                <p eId="att_2__table_2__p_47">Has there been any pre-application consultation?</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_48">Y</p>
+              </td>
+              <td>
+                <p eId="att_2__table_2__p_49">N</p>
+              </td>
+              <td colspan="7">
+                <p eId="att_2__table_2__p_50">If yes, complete the information below and attach the minutes of the pre-application consultation.</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="7">
+                <p eId="att_2__table_2__p_51">Official’s name</p>
+              </td>
+              <td colspan="4">
+                <p eId="att_2__table_2__p_52">Reference Number</p>
+              </td>
+              <td colspan="6">
+                <p eId="att_2__table_2__p_53">Date of consultation</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="att_3__table_1">
+            <tr>
+              <td colspan="4">
+                <p eId="att_3__table_1__p_1"><b>Address of Department </b></p>
+                <p eId="att_3__table_1__p_2"><i>(To be completed by an official)</i></p>
+              </td>
+              <td colspan="6">
+                <p eId="att_3__table_1__p_3"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <p eId="att_3__table_1__p_4"><b>Reference number</b></p>
+                <p eId="att_3__table_1__p_5"><i>(To be completed by an official)</i></p>
+              </td>
+              <td colspan="6">
+                <p eId="att_3__table_1__p_6"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10">
+                <p eId="att_3__table_1__p_7"><i>Complete this form using BLOCK letters and ticking the appropriate boxes.</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10">
+                <p eId="att_3__table_1__p_8"><i>Note:</i></p>
+                <p eId="att_3__table_1__p_9"><i>An appeal to the Provincial Minister must be submitted within <b>21 days</b> of the date of notification of the decision.</i></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10" class="akn--text-center">
+                <p eId="att_3__table_1__p_10"><b>Part A: Appeal</b></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_3__table_1__p_11">Are you appealing against the decision of the Head of Department?</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_12">Y</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_13">N</p>
+              </td>
+              <td>
+                <p eId="att_3__table_1__p_14"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_3__table_1__p_15">Are you appealing against a condition of approval imposed by the Head of Department?</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_16">Y</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_17">N</p>
+              </td>
+              <td>
+                <p eId="att_3__table_1__p_18">If yes, list condition(s) in Part F</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_3__table_1__p_19">Are you are appealing because your rights have been affected by the failure of the Head of Department to decide on your application within the prescribed period?</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_20">Y</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_21">N</p>
+              </td>
+              <td>
+                <p eId="att_3__table_1__p_22"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_3__table_1__p_23">Date of decision</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_24">DD/MM/YYYY</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_25">Date of notification</p>
+              </td>
+              <td colspan="5">
+                <p eId="att_3__table_1__p_26">DD/MM/YYYY</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10" class="akn--text-center">
+                <p eId="att_3__table_1__p_27"><b>Part B: Appellant's details</b></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_28">First name(s)</p>
+              </td>
+              <td colspan="8">
+                <p eId="att_3__table_1__p_29"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_30">Surname</p>
+              </td>
+              <td colspan="8">
+                <p eId="att_3__table_1__p_31"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_32">Company or legal person's name <i>(If applicable)</i></p>
+              </td>
+              <td colspan="8">
+                <p eId="att_3__table_1__p_33"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_34">Physical address</p>
+              </td>
+              <td colspan="8">
+                <p eId="att_3__table_1__p_35"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_36">Postal address <i>(If different from physical address)</i></p>
+              </td>
+              <td colspan="4">
+                <p eId="att_3__table_1__p_37"/>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_38">Postal code</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_39"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_40">E-mail</p>
+              </td>
+              <td colspan="8">
+                <p eId="att_3__table_1__p_41"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_3__table_1__p_42">Tel.</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_43">Fax</p>
+              </td>
+              <td colspan="2">
+                <p eId="att_3__table_1__p_44"/>
+              </td>
+              <td>
+                <p eId="att_3__table_1__p_45">Cell.</p>
+              </td>
+              <td>
+                <p eId="att_3__table_1__p_46"/>
+              </td>
+            </tr>
+          </table>
         </content>
       </part>
     </body>

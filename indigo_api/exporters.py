@@ -403,18 +403,20 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 for x in range(missing_cells):
                     log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
                     row.append(doc.maker('td'))
-                    # update the matrix
-                    matrix[y][len(matrix[y])] = True
+                # update the matrix
+                for x in range(n_cols):
+                    matrix[y][x] = True
 
             # add colgroup element with each column and its width
             column_widths = [0 for _ in range(n_cols)]
             # offset also needs to take rowspans into account: update the matrix to be False for co-ordinates where
             # a cell is not expected because of a rowspan on a previous cell
             for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
+                offset = 0
                 for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
-                    offset = 0
-                    if not matrix[y][x]:
-                        offset += 1
+                    # take colspan into account to set False on the correct cell in the matrix
+                    colspan = int(cell.get('colspan', '1'))
+                    offset += colspan - 1
                     rowspan = int(cell.get('rowspan', '1'))
                     if rowspan > 1:
                         for r in range(rowspan - 1):

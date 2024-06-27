@@ -341,6 +341,982 @@
                       </fo:table-row>
                     </fo:table-body>
                   </fo:table>
+                  <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%" border="solid 1pt">
+                    <fo:table-column column-width="55.6701030927835%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="4.123711340206185%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.092783505154639%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="6.185567010309278%"/>
+                    <fo:table-body>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Address of Department</fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(To be completed by an official)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-rows-spanned="14">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Reference number</fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(To be completed by an official)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">Complete this form by using BLOCK letters and by ticking the appropriate boxes.</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part A: Applications in terms of the Act</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Land development</fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">Section 53(2) of the Act and regulations 10(4) and 12)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, complete all parts, except part H, of this application form.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Amendment of land development approval </fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(Section 53(2) of the Act and regulations 10(5) and 12)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, complete all parts, except part H, of this application form.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Extension of validity period </fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(Section 57(2) of the Act and regulation 28)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, complete all parts, except part G, of this application form.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part B: Applicant details</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">First name(s)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Surname</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Company name (If applicable)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Postal address</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Postal code</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">E-mail</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Tel.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Fax</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Cell.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                  <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%" border="solid 1pt">
+                    <fo:table-column column-width="32.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="20.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="3.0%"/>
+                    <fo:table-body>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="16">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part C: Details of owner(s)</fo:inline>
+                              <fo:inline font-style="italic">(If different from applicant)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Full name(s)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="15">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-rows-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Physical address(es)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="11" number-rows-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Postal code</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">E-mail</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="15">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Tel.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="7">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Fax</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Cell.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="16">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part D: Property details </fo:inline>
+                              <fo:inline font-style="italic">(In accordance with title deed)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Property description <fo:inline font-style="italic">(Number(s) of Erf/ Erven/Portion(s) or Farm(s))</fo:inline></fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="14">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Physical address</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="11">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Town/City</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Current zoning</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="7">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Extent</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">m²/ ha</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="3">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Are there existing buildings?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Current land use</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="14">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Title deed number and date</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">T</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="13">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Any restrictive conditions?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, list conditions</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Is the property encumbered by a bond?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, list bondholder(s)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="16">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part E: Pre-application consultation</fo:inline>
+                              <fo:inline font-style="italic"> (regulation 11)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="7">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Has there been any pre-application consultation?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="7">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, complete the information below and attach the minutes of the pre-application consultation.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="7">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Official’s name</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Reference Number</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Date of consultation</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                  <fo:table margin-bottom="0.8em * 2&#10;  " margin-top="0.8em * 2&#10;  " table-layout="fixed" width="100%" border="solid 1pt">
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%" border-right="solid 0.5pt"/>
+                    <fo:table-column column-width="10.0%"/>
+                    <fo:table-body>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Address of Department </fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(To be completed by an official)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Reference number</fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">(To be completed by an official)</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="6">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="10">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">Complete this form using BLOCK letters and ticking the appropriate boxes.</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="10">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">Note:</fo:inline>
+                            </fo:block>
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-style="italic">An appeal to the Provincial Minister must be submitted within <fo:inline font-weight="bold">21 days</fo:inline> of the date of notification of the decision.</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="10">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part A: Appeal</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Are you appealing against the decision of the Head of Department?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Are you appealing against a condition of approval imposed by the Head of Department?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">If yes, list condition(s) in Part F</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Are you are appealing because your rights have been affected by the failure of the Head of Department to decide on your application within the prescribed period?</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Y</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">N</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Date of decision</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">DD/MM/YYYY</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Date of notification</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="5">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">DD/MM/YYYY</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="10">
+                          <fo:block font-weight="normal" text-align="center" start-indent="0">
+                            <fo:block margin-top="0.8em">
+                              <fo:inline font-weight="bold">Part B: Appellant's details</fo:inline>
+                            </fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">First name(s)</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Surname</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Company or legal person's name <fo:inline font-style="italic">(If applicable)</fo:inline></fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Physical address</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Postal address <fo:inline font-style="italic">(If different from physical address)</fo:inline></fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="4">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Postal code</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row border-bottom="solid 0.5pt">
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">E-mail</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="8">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Tel.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Fax</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt" number-columns-spanned="2">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em">Cell.</fo:block>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0">
+                            <fo:block margin-top="0.8em"/>
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                        <fo:table-cell min-height="1em" keep-together.within-column="always" padding="6pt">
+                          <fo:block font-weight="normal" text-align="start" start-indent="0"/>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
                 </fo:list-item-body>
               </fo:list-item>
             </fo:list-block>

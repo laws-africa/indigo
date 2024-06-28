@@ -4,18 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """ NOTE: for installs where the TaxonomyVocabulary, VocabularyTopic, and Workflow tables were manually deleted,
+              this migration can safely -- and should -- be skipped.
+              Other minor changes are in 0040 -- don't skip that one.
+    """
 
     dependencies = [
         ('indigo_api', '0038_alter_subtype_abbreviation'),
     ]
 
     operations = [
-        # tables were dropped manually on certain installs, so this fails
-        # migrations.AlterUniqueTogether(
-        #     name='vocabularytopic',
-        #     unique_together=None,
-        # ),
-        # TODO: finalise other migrations to skip
+        migrations.AlterUniqueTogether(
+            name='vocabularytopic',
+            unique_together=None,
+        ),
         migrations.RemoveField(
             model_name='vocabularytopic',
             name='vocabulary',
@@ -44,32 +46,13 @@ class Migration(migrations.Migration):
             model_name='work',
             name='taxonomies',
         ),
-        migrations.AlterField(
-            model_name='document',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, help_text='Timestamp of when the expression was first created.', verbose_name='created at'),
-        ),
-        migrations.AlterField(
-            model_name='document',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, help_text='Timestamp of when the expression was last updated.', verbose_name='updated at'),
-        ),
-        migrations.AlterField(
-            model_name='taxonomytopic',
-            name='description',
-            field=models.TextField(blank=True, help_text='Description of the topic', null=True, verbose_name='description'),
-        ),
-        migrations.AlterField(
-            model_name='taxonomytopic',
-            name='name',
-            field=models.CharField(help_text='Name of the taxonomy topic', max_length=512, verbose_name='name'),
-        ),
-        migrations.AlterField(
-            model_name='taxonomytopic',
-            name='slug',
-            field=models.SlugField(help_text='Unique short name (code) for the topic.', max_length=4096, unique=True, verbose_name='slug'),
-        ),
         migrations.DeleteModel(
             name='TaxonomyVocabulary',
+        ),
+        migrations.DeleteModel(
+            name='VocabularyTopic',
+        ),
+        migrations.DeleteModel(
+            name='Workflow',
         ),
     ]

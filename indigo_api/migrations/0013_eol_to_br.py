@@ -44,5 +44,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(eol_to_br, br_to_eol),
+        migrations.RunPython(eol_to_br, br_to_eol, elidable=True),
     ]

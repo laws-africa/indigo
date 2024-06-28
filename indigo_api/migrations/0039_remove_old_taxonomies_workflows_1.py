@@ -10,10 +10,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='vocabularytopic',
-            unique_together=None,
-        ),
+        # tables were dropped manually on certain installs, so this fails
+        # migrations.AlterUniqueTogether(
+        #     name='vocabularytopic',
+        #     unique_together=None,
+        # ),
+        # TODO: finalise other migrations to skip
         migrations.RemoveField(
             model_name='vocabularytopic',
             name='vocabulary',

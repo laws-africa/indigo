@@ -20,5 +20,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(backfill_work_in_progress, migrations.RunPython.noop)
+        migrations.RunPython(backfill_work_in_progress, migrations.RunPython.noop, elidable=True)
     ]

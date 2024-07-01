@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(forwards, migrations.RunPython.noop),
+        migrations.RunPython(forwards, migrations.RunPython.noop, elidable=True),
 
         # strip att_1/ from att_1/att_1__sec_1 in anchor ids
         # this ensures that ALL matching annotations are updated, not just those
@@ -74,5 +74,5 @@ UPDATE indigo_api_annotation
 SET anchor_id = substr(anchor_id, strpos(anchor_id, '/') + 1)
 WHERE anchor_id like '%/%';
             """,
-            migrations.RunSQL.noop),
+            migrations.RunSQL.noop, elidable=True),
     ]

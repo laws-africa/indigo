@@ -30,5 +30,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(backfill_principal_works, migrations.RunPython.noop)
+        migrations.RunPython(backfill_principal_works, migrations.RunPython.noop, elidable=True)
     ]

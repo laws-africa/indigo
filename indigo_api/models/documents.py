@@ -522,6 +522,12 @@ class Document(DocumentMixin, models.Model):
         else:
             return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
 
+    def change_date(self, new_date, user, comment=None):
+        # only change (and save) if there's a difference
+        if self.expression_date != new_date:
+            self.expression_date = new_date
+            self.save_with_revision(user, comment=comment)
+
     def _make_doc(self, xml):
         return self.cobalt_class(xml)
 

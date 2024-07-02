@@ -854,6 +854,14 @@ class Amendment(models.Model):
         amendments.sort(key=lambda x: (x.date, x.amending_work.date, x.amending_work.subtype or ''))
         return amendments
 
+    def update_related(self, old_date):
+        # update existing documents to have the new date as their expression date
+        for document in self.amended_work.document_set.filter(expression_date=old_date):
+            document.change_date(self.date, self.updated_by_user, comment=_('Document date changed with amendment date.'))
+        # update any tasks at the old date too
+        for task in self.amended_work.tasks.filter(timeline_date=old_date):
+            task.change_date(self.date, self.updated_by_user)
+
 
 @receiver(signals.post_save, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):

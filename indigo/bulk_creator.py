@@ -423,12 +423,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
             'update_amendment_tasks': 'cancel' if self.cancel_amendment_tasks else 'block' if self.block_amendment_tasks else None,
         }
         for amendment in broker.amendments:
-            data[f'amendment_task_description_{amendment.pk}'] = _('''Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.
+            data[f'amendment_task_description_{amendment.pk}'] = _('''Apply the amendments made by %(amending_title)s (%(numbered_title)s) on the given date.
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.''') % {
                 'amending_title': amendment.amending_work.title,
                 'numbered_title': amendment.amending_work.numbered_title(),
-                'date': amendment.date,
             }
         broker.create_tasks(self.user, data)
 

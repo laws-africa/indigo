@@ -1,31 +1,17 @@
 import { components, vueComponents } from './components';
-import {
-  LaAkomaNtoso,
-  LaGutter,
-  LaGutterItem,
-  LaTableOfContentsController,
-  LaTableOfContents,
-  LaTocItem,
-  LaDecorateExternalRefs,
-  LaDecorateInternalRefs,
-  LaDecorateTerms
-} from '@lawsafrica/law-widgets/dist/components';
+import '@lawsafrica/law-widgets/dist/components/la-akoma-ntoso';
+import '@lawsafrica/law-widgets/dist/components/la-gutter';
+import '@lawsafrica/law-widgets/dist/components/la-gutter-item';
+import '@lawsafrica/law-widgets/dist/components/la-table-of-contents-controller';
+import '@lawsafrica/law-widgets/dist/components/la-decorate-external-refs';
+import '@lawsafrica/law-widgets/dist/components/la-decorate-internal-refs';
+import '@lawsafrica/law-widgets/dist/components/la-decorate-terms';
 import './compat-imports';
 import { relativeTimestamps } from './timestamps';
 import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
-
-customElements.define('la-akoma-ntoso', LaAkomaNtoso);
-customElements.define('la-gutter', LaGutter);
-customElements.define('la-gutter-item', LaGutterItem);
-customElements.define('la-decorate-external-refs', LaDecorateExternalRefs);
-customElements.define('la-decorate-internal-refs', LaDecorateInternalRefs);
-customElements.define('la-decorate-terms', LaDecorateTerms);
-customElements.define('la-table-of-contents-controller', LaTableOfContentsController);
-customElements.define('la-table-of-contents', LaTableOfContents);
-customElements.define('la-toc-item', LaTocItem);
 
 class IndigoApp {
   setup () {

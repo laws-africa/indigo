@@ -611,11 +611,11 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         self.object.amended_work.save()
 
         # update old docs to have the new date as their expression date
-        docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
-        for doc in docs:
-            doc.expression_date = self.object.date
-            doc.updated_by_user = self.request.user
-            doc.save()
+        for doc in self.object.amended_work.document_set.filter(expression_date=old_date):
+            doc.change_date(self.object.date, self.request.user, comment=_('Document date changed with amendment date.'))
+        # update any tasks at the old date too
+        for task in self.object.amended_work.tasks.filter(timeline_date=old_date):
+            task.change_date(self.object.date, self.request.user)
 
         return result
 

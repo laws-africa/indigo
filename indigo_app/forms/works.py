@@ -413,14 +413,8 @@ class AmendmentForm(BasePartialWorkForm):
                 amendment.date = self.cleaned_data["date"]
                 amendment.updated_by_user = self.user
                 amendment.save()
-
-                old_date = self.initial['date']
-                # update old docs to have the new date as their expression date
-                for doc in amendment.amended_work.document_set.filter(expression_date=old_date):
-                    doc.change_date(amendment.date, self.user, comment=_('Document date changed with amendment date.'))
-                # update any tasks at the old date too
-                for task in amendment.amended_work.tasks.filter(timeline_date=old_date):
-                    task.change_date(amendment.date, self.user)
+                # update documents and tasks
+                amendment.update_related(old_date=self.initial['date'])
             else:
                 Amendment.objects.create(
                     amended_work=self.cleaned_data['amended_work'],

@@ -601,21 +601,13 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        # get old/existing/incorrect date
-        old_date = form.initial['date']
-
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
         result = super().form_valid(form)
         self.object.amended_work.updated_by_user = self.request.user
         self.object.amended_work.save()
-
-        # update old docs to have the new date as their expression date
-        for doc in self.object.amended_work.document_set.filter(expression_date=old_date):
-            doc.change_date(self.object.date, self.request.user, comment=_('Document date changed with amendment date.'))
-        # update any tasks at the old date too
-        for task in self.object.amended_work.tasks.filter(timeline_date=old_date):
-            task.change_date(self.object.date, self.request.user)
+        # update documents and tasks
+        self.object.update_related(old_date=form.initial['date'])
 
         return result
 

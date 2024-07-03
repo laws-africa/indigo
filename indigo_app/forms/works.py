@@ -414,7 +414,7 @@ class AmendmentForm(BasePartialWorkForm):
                 amendment.updated_by_user = self.user
                 amendment.save()
                 # update documents and tasks
-                amendment.update_related(old_date=self.initial['date'])
+                amendment.update_date_for_related(old_date=self.initial['date'])
             else:
                 Amendment.objects.create(
                     amended_work=self.cleaned_data['amended_work'],

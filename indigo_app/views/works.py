@@ -621,7 +621,7 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         self.object.amended_work.updated_by_user = self.request.user
         self.object.amended_work.save()
         # update documents and tasks
-        self.object.update_related(old_date=form.initial['date'])
+        self.object.update_date_for_related(old_date=form.initial['date'])
 
         return result
 

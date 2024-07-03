@@ -854,7 +854,7 @@ class Amendment(models.Model):
         amendments.sort(key=lambda x: (x.date, x.amending_work.date, x.amending_work.subtype or ''))
         return amendments
 
-    def update_related(self, old_date):
+    def update_date_for_related(self, old_date):
         # update existing documents to have the new date as their expression date
         for document in self.amended_work.document_set.filter(expression_date=old_date):
             document.change_date(self.date, self.updated_by_user, comment=_('Document date changed with amendment date.'))

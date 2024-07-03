@@ -78,7 +78,7 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
 
     def get_work_timeline(self, work):
         timeline = get_timeline(work)
-        work_expressions = list(work.expressions().all())
+        work_expressions = work.expressions().all()
         # add expressions
         for entry in timeline:
             entry.expressions = [e for e in work_expressions if e.expression_date == entry.date]
@@ -92,20 +92,34 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
 
         # these will have their own entries as their dates aren't in the timeline yet
         extra_tasks = timeline_tasks.exclude(timeline_date__in=dates).order_by('timeline_date')
+        extra_documents = work_expressions.exclude(expression_date__in=dates).order_by('expression_date')
         for date, tasks in groupby(extra_tasks, key=lambda t: t.timeline_date):
             entry = TimelineEntry(date=date, initial=False, events=[])
             entry.tasks = list(tasks)
-            # dates are in descending order, so slot the entry in before the first one that's earlier
-            for i, date in enumerate(dates):
-                if date < entry.date:
-                    timeline.insert(i, entry)
-                    dates.insert(i, entry.date)
-                    break
-            if entry.date not in dates:
-                # we've gone past the earliest / last one, so just append
-                timeline.append(entry)
-                dates.append(entry.date)
+            entry.stranded_documents = list(extra_documents.filter(expression_date=date))
+            timeline, dates = self.insert_entry(timeline, dates, entry)
+
+        extra_documents = extra_documents.exclude(expression_date__in=dates).order_by('expression_date')
+        for date, documents in groupby(extra_documents, key=lambda d: d.expression_date):
+            entry = TimelineEntry(date=date, initial=False, events=[])
+            entry.stranded_documents = list(documents)
+            timeline, dates = self.insert_entry(timeline, dates, entry)
+
         return timeline
+
+    def insert_entry(self, timeline, dates, entry):
+        # dates are in descending order, so slot the entry in before the first one that's earlier
+        for i, date in enumerate(dates):
+            if date < entry.date:
+                timeline.insert(i, entry)
+                dates.insert(i, entry.date)
+                break
+        if entry.date not in dates:
+            # we've gone past the earliest / last one, so just append
+            timeline.append(entry)
+            dates.append(entry.date)
+
+        return timeline, dates
 
     def get_object(self, queryset=None):
         # the frbr_uri may include a portion, so we strip that here and update the kwargs

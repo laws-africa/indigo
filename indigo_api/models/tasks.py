@@ -521,6 +521,14 @@ class Task(models.Model):
     def friendly_state(self):
         return dict(self.STATE_CHOICES).get(self.state, '')
 
+    def change_date(self, new_date, user):
+        # only change (and save) if there's a difference
+        if self.timeline_date != new_date:
+            self.timeline_date = new_date
+            self.updated_by_user = user
+            self.save()
+            action.send(self.updated_by_user, verb='updated', action_object=self, place_code=self.place.place_code)
+
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):

@@ -131,7 +131,7 @@ class WorksTest(testcases.TestCase):
 
         view = WorkViewBase()
         timeline = view.get_work_timeline(work)
-        self.assertEqual(5, len(timeline))
+        self.assertEqual(7, len(timeline))
 
         # most recent event first
         self.assertEqual(datetime.date(2019, 1, 1), timeline[0].date)
@@ -169,11 +169,17 @@ class WorksTest(testcases.TestCase):
         self.assertEqual('', event.note)
         self.assertEqual(Commencement.objects.get(pk=1), event.related)
 
+        # stranded document
+        self.assertEqual(datetime.date(2014, 10, 12), timeline[3].date)
+        self.assertEqual(False, timeline[3].initial)
+        self.assertEqual(0, len(timeline[3].events))
+        self.assertEqual(1, len(timeline[3].stranded_documents))
+
         # publication date on fixture
-        self.assertEqual(datetime.date(2014, 4, 2), timeline[3].date)
-        self.assertEqual(True, timeline[3].initial)
-        self.assertEqual(1, len(timeline[3].events))
-        event = timeline[3].events[0]
+        self.assertEqual(datetime.date(2014, 4, 2), timeline[4].date)
+        self.assertEqual(True, timeline[4].initial)
+        self.assertEqual(1, len(timeline[4].events))
+        event = timeline[4].events[0]
         self.assertEqual('publication', event.type)
         self.assertEqual('Published in Government Gazette 12345', event.description)
         self.assertEqual('', event.by_frbr_uri)
@@ -182,16 +188,22 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(None, event.related)
 
         # assent date (oldest)
-        self.assertEqual(datetime.date(2014, 3, 20), timeline[4].date)
-        self.assertEqual(False, timeline[4].initial)
-        self.assertEqual(1, len(timeline[4].events))
-        event = timeline[4].events[0]
+        self.assertEqual(datetime.date(2014, 3, 20), timeline[5].date)
+        self.assertEqual(False, timeline[5].initial)
+        self.assertEqual(1, len(timeline[5].events))
+        event = timeline[5].events[0]
         self.assertEqual('assent', event.type)
         self.assertEqual('Assented to', event.description)
         self.assertEqual('', event.by_frbr_uri)
         self.assertEqual('', event.by_title)
         self.assertEqual('', event.note)
         self.assertEqual(None, event.related)
+
+        # stranded document
+        self.assertEqual(datetime.date(2014, 2, 12), timeline[6].date)
+        self.assertEqual(False, timeline[6].initial)
+        self.assertEqual(0, len(timeline[6].events))
+        self.assertEqual(1, len(timeline[6].stranded_documents))
 
     def test_get_work_timeline_multiple_amendments(self):
         work = Work.objects.get(pk=1)
@@ -233,7 +245,7 @@ class WorksTest(testcases.TestCase):
         view = WorkViewBase()
         timeline = view.get_work_timeline(work)
         # self.assertEqual(3, len(timeline))
-        self.assertEqual(4, len(timeline))
+        self.assertEqual(6, len(timeline))
         self.assertEqual(7, len(timeline[0].events))
 
         event = timeline[0].events[0]

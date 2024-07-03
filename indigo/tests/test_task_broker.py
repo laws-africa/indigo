@@ -36,10 +36,9 @@ class BaseTaskBrokerTestCase(TestCase):
         }
         for amendment in self.broker.amendments:
             data[f'amendment_task_description_{amendment.pk}'] = 'Apply the amendments made by %(amending_title)s' \
-                                                                 ' (%(numbered_title)s) on %(date)s.' % {
+                                                                 ' (%(numbered_title)s) on the given date.' % {
                                                                      'amending_title': amendment.amending_work.title,
                                                                      'numbered_title': amendment.amending_work.numbered_title(),
-                                                                     'date': amendment.date,
                                                                  }
         self.broker.create_tasks(self.user, data=data)
         self.assertEqual(11, len(self.broker.conversion_tasks))

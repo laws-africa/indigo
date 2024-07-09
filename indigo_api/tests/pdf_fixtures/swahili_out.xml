@@ -20,7 +20,7 @@
   <fo:page-sequence format="1" initial-page-number="1" master-reference="A4">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block margin-top="-1.5cm" border-bottom-color="#D04242" border-bottom-style="solid" text-align-last="justify" line-height="1.3" font-size="9pt" font-family="PT Serif">
-        <fo:block end-indent="1pt" start-indent="1pt">
+        <fo:block last-line-end-indent="-29pt" end-indent="30pt" start-indent="1pt">
           <fo:inline>
           Katiba ya Jamhuri ya Muungano wa Tanzania, ya Mwaka
         <fo:leader leader-pattern="space"/>

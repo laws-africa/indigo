@@ -72,11 +72,14 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         if instance.trusted_url:
             return instance.trusted_url
 
-        # the publication document is linked to the work, not the expression
-        uri = (instance.work.work_uri.work_uri())[1:]
+        uri = self.get_work_uri(instance)
         return reverse_content_api('indigo_content_api:published-document-publication',
                                    request=self.context['request'],
                                    kwargs={'frbr_uri': uri, 'filename': instance.filename})
+
+    def get_work_uri(self, instance):
+        # the publication document is linked to the work, not the expression
+        return instance.work.work_uri.work_uri()[1:]
 
 
 class AmendmentSerializer(serializers.ModelSerializer):

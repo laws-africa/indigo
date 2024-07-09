@@ -3,7 +3,7 @@
   {% block running-header %}
     <container name="running-header">
       <span class="left-align">
-        {{ document.title }}
+        {{ document.title }}{% if document.work.numbered_title %} ({{ document.work.numbered_title }}){% endif %}
       </span>
       <span class="right-align">
         {{ place_string }}

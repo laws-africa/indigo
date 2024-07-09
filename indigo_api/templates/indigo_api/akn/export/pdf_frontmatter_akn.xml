@@ -74,7 +74,7 @@
 {% block toc %}
   {% if toc %}
     <container name="toc">
-      <h3>{{ document.title }}</h3>
+      <h3>{{ document.title }}{% if document.work.numbered_title %} ({{ document.work.numbered_title }}){% endif %}</h3>
       <h3>{% trans "Contents" %}</h3>
       <toc>
         {% for entry in toc %}

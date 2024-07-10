@@ -35,7 +35,6 @@
   {% block expression-detail %}
     <div name="expression-detail">
       <p>{% blocktrans with date=document.expression_date|date:"j E Y" %}Document date: {{ date }}{% endblocktrans %}</p>
-      <p>FRBR URI: {{ document.expression_frbr_uri }}</p>
     </div>
   {% endblock %}
   {% block updates %}
@@ -63,6 +62,7 @@
   {% endblock %}
   {% block licence %}
     <div name="licence">
+      <p>FRBR URI: {{ document.expression_frbr_uri }}</p>
       <p>
         {% trans "There is no copyright on the legislative content of this document." %}<br/>
         {% trans "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely." %}
@@ -74,7 +74,7 @@
 {% block toc %}
   {% if toc %}
     <container name="toc">
-      <h3>{{ document.title }}</h3>
+      <h3>{{ document.title }}{% if document.work.numbered_title %} ({{ document.work.numbered_title }}){% endif %}</h3>
       <h3>{% trans "Contents" %}</h3>
       <toc>
         {% for entry in toc %}

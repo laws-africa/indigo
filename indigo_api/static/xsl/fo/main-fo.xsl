@@ -70,7 +70,7 @@
                     border-bottom-style="solid"
                     border-bottom-color="{$accent-colour}"
                     margin-top="-1.5cm">
-            <fo:block start-indent="1pt" end-indent="1pt">
+            <fo:block start-indent="1pt" end-indent="30pt" last-line-end-indent="-29pt">
               <fo:inline>
                 <xsl:value-of select="//akn:staticContent/akn:container[@name='running-header']/akn:span[@class='left-align']"/>
                 <fo:leader leader-pattern="space"/>

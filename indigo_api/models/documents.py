@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import signals
 from django.core.management import call_command
 from django.contrib.auth.models import User
-from django.db.models import JSONField
+from django.db.models import JSONField, Case, When, Value, F
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -49,6 +49,18 @@ class DocumentQuerySet(models.QuerySet):
         """ Select only the most recent expression for documents with the same frbr_uri.
         """
         return self.distinct('frbr_uri').order_by('frbr_uri', '-expression_date')
+
+    def prefer_language(self, lang_code):
+        """ Prefer the provided language if available, otherwise use the first alphabetically.
+        """
+        order_by = list(self.query.order_by)
+        order_by.append(
+            Case(
+                When(language__language__iso_639_2T=lang_code, then=Value('aaa')),
+                default=F('language__language__iso_639_2T')
+            )
+        )
+        return self.order_by(*order_by)
 
     def get_for_frbr_uri(self, frbr_uri):
         """ Find a single document matching the FRBR URI.

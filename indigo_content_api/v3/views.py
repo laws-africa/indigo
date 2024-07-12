@@ -51,7 +51,10 @@ class PlaceWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericViewSet):
             raise Http404()
 
     def get_queryset(self):
-        queryset = PublishedDocumentDetailViewV3.queryset.filter(work__country=self.country, work__locality=self.locality)
+        queryset = PublishedDocumentDetailViewV3.queryset\
+                .latest_expression() \
+                .prefer_language(self.country.primary_language.code) \
+                .filter(work__country=self.country, work__locality=self.locality)
         return super().filter_queryset(queryset)
 
 

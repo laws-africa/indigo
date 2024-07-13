@@ -1,9 +1,31 @@
 from lxml import etree
 import re
 
+from django.conf import settings
+
 from indigo.analysis.markup import TextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work
+
+
+def markup_document_refs(document):
+    finder = plugins.for_document('refs', document)
+    if finder:
+        finder.find_references_in_document(document)
+
+    finder = plugins.for_document('refs-subtypes', document)
+    if finder:
+        finder.find_references_in_document(document)
+
+    finder = plugins.for_document('refs-cap', document)
+    if finder:
+        finder.find_references_in_document(document)
+
+    # new mechanism for calling locale-based matchers based on DocumentPatternMatcher
+    for plugin_type in settings.INDIGO['LINK_REFERENCES_PLUGINS']:
+        matcher = plugins.for_document(plugin_type, document)
+        if matcher:
+            matcher.markup_document_matches(document)
 
 
 class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):

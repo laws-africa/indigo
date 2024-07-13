@@ -12,6 +12,7 @@ import indigo.pipelines.html as html
 import indigo.pipelines.pdf as pdf
 import indigo.pipelines.text as text
 import indigo.pipelines.xml as xml
+from indigo.analysis.refs.base import markup_document_refs
 from indigo.pipelines import DoctypePipeline
 from indigo.pipelines.base import HtmlToBluebellText, ParseBluebellText, SimplifyHtml, RemoveInlines, \
     CleanTableStyles, WrapAnnotations
@@ -237,25 +238,7 @@ class Importer(LocaleBasedMatcher):
     def analyse_after_import(self, doc):
         """ Run analysis after first import.
         """
-        finder = plugins.for_document('refs', doc)
-        if finder:
-            finder.find_references_in_document(doc)
-
-        finder = plugins.for_document('refs-subtypes', doc)
-        if finder:
-            finder.find_references_in_document(doc)
-
-        finder = plugins.for_document('refs-cap', doc)
-        if finder:
-            finder.find_references_in_document(doc)
-
-        finder = plugins.for_document('refs-act-names', doc)
-        if finder:
-            finder.find_references_in_document(doc)
-
-        finder = plugins.for_document('internal-refs', doc)
-        if finder:
-            finder.find_references_in_document(doc)
+        markup_document_refs(doc)
 
         italics_terms_finder = plugins.for_document('italics-terms', doc)
         italics_terms = doc.work.country.italics_terms

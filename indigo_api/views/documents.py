@@ -419,13 +419,11 @@ class LinkReferencesView(DocumentResourceView, APIView):
         if finder:
             finder.find_references_in_document(document)
 
-        finder = plugins.for_document('refs-act-names', document)
-        if finder:
-            finder.find_references_in_document(document)
-
-        finder = plugins.for_document('internal-refs', document)
-        if finder:
-            finder.find_references_in_document(document)
+        # new mechanism for calling locale-based matchers based on DocumentPatternMatcher
+        for plugin_type in ['refs-act-names', 'internal-refs']:
+            matcher = plugins.for_document(plugin_type, self.document)
+            if matcher:
+                matcher.markup_document_matches(document)
 
 
 class MarkUpItalicsTermsView(DocumentResourceView, APIView):

@@ -11,7 +11,8 @@ from lxml.etree import Element
 from cobalt import FrbrUri
 from docpipe.matchers import CitationMatcher, ExtractedCitation
 from docpipe.xmlutils import wrap_text
-from indigo.plugins import LocaleBasedMatcher, plugins
+from indigo.analysis.matchers import DocumentPatternMatcherMixin
+from indigo.plugins import plugins
 from cobalt.schemas import AkomaNtoso30
 from indigo.analysis.refs.provision_refs import ParseError, Parser, TreeNode
 from indigo.xmlutils import closest
@@ -699,25 +700,14 @@ class ProvisionRefsMatcher(CitationMatcher):
         return None, None
 
 
-class BaseProvisionRefsFinder(LocaleBasedMatcher, ProvisionRefsMatcher):
-    def find_references_in_document(self, document):
-        """ Find references in +document+, which is an Indigo Document object.
-        """
-        # we need to use etree, not objectify, so we can't use document.doc.root,
-        # we have to re-parse it
-        root = etree.fromstring(document.content)
-        self.markup_xml_matches(document.expression_uri, root)
-        document.content = etree.tostring(root, encoding='unicode')
-
-
 @plugins.register('internal-refs')
-class ProvisionRefsFinderENG(BaseProvisionRefsFinder):
+class ProvisionRefsFinderENG(DocumentPatternMatcherMixin, ProvisionRefsMatcher):
     # country, language, locality
     locale = (None, 'eng', None)
 
 
 @plugins.register('internal-refs')
-class ProvisionRefsFinderAFR(BaseProvisionRefsFinder):
+class ProvisionRefsFinderAFR(DocumentPatternMatcherMixin, ProvisionRefsMatcher):
     # country, language, locality
     locale = (None, 'afr', None)
 

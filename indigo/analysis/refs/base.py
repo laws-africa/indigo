@@ -82,6 +82,26 @@ class ActNumberCitationMatcherENG(ActNumberCitationMatcher):
     locale = (None, 'eng', None)
 
 
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherFRA(ActNumberCitationMatcher):
+    """ French Act number citation matcher.
+
+    Loi 852 de 1998
+    """
+    locale = (None, 'fra', None)
+    pattern_re = re.compile(
+        r"""\bLoi\s*
+            (?P<ref>
+              (?P<num>\d+)\s*
+              de\s*
+              (?P<year>\d{4})
+            )
+        """,
+        re.X | re.I)
+    html_candidate_xpath = ".//text()[contains(., 'Loi') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Loi') and not(ancestor::ns:ref)]"
+
+
 @plugins.register('refs-subtypes')
 class RefsFinderSubtypesENG(BaseRefsFinder):
     """ Finds references to works other than Acts in documents, of the form:

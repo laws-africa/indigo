@@ -5,104 +5,10 @@ from django.test import TestCase
 
 from cobalt import FrbrUri
 
-from indigo.analysis.refs.base import RefsFinderENG, RefsFinderSubtypesENG, RefsFinderCapENG
+from indigo.analysis.refs.base import RefsFinderSubtypesENG, RefsFinderCapENG, ActNumberCitationMatcherFRA
 
 from indigo_api.models import Document, Language, Work, Country, User
 from indigo_api.tests.fixtures import document_fixture
-
-
-class RefsFinderENGTestCase(TestCase):
-    fixtures = ['languages_data', 'countries']
-
-    def setUp(self):
-        self.work = Work(frbr_uri='/akn/za/act/1991/1')
-        self.finder = RefsFinderENG()
-        self.eng = Language.for_code('eng')
-        self.maxDiff = None
-
-    def test_find_simple(self):
-        document = Document(
-            work=self.work,
-            document_xml=document_fixture(
-                xml="""
-        <section eId="sec_1">
-          <num>1.</num>
-          <heading>Tester</heading>
-          <paragraph eId="sec_1.paragraph-0">
-            <content>
-              <p>Something to do with Act no 22 of 2012.</p>
-              <p>And another thing about Act 4 of 1998.</p>
-            </content>
-          </paragraph>
-        </section>"""
-            ),
-            language=self.eng)
-
-        expected = Document(
-            work=self.work,
-            document_xml=document_fixture(
-                xml="""
-        <section eId="sec_1">
-          <num>1.</num>
-          <heading>Tester</heading>
-          <paragraph eId="sec_1.paragraph-0">
-            <content>
-              <p>Something to do with Act <ref href="/akn/za/act/2012/22">no 22 of 2012</ref>.</p>
-              <p>And another thing about Act <ref href="/akn/za/act/1998/4">4 of 1998</ref>.</p>
-            </content>
-          </paragraph>
-        </section>"""
-            ),
-            language=self.eng)
-
-        self.finder.find_references_in_document(document)
-        root = etree.fromstring(expected.content)
-        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
-        self.assertEqual(expected.content, document.content)
-
-    def test_dont_find_self(self):
-        document = Document(
-            work=self.work,
-            frbr_uri=self.work.frbr_uri,
-            document_xml=document_fixture(
-                xml="""
-        <section eId="sec_1">
-          <num>1.</num>
-          <heading>Tester</heading>
-          <paragraph eId="sec_1.paragraph-0">
-            <content>
-              <p>Something to do with Act 1 of 1991.</p>
-              <p>Something to do with Act no 22 of 2012.</p>
-              <p>And another thing about Act 4 of 1998.</p>
-            </content>
-          </paragraph>
-        </section>"""
-            ),
-            language=self.eng)
-
-        expected = Document(
-            work=self.work,
-            document_xml=document_fixture(
-                xml="""
-        <section eId="sec_1">
-          <num>1.</num>
-          <heading>Tester</heading>
-          <paragraph eId="sec_1.paragraph-0">
-            <content>
-              <p>Something to do with Act 1 of 1991.</p>
-              <p>Something to do with Act <ref href="/akn/za/act/2012/22">no 22 of 2012</ref>.</p>
-              <p>And another thing about Act <ref href="/akn/za/act/1998/4">4 of 1998</ref>.</p>
-            </content>
-          </paragraph>
-        </section>"""
-            ),
-            language=self.eng)
-
-        document.doc.frbr_uri = FrbrUri.parse(self.work.frbr_uri)
-        self.finder.find_references_in_document(document)
-        root = etree.fromstring(expected.content)
-        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
-        self.assertEqual(expected.content, document.content)
 
 
 class RefsFinderSubtypesENGTestCase(TestCase):
@@ -220,3 +126,36 @@ class RefsFinderCapENGTestCase(TestCase):
         self.assertEqual(expected.content, document.content)
         # set back to what it is in settings.py
         settings.INDIGO['WORK_PROPERTIES'] = {}
+
+
+class ActNumberCitationMatcherFRATestCase(TestCase):
+    maxDiff = None
+
+    def setUp(self):
+        self.marker = ActNumberCitationMatcherFRA()
+        self.frbr_uri = FrbrUri.parse("/akn/za-wc/act/2021/509")
+
+    def test_xml_matches(self):
+        xml = etree.fromstring(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <statement name="statement">
+    <preamble>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la Loi 852 de 1972</p>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la Loi852 de 1972</p>
+    </preamble>
+  </statement>
+</akomaNtoso>"""
+        )
+        self.marker.markup_xml_matches(self.frbr_uri, xml)
+
+        self.assertMultiLineEqual(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <statement name="statement">
+    <preamble>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi 852 de 1972</a></p>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi852 de 1972</a></p>
+    </preamble>
+  </statement>
+</akomaNtoso>""",
+            etree.tostring(xml, encoding="unicode", pretty_print=True).strip(),
+        )

@@ -166,7 +166,8 @@ INDIGO = {
     # namespaces to look for translation packs for javascript translation via i18next
     'JS_I18N_NAMESPACES': ['indigo_app'],
 
-    'LINK_REFERENCES_PLUGINS': ['refs-act-names', 'internal-refs'],
+    # Plugins to use for linking references. The internal-refs must come after work-level plugins.
+    'LINK_REFERENCES_PLUGINS': ['refs-act-names', 'refs-aliases', 'internal-refs'],
 }
 
 # Database

@@ -4,10 +4,11 @@ import re
 from django.conf import settings
 
 from docpipe.citations import ActMatcher
+from docpipe.matchers import CitationMatcher
 from indigo.analysis.markup import TextPatternMarker
 from indigo.analysis.matchers import DocumentPatternMatcherMixin
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work
+from indigo_api.models import Subtype, Work, Country
 
 
 def markup_document_refs(document):
@@ -171,7 +172,7 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
 
 
 @plugins.register('refs-cap')
-class RefsFinderCapENG(BaseRefsFinder):
+class RefsFinderCapENG(DocumentPatternMatcherMixin, CitationMatcher):
     """ Finds references to works with cap numbers, of the form:
 
         Cap. 231
@@ -188,22 +189,32 @@ class RefsFinderCapENG(BaseRefsFinder):
              (?P<num>\w+)
             )
         ''', re.X)
-    candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::a:ref)]"
+    html_candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::ns:ref)]"
 
-    def setup(self, root):
-        self.setup_cap_numbers(self.document)
-        super().setup(root)
+    def setup(self, frbr_uri, *args, **kwargs):
+        super().setup(frbr_uri, *args, **kwargs)
+        self.setup_cap_numbers(frbr_uri)
 
-    def setup_cap_numbers(self, document):
-        country = document.work.country
-        locality = document.work.locality
+    def setup_cap_numbers(self, frbr_uri):
+        try:
+            country = Country.for_code(frbr_uri.country)
+        except Country.DoesNotExist:
+            return
+
+        # look for a locality, but allow no matches
+        locality = None
+        if frbr_uri.locality:
+            locality = country.localities.filter(code=frbr_uri.locality).first()
+
         place = locality or country
         cap_strings = [p for p in place.settings.work_properties if p.startswith('cap')]
-
-        self.cap_numbers = {w.properties[c]: w.frbr_uri for c in cap_strings for w in Work.objects.filter(country=country, locality=locality) if w.properties.get(c)}
-
-    def is_valid(self, node, match):
-        return self.cap_numbers.get(match.group('num'))
+        self.cap_numbers = {
+            w.properties[c]: w.frbr_uri
+            for c in cap_strings
+            for w in Work.objects.filter(country=country, locality=locality)
+            if w.properties.get(c)
+        }
 
     def make_href(self, match):
-        return self.cap_numbers[match.group('num')]
+        return self.cap_numbers.get(match.groups['num'])

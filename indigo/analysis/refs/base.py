@@ -3,7 +3,9 @@ import re
 
 from django.conf import settings
 
+from docpipe.citations import ActMatcher
 from indigo.analysis.markup import TextPatternMarker
+from indigo.analysis.matchers import DocumentPatternMatcherMixin
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work
 
@@ -70,31 +72,14 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         return link_uri
 
 
-@plugins.register('refs')
-class RefsFinderENG(BaseRefsFinder):
-    """ Finds references to Acts in documents, of the form:
+class ActNumberCitationMatcher(DocumentPatternMatcherMixin, ActMatcher):
+    """Base plugin class for Act number citation matchers."""
+    pass
 
-        Act 52 of 2001
-        Act no. 52 of 1998
-        Income Tax Act, 1962 (No 58 of 1962)
 
-    """
-
-    # country, language, locality
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherENG(ActNumberCitationMatcher):
     locale = (None, 'eng', None)
-
-    pattern_re = re.compile(
-        r'''\bAct,?\s+
-            (\d{4}\s+)?
-            \(?
-            (?P<ref>
-             ([nN]o\.?\s*)?
-             (?P<num>\d+)\s+
-             of\s+
-             (?P<year>\d{4})
-            )
-        ''', re.X)
-    candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
 
 
 @plugins.register('refs-subtypes')

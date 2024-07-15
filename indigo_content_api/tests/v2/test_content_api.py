@@ -1,4 +1,3 @@
-import json
 import tempfile
 from datetime import date
 
@@ -9,8 +8,8 @@ from sass_processor.processor import SassProcessor
 from rest_framework.test import APITestCase
 
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Country
-
+from indigo_api.models import Country, Language
+from languages_plus.models import Language as MasterLanguage
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
 # but during testing we haven't compiled assets
@@ -720,6 +719,16 @@ class ContentAPIV2TestMixin:
                 {'type': 'assent', 'description': 'Assented to', 'by_frbr_uri': '', 'by_title': '',
                  'note': ''}]
         }], timeline)
+
+    def test_published_different_default_language(self):
+        za = Country.for_code('za')
+        fr, _ = Language.objects.get_or_create(language=MasterLanguage.objects.get(pk='fr'))
+        za.primary_language = fr
+        za.save()
+
+        response = self.client.get(self.api_path + '/akn/za/.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(0, response.json()['count'])
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277

@@ -5,7 +5,8 @@ from django.test import TestCase
 
 from cobalt import FrbrUri
 
-from indigo.analysis.refs.base import RefsFinderSubtypesENG, RefsFinderCapENG, ActNumberCitationMatcherFRA
+from indigo.analysis.refs.base import RefsFinderSubtypesENG, RefsFinderCapENG, ActNumberCitationMatcherFRA, \
+    ActNumberCitationMatcherAFR
 
 from indigo_api.models import Document, Language, Work, Country, User
 from indigo_api.tests.fixtures import document_fixture
@@ -126,6 +127,47 @@ class RefsFinderCapENGTestCase(TestCase):
         self.assertEqual(expected.content, document.content)
         # set back to what it is in settings.py
         settings.INDIGO['WORK_PROPERTIES'] = {}
+
+
+class ActNumberCitationMatcherAFRTestCase(TestCase):
+    maxDiff = None
+
+    def setUp(self):
+        self.marker = ActNumberCitationMatcherAFR()
+        self.frbr_uri = FrbrUri.parse('/akn/za/act/1998/1')
+
+    def test_find_simple(self):
+        xml = etree.fromstring(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+<body>
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Tester</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p>Something to do with Wet no 22 van 2012.</p>
+        <p>And another thing about Wet 4 van 1998.</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+</akomaNtoso>""")
+
+        self.marker.markup_xml_matches(self.frbr_uri, xml)
+        self.assertMultiLineEqual("""<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+<body>
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Tester</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p>Something to do with <ref href="/akn/za/act/2012/22">Wet no 22 van 2012</ref>.</p>
+        <p>And another thing about <ref href="/akn/za/act/1998/4">Wet 4 van 1998</ref>.</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+</akomaNtoso>""", etree.tostring(xml, encoding="unicode", pretty_print=True).strip())
 
 
 class ActNumberCitationMatcherFRATestCase(TestCase):

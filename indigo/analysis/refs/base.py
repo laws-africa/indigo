@@ -100,6 +100,29 @@ class ActNumberCitationMatcherFRA(ActNumberCitationMatcher):
     xml_candidate_xpath = ".//text()[contains(., 'Loi') and not(ancestor::ns:ref)]"
 
 
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherAFR(ActNumberCitationMatcher):
+    """ Afrikaans Act number citation matcher.
+
+    Wet 852 van 1998
+    """
+    locale = (None, 'afr', None)
+    pattern_re = re.compile(
+        r"""\bWet,?\s*
+            ((19|20)\d{2}\s*)?
+            \(?
+            (?P<ref>
+              ([no.]*\s*)?
+              (?P<num>\d+)\s*
+              van\s*
+              (?P<year>\d{4})
+            )\)?
+        """,
+        re.X | re.I)
+    html_candidate_xpath = ".//text()[contains(., 'Wet') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Wet') and not(ancestor::ns:ref)]"
+
+
 @plugins.register('refs-subtypes')
 class RefsFinderSubtypesENG(BaseRefsFinder):
     """ Finds references to works other than Acts in documents, of the form:

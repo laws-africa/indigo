@@ -120,7 +120,7 @@ class RefsFinderCapENGTestCase(TestCase):
             language=self.eng,
             work=work)
 
-        self.finder.find_references_in_document(document)
+        self.finder.markup_document_matches(document)
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
@@ -152,8 +152,8 @@ class ActNumberCitationMatcherFRATestCase(TestCase):
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <statement name="statement">
     <preamble>
-      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi 852 de 1972</a></p>
-      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi852 de 1972</a></p>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi 852 de 1972</ref></p>
+      <p eId="preamble__p_1">article 97 remplacé par l'article premier de la <ref href="/akn/za/act/1972/852">Loi852 de 1972</ref></p>
     </preamble>
   </statement>
 </akomaNtoso>""",

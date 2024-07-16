@@ -80,7 +80,7 @@ class WorkTitlesCitationMatcher(CommonTitlesCitationMatcher):
                 self.titles[w["title"]] = w["frbr_uri"]
 
     def get_queryset(self, frbr_uri, country, locality):
-        # load titles for WorkExpressions in this country and/or locality
+        # load titles for Works in this country and/or locality
         qs = (
             Work.objects.filter(
                 country=country,

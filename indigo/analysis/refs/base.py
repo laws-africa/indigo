@@ -12,15 +12,12 @@ from indigo_api.models import Subtype, Work, Country
 
 
 def markup_document_refs(document):
+    # TODO: these are both old and should be retired
     finder = plugins.for_document('refs', document)
     if finder:
         finder.find_references_in_document(document)
 
     finder = plugins.for_document('refs-subtypes', document)
-    if finder:
-        finder.find_references_in_document(document)
-
-    finder = plugins.for_document('refs-cap', document)
     if finder:
         finder.find_references_in_document(document)
 

@@ -76,8 +76,8 @@ class WorkTitlesCitationMatcher(CommonTitlesCitationMatcher):
             if date and date.startswith('@'):
                 qs = qs.filter(date__lte=date[1:5])
 
-            for we in qs:
-                self.titles[we["title"]] = we["frbr_uri"]
+            for w in qs:
+                self.titles[w["title"]] = w["frbr_uri"]
 
     def get_queryset(self, frbr_uri, country, locality):
         # load titles for WorkExpressions in this country and/or locality

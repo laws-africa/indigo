@@ -11,7 +11,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias
 
 admin.site.register(Subtype)
 
@@ -84,9 +84,16 @@ class TaskLabelAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
+@admin.register(CitationAlias)
+class CitationAliasAdmin(admin.ModelAdmin):
+    list_display = ('frbr_uri', 'place', 'aliases',)
+    list_filter = ('place',)
+
+
 def run_now(modeladmin, request, queryset):
     queryset.update(run_at=now())
     messages.success(request, _("Updated run time to now for selected tasks."))
+
 
 run_now.short_description = _("Set run time to now")
 TaskAdmin.actions.append(run_now)

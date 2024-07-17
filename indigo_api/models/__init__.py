@@ -1,3 +1,4 @@
+from .citations import *
 from .places import *
 from .works import *
 from .documents import *

@@ -1,9 +1,31 @@
 from lxml import etree
 import re
 
+from django.conf import settings
+
+from docpipe.citations import ActMatcher
+from docpipe.matchers import CitationMatcher
 from indigo.analysis.markup import TextPatternMarker
+from indigo.analysis.matchers import DocumentPatternMatcherMixin
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work
+from indigo_api.models import Subtype, Work, Country
+
+
+def markup_document_refs(document):
+    # TODO: these are both old and should be retired
+    finder = plugins.for_document('refs', document)
+    if finder:
+        finder.find_references_in_document(document)
+
+    finder = plugins.for_document('refs-subtypes', document)
+    if finder:
+        finder.find_references_in_document(document)
+
+    # new mechanism for calling locale-based matchers based on DocumentPatternMatcher
+    for plugin_type in settings.INDIGO['LINK_REFERENCES_PLUGINS']:
+        matcher = plugins.for_document(plugin_type, document)
+        if matcher:
+            matcher.markup_document_matches(document)
 
 
 class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
@@ -48,31 +70,57 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         return link_uri
 
 
-@plugins.register('refs')
-class RefsFinderENG(BaseRefsFinder):
-    """ Finds references to Acts in documents, of the form:
+class ActNumberCitationMatcher(DocumentPatternMatcherMixin, ActMatcher):
+    """Base plugin class for Act number citation matchers."""
+    pass
 
-        Act 52 of 2001
-        Act no. 52 of 1998
-        Income Tax Act, 1962 (No 58 of 1962)
 
-    """
-
-    # country, language, locality
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherENG(ActNumberCitationMatcher):
     locale = (None, 'eng', None)
 
+
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherFRA(ActNumberCitationMatcher):
+    """ French Act number citation matcher.
+
+    Loi 852 de 1998
+    """
+    locale = (None, 'fra', None)
     pattern_re = re.compile(
-        r'''\bAct,?\s+
-            (\d{4}\s+)?
+        r"""\bLoi\s*
+            (?P<ref>
+              (?P<num>\d+)\s*
+              de\s*
+              (?P<year>\d{4})
+            )
+        """,
+        re.X | re.I)
+    html_candidate_xpath = ".//text()[contains(., 'Loi') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Loi') and not(ancestor::ns:ref)]"
+
+
+@plugins.register('refs-act-numbers')
+class ActNumberCitationMatcherAFR(ActNumberCitationMatcher):
+    """ Afrikaans Act number citation matcher.
+
+    Wet 852 van 1998
+    """
+    locale = (None, 'afr', None)
+    pattern_re = re.compile(
+        r"""\bWet,?\s*
+            ((19|20)\d{2}\s*)?
             \(?
             (?P<ref>
-             ([nN]o\.?\s*)?
-             (?P<num>\d+)\s+
-             of\s+
-             (?P<year>\d{4})
-            )
-        ''', re.X)
-    candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
+              ([no.]*\s*)?
+              (?P<num>\d+)\s*
+              van\s*
+              (?P<year>\d{4})
+            )\)?
+        """,
+        re.X | re.I)
+    html_candidate_xpath = ".//text()[contains(., 'Wet') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Wet') and not(ancestor::ns:ref)]"
 
 
 @plugins.register('refs-subtypes')
@@ -144,7 +192,7 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
 
 
 @plugins.register('refs-cap')
-class RefsFinderCapENG(BaseRefsFinder):
+class RefsFinderCapENG(DocumentPatternMatcherMixin, CitationMatcher):
     """ Finds references to works with cap numbers, of the form:
 
         Cap. 231
@@ -161,22 +209,32 @@ class RefsFinderCapENG(BaseRefsFinder):
              (?P<num>\w+)
             )
         ''', re.X)
-    candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::a:ref)]"
+    html_candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::ns:ref)]"
 
-    def setup(self, root):
-        self.setup_cap_numbers(self.document)
-        super().setup(root)
+    def setup(self, frbr_uri, *args, **kwargs):
+        super().setup(frbr_uri, *args, **kwargs)
+        self.setup_cap_numbers(frbr_uri)
 
-    def setup_cap_numbers(self, document):
-        country = document.work.country
-        locality = document.work.locality
+    def setup_cap_numbers(self, frbr_uri):
+        try:
+            country = Country.for_code(frbr_uri.country)
+        except Country.DoesNotExist:
+            return
+
+        # look for a locality, but allow no matches
+        locality = None
+        if frbr_uri.locality:
+            locality = country.localities.filter(code=frbr_uri.locality).first()
+
         place = locality or country
         cap_strings = [p for p in place.settings.work_properties if p.startswith('cap')]
-
-        self.cap_numbers = {w.properties[c]: w.frbr_uri for c in cap_strings for w in Work.objects.filter(country=country, locality=locality) if w.properties.get(c)}
-
-    def is_valid(self, node, match):
-        return self.cap_numbers.get(match.group('num'))
+        self.cap_numbers = {
+            w.properties[c]: w.frbr_uri
+            for c in cap_strings
+            for w in Work.objects.filter(country=country, locality=locality)
+            if w.properties.get(c)
+        }
 
     def make_href(self, match):
-        return self.cap_numbers[match.group('num')]
+        return self.cap_numbers.get(match.groups['num'])

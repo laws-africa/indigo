@@ -27,6 +27,7 @@ import lxml.html.diff
 from lxml.etree import LxmlError
 
 from indigo.analysis.differ import AKNHTMLDiffer
+from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
 from indigo.xmlutils import parse_html_str
 from ..models import Document, Annotation, DocumentActivity, Task
@@ -407,25 +408,7 @@ class LinkReferencesView(DocumentResourceView, APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def find_references(self, document):
-        finder = plugins.for_document('refs', document)
-        if finder:
-            finder.find_references_in_document(document)
-
-        finder = plugins.for_document('refs-subtypes', document)
-        if finder:
-            finder.find_references_in_document(document)
-
-        finder = plugins.for_document('refs-cap', document)
-        if finder:
-            finder.find_references_in_document(document)
-
-        finder = plugins.for_document('refs-act-names', document)
-        if finder:
-            finder.find_references_in_document(document)
-
-        finder = plugins.for_document('internal-refs', document)
-        if finder:
-            finder.find_references_in_document(document)
+        markup_document_refs(document)
 
 
 class MarkUpItalicsTermsView(DocumentResourceView, APIView):

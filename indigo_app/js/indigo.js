@@ -12,6 +12,10 @@ import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+
+window.tippy = tippy;
 
 class IndigoApp {
   setup () {

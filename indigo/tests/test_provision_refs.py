@@ -512,6 +512,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
         )
 
     def test_local_sections_af(self):
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/afr@2009-01-01")
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
@@ -863,7 +864,8 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    def test_remote_sections_af(self):
+    def test_remote_sections_afr(self):
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/afr@2009-01-01")
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
@@ -1652,8 +1654,8 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result.references)
         self.assertIsNone(result.target)
 
-    def test_mixed_af(self):
-        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdelings 32(a)")
+    def test_mixed_afr(self):
+        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdelings 32(a)", "afr")
         self.assertEqual([
             MainProvisionRef(
                 "Afdeling",
@@ -1770,15 +1772,15 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual("of", result.target)
         self.assertEqual(result.end, 17)
 
-    def test_target_af(self):
-        result = parse_provision_refs("Afdeling 2 van hierdie Wet")
+    def test_target_afr(self):
+        result = parse_provision_refs("Afdeling 2 van hierdie Wet", "afr")
         self.assertEqual("this", result.target)
         self.assertEqual(result.end, 23)
 
-        result = parse_provision_refs("Afdeling 2 daarvan")
+        result = parse_provision_refs("Afdeling 2 daarvan", "afr")
         self.assertEqual("thereof", result.target)
         self.assertEqual(result.end, 18)
 
-        result = parse_provision_refs("Afdeling 2 van die Wet met kak")
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 15)
+        result = parse_provision_refs("Afdeling 2 van die Wet met kak", "afr")
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 22)

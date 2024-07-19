@@ -11,9 +11,7 @@ grammar ProvisionRefs
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  references  <- unit WS+ main_ref (to_and_or main_ref)* %references
-
-  unit        <- unit_eng / unit_afr
+  references  <- unit__i18n WS+ main_ref (to_and_or main_ref)* %references
 
   main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 
@@ -43,26 +41,28 @@ grammar ProvisionRefs
                  # (a), to (b)
   range       <- (WS* comma)? to %range
 
+  to          <- WS* dash WS* / WS+ to__i18n WS+
+
                  # (a) and (b)
                  # (a), or (b)
                  # (a), (b)
-  and_or      <- ((WS* comma)? WS* _and WS+) %and_or
-                 / ((WS* comma)? WS* _or WS+) %and_or
+  and_or      <- ((WS* comma)? WS* and__i18n WS+) %and_or
+                 / ((WS* comma)? WS* or__i18n WS+) %and_or
                  / (WS* comma WS*) %and_or
 
   target      <- of_this / of_the_act / thereof / of
 
                  # of this...
-  of_this     <- comma? WS* (of_this_eng / of_this_afr) WS+ %of_this
+  of_this     <- comma? WS* (of_this__i18n) WS+ %of_this
 
                  # of the Act
-  of_the_act  <- comma? WS* (of_the_act_eng) %of_the_act
+  of_the_act  <- comma? WS* (of_the_act__i18n) %of_the_act
 
                  # of...
-  of          <- comma? WS* (of_eng / of_afr) WS+ %of
+  of          <- comma? WS* (of__i18n) WS+ %of
 
                  # thereof
-  thereof     <- comma? WS* (thereof_eng / thereof_afr) %thereof
+  thereof     <- comma? WS* (thereof__i18n) %thereof
 
                  # this is simply all text after the reference, which could be none. This is required because
                  # the grammar expects to match the entire input, but we don't care about anything beyond the end
@@ -71,7 +71,22 @@ grammar ProvisionRefs
   tail        <- .*
 
   # --------
-  # terminals
+  # language-switching terminals
+  #
+  # the xxx__i18n rules will be patched in python to use the rule for the current language
+  # --------
+
+  and__i18n         <- ""
+  of__i18n          <- ""
+  of_the_act__i18n  <- ""
+  of_this__i18n     <- ""
+  or__i18n          <- ""
+  thereof__i18n     <- ""
+  to__i18n          <- ""
+  unit__i18n        <- ""
+
+  # --------
+  # translated terminals
   # --------
 
                  # english
@@ -100,19 +115,12 @@ grammar ProvisionRefs
                  `subafdelings` / `subafdeling` /
                  `subparagrawe` / `subparagraaf`
 
-  _and        <- and_eng / and_afr
   and_eng      <- `and`
   and_afr      <- `en`
 
-  _or         <- or_eng / or_afr
   or_eng       <- `or`
-  # HACK: Afrikaans 'of' for 'or' not supported because it clashes with English 'of'
-  or_afr       <- or_eng # `of`
+  or_afr       <- `of`
 
-                 # note that "tot" must come before "to" because the latter is a substring of the former
-                 # whitespace is required around 'to' word, optional around dashes
-  to          <- WS* dash WS* / WS+ to_afr WS+ / WS+ to_eng WS+
-  dash        <- `-` / `–` / `—`
   to_eng       <- `to`
   to_afr       <- `tot`
 
@@ -123,10 +131,16 @@ grammar ProvisionRefs
   of_this_afr  <- `van hierdie`
 
   of_the_act_eng <- `of the Act` / `of the act`
+  of_the_act_afr <- `van die Wet` / `van die wet`
 
   thereof_eng  <- `thereof`
   thereof_afr  <- `daarvan`
 
+  # --------
+  # terminals
+  # --------
+
+  dash        <- `-` / `–` / `—`
   comma       <- [,;]
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]

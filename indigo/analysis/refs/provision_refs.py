@@ -33,7 +33,7 @@ class TreeNode2(TreeNode):
 class TreeNode3(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode3, self).__init__(text, offset, elements)
-        self.unit = elements[0]
+        self.unit__i18n = elements[0]
         self.main_ref = elements[2]
 
 
@@ -96,19 +96,19 @@ class TreeNode12(TreeNode):
 class TreeNode13(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode13, self).__init__(text, offset, elements)
-        self._and = elements[2]
+        self.dash = elements[1]
 
 
 class TreeNode14(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode14, self).__init__(text, offset, elements)
-        self.comma = elements[1]
+        self.to__i18n = elements[1]
 
 
 class TreeNode15(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode15, self).__init__(text, offset, elements)
-        self._or = elements[2]
+        self.and__i18n = elements[2]
 
 
 class TreeNode16(TreeNode):
@@ -120,31 +120,43 @@ class TreeNode16(TreeNode):
 class TreeNode17(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode17, self).__init__(text, offset, elements)
-        self.comma = elements[1]
+        self.or__i18n = elements[2]
 
 
 class TreeNode18(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode18, self).__init__(text, offset, elements)
-        self.of_the_act_en = elements[2]
+        self.comma = elements[1]
 
 
 class TreeNode19(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode19, self).__init__(text, offset, elements)
-        self.dash = elements[1]
+        self.comma = elements[1]
 
 
 class TreeNode20(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode20, self).__init__(text, offset, elements)
-        self.to_af = elements[1]
+        self.of_this__i18n = elements[2]
 
 
 class TreeNode21(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode21, self).__init__(text, offset, elements)
-        self.to_en = elements[1]
+        self.of_the_act__i18n = elements[2]
+
+
+class TreeNode22(TreeNode):
+    def __init__(self, text, offset, elements):
+        super(TreeNode22, self).__init__(text, offset, elements)
+        self.of__i18n = elements[2]
+
+
+class TreeNode23(TreeNode):
+    def __init__(self, text, offset, elements):
+        super(TreeNode23, self).__init__(text, offset, elements)
+        self.thereof__i18n = elements[2]
 
 
 FAILURE = object()
@@ -240,7 +252,7 @@ class Grammar(object):
             return cached[0]
         index1, elements0 = self._offset, []
         address1 = FAILURE
-        address1 = self._read_unit()
+        address1 = self._read_unit__i18n()
         if address1 is not FAILURE:
             elements0.append(address1)
             address2 = FAILURE
@@ -314,22 +326,6 @@ class Grammar(object):
             address0 = self._actions.references(self._input, index1, self._offset, elements0)
             self._offset = self._offset
         self._cache['references'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_unit(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['unit'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        index1 = self._offset
-        address0 = self._read_unit_en()
-        if address0 is FAILURE:
-            self._offset = index1
-            address0 = self._read_unit_af()
-            if address0 is FAILURE:
-                self._offset = index1
-        self._cache['unit'][index0] = (address0, self._offset)
         return address0
 
     def _read_main_ref(self):
@@ -720,6 +716,118 @@ class Grammar(object):
         self._cache['range'][index0] = (address0, self._offset)
         return address0
 
+    def _read_to(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        index2, elements0 = self._offset, []
+        address1 = FAILURE
+        index3, elements1, address2 = self._offset, [], None
+        while True:
+            address2 = self._read_WS()
+            if address2 is not FAILURE:
+                elements1.append(address2)
+            else:
+                break
+        if len(elements1) >= 0:
+            address1 = TreeNode(self._input[index3:self._offset], index3, elements1)
+            self._offset = self._offset
+        else:
+            address1 = FAILURE
+        if address1 is not FAILURE:
+            elements0.append(address1)
+            address3 = FAILURE
+            address3 = self._read_dash()
+            if address3 is not FAILURE:
+                elements0.append(address3)
+                address4 = FAILURE
+                index4, elements2, address5 = self._offset, [], None
+                while True:
+                    address5 = self._read_WS()
+                    if address5 is not FAILURE:
+                        elements2.append(address5)
+                    else:
+                        break
+                if len(elements2) >= 0:
+                    address4 = TreeNode(self._input[index4:self._offset], index4, elements2)
+                    self._offset = self._offset
+                else:
+                    address4 = FAILURE
+                if address4 is not FAILURE:
+                    elements0.append(address4)
+                else:
+                    elements0 = None
+                    self._offset = index2
+            else:
+                elements0 = None
+                self._offset = index2
+        else:
+            elements0 = None
+            self._offset = index2
+        if elements0 is None:
+            address0 = FAILURE
+        else:
+            address0 = TreeNode13(self._input[index2:self._offset], index2, elements0)
+            self._offset = self._offset
+        if address0 is FAILURE:
+            self._offset = index1
+            index5, elements3 = self._offset, []
+            address6 = FAILURE
+            index6, elements4, address7 = self._offset, [], None
+            while True:
+                address7 = self._read_WS()
+                if address7 is not FAILURE:
+                    elements4.append(address7)
+                else:
+                    break
+            if len(elements4) >= 1:
+                address6 = TreeNode(self._input[index6:self._offset], index6, elements4)
+                self._offset = self._offset
+            else:
+                address6 = FAILURE
+            if address6 is not FAILURE:
+                elements3.append(address6)
+                address8 = FAILURE
+                address8 = self._read_to__i18n()
+                if address8 is not FAILURE:
+                    elements3.append(address8)
+                    address9 = FAILURE
+                    index7, elements5, address10 = self._offset, [], None
+                    while True:
+                        address10 = self._read_WS()
+                        if address10 is not FAILURE:
+                            elements5.append(address10)
+                        else:
+                            break
+                    if len(elements5) >= 1:
+                        address9 = TreeNode(self._input[index7:self._offset], index7, elements5)
+                        self._offset = self._offset
+                    else:
+                        address9 = FAILURE
+                    if address9 is not FAILURE:
+                        elements3.append(address9)
+                    else:
+                        elements3 = None
+                        self._offset = index5
+                else:
+                    elements3 = None
+                    self._offset = index5
+            else:
+                elements3 = None
+                self._offset = index5
+            if elements3 is None:
+                address0 = FAILURE
+            else:
+                address0 = TreeNode14(self._input[index5:self._offset], index5, elements3)
+                self._offset = self._offset
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['to'][index0] = (address0, self._offset)
+        return address0
+
     def _read_and_or(self):
         address0, index0 = FAILURE, self._offset
         cached = self._cache['and_or'].get(index0)
@@ -759,7 +867,7 @@ class Grammar(object):
         if elements1 is None:
             address1 = FAILURE
         else:
-            address1 = TreeNode14(self._input[index4:self._offset], index4, elements1)
+            address1 = TreeNode16(self._input[index4:self._offset], index4, elements1)
             self._offset = self._offset
         if address1 is FAILURE:
             address1 = TreeNode(self._input[index3:index3], index3, [])
@@ -782,7 +890,7 @@ class Grammar(object):
             if address5 is not FAILURE:
                 elements0.append(address5)
                 address7 = FAILURE
-                address7 = self._read__and()
+                address7 = self._read_and__i18n()
                 if address7 is not FAILURE:
                     elements0.append(address7)
                     address8 = FAILURE
@@ -851,7 +959,7 @@ class Grammar(object):
             if elements6 is None:
                 address10 = FAILURE
             else:
-                address10 = TreeNode16(self._input[index10:self._offset], index10, elements6)
+                address10 = TreeNode18(self._input[index10:self._offset], index10, elements6)
                 self._offset = self._offset
             if address10 is FAILURE:
                 address10 = TreeNode(self._input[index9:index9], index9, [])
@@ -874,7 +982,7 @@ class Grammar(object):
                 if address14 is not FAILURE:
                     elements5.append(address14)
                     address16 = FAILURE
-                    address16 = self._read__or()
+                    address16 = self._read_or__i18n()
                     if address16 is not FAILURE:
                         elements5.append(address16)
                         address17 = FAILURE
@@ -1018,17 +1126,11 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                index4 = self._offset
-                address4 = self._read_of_this_en()
-                if address4 is FAILURE:
-                    self._offset = index4
-                    address4 = self._read_of_this_af()
-                    if address4 is FAILURE:
-                        self._offset = index4
+                address4 = self._read_of_this__i18n()
                 if address4 is not FAILURE:
                     elements0.append(address4)
                     address5 = FAILURE
-                    index5, elements2, address6 = self._offset, [], None
+                    index4, elements2, address6 = self._offset, [], None
                     while True:
                         address6 = self._read_WS()
                         if address6 is not FAILURE:
@@ -1036,7 +1138,7 @@ class Grammar(object):
                         else:
                             break
                     if len(elements2) >= 1:
-                        address5 = TreeNode(self._input[index5:self._offset], index5, elements2)
+                        address5 = TreeNode(self._input[index4:self._offset], index4, elements2)
                         self._offset = self._offset
                     else:
                         address5 = FAILURE
@@ -1093,7 +1195,7 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                address4 = self._read_of_the_act_en()
+                address4 = self._read_of_the_act__i18n()
                 if address4 is not FAILURE:
                     elements0.append(address4)
                 else:
@@ -1144,17 +1246,11 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                index4 = self._offset
-                address4 = self._read_of_en()
-                if address4 is FAILURE:
-                    self._offset = index4
-                    address4 = self._read_of_af()
-                    if address4 is FAILURE:
-                        self._offset = index4
+                address4 = self._read_of__i18n()
                 if address4 is not FAILURE:
                     elements0.append(address4)
                     address5 = FAILURE
-                    index5, elements2, address6 = self._offset, [], None
+                    index4, elements2, address6 = self._offset, [], None
                     while True:
                         address6 = self._read_WS()
                         if address6 is not FAILURE:
@@ -1162,7 +1258,7 @@ class Grammar(object):
                         else:
                             break
                     if len(elements2) >= 1:
-                        address5 = TreeNode(self._input[index5:self._offset], index5, elements2)
+                        address5 = TreeNode(self._input[index4:self._offset], index4, elements2)
                         self._offset = self._offset
                     else:
                         address5 = FAILURE
@@ -1219,13 +1315,7 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address4 = FAILURE
-                index4 = self._offset
-                address4 = self._read_thereof_en()
-                if address4 is FAILURE:
-                    self._offset = index4
-                    address4 = self._read_thereof_af()
-                    if address4 is FAILURE:
-                        self._offset = index4
+                address4 = self._read_thereof__i18n()
                 if address4 is not FAILURE:
                     elements0.append(address4)
                 else:
@@ -1275,9 +1365,185 @@ class Grammar(object):
         self._cache['tail'][index0] = (address0, self._offset)
         return address0
 
-    def _read_unit_en(self):
+    def _read_and__i18n(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['unit_en'].get(index0)
+        cached = self._cache['and__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::and__i18n', '""'))
+        self._cache['and__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of__i18n', '""'))
+        self._cache['of__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_the_act__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_the_act__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_the_act__i18n', '""'))
+        self._cache['of_the_act__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_this__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_this__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_this__i18n', '""'))
+        self._cache['of_this__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_or__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['or__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::or__i18n', '""'))
+        self._cache['or__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_thereof__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['thereof__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::thereof__i18n', '""'))
+        self._cache['thereof__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_to__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::to__i18n', '""'))
+        self._cache['to__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_unit__i18n(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit__i18n'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 0
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 == '':
+            address0 = TreeNode(self._input[self._offset:self._offset + 0], self._offset, [])
+            self._offset = self._offset + 0
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::unit__i18n', '""'))
+        self._cache['unit__i18n'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_unit_eng(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['unit_eng'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -1294,7 +1560,7 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::unit_en', '`articles`'))
+                self._expected.append(('ProvisionRefs::unit_eng', '`articles`'))
         if address0 is FAILURE:
             self._offset = index1
             chunk1, max1 = None, self._offset + 7
@@ -1309,7 +1575,7 @@ class Grammar(object):
                     self._failure = self._offset
                     self._expected = []
                 if self._offset == self._failure:
-                    self._expected.append(('ProvisionRefs::unit_en', '`article`'))
+                    self._expected.append(('ProvisionRefs::unit_eng', '`article`'))
             if address0 is FAILURE:
                 self._offset = index1
                 chunk2, max2 = None, self._offset + 8
@@ -1324,7 +1590,7 @@ class Grammar(object):
                         self._failure = self._offset
                         self._expected = []
                     if self._offset == self._failure:
-                        self._expected.append(('ProvisionRefs::unit_en', '`chapters`'))
+                        self._expected.append(('ProvisionRefs::unit_eng', '`chapters`'))
                 if address0 is FAILURE:
                     self._offset = index1
                     chunk3, max3 = None, self._offset + 7
@@ -1339,7 +1605,7 @@ class Grammar(object):
                             self._failure = self._offset
                             self._expected = []
                         if self._offset == self._failure:
-                            self._expected.append(('ProvisionRefs::unit_en', '`chapter`'))
+                            self._expected.append(('ProvisionRefs::unit_eng', '`chapter`'))
                     if address0 is FAILURE:
                         self._offset = index1
                         chunk4, max4 = None, self._offset + 5
@@ -1354,7 +1620,7 @@ class Grammar(object):
                                 self._failure = self._offset
                                 self._expected = []
                             if self._offset == self._failure:
-                                self._expected.append(('ProvisionRefs::unit_en', '`items`'))
+                                self._expected.append(('ProvisionRefs::unit_eng', '`items`'))
                         if address0 is FAILURE:
                             self._offset = index1
                             chunk5, max5 = None, self._offset + 4
@@ -1369,7 +1635,7 @@ class Grammar(object):
                                     self._failure = self._offset
                                     self._expected = []
                                 if self._offset == self._failure:
-                                    self._expected.append(('ProvisionRefs::unit_en', '`item`'))
+                                    self._expected.append(('ProvisionRefs::unit_eng', '`item`'))
                             if address0 is FAILURE:
                                 self._offset = index1
                                 chunk6, max6 = None, self._offset + 10
@@ -1384,7 +1650,7 @@ class Grammar(object):
                                         self._failure = self._offset
                                         self._expected = []
                                     if self._offset == self._failure:
-                                        self._expected.append(('ProvisionRefs::unit_en', '`paragraphs`'))
+                                        self._expected.append(('ProvisionRefs::unit_eng', '`paragraphs`'))
                                 if address0 is FAILURE:
                                     self._offset = index1
                                     chunk7, max7 = None, self._offset + 9
@@ -1399,7 +1665,7 @@ class Grammar(object):
                                             self._failure = self._offset
                                             self._expected = []
                                         if self._offset == self._failure:
-                                            self._expected.append(('ProvisionRefs::unit_en', '`paragraph`'))
+                                            self._expected.append(('ProvisionRefs::unit_eng', '`paragraph`'))
                                     if address0 is FAILURE:
                                         self._offset = index1
                                         chunk8, max8 = None, self._offset + 5
@@ -1414,7 +1680,7 @@ class Grammar(object):
                                                 self._failure = self._offset
                                                 self._expected = []
                                             if self._offset == self._failure:
-                                                self._expected.append(('ProvisionRefs::unit_en', '`parts`'))
+                                                self._expected.append(('ProvisionRefs::unit_eng', '`parts`'))
                                         if address0 is FAILURE:
                                             self._offset = index1
                                             chunk9, max9 = None, self._offset + 4
@@ -1429,7 +1695,7 @@ class Grammar(object):
                                                     self._failure = self._offset
                                                     self._expected = []
                                                 if self._offset == self._failure:
-                                                    self._expected.append(('ProvisionRefs::unit_en', '`part`'))
+                                                    self._expected.append(('ProvisionRefs::unit_eng', '`part`'))
                                             if address0 is FAILURE:
                                                 self._offset = index1
                                                 chunk10, max10 = None, self._offset + 6
@@ -1444,7 +1710,7 @@ class Grammar(object):
                                                         self._failure = self._offset
                                                         self._expected = []
                                                     if self._offset == self._failure:
-                                                        self._expected.append(('ProvisionRefs::unit_en', '`points`'))
+                                                        self._expected.append(('ProvisionRefs::unit_eng', '`points`'))
                                                 if address0 is FAILURE:
                                                     self._offset = index1
                                                     chunk11, max11 = None, self._offset + 5
@@ -1459,7 +1725,7 @@ class Grammar(object):
                                                             self._failure = self._offset
                                                             self._expected = []
                                                         if self._offset == self._failure:
-                                                            self._expected.append(('ProvisionRefs::unit_en', '`point`'))
+                                                            self._expected.append(('ProvisionRefs::unit_eng', '`point`'))
                                                     if address0 is FAILURE:
                                                         self._offset = index1
                                                         chunk12, max12 = None, self._offset + 11
@@ -1474,7 +1740,7 @@ class Grammar(object):
                                                                 self._failure = self._offset
                                                                 self._expected = []
                                                             if self._offset == self._failure:
-                                                                self._expected.append(('ProvisionRefs::unit_en', '`regulations`'))
+                                                                self._expected.append(('ProvisionRefs::unit_eng', '`regulations`'))
                                                         if address0 is FAILURE:
                                                             self._offset = index1
                                                             chunk13, max13 = None, self._offset + 10
@@ -1489,7 +1755,7 @@ class Grammar(object):
                                                                     self._failure = self._offset
                                                                     self._expected = []
                                                                 if self._offset == self._failure:
-                                                                    self._expected.append(('ProvisionRefs::unit_en', '`regulation`'))
+                                                                    self._expected.append(('ProvisionRefs::unit_eng', '`regulation`'))
                                                             if address0 is FAILURE:
                                                                 self._offset = index1
                                                                 chunk14, max14 = None, self._offset + 8
@@ -1504,7 +1770,7 @@ class Grammar(object):
                                                                         self._failure = self._offset
                                                                         self._expected = []
                                                                     if self._offset == self._failure:
-                                                                        self._expected.append(('ProvisionRefs::unit_en', '`sections`'))
+                                                                        self._expected.append(('ProvisionRefs::unit_eng', '`sections`'))
                                                                 if address0 is FAILURE:
                                                                     self._offset = index1
                                                                     chunk15, max15 = None, self._offset + 7
@@ -1519,7 +1785,7 @@ class Grammar(object):
                                                                             self._failure = self._offset
                                                                             self._expected = []
                                                                         if self._offset == self._failure:
-                                                                            self._expected.append(('ProvisionRefs::unit_en', '`section`'))
+                                                                            self._expected.append(('ProvisionRefs::unit_eng', '`section`'))
                                                                     if address0 is FAILURE:
                                                                         self._offset = index1
                                                                         chunk16, max16 = None, self._offset + 13
@@ -1534,7 +1800,7 @@ class Grammar(object):
                                                                                 self._failure = self._offset
                                                                                 self._expected = []
                                                                             if self._offset == self._failure:
-                                                                                self._expected.append(('ProvisionRefs::unit_en', '`subparagraphs`'))
+                                                                                self._expected.append(('ProvisionRefs::unit_eng', '`subparagraphs`'))
                                                                         if address0 is FAILURE:
                                                                             self._offset = index1
                                                                             chunk17, max17 = None, self._offset + 12
@@ -1549,7 +1815,7 @@ class Grammar(object):
                                                                                     self._failure = self._offset
                                                                                     self._expected = []
                                                                                 if self._offset == self._failure:
-                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`subparagraph`'))
+                                                                                    self._expected.append(('ProvisionRefs::unit_eng', '`subparagraph`'))
                                                                             if address0 is FAILURE:
                                                                                 self._offset = index1
                                                                                 chunk18, max18 = None, self._offset + 14
@@ -1564,7 +1830,7 @@ class Grammar(object):
                                                                                         self._failure = self._offset
                                                                                         self._expected = []
                                                                                     if self._offset == self._failure:
-                                                                                        self._expected.append(('ProvisionRefs::unit_en', '`sub-paragraphs`'))
+                                                                                        self._expected.append(('ProvisionRefs::unit_eng', '`sub-paragraphs`'))
                                                                                 if address0 is FAILURE:
                                                                                     self._offset = index1
                                                                                     chunk19, max19 = None, self._offset + 13
@@ -1579,7 +1845,7 @@ class Grammar(object):
                                                                                             self._failure = self._offset
                                                                                             self._expected = []
                                                                                         if self._offset == self._failure:
-                                                                                            self._expected.append(('ProvisionRefs::unit_en', '`sub-paragraph`'))
+                                                                                            self._expected.append(('ProvisionRefs::unit_eng', '`sub-paragraph`'))
                                                                                     if address0 is FAILURE:
                                                                                         self._offset = index1
                                                                                         chunk20, max20 = None, self._offset + 14
@@ -1594,7 +1860,7 @@ class Grammar(object):
                                                                                                 self._failure = self._offset
                                                                                                 self._expected = []
                                                                                             if self._offset == self._failure:
-                                                                                                self._expected.append(('ProvisionRefs::unit_en', '`subregulations`'))
+                                                                                                self._expected.append(('ProvisionRefs::unit_eng', '`subregulations`'))
                                                                                         if address0 is FAILURE:
                                                                                             self._offset = index1
                                                                                             chunk21, max21 = None, self._offset + 13
@@ -1609,7 +1875,7 @@ class Grammar(object):
                                                                                                     self._failure = self._offset
                                                                                                     self._expected = []
                                                                                                 if self._offset == self._failure:
-                                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`subregulation`'))
+                                                                                                    self._expected.append(('ProvisionRefs::unit_eng', '`subregulation`'))
                                                                                             if address0 is FAILURE:
                                                                                                 self._offset = index1
                                                                                                 chunk22, max22 = None, self._offset + 15
@@ -1624,7 +1890,7 @@ class Grammar(object):
                                                                                                         self._failure = self._offset
                                                                                                         self._expected = []
                                                                                                     if self._offset == self._failure:
-                                                                                                        self._expected.append(('ProvisionRefs::unit_en', '`sub-regulations`'))
+                                                                                                        self._expected.append(('ProvisionRefs::unit_eng', '`sub-regulations`'))
                                                                                                 if address0 is FAILURE:
                                                                                                     self._offset = index1
                                                                                                     chunk23, max23 = None, self._offset + 14
@@ -1639,7 +1905,7 @@ class Grammar(object):
                                                                                                             self._failure = self._offset
                                                                                                             self._expected = []
                                                                                                         if self._offset == self._failure:
-                                                                                                            self._expected.append(('ProvisionRefs::unit_en', '`sub-regulation`'))
+                                                                                                            self._expected.append(('ProvisionRefs::unit_eng', '`sub-regulation`'))
                                                                                                     if address0 is FAILURE:
                                                                                                         self._offset = index1
                                                                                                         chunk24, max24 = None, self._offset + 11
@@ -1654,7 +1920,7 @@ class Grammar(object):
                                                                                                                 self._failure = self._offset
                                                                                                                 self._expected = []
                                                                                                             if self._offset == self._failure:
-                                                                                                                self._expected.append(('ProvisionRefs::unit_en', '`subsections`'))
+                                                                                                                self._expected.append(('ProvisionRefs::unit_eng', '`subsections`'))
                                                                                                         if address0 is FAILURE:
                                                                                                             self._offset = index1
                                                                                                             chunk25, max25 = None, self._offset + 10
@@ -1669,7 +1935,7 @@ class Grammar(object):
                                                                                                                     self._failure = self._offset
                                                                                                                     self._expected = []
                                                                                                                 if self._offset == self._failure:
-                                                                                                                    self._expected.append(('ProvisionRefs::unit_en', '`subsection`'))
+                                                                                                                    self._expected.append(('ProvisionRefs::unit_eng', '`subsection`'))
                                                                                                             if address0 is FAILURE:
                                                                                                                 self._offset = index1
                                                                                                                 chunk26, max26 = None, self._offset + 12
@@ -1684,7 +1950,7 @@ class Grammar(object):
                                                                                                                         self._failure = self._offset
                                                                                                                         self._expected = []
                                                                                                                     if self._offset == self._failure:
-                                                                                                                        self._expected.append(('ProvisionRefs::unit_en', '`sub-sections`'))
+                                                                                                                        self._expected.append(('ProvisionRefs::unit_eng', '`sub-sections`'))
                                                                                                                 if address0 is FAILURE:
                                                                                                                     self._offset = index1
                                                                                                                     chunk27, max27 = None, self._offset + 11
@@ -1699,15 +1965,15 @@ class Grammar(object):
                                                                                                                             self._failure = self._offset
                                                                                                                             self._expected = []
                                                                                                                         if self._offset == self._failure:
-                                                                                                                            self._expected.append(('ProvisionRefs::unit_en', '`sub-section`'))
+                                                                                                                            self._expected.append(('ProvisionRefs::unit_eng', '`sub-section`'))
                                                                                                                     if address0 is FAILURE:
                                                                                                                         self._offset = index1
-        self._cache['unit_en'][index0] = (address0, self._offset)
+        self._cache['unit_eng'][index0] = (address0, self._offset)
         return address0
 
-    def _read_unit_af(self):
+    def _read_unit_afr(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['unit_af'].get(index0)
+        cached = self._cache['unit_afr'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -1724,7 +1990,7 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::unit_af', '`afdelings`'))
+                self._expected.append(('ProvisionRefs::unit_afr', '`afdelings`'))
         if address0 is FAILURE:
             self._offset = index1
             chunk1, max1 = None, self._offset + 8
@@ -1739,7 +2005,7 @@ class Grammar(object):
                     self._failure = self._offset
                     self._expected = []
                 if self._offset == self._failure:
-                    self._expected.append(('ProvisionRefs::unit_af', '`afdeling`'))
+                    self._expected.append(('ProvisionRefs::unit_afr', '`afdeling`'))
             if address0 is FAILURE:
                 self._offset = index1
                 chunk2, max2 = None, self._offset + 8
@@ -1754,7 +2020,7 @@ class Grammar(object):
                         self._failure = self._offset
                         self._expected = []
                     if self._offset == self._failure:
-                        self._expected.append(('ProvisionRefs::unit_af', '`artikels`'))
+                        self._expected.append(('ProvisionRefs::unit_afr', '`artikels`'))
                 if address0 is FAILURE:
                     self._offset = index1
                     index2, elements0 = self._offset, []
@@ -1771,7 +2037,7 @@ class Grammar(object):
                             self._failure = self._offset
                             self._expected = []
                         if self._offset == self._failure:
-                            self._expected.append(('ProvisionRefs::unit_af', '`artikel`'))
+                            self._expected.append(('ProvisionRefs::unit_afr', '`artikel`'))
                     if address1 is not FAILURE:
                         elements0.append(address1)
                         address2 = FAILURE
@@ -1787,7 +2053,7 @@ class Grammar(object):
                                 self._failure = self._offset
                                 self._expected = []
                             if self._offset == self._failure:
-                                self._expected.append(('ProvisionRefs::unit_af', '`dele`'))
+                                self._expected.append(('ProvisionRefs::unit_afr', '`dele`'))
                         if address2 is not FAILURE:
                             elements0.append(address2)
                         else:
@@ -1817,7 +2083,7 @@ class Grammar(object):
                                 self._failure = self._offset
                                 self._expected = []
                             if self._offset == self._failure:
-                                self._expected.append(('ProvisionRefs::unit_af', '`deel`'))
+                                self._expected.append(('ProvisionRefs::unit_afr', '`deel`'))
                         if address3 is not FAILURE:
                             elements1.append(address3)
                             address4 = FAILURE
@@ -1833,7 +2099,7 @@ class Grammar(object):
                                     self._failure = self._offset
                                     self._expected = []
                                 if self._offset == self._failure:
-                                    self._expected.append(('ProvisionRefs::unit_af', '`hoofstukke`'))
+                                    self._expected.append(('ProvisionRefs::unit_afr', '`hoofstukke`'))
                             if address4 is not FAILURE:
                                 elements1.append(address4)
                             else:
@@ -1861,7 +2127,7 @@ class Grammar(object):
                                     self._failure = self._offset
                                     self._expected = []
                                 if self._offset == self._failure:
-                                    self._expected.append(('ProvisionRefs::unit_af', '`hoofstuk`'))
+                                    self._expected.append(('ProvisionRefs::unit_afr', '`hoofstuk`'))
                             if address0 is FAILURE:
                                 self._offset = index1
                                 chunk8, max8 = None, self._offset + 9
@@ -1876,7 +2142,7 @@ class Grammar(object):
                                         self._failure = self._offset
                                         self._expected = []
                                     if self._offset == self._failure:
-                                        self._expected.append(('ProvisionRefs::unit_af', '`paragrawe`'))
+                                        self._expected.append(('ProvisionRefs::unit_afr', '`paragrawe`'))
                                 if address0 is FAILURE:
                                     self._offset = index1
                                     chunk9, max9 = None, self._offset + 9
@@ -1891,7 +2157,7 @@ class Grammar(object):
                                             self._failure = self._offset
                                             self._expected = []
                                         if self._offset == self._failure:
-                                            self._expected.append(('ProvisionRefs::unit_af', '`paragraaf`'))
+                                            self._expected.append(('ProvisionRefs::unit_afr', '`paragraaf`'))
                                     if address0 is FAILURE:
                                         self._offset = index1
                                         chunk10, max10 = None, self._offset + 5
@@ -1906,7 +2172,7 @@ class Grammar(object):
                                                 self._failure = self._offset
                                                 self._expected = []
                                             if self._offset == self._failure:
-                                                self._expected.append(('ProvisionRefs::unit_af', '`punte`'))
+                                                self._expected.append(('ProvisionRefs::unit_afr', '`punte`'))
                                         if address0 is FAILURE:
                                             self._offset = index1
                                             chunk11, max11 = None, self._offset + 4
@@ -1921,7 +2187,7 @@ class Grammar(object):
                                                     self._failure = self._offset
                                                     self._expected = []
                                                 if self._offset == self._failure:
-                                                    self._expected.append(('ProvisionRefs::unit_af', '`punt`'))
+                                                    self._expected.append(('ProvisionRefs::unit_afr', '`punt`'))
                                             if address0 is FAILURE:
                                                 self._offset = index1
                                                 chunk12, max12 = None, self._offset + 12
@@ -1936,7 +2202,7 @@ class Grammar(object):
                                                         self._failure = self._offset
                                                         self._expected = []
                                                     if self._offset == self._failure:
-                                                        self._expected.append(('ProvisionRefs::unit_af', '`subafdelings`'))
+                                                        self._expected.append(('ProvisionRefs::unit_afr', '`subafdelings`'))
                                                 if address0 is FAILURE:
                                                     self._offset = index1
                                                     chunk13, max13 = None, self._offset + 11
@@ -1951,7 +2217,7 @@ class Grammar(object):
                                                             self._failure = self._offset
                                                             self._expected = []
                                                         if self._offset == self._failure:
-                                                            self._expected.append(('ProvisionRefs::unit_af', '`subafdeling`'))
+                                                            self._expected.append(('ProvisionRefs::unit_afr', '`subafdeling`'))
                                                     if address0 is FAILURE:
                                                         self._offset = index1
                                                         chunk14, max14 = None, self._offset + 12
@@ -1966,7 +2232,7 @@ class Grammar(object):
                                                                 self._failure = self._offset
                                                                 self._expected = []
                                                             if self._offset == self._failure:
-                                                                self._expected.append(('ProvisionRefs::unit_af', '`subparagrawe`'))
+                                                                self._expected.append(('ProvisionRefs::unit_afr', '`subparagrawe`'))
                                                         if address0 is FAILURE:
                                                             self._offset = index1
                                                             chunk15, max15 = None, self._offset + 12
@@ -1981,31 +2247,15 @@ class Grammar(object):
                                                                     self._failure = self._offset
                                                                     self._expected = []
                                                                 if self._offset == self._failure:
-                                                                    self._expected.append(('ProvisionRefs::unit_af', '`subparagraaf`'))
+                                                                    self._expected.append(('ProvisionRefs::unit_afr', '`subparagraaf`'))
                                                             if address0 is FAILURE:
                                                                 self._offset = index1
-        self._cache['unit_af'][index0] = (address0, self._offset)
+        self._cache['unit_afr'][index0] = (address0, self._offset)
         return address0
 
-    def _read__and(self):
+    def _read_and_eng(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['_and'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        index1 = self._offset
-        address0 = self._read_and_en()
-        if address0 is FAILURE:
-            self._offset = index1
-            address0 = self._read_and_af()
-            if address0 is FAILURE:
-                self._offset = index1
-        self._cache['_and'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_and_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['and_en'].get(index0)
+        cached = self._cache['and_eng'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -2021,13 +2271,13 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::and_en', '`and`'))
-        self._cache['and_en'][index0] = (address0, self._offset)
+                self._expected.append(('ProvisionRefs::and_eng', '`and`'))
+        self._cache['and_eng'][index0] = (address0, self._offset)
         return address0
 
-    def _read_and_af(self):
+    def _read_and_afr(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['and_af'].get(index0)
+        cached = self._cache['and_afr'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -2043,29 +2293,13 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::and_af', '`en`'))
-        self._cache['and_af'][index0] = (address0, self._offset)
+                self._expected.append(('ProvisionRefs::and_afr', '`en`'))
+        self._cache['and_afr'][index0] = (address0, self._offset)
         return address0
 
-    def _read__or(self):
+    def _read_or_eng(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['_or'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        index1 = self._offset
-        address0 = self._read_or_en()
-        if address0 is FAILURE:
-            self._offset = index1
-            address0 = self._read_or_af()
-            if address0 is FAILURE:
-                self._offset = index1
-        self._cache['_or'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_or_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['or_en'].get(index0)
+        cached = self._cache['or_eng'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -2081,181 +2315,286 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::or_en', '`or`'))
-        self._cache['or_en'][index0] = (address0, self._offset)
+                self._expected.append(('ProvisionRefs::or_eng', '`or`'))
+        self._cache['or_eng'][index0] = (address0, self._offset)
         return address0
 
-    def _read_or_af(self):
+    def _read_or_afr(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['or_af'].get(index0)
+        cached = self._cache['or_afr'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
-        address0 = self._read_or_en()
-        self._cache['or_af'][index0] = (address0, self._offset)
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::or_afr', '`of`'))
+        self._cache['or_afr'][index0] = (address0, self._offset)
         return address0
 
-    def _read_to(self):
+    def _read_to_eng(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['to'].get(index0)
+        cached = self._cache['to_eng'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'to'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::to_eng', '`to`'))
+        self._cache['to_eng'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_to_afr(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['to_afr'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 3
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'tot'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
+            self._offset = self._offset + 3
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::to_afr', '`tot`'))
+        self._cache['to_afr'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_eng(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_eng'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 2
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
+            self._offset = self._offset + 2
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_eng', '`of`'))
+        self._cache['of_eng'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_afr(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_afr'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 3
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'van'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
+            self._offset = self._offset + 3
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_afr', '`van`'))
+        self._cache['of_afr'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_this_eng(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_this_eng'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of this'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_this_eng', '`of this`'))
+        self._cache['of_this_eng'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_this_afr(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_this_afr'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 11
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'van hierdie'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+            self._offset = self._offset + 11
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_this_afr', '`van hierdie`'))
+        self._cache['of_this_afr'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_the_act_eng(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_the_act_eng'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
         index1 = self._offset
-        index2, elements0 = self._offset, []
-        address1 = FAILURE
-        index3, elements1, address2 = self._offset, [], None
-        while True:
-            address2 = self._read_WS()
-            if address2 is not FAILURE:
-                elements1.append(address2)
-            else:
-                break
-        if len(elements1) >= 0:
-            address1 = TreeNode(self._input[index3:self._offset], index3, elements1)
-            self._offset = self._offset
+        chunk0, max0 = None, self._offset + 10
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'of the Act'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+            self._offset = self._offset + 10
         else:
-            address1 = FAILURE
-        if address1 is not FAILURE:
-            elements0.append(address1)
-            address3 = FAILURE
-            address3 = self._read_dash()
-            if address3 is not FAILURE:
-                elements0.append(address3)
-                address4 = FAILURE
-                index4, elements2, address5 = self._offset, [], None
-                while True:
-                    address5 = self._read_WS()
-                    if address5 is not FAILURE:
-                        elements2.append(address5)
-                    else:
-                        break
-                if len(elements2) >= 0:
-                    address4 = TreeNode(self._input[index4:self._offset], index4, elements2)
-                    self._offset = self._offset
-                else:
-                    address4 = FAILURE
-                if address4 is not FAILURE:
-                    elements0.append(address4)
-                else:
-                    elements0 = None
-                    self._offset = index2
-            else:
-                elements0 = None
-                self._offset = index2
-        else:
-            elements0 = None
-            self._offset = index2
-        if elements0 is None:
             address0 = FAILURE
-        else:
-            address0 = TreeNode19(self._input[index2:self._offset], index2, elements0)
-            self._offset = self._offset
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_the_act_eng', '`of the Act`'))
         if address0 is FAILURE:
             self._offset = index1
-            index5, elements3 = self._offset, []
-            address6 = FAILURE
-            index6, elements4, address7 = self._offset, [], None
-            while True:
-                address7 = self._read_WS()
-                if address7 is not FAILURE:
-                    elements4.append(address7)
-                else:
-                    break
-            if len(elements4) >= 1:
-                address6 = TreeNode(self._input[index6:self._offset], index6, elements4)
-                self._offset = self._offset
+            chunk1, max1 = None, self._offset + 10
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == 'of the act'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
+                self._offset = self._offset + 10
             else:
-                address6 = FAILURE
-            if address6 is not FAILURE:
-                elements3.append(address6)
-                address8 = FAILURE
-                address8 = self._read_to_af()
-                if address8 is not FAILURE:
-                    elements3.append(address8)
-                    address9 = FAILURE
-                    index7, elements5, address10 = self._offset, [], None
-                    while True:
-                        address10 = self._read_WS()
-                        if address10 is not FAILURE:
-                            elements5.append(address10)
-                        else:
-                            break
-                    if len(elements5) >= 1:
-                        address9 = TreeNode(self._input[index7:self._offset], index7, elements5)
-                        self._offset = self._offset
-                    else:
-                        address9 = FAILURE
-                    if address9 is not FAILURE:
-                        elements3.append(address9)
-                    else:
-                        elements3 = None
-                        self._offset = index5
-                else:
-                    elements3 = None
-                    self._offset = index5
-            else:
-                elements3 = None
-                self._offset = index5
-            if elements3 is None:
                 address0 = FAILURE
-            else:
-                address0 = TreeNode20(self._input[index5:self._offset], index5, elements3)
-                self._offset = self._offset
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('ProvisionRefs::of_the_act_eng', '`of the act`'))
             if address0 is FAILURE:
                 self._offset = index1
-                index8, elements6 = self._offset, []
-                address11 = FAILURE
-                index9, elements7, address12 = self._offset, [], None
-                while True:
-                    address12 = self._read_WS()
-                    if address12 is not FAILURE:
-                        elements7.append(address12)
-                    else:
-                        break
-                if len(elements7) >= 1:
-                    address11 = TreeNode(self._input[index9:self._offset], index9, elements7)
-                    self._offset = self._offset
-                else:
-                    address11 = FAILURE
-                if address11 is not FAILURE:
-                    elements6.append(address11)
-                    address13 = FAILURE
-                    address13 = self._read_to_en()
-                    if address13 is not FAILURE:
-                        elements6.append(address13)
-                        address14 = FAILURE
-                        index10, elements8, address15 = self._offset, [], None
-                        while True:
-                            address15 = self._read_WS()
-                            if address15 is not FAILURE:
-                                elements8.append(address15)
-                            else:
-                                break
-                        if len(elements8) >= 1:
-                            address14 = TreeNode(self._input[index10:self._offset], index10, elements8)
-                            self._offset = self._offset
-                        else:
-                            address14 = FAILURE
-                        if address14 is not FAILURE:
-                            elements6.append(address14)
-                        else:
-                            elements6 = None
-                            self._offset = index8
-                    else:
-                        elements6 = None
-                        self._offset = index8
-                else:
-                    elements6 = None
-                    self._offset = index8
-                if elements6 is None:
-                    address0 = FAILURE
-                else:
-                    address0 = TreeNode21(self._input[index8:self._offset], index8, elements6)
-                    self._offset = self._offset
-                if address0 is FAILURE:
-                    self._offset = index1
-        self._cache['to'][index0] = (address0, self._offset)
+        self._cache['of_the_act_eng'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_of_the_act_afr(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['of_the_act_afr'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1 = self._offset
+        chunk0, max0 = None, self._offset + 11
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'van die Wet'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+            self._offset = self._offset + 11
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::of_the_act_afr', '`van die Wet`'))
+        if address0 is FAILURE:
+            self._offset = index1
+            chunk1, max1 = None, self._offset + 11
+            if max1 <= self._input_size:
+                chunk1 = self._input[self._offset:max1]
+            if chunk1 is not None and chunk1.lower() == 'van die wet'.lower():
+                address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
+                self._offset = self._offset + 11
+            else:
+                address0 = FAILURE
+                if self._offset > self._failure:
+                    self._failure = self._offset
+                    self._expected = []
+                if self._offset == self._failure:
+                    self._expected.append(('ProvisionRefs::of_the_act_afr', '`van die wet`'))
+            if address0 is FAILURE:
+                self._offset = index1
+        self._cache['of_the_act_afr'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_thereof_eng(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['thereof_eng'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'thereof'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::thereof_eng', '`thereof`'))
+        self._cache['thereof_eng'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_thereof_afr(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['thereof_afr'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        chunk0, max0 = None, self._offset + 7
+        if max0 <= self._input_size:
+            chunk0 = self._input[self._offset:max0]
+        if chunk0 is not None and chunk0.lower() == 'daarvan'.lower():
+            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
+            self._offset = self._offset + 7
+        else:
+            address0 = FAILURE
+            if self._offset > self._failure:
+                self._failure = self._offset
+                self._expected = []
+            if self._offset == self._failure:
+                self._expected.append(('ProvisionRefs::thereof_afr', '`daarvan`'))
+        self._cache['thereof_afr'][index0] = (address0, self._offset)
         return address0
 
     def _read_dash(self):
@@ -2311,222 +2650,6 @@ class Grammar(object):
                 if address0 is FAILURE:
                     self._offset = index1
         self._cache['dash'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_to_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['to_en'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 2
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'to'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
-            self._offset = self._offset + 2
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::to_en', '`to`'))
-        self._cache['to_en'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_to_af(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['to_af'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 3
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'tot'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
-            self._offset = self._offset + 3
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::to_af', '`tot`'))
-        self._cache['to_af'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_of_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['of_en'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 2
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'of'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 2], self._offset, [])
-            self._offset = self._offset + 2
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::of_en', '`of`'))
-        self._cache['of_en'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_of_af(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['of_af'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 3
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'van'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 3], self._offset, [])
-            self._offset = self._offset + 3
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::of_af', '`van`'))
-        self._cache['of_af'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_of_this_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['of_this_en'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 7
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'of this'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-            self._offset = self._offset + 7
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::of_this_en', '`of this`'))
-        self._cache['of_this_en'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_of_this_af(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['of_this_af'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 11
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'van hierdie'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 11], self._offset, [])
-            self._offset = self._offset + 11
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::of_this_af', '`van hierdie`'))
-        self._cache['of_this_af'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_of_the_act_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['of_the_act_en'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        index1 = self._offset
-        chunk0, max0 = None, self._offset + 10
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'of the Act'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
-            self._offset = self._offset + 10
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::of_the_act_en', '`of the Act`'))
-        if address0 is FAILURE:
-            self._offset = index1
-            chunk1, max1 = None, self._offset + 10
-            if max1 <= self._input_size:
-                chunk1 = self._input[self._offset:max1]
-            if chunk1 is not None and chunk1.lower() == 'of the act'.lower():
-                address0 = TreeNode(self._input[self._offset:self._offset + 10], self._offset, [])
-                self._offset = self._offset + 10
-            else:
-                address0 = FAILURE
-                if self._offset > self._failure:
-                    self._failure = self._offset
-                    self._expected = []
-                if self._offset == self._failure:
-                    self._expected.append(('ProvisionRefs::of_the_act_en', '`of the act`'))
-            if address0 is FAILURE:
-                self._offset = index1
-        self._cache['of_the_act_en'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_thereof_en(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['thereof_en'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 7
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'thereof'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-            self._offset = self._offset + 7
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::thereof_en', '`thereof`'))
-        self._cache['thereof_en'][index0] = (address0, self._offset)
-        return address0
-
-    def _read_thereof_af(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['thereof_af'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        chunk0, max0 = None, self._offset + 7
-        if max0 <= self._input_size:
-            chunk0 = self._input[self._offset:max0]
-        if chunk0 is not None and chunk0.lower() == 'daarvan'.lower():
-            address0 = TreeNode(self._input[self._offset:self._offset + 7], self._offset, [])
-            self._offset = self._offset + 7
-        else:
-            address0 = FAILURE
-            if self._offset > self._failure:
-                self._failure = self._offset
-                self._expected = []
-            if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::thereof_af', '`daarvan`'))
-        self._cache['thereof_af'][index0] = (address0, self._offset)
         return address0
 
     def _read_comma(self):

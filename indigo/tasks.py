@@ -1,3 +1,4 @@
+from django.core.files import File
 from itertools import chain
 
 from indigo_api.models import Task, TaskFile
@@ -83,15 +84,21 @@ class TaskBroker:
             publication_document = task.work.publication_document
             if publication_document.trusted_url:
                 input_file.url = publication_document.trusted_url
+                self.save_input_file_using_publication_document_info(input_file, task, publication_document)
             elif publication_document.file:
-                input_file.file = publication_document.file
-            input_file.filename = publication_document.filename
-            input_file.mime_type = publication_document.mime_type
-            input_file.size = publication_document.size
-            input_file.task_as_input = task
-            input_file.save()
+                # make a copy of the publication document's file, since the task form can be edited and the file deleted
+                with open(publication_document.file.path, 'rb') as f:
+                    input_file.file = File(f, name=publication_document.filename)
+                    self.save_input_file_using_publication_document_info(input_file, task, publication_document)
             task.input_file = input_file
             task.save()
+
+    def save_input_file_using_publication_document_info(self, input_file, task, publication_document):
+        input_file.filename = publication_document.filename
+        input_file.mime_type = publication_document.mime_type
+        input_file.size = publication_document.size
+        input_file.task_as_input = task
+        input_file.save()
 
     def get_or_create_task(self, work, task_type, description, user, timeline_date=None):
         task = Task.objects.filter(work=work, code=task_type, timeline_date=timeline_date, state__in=Task.OPEN_STATES).first()

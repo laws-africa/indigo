@@ -115,26 +115,47 @@ grammar ProvisionRefs
                  `subafdelings` / `subafdeling` /
                  `subparagrawe` / `subparagraaf`
 
+                 # french
+  unit_fra     <- `articles` / `article` /
+                  `chapitres` / `chapitre` /
+                  `paragraphes` / `paragraphe` /
+                  `parties` / `partie` /
+                  `points` / `point` /
+                  `règlements` / `règlement` /
+                  `reglements` / `reglement` /
+                  `sections` / `section` /
+                  `sous-paragraphes` / `sous-paragraphe` /
+                  `sous-règlements` / `sous-règlement` /
+                  `sous-reglements` / `sous-reglement` /
+                  `sous-sections` / `sous-section`
+
   and_eng      <- `and`
   and_afr      <- `en`
+  and_fra      <- `et`
 
   or_eng       <- `or`
   or_afr       <- `of`
+  or_fra       <- `ou`
 
   to_eng       <- `to`
   to_afr       <- `tot`
+  to_fra       <- `à` / `a`
 
   of_eng       <- `of`
   of_afr       <- `van`
+  of_fra       <- `de`
 
   of_this_eng  <- `of this`
   of_this_afr  <- `van hierdie`
+  of_this_fra  <- `de cette` / `de ce`
 
   of_the_act_eng <- `of the Act` / `of the act`
   of_the_act_afr <- `van die Wet` / `van die wet`
+  of_the_act_fra <- `de la loi` / `de la Loi`
 
   thereof_eng  <- `thereof`
   thereof_afr  <- `daarvan`
+  thereof_fra  <- `de cela`
 
   # --------
   # terminals

@@ -79,7 +79,7 @@ def parse_provision_refs(text, lang_code='eng'):
         """
 
         # supported languages
-        lang_codes = ['eng', 'afr']
+        lang_codes = ['eng', 'afr', 'fra']
 
         def __init__(self, lang_code, *args, **kwargs):
             if lang_code not in self.lang_codes:

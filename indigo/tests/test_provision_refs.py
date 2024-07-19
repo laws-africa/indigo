@@ -517,7 +517,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    def test_local_sections_af(self):
+    def test_local_sections_afr(self):
         self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/afr@2009-01-01")
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
@@ -1689,6 +1689,53 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result.references)
         self.assertIsNone(result.target)
 
+    def test_simple_fra(self):
+        result = parse_provision_refs("chapitre 1", "fra")
+        self.assertEqual([
+            MainProvisionRef('chapitre', ProvisionRef('1', 9, 10))
+        ], result.references)
+
+        result = parse_provision_refs("chapitre 1 et sous-section 2(a)", "fra")
+        self.assertEqual([
+            MainProvisionRef('chapitre', ProvisionRef('1', 9, 10)),
+            MainProvisionRef('sous-section', ProvisionRef('2', 27, 28, None,
+                                                          ProvisionRef('(a)', 28, 31)))
+        ], result.references)
+
+        result = parse_provision_refs("chapitre 32 de Loi 3 de 1999", "fra")
+        self.assertEqual([
+            MainProvisionRef('chapitre', ProvisionRef('32', 9, 11)),
+        ], result.references)
+
+    def test_mixed_fra(self):
+        result = parse_provision_refs("Chapitres 1.2(1)(a),(c) à (e), (f)(ii) et (2), et (3)(g),(h) et chapitre 32(a)", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "Chapitres",
+                ProvisionRef("1.2", 10, 13, None,
+                             ProvisionRef("(1)", 13, 16, None,
+                                          ProvisionRef("(a)", 16, 19)
+                                          ),
+                             ), [
+                    ProvisionRef("(c)", 20, 23, "and_or"),
+                    ProvisionRef("(e)", 26, 29, "range"),
+                    ProvisionRef("(f)", 31, 34, "and_or",
+                                 ProvisionRef("(ii)", 34, 38)),
+                    ProvisionRef("(2)", 42, 45, "and_or"),
+                    ProvisionRef("(3)", 50, 53, "and_or",
+                                 ProvisionRef("(g)", 53, 56)),
+                    ProvisionRef("(h)", 57, 60, "and_or"),
+                ]
+            ),
+            MainProvisionRef(
+                "chapitre",
+                ProvisionRef("32", 73, 75, None,
+                             ProvisionRef("(a)", 75, 78),
+                             ),
+            )
+        ], result.references)
+        self.assertIsNone(result.target)
+
     def test_multiple_mains(self):
         result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a)")
         self.assertEqual([
@@ -1790,3 +1837,20 @@ class ProvisionRefsGrammarTest(TestCase):
         result = parse_provision_refs("Afdeling 2 van die Wet met kak", "afr")
         self.assertEqual("the_act", result.target)
         self.assertEqual(result.end, 22)
+
+    def test_target_fra(self):
+        result = parse_provision_refs("Section 2 de cette loi", "fra")
+        self.assertEqual("this", result.target)
+        self.assertEqual(result.end, 19)
+
+        result = parse_provision_refs("Section 2 de ce reglement", "fra")
+        self.assertEqual("this", result.target)
+        self.assertEqual(result.end, 16)
+
+        result = parse_provision_refs("Section 2 de cela", "fra")
+        self.assertEqual("thereof", result.target)
+        self.assertEqual(result.end, 17)
+
+        result = parse_provision_refs("Section 2 de la loi mais", "fra")
+        self.assertEqual("the_act", result.target)
+        self.assertEqual(result.end, 19)

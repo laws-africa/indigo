@@ -13,7 +13,7 @@ grammar ProvisionRefs
                  # section 32.1a.2
   references  <- unit WS+ main_ref (to_and_or main_ref)* %references
 
-  unit        <- unit_en / unit_af
+  unit        <- unit_eng / unit_afr
 
   main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 
@@ -53,16 +53,16 @@ grammar ProvisionRefs
   target      <- of_this / of_the_act / thereof / of
 
                  # of this...
-  of_this     <- comma? WS* (of_this_en / of_this_af) WS+ %of_this
+  of_this     <- comma? WS* (of_this_eng / of_this_afr) WS+ %of_this
 
                  # of the Act
-  of_the_act  <- comma? WS* (of_the_act_en) %of_the_act
+  of_the_act  <- comma? WS* (of_the_act_eng) %of_the_act
 
                  # of...
-  of          <- comma? WS* (of_en / of_af) WS+ %of
+  of          <- comma? WS* (of_eng / of_afr) WS+ %of
 
                  # thereof
-  thereof     <- comma? WS* (thereof_en / thereof_af) %thereof
+  thereof     <- comma? WS* (thereof_eng / thereof_afr) %thereof
 
                  # this is simply all text after the reference, which could be none. This is required because
                  # the grammar expects to match the entire input, but we don't care about anything beyond the end
@@ -75,7 +75,7 @@ grammar ProvisionRefs
   # --------
 
                  # english
-  unit_en     <- `articles` / `article` /
+  unit_eng     <- `articles` / `article` /
                  `chapters` / `chapter` /
                  `items` / `item` /
                  `paragraphs` / `paragraph` /
@@ -91,7 +91,7 @@ grammar ProvisionRefs
                  `sub-sections` / `sub-section`
 
                  # afrikaans
-  unit_af     <- `afdelings` / `afdeling` /
+  unit_afr     <- `afdelings` / `afdeling` /
                  `artikels` / `artikel`
                  `dele` / `deel`
                  `hoofstukke` / `hoofstuk` /
@@ -100,32 +100,32 @@ grammar ProvisionRefs
                  `subafdelings` / `subafdeling` /
                  `subparagrawe` / `subparagraaf`
 
-  _and        <- and_en / and_af
-  and_en      <- `and`
-  and_af      <- `en`
+  _and        <- and_eng / and_afr
+  and_eng      <- `and`
+  and_afr      <- `en`
 
-  _or         <- or_en / or_af
-  or_en       <- `or`
+  _or         <- or_eng / or_afr
+  or_eng       <- `or`
   # HACK: Afrikaans 'of' for 'or' not supported because it clashes with English 'of'
-  or_af       <- or_en # `of`
+  or_afr       <- or_eng # `of`
 
                  # note that "tot" must come before "to" because the latter is a substring of the former
                  # whitespace is required around 'to' word, optional around dashes
-  to          <- WS* dash WS* / WS+ to_af WS+ / WS+ to_en WS+
+  to          <- WS* dash WS* / WS+ to_afr WS+ / WS+ to_eng WS+
   dash        <- `-` / `–` / `—`
-  to_en       <- `to`
-  to_af       <- `tot`
+  to_eng       <- `to`
+  to_afr       <- `tot`
 
-  of_en       <- `of`
-  of_af       <- `van`
+  of_eng       <- `of`
+  of_afr       <- `van`
 
-  of_this_en  <- `of this`
-  of_this_af  <- `van hierdie`
+  of_this_eng  <- `of this`
+  of_this_afr  <- `van hierdie`
 
-  of_the_act_en <- `of the Act` / `of the act`
+  of_the_act_eng <- `of the Act` / `of the act`
 
-  thereof_en  <- `thereof`
-  thereof_af  <- `daarvan`
+  thereof_eng  <- `thereof`
+  thereof_afr  <- `daarvan`
 
   comma       <- [,;]
   digit       <- [0-9]

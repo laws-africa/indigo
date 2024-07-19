@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from lxml import etree
-import lxml.html
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 from docpipe.matchers import ExtractedCitation
@@ -18,6 +17,13 @@ unittest.util._MAX_LENGTH = 999999999
 
 class ProvisionRefsResolverTestCase(TestCase):
     maxDiff = None
+
+    def resolve_references_str(self, text: str, root, lang_code='eng'):
+        """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
+        refs = parse_provision_refs(text, lang_code).references
+        for ref in refs:
+            self.resolver.resolve_references(ref, root)
+        return refs
 
     def setUp(self):
         self.resolver = ProvisionRefsResolver()
@@ -61,7 +67,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef("1", 8, 9,
                              element=self.doc.xpath('.//*[@eId="sec_1"]')[0],
                              eId="sec_1"))
-        ], self.resolver.resolve_references_str("Section 1", self.doc))
+        ], self.resolve_references_str("Section 1", self.doc))
 
     def test_initial_no_match(self):
         self.assertEqual([
@@ -69,7 +75,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                 "Section",
                 ProvisionRef("3", 8, 9, None, ProvisionRef("(1)", 9, 12))
             )
-        ], self.resolver.resolve_references_str("Section 3(1)", self.doc))
+        ], self.resolve_references_str("Section 3(1)", self.doc))
 
     def test_nested(self):
         self.assertEqual([
@@ -86,7 +92,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_1",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 1(1)", self.doc))
+        ], self.resolve_references_str("Section 1(1)", self.doc))
 
         self.assertEqual([
             MainProvisionRef(
@@ -107,7 +113,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(1)(a)", self.doc))
+        ], self.resolve_references_str("Section 2(1)(a)", self.doc))
 
     def test_nested_truncated(self):
         self.assertEqual([
@@ -125,7 +131,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(1)(d)", self.doc))
+        ], self.resolve_references_str("Section 2(1)(d)", self.doc))
 
     def test_local(self):
         root = self.doc.xpath('.//*[@eId="sec_2"]')[0]
@@ -146,7 +152,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2__subsec_1",
                 ),
             ),
-        ], self.resolver.resolve_references_str("paragraph (a), subsection (1)", root))
+        ], self.resolve_references_str("paragraph (a), subsection (1)", root))
 
     def test_not_outside_of(self):
         self.doc = AkomaNtosoDocument(document_fixture(xml="""
@@ -178,7 +184,7 @@ class ProvisionRefsResolverTestCase(TestCase):
             MainProvisionRef(
                 "Paragraph",
                 ProvisionRef("2", 10, 11, None))
-        ], self.resolver.resolve_references_str("Paragraph 2", root))
+        ], self.resolve_references_str("Paragraph 2", root))
 
 
 class ProvisionRefsMatcherTestCase(TestCase):

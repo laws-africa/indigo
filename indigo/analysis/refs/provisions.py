@@ -247,13 +247,6 @@ class ProvisionRefsResolver:
     ]
     minor_hier_elements = list(set(AkomaNtoso30.hier_elements) - set(major_hier_elements))
 
-    def resolve_references_str(self, text: str, root: Element):
-        """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
-        refs = parse_provision_refs(text).references
-        for ref in refs:
-            self.resolve_references(ref, root)
-        return refs
-
     def resolve_references(self, main_ref: MainProvisionRef, local_root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
         # when resolving a reference like "Section 32(1)(a) and (b)", everything is relative to the first reference,
@@ -403,7 +396,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         return parses
 
     def parse_refs(self, text: str) -> ParseResult:
-        return parse_provision_refs(text, self.frbr_uri.language or 'eng')
+        return parse_provision_refs(text, self.frbr_uri.language)
 
     def handle_node_match(self, node, match, in_tail):
         """Process a potential citation match in the text (or tail) of a node.

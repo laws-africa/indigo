@@ -12,6 +12,10 @@ import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
+import tippy, { delegate } from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+
+window.tippy = tippy;
 
 class IndigoApp {
   setup () {
@@ -20,6 +24,7 @@ class IndigoApp {
     this.Vue = getVue();
     this.setupI18n();
     this.setupHtmx();
+    this.setupPopups();
 
     for (const [name, component] of Object.entries(components)) {
       this.componentLibrary[name] = component;
@@ -154,6 +159,35 @@ class IndigoApp {
           setTimeout(() => {
             el.disabled = true;
           }, 10);
+        }
+      }
+    });
+  }
+
+  /** Show popover when hovering on selected links. Links must have a 'data-popup-url' attribute. */
+  setupPopups () {
+    delegate('body', {
+      target: 'a[data-popup-url]',
+      content: '...',
+      allowHTML: true,
+      interactive: true,
+      theme: 'light',
+      placement: 'bottom-start',
+      appendTo: document.body,
+      onTrigger: async (instance, event) => {
+        const url = event.currentTarget.getAttribute('data-popup-url');
+        if (url) {
+          try {
+            const resp = await fetch(url);
+            if (resp.ok) {
+              instance.setContent(await resp.text());
+            } else {
+              instance.setContent(':(');
+            }
+          } catch (e) {
+            // ignore errors
+            console.log(e);
+          }
         }
       }
     });

@@ -726,6 +726,8 @@
       if (!href || !href.startsWith('#')) return;
       const eId = href.substring(1);
 
+      if (element._tippy) return;
+
       const target = this.documentContent.xpath(
         `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
 
@@ -734,21 +736,13 @@
         const html = document.createElement('la-akoma-ntoso');
         html.appendChild(this.sourceEditor.htmlRenderer.renderXmlElement(this.model, target));
 
-        $(element).popover({
+        tippy(element, {
           content: html.outerHTML,
-          html: true,
-          sanitize: false,
-          placement: 'top',
-          delay: { "show": 0, "hide": 300 },
-        }).popover('show');
-
-        // hack to hide popover when the user moves off of the link
-        element.addEventListener('mouseleave', () => {
-          setTimeout(() => {
-            if (!document.querySelector('.popover:hover')) {
-              $(element).popover('hide');
-            }
-          }, 300);
+          allowHTML: true,
+          interactive: true,
+          theme: 'light',
+          placement: 'bottom-start',
+          appendTo: document.getElementById("document-sheet"),
         });
       }
     }

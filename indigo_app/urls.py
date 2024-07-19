@@ -5,6 +5,9 @@ from django.views.decorators.cache import cache_page
 from .views import users, works, documents, tasks, places
 
 
+POPUP_CACHE_SECS = 60 * 30
+
+
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 
@@ -111,7 +114,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/arbitrary_expression_dates/(?P<arbitrary_expression_date_id>\d+)/edit$', works.EditArbitraryExpressionDateView.as_view(), name='edit_arbitrary_expression_date'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)$', works.WorkAmendmentDetailView.as_view(), name='work_amendment_detail'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/points-in-time/new$', works.AddWorkPointInTimeView.as_view(), name='new_work_point_in_time'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/popup$', works.WorkPopupView.as_view(), name='work_popup'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/popup$', cache_page(POPUP_CACHE_SECS)(works.WorkPopupView.as_view()), name='work_popup'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),
@@ -127,7 +130,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/comments$', works.WorkCommentsView.as_view(), name='work_comments'),
 
     path('documents/<int:doc_id>/', documents.DocumentDetailView.as_view(), name='document'),
-    path('documents/<int:doc_id>/popup', documents.DocumentPopupView.as_view(), name='document_popup'),
+    path('documents/<int:doc_id>/popup', cache_page(POPUP_CACHE_SECS)(documents.DocumentPopupView.as_view()), name='document_popup'),
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),
     path('tasks/all/', tasks.AllTasksView.as_view(), name='all_tasks'),

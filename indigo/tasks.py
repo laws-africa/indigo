@@ -87,9 +87,8 @@ class TaskBroker:
                 self.save_input_file_using_publication_document_info(input_file, task, publication_document)
             elif publication_document.file:
                 # make a copy of the publication document's file, since the task form can be edited and the file deleted
-                with open(publication_document.file.path, 'rb') as f:
-                    input_file.file = File(f, name=publication_document.filename)
-                    self.save_input_file_using_publication_document_info(input_file, task, publication_document)
+                input_file.file = File(publication_document.file, name=publication_document.filename)
+                self.save_input_file_using_publication_document_info(input_file, task, publication_document)
             task.input_file = input_file
             task.save()
 

@@ -68,7 +68,7 @@ class ParseResult:
     end: int
 
 
-def parse_provision_refs(text):
+def parse_provision_refs(text, lang_code='eng'):
     class CustomParser(Parser):
         """This is a custom parser that overrides the method that reads the tail of the text.
         The parent parser's implementation reads character by character and creates a new TreeNode for each character.
@@ -77,6 +77,29 @@ def parse_provision_refs(text):
 
         On a test input, this reduced parse time from 1.5sec to 0.003 sec!
         """
+
+        # supported languages
+        lang_codes = ['eng', 'afr', 'fra']
+
+        def __init__(self, lang_code, *args, **kwargs):
+            if lang_code not in self.lang_codes:
+                log.warning(f"Unsupported language code: {lang_code}, using 'eng' instead")
+                lang_code = 'eng'
+            self.lang_code = lang_code
+            super().__init__(*args, **kwargs)
+            self.patch_i18n()
+
+        def patch_i18n(self):
+            # find all _read_foo__i18n methods and patch them to call _read_foo__<lang_code> instead
+            for name in dir(self):
+                if name.startswith('_read_') and name.endswith('__i18n'):
+                    lang_name = name[:-5] + self.lang_code
+                    if hasattr(self, lang_name):
+                        log.debug(f"Patching {name} to {lang_name}")
+                        setattr(self, name, getattr(self, lang_name))
+                    else:
+                        raise ValueError(f"Missing translated rule {lang_name} for {name}")
+
         def _read_tail(self):
             node = TreeNode(self._input[self._offset:self._input_size], self._offset, [])
             self._offset = self._input_size
@@ -152,7 +175,7 @@ def parse_provision_refs(text):
         def thereof(self, input, start, end, elements):
             return "thereof"
 
-    parser = CustomParser(text, Actions(), None)
+    parser = CustomParser(lang_code, text, Actions(), None)
     return parser.parse()
 
 
@@ -223,13 +246,6 @@ class ProvisionRefsResolver:
         "tome",
     ]
     minor_hier_elements = list(set(AkomaNtoso30.hier_elements) - set(major_hier_elements))
-
-    def resolve_references_str(self, text: str, root: Element):
-        """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
-        refs = parse_provision_refs(text).references
-        for ref in refs:
-            self.resolve_references(ref, root)
-        return refs
 
     def resolve_references(self, main_ref: MainProvisionRef, local_root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
@@ -380,7 +396,7 @@ class ProvisionRefsMatcher(CitationMatcher):
         return parses
 
     def parse_refs(self, text: str) -> ParseResult:
-        return parse_provision_refs(text)
+        return parse_provision_refs(text, self.frbr_uri.language)
 
     def handle_node_match(self, node, match, in_tail):
         """Process a potential citation match in the text (or tail) of a node.

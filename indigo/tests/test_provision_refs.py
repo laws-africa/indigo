@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from lxml import etree
-import lxml.html
 
 from cobalt import AkomaNtosoDocument, FrbrUri
 from docpipe.matchers import ExtractedCitation
@@ -18,6 +17,13 @@ unittest.util._MAX_LENGTH = 999999999
 
 class ProvisionRefsResolverTestCase(TestCase):
     maxDiff = None
+
+    def resolve_references_str(self, text: str, root, lang_code='eng'):
+        """Parse a string into reference objects, and the resolve them to eIds in the given root element."""
+        refs = parse_provision_refs(text, lang_code).references
+        for ref in refs:
+            self.resolver.resolve_references(ref, root)
+        return refs
 
     def setUp(self):
         self.resolver = ProvisionRefsResolver()
@@ -61,7 +67,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef("1", 8, 9,
                              element=self.doc.xpath('.//*[@eId="sec_1"]')[0],
                              eId="sec_1"))
-        ], self.resolver.resolve_references_str("Section 1", self.doc))
+        ], self.resolve_references_str("Section 1", self.doc))
 
     def test_initial_no_match(self):
         self.assertEqual([
@@ -69,7 +75,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                 "Section",
                 ProvisionRef("3", 8, 9, None, ProvisionRef("(1)", 9, 12))
             )
-        ], self.resolver.resolve_references_str("Section 3(1)", self.doc))
+        ], self.resolve_references_str("Section 3(1)", self.doc))
 
     def test_nested(self):
         self.assertEqual([
@@ -86,7 +92,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_1",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 1(1)", self.doc))
+        ], self.resolve_references_str("Section 1(1)", self.doc))
 
         self.assertEqual([
             MainProvisionRef(
@@ -107,7 +113,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(1)(a)", self.doc))
+        ], self.resolve_references_str("Section 2(1)(a)", self.doc))
 
     def test_nested_truncated(self):
         self.assertEqual([
@@ -125,7 +131,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2",
                 )
             )
-        ], self.resolver.resolve_references_str("Section 2(1)(d)", self.doc))
+        ], self.resolve_references_str("Section 2(1)(d)", self.doc))
 
     def test_local(self):
         root = self.doc.xpath('.//*[@eId="sec_2"]')[0]
@@ -146,7 +152,7 @@ class ProvisionRefsResolverTestCase(TestCase):
                     eId="sec_2__subsec_1",
                 ),
             ),
-        ], self.resolver.resolve_references_str("paragraph (a), subsection (1)", root))
+        ], self.resolve_references_str("paragraph (a), subsection (1)", root))
 
     def test_not_outside_of(self):
         self.doc = AkomaNtosoDocument(document_fixture(xml="""
@@ -178,7 +184,7 @@ class ProvisionRefsResolverTestCase(TestCase):
             MainProvisionRef(
                 "Paragraph",
                 ProvisionRef("2", 10, 11, None))
-        ], self.resolver.resolve_references_str("Paragraph 2", root))
+        ], self.resolve_references_str("Paragraph 2", root))
 
 
 class ProvisionRefsMatcherTestCase(TestCase):
@@ -511,7 +517,8 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    def test_local_sections_af(self):
+    def test_local_sections_afr(self):
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/afr@2009-01-01")
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
@@ -604,6 +611,67 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_local_sections_fra(self):
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/fra@2009-01-01")
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <article eId="art_7">
+              <num>7.</num>
+              <heading>Article 7</heading>
+              <content>
+                <p>la période de validité des titres visés à l’article 8 sont</p>
+              </content>
+            </article>
+            <article eId="art_8">
+              <num>8.</num>
+              <heading>Article 8</heading>
+              <subsection eId="art_8__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="art_8__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="art_8__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="art_8__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </article>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <article eId="art_7">
+              <num>7.</num>
+              <heading>Article 7</heading>
+              <content>
+                <p>la période de validité des titres visés à l’article <ref href="#art_8">8</ref> sont</p>
+              </content>
+            </article>
+            <article eId="art_8">
+              <num>8.</num>
+              <heading>Article 8</heading>
+              <subsection eId="art_8__subsec_a">
+                <num>(a)</num>
+                <paragraph eId="art_8__subsec_a__para_1">
+                  <num>(1)</num>
+                </paragraph>
+                <paragraph eId="art_8__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+              <subsection eId="art_8__subsec_b">
+                <num>(b)</num>
+              </subsection>
+            </article>
         """))
 
         actual = etree.fromstring(doc.to_xml())
@@ -863,7 +931,8 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
-    def test_remote_sections_af(self):
+    def test_remote_sections_afr(self):
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2009/1/afr@2009-01-01")
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
               <num>7.</num>
@@ -1444,341 +1513,3 @@ class ProvisionRefsMatcherTestCase(TestCase):
         self.assertEqual([
             ExtractedCitation("Act No. 1 of 2009", 30, 38, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
         ], self.finder.citations)
-
-
-class ProvisionRefsGrammarTest(TestCase):
-    maxDiff = None
-
-    def test_single(self):
-        result = parse_provision_refs("Section 1")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1", 8, 9)
-            )
-        ], result.references)
-        self.assertEqual(result.end, 9)
-
-        result = parse_provision_refs("paragraph (a)")
-        self.assertEqual([
-            MainProvisionRef(
-                "paragraph",
-                ProvisionRef("(a)", 10, 13)
-            )
-        ], result.references)
-
-    def test_single_whitespace(self):
-        result = parse_provision_refs("Section 1\n")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1", 8, 9)
-            )
-        ], result.references)
-        self.assertEqual(result.end, 9)
-
-        result = parse_provision_refs("paragraph (a)\n")
-        self.assertEqual([
-            MainProvisionRef(
-                "paragraph",
-                ProvisionRef("(a)", 10, 13)
-            )
-        ], result.references)
-
-    def test_multiple_main_numbers(self):
-        result = parse_provision_refs("Section 1, 32 and 33")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1", 8, 9)
-            ),
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("32", 11, 13)
-            ),
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("33", 18, 20)
-            )
-        ], result.references)
-        self.assertEqual(result.end, 20)
-
-        result = parse_provision_refs("paragraph (a) and subparagraph (c)")
-        self.assertEqual([
-            MainProvisionRef(
-                "paragraph",
-                ProvisionRef("(a)", 10, 13)
-            ),
-            MainProvisionRef(
-                "subparagraph",
-                ProvisionRef("(c)", 31, 34)
-            )
-        ], result.references)
-
-    def test_multiple_main(self):
-        result = parse_provision_refs("Section 1 and section 2, section 3 and chapter 4")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1", 8, 9)
-            ),
-            MainProvisionRef(
-                "section",
-                ProvisionRef("2", 22, 23)
-            ),
-            MainProvisionRef(
-                "section",
-                ProvisionRef("3", 33, 34)
-            ),
-            MainProvisionRef(
-                "chapter",
-                ProvisionRef("4", 47, 48)
-            )
-        ], result.references)
-
-    def test_mixed(self):
-        result = parse_provision_refs("Section 1.2(1)(a),(c) to (e), (f)(ii) and (2), and (3)(g),(h) and section 32(a)")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1.2", 8, 11, None,
-                    ProvisionRef("(1)", 11, 14, None,
-                        ProvisionRef("(a)", 14, 17)
-                    ),
-                ), [
-                    ProvisionRef("(c)", 18, 21, "and_or"),
-                    ProvisionRef("(e)", 25, 28, "range"),
-                    ProvisionRef("(f)", 30, 33, "and_or",
-                        ProvisionRef("(ii)", 33, 37),
-                    ),
-                    ProvisionRef("(2)", 42, 45, "and_or"),
-                    ProvisionRef("(3)", 51, 54, "and_or",
-                        ProvisionRef("(g)", 54, 57),
-                    ),
-                    ProvisionRef("(h)", 58, 61, "and_or"),
-                ]
-            ),
-            MainProvisionRef(
-                "section",
-                ProvisionRef("32", 74, 76, None,
-                    ProvisionRef("(a)", 76, 79),
-                ),
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_mixed_newlines(self):
-        result = parse_provision_refs("Section 1.2(1)(a),\n(c) to (e), (f)(ii)\nand (2), and (3)\n(g),(h)\nand section 32(a)\n")
-        self.assertEqual([
-            MainProvisionRef(
-                "Section",
-                ProvisionRef("1.2", 8, 11, None,
-                             ProvisionRef("(1)", 11, 14, None,
-                                          ProvisionRef("(a)", 14, 17)
-                                          ),
-                             ), [
-                    ProvisionRef("(c)", 19, 22, "and_or"),
-                    ProvisionRef("(e)", 26, 29, "range"),
-                    ProvisionRef("(f)", 31, 34, "and_or",
-                                 ProvisionRef("(ii)", 34, 38),
-                                 ),
-                    ProvisionRef("(2)", 43, 46, "and_or"),
-                    ProvisionRef("(3)", 52, 55, "and_or",
-                                 ProvisionRef("(g)", 56, 59),
-                                 ),
-                    ProvisionRef("(h)", 60, 63, "and_or"),
-                ]
-            ),
-            MainProvisionRef(
-                "section",
-                ProvisionRef("32", 76, 78, None,
-                             ProvisionRef("(a)", 78, 81),
-                             ),
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_range(self):
-        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g)- (j)")
-        self.assertEqual([
-            MainProvisionRef(
-                'Section',
-                ProvisionRef('1.2', 8, 11, None,
-                             ProvisionRef('(1)', 11, 14)),
-                             [
-                                 ProvisionRef('(3)', 18, 21, 'range'),
-                                 ProvisionRef('(ii)', 23, 27, 'and_or'),
-                                 ProvisionRef('(iii)', 30, 35, 'range'),
-                                 ProvisionRef('(g)', 37, 40, 'and_or'),
-                                 ProvisionRef('(j)', 42, 45, 'range')
-                             ]
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_range_space_before(self):
-        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g) -(j)")
-        self.assertEqual([
-            MainProvisionRef(
-                'Section',
-                ProvisionRef('1.2', 8, 11, None,
-                             ProvisionRef('(1)', 11, 14)),
-                             [
-                                 ProvisionRef('(3)', 18, 21, 'range'),
-                                 ProvisionRef('(ii)', 23, 27, 'and_or'),
-                                 ProvisionRef('(iii)', 30, 35, 'range'),
-                                 ProvisionRef('(g)', 37, 40, 'and_or'),
-                                 ProvisionRef('(j)', 42, 45, 'range')
-                             ]
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_range_no_spaces(self):
-        result = parse_provision_refs("Section 1.2(1) to (3), (ii) — (iii), (g)-(j)")
-        self.assertEqual([
-            MainProvisionRef(
-                'Section',
-                ProvisionRef('1.2', 8, 11, None,
-                             ProvisionRef('(1)', 11, 14)),
-                             [
-                                 ProvisionRef('(3)', 18, 21, 'range'),
-                                 ProvisionRef('(ii)', 23, 27, 'and_or'),
-                                 ProvisionRef('(iii)', 30, 35, 'range'),
-                                 ProvisionRef('(g)', 37, 40, 'and_or'),
-                                 ProvisionRef('(j)', 41, 44, 'range')
-                             ]
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_mixed_af(self):
-        result = parse_provision_refs("Afdeling 1.2(1)(a),(c) tot (e), (f)(ii) en (2), en (3)(g),(h) en afdelings 32(a)")
-        self.assertEqual([
-            MainProvisionRef(
-                "Afdeling",
-                ProvisionRef("1.2", 9, 12, None,
-                    ProvisionRef("(1)", 12, 15, None,
-                        ProvisionRef("(a)", 15, 18)
-                    ),
-                ), [
-                    ProvisionRef("(c)", 19, 22, "and_or"),
-                    ProvisionRef("(e)", 27, 30, "range"),
-                    ProvisionRef("(f)", 32, 35, "and_or",
-                        ProvisionRef("(ii)", 35, 39)),
-                    ProvisionRef("(2)", 43, 46, "and_or"),
-                    ProvisionRef("(3)", 51, 54, "and_or",
-                        ProvisionRef("(g)", 54, 57)),
-                    ProvisionRef("(h)", 58, 61, "and_or"),
-                ]
-            ),
-            MainProvisionRef(
-                "afdelings",
-                ProvisionRef("32", 75, 77, None,
-                    ProvisionRef("(a)", 77, 80),
-                ),
-            )
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_multiple_mains(self):
-        result = parse_provision_refs("Section 2(1), section 3(b) and section 32(a)")
-        self.assertEqual([
-            MainProvisionRef('Section', ProvisionRef('2', 8, 9, None, ProvisionRef('(1)', 9, 12))),
-            MainProvisionRef('section', ProvisionRef('3', 22, 23, None, ProvisionRef('(b)', 23, 26))),
-            MainProvisionRef('section', ProvisionRef('32', 39, 41, None, ProvisionRef('(a)', 41, 44)))
-        ], result.references)
-        self.assertIsNone(result.target)
-
-        result = parse_provision_refs("Sections 26 and 31")
-        self.assertEqual([
-            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
-            MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
-        ], result.references)
-        self.assertIsNone(result.target)
-
-        result = parse_provision_refs("Sections 26 and 31.")
-        self.assertEqual([
-            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
-            MainProvisionRef('Sections', ProvisionRef('31', 16, 18)),
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_multiple_mains_range(self):
-        result = parse_provision_refs("Sections 26 to 31")
-        self.assertEqual([
-            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
-            MainProvisionRef('Sections', ProvisionRef('31', 15, 17)),
-        ], result.references)
-        self.assertIsNone(result.target)
-
-        result = parse_provision_refs("Sections 26, 27 and 28 to 31")
-        self.assertEqual([
-            MainProvisionRef('Sections', ProvisionRef('26', 9, 11)),
-            MainProvisionRef('Sections', ProvisionRef('27', 13, 15)),
-            MainProvisionRef('Sections', ProvisionRef('28', 20, 22)),
-            MainProvisionRef('Sections', ProvisionRef('31', 26, 28)),
-        ], result.references)
-        self.assertIsNone(result.target)
-
-    def test_multiple_mains_target(self):
-        result = parse_provision_refs("Sections 2(1), section 3(b) and section 32(a) of another Act")
-        self.assertEqual([
-            MainProvisionRef('Sections', ProvisionRef('2', 9, 10, None, ProvisionRef('(1)', 10, 13))),
-            MainProvisionRef('section', ProvisionRef('3', 23, 24, None, ProvisionRef('(b)', 24, 27))),
-            MainProvisionRef('section', ProvisionRef('32', 40, 42, None, ProvisionRef('(a)', 42, 45)))
-        ], result.references)
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 49)
-
-    def test_target(self):
-        result = parse_provision_refs("Section 2 of this Act")
-        self.assertEqual("this", result.target)
-        self.assertEqual(result.end, 18)
-
-        result = parse_provision_refs("Section 2, of this Act")
-        self.assertEqual("this", result.target)
-        self.assertEqual(result.end, 19)
-
-        result = parse_provision_refs("Section 2 thereof")
-        self.assertEqual("thereof", result.target)
-        self.assertEqual(result.end, 17)
-
-        result = parse_provision_refs("Section 2, thereof and some")
-        self.assertEqual("thereof", result.target)
-        self.assertEqual(result.end, 18)
-
-        result = parse_provision_refs("Section 2 of the Act")
-        self.assertEqual("the_act", result.target)
-        self.assertEqual(result.end, 20)
-
-        result = parse_provision_refs("Section 2, of the Act with junk")
-        self.assertEqual("the_act", result.target)
-        self.assertEqual(result.end, 21)
-
-        result = parse_provision_refs("Section 2,\nof the Act with junk")
-        self.assertEqual("the_act", result.target)
-        self.assertEqual(result.end, 21)
-
-        result = parse_provision_refs("Section 2\nof the Act with junk")
-        self.assertEqual("the_act", result.target)
-        self.assertEqual(result.end, 20)
-
-    def test_target_truncated(self):
-        # the remainder of the text is wrapped in another tag
-        result = parse_provision_refs("section 26(a) of ")
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 17)
-
-    def test_target_af(self):
-        result = parse_provision_refs("Afdeling 2 van hierdie Wet")
-        self.assertEqual("this", result.target)
-        self.assertEqual(result.end, 23)
-
-        result = parse_provision_refs("Afdeling 2 daarvan")
-        self.assertEqual("thereof", result.target)
-        self.assertEqual(result.end, 18)
-
-        result = parse_provision_refs("Afdeling 2 van die Wet met kak")
-        self.assertEqual("of", result.target)
-        self.assertEqual(result.end, 15)

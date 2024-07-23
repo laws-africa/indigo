@@ -49,6 +49,7 @@ export default {
         const label = document.createElement('label');
         label.innerHTML = a.innerHTML;
         label.className = 'content__action__title';
+        label.title = a.innerText;
         a.insertAdjacentElement('beforebegin', label);
         a.remove();
 

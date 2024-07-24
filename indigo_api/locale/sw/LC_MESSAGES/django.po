@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-23 21:07+0200\n"
-"PO-Revision-Date: 2024-05-20 08:20\n"
+"PO-Revision-Date: 2024-07-24 07:37\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -30,38 +30,32 @@ msgid "Invalid FRBR URI"
 msgstr "URI ya FRBR si sahihi"
 
 #: models/citations.py:19
-#, fuzzy
-#| msgid "All places"
 msgid "place"
-msgstr "Maeneo yote"
+msgstr "mahali"
 
 #: models/citations.py:19
 msgid "Two letter country code, with optional locality code"
-msgstr ""
+msgstr "Msimbo wa nchi wenye herufi mbili, na msimbo wa eneo wa hiari"
 
 #: models/citations.py:20 models/works.py:425
 msgid "FRBR URI"
 msgstr "FRBR URI"
 
 #: models/citations.py:21
-#, fuzzy
-#| msgid "alias"
 msgid "aliases"
-msgstr "pak"
+msgstr "lakabu"
 
 #: models/citations.py:21
 msgid "Aliases, one per line"
-msgstr ""
+msgstr "Lakabu, moja kwa kila mstari"
 
 #: models/citations.py:26
 msgid "Citation alias"
-msgstr ""
+msgstr "Lakabu ya dondoo"
 
 #: models/citations.py:27
-#, fuzzy
-#| msgid "work aliases"
 msgid "Citation aliases"
-msgstr "majina ya utani wa kazi"
+msgstr "Lakabu za dondoo"
 
 #: models/documents.py:283
 #, python-format
@@ -170,7 +164,7 @@ msgstr "imeundwa saa"
 
 #: models/documents.py:347
 msgid "Timestamp of when the expression was first created."
-msgstr ""
+msgstr "Muhuri wa wakati wa wakati usemi uliundwa kwa mara ya kwanza."
 
 #: models/documents.py:348 models/documents.py:638 models/documents.py:690
 #: models/documents.py:752 models/tasks.py:165 models/tasks.py:605
@@ -181,7 +175,7 @@ msgstr "imesasishwa saa"
 
 #: models/documents.py:349
 msgid "Timestamp of when the expression was last updated."
-msgstr ""
+msgstr "Muhuri wa wakati wa wakati usemi ulisasishwa mara ya mwisho."
 
 #: models/documents.py:351 models/documents.py:684 models/works.py:490
 #: models/works.py:768 models/works.py:827 models/works.py:897
@@ -657,18 +651,16 @@ msgid "Work for FRBR URI '%(uri)s' doesn't exist"
 msgstr "Fanya kazi FRBR URI '%(uri)s' haipo"
 
 #: models/works.py:47
-#, fuzzy
-#| msgid "taxonomy topic"
 msgid "Name of the taxonomy topic"
-msgstr "mada ya ushuru"
+msgstr "Jina la mada ya taxonomy"
 
 #: models/works.py:49
 msgid "Unique short name (code) for the topic."
-msgstr ""
+msgstr "Jina fupi la kipekee (msimbo) wa mada."
 
 #: models/works.py:51
 msgid "Description of the topic"
-msgstr ""
+msgstr "Maelezo ya mada"
 
 #: models/works.py:52
 msgid "public"
@@ -1002,7 +994,7 @@ msgstr "marekebisho"
 
 #: models/works.py:860
 msgid "Document date changed with amendment date."
-msgstr ""
+msgstr "Tarehe ya hati ilibadilishwa na tarehe ya marekebisho."
 
 #: models/works.py:888
 msgid "Arbitrary date, e.g. consolidation date"
@@ -1213,20 +1205,3 @@ msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 msgid "Error during import"
 msgstr "Hitilafu wakati wa kuingiza"
 
-#~ msgid "Can close a workflow"
-#~ msgstr "Inaweza kufunga mtiririko wa kazi"
-
-#~ msgid "workflow"
-#~ msgstr "mtiririko wa kazi"
-
-#~ msgid "workflows"
-#~ msgstr "mtiririko wa kazi"
-
-#~ msgid "due date"
-#~ msgstr "tarehe ya kukamilisha"
-
-#~ msgid "priority"
-#~ msgstr "kipaumbele"
-
-#~ msgid "All topics"
-#~ msgstr "Mada zote"

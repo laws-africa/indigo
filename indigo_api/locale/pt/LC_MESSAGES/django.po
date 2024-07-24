@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-23 21:07+0200\n"
-"PO-Revision-Date: 2024-05-20 08:20\n"
+"PO-Revision-Date: 2024-07-24 08:38\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -30,38 +30,32 @@ msgid "Invalid FRBR URI"
 msgstr "FRBR URI Inválido"
 
 #: models/citations.py:19
-#, fuzzy
-#| msgid "All places"
 msgid "place"
-msgstr "Todos lugares"
+msgstr "lugar"
 
 #: models/citations.py:19
 msgid "Two letter country code, with optional locality code"
-msgstr ""
+msgstr "Código do país de duas letras, com código de localidade opcional"
 
 #: models/citations.py:20 models/works.py:425
 msgid "FRBR URI"
 msgstr "URI do FRBR"
 
 #: models/citations.py:21
-#, fuzzy
-#| msgid "alias"
 msgid "aliases"
 msgstr "apelido"
 
 #: models/citations.py:21
 msgid "Aliases, one per line"
-msgstr ""
+msgstr "Aliases, um por linha"
 
 #: models/citations.py:26
 msgid "Citation alias"
-msgstr ""
+msgstr "Alias de citação"
 
 #: models/citations.py:27
-#, fuzzy
-#| msgid "work aliases"
 msgid "Citation aliases"
-msgstr "apelidos de trabalho"
+msgstr "Aliases de citação"
 
 #: models/documents.py:283
 #, python-format
@@ -170,7 +164,7 @@ msgstr "criado em"
 
 #: models/documents.py:347
 msgid "Timestamp of when the expression was first created."
-msgstr ""
+msgstr "Carimbo de data/hora de quando a expressão foi criada pela primeira vez."
 
 #: models/documents.py:348 models/documents.py:638 models/documents.py:690
 #: models/documents.py:752 models/tasks.py:165 models/tasks.py:605
@@ -181,7 +175,7 @@ msgstr "atualizado em"
 
 #: models/documents.py:349
 msgid "Timestamp of when the expression was last updated."
-msgstr ""
+msgstr "Carimbo de data/hora de quando a expressão foi atualizada pela última vez."
 
 #: models/documents.py:351 models/documents.py:684 models/works.py:490
 #: models/works.py:768 models/works.py:827 models/works.py:897
@@ -657,18 +651,16 @@ msgid "Work for FRBR URI '%(uri)s' doesn't exist"
 msgstr "Trabalho para FRBR URI '%(uri)s' não existe"
 
 #: models/works.py:47
-#, fuzzy
-#| msgid "taxonomy topic"
 msgid "Name of the taxonomy topic"
-msgstr "tópico de taxonomia"
+msgstr "Nome do tópico de taxonomia"
 
 #: models/works.py:49
 msgid "Unique short name (code) for the topic."
-msgstr ""
+msgstr "Nome abreviado exclusivo (código) para o tópico."
 
 #: models/works.py:51
 msgid "Description of the topic"
-msgstr ""
+msgstr "Descrição do tópico"
 
 #: models/works.py:52
 msgid "public"
@@ -1002,7 +994,7 @@ msgstr "alterações"
 
 #: models/works.py:860
 msgid "Document date changed with amendment date."
-msgstr ""
+msgstr "Data do documento alterada com data de alteração."
 
 #: models/works.py:888
 msgid "Arbitrary date, e.g. consolidation date"
@@ -1213,20 +1205,3 @@ msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
 msgid "Error during import"
 msgstr "Erro durante a importação"
 
-#~ msgid "Can close a workflow"
-#~ msgstr "Pode fechar um fluxo de trabalho"
-
-#~ msgid "workflow"
-#~ msgstr "fluxo de trabalho"
-
-#~ msgid "workflows"
-#~ msgstr "fluxos de trabalho"
-
-#~ msgid "due date"
-#~ msgstr "data de vencimento"
-
-#~ msgid "priority"
-#~ msgstr "prioridade"
-
-#~ msgid "All topics"
-#~ msgstr "Todos os tópicos"

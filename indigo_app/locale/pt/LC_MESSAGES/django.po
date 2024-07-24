@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-23 21:07+0200\n"
-"PO-Revision-Date: 2024-05-20 08:20\n"
+"PO-Revision-Date: 2024-07-24 08:38\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -122,10 +122,8 @@ msgid "Updated at (oldest first)"
 msgstr "Atualizado em (mais antigo primeiro)"
 
 #: forms/tasks.py:164
-#, fuzzy
-#| msgid "assigned"
 msgid "(Not assigned)"
-msgstr "atribuído"
+msgstr "(Não atribuído)"
 
 #: forms/tasks.py:290 templates/indigo_api/_task_detail.html:242
 msgid "Unassigned"
@@ -189,10 +187,8 @@ msgid "Cannot specify all provisions, and a list of provisions."
 msgstr "Não é possível especificar todas as disposições e uma lista de disposições."
 
 #: forms/works.py:651
-#, fuzzy
-#| msgid "Commenced work and date must be unique together."
 msgid "Commencing work and date must be unique together."
-msgstr "O trabalho iniciado e a data devem ser únicos juntos."
+msgstr "O início do trabalho e a data devem ser únicos juntos."
 
 #: forms/works.py:694
 msgid "Commenced work and date must be unique together."
@@ -466,7 +462,7 @@ msgstr "publicações"
 
 #: templates/400.html:6 templates/400.html:9
 msgid "400 Bad Request"
-msgstr ""
+msgstr "400 Solicitação incorreta"
 
 #: templates/400.html:11 templates/404.html:13 templates/500.html:13
 #: templates/main.html:37
@@ -483,23 +479,23 @@ msgstr "Você não tem permissão para fazer isso."
 
 #: templates/404.html:6 templates/404.html:9
 msgid "404 Not Found"
-msgstr ""
+msgstr "404 não encontrado"
 
 #: templates/404.html:11
 msgid "We could not find that page."
-msgstr ""
+msgstr "Não conseguimos encontrar essa página."
 
 #: templates/500.html:6
 msgid "400 Server Error"
-msgstr ""
+msgstr "Erro de servidor 400"
 
 #: templates/500.html:9
 msgid "500 Server Error"
-msgstr ""
+msgstr "Erro de servidor 500"
 
 #: templates/500.html:11
 msgid "Whoops, something went wrong."
-msgstr ""
+msgstr "Opa, algo deu errado."
 
 #: templates/account/email.html:16
 msgid "You can use any of these email addresses to log in."
@@ -740,22 +736,16 @@ msgstr "Atribuir a"
 
 #: templates/indigo_api/_task_bulk_update_form.html:19
 #: templates/indigo_api/_task_bulk_update_form.html:25
-#, fuzzy
-#| msgid "Updating..."
 msgid "Updating"
-msgstr "Atualizando..."
+msgstr "Atualizando"
 
 #: templates/indigo_api/_task_bulk_update_form.html:20
-#, fuzzy
-#| msgid "Unblock task"
 msgid "Unblock"
-msgstr "Desbloquear tarefa"
+msgstr "Desbloquear"
 
 #: templates/indigo_api/_task_bulk_update_form.html:26
-#, fuzzy
-#| msgid "Blocking"
 msgid "Block"
-msgstr "Bloqueio"
+msgstr "Bloquear"
 
 #: templates/indigo_api/_task_card_single.html:17
 #: templates/indigo_api/_task_detail.html:35
@@ -854,10 +844,8 @@ msgid "Are you sure you want to finish this task?"
 msgstr "Tem certeza de que deseja concluir esta tarefa?"
 
 #: templates/indigo_api/_task_detail.html:211
-#, fuzzy
-#| msgid "Finish"
 msgid "Finishing"
-msgstr "Terminar"
+msgstr "Acabamento"
 
 #: templates/indigo_api/_task_detail.html:214
 msgid "Finish"
@@ -1180,10 +1168,8 @@ msgstr "Adicionar início"
 
 #: templates/indigo_api/_work_form_commencements_form.html:50
 #: templates/indigo_api/commencements/_commencement_form_commencing_work.html:26
-#, fuzzy
-#| msgid "Choose commencing work"
 msgid "Change commencing work"
-msgstr "Escolha começar o trabalho"
+msgstr "Mudança no início do trabalho"
 
 #: templates/indigo_api/_work_form_commencements_form.html:52
 #: templates/indigo_api/commencements/_commencement_form_commencing_work.html:28
@@ -1287,13 +1273,12 @@ msgstr "Verifique se esta obra já entrou em vigor ou tem data de início futura
 #: templates/indigo_api/_work_form_content.html:363
 #, python-format
 msgid "Add basic commencement details below, or go to the <a href=\"%(comm_url)s\" target=\"_blank\">Commencements</a> page for more options."
-msgstr ""
+msgstr "Adicione detalhes básicos de início abaixo ou vá para a página <a href=\"%(comm_url)s\" target=\"_blank\">Início</a> para mais opções."
 
 #: templates/indigo_api/_work_form_content.html:369
-#, fuzzy, python-format
-#| msgid "If you change this commencement date, you may also have to manually change the dates for related <a href=\"%(work_url)s\">amendments and repeals</a> made by this work."
+#, python-format
 msgid "Changes to commencement dates will not automatically update the <a href=\"%(related_url)s\" target=\"_blank\">commencements, amendments, and repeals made</a> by this work."
-msgstr "Se você alterar esta data de início, também poderá ter que alterar manualmente as datas para <a href=\"%(work_url)s\">alterações relacionadas e revogações</a> feitas por este trabalho."
+msgstr "As alterações nas datas de início não atualizarão automaticamente os <a href=\"%(related_url)s\" target=\"_blank\">inícios, alterações e revogações feitas</a> por este trabalho."
 
 #: templates/indigo_api/_work_form_content.html:466
 #: templates/indigo_app/place/_work_detail_overview.html:40
@@ -1387,10 +1372,8 @@ msgid "Add repealed work"
 msgstr "Adicionar trabalho revogado"
 
 #: templates/indigo_api/_work_info_badges.html:5
-#, fuzzy
-#| msgid "Principal"
 msgid "principal"
-msgstr "Diretor"
+msgstr "diretor"
 
 #: templates/indigo_api/_work_info_badges.html:8
 #: templates/indigo_api/document/show.html:27 templates/place/detail.html:221
@@ -1398,10 +1381,8 @@ msgid "repealed"
 msgstr "revogado"
 
 #: templates/indigo_api/_work_info_badges.html:14
-#, fuzzy
-#| msgid "Subsidiary"
 msgid "subsidiary"
-msgstr "Subsidiária"
+msgstr "subsidiária"
 
 #: templates/indigo_api/_work_info_badges.html:22
 #: templates/indigo_api/document/show.html:29
@@ -1465,10 +1446,8 @@ msgid "Subsidiary works"
 msgstr "Obras subsidiárias"
 
 #: templates/indigo_api/commencement_detail.html:15
-#, fuzzy
-#| msgid "Really delete this commencement?"
 msgid "Really delete this commencement? There is no undo."
-msgstr "Realmente excluir este início?"
+msgstr "Realmente excluir este início? Não há como desfazer."
 
 #: templates/indigo_api/commencement_detail.html:24
 #: templates/indigo_api/document/_annotations.html:23
@@ -1481,7 +1460,7 @@ msgstr "Editar"
 
 #: templates/indigo_api/commencement_detail.html:31
 msgid "This commencement doesn't have a date."
-msgstr ""
+msgstr "Este início não tem data."
 
 #: templates/indigo_api/commencement_detail.html:37
 msgid "Commenced by"
@@ -1496,35 +1475,28 @@ msgid "Commences all provisions"
 msgstr "Inicia todas as disposições"
 
 #: templates/indigo_api/commencement_detail.html:47
-#, fuzzy, python-format
-#| msgid "Provisions commenced"
+#, python-format
 msgid "%(count)s provision commenced:"
 msgid_plural "%(count)s provisions commenced:"
-msgstr[0] "Provisões iniciadas"
-msgstr[1] "Provisões iniciadas"
+msgstr[0] "%(count)s provisão iniciada:"
+msgstr[1] "%(count)s disposições iniciadas:"
 
 #: templates/indigo_api/commencement_detail.html:58
 #: templates/indigo_api/commencement_form.html:126
-#, fuzzy
-#| msgid "Uncommenced provisions"
 msgid "Loading provisions…"
-msgstr "Disposições não iniciadas"
+msgstr "Carregando provisões…"
 
 #: templates/indigo_api/commencement_form.html:48
 msgid "Example: See section 1 ..."
 msgstr "Exemplo: Veja a seção 1..."
 
 #: templates/indigo_api/commencement_form.html:79
-#, fuzzy
-#| msgid "A main commencement already exists."
 msgid "Another commencement has already been marked as 'main'."
-msgstr "Já existe um começo principal."
+msgstr "Outro início já foi marcado como ‘principal’."
 
 #: templates/indigo_api/commencement_form.html:109
-#, fuzzy
-#| msgid "A commencement for all provisions must be the only commencement."
 msgid "A commencement can only commence all provisions if it's the only one."
-msgstr "O início de todas as disposições deve ser o único início."
+msgstr "Um início só pode iniciar todas as disposições se for o único."
 
 #: templates/indigo_api/commencement_form.html:145
 #: templates/indigo_api/work_form.html:19
@@ -1537,17 +1509,15 @@ msgstr "Selecione todas as provisões"
 
 #: templates/indigo_api/commencements/_commencement_provisions_edit.html:27
 msgid "Available provisions will appear here once the content has been marked up."
-msgstr ""
+msgstr "As disposições disponíveis aparecerão aqui assim que o conteúdo for marcado."
 
 #: templates/indigo_api/commencements/_commencement_provisions_edit.html:28
 msgid "Wait until the content has been finalised before selecting provisions."
-msgstr ""
+msgstr "Aguarde até que o conteúdo seja finalizado antes de selecionar as disposições."
 
 #: templates/indigo_api/commencements/_provisions_tree.html:15
-#, fuzzy
-#| msgid "Select all provisions"
 msgid "(and all subprovisions)"
-msgstr "Selecione todas as provisões"
+msgstr "(e todas as subdisposições)"
 
 #: templates/indigo_api/commencements/_work_uncommenced_provisions_detail.html:6
 msgid "Uncommenced provisions"
@@ -2269,13 +2239,11 @@ msgstr "Adicionar data de consolidação"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:46
 msgid "No event recorded for this date"
-msgstr ""
+msgstr "Nenhum evento registrado para esta data"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:49
-#, fuzzy
-#| msgid "Attach document"
 msgid "Stranded documents:"
-msgstr "anexar documento"
+msgstr "Documentos encalhados:"
 
 #: templates/indigo_api/timeline/_work_points_in_time.html:97
 msgid "Create amended version"
@@ -2550,27 +2518,20 @@ msgid "This work has not commenced."
 msgstr "Este trabalho não começou."
 
 #: templates/indigo_api/work_commencements.html:18
-#, fuzzy
-#| msgid "This work has %(count)s <a href=\"#uncommenced\">uncommenced provision</a>."
-#| msgid_plural "This work has %(count)s <a href=\"#uncommenced\">uncommenced provisions</a>."
 msgid "This work has <a href=\"#uncommenced-provisions\">uncommenced provisions</a>."
-msgstr "Este trabalho tem %(count)s <a href=\"#uncommenced\">provisão não iniciada</a>."
+msgstr "Este trabalho tem <a href=\"#uncommenced-provisions\">disposições não iniciadas</a>."
 
 #: templates/indigo_api/work_commencements.html:33
-#, fuzzy
-#| msgid "Add commencement"
 msgid "Add a commencement"
-msgstr "Adicionar início"
+msgstr "Adicionar um começo"
 
 #: templates/indigo_api/work_commencements.html:44
 msgid "Unknown"
 msgstr "Desconhecido"
 
 #: templates/indigo_api/work_commencements.html:58
-#, fuzzy
-#| msgid "Uncommenced provisions"
 msgid "Loading uncommenced provisions…"
-msgstr "Disposições não iniciadas"
+msgstr "Carregando provisões não iniciadas…"
 
 #: templates/indigo_api/work_commencements.html:64
 msgid "Not yet commenced?"
@@ -2582,17 +2543,15 @@ msgstr "Remova todos os detalhes de início e marque como não iniciado."
 
 #: templates/indigo_api/work_commencements.html:66
 msgid "Are you sure? ALL commencement information will be permanently deleted."
-msgstr ""
+msgstr "Tem certeza? TODAS as informações de início serão excluídas permanentemente."
 
 #: templates/indigo_api/work_commencements.html:66
 msgid "This work has not commenced"
 msgstr "Este trabalho não começou"
 
 #: templates/indigo_api/work_commencements.html:77
-#, fuzzy
-#| msgid "Saving…"
 msgid "Loading…"
-msgstr "Salvando…"
+msgstr "Carregando…"
 
 #: templates/indigo_api/work_form.html:5
 msgid "New work"
@@ -2700,13 +2659,11 @@ msgid "Contributors"
 msgstr "Colaboradores"
 
 #: templates/indigo_api/work_overview.html:162
-#, fuzzy, python-format
-#| msgid "%(counter)s task"
-#| msgid_plural "%(counter)s tasks"
+#, python-format
 msgid "%(count)s task"
 msgid_plural "%(count)s tasks"
-msgstr[0] "%(counter)s tarefa"
-msgstr[1] "%(counter)s tarefas"
+msgstr[0] "%(count)s tarefa"
+msgstr[1] "%(count)s tarefas"
 
 #: templates/indigo_api/work_tasks.html:18
 msgid "No tasks."
@@ -2722,12 +2679,10 @@ msgstr "Parece que você está offline ou o servidor não está disponível."
 
 #: templates/indigo_app/actions/_action_amendment.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma alteração em %(date)s em\n"
 "  "
 
@@ -2739,23 +2694,19 @@ msgstr "por"
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma consolidação em %(date)s em\n"
 "  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    um início em %(date)s em\n"
 "  "
 
@@ -2806,20 +2757,16 @@ msgstr "%(org)s está em manutenção. Voltaremos em breve."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Aprovar %(works_length)s trabalho em andamento\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Aprovar %(works_length)s trabalhos em andamento\n"
 "        "
 
@@ -2865,31 +2812,20 @@ msgstr "Tarefas de alteração serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:147
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
-"\n"
+msgstr "\n"
 "                              Descrição da tarefa: %(amended_title)s (%(amended_numbered_title)s) alterada por %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:151
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "Apply the amendments made by %(title)s (%(numbered_title)s) on %(date)s.\n"
-#| "\n"
-#| "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n"
-"\n"
+#, python-format
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Aplicar as alterações feitas por %(title)s (%(numbered_title)s) em %(date)s.\n"
-"\n"
+msgstr "\n"
+"Aplicar as alterações feitas até %(title)s (%(numbered_title)s) na data indicada.\n\n"
 "A alteração já foi vinculada, então comece na Etapa 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:184
@@ -3036,10 +2972,8 @@ msgstr "%(username)s não tem tarefas que foram aprovadas."
 
 #: templates/indigo_app/tasks/all_tasks.html:4
 #: templates/indigo_app/tasks/tabbed_layout.html:22
-#, fuzzy
-#| msgid "Add tasks"
 msgid "All tasks"
-msgstr "Adicionar tarefas"
+msgstr "Todas as tarefas"
 
 #: templates/indigo_app/tasks/available_tasks.html:4
 msgid "Available tasks"
@@ -3148,38 +3082,30 @@ msgid "Your account"
 msgstr "Sua conta"
 
 #: templates/place/_place_cards.html:15
-msgid ""
-"\n"
+msgid "\n"
 "                    Work\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Works\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Trabalho\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Funciona\n"
 "                  "
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                    Task\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Tasks\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Tarefa\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Tarefas\n"
 "                  "
 
@@ -3519,16 +3445,14 @@ msgid "Computer says no."
 msgstr "O computador diz não."
 
 #: views/tasks.py:543
-#, fuzzy, python-format
-#| msgid "Unassigned %(count)d task%(plural)s"
+#, python-format
 msgid "%(verb)s %(count)d task%(plural)s"
-msgstr "Tarefa %(count)d não atribuída%(plural)s"
+msgstr "%(verb)s %(count)d tarefa%(plural)s"
 
 #: views/tasks.py:547
-#, fuzzy, python-format
-#| msgid "Unassigned %(count)d task%(plural)s"
+#, python-format
 msgid "Couldn't %(verb)s %(count)d task%(plural)s"
-msgstr "Tarefa %(count)d não atribuída%(plural)s"
+msgstr "Não foi possível %(verb)s %(count)d tarefa%(plural)s"
 
 #: views/works.py:209
 msgid "Work updated."
@@ -3562,198 +3486,3 @@ msgstr "Não foi possível buscar informações da planilha. Sua planilha é com
 msgid "Error during import: %(error)s"
 msgstr "Erro durante a importação: %(error)s"
 
-#~ msgid "columns"
-#~ msgstr "colunas"
-
-#~ msgid "list"
-#~ msgstr "lista"
-
-#~ msgid "(Commenced in full)"
-#~ msgstr "(Iniciado na íntegra)"
-
-#~ msgid "(in full)"
-#~ msgstr "(na íntegra)"
-
-#~ msgid "Update selected tasks"
-#~ msgstr "Atualizar tarefas selecionadas"
-
-#~ msgid "Are you sure you want to remove this task?"
-#~ msgstr "Tem certeza de que deseja remover esta tarefa?"
-
-#~ msgid "Remove from project"
-#~ msgstr "Remover do projeto"
-
-#~ msgid "Projects"
-#~ msgstr "Projetos"
-
-#~ msgid "Choose projects"
-#~ msgstr "Escolha projetos"
-
-#~ msgid "Me"
-#~ msgstr "Meu"
-
-#~ msgid "The work that brings this work into force."
-#~ msgstr "A obra que põe em vigor esta obra."
-
-#, python-format
-#~ msgid "This work has mixed commencements, <a href=\"%(comm_url)s\">edit them in the Commencements page</a>."
-#~ msgstr "Este trabalho tem inícios mistos, <a href=\"%(comm_url)s\">edite-os na página Inícios</a>."
-
-#~ msgid "Commencement date"
-#~ msgstr "Data de início"
-
-#~ msgid "Date when most (or all) of the work comes into force."
-#~ msgstr "Data em que a maior parte (ou a totalidade) do trabalho entra em vigor."
-
-#~ msgid "Leave this blank when a work has come into force, but the exact commencement date is unknown or open to interpretation."
-#~ msgstr "Deixe este espaço em branco quando uma obra entrar em vigor, mas a data exata de início for desconhecida ou aberta a interpretação."
-
-#~ msgid "Commencement note"
-#~ msgstr "nota de início"
-
-#~ msgid "When the commencement date is open to interpretation, give a reference to a provision of this or a commencing work for added context."
-#~ msgstr "Quando a data de início estiver aberta a interpretações, faça referência a uma disposição deste ou a um trabalho inicial para contexto adicional."
-
-#~ msgid "Please note we are phasing out projects; rather choose a topic. You're welcome to choose a project as well during the transition."
-#~ msgstr "Observe que estamos eliminando projetos; em vez disso, escolha um tópico. Você também pode escolher um projeto durante a transição."
-
-#~ msgid "Choose a project for newly created tasks"
-#~ msgstr "Escolha um projeto para tarefas recém-criadas"
-
-#~ msgid "Choose a project"
-#~ msgstr "Escolha um projeto"
-
-#~ msgid "There are no projects (create one and refresh this page)"
-#~ msgstr "Não há projetos (crie um e atualize esta página)"
-
-#~ msgid "Create a new project"
-#~ msgstr "Criar um novo projeto"
-
-#~ msgid "All provisions have commenced, no additional commencement events are required."
-#~ msgstr "Todas as provisões foram iniciadas, nenhum evento de início adicional é necessário."
-
-#~ msgid "Add without a commencing work"
-#~ msgstr "Adicionar sem iniciar o trabalho"
-
-#~ msgid "Commenced in part"
-#~ msgstr "Iniciado em parte"
-
-#, python-format
-#~ msgid "Commences %(provisions)s of %(total_provisions_count)s provisions:"
-#~ msgstr "Começa %(provisions)s de %(total_provisions_count)s disposições:"
-
-#, python-format
-#~ msgid "%(user.task_count)s task"
-#~ msgid_plural "%(user.task_count)s tasks"
-#~ msgstr[0] "%(user.task_count)s tarefa"
-#~ msgstr[1] "%(user.task_count)s tarefas"
-
-#, python-format
-#~ msgid "Assented to on %(date)s"
-#~ msgstr "Aprovado em %(date)s"
-
-#, python-format
-#~ msgid "Repealed on %(date)s by <a href=\"%(url)s\">%(title)s</a>."
-#~ msgstr "Revogado em %(date)s por <a href=\"%(url)s\">%(title)s</a>."
-
-#, python-format
-#~ msgid "Repealed on %(date)s."
-#~ msgstr "Revogado em %(date)s."
-
-#~ msgid "Edit project"
-#~ msgstr "Editar projeto"
-
-#~ msgid "Priority"
-#~ msgstr "Prioridade"
-
-#~ msgid "Due on"
-#~ msgstr "Devido a"
-
-#~ msgid "Overdue"
-#~ msgstr "Atrasado"
-
-#, python-format
-#~ msgid "%(n_done)s of %(n_tasks)s task"
-#~ msgid_plural "%(n_done)s of %(n_tasks)s tasks"
-#~ msgstr[0] "%(n_done)s de %(n_tasks)s tarefa"
-#~ msgstr[1] "%(n_done)s de %(n_tasks)s tarefas"
-
-#~ msgid "No tasks match your filters."
-#~ msgstr "Nenhuma tarefa corresponde aos seus filtros."
-
-#~ msgid "This project is closed; reopen it to add tasks."
-#~ msgstr "Este projeto está fechado; reabri-lo para adicionar tarefas."
-
-#~ msgid "Add some tasks to this project to get going."
-#~ msgstr "Adicione algumas tarefas a este projeto para prosseguir."
-
-#~ msgid "Are you sure you want to close this project?"
-#~ msgstr "Tem certeza de que deseja fechar este projeto?"
-
-#~ msgid "Close project"
-#~ msgstr "Fechar projeto"
-
-#~ msgid "Are you sure you want to reopen this project?"
-#~ msgstr "Tem certeza de que deseja reabrir este projeto?"
-
-#~ msgid "Reopen project"
-#~ msgstr "Reabrir projeto"
-
-#~ msgid "Choose tasks to add to this project"
-#~ msgstr "Escolha tarefas para adicionar a este projeto"
-
-#~ msgid "New project"
-#~ msgstr "Novo projeto"
-
-#~ msgid "You don't have permission to create a project."
-#~ msgstr "Você não tem permissão para criar um projeto."
-
-#~ msgid "A short description of this project"
-#~ msgstr "Uma breve descrição deste projeto"
-
-#~ msgid "Priority project"
-#~ msgstr "Projeto prioritário"
-
-#~ msgid "Are you sure you want to permanently delete this project? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)"
-#~ msgstr "Tem certeza de que deseja excluir permanentemente este projeto? Você também pode fechá-lo na visão geral. Essa ação não pode ser desfeita. (Quaisquer tarefas relacionadas não serão afetadas.)"
-
-#~ msgid "Delete workflow"
-#~ msgstr "Excluir fluxo de trabalho"
-
-#~ msgid "Save project"
-#~ msgstr "Salvar projeto"
-
-#~ msgid "Create project"
-#~ msgstr "Criar projeto"
-
-#~ msgid "Closed"
-#~ msgstr "Fechado"
-
-#, python-format
-#~ msgid "Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span> by"
-#~ msgstr "Criado <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span> por"
-
-#, python-format
-#~ msgid "Created <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span>"
-#~ msgstr "Criado <span class=\"time-ago\" data-timestamp=\"%(date)s\">%(created_at)s</span>"
-
-#~ msgid "Create projects to group and track related tasks."
-#~ msgstr "Crie projetos para agrupar e rastrear tarefas relacionadas."
-
-#~ msgid "this project"
-#~ msgstr "este projeto"
-
-#~ msgid "the project"
-#~ msgstr "o projeto"
-
-#~ msgid "Priority projects"
-#~ msgstr "Projetos prioritários"
-
-#~ msgid "Due"
-#~ msgstr "Devido"
-
-#~ msgid "No tasks found."
-#~ msgstr "Nenhuma tarefa encontrada."
-
-#~ msgid "Priority tasks"
-#~ msgstr "Tarefas prioritárias"

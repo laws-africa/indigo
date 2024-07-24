@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-20 08:20\n"
+"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"PO-Revision-Date: 2024-07-24 07:37\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -22,44 +22,348 @@ msgid "Act"
 msgstr "Tenda"
 
 #: analysis/toc/base.py:14
-msgid "Article"
-msgstr "Kifungu"
+msgid "Activity Report"
+msgstr "Ripoti ya Shughuli"
 
 #: analysis/toc/base.py:15
+msgid "Agreement"
+msgstr "Makubaliano"
+
+#: analysis/toc/base.py:16
+msgid "Board Notice"
+msgstr "Notisi ya Bodi"
+
+#: analysis/toc/base.py:17
 msgid "By-law"
 msgstr "Sheria ndogo"
 
-#: analysis/toc/base.py:16
-msgid "Chapter"
-msgstr "Sura"
+#: analysis/toc/base.py:18
+msgid "Charter"
+msgstr "Mkataba"
 
-#: analysis/toc/base.py:17
+#: analysis/toc/base.py:19
+msgid "Code"
+msgstr "Kanuni"
+
+#: analysis/toc/base.py:20
+msgid "Constitutional Instrument"
+msgstr "Chombo cha Katiba"
+
+#: analysis/toc/base.py:21
+msgid "Convention"
+msgstr "Mkataba"
+
+#: analysis/toc/base.py:22
+msgid "Corrigendum"
+msgstr "Corrigendum"
+
+#: analysis/toc/base.py:23
+msgid "Covenant"
+msgstr "Agano"
+
+#: analysis/toc/base.py:24
+msgid "Decision"
+msgstr "Uamuzi"
+
+#: analysis/toc/base.py:25
+msgid "Declaration"
+msgstr "Tamko"
+
+#: analysis/toc/base.py:26
+msgid "Decree"
+msgstr "Amri"
+
+#: analysis/toc/base.py:27
+msgid "Directive"
+msgstr "Maelekezo"
+
+#: analysis/toc/base.py:28
+msgid "Executive Instrument"
+msgstr "Chombo cha Mtendaji"
+
+#: analysis/toc/base.py:29
+msgid "General Notice"
+msgstr "Taarifa ya Jumla"
+
+#: analysis/toc/base.py:30
 msgid "Government Notice"
 msgstr "Tangazo la Serikali"
 
-#: analysis/toc/base.py:18
+#: analysis/toc/base.py:31
+msgid "Guidance Note"
+msgstr "Kumbuka Mwongozo"
+
+#: analysis/toc/base.py:32
+msgid "Guidelines"
+msgstr "Miongozo"
+
+#: analysis/toc/base.py:33
+msgid "Hansard"
+msgstr "Hansard"
+
+#: analysis/toc/base.py:34
+msgid "High Commissioners Notice"
+msgstr "Notisi ya Makamishna Mkuu"
+
+#: analysis/toc/base.py:35
+msgid "Instructions"
+msgstr "Maagizo"
+
+#: analysis/toc/base.py:36
+msgid "Instructions of the Registrar General"
+msgstr "Maelekezo ya Msajili Mkuu"
+
+#: analysis/toc/base.py:37
+msgid "Kings Order in Council"
+msgstr "Agizo la Wafalme Barazani"
+
+#: analysis/toc/base.py:38
+msgid "Law"
+msgstr "Sheria"
+
+#: analysis/toc/base.py:39
+msgid "Legal Notice"
+msgstr "Notisi ya Kisheria"
+
+#: analysis/toc/base.py:40
+msgid "Legislative Instrument"
+msgstr "Chombo cha Kutunga Sheria"
+
+#: analysis/toc/base.py:41
+msgid "Local Authority Notice"
+msgstr "Notisi ya Mamlaka ya Mtaa"
+
+#: analysis/toc/base.py:42
+msgid "Measure"
+msgstr "Pima"
+
+#: analysis/toc/base.py:43
+msgid "Ministerial Instructions"
+msgstr "Maagizo ya Wizara"
+
+#: analysis/toc/base.py:44
+msgid "Ministerial Order"
+msgstr "Amri ya Waziri"
+
+#: analysis/toc/base.py:45
+msgid "Model Law"
+msgstr "Sheria ya Mfano"
+
+#: analysis/toc/base.py:46
+msgid "Municipal Notice"
+msgstr "Tangazo la Manispaa"
+
+#: analysis/toc/base.py:47
+msgid "Official Notice"
+msgstr "Taarifa Rasmi"
+
+#: analysis/toc/base.py:48
+msgid "Order"
+msgstr "Agizo"
+
+#: analysis/toc/base.py:49
+msgid "Ordinance"
+msgstr "Sheria"
+
+#: analysis/toc/base.py:50
+msgid "Organic Law"
+msgstr "Sheria ya Kikaboni"
+
+#: analysis/toc/base.py:51
+msgid "Pact"
+msgstr "Mkataba"
+
+#: analysis/toc/base.py:52
+msgid "Practice Direction"
+msgstr "Mwelekeo wa Mazoezi"
+
+#: analysis/toc/base.py:53
+msgid "Premiers Notice"
+msgstr "Ilani ya Premiers"
+
+#: analysis/toc/base.py:54
+msgid "Presidential Order"
+msgstr "Agizo la Rais"
+
+#: analysis/toc/base.py:55
+msgid "Prime Ministers Order"
+msgstr "Agizo la Waziri Mkuu"
+
+#: analysis/toc/base.py:56
+msgid "Proclamation"
+msgstr "Tangazo"
+
+#: analysis/toc/base.py:57
+msgid "Proposal"
+msgstr "Pendekezo"
+
+#: analysis/toc/base.py:58
+msgid "Protocol"
+msgstr "Itifaki"
+
+#: analysis/toc/base.py:59
+msgid "Provincial Notice"
+msgstr "Tangazo la Mkoa"
+
+#: analysis/toc/base.py:60
+msgid "Questions"
+msgstr "Maswali"
+
+#: analysis/toc/base.py:61
+msgid "Recommendation"
+msgstr "Pendekezo"
+
+#: analysis/toc/base.py:62
+msgid "Regulation"
+msgstr "Taratibu"
+
+#: analysis/toc/base.py:63
+msgid "Resolution"
+msgstr "Azimio"
+
+#: analysis/toc/base.py:64
+msgid "Rules"
+msgstr "Kanuni"
+
+#: analysis/toc/base.py:65
+msgid "Standard"
+msgstr "Kawaida"
+
+#: analysis/toc/base.py:66
+msgid "Statement"
+msgstr "Kauli"
+
+#: analysis/toc/base.py:67
+msgid "Statute"
+msgstr "Sheria"
+
+#: analysis/toc/base.py:68
+msgid "Statutory Instrument"
+msgstr "Hati ya Kisheria"
+
+#: analysis/toc/base.py:69
+msgid "Study"
+msgstr "Jifunze"
+
+#: analysis/toc/base.py:70
+msgid "Treaty"
+msgstr "Mkataba"
+
+#: analysis/toc/base.py:73
+msgid "Alinea"
+msgstr "Alinea"
+
+#: analysis/toc/base.py:74
+msgid "Article"
+msgstr "Kifungu"
+
+#: analysis/toc/base.py:75
+msgid "Book"
+msgstr "Kitabu"
+
+#: analysis/toc/base.py:76
+msgid "Chapter"
+msgstr "Sura"
+
+#: analysis/toc/base.py:77
+msgid "Clause"
+msgstr "Kifungu"
+
+#: analysis/toc/base.py:78
+msgid "Division"
+msgstr "Mgawanyiko"
+
+#: analysis/toc/base.py:79
+msgid "Indent"
+msgstr "Pendekeza ndani"
+
+#: analysis/toc/base.py:80
+msgid "Level"
+msgstr "Kiwango"
+
+#: analysis/toc/base.py:81
+msgid "List"
+msgstr "Orodha"
+
+#: analysis/toc/base.py:82
 msgid "Paragraph"
 msgstr "Aya"
 
-#: analysis/toc/base.py:19
+#: analysis/toc/base.py:83
 msgid "Part"
 msgstr "Sehemu"
 
-#: analysis/toc/base.py:20
+#: analysis/toc/base.py:84
+msgid "Point"
+msgstr "Hatua"
+
+#: analysis/toc/base.py:85
 msgid "Section"
 msgstr "Sehemu"
 
-#: analysis/toc/base.py:21
+#: analysis/toc/base.py:86
 msgid "Preface"
 msgstr "Dibaji"
 
-#: analysis/toc/base.py:22
+#: analysis/toc/base.py:87
 msgid "Preamble"
 msgstr "Dibaji"
 
-#: analysis/toc/base.py:23
+#: analysis/toc/base.py:88
+msgid "Proviso"
+msgstr "Masharti"
+
+#: analysis/toc/base.py:89
+msgid "Rule"
+msgstr "Kanuni"
+
+#: analysis/toc/base.py:90
+msgid "Subchapter"
+msgstr "Sura ndogo"
+
+#: analysis/toc/base.py:91
+msgid "Subclause"
+msgstr "Ibara ndogo"
+
+#: analysis/toc/base.py:92
+msgid "Subdivision"
+msgstr "Ugawaji"
+
+#: analysis/toc/base.py:93
+msgid "Sublist"
+msgstr "Orodha ndogo"
+
+#: analysis/toc/base.py:94
+msgid "Subparagraph"
+msgstr "Kifungu kidogo"
+
+#: analysis/toc/base.py:95
 msgid "Subpart"
 msgstr "Sehemu ndogo"
+
+#: analysis/toc/base.py:96
+msgid "Subrule"
+msgstr "Kanuni ndogo"
+
+#: analysis/toc/base.py:97
+msgid "Subsection"
+msgstr "Kifungu kidogo"
+
+#: analysis/toc/base.py:98
+msgid "Subtitle"
+msgstr "Manukuu"
+
+#: analysis/toc/base.py:99
+msgid "Title"
+msgstr "Mada"
+
+#: analysis/toc/base.py:100
+msgid "Tome"
+msgstr "Kwangu"
+
+#: analysis/toc/base.py:101
+msgid "Transitional"
+msgstr "Mpito"
 
 #: analysis/work_detail/base.py:30
 #, python-format
@@ -71,49 +375,49 @@ msgstr "Sura ya %(cap)s"
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s ya %(year)s"
 
-#: bulk_creator.py:300
+#: bulk_creator.py:299
 #, python-format
 msgid "Error talking to Google Sheets: %s"
 msgstr "Hitilafu katika kuzungumza na Majedwali ya Google: %s"
 
-#: bulk_creator.py:307
+#: bulk_creator.py:306
 msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
 msgstr "Laha yako haikufaulu kuleta; tafadhali hakikisha kuwa una kushiriki kiungo ILIYOWASHWA (Mtu yeyote aliye na kiungo)."
 
-#: bulk_creator.py:340
+#: bulk_creator.py:339
 #, python-format
 msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
 msgstr "Imeshindwa kufikia lahajedwali. Je, URL ni sahihi na umeishiriki na %s?"
 
-#: bulk_creator.py:346
+#: bulk_creator.py:345
 #, python-format
 msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
 msgstr "Inaonekana hakuna data katika laha %(name)s kati ya %(id)s"
 
-#: bulk_creator.py:419
+#: bulk_creator.py:417
 msgid "Convert the input file into a .docx file and remove automatic numbering."
 msgstr "Badilisha faili ya ingizo kuwa faili ya .docx na uondoe nambari za kiotomatiki."
 
-#: bulk_creator.py:421
+#: bulk_creator.py:419
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
 msgstr "Ingiza maudhui ya kazi hii kwa tarehe inayofaa - kwa kawaida tarehe ya kuchapishwa au ya ujumuishaji."
 
-#: bulk_creator.py:423
+#: bulk_creator.py:421
 msgid "Find and link the Gazette (original publication document) for this work."
 msgstr "Tafuta na uunganishe Gazeti la Serikali (hati halisi ya uchapishaji) kwa kazi hii."
 
-#: bulk_creator.py:428
+#: bulk_creator.py:426
 #, python-format
-msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n\n"
+msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr "Tekeleza marekebisho yaliyofanywa na %(amending_title)s (%(numbered_title)s) tarehe %(date)s.\n\n"
+msgstr "Tekeleza marekebisho yaliyofanywa na %(amending_title)s (%(numbered_title)s) katika tarehe iliyotolewa.\n\n"
 "Marekebisho tayari yameunganishwa, kwa hivyo anza katika Hatua ya 3 ya https://docs.laws.africa/managing-works/amending-works."
 
-#: bulk_creator.py:998
+#: bulk_creator.py:983
 msgid "Link commencement (passive)"
 msgstr "Kuanza kwa kiungo (kitendo)"
 
-#: bulk_creator.py:999
+#: bulk_creator.py:984
 #, python-format
 msgid "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n\n"
 "Possible reasons:\n"
@@ -126,26 +430,26 @@ msgstr "Inaonekana kazi hii ilianzishwa na \"%(commenced_by)s\" kwenye %(date)s 
 "– kazi inayoanza haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha tarehe ya kuanza na kuanza kazi wewe mwenyewe."
 
-#: bulk_creator.py:1007
+#: bulk_creator.py:992
 msgid "(unknown)"
 msgstr "(haijulikani)"
 
-#: bulk_creator.py:1012
+#: bulk_creator.py:997
 msgid "'Commences on' date missing"
 msgstr "Tarehe ya 'Kuanza' haipo"
 
-#: bulk_creator.py:1013
+#: bulk_creator.py:998
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
 "If it should be linked, please do so manually."
 msgstr "Inaonekana kazi hii inaanza \"%(commences)s\" (angalia safu mlalo %(row_num)s ya lahajedwali), lakini 'tarehe_ya_tarehe' haikutolewa kwa hivyo hakuna hatua iliyochukuliwa.\n\n"
 "Ikiwa inapaswa kuunganishwa, tafadhali fanya hivyo mwenyewe."
 
-#: bulk_creator.py:1021
+#: bulk_creator.py:1006
 msgid "Link commencement (active)"
 msgstr "Kuanza kwa kiungo (inafanya kazi)"
 
-#: bulk_creator.py:1022
+#: bulk_creator.py:1007
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n\n"
 "Possible reasons:\n"
@@ -158,11 +462,11 @@ msgstr "Inaonekana kazi hii inaanza \"%(commences)s\" kwenye %(date)s (tazama sa
 "- kazi iliyoanzishwa haipo kwenye mfumo.\n\n"
 "Ikiwa kuanza kunapaswa kuunganishwa, tafadhali fanya hivyo mwenyewe."
 
-#: bulk_creator.py:1035
+#: bulk_creator.py:1020
 msgid "Link amendment (active)"
 msgstr "Marekebisho ya kiungo (yanatumika)"
 
-#: bulk_creator.py:1039
+#: bulk_creator.py:1024
 #, python-format
 msgid "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -177,11 +481,11 @@ msgstr "Inaonekana kazi hii inarekebisha \"%(amended_work)s\" (angalia safu mlal
 "– kazi iliyorekebishwa haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha marekebisho wewe mwenyewe."
 
-#: bulk_creator.py:1052
+#: bulk_creator.py:1037
 msgid "Link amendment (passive)"
 msgstr "Marekebisho ya kiungo (ya kupita kiasi)"
 
-#: bulk_creator.py:1056
+#: bulk_creator.py:1041
 #, python-format
 msgid "It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -196,22 +500,22 @@ msgstr "Inaonekana kazi hii imerekebishwa na \"%(amending_work)s\" (angalia safu
 "- kazi ya kurekebisha haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha marekebisho wewe mwenyewe."
 
-#: bulk_creator.py:1069
+#: bulk_creator.py:1054
 msgid "Link amendment (pending commencement)"
 msgstr "Marekebisho ya kiungo (inasubiri kuanza)"
 
-#: bulk_creator.py:1070
+#: bulk_creator.py:1055
 #, python-format
 msgid "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n\n"
 "Please link the amendment manually (and apply it) when this work comes into force."
 msgstr "Inaonekana kazi hii inarekebisha %(amended_title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza (kwa hivyo hakuna tarehe ya marekebisho).\n\n"
 "Tafadhali unganisha marekebisho wewe mwenyewe (na uitumie) kazi hii inapoanza kutumika."
 
-#: bulk_creator.py:1078
+#: bulk_creator.py:1063
 msgid "Link repealed by"
 msgstr "Kiungo kimefutwa na"
 
-#: bulk_creator.py:1079
+#: bulk_creator.py:1064
 #, python-format
 msgid "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -224,11 +528,11 @@ msgstr "Inaonekana kazi hii ilifutwa na \"%(repealed_by)s\" (angalia safu mlalo 
 "- kazi ya kufuta haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha ubatilishaji wewe mwenyewe."
 
-#: bulk_creator.py:1091 bulk_creator.py:1128
+#: bulk_creator.py:1076 bulk_creator.py:1113
 msgid "Link repeal"
 msgstr "Kufutwa kwa kiungo"
 
-#: bulk_creator.py:1092
+#: bulk_creator.py:1077
 #, python-format
 msgid "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -241,11 +545,11 @@ msgstr "Inaonekana kazi hii inabatilisha \"%(repeals)s\" (angalia safu mlalo %(r
 "- kazi iliyofutwa haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha ubatilishaji wewe mwenyewe."
 
-#: bulk_creator.py:1104
+#: bulk_creator.py:1089
 msgid "Check / update repeal"
 msgstr "Angalia / sasisha kufuta"
 
-#: bulk_creator.py:1105
+#: bulk_creator.py:1090
 #, python-format
 msgid "On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
 "But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n\n"
@@ -254,29 +558,29 @@ msgstr "Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii
 "Lakini kazi hii tayari imeorodheshwa kuwa imefutwa na %(repealed_by)s (%(repealed_by_numbered_title)s), kwa hivyo maelezo ya kufuta hayakusasishwa kiotomatiki.\n\n"
 "Ikiwa maelezo ya zamani/yaliyopo ya kufuta hayakuwa sahihi, isasishe wewe mwenyewe. Vinginevyo (ikiwa lahajedwali haikuwa sahihi), ghairi jukumu hili kwa maoni.\n"
 
-#: bulk_creator.py:1119
+#: bulk_creator.py:1104
 msgid "Link repeal (pending commencement)"
 msgstr "Kufutwa kwa kiungo (inasubiri kuanza)"
 
-#: bulk_creator.py:1120
+#: bulk_creator.py:1105
 #, python-format
 msgid "It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n\n"
 "Please link the repeal manually when this work comes into force."
 msgstr "Inaonekana kazi hii inabatilisha %(title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki kwa sababu kazi hii bado haijaanza (kwa hivyo hakuna tarehe ya kufutwa).\n\n"
 "Tafadhali unganisha ubatilishaji mwenyewe wakati kazi hii inaanza kutumika."
 
-#: bulk_creator.py:1129
+#: bulk_creator.py:1114
 #, python-format
 msgid "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n\n"
 "Please link it manually."
 msgstr "Inaonekana kazi hii ilifutwa na %(title)s (%(numbered_title)s), lakini haikuweza kuunganishwa kiotomatiki.\n\n"
 "Tafadhali iunganishe wewe mwenyewe."
 
-#: bulk_creator.py:1137
+#: bulk_creator.py:1122
 msgid "Link primary work"
 msgstr "Unganisha kazi ya msingi"
 
-#: bulk_creator.py:1138
+#: bulk_creator.py:1123
 #, python-format
 msgid "It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -289,11 +593,11 @@ msgstr "Inaonekana kazi ya msingi ya kazi hii ni \"%(work)s\" (angalia safu mlal
 "– kazi ya msingi haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha kazi ya msingi kwa mikono."
 
-#: bulk_creator.py:1150
+#: bulk_creator.py:1135
 msgid "Link subleg"
 msgstr "Kiungo subleg"
 
-#: bulk_creator.py:1151
+#: bulk_creator.py:1136
 #, python-format
 msgid "It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -306,11 +610,11 @@ msgstr "Inaonekana kazi hii ina subleg \"%(subleg)s\" (angalia safu mlalo %(row_
 "– kazi ndogo haipo kwenye mfumo.\n\n"
 "Tafadhali unganisha kazi ya subleg kwa mikono."
 
-#: bulk_creator.py:1163
+#: bulk_creator.py:1148
 msgid "Check / update primary work"
 msgstr "Angalia / sasisha kazi ya msingi"
 
-#: bulk_creator.py:1164
+#: bulk_creator.py:1149
 #, python-format
 msgid "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n\n"
 "But this work is already subleg under %(parent)s, so nothing was done.\n\n"
@@ -319,11 +623,11 @@ msgstr "Kwenye lahajedwali (tazama safu ya %(row_num)s), inasema kwamba kazi hii
 "Lakini kazi hii tayari ni subleg under %(parent)s, kwa hivyo hakuna kilichofanyika.\n\n"
 "Angalia mara mbili ni kazi gani ambayo kazi hii imedhibitiwa na usasishe mwenyewe ikiwa inahitajika. Ikiwa lahajedwali haikuwa sahihi, ghairi jukumu hili kwa maoni."
 
-#: bulk_creator.py:1176
+#: bulk_creator.py:1161
 msgid "Link taxonomy"
 msgstr "Unganisha taxonomy"
 
-#: bulk_creator.py:1177
+#: bulk_creator.py:1162
 #, python-format
 msgid "It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -334,7 +638,7 @@ msgstr "Inaonekana kazi hii ina taksonomia ifuatayo: \"%(topics)s\" (angalia saf
 "– kosa la kuchapa kwenye lahajedwali\n"
 "– taknologia haipo kwenye mfumo."
 
-#: bulk_creator.py:1243
+#: bulk_creator.py:1225
 #, python-format
 msgid "%s (about to be imported)"
 msgstr "%s (inakaribia kuingizwa)"

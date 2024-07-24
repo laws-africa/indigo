@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 16:16+0200\n"
-"PO-Revision-Date: 2024-05-20 08:21\n"
+"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"PO-Revision-Date: 2024-07-24 07:37\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -274,17 +274,17 @@ msgstr "Toka nje"
 msgid "Log in"
 msgstr "Ingia"
 
-#: views.py:254
+#: views.py:136
 #, python-format
 msgid "%(badge)s badge awarded to %(user)s"
 msgstr "%(badge)s beji iliyotolewa kwa %(user)s"
 
-#: views.py:256
+#: views.py:138
 #, python-format
 msgid "%(badge)s badge couldn't be awarded to %(user)s"
 msgstr "%(badge)s beji haikuweza kutunukiwa %(user)s"
 
-#: views.py:273
+#: views.py:155
 #, python-format
 msgid "%(badge)s badge removed from %(user)s"
 msgstr "%(badge)s beji imeondolewa kutoka %(user)s"

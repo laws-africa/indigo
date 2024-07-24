@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 16:16+0200\n"
+"POT-Creation-Date: 2024-07-23 21:07+0200\n"
 "PO-Revision-Date: 2024-05-20 08:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -274,18 +274,17 @@ msgstr "Se déconnecter"
 msgid "Log in"
 msgstr "Se connecter"
 
-#: views.py:254
+#: views.py:136
 #, python-format
 msgid "%(badge)s badge awarded to %(user)s"
 msgstr "%(badge)s badge attribué à %(user)s"
 
-#: views.py:256
+#: views.py:138
 #, python-format
 msgid "%(badge)s badge couldn't be awarded to %(user)s"
 msgstr "%(badge)s Le badge n'a pas pu être attribué à %(user)s"
 
-#: views.py:273
+#: views.py:155
 #, python-format
 msgid "%(badge)s badge removed from %(user)s"
 msgstr "%(badge)s badge supprimé de %(user)s"
-

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-25 12:21+0200\n"
-"PO-Revision-Date: 2024-05-23 06:50\n"
+"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"PO-Revision-Date: 2024-07-24 07:36\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -22,44 +22,348 @@ msgid "Act"
 msgstr "Loi"
 
 #: analysis/toc/base.py:14
-msgid "Article"
-msgstr "Article"
+msgid "Activity Report"
+msgstr "Rapport d'activité"
 
 #: analysis/toc/base.py:15
+msgid "Agreement"
+msgstr "Accord"
+
+#: analysis/toc/base.py:16
+msgid "Board Notice"
+msgstr "Avis du conseil d'administration"
+
+#: analysis/toc/base.py:17
 msgid "By-law"
 msgstr "Règle"
 
-#: analysis/toc/base.py:16
-msgid "Chapter"
-msgstr "Chapitre"
+#: analysis/toc/base.py:18
+msgid "Charter"
+msgstr "Charte"
 
-#: analysis/toc/base.py:17
+#: analysis/toc/base.py:19
+msgid "Code"
+msgstr "Code"
+
+#: analysis/toc/base.py:20
+msgid "Constitutional Instrument"
+msgstr "Instrument constitutionnel"
+
+#: analysis/toc/base.py:21
+msgid "Convention"
+msgstr "Convention"
+
+#: analysis/toc/base.py:22
+msgid "Corrigendum"
+msgstr "Corrigendum"
+
+#: analysis/toc/base.py:23
+msgid "Covenant"
+msgstr "Engagement"
+
+#: analysis/toc/base.py:24
+msgid "Decision"
+msgstr "Décision"
+
+#: analysis/toc/base.py:25
+msgid "Declaration"
+msgstr "Déclaration"
+
+#: analysis/toc/base.py:26
+msgid "Decree"
+msgstr "Décret"
+
+#: analysis/toc/base.py:27
+msgid "Directive"
+msgstr "Directif"
+
+#: analysis/toc/base.py:28
+msgid "Executive Instrument"
+msgstr "Instrument exécutif"
+
+#: analysis/toc/base.py:29
+msgid "General Notice"
+msgstr "Avis général"
+
+#: analysis/toc/base.py:30
 msgid "Government Notice"
 msgstr "Avis du Gouvernement"
 
-#: analysis/toc/base.py:18
+#: analysis/toc/base.py:31
+msgid "Guidance Note"
+msgstr "La note d'orientation"
+
+#: analysis/toc/base.py:32
+msgid "Guidelines"
+msgstr "Des lignes directrices"
+
+#: analysis/toc/base.py:33
+msgid "Hansard"
+msgstr "Hansard"
+
+#: analysis/toc/base.py:34
+msgid "High Commissioners Notice"
+msgstr "Avis des hauts commissaires"
+
+#: analysis/toc/base.py:35
+msgid "Instructions"
+msgstr "Instructions"
+
+#: analysis/toc/base.py:36
+msgid "Instructions of the Registrar General"
+msgstr "Instructions du registraire général"
+
+#: analysis/toc/base.py:37
+msgid "Kings Order in Council"
+msgstr "Décret du Roi en conseil"
+
+#: analysis/toc/base.py:38
+msgid "Law"
+msgstr "Loi"
+
+#: analysis/toc/base.py:39
+msgid "Legal Notice"
+msgstr "Mention légale"
+
+#: analysis/toc/base.py:40
+msgid "Legislative Instrument"
+msgstr "Instrument législatif"
+
+#: analysis/toc/base.py:41
+msgid "Local Authority Notice"
+msgstr "Avis des autorités locales"
+
+#: analysis/toc/base.py:42
+msgid "Measure"
+msgstr "Mesure"
+
+#: analysis/toc/base.py:43
+msgid "Ministerial Instructions"
+msgstr "Instructions ministérielles"
+
+#: analysis/toc/base.py:44
+msgid "Ministerial Order"
+msgstr "Arrêté ministériel"
+
+#: analysis/toc/base.py:45
+msgid "Model Law"
+msgstr "Loi type"
+
+#: analysis/toc/base.py:46
+msgid "Municipal Notice"
+msgstr "Avis municipal"
+
+#: analysis/toc/base.py:47
+msgid "Official Notice"
+msgstr "Avis officiel"
+
+#: analysis/toc/base.py:48
+msgid "Order"
+msgstr "Commande"
+
+#: analysis/toc/base.py:49
+msgid "Ordinance"
+msgstr "Ordonnance"
+
+#: analysis/toc/base.py:50
+msgid "Organic Law"
+msgstr "Loi Organique"
+
+#: analysis/toc/base.py:51
+msgid "Pact"
+msgstr "Pacte"
+
+#: analysis/toc/base.py:52
+msgid "Practice Direction"
+msgstr "Directive de pratique"
+
+#: analysis/toc/base.py:53
+msgid "Premiers Notice"
+msgstr "Avis aux premiers ministres"
+
+#: analysis/toc/base.py:54
+msgid "Presidential Order"
+msgstr "Arrêté présidentiel"
+
+#: analysis/toc/base.py:55
+msgid "Prime Ministers Order"
+msgstr "Arrêté du Premier Ministre"
+
+#: analysis/toc/base.py:56
+msgid "Proclamation"
+msgstr "Proclamation"
+
+#: analysis/toc/base.py:57
+msgid "Proposal"
+msgstr "Proposition"
+
+#: analysis/toc/base.py:58
+msgid "Protocol"
+msgstr "Protocole"
+
+#: analysis/toc/base.py:59
+msgid "Provincial Notice"
+msgstr "Avis provincial"
+
+#: analysis/toc/base.py:60
+msgid "Questions"
+msgstr "Des questions"
+
+#: analysis/toc/base.py:61
+msgid "Recommendation"
+msgstr ""
+
+#: analysis/toc/base.py:62
+msgid "Regulation"
+msgstr ""
+
+#: analysis/toc/base.py:63
+msgid "Resolution"
+msgstr ""
+
+#: analysis/toc/base.py:64
+msgid "Rules"
+msgstr ""
+
+#: analysis/toc/base.py:65
+msgid "Standard"
+msgstr ""
+
+#: analysis/toc/base.py:66
+msgid "Statement"
+msgstr ""
+
+#: analysis/toc/base.py:67
+msgid "Statute"
+msgstr ""
+
+#: analysis/toc/base.py:68
+msgid "Statutory Instrument"
+msgstr ""
+
+#: analysis/toc/base.py:69
+msgid "Study"
+msgstr ""
+
+#: analysis/toc/base.py:70
+msgid "Treaty"
+msgstr ""
+
+#: analysis/toc/base.py:73
+msgid "Alinea"
+msgstr ""
+
+#: analysis/toc/base.py:74
+msgid "Article"
+msgstr "Article"
+
+#: analysis/toc/base.py:75
+msgid "Book"
+msgstr ""
+
+#: analysis/toc/base.py:76
+msgid "Chapter"
+msgstr "Chapitre"
+
+#: analysis/toc/base.py:77
+msgid "Clause"
+msgstr ""
+
+#: analysis/toc/base.py:78
+msgid "Division"
+msgstr ""
+
+#: analysis/toc/base.py:79
+msgid "Indent"
+msgstr ""
+
+#: analysis/toc/base.py:80
+msgid "Level"
+msgstr ""
+
+#: analysis/toc/base.py:81
+msgid "List"
+msgstr ""
+
+#: analysis/toc/base.py:82
 msgid "Paragraph"
 msgstr "Paragraphe"
 
-#: analysis/toc/base.py:19
+#: analysis/toc/base.py:83
 msgid "Part"
 msgstr "Partie"
 
-#: analysis/toc/base.py:20
+#: analysis/toc/base.py:84
+msgid "Point"
+msgstr ""
+
+#: analysis/toc/base.py:85
 msgid "Section"
 msgstr "Section"
 
-#: analysis/toc/base.py:21
+#: analysis/toc/base.py:86
 msgid "Preface"
 msgstr "Préface"
 
-#: analysis/toc/base.py:22
+#: analysis/toc/base.py:87
 msgid "Preamble"
 msgstr "Préambule"
 
-#: analysis/toc/base.py:23
+#: analysis/toc/base.py:88
+msgid "Proviso"
+msgstr ""
+
+#: analysis/toc/base.py:89
+msgid "Rule"
+msgstr ""
+
+#: analysis/toc/base.py:90
+msgid "Subchapter"
+msgstr ""
+
+#: analysis/toc/base.py:91
+msgid "Subclause"
+msgstr ""
+
+#: analysis/toc/base.py:92
+msgid "Subdivision"
+msgstr ""
+
+#: analysis/toc/base.py:93
+msgid "Sublist"
+msgstr ""
+
+#: analysis/toc/base.py:94
+msgid "Subparagraph"
+msgstr ""
+
+#: analysis/toc/base.py:95
 msgid "Subpart"
 msgstr "Sous-partie"
+
+#: analysis/toc/base.py:96
+msgid "Subrule"
+msgstr ""
+
+#: analysis/toc/base.py:97
+msgid "Subsection"
+msgstr ""
+
+#: analysis/toc/base.py:98
+msgid "Subtitle"
+msgstr ""
+
+#: analysis/toc/base.py:99
+msgid "Title"
+msgstr "Titre"
+
+#: analysis/toc/base.py:100
+msgid "Tome"
+msgstr ""
+
+#: analysis/toc/base.py:101
+msgid "Transitional"
+msgstr ""
 
 #: analysis/work_detail/base.py:30
 #, python-format
@@ -71,49 +375,48 @@ msgstr "Chapitre %(cap)s"
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s de %(year)s"
 
-#: bulk_creator.py:300
+#: bulk_creator.py:299
 #, python-format
 msgid "Error talking to Google Sheets: %s"
 msgstr "Erreur de communication avec Google Sheets : %s"
 
-#: bulk_creator.py:307
+#: bulk_creator.py:306
 msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
 msgstr "Votre feuille n'a pas été importée avec succès ; veuillez vérifier que vous avez le partage de liens activé. (Quiconque avec le lien)."
 
-#: bulk_creator.py:340
+#: bulk_creator.py:339
 #, python-format
 msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
 msgstr "Impossible d'accéder à la feuille de calcul. L'URL est-elle correcte et l'avez-vous partagée avec %s?"
 
-#: bulk_creator.py:346
+#: bulk_creator.py:345
 #, python-format
 msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
 msgstr "Il ne semble pas y avoir de données dans la feuille %(name)s de %(id)s"
 
-#: bulk_creator.py:419
+#: bulk_creator.py:417
 msgid "Convert the input file into a .docx file and remove automatic numbering."
 msgstr "Convertissez le fichier d'entrée en fichier .docx et supprimez la numérotation automatique."
 
-#: bulk_creator.py:421
+#: bulk_creator.py:419
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
 msgstr "Importez le contenu de ce travail à la date appropriée – généralement la date de publication ou de consolidation."
 
-#: bulk_creator.py:423
+#: bulk_creator.py:421
 msgid "Find and link the Gazette (original publication document) for this work."
 msgstr "Recherchez et associez la Gazette (document de publication original) pour ce travail."
 
-#: bulk_creator.py:428
+#: bulk_creator.py:426
 #, python-format
-msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on %(date)s.\n\n"
+msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr "Appliquer les modifications apportées par %(amending_title)s (%(numbered_title)s) le %(date)s.\n\n"
-"L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
+msgstr ""
 
-#: bulk_creator.py:998
+#: bulk_creator.py:983
 msgid "Link commencement (passive)"
 msgstr "Début du lien (passif)"
 
-#: bulk_creator.py:999
+#: bulk_creator.py:984
 #, python-format
 msgid "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n\n"
 "Possible reasons:\n"
@@ -126,26 +429,26 @@ msgstr "On dirait que cette œuvre a été commencée par \"%(commenced_by)s\" s
 "– le début du travail n'existe pas sur le système.\n\n"
 "Veuillez lier la date de début et le début des travaux manuellement."
 
-#: bulk_creator.py:1007
+#: bulk_creator.py:992
 msgid "(unknown)"
 msgstr "(inconnu)"
 
-#: bulk_creator.py:1012
+#: bulk_creator.py:997
 msgid "'Commences on' date missing"
 msgstr "La date \"commence le\" manque"
 
-#: bulk_creator.py:1013
+#: bulk_creator.py:998
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
 "If it should be linked, please do so manually."
 msgstr "On dirait que cette œuvre commence «%(commences)s» (voir la ligne %(row_num)s de la feuille de calcul), mais 'commences_on_date' n'a pas été donné, donc aucune action n'a été prise.\n\n"
 "Si elle doit être liée, veuillez le faire manuellement."
 
-#: bulk_creator.py:1021
+#: bulk_creator.py:1006
 msgid "Link commencement (active)"
 msgstr "Début du lien (actif)"
 
-#: bulk_creator.py:1022
+#: bulk_creator.py:1007
 #, python-format
 msgid "It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n\n"
 "Possible reasons:\n"
@@ -158,11 +461,11 @@ msgstr "On dirait que cette œuvre commence «%(commences)s» sur %(date)s (voir
 "– le travail commencé est inexistant pas sur le système.\n\n"
 "Si le début doit être lié, veuillez le faire manuellement."
 
-#: bulk_creator.py:1035
+#: bulk_creator.py:1020
 msgid "Link amendment (active)"
 msgstr "Amendement du lien (actif)"
 
-#: bulk_creator.py:1039
+#: bulk_creator.py:1024
 #, python-format
 msgid "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -177,11 +480,11 @@ msgstr "On dirait que cette œuvre modifie \"%(amended_work)s\" (voir la ligne %
 "– l'œuvre modifiée n'existe pas dans le système.\n\n"
 "Veuillez lier la modification manuellement."
 
-#: bulk_creator.py:1052
+#: bulk_creator.py:1037
 msgid "Link amendment (passive)"
 msgstr "Amendement du lien (passif)"
 
-#: bulk_creator.py:1056
+#: bulk_creator.py:1041
 #, python-format
 msgid "It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -196,22 +499,22 @@ msgstr "On dirait que cette œuvre soit modifiée par \"%(amending_work)s\" (voi
 "– le œuvre modificatif n'existe pas sur le système.\n\n"
 "Veuillez lier la modification manuellement."
 
-#: bulk_creator.py:1069
+#: bulk_creator.py:1054
 msgid "Link amendment (pending commencement)"
 msgstr "Amendement du lien (en attente de commencement)"
 
-#: bulk_creator.py:1070
+#: bulk_creator.py:1055
 #, python-format
 msgid "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n\n"
 "Please link the amendment manually (and apply it) when this work comes into force."
 msgstr "On dirait que cette œuvre modifie %(amended_title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'amendement).\n\n"
 "Veuillez lier la modification manuellement (et l'appliquer) lorsque ce œuvre entrera en vigueur."
 
-#: bulk_creator.py:1078
+#: bulk_creator.py:1063
 msgid "Link repealed by"
 msgstr "Lien abrogé par"
 
-#: bulk_creator.py:1079
+#: bulk_creator.py:1064
 #, python-format
 msgid "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -224,11 +527,11 @@ msgstr "On dirait que cette œuvre ait été abrogé par \"%(repealed_by)s\" (vo
 "– le œuvre d'abrogation n'existe pas sur le système.\n\n"
 "Veuillez lier l'abrogation manuellement."
 
-#: bulk_creator.py:1091 bulk_creator.py:1128
+#: bulk_creator.py:1076 bulk_creator.py:1113
 msgid "Link repeal"
 msgstr "Abrogation du lien"
 
-#: bulk_creator.py:1092
+#: bulk_creator.py:1077
 #, python-format
 msgid "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -241,11 +544,11 @@ msgstr "Il semble que ce travail supprime \"%(repeals)s\" (voir la ligne %(row_n
 "– l'ouvrage abrogé n'existe pas sur le système.\n\n"
 "Veuillez lier l'abrogation manuellement."
 
-#: bulk_creator.py:1104
+#: bulk_creator.py:1089
 msgid "Check / update repeal"
 msgstr "Vérifier / mettre à jour l'abrogation"
 
-#: bulk_creator.py:1105
+#: bulk_creator.py:1090
 #, python-format
 msgid "On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
 "But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n\n"
@@ -254,29 +557,29 @@ msgstr "Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cet
 "Mais ce travail est déjà répertorié comme ayant été abrogé par %(repealed_by)s (%(repealed_by_numbered_title)s), les informations d'abrogation n'ont donc pas été mises à jour automatiquement.\n\n"
 "Si les informations d'abrogation antérieures ou existantes sont erronées, mettez à jour manuellement. Sinon, si la feuille de calcul est incorrecte, annulez cette tâche avec un commentaire.\n"
 
-#: bulk_creator.py:1119
+#: bulk_creator.py:1104
 msgid "Link repeal (pending commencement)"
 msgstr "Abrogation du lien (en attente de commencement)"
 
-#: bulk_creator.py:1120
+#: bulk_creator.py:1105
 #, python-format
 msgid "It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n\n"
 "Please link the repeal manually when this work comes into force."
 msgstr "On dirait que cette œuvre abroge %(title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement parce que ce travail n'a pas encore commencé (donc il n'y a pas de date pour l'abrogation).\n\n"
 "Veuillez lier l'abrogation manuellement lorsque ce travail entre en vigueur."
 
-#: bulk_creator.py:1129
+#: bulk_creator.py:1114
 #, python-format
 msgid "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n\n"
 "Please link it manually."
 msgstr "On dirait que cette œuvre ait été abrogé par %(title)s (%(numbered_title)s), mais il ne peut pas être lié automatiquement.\n\n"
 "Veuillez le lier manuellement."
 
-#: bulk_creator.py:1137
+#: bulk_creator.py:1122
 msgid "Link primary work"
 msgstr "Lier l'œuvre principal"
 
-#: bulk_creator.py:1138
+#: bulk_creator.py:1123
 #, python-format
 msgid "It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -289,11 +592,11 @@ msgstr "On dirait que le travail principal de cette œuvre soit \"%(work)s\" (vo
 "– le travail principal n'existe pas sur le système.\n\n"
 "Veuillez lier le travail principal manuellement."
 
-#: bulk_creator.py:1150
+#: bulk_creator.py:1135
 msgid "Link subleg"
 msgstr "Lier la législation subordonnée"
 
-#: bulk_creator.py:1151
+#: bulk_creator.py:1136
 #, python-format
 msgid "It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -306,11 +609,11 @@ msgstr "On dirait que cette œuvre ait une législation subordonnée \"%(subleg)
 "– le travail de législation subordonnée n'existe pas sur le système.\n\n"
 "Veuillez lier le travail de législation subordonnée manuellement."
 
-#: bulk_creator.py:1163
+#: bulk_creator.py:1148
 msgid "Check / update primary work"
 msgstr "Vérifier / mettre à jour le travail principal"
 
-#: bulk_creator.py:1164
+#: bulk_creator.py:1149
 #, python-format
 msgid "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n\n"
 "But this work is already subleg under %(parent)s, so nothing was done.\n\n"
@@ -319,11 +622,11 @@ msgstr "Sur la feuille de calcul (voir la ligne %(row_num)s), il est dit que cet
 "Mais ce travail est déjà une législation subordonnée sous %(parent)s, donc rien n'a été fait.\n\n"
 "Vérifiez à nouveau de quel travail ce travail est une législation subordonnée, et mettez-le à jour manuellement si nécessaire. Si la feuille de calcul était erronée, annulez cette tâche avec un commentaire."
 
-#: bulk_creator.py:1176
+#: bulk_creator.py:1161
 msgid "Link taxonomy"
 msgstr "Lier la taxonomie"
 
-#: bulk_creator.py:1177
+#: bulk_creator.py:1162
 #, python-format
 msgid "It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
 "Possible reasons:\n"
@@ -334,7 +637,7 @@ msgstr "On dirait que cette œuvre a la taxonomie suivante : \"%(topics)s\" (voi
 "– une faute de frappe dans la feuille de calcul\n"
 "– la taxonomie n'existe pas sur le système."
 
-#: bulk_creator.py:1243
+#: bulk_creator.py:1225
 #, python-format
 msgid "%s (about to be imported)"
 msgstr "%s (vers être importé)"

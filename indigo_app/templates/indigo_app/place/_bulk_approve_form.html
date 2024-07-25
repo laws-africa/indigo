@@ -69,7 +69,7 @@
                       <span class="text-muted">{{ work.frbr_uri }}</span>
                       {% if work in form.broker.missing_import_date_works %}
                         <i class="fas fa-exclamation-triangle text-warning"></i>
-                        <span class="alert alert-danger p-1">Import date missing</span>
+                        <span class="alert alert-danger p-1">{% trans "Import date missing – add a publication date or a consolidation date" %}</span>
                       {% endif %}
                     </li>
                   {% endfor %}

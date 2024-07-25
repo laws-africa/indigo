@@ -393,7 +393,7 @@ class Task(models.Model):
         # create the document
         document = Document()
         document.work = self.work
-        document.expression_date = self.timeline_date or self.work.get_import_date()
+        document.expression_date = self.timeline_date or self.work.get_import_date() or datetime.date.today()
         document.language = self.country.primary_language
         document.created_by_user = user
         document.save()

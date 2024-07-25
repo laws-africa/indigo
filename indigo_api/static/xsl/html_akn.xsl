@@ -110,6 +110,7 @@
           </xsl:choose>
         </xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'nor'"><xsl:text>Kapittel </xsl:text></xsl:when>
         <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
@@ -215,6 +216,7 @@
         <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'nor'"/>
         <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>

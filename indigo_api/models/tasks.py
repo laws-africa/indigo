@@ -392,15 +392,17 @@ class Task(models.Model):
     def create_and_import_document(self, user):
         # create the document
         document = Document()
+        import_date = self.work.get_import_date()
         document.work = self.work
-        document.expression_date = self.timeline_date or self.work.get_import_date() or datetime.date.today()
+        document.expression_date = self.timeline_date or import_date or datetime.date.today()
         document.language = self.country.primary_language
         document.created_by_user = user
         document.save()
 
-        # link it to the related import task
+        # link it to the related import task (only if the work has an import date)
         import_task = Task.objects.filter(work=self.work, code='import-content',
-                                          timeline_date=self.timeline_date or self.work.get_import_date()).first()
+                                          timeline_date=self.timeline_date or self.work.get_import_date()).first() \
+            if import_date else None
         if import_task:
             import_task.document = document
             import_task.save()

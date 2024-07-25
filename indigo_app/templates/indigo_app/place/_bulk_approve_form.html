@@ -23,7 +23,7 @@
         {% for work in form.broker.works %}
           <input type="hidden" name="works" value="{{ work.pk }}">
         {% endfor %}
-        {% if form.broker.works  %}
+        {% if form.broker.works %}
           <div class="alert alert-warning">
             <ul>
               {% for work in form.broker.works %}
@@ -62,8 +62,15 @@
                 <ul>
                   {% for work in form.broker.import_task_works %}
                     <li>
+                      {% if work in form.broker.missing_import_date_works %}
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                      {% endif %}
                       <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                       <span class="text-muted">{{ work.frbr_uri }}</span>
+                      {% if work in form.broker.missing_import_date_works %}
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        <span class="alert alert-danger p-1">Import date missing</span>
+                      {% endif %}
                     </li>
                   {% endfor %}
                 </ul>

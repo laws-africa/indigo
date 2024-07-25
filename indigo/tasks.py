@@ -9,6 +9,7 @@ class TaskBroker:
         # the works, filtered
         self.works, self.ignored_works = self.get_works_and_ignored_works(works)
         self.import_task_works = self.works.filter(principal=True)
+        self.missing_import_date_works = [w for w in self.import_task_works if not w.get_import_date()]
         self.gazette_task_works = [w for w in self.works if not w.has_publication_document()]
         all_amendments = [w.amendments.all() for w in works if w.amendments.exists()] + \
                          [w.amendments_made.all() for w in works if w.amendments_made.exists()]

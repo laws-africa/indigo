@@ -14,6 +14,7 @@ from django.forms import formset_factory
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
+from django_htmx.http import HttpResponseClientRedirect
 from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -405,18 +406,34 @@ class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
             return ('indigo_api.delete_commencement',)
         return ('indigo_api.view_commencement',)
 
+    def get(self, request, *args, **kwargs):
+        if request.htmx.target == 'commencement-new':
+            # delete the new commencement and reload the page
+            work_commencements_url = self.get_work_commencements_url()
+            self.do_delete()
+            return HttpResponseClientRedirect(redirect_to=work_commencements_url)
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         # for now, the only thing we post to this view is 'delete'
         if 'delete' in request.POST:
             return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        work_commencements_url = self.get_work_commencements_url()
+        self.do_delete()
+        return redirect(work_commencements_url)
+
+    def do_delete(self):
         commencement = self.get_object()
         work = commencement.commenced_work
         commencement.delete()
         work.updated_by_user = self.request.user
         work.save()
-        return redirect(reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri}))
+
+    def get_work_commencements_url(self):
+        work = self.get_object().commenced_work
+        return reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -468,12 +485,6 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
 
-    def post(self, request, *args, **kwargs):
-        # if a brand new commencement has editing cancelled, we need to re-render the whole page
-        if 'cancel' in request.POST:
-            return redirect(self.get_success_url())
-        return super().post(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['disable_main_commencement'] = self.work.main_commencement and not self.object.main
@@ -490,7 +501,7 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         self.object = form.save()
-        return redirect(self.get_success_url())
+        return HttpResponseClientRedirect(redirect_to=self.get_success_url())
 
     def get_success_url(self):
         # re-render the whole page (updated provisions)

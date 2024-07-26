@@ -24,9 +24,11 @@
   <div class="btn-group btn-group-sm document-analysis-menu">
     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-magic"></i> {% trans "Analysis" %}</button>
     <div class="dropdown-menu">
-      <a class="dropdown-item" href="#defined-terms-modal" data-bs-toggle="modal">{% trans "Defined terms..." %}</a>
-      <a class="dropdown-item" href="#references-modal" data-bs-toggle="modal">{% trans "References..." %}</a>
-      <a class="dropdown-item" href="#italics-modal" data-bs-toggle="modal">{% trans "Italicised terms..." %}</a>
+      {% block document-analysis-menu-items %}
+        <a class="dropdown-item" href="#defined-terms-modal" data-bs-toggle="modal">{% trans "Defined terms..." %}</a>
+        <a class="dropdown-item" href="#references-modal" data-bs-toggle="modal">{% trans "References..." %}</a>
+        <a class="dropdown-item" href="#italics-modal" data-bs-toggle="modal">{% trans "Italicised terms..." %}</a>
+      {% endblock %}
     </div>
   </div>
 </div>

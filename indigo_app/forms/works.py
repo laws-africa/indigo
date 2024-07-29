@@ -581,12 +581,10 @@ class CommencementForm(forms.ModelForm):
             raise ValidationError(_("Cannot specify all provisions, and a list of provisions."))
 
         # don't try to save a duplicate commencement, we'll get an IntegrityError
-        duplicate_commencement = self.work.commencements.exclude(
-            pk=self.instance.pk
-        ).filter(
+        if self.work.commencements.exclude(pk=self.instance.pk).filter(
             commencing_work=cleaned_data.get('commencing_work'),
-            date=cleaned_data.get('date')).first()
-        if duplicate_commencement:
+            date=cleaned_data.get('date')
+        ).exists():
             raise ValidationError(_("A commencement at this date and with this commencing work already exists."))
 
         return cleaned_data

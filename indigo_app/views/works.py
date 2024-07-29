@@ -406,34 +406,18 @@ class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
             return ('indigo_api.delete_commencement',)
         return ('indigo_api.view_commencement',)
 
-    def get(self, request, *args, **kwargs):
-        if request.htmx.target == 'commencement-new':
-            # delete the new commencement and reload the page
-            work_commencements_url = self.get_work_commencements_url()
-            self.do_delete()
-            return HttpResponseClientRedirect(redirect_to=work_commencements_url)
-        return super().get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         # for now, the only thing we post to this view is 'delete'
         if 'delete' in request.POST:
             return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        work_commencements_url = self.get_work_commencements_url()
-        self.do_delete()
-        return redirect(work_commencements_url)
-
-    def do_delete(self):
         commencement = self.get_object()
         work = commencement.commenced_work
         commencement.delete()
         work.updated_by_user = self.request.user
         work.save()
-
-    def get_work_commencements_url(self):
-        work = self.get_object().commenced_work
-        return reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri})
+        return redirect(reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

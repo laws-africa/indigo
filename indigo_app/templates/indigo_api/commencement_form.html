@@ -145,11 +145,7 @@
           class="btn btn-link"
           hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
           hx-target="#{{ request.htmx.target }}"
-          {% if request.htmx.target == 'commencement-new' %}
-            data-confirm="{% trans 'Really delete this commencement? There is no undo.' %}"
-          {% else %}
-            data-confirm="{% trans 'Discard all changes to this commencement?' %}"
-          {% endif %}
+          data-confirm="{% trans 'Discard all changes to this commencement?' %}"
       >{% trans 'Cancel' %}</button>
       <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
     </div>

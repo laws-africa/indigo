@@ -370,6 +370,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context = super().get_context_data(**kwargs)
         context['commencements'] = self.work.commencements.all().reverse()
         context['has_uncommenced_provisions'] = self.work.all_uncommenced_provision_ids(return_bool=True)
+        context['blank_commencement_exists'] = self.work.commencements.filter(date=None, commencing_work=None).exists()
         return context
 
 

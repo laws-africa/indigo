@@ -1,153 +1,140 @@
 {% load i18n %}
 
-{% if not commencement.id %}
-  {# This will only ever be the case when a brand new commencement doesn't validate #}
+<form
+    hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+    class="commencement-form"
+    hx-target="#{{ request.htmx.target }}"
+>
+  {% csrf_token %}
+
   <div class="card-body">
-    <div class="alert alert-danger">
-      <div>{% trans "A commencement without a date or a commencing work already exists. Edit or delete that first before adding another." %}</div>
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for err in form.non_field_errors %}
+          <div>{{ err }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="row mb-3">
+      <label for="{{ form.commencing_work.id_for_label }}" class="col-2 col-form-label">{{ form.commencing_work.label }}</label>
+      <div class="col-4">
+        {% include 'indigo_api/commencements/_commencement_form_commencing_work.html' %}
+      </div>
+    </div>
+    <div id="non-commencing-work-data-{{ commencement.id }}">
+      <div class="row mb-3">
+        <label for="{{ form.date.id_for_label }}" class="col-2 col-form-label">{{ form.date.label }}</label>
+        <div class="col-4">
+          <input
+              hx-post="{% url 'work_commencement_provisions_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+              hx-trigger="load, change"
+              hx-target="#provisions-edit-{{ commencement.id }}"
+              hx-include="provisions-edit-{{ commencement.id }}"
+              type="date"
+              class="form-control"
+              id="{{ form.date.id_for_label }}"
+              name="{{ form.date.html_name }}"
+              value="{{ commencement.date|date:"Y-m-d" }}"
+          >
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="{{ form.note.id_for_label }}" class="col-2 col-form-label">{{ form.note.label }}</label>
+        <div class="col-4">
+          <input
+              type="text"
+              class="form-control me-2"
+              placeholder="{% trans 'Example: See section 1 ...' %}"
+              name="{{ form.note.html_name }}"
+              value="{{ commencement.note|default:'' }}"
+          >
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="{{ form.main.id_for_label }}-{{ commencement.id }}" class="col-2 col-form-label">{{ form.main.label }}</label>
+        <div class="col-4 mt-1">
+          <div class="form-check">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                id="{{ form.main.id_for_label }}-{{ commencement.id }}"
+                name="{{ form.main.html_name }}"
+                value="true"
+                {% if commencement.main %}checked{% endif %}
+                {% if disable_main_commencement %}disabled{% endif %}
+            >
+          </div>
+          {% if form.main.errors %}
+            <div class="text-danger">
+              {% for error in form.main.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-6">
+          {% if disable_main_commencement %}
+            <div class="form-text text-muted">
+              {% trans "Another commencement has already been marked as 'main'." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}" class="col-2 col-form-label">{{ form.all_provisions.label }}</label>
+        <div class="col-4">
+          <div class="form-check">
+            <input
+                type="checkbox"
+                class="form-check-input all-provisions"
+                id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
+                name="{{ form.all_provisions.html_name }}"
+                value="true"
+                {% if commencement.all_provisions %}checked{% endif %}
+                {% if disable_all_provisions %}disabled{% endif %}
+            >
+          </div>
+          {% if form.all_provisions.errors %}
+            <div class="text-danger">
+              {% for error in form.all_provisions.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-6">
+          {% if disable_all_provisions %}
+            <div class="form-text text-muted">
+              {% trans "A commencement can only commence all provisions if it's the only one." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
+        <label for="{{ form.provisions.id_for_label }}" class="col-2 col-form-label">{{ form.provisions.label }}</label>
+        <div
+            class="col-6 mt-1"
+            id="provisions-edit-{{ commencement.id }}"
+        >
+          {% for provision in commencement.provisions %}
+            <input type="hidden" name="{{ form.provisions.html_name }}" value="{{ provision }}">
+          {% endfor %}
+          {% if form.provisions_select_all.value %}
+            <input type="hidden" name="{{ form.provisions_select_all.html_name }}" value="1">
+          {% endif %}
+          {% trans "Loading provisions…" %}
+        </div>
+      </div>
     </div>
   </div>
   <div class="card-footer text-end">
-    <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}"
-    >{% trans 'Cancel and reload' %}</a>
+    <button
+        class="btn btn-link"
+        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+        hx-target="#{{ request.htmx.target }}"
+        data-confirm="{% trans 'Discard all changes to this commencement?' %}"
+    >{% trans 'Cancel' %}</button>
+    <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
   </div>
-{% else %}
-  <form
-      hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
-      class="commencement-form"
-      hx-target="#{{ request.htmx.target }}"
-  >
-    {% csrf_token %}
-
-    <div class="card-body">
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-          {% for err in form.non_field_errors %}
-            <div>{{ err }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <div class="row mb-3">
-        <label for="{{ form.commencing_work.id_for_label }}" class="col-2 col-form-label">{{ form.commencing_work.label }}</label>
-        <div class="col-4">
-          {% include 'indigo_api/commencements/_commencement_form_commencing_work.html' %}
-        </div>
-      </div>
-      <div id="non-commencing-work-data-{{ commencement.id }}">
-        <div class="row mb-3">
-          <label for="{{ form.date.id_for_label }}" class="col-2 col-form-label">{{ form.date.label }}</label>
-          <div class="col-4">
-            <input
-                hx-post="{% url 'work_commencement_provisions_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
-                hx-trigger="load, change"
-                hx-target="#provisions-edit-{{ commencement.id }}"
-                hx-include="provisions-edit-{{ commencement.id }}"
-                type="date"
-                class="form-control"
-                id="{{ form.date.id_for_label }}"
-                name="{{ form.date.html_name }}"
-                value="{{ commencement.date|date:"Y-m-d" }}"
-            >
-          </div>
-        </div>
-        <div class="row mb-3">
-          <label for="{{ form.note.id_for_label }}" class="col-2 col-form-label">{{ form.note.label }}</label>
-          <div class="col-4">
-            <input
-                type="text"
-                class="form-control me-2"
-                placeholder="{% trans 'Example: See section 1 ...' %}"
-                name="{{ form.note.html_name }}"
-                value="{{ commencement.note|default:'' }}"
-            >
-          </div>
-        </div>
-        <div class="row mb-3">
-          <label for="{{ form.main.id_for_label }}-{{ commencement.id }}" class="col-2 col-form-label">{{ form.main.label }}</label>
-          <div class="col-4 mt-1">
-            <div class="form-check">
-              <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="{{ form.main.id_for_label }}-{{ commencement.id }}"
-                  name="{{ form.main.html_name }}"
-                  value="true"
-                  {% if commencement.main %}checked{% endif %}
-                  {% if disable_main_commencement %}disabled{% endif %}
-              >
-            </div>
-            {% if form.main.errors %}
-              <div class="text-danger">
-                {% for error in form.main.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-          <div class="col-6">
-            {% if disable_main_commencement %}
-              <div class="form-text text-muted">
-                {% trans "Another commencement has already been marked as 'main'." %}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        <div class="row mb-3">
-          <label for="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}" class="col-2 col-form-label">{{ form.all_provisions.label }}</label>
-          <div class="col-4">
-            <div class="form-check">
-              <input
-                  type="checkbox"
-                  class="form-check-input all-provisions"
-                  id="{{ form.all_provisions.id_for_label }}-{{ commencement.id }}"
-                  name="{{ form.all_provisions.html_name }}"
-                  value="true"
-                  {% if commencement.all_provisions %}checked{% endif %}
-                  {% if disable_all_provisions %}disabled{% endif %}
-              >
-            </div>
-            {% if form.all_provisions.errors %}
-              <div class="text-danger">
-                {% for error in form.all_provisions.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-          <div class="col-6">
-            {% if disable_all_provisions %}
-              <div class="form-text text-muted">
-                {% trans "A commencement can only commence all provisions if it's the only one." %}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        <div class="row mb-3 provisions-commenced {% if commencement.all_provisions %}d-none{% endif %}">
-          <label for="{{ form.provisions.id_for_label }}" class="col-2 col-form-label">{{ form.provisions.label }}</label>
-          <div
-              class="col-6 mt-1"
-              id="provisions-edit-{{ commencement.id }}"
-          >
-            {% for provision in commencement.provisions %}
-              <input type="hidden" name="{{ form.provisions.html_name }}" value="{{ provision }}">
-            {% endfor %}
-            {% if form.provisions_select_all.value %}
-              <input type="hidden" name="{{ form.provisions_select_all.html_name }}" value="1">
-            {% endif %}
-            {% trans "Loading provisions…" %}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card-footer text-end">
-      <button
-          class="btn btn-link"
-          hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-          hx-target="#{{ request.htmx.target }}"
-          data-confirm="{% trans 'Discard all changes to this commencement?' %}"
-      >{% trans 'Cancel' %}</button>
-      <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
-    </div>
-  </form>
-{% endif %}
+</form>

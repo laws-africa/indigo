@@ -1,6 +1,5 @@
 import re
 from dataclasses import dataclass, field
-from datetime import date
 from functools import cached_property
 from typing import List
 
@@ -576,10 +575,19 @@ class CommencementForm(forms.ModelForm):
         return self.cleaned_data['all_provisions']
 
     def clean(self):
-        super().clean()
+        cleaned_data = super().clean()
         # all_provisions may have been nuked during clean
-        if self.cleaned_data.get('all_provisions') and self.cleaned_data['provisions']:
+        if cleaned_data.get('all_provisions') and cleaned_data['provisions']:
             raise ValidationError(_("Cannot specify all provisions, and a list of provisions."))
+
+        # don't try to save a duplicate commencement, we'll get an IntegrityError
+        if self.work.commencements.exclude(pk=self.instance.pk).filter(
+            commencing_work=cleaned_data.get('commencing_work'),
+            date=cleaned_data.get('date')
+        ).exists():
+            raise ValidationError(_("A commencement at this date and with this commencing work already exists."))
+
+        return cleaned_data
 
 
 class CommencementsPartialForm(BasePartialWorkForm):

@@ -25,13 +25,17 @@
     {% if perms.indigo_api.add_commencement %}
       <li class="timeline-item card" id="commencement-new">
         <div class="card-body">
-          {% block new-commencement-card %}
+          {% if blank_commencement_exists %}
+            <div class="col-6 alert alert-danger">
+              <div>{% trans "A commencement without a date or a commencing work already exists. Edit it before adding another one." %}</div>
+            </div>
+          {% else %}
             <button
                 class="btn btn-success"
                 hx-post="{% url 'work_commencement_add' frbr_uri=work.frbr_uri %}"
                 hx-target="#commencement-new"
             >{% trans 'Add a commencement' %}</button>
-          {% endblock %}
+          {% endif %}
         </div>
       </li>
     {% endif %}

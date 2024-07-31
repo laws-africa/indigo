@@ -5,7 +5,7 @@ from collections import Counter
 from itertools import chain, groupby
 from datetime import timedelta
 
-from django import  forms
+from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -14,9 +14,11 @@ from django.forms import formset_factory
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
-from django.http import Http404, JsonResponse
+from django_htmx.http import HttpResponseClientRedirect
+from django.http import Http404, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as __
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
@@ -369,6 +371,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context = super().get_context_data(**kwargs)
         context['commencements'] = self.work.commencements.all().reverse()
         context['has_uncommenced_provisions'] = self.work.all_uncommenced_provision_ids(return_bool=True)
+        context['blank_commencement_exists'] = self.work.commencements.filter(date=None, commencing_work=None).exists()
         return context
 
 
@@ -468,12 +471,6 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
 
-    def post(self, request, *args, **kwargs):
-        # if a brand new commencement has editing cancelled, we need to re-render the whole page
-        if 'cancel' in request.POST:
-            return redirect(self.get_success_url())
-        return super().post(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['disable_main_commencement'] = self.work.main_commencement and not self.object.main
@@ -490,7 +487,7 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         self.object = form.save()
-        return redirect(self.get_success_url())
+        return HttpResponseClientRedirect(redirect_to=self.get_success_url())
 
     def get_success_url(self):
         # re-render the whole page (updated provisions)
@@ -549,6 +546,10 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
         form.instance.commenced_work = self.work
         form.instance.created_by_user = self.request.user
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, __("Couldn't add another blank commencement"))
+        return HttpResponseClientRedirect(redirect_to=reverse('work_commencements', kwargs={'frbr_uri': self.work.frbr_uri}))
 
     def get_success_url(self):
         return reverse('work_commencement_edit', kwargs={'frbr_uri': self.work.frbr_uri, 'pk': self.object.id})

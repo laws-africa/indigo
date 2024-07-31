@@ -1,21 +1,21 @@
 {% load i18n %}
 
 <form
-    method="post"
-    action="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
+    hx-post="{% url 'work_commencement_edit' frbr_uri=work.frbr_uri pk=commencement.id %}"
     class="commencement-form"
+    hx-target="#{{ request.htmx.target }}"
 >
   {% csrf_token %}
 
-  {% if form.non_field_errors %}
-    <div class="alert alert-danger">
-      {% for err in form.non_field_errors %}
-        <div>{{ err }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-
   <div class="card-body">
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for err in form.non_field_errors %}
+          <div>{{ err }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="row mb-3">
       <label for="{{ form.commencing_work.id_for_label }}" class="col-2 col-form-label">{{ form.commencing_work.label }}</label>
       <div class="col-4">
@@ -129,19 +129,12 @@
     </div>
   </div>
   <div class="card-footer text-end">
-    {% if request.htmx.target == 'commencement-new' %}
-      <button
-          class="btn btn-link"
-          type="submit"
-          name="cancel"
-      >{% trans 'Cancel' %}</button>
-    {% else %}
-      <button
-          class="btn btn-link"
-          hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
-          hx-target="#commencement-detail-{{ commencement.id }}"
-      >{% trans 'Cancel' %}</button>
-    {% endif %}
+    <button
+        class="btn btn-link"
+        hx-get="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri pk=commencement.id %}"
+        hx-target="#{{ request.htmx.target }}"
+        hx-confirm="{% trans 'Discard all changes to this commencement?' %}"
+    >{% trans 'Cancel' %}</button>
     <button class="btn btn-success" data-disable-with="{% trans 'Saving…' %}">{% trans 'Save' %}</button>
   </div>
 </form>

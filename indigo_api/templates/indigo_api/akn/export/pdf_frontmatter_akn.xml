@@ -34,7 +34,7 @@
   {% endblock %}
   {% block expression-detail %}
     <div name="expression-detail">
-      <p>{% blocktrans with date=document.expression_date|date:"j E Y" %}Document date: {{ date }}{% endblocktrans %}</p>
+      <p>{% blocktrans with date=document.expression_date|date:"j E Y" %}Legislation as at {{ date }}{% endblocktrans %}</p>
     </div>
   {% endblock %}
   {% block updates %}

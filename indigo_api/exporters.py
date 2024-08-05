@@ -269,7 +269,39 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'toc': toc,
             'include_country': document.country not in self.dont_include_countries,
             'place_string': self.get_place_string(document),
+            'notices': self.get_notices(document),
         }
+
+    def get_notices(self, document):
+        work = document.work
+        notices = []
+
+        # repeal
+        if work.repealed_date:
+            notice = _('This legislation was <b>repealed</b> on %(date)s by %(work)s') % {
+                'date': work.repealed_date, 'work': work.repealed_by.title}
+            notice += f' ({work.repealed_by.numbered_title()}).' if work.repealed_by.numbered_title() else '.'
+            notices.append(notice)
+
+        # commencement
+        if not work.commenced:
+            notices.append(_('This legislation is not yet in force.'))
+        elif work.all_uncommenced_provision_ids(date=document.expression_date, return_bool=True):
+            notices.append(_('This legislation had not yet come into force in full on %(date)s.') % {
+                'date': document.expression_date})
+
+        # not the latest point in time
+        if work.expressions().filter(expression_date__gt=document.expression_date):
+            notices.append(_('This is not the latest available version of this legislation.'))
+
+        # unapplied amendments
+        amendment_dates = [a.date for a in work.amendments.all()]
+        possible_dates = amendment_dates + [work.publication_date] if work.publication_date else []
+        if document.expression_date < max(possible_dates):
+            notices.append(_('There are outstanding amendments that have not yet been applied.'
+                             ' See the online version for more information.'))
+
+        return notices
 
     def get_base_toc(self, document):
         return document.table_of_contents()

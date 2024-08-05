@@ -37,6 +37,18 @@
       <p>{% blocktrans with date=document.expression_date|date:"j E Y" %}Legislation as at {{ date }}{% endblocktrans %}</p>
     </div>
   {% endblock %}
+  {% block notices %}
+    {% if notices %}
+      <div name="notices">
+        {% for notice in notices %}
+          <notice>
+            <n>{% trans "Note:" %}</n>
+            <p>{{ notice|safe }}</p>
+          </notice>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endblock %}
   {% block updates %}
     <div name="updates-block">
       <p>{% trans "Please note that there may have been updates since this file was created." %}</p>

@@ -16,6 +16,9 @@
           <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
           <p>bad <ref>https:// address</ref></p>
           <p>good? <ref href="https://x">https://x address</ref></p>
+          <p>bad <ref>no scheme, just example.com</ref> ref</p>
+          <p>bad <ref href="http://example.com/some%20path/with%5B%5D%3Dbad%20chars/?query=value%20with%20spaces%3F#anchor%20spaces"
+>bad chars</ref> ref</p>
           <p>to be resolved <ref href="RRRR/akn/za/act/1962/58">Act 58 of 1962</ref></p>
           <p>to be resolved <ref href="RRRR/akn/za/act/1962/58/eng@1999-08-81#sec_3">Act 58 of 1962</ref></p>
           <p>to be resolved <ref href="RRRR/akn/za/act/1962/58/~chp_IV__sec_27">Act 58 of 1962</ref></p>

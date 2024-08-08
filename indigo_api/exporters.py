@@ -5,7 +5,7 @@ import re
 import shutil
 import tempfile
 from collections import defaultdict
-from urllib.parse import unquote
+from urllib.parse import quote, urlparse
 
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
@@ -335,20 +335,30 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
 
     def adjust_refs(self, doc):
         """ Prefix absolute hrefs into fully-qualified URLs.
+            Remove hrefs that will break FOP.
         """
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
             href = ref.attrib['href']
             text = ''.join(ref.xpath('.//text()'))
-            # remove links that will break FOP
-            bad_href_re = re.compile(r'\W')
-            bad_href_match = re.match(bad_href_re, unquote(href))
-            if href == 'https://' or href == 'mailto:' or bad_href_match:
-                log.info(f'Removing bad href "{href}" from the text "{text}"')
+            scheme, netloc, path, params, query, fragment = urlparse(href)
+
+            if not scheme:
+                # e.g. /akn/… which should be resolved, or
+                # e.g. #sec_6 which should be left alone, or
+                # e.g. example.com which should be removed
+                if path and path.startswith('/'):
+                    ref.attrib['href'] = self.resolver_url + href
+                elif not fragment:
+                    log.info(f'Removing href "{href}" from text "{text}"')
+                    del ref.attrib['href']
+                continue
+
+            if not (netloc or path):
+                log.info(f'Removing href "{href}" from the text "{text}"')
                 del ref.attrib['href']
 
-            # add resolver before /akn/etc links
-            elif href.startswith('/'):
-                ref.attrib['href'] = self.resolver_url + href
+            else:
+                ref.attrib['href'] = quote(href, safe=':/@?=&#')
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.

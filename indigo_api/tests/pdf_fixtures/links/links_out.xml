@@ -16,9 +16,9 @@
           <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
           <p>bad <ref>https:// address</ref></p>
           <p>good? <ref href="https://x">https://x address</ref></p>
-          <p>to be resolved <ref href="https://example.com/akn/za/act/1962/58">Act 58 of 1962</ref></p>
-          <p>to be resolved <ref href="https://example.com/akn/za/act/1962/58/eng@1999-08-81#sec_3">Act 58 of 1962</ref></p>
-          <p>to be resolved <ref href="https://example.com/akn/za/act/1962/58/~chp_IV__sec_27">Act 58 of 1962</ref></p>
+          <p>to be resolved <ref href="RRRR/akn/za/act/1962/58">Act 58 of 1962</ref></p>
+          <p>to be resolved <ref href="RRRR/akn/za/act/1962/58/eng@1999-08-81#sec_3">Act 58 of 1962</ref></p>
+          <p>to be resolved <ref href="RRRR/akn/za/act/1962/58/~chp_IV__sec_27">Act 58 of 1962</ref></p>
           <p>internal <ref href="#sec_6">section 6</ref></p>
         </content>
       </section>

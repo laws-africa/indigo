@@ -5,7 +5,7 @@ import re
 import shutil
 import tempfile
 from collections import defaultdict
-from urllib.parse import quote, urlparse
+from urllib.parse import quote, unquote, urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
@@ -333,6 +333,12 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     for chunk in attachment.file.chunks():
                         f.write(chunk)
 
+    def escape_url(self, url):
+        parsed_url = urlparse(url)
+        return urlunparse((parsed_url.scheme, parsed_url.netloc, quote(unquote(parsed_url.path), safe='@"/'),
+                           parsed_url.params, quote(unquote(parsed_url.query), safe="=&"),
+                           quote(unquote(parsed_url.fragment)))).replace(" ", "%20")
+
     def adjust_refs(self, doc):
         """ Prefix absolute hrefs into fully-qualified URLs.
             Remove hrefs that will break FOP.
@@ -340,25 +346,33 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
             href = ref.attrib['href']
             text = ''.join(ref.xpath('.//text()'))
-            scheme, netloc, path, params, query, fragment = urlparse(href)
+            parsed_url = urlparse(href)
 
-            if not scheme:
+            if not parsed_url.scheme:
                 # e.g. /akn/… which should be resolved, or
                 # e.g. #sec_6 which should be left alone, or
                 # e.g. example.com which should be removed
-                if path and path.startswith('/'):
-                    ref.attrib['href'] = self.resolver_url + href
-                elif not fragment:
+                if parsed_url.path and parsed_url.path.startswith('/'):
+                    # /akn/… -- resolve it
+                    parsed_resolver_url = urlparse(self.resolver_url)
+                    new_path = parsed_resolver_url.path.rstrip('/') + parsed_url.path
+                    ref.attrib['href'] = self.escape_url(urlunparse(
+                        (parsed_resolver_url.scheme, parsed_resolver_url.netloc, new_path, parsed_url.params,
+                         parsed_url.query, parsed_url.fragment)))
+                elif not parsed_url.fragment:
+                    # example.com -- remove it
                     log.info(f'Removing href "{href}" from text "{text}"')
                     del ref.attrib['href']
-                continue
+                # #sec_6 -- leave it alone
 
-            if not (netloc or path):
+            elif not (parsed_url.netloc or parsed_url.path):
+                # e.g. mailto: or https:// -- remove it
                 log.info(f'Removing href "{href}" from the text "{text}"')
                 del ref.attrib['href']
 
             else:
-                ref.attrib['href'] = quote(href, safe=':/@?=&#')
+                # keep it as is but clean it up a bit
+                ref.attrib['href'] = self.escape_url(urlunparse(parsed_url))
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.

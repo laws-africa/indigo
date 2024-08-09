@@ -337,7 +337,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         parsed_url = urlparse(url)
         return urlunparse((parsed_url.scheme, parsed_url.netloc, quote(unquote(parsed_url.path), safe='@"/'),
                            parsed_url.params, quote(unquote(parsed_url.query), safe="=&"),
-                           quote(unquote(parsed_url.fragment)))).replace(" ", "%20")
+                           quote(unquote(parsed_url.fragment), safe=":"))).replace(" ", "%20")
 
     def adjust_refs(self, doc):
         """ Prefix absolute hrefs into fully-qualified URLs.

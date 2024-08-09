@@ -10,7 +10,7 @@
           <p>bad <ref href="mailto:@">mailto:@ address</ref></p>
           <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
           <p>good <ref href="mailto:info@example.com">mailto:info@example.com address</ref></p>
-          <p>good <ref href="https://hudoc.echr.coe.int/fre#%7B%22itemid%22%3A%5B%22002-7652%22%5D%7D">https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]} address</ref></p>
+          <p>good <ref href="https://hudoc.echr.coe.int/fre#%7B%22itemid%22:%5B%22002-7652%22%5D%7D">https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]} address</ref></p>
           <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
           <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
           <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>

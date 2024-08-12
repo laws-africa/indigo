@@ -278,7 +278,11 @@ STATICFILES_FINDERS = (
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "indigo.pipeline.GzipManifestPipelineStorage"
+    }
+}
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
     '.xsl': 'application/xslt+xml',
@@ -505,8 +509,6 @@ LOGGING = {
 ACTSTREAM_SETTINGS = {
     'USE_JSONFIELD': True,
 }
-
-USE_NATIVE_JSONFIELD = True
 
 # Adminstrators intended to receive email notifications
 # Each item in the list should be a tuple of (Full name, email address). Example:

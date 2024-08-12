@@ -6,5 +6,6 @@
  */
 import * as indigoAkn from '@lawsafrica/indigo-akn';
 import { fromRange as textPositionFromRange } from 'dom-anchor-text-position';
+
 window.indigoAkn = indigoAkn;
 window.textPositionFromRange = textPositionFromRange;

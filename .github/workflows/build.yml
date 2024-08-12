@@ -9,6 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Compile javascript and commit changes
+    # avoid circular build commits
+    if: ${{ !contains(github.event.head_commit.message, 'nobuild') }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -28,13 +30,17 @@ jobs:
       - name: Copy node dependencies
         # Keep the local copy of some node dependencies up to date
         # indigo-web: only used for PDF exports
-        # monaco-editor
         run: |
           cp -R node_modules/indigo-web/scss indigo_app/static/lib/indigo-web/
-          cp -R node_modules/monaco-editor/min/vs/{base,basic-languages,editor,loader.js} indigo_app/static/lib/monaco-editor/
 
       - name: Push
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v9
         with:
-          add: 'indigo_app/static/javascript/indigo/bluebell-monaco.js indigo_app/static/lib/external-imports.js indigo_app/static/javascript/indigo-app.js indigo_app/static/lib/indigo-web/ indigo/analysis/refs/provision_refs.py --force'
-          message: 'Update compiled bluebell-monaco.js, external-imports.js and indigo-app.js'
+          add: |
+            - indigo_app/static/javascript/indigo/bluebell-monaco.js --force
+            - indigo_app/static/javascript/indigo/editor.worker.*.js --force
+            - indigo_app/static/lib/external-imports.js --force
+            - indigo_app/static/javascript/indigo-app.js --force
+            - indigo_app/static/lib/indigo-web/ --force
+            - indigo/analysis/refs/provision_refs.py --force
+          message: 'Update compiled bluebell-monaco.js, external-imports.js and indigo-app.js [nobuild]'

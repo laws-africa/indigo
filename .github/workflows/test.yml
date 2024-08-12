@@ -54,6 +54,11 @@ jobs:
     - name: Install node dependencies
       run: npm install -g jshint sass
 
+    - name: Compile assets
+      run: |
+        python manage.py compilescss
+        python manage.py collectstatic --noinput -i docs -i \*.scss
+
     - name: Run tests
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"

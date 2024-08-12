@@ -552,3 +552,5 @@ FOP_FONT_PATH = os.environ.get("FOP_FONT_PATH")
 
 # allow injection of a custom test runner for github actions
 TEST_RUNNER = os.environ.get('TEST_RUNNER', 'django.test.runner.DiscoverRunner')
+# only used by xmlrunner https://github.com/xmlrunner/unittest-xml-reporting#django-support
+TEST_OUTPUT_DIR = './test-reports'

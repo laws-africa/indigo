@@ -58,7 +58,6 @@ jobs:
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
         TEST_RUNNER: "xmlrunner.extra.djangotestrunner.XMLTestRunner"
-        TEST_OUTPUT_DIR: "./test-reports"
       run: |
         PATH=/usr/share/fop-2.5/fop:$PATH
         coverage run manage.py test
@@ -68,5 +67,6 @@ jobs:
       uses: dorny/test-reporter@v1
       if: success() || failure()
       with:
+        name: Tests
         path: test-reports/*.xml
         reporter: java-junit

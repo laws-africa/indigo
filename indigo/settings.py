@@ -226,9 +226,18 @@ TEMPLATES = [
     }
 ]
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "indigo.pipeline.GzipManifestPipelineStorage"
+    }
+}
+
 # attachments
 if not DEBUG:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES["default"]["BACKEND"] = "storages.backends.s3boto3.S3Boto3Storage"
     AWS_S3_FILE_OVERWRITE = False
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -276,13 +285,6 @@ STATICFILES_FINDERS = (
     "pipeline.finders.PipelineFinder",
 )
 
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "indigo.pipeline.GzipManifestPipelineStorage"
-    }
-}
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
     '.xsl': 'application/xslt+xml',

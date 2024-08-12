@@ -1,22 +1,83 @@
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-  <act name="act">
-    <meta/>
-    <body>
-      <section eId="sec_1">
-        <num>1.</num>
-        <heading>Heading</heading>
-        <content>
-          <p>bad <ref>mailto: <b>add</b>ress</ref></p>
-          <p>bad <ref href="mailto:@">mailto:@ address</ref></p>
-          <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
-          <p>good <ref href="mailto:info@example.com">mailto:info@example.com address</ref></p>
-          <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
-          <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
-          <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
-          <p>bad <ref>https:// address</ref></p>
-          <p>good? <ref href="https://x">https://x address</ref></p>
-        </content>
-      </section>
-    </body>
-  </act>
-</akomaNtoso>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <fo:layout-master-set>
+    <fo:simple-page-master margin-right="2.5cm" margin-left="2.5cm" margin-bottom="3cm" margin-top="3cm" page-height="297mm" page-width="210mm" master-name="A4">
+      <fo:region-body/>
+      <fo:region-before/>
+      <fo:region-after/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:bookmark-tree/>
+  <fo:page-sequence format="i" initial-page-number="1" master-reference="A4">
+    <fo:static-content flow-name="xsl-region-after">
+      <fo:block margin-top="1cm" text-align="center" font-size="9pt" font-family="PT Sans">
+        <fo:page-number/>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block/>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence format="1" initial-page-number="1" master-reference="A4">
+    <fo:static-content flow-name="xsl-region-before">
+      <fo:block margin-top="-1.5cm" border-bottom-color="#D04242" border-bottom-style="solid" text-align-last="justify" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block last-line-end-indent="-29pt" end-indent="30pt" start-indent="1pt">
+          <fo:inline>
+            <fo:leader leader-pattern="space"/>
+          </fo:inline>
+        </fo:block>
+      </fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="xsl-region-after">
+      <fo:block padding-top="3pt" margin-top="1cm" border-top-color="#D04242" border-top-style="solid" text-align-last="justify" font-size="9pt" font-family="PT Serif">
+        <fo:block end-indent="2pt" start-indent="2pt">
+          <fo:inline>
+            <fo:leader leader-pattern="space"/>
+            <fo:page-number/>
+          </fo:inline>
+        </fo:block>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block>
+          <fo:block-container>
+            <fo:list-block margin-top="0.8em*2" start-indent="0">
+              <fo:list-item id="sec_1">
+                <fo:list-item-label end-indent="label-end()">
+                  <fo:block text-align="end" font-size="9pt * 1.14&#10;  " font-weight="bold">1.</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="3em">
+                  <fo:block keep-with-next="always" font-size="9pt * 1.14&#10;  " font-weight="bold">Heading</fo:block>
+                  <fo:block margin-top="0.8em">bad mailto: <fo:inline font-weight="bold">add</fo:inline>ress</fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:@">mailto:@ address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:.com">mailto:.com address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">good <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:info@example.com">mailto:info@example.com address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">good <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://hudoc.echr.coe.int/fre#%7B%22itemid%22:%5B%22002-7652%22%5D%7D">https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]} address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">good <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/foo%20bar?a=%22x">https://example.com/foo bar?a="x</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">fine <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/foo%20bar?a=%22x">https://example.com/foo bar?a="x</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">good <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other+value&amp;a=%22x">https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other%20value&amp;a="x</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">good <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/path/name;param1;p2=x%3Da,y%3Bb,z%2Cc;p3?a=%27x">with params</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">not great, but won't break <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/path/name;param1;p2=x=a,y;b,z,c;p3?a=%27x">with params</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">not great, but won't break <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/path/name;param%201;p%202=x=a,y;b,z,c;p%203?a=%27+x">with params</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:.@">mailto:.@ address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:@c.x">mailto:@c.x address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="mailto:@.com">mailto:@.com address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad https:// address</fo:block>
+                  <fo:block margin-top="0.8em">good? <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://x">https://x address</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">bad no scheme, just example.com ref</fo:block>
+                  <fo:block margin-top="0.8em">bad <fo:basic-link text-decoration="underline" color="#D04242" external-destination="http://example.com/some%20path/with%5B%5D%3Dbad%20chars/?query=value+with+spaces%3F#anchor%20spaces">bad chars</fo:basic-link> ref</fo:block>
+                  <fo:block margin-top="0.8em">to be resolved <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/akn/za/act/1962/58">Act 58 of 1962</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">to be resolved <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/akn/za/act/1962/58/eng@1999-08-81#sec_3">Act 58 of 1962</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">to be resolved <fo:basic-link text-decoration="underline" color="#D04242" external-destination="https://example.com/akn/za/act/1962/58/~chp_IV__sec_27">Act 58 of 1962</fo:basic-link></fo:block>
+                  <fo:block margin-top="0.8em">internal <fo:basic-link text-decoration="underline" color="#3E1313" internal-destination="sec_6">section 6</fo:basic-link></fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block-container>
+        </fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

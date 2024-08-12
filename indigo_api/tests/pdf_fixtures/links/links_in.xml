@@ -11,6 +11,12 @@
           <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
           <p>good <ref href="mailto:info@example.com">mailto:info@example.com address</ref></p>
           <p>good <ref href='https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]}'>https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]} address</ref></p>
+          <p>good <ref href="https://example.com/foo%20bar?a=%22x">https://example.com/foo bar?a="x</ref></p>
+          <p>fine <ref href='https://example.com/foo bar?a="x'>https://example.com/foo bar?a="x</ref></p>
+          <p>good <ref href="https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other%20value&amp;a=%22x">https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other%20value&amp;a="x</ref></p>
+          <p>good <ref href="https://example.com/path/name;param1;p2=x%3Da,y%3Bb,z%2Cc;p3?a='x">with params</ref></p>
+          <p>not great, but won't break <ref href="https://example.com/path/name;param1;p2=x=a,y;b,z,c;p3?a='x">with params</ref></p>
+          <p>not great, but won't break <ref href="https://example.com/path/name;param 1;p 2=x=a,y;b,z,c;p 3?a=' x">with params</ref></p>
           <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
           <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
           <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>

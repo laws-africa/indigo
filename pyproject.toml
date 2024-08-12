@@ -34,7 +34,7 @@ dependencies = [
     "dj-database-url>=0.3.0",
     "django-activity-stream>=0.10.0",
     "django-allauth[socialaccount]>=0.62.0",
-    "django-background-tasks>=1.2.5",
+    "django-background-tasks-updated>=1.2.8",
     "django-compressor>=3.1,<=4.4",
     "django-cors-headers>=3.11.0",
     "django-countries-plus>=2.0.1",
@@ -74,7 +74,6 @@ dependencies = [
 
     # for indigo_social
     "pillow>=5.2.0",
-    "pinax-badges>=2.0.3",
 ]
 dynamic = ["version"]
 

@@ -42,7 +42,6 @@ INSTALLED_APPS = (
 
     # Indigo social
     'indigo_social',
-    'pinax.badges',
 
     # the Indigo act resolver
     'indigo_resolver',

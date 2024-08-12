@@ -63,10 +63,8 @@ jobs:
         coverage run manage.py test
         jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js
 
-    - name: Test report
-      uses: dorny/test-reporter@v1
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/linux@v2
       if: success() || failure()
       with:
-        name: Tests
-        path: test-reports/*.xml
-        reporter: java-junit
+        files: test-reports/*.xml

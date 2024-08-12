@@ -25,9 +25,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
-    "django>=3.2,<4",
+    "django>=4.2,<5",
     "boto3>=1.7",
-    "urllib3<2",  # botocore doesn"t play well with urllib3 2.0+ see https://github.com/boto/botocore/issues/2926
+    "urllib3<2.1",  # botocore doesn"t play well with urllib3 > 2.1 see https://github.com/boto/botocore/issues/2926
     "bluebell-akn>=2.3.0",
     "cssutils>=2.3.0",
     "django-ckeditor>=5.8",
@@ -37,7 +37,7 @@ dependencies = [
     "django-background-tasks>=1.2.5",
     "django-compressor>=3.1,<=4.4",
     "django-cors-headers>=3.11.0",
-    "django-countries-plus<=2.0.0",
+    "django-countries-plus>=2.0.1",
     "django-jsonfield>=1.4.1",
     "django-jsonfield-compat>=0.4.4",
     "django-filter==2.4.0",
@@ -45,7 +45,7 @@ dependencies = [
     "django-htmx>=1.15.0",
     "django-languages-plus>=1.1.1",
     "django-pipeline>=1.6.11,<3.1.0",
-    "django-recaptcha>=1.4.0,<2.0.0",
+    "django-recaptcha>=3.0.0,<4.0.0",
     "django-reversion>=3.0.9",
     "django-sass-processor>=1.1",
     "django-sass-processor-dart-sass>=0.0.1",
@@ -53,8 +53,7 @@ dependencies = [
     "django-templated-email>=2.3.0",
     "django-treebeard>=4.5.1",
     "djangorestframework-xml>=1.3.0",
-    "djangorestframework>=3.11.0,<3.12.0",  # v3.12.0: The authtoken model no longer exposes
-    # the pk in the admin URL. [#7341]
+    "djangorestframework>=3.15.0",
     "docpipe @ git+https://github.com/laws-africa/docpipe@867de526a55c3ab4ef580dab9a6d91c7b85eca21",
     "drf-spectacular==0.27.2",
     "EbookLib>=0.15",

@@ -306,15 +306,15 @@ class AddWorkOffCanvasView(AddWorkView):
 class DeleteWorkView(WorkViewBase, DeleteView):
     permission_required = ('indigo_api.delete_work',)
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         self.object = self.get_object()
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, _('Deleted %(title)s · %(frbr_uri)s') % {"title": self.work.title, "frbr_uri": self.work.frbr_uri})
+            messages.success(self.request, _('Deleted %(title)s · %(frbr_uri)s') % {"title": self.work.title, "frbr_uri": self.work.frbr_uri})
             return redirect(self.get_success_url())
         else:
-            messages.error(request, _('This work cannot be deleted while linked documents and related works exist.'))
+            messages.error(self.request, _('This work cannot be deleted while linked documents and related works exist.'))
             return redirect('work_edit', frbr_uri=self.work.frbr_uri)
 
     def get_success_url(self):

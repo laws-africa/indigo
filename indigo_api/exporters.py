@@ -5,7 +5,7 @@ import re
 import shutil
 import tempfile
 from collections import defaultdict
-from urllib.parse import quote, unquote, urlparse, urlunparse
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
@@ -336,7 +336,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     def escape_url(self, url):
         parsed_url = urlparse(url)
         return urlunparse((parsed_url.scheme, parsed_url.netloc, quote(unquote(parsed_url.path), safe='@"/'),
-                           quote(unquote(parsed_url.params), safe="=;,"), quote(unquote(parsed_url.query), safe="=&"),
+                           parsed_url.params, urlencode(parse_qsl(parsed_url.query)),
                            quote(unquote(parsed_url.fragment), safe=":"))).replace(" ", "%20")
 
     def adjust_refs(self, doc):

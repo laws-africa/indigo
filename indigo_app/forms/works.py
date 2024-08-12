@@ -98,7 +98,7 @@ class WorkForm(forms.ModelForm):
             work=self.instance,
             form_kwargs={'work': self.instance, 'user': self.user},
             prefix="aliases",
-            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance else []
+            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance and self.instance.pk else []
         )
         self.formsets.append(self.aliases_formset)
 

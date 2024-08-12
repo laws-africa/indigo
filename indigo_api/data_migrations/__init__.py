@@ -43,7 +43,7 @@ class RealCrossHeadings(DataMigration):
     """
     def migrate_document(self, document):
         self.ns = document.doc.namespace
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         changed, root = self.migrate_xml(root)
         if changed:
             document.content = etree.tostring(root, encoding='unicode')

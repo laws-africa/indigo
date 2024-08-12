@@ -336,7 +336,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     def escape_url(self, url):
         parsed_url = urlparse(url)
         return urlunparse((parsed_url.scheme, parsed_url.netloc, quote(unquote(parsed_url.path), safe='@"/'),
-                           parsed_url.params, quote(unquote(parsed_url.query), safe="=&"),
+                           quote(unquote(parsed_url.params), safe="=;,"), quote(unquote(parsed_url.query), safe="=&"),
                            quote(unquote(parsed_url.fragment), safe=":"))).replace(" ", "%20")
 
     def adjust_refs(self, doc):

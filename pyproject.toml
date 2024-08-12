@@ -10,7 +10,7 @@ exclude = ["docs"]
 name = "indigo"
 description = "A Django application for publishing legislation using Akoma Ntoso"
 readme = "README.md"
-requires-python = ">= 3.9"
+requires-python = ">= 3.10"
 authors = [
     {name = "Laws.Africa", email = "info@laws.africa"}
 ]
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
     "django>=3.2,<4",

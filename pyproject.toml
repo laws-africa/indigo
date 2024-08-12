@@ -10,7 +10,7 @@ exclude = ["docs"]
 name = "indigo"
 description = "A Django application for publishing legislation using Akoma Ntoso"
 readme = "README.md"
-requires-python = "~=3.10"
+requires-python = ">= 3.9"
 authors = [
     {name = "Laws.Africa", email = "info@laws.africa"}
 ]

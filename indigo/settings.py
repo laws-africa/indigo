@@ -549,3 +549,6 @@ if not DEBUG and SENTRY_DSN:
 FOP_CMD = os.environ.get("FOP_CMD", "fop")
 FOP_CONFIG = os.environ.get("FOP_CONFIG")
 FOP_FONT_PATH = os.environ.get("FOP_FONT_PATH")
+
+# allow injection of a custom test runner for github actions
+TEST_RUNNER = os.environ.get('TEST_RUNNER', 'django.test.runner.DiscoverRunner')

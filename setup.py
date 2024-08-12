@@ -30,18 +30,18 @@ setup(
     # See https://pypi.org/classifiers/
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Framework :: Django :: 3.2',
+        'Framework :: Django :: 4.2',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.10',
     ],
 
     packages=find_packages(exclude=['docs']),
     include_package_data=True,
 
-    python_requires='~=3.7',
+    python_requires='~=3.10',
     install_requires=[
         'django>=3.2,<4',
         'boto3>=1.7',

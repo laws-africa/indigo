@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # NOTE: This is an example Dockerfile for getting Indigo running in a simple way.
 #       In production, you will probably want to use this as a template and make
@@ -11,7 +11,7 @@ FROM ubuntu:20.04
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y wget git \
   # python
-  python3 python3-pip libpq-dev python-is-python3 \
+  python3 python3-pip libpq-dev \
   # pdftotext and ps2pdf
   poppler-utils ghostscript \
   # for fop
@@ -34,7 +34,7 @@ RUN wget -q -O dart-sass.tgz 'https://github.com/sass/dart-sass/releases/downloa
 WORKDIR /app
 
 # These are production-only dependencies
-RUN pip install psycopg2==2.8.6
+RUN pip install psycopg2==2.9.9
 
 # Copy the code
 COPY . /app

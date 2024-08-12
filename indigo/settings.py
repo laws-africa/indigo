@@ -307,7 +307,6 @@ PIPELINE = {
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',
-                'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
                 'javascript/select2-4.0.0.min.js',
                 'javascript/caret.js',
                 'javascript/prettyprint.js',

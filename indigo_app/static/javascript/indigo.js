@@ -67,10 +67,6 @@ function bootstrapIndigo(exports) {
       Indigo.progressView.pop();
     });
 
-  // datepicker
-  $.fn.datepicker.defaults.format = "yyyy-mm-dd";
-  $.fn.datepicker.defaults.autoclose = true;
-
   // tooltips
   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [title]:not(.notooltip)'))
   tooltipTriggerList.map(function (tooltipTriggerEl) {

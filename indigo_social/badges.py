@@ -17,11 +17,11 @@ def perms_to_codes(perms):
 
 class BadgeCache:
     def __init__(self):
-        self._registry = {}
+        self.registry = {}
 
     def register(self, badge):
         badge = badge()
-        self._registry[badge.slug] = badge
+        self.registry[badge.slug] = badge
 
 
 badges = BadgeCache()

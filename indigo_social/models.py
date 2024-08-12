@@ -86,8 +86,7 @@ class BadgeAward(models.Model):
     slug = models.CharField(max_length=255)
 
     class Meta:
-        db_table = "pinax_badges__badgeaward"
-        managed = False
+        db_table = "pinax_badges_badgeaward"
 
     def __getattr__(self, attr):
         return getattr(self._badge, attr)
@@ -98,8 +97,8 @@ class BadgeAward(models.Model):
 
     @property
     def _badge(self):
-        from .badges import badges
-        return badges._registry[self.slug]
+        from indigo_social.badges import badges
+        return badges.registry[self.slug]
 
     @property
     def name(self):

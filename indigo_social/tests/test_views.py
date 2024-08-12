@@ -1,7 +1,7 @@
 from django.test import testcases, override_settings
 from django.contrib.auth.models import User
 
-from pinax.badges.registry import badges
+from indigo_social.badges import badges
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')

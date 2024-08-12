@@ -1,7 +1,7 @@
 from django.dispatch import Signal
 
 
-work_changed = Signal(providing_args=["work", "request"])
+work_changed = Signal()
 """ A user has created or made changes to a work.
 """
 
@@ -16,11 +16,11 @@ work_unapproved = Signal()
 """
 
 
-document_published = Signal(providing_args=["document", "request"])
+document_published = Signal()
 """ A user has changed a document from draft to published.
 """
 
 
-task_closed = Signal(providing_args=["task"])
+task_closed = Signal()
 """ A user has closed a task
 """

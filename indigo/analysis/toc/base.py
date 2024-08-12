@@ -2,7 +2,7 @@ import re
 from functools import lru_cache
 
 from cobalt.schemas import AkomaNtoso30
-from django.utils.translation import override, ugettext as _
+from django.utils.translation import override, gettext as _
 from lxml import etree
 
 from indigo.plugins import plugins, LocaleBasedMatcher

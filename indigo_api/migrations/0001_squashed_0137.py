@@ -17,7 +17,6 @@ class Migration(migrations.Migration):
         ('countries_plus', '0005_auto_20160224_1804'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('reversion', '0001_squashed_0004_auto_20160611_1202'),
-        ('pinax_badges', '0001_initial'),
     ]
 
     operations = [

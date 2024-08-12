@@ -15,10 +15,10 @@ from django.views.generic import DetailView, FormView, UpdateView, CreateView, D
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import HttpResponseClientRedirect
-from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.http import Http404, JsonResponse
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext as __
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as __
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime

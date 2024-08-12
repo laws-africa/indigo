@@ -10,7 +10,7 @@ from django.core.validators import URLValidator
 from django.db.models import IntegerField, Case, When, Value
 from django.db.models import Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker

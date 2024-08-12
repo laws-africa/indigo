@@ -35,7 +35,7 @@ class SocialAccountInline(admin.TabularInline):
 
 
 # Define a new User admin
-UserAdmin.inlines = UserAdmin.inlines + [EditorInline, SocialAccountInline]
+UserAdmin.inlines = list(UserAdmin.inlines) + [EditorInline, SocialAccountInline]
 
 
 @admin.register(Country)

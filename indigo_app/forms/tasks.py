@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.http import QueryDict
 
 from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work

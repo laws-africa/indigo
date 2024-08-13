@@ -1,9 +1,10 @@
 from django.test import override_settings
 
 from rest_framework.test import APITestCase
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class TaxonomyTopicsAPIV3Test(APITestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'published', 'colophon',
                 'attachments', 'commencements']

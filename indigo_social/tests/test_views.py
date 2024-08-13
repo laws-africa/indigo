@@ -2,9 +2,10 @@ from django.test import testcases, override_settings
 from django.contrib.auth.models import User
 
 from indigo_social.badges import badges
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class SocialViewsTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor']
 

@@ -1,12 +1,8 @@
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
-from sass_processor.processor import SassProcessor
 
 from indigo_content_api.tests.v2.test_content_api import ContentAPIV2TestMixin
-
-# Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
-# but during testing we haven't compiled assets
-SassProcessor.processor_enabled = True
+from indigo_app.tests.utils import TEST_STORAGES
 
 
 class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
@@ -81,8 +77,7 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         self.assertGreaterEqual(len(response.data['results']), 1)
 
 
-# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
+@override_settings(STORAGES=TEST_STORAGES)
 class ContentAPIV3Test(ContentAPIV3TestMixin, APITestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'published', 'colophon',
                 'attachments', 'commencements']

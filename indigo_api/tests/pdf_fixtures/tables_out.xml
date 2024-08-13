@@ -7,7 +7,7 @@
     </fo:simple-page-master>
   </fo:layout-master-set>
   <fo:bookmark-tree/>
-  <fo:page-sequence format="i" initial-page-number="1" master-reference="A4">
+  <fo:page-sequence force-page-count="no-force" format="i" initial-page-number="1" master-reference="A4">
     <fo:static-content flow-name="xsl-region-after">
       <fo:block margin-top="1cm" text-align="center" font-size="9pt" font-family="PT Sans">
         <fo:page-number/>

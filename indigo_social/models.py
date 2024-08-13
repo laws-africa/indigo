@@ -99,15 +99,3 @@ class BadgeAward(models.Model):
     def _badge(self):
         from indigo_social.badges import badges
         return badges.registry[self.slug]
-
-    @property
-    def name(self):
-        return self._badge.levels[self.level].name
-
-    @property
-    def description(self):
-        return self._badge.levels[self.level].description
-
-    @property
-    def progress(self):
-        return self._badge.progress(self.user, self.level)

@@ -54,7 +54,9 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block-container font-family="{$font-fam}" font-size="{$fontsize}"
                               line-height="1.3" text-align="start">
-            <xsl:apply-templates select="//akn:frontMatter"/>
+            <fo:block>
+              <xsl:apply-templates select="//akn:frontMatter"/>
+            </fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>

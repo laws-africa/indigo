@@ -53,6 +53,8 @@
 
       // rewrite all eIds before setting the content
       new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
+      // rewrite all attachment FRBR URI work components too
+      new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 

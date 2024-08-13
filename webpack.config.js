@@ -31,7 +31,7 @@ const legacyConfig = {
 
 const appConfig = {
   entry: './indigo_app/js/main.js',
-  mode: 'development',
+  mode: 'production',
   resolve: {
     modules: [
       './node_modules',

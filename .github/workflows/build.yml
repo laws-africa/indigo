@@ -12,12 +12,12 @@ jobs:
     # avoid circular build commits
     if: ${{ !contains(github.event.head_commit.message, 'nobuild') }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # use a token that has admin perms to bypass direct commits to master
           token: ${{ secrets.LA_ACTIONS_TOKEN }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -42,7 +42,7 @@ jobs:
             - indigo/analysis/refs/provision_refs.py --force
             - indigo_app/static/javascript/indigo-app.js --force
             - indigo_app/static/javascript/indigo/bluebell-monaco.js --force
-            - indigo_app/static/javascript/monaco/*.js --force
+            - indigo_app/static/javascript/monaco/* --force
             - indigo_app/static/lib/external-imports.js --force
             - indigo_app/static/lib/indigo-web/ --force
           message: 'Update compiled bluebell-monaco.js, external-imports.js and indigo-app.js [nobuild]'

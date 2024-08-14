@@ -285,6 +285,10 @@ STATICFILES_FINDERS = (
     "pipeline.finders.PipelineFinder",
 )
 
+SASS_PROCESSOR_INCLUDE_DIRS = [
+    os.environ.get("NODE_PATH") or os.path.join(BASE_DIR, "node_modules"),
+]
+
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
     '.xsl': 'application/xslt+xml',

@@ -52,7 +52,14 @@ jobs:
         node-version: '18'
 
     - name: Install node dependencies
-      run: npm install -g jshint sass
+      run: |
+        npm ci --no-audit --prefer-offline --ignore-scripts
+        npm install -g jshint sass
+
+    - name: Build javascript
+      run: |
+        git rm -rf --ignore-unmatch indigo_app/static/javascript/monaco/
+        npx webpack
 
     - name: Compile assets
       run: |

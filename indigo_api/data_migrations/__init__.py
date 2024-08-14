@@ -1,6 +1,6 @@
 import re
 import json
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from lxml import etree
 
 from indigo.xmlutils import rewrite_ids
@@ -9,7 +9,7 @@ from docpipe.xmlutils import unwrap_element
 
 class DataMigration:
     def migrate_document_version(self, version):
-        data = json.loads(force_text(version.serialized_data.encode("utf8")))[0]
+        data = json.loads(force_str(version.serialized_data.encode("utf8")))[0]
         fields = data['fields']
         if fields.get('document_xml'):
             xml = etree.fromstring(fields['document_xml'])
@@ -43,7 +43,7 @@ class RealCrossHeadings(DataMigration):
     """
     def migrate_document(self, document):
         self.ns = document.doc.namespace
-        root = etree.fromstring(document.content)
+        root = etree.fromstring(document.content.encode('utf-8'))
         changed, root = self.migrate_xml(root)
         if changed:
             document.content = etree.tostring(root, encoding='unicode')

@@ -9,9 +9,10 @@ import reversion
 
 from indigo_app.views.works import WorkViewBase
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country, Document
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class WorksTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'publications', 'commencements']
 
@@ -362,7 +363,7 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(resp.status_code, 404)
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.

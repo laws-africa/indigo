@@ -4,16 +4,12 @@ from datetime import date
 from mock import patch
 from django.test.utils import override_settings
 from django.conf import settings
-from sass_processor.processor import SassProcessor
 from rest_framework.test import APITestCase
 
 from indigo_api.exporters import PDFExporter
 from indigo_api.models import Country, Language
+from indigo_app.tests.utils import TEST_STORAGES
 from languages_plus.models import Language as MasterLanguage
-
-# Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
-# but during testing we haven't compiled assets
-SassProcessor.processor_enabled = True
 
 
 class ContentAPIV2TestMixin:
@@ -731,8 +727,7 @@ class ContentAPIV2TestMixin:
         self.assertNotEqual(0, response.json()['count'])
 
 
-# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
+@override_settings(STORAGES=TEST_STORAGES)
 class ContentAPIV2Test(ContentAPIV2TestMixin, APITestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'published', 'colophon', 'attachments',
                 'commencements']

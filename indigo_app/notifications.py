@@ -9,10 +9,10 @@ from django_comments.models import Comment
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
-from pinax.badges.models import BadgeAward
 
 from indigo.settings import INDIGO_ORGANISATION
 from indigo_api.models import Task, Annotation
+from indigo_social.models import BadgeAward
 
 
 log = logging.getLogger(__name__)

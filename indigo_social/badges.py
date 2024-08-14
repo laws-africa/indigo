@@ -1,47 +1,66 @@
+import dataclasses
+
 from django.contrib.auth.models import Permission, Group
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.core.signals import request_started
 
-from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
-from pinax.badges.registry import badges
 from indigo_api.models import Country
 from indigo_app.models import Editor
-
-
-# monkey-patch the badge registry to make it easier to find badges
-badges.registry = badges._registry
+from indigo_social.signals import badge_awarded
 
 
 def perms_to_codes(perms):
     return set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
 
 
-class BaseBadge(Badge):
-    multiple = False
-    levels = [1]
-    events = []
+class BadgeCache:
+    def __init__(self):
+        self.registry = {}
+
+    def register(self, badge):
+        badge = badge()
+        self.registry[badge.slug] = badge
+
+
+badges = BadgeCache()
+
+
+@dataclasses.dataclass
+class BadgeDetail:
+    name: str
+    description: str
+
+
+class BaseBadge:
     can_award_manually = True
     nature = None
     css_class = ""
+    slug = None
+    name = None
+    description = None
 
     def __init__(self):
         # hoop jumping to ensure that BadgeAward objects pick up the correct name
         # and description
         self.levels = [BadgeDetail(name=self.name, description=self.description)]
-        super(Badge, self).__init__()
 
     def can_award(self, user, **kwargs):
         return not user.badges_earned.filter(slug=self.slug).exists()
 
+    def possibly_award(self, user):
+        from .models import BadgeAward
+        if self.award(user):
+            badge, created = BadgeAward.objects.get_or_create(user=user, slug=self.slug)
+            if created:
+                badge_awarded.send(sender=self, badge_award=badge)
+
     def award(self, user, **state):
-        """ Should this badge be awarded? This is part of the pinax-badges API
-        and is called by `possibly_award`.
-        """
+        """ Should this badge be awarded? """
         if self.can_award(user, **state):
             self.grant(user)
-            return BadgeAwarded()
+            return True
 
     def unaward(self, user):
         """ Unaward all awards of this badge to a user.
@@ -63,6 +82,7 @@ class BaseBadge(Badge):
     @property
     def image(self):
         return f"images/badges/{self.slug}.svg"
+
 
 
 class PermissionBadge(BaseBadge):

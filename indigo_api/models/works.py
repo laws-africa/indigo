@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from natsort import natsorted
 import reversion.revisions
 from reversion.models import Version
@@ -246,10 +246,10 @@ class WorkMixin(object):
 
     @cached_property
     def main_commencement(self):
-        return self.commencements.filter(main=True).first()
+        return self.commencements.filter(main=True).first() if self.pk else None
 
     def first_commencement_date(self):
-        first = self.commencements.first()
+        first = self.commencements.first() if self.pk else None
         if first:
             return first.date
 

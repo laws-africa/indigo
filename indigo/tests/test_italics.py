@@ -48,7 +48,7 @@ class ItalicsMarkupTestCase(TestCase):
         )
 
         self.italics_terms_finder.mark_up_italics_in_document(document, self.italics_terms)
-        root = etree.fromstring(expected.content)
+        root = etree.fromstring(expected.content.encode('utf-8'))
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
 
@@ -97,6 +97,6 @@ class ItalicsMarkupTestCase(TestCase):
         )
 
         self.italics_terms_finder.mark_up_italics_in_document(document, self.italics_terms)
-        root = etree.fromstring(expected.content)
+        root = etree.fromstring(expected.content.encode('utf-8'))
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)

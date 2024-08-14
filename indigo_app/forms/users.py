@@ -2,7 +2,7 @@ from allauth.account.forms import SignupForm
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from indigo_api.models import Country
 from indigo_app.models import Editor

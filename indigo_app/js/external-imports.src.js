@@ -4,7 +4,10 @@
  *
  * This provides a bridge between Indigo's lack of any support for 'import', and ES6-style imports.
  */
+import * as bootstrap from 'bootstrap';
 import * as indigoAkn from '@lawsafrica/indigo-akn';
 import { fromRange as textPositionFromRange } from 'dom-anchor-text-position';
+
+window.bootstrap = bootstrap;
 window.indigoAkn = indigoAkn;
 window.textPositionFromRange = textPositionFromRange;

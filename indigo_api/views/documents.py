@@ -3,6 +3,7 @@ import copy
 
 from actstream import action
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_control
 from django.contrib.contenttypes.models import ContentType
@@ -240,7 +241,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return Response(status=200)
 
     @detail_route_action(detail=True, methods=['GET'])
-    @cache_control(public=True, max_age=24 * 3600)
+    @method_decorator(cache_control(public=True, max_age=24 * 3600))
     def diff(self, request, *args, **kwargs):
         # this can be cached because the underlying data won't change (although
         # the formatting might)

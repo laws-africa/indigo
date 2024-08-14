@@ -11,7 +11,7 @@ FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y wget git \
   # python
-  python3 python3-pip libpq-dev \
+  python3 python3-pip libpq-dev python-is-python3 \
   # pdftotext and ps2pdf
   poppler-utils ghostscript \
   # for fop
@@ -33,6 +33,9 @@ RUN wget -q -O dart-sass.tgz 'https://github.com/sass/dart-sass/releases/downloa
 
 WORKDIR /app
 
+# Bring pip up to date; pip <= 22 (the default on ubuntu 22.04) is not supported
+RUN pip install --upgrade pip
+
 # These are production-only dependencies
 RUN pip install psycopg2==2.9.9
 
@@ -43,10 +46,8 @@ COPY . /app
 RUN pip install -e .
 
 # Compile static assets.
-#
-# Note that we ignore 'docs' directories because some components
-# have badly formed docs CSS.
-RUN python manage.py compilescss && \
-    python manage.py collectstatic --noinput -i docs -i \*.scss 2>&1
+RUN python manage.py compilescss
+# Note that we ignore 'docs' directories because some components have badly formed docs CSS.
+RUN python manage.py collectstatic --noinput -i docs -i \*.scss 2>&1
 
 CMD python manage.py

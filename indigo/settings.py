@@ -285,9 +285,14 @@ STATICFILES_FINDERS = (
     "pipeline.finders.PipelineFinder",
 )
 
-SASS_PROCESSOR_INCLUDE_DIRS = [
-    os.environ.get("NODE_PATH") or os.path.join(BASE_DIR, "node_modules"),
-]
+if os.environ.get("NODE_PATH"):
+    SASS_PROCESSOR_INCLUDE_DIRS = [os.environ.get("NODE_PATH")]
+else:
+    # look for node modules in the current dir, and in the project root
+    SASS_PROCESSOR_INCLUDE_DIRS = [
+        os.path.join(".", "node_modules"),
+        os.path.join(BASE_DIR, "node_modules"),
+    ]
 
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {

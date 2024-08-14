@@ -78,5 +78,6 @@ jobs:
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/linux@v2
       if: success() || failure()
+      continue-on-error: true
       with:
         files: test-reports/*.xml

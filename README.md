@@ -5,7 +5,7 @@
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 
 Indigo is Laws.Africa's legislation database for managing, consolidating and publishing
-legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
+legislation in the [Akoma Ntoso](https://www.oasis-open.org/standard/akn-v1-0/) format.
 
 It is a Django python web application using:
 

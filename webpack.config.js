@@ -101,7 +101,7 @@ const monacoConfig = {
     rules: [
       {
         test: /\.css$/,
-        use: ['css-loader']
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.ttf$/,
@@ -118,7 +118,7 @@ const monacoConfig = {
   },
   output: {
     filename: 'monaco.js',
-    path: path.resolve(__dirname, 'indigo_app/static/javascript'),
+    path: path.resolve(__dirname, 'indigo_app/static/javascript/monaco'),
     chunkFormat: false
   }
 };

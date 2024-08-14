@@ -25,13 +25,18 @@ RUN wget -q -O fop.tgz 'http://www.apache.org/dyn/closer.cgi?filename=/xmlgraphi
 
 ENV PATH=/usr/local/share/fop-2.4/fop:$PATH
 
-# dart sass
-RUN wget -q -O dart-sass.tgz 'https://github.com/sass/dart-sass/releases/download/1.53.0/dart-sass-1.53.0-linux-x64.tar.gz' && \
-  tar xzf dart-sass.tgz && \
-  mv dart-sass/sass /usr/local/bin && \
-  rm -rf dart-sass*
+# node
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+# install sass for compiling assets before deploying
+RUN npm i -g sass
 
 WORKDIR /app
+
+# install runtime node dependencies
+# copying this in first means Docker can cache this operation
+COPY package*.json /app/
+RUN npm ci --no-audit --ignore-scripts --omit=dev
 
 # Bring pip up to date; pip <= 22 (the default on ubuntu 22.04) is not supported
 RUN pip install --upgrade pip

@@ -42,7 +42,6 @@ INSTALLED_APPS = (
 
     # Indigo social
     'indigo_social',
-    'pinax.badges',
 
     # the Indigo act resolver
     'indigo_resolver',
@@ -227,9 +226,18 @@ TEMPLATES = [
     }
 ]
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "indigo.pipeline.GzipManifestPipelineStorage"
+    }
+}
+
 # attachments
 if not DEBUG:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES["default"]["BACKEND"] = "storages.backends.s3boto3.S3Boto3Storage"
     AWS_S3_FILE_OVERWRITE = False
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -277,9 +285,6 @@ STATICFILES_FINDERS = (
     "pipeline.finders.PipelineFinder",
 )
 
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
     '.xsl': 'application/xslt+xml',
@@ -292,19 +297,16 @@ PIPELINE = {
     'JAVASCRIPT': {
         'js': {
             'source_filenames': (
+                'lib/external-imports.js',
                 'bower_components/jquery/dist/jquery.min.js',
                 'bower_components/jquery-cookie/jquery.cookie.js',
                 'bower_components/underscore/underscore-min.js',
                 'bower_components/backbone/backbone.js',
                 'bower_components/backbone.stickit/backbone.stickit.js',
-                'lib/bootstrap-5.3.2/dist/js/bootstrap.bundle.min.js',
                 'lib/bootstrap-select/js/bootstrap-select.min.js',
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',
-                'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
-                'bower_components/showdown/dist/showdown.min.js',
-                'lib/external-imports.js',
                 'javascript/select2-4.0.0.min.js',
                 'javascript/caret.js',
                 'javascript/prettyprint.js',
@@ -418,7 +420,9 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 # Google recaptcha
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
-NOCAPTCHA = True
+if DEBUG:
+    # don't complain about the test keys
+    SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
@@ -508,8 +512,6 @@ ACTSTREAM_SETTINGS = {
     'USE_JSONFIELD': True,
 }
 
-USE_NATIVE_JSONFIELD = True
-
 # Adminstrators intended to receive email notifications
 # Each item in the list should be a tuple of (Full name, email address). Example:
 # [('Indigo Admin', 'indigoadmin@example.com')]
@@ -551,3 +553,8 @@ if not DEBUG and SENTRY_DSN:
 FOP_CMD = os.environ.get("FOP_CMD", "fop")
 FOP_CONFIG = os.environ.get("FOP_CONFIG")
 FOP_FONT_PATH = os.environ.get("FOP_FONT_PATH")
+
+# allow injection of a custom test runner for github actions
+TEST_RUNNER = os.environ.get('TEST_RUNNER', 'django.test.runner.DiscoverRunner')
+# only used by xmlrunner https://github.com/xmlrunner/unittest-xml-reporting#django-support
+TEST_OUTPUT_DIR = './test-reports'

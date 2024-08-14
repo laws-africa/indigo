@@ -1,16 +1,10 @@
-import datetime
-
-from django.test import testcases, override_settings
+from django.test import override_settings
 from django_webtest import WebTest
 from django.contrib.auth.models import User
-from webtest import Upload
-
-import reversion
-
-from indigo_api.models import Work
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class UsersWebTest(WebTest):
     fixtures = ['languages_data', 'countries', 'user', 'editor']
 

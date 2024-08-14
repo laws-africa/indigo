@@ -10,7 +10,7 @@ from django.core.validators import URLValidator
 from django.db.models import IntegerField, Case, When, Value
 from django.db.models import Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
@@ -98,7 +98,7 @@ class WorkForm(forms.ModelForm):
             work=self.instance,
             form_kwargs={'work': self.instance, 'user': self.user},
             prefix="aliases",
-            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance else []
+            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance and self.instance.pk else []
         )
         self.formsets.append(self.aliases_formset)
 

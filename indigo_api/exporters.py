@@ -10,7 +10,7 @@ from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunpa
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
-from django.utils.translation import override, ugettext as _
+from django.utils.translation import override, gettext_lazy as _
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree

@@ -5,13 +5,12 @@ from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import _lazy_re_compile, RegexValidator
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from PIL import Image
 
 from indigo_api.models import Country, User
-from indigo_social.models import UserProfile
+from indigo_social.models import UserProfile, BadgeAward
 from indigo_social.badges import badges
-from pinax.badges.models import BadgeAward
 
 
 class UserProfileForm(forms.ModelForm):

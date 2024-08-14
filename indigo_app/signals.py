@@ -6,10 +6,10 @@ from allauth.account.signals import user_signed_up
 from actstream.models import Action
 from django_comments.models import Comment
 from django_comments.signals import comment_was_posted
-from pinax.badges.signals import badge_awarded
 
 from indigo_api.models import Task, Annotation
 from indigo_app.notifications import notify_task_action, notify_comment_posted, notify_new_user_signed_up, notify_annotation_reply_posted, notify_user_badge_earned
+from indigo_social.signals import badge_awarded
 
 
 @receiver(signals.post_save, sender=Action)

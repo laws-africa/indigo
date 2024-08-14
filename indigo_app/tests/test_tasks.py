@@ -3,9 +3,10 @@ from django.contrib.auth.models import User
 from django_webtest import WebTest
 
 from indigo_api.models import Task, Work
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class TasksTest(WebTest):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'tasks']
 

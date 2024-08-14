@@ -21,7 +21,7 @@
     {% include 'indigo_api/timeline/_timeline_entry_event.html' %}
 
     <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ consolidation.id }}">
-      <input type="text" class="form-control amendment-date me-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ consolidation.date|date:"Y-m-d" }}" autocomplete="off">
+      <input type="date" class="form-control amendment-date me-2" required name="date" value="{{ consolidation.date|date:"Y-m-d" }}" autocomplete="off">
       <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
       <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="btn btn-link" data-bs-toggle="collapse">{% trans 'Cancel' %}</a>
     </div>

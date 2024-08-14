@@ -6,7 +6,6 @@ from django import template
 from django.urls import reverse
 from django.utils.html import format_html
 from django.conf import settings
-from jsonfield.utils import TZAwareJSONEncoder
 
 register = template.Library()
 
@@ -39,7 +38,7 @@ def user_profile_photo_thumbnail(user, height=32, width=32):
 
 @register.filter
 def jsonify(value):
-    return json.dumps(value, cls=TZAwareJSONEncoder)
+    return json.dumps(value)
 
 
 @register.filter

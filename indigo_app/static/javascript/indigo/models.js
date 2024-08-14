@@ -4,6 +4,15 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   /* A model for the content of a document. The API handles it separately
    * to the document metadata since the content can be very big.
    *
@@ -652,17 +661,12 @@
     },
   });
 
-  var showdownConverter = new showdown.Converter({
-    'noHeaderId': true,
-    'simplifiedAutoLink': true,
-    'excludeTrailingPunctuationFromURLs': true,
-    'simpleLineBreaks': true,
-    'openLinksInNewWindow': true,
-  });
-
   Indigo.Annotation = Backbone.Model.extend({
     toHtml: function() {
-      return showdownConverter.makeHtml(this.get('text'));
+      var text = escapeHtml(this.get('text'));
+
+      // split on newlines and wrap each line in a <p> tag
+      return "<p>" + text.replace(/\n+/g, "</p><p>") + "</p>";
     },
 
     parse: function(json) {

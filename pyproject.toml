@@ -38,7 +38,7 @@ dependencies = [
     "django-compressor>=3.1,<=4.4",
     "django-cors-headers>=3.11.0",
     "django-countries-plus>=2.0.1",
-    "django-filter==2.4.0",
+    "django-filter==24.3",
     "django-fsm>=2.6.0",
     "django-htmx>=1.15.0",
     "django-languages-plus>=1.1.1",

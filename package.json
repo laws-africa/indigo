@@ -15,7 +15,7 @@
     "bootstrap-select": "^1.13.18",
     "bower": "^1.8.8",
     "canopy": "^0.4.1",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "css-loader": "^5.2.6",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.0.0",

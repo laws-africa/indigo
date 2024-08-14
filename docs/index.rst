@@ -4,7 +4,7 @@ Indigo platform
 .. image:: logo.png
 
 Indigo is `Laws.Africa's <https://laws.africa/>`_ legislation database for managing, consolidating and publishing
-legislation in the `Akoma Ntoso <http://www.akomantoso.org/>`_ format.
+legislation in the `Akoma Ntoso <https://www.oasis-open.org/standard/akn-v1-0/>`_ format.
 
 Visit our `GitHub repository <https://github.com/laws-africa/indigo>`_ to find out how you
 can contribute to the project.

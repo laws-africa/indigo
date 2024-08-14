@@ -37,10 +37,10 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: |
-            - indigo_app/static/javascript/indigo/bluebell-monaco.js --force
-            - indigo_app/static/javascript/indigo/editor.worker.*.js --force
-            - indigo_app/static/lib/external-imports.js --force
-            - indigo_app/static/javascript/indigo-app.js --force
-            - indigo_app/static/lib/indigo-web/ --force
             - indigo/analysis/refs/provision_refs.py --force
+            - indigo_app/static/javascript/editor.worker.*.js --force
+            - indigo_app/static/javascript/indigo-app.js --force
+            - indigo_app/static/javascript/indigo/bluebell-monaco.js --force
+            - indigo_app/static/lib/external-imports.js --force
+            - indigo_app/static/lib/indigo-web/ --force
           message: 'Update compiled bluebell-monaco.js, external-imports.js and indigo-app.js [nobuild]'

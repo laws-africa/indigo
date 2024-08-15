@@ -25,7 +25,9 @@ $(function() {
 
   // Toasts should disappear after a few seconds
   function nukeToasts() {
-    $('.alert-dismissible.auto-dismiss').alert('close');
+    for (let el of document.querySelectorAll('.alert-dismissible.auto-dismiss')) {
+      bootstrap.Alert.getOrCreateInstance(el).close();
+    }
   }
   setTimeout(nukeToasts, 3 * 1000);
 });

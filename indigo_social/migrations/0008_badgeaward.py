@@ -25,6 +25,7 @@ class Migration(migrations.Migration):
                 ('slug', models.CharField(max_length=255)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='badges_earned',
                                            to=settings.AUTH_USER_MODEL)),
+                ('level', models.IntegerField(default=1)),
             ],
             options={
                 'db_table': 'pinax_badges_badgeaward',

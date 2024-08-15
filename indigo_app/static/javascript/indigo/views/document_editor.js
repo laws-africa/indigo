@@ -74,7 +74,7 @@
         opts.pasteAs = {enabled: false};
         this.textEditor = window.monaco.editor.create(
           this.el.querySelector('.document-text-editor .monaco-editor'),
-          opts,
+          opts
         );
         new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
         this.grammarModel.setupEditor(this.textEditor);

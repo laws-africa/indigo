@@ -84,6 +84,7 @@ class BadgeAward(models.Model):
     user = models.ForeignKey(User, related_name="badges_earned", on_delete=models.CASCADE)
     awarded_at = models.DateTimeField(auto_now_add=True)
     slug = models.CharField(max_length=255)
+    level = models.IntegerField(default=1)
 
     class Meta:
         db_table = "pinax_badges_badgeaward"

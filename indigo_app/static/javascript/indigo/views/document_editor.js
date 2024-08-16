@@ -68,13 +68,9 @@
 
     setupTextEditor: function() {
       if (!this.textEditor) {
-        var opts = this.grammarModel.monacoOptions();
-        // hack to work around pasting not working in monaco >= 0.39
-        // see https://github.com/laws-africa/indigo/issues/2196
-        opts.pasteAs = {enabled: false};
         this.textEditor = window.monaco.editor.create(
           this.el.querySelector('.document-text-editor .monaco-editor'),
-          opts
+          this.grammarModel.monacoOptions()
         );
         new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
         this.grammarModel.setupEditor(this.textEditor);

@@ -80,7 +80,7 @@
      * @param {Element[]} newNodes the nodes to replace the old one with, or null to delete the node
      */
     replaceNode: function(oldNode, newNodes) {
-      indigoAkn.fixTables(newNodes);
+      indigoAkn.fixTables(newNodes || []);
       var del = !newNodes;
       var first = del ? null : newNodes[0];
 

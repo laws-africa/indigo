@@ -8,13 +8,13 @@
         <content>
           <table eId="att_1__table_2" class="border">
             <colgroup><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/></colgroup><tr>
-              <td rowspan="5">
+              <td rowspan="12">
                 <p eId="att_1__table_2__p_1">Nature of ownership<br/>or control the<br/>beneficial owner has<br/>in the company ,<br/>whether individually<br/>or jointly*</p>
               </td>
               <td rowspan="2" colspan="3">
                 <p eId="att_1__table_2__p_2">.The percentage of issued shares a person holds in the company - Directly.........%of shares<br/>-Indirectly.........%of shares</p>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="3">
                 <p eId="att_1__table_2__p_3">The percentage of voting rights a person holds in the company <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
@@ -24,18 +24,18 @@
               <td rowspan="2" colspan="3">
                 <p eId="att_1__table_2__p_4">.A person holds a right to appoint or remove a majority of the members of the board of directors of the company : <br/>- Directly<br/>-Indirectly</p>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="3">
                 <p eId="att_1__table_2__p_5">A person exercises significant influence or control over the company.<br/>- Directly<br/>-Indirectly</p>
               </td>
             </tr>
             <tr>
-              <td rowspan="1" colspan="3" style="width:54.078%">
+              <td rowspan="2" colspan="3" style="width:54.078%">
                 <p eId="att_1__table_2__p_6">.A person holds the highest percentage of the issued<br/>shares but does not meet the above<br/>four criteria . <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
               </td>
-            <td/><td/><td/></tr>
-          </table>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
+          <tr><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr></table>
           <table eId="att_2__table_1" class="border">
             <colgroup><col width="55.6701030927835%"/><col width="4.123711340206185%"/><col width="3.092783505154639%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/></colgroup><tr>
               <td colspan="4">
@@ -180,14 +180,14 @@
               <td>
                 <p eId="att_2__table_1__p_42"/>
               </td>
-            <td/></tr>
+            <td><p/></td></tr>
           </table>
           <table eId="att_2__table_2" class="border">
             <colgroup><col width="32.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="20.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/></colgroup><tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_1"><b>Part C: Details of owner(s)</b><i>(If different from applicant)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td style="width:32.7982%">
                 <p eId="att_2__table_2__p_2">Full name(s)</p>
@@ -195,7 +195,7 @@
               <td colspan="15" style="width:61.9266%">
                 <p eId="att_2__table_2__p_3"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td rowspan="2" style="width:32.7982%">
                 <p eId="att_2__table_2__p_4">Physical address(es)</p>
@@ -206,7 +206,7 @@
               <td colspan="4">
                 <p eId="att_2__table_2__p_6"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td>
                 <p eId="att_2__table_2__p_7"/>
@@ -217,7 +217,7 @@
               <td colspan="2">
                 <p eId="att_2__table_2__p_9"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td style="width:32.7982%">
                 <p eId="att_2__table_2__p_10">E-mail</p>
@@ -225,7 +225,7 @@
               <td colspan="15" style="width:61.9266%">
                 <p eId="att_2__table_2__p_11"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="5" style="width:18.1193%">
                 <p eId="att_2__table_2__p_12">Tel.</p>
@@ -242,12 +242,12 @@
               <td colspan="2">
                 <p eId="att_2__table_2__p_16"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_17"><b>Part D: Property details </b><i>(In accordance with title deed)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_18">Property description <i>(Number(s) of Erf/ Erven/Portion(s) or Farm(s))</i></p>
@@ -255,7 +255,7 @@
               <td colspan="14">
                 <p eId="att_2__table_2__p_19"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_20">Physical address</p>
@@ -269,7 +269,7 @@
               <td>
                 <p eId="att_2__table_2__p_23"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_24">Current zoning</p>
@@ -300,7 +300,7 @@
               <td colspan="14">
                 <p eId="att_2__table_2__p_32"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_33">Title deed number and date</p>
@@ -311,7 +311,7 @@
               <td colspan="13">
                 <p eId="att_2__table_2__p_35"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_36">Any restrictive conditions?</p>
@@ -328,7 +328,7 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_40"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_41">Is the property encumbered by a bond?</p>
@@ -345,12 +345,12 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_45"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_46"><b>Part E: Pre-application consultation</b><i> (regulation 11)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="7">
                 <p eId="att_2__table_2__p_47">Has there been any pre-application consultation?</p>
@@ -364,7 +364,7 @@
               <td colspan="7">
                 <p eId="att_2__table_2__p_50">If yes, complete the information below and attach the minutes of the pre-application consultation.</p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="7">
                 <p eId="att_2__table_2__p_51">Official’s name</p>
@@ -375,7 +375,7 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_53">Date of consultation</p>
               </td>
-            <td/></tr>
+            <td><p/></td></tr>
           </table>
           <table eId="att_3__table_1" class="border">
             <colgroup><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/></colgroup><tr>
@@ -543,7 +543,7 @@
               <td>
                 <p eId="att_3__table_1__p_46"/>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
           </table>
         </content>
       </part>

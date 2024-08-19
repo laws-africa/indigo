@@ -544,7 +544,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 # mark matrix elements occupied by current cell with true
                 for xx in range(x, x + int(cell.get('colspan', 1))):
                     for yy in range(y, y + int(cell.get('rowspan', 1))):
-                        matrix[yy][xx] = True
+                        # skip already occupied cells due to overlapping spans
+                        xxx = xx
+                        while matrix[yy][xxx]:
+                            xxx += 1
+                        matrix[yy][xxx] = True
 
         return matrix
 

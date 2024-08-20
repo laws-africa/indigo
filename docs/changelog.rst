@@ -7,6 +7,7 @@ Changelog
 
 * BREAKING: Upgrade to Django 4.2 and Python >= 3.10
 * CHANGE: Taxonomies are removed. You must upgrade to 18.1.0 first and run `python manage.py migrate_taxonomies` before upgrading to this version.
+* Remove: unused charts.js library and charts code
 
 18.1.0 (2024-03-25)
 -------------------

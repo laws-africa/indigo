@@ -395,11 +395,18 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Ensure that tables have the correct number of columns and rows, otherwise
         PDF generation fails.
         """
-        # there should never be a completely empty row -- check for this first
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
+            # there should never be a completely empty row (FOP constraint)
+            for empty_row in table.xpath('a:tr[not(a:td|a:th)]', namespaces={'a': doc.namespace}):
+                table.remove(empty_row)
+            # a cell can't span more rows than actually come after it (FOP constraint)
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
-                if not row.xpath('a:td|a:th', namespaces={'a': doc.namespace}):
-                    table.remove(row)
+                actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
+                for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
+                    rowspan = int(cell.get('rowspan', 1))
+                    if rowspan > 1:
+                        # rowspan is the smaller of the current rowspan, and the actual number of rows (plus this one)
+                        cell.set('rowspan', str(min(rowspan, actual + 1)))
 
             matrix = self.map_table(table, doc)
 

@@ -395,19 +395,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Ensure that tables have the correct number of columns and rows, otherwise
         PDF generation fails.
         """
+        # there should never be a completely empty row -- check for this first
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
-            # a cell can't span more rows than actually come after it
-            # there should also never be a completely empty row -- check for this first
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 if not row.xpath('a:td|a:th', namespaces={'a': doc.namespace}):
                     table.remove(row)
-            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
-                actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
-                for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
-                    rowspan = int(cell.get('rowspan', 1))
-                    if rowspan > 1:
-                        # rowspan is the smaller of the current rowspan, and the actual number of rows (plus this one)
-                        cell.set('rowspan', str(min(rowspan, actual + 1)))
 
             matrix = self.map_table(table, doc)
 
@@ -426,7 +418,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 missing_cells = n_cols - len(matrix[y])
                 for x in range(missing_cells):
                     log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
-                    row.append(doc.maker('td'))
+                    cell = doc.maker('td')
+                    cell.append(doc.maker('p'))
+                    row.append(cell)
                 # update the matrix
                 for x in range(n_cols):
                     matrix[y][x] = True
@@ -550,7 +544,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 # mark matrix elements occupied by current cell with true
                 for xx in range(x, x + int(cell.get('colspan', 1))):
                     for yy in range(y, y + int(cell.get('rowspan', 1))):
-                        matrix[yy][xx] = True
+                        # skip already occupied cells due to overlapping spans
+                        xxx = xx
+                        while matrix[yy][xxx]:
+                            xxx += 1
+                        matrix[yy][xxx] = True
 
         return matrix
 

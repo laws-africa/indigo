@@ -8,13 +8,13 @@
         <content>
           <table eId="att_1__table_2" class="border">
             <colgroup><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/><col width="14.285714285714286%"/></colgroup><tr>
-              <td rowspan="5">
+              <td rowspan="12">
                 <p eId="att_1__table_2__p_1">Nature of ownership<br/>or control the<br/>beneficial owner has<br/>in the company ,<br/>whether individually<br/>or jointly*</p>
               </td>
               <td rowspan="2" colspan="3">
                 <p eId="att_1__table_2__p_2">.The percentage of issued shares a person holds in the company - Directly.........%of shares<br/>-Indirectly.........%of shares</p>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="3">
                 <p eId="att_1__table_2__p_3">The percentage of voting rights a person holds in the company <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
@@ -24,18 +24,18 @@
               <td rowspan="2" colspan="3">
                 <p eId="att_1__table_2__p_4">.A person holds a right to appoint or remove a majority of the members of the board of directors of the company : <br/>- Directly<br/>-Indirectly</p>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="3">
                 <p eId="att_1__table_2__p_5">A person exercises significant influence or control over the company.<br/>- Directly<br/>-Indirectly</p>
               </td>
             </tr>
             <tr>
-              <td rowspan="1" colspan="3" style="width:54.078%">
+              <td rowspan="2" colspan="3" style="width:54.078%">
                 <p eId="att_1__table_2__p_6">.A person holds the highest percentage of the issued<br/>shares but does not meet the above<br/>four criteria . <br/>- Directly.........%of shares<br/>-Indirectly.........%of shares</p>
               </td>
-            <td/><td/><td/></tr>
-          </table>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
+          <tr><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr><tr><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr></table>
           <table eId="att_2__table_1" class="border">
             <colgroup><col width="55.6701030927835%"/><col width="4.123711340206185%"/><col width="3.092783505154639%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/><col width="6.185567010309278%"/></colgroup><tr>
               <td colspan="4">
@@ -180,14 +180,14 @@
               <td>
                 <p eId="att_2__table_1__p_42"/>
               </td>
-            <td/></tr>
+            <td><p/></td></tr>
           </table>
           <table eId="att_2__table_2" class="border">
             <colgroup><col width="32.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="20.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/><col width="3.0%"/></colgroup><tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_1"><b>Part C: Details of owner(s)</b><i>(If different from applicant)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td style="width:32.7982%">
                 <p eId="att_2__table_2__p_2">Full name(s)</p>
@@ -195,7 +195,7 @@
               <td colspan="15" style="width:61.9266%">
                 <p eId="att_2__table_2__p_3"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td rowspan="2" style="width:32.7982%">
                 <p eId="att_2__table_2__p_4">Physical address(es)</p>
@@ -206,7 +206,7 @@
               <td colspan="4">
                 <p eId="att_2__table_2__p_6"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td>
                 <p eId="att_2__table_2__p_7"/>
@@ -217,7 +217,7 @@
               <td colspan="2">
                 <p eId="att_2__table_2__p_9"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td style="width:32.7982%">
                 <p eId="att_2__table_2__p_10">E-mail</p>
@@ -225,7 +225,7 @@
               <td colspan="15" style="width:61.9266%">
                 <p eId="att_2__table_2__p_11"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="5" style="width:18.1193%">
                 <p eId="att_2__table_2__p_12">Tel.</p>
@@ -242,12 +242,12 @@
               <td colspan="2">
                 <p eId="att_2__table_2__p_16"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_17"><b>Part D: Property details </b><i>(In accordance with title deed)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_18">Property description <i>(Number(s) of Erf/ Erven/Portion(s) or Farm(s))</i></p>
@@ -255,7 +255,7 @@
               <td colspan="14">
                 <p eId="att_2__table_2__p_19"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_20">Physical address</p>
@@ -269,7 +269,7 @@
               <td>
                 <p eId="att_2__table_2__p_23"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_24">Current zoning</p>
@@ -300,7 +300,7 @@
               <td colspan="14">
                 <p eId="att_2__table_2__p_32"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_33">Title deed number and date</p>
@@ -311,7 +311,7 @@
               <td colspan="13">
                 <p eId="att_2__table_2__p_35"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_36">Any restrictive conditions?</p>
@@ -328,7 +328,7 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_40"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="2">
                 <p eId="att_2__table_2__p_41">Is the property encumbered by a bond?</p>
@@ -345,12 +345,12 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_45"/>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="16" class="akn--text-center" style="center">
                 <p eId="att_2__table_2__p_46"><b>Part E: Pre-application consultation</b><i> (regulation 11)</i></p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="7">
                 <p eId="att_2__table_2__p_47">Has there been any pre-application consultation?</p>
@@ -364,7 +364,7 @@
               <td colspan="7">
                 <p eId="att_2__table_2__p_50">If yes, complete the information below and attach the minutes of the pre-application consultation.</p>
               </td>
-            <td/><td/></tr>
+            <td><p/></td><td><p/></td></tr>
             <tr>
               <td colspan="7">
                 <p eId="att_2__table_2__p_51">Official’s name</p>
@@ -375,7 +375,7 @@
               <td colspan="6">
                 <p eId="att_2__table_2__p_53">Date of consultation</p>
               </td>
-            <td/></tr>
+            <td><p/></td></tr>
           </table>
           <table eId="att_3__table_1" class="border">
             <colgroup><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/></colgroup><tr>
@@ -543,7 +543,371 @@
               <td>
                 <p eId="att_3__table_1__p_46"/>
               </td>
-            <td/><td/><td/></tr>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
+          </table>
+          <table eId="att_23__table_1" class="border">
+            <colgroup><col width="25.0%"/><col width="25.0%"/><col width="25.0%"/><col width="25.0%"/></colgroup><tr style="header-row">
+              <th>
+                <p eId="att_23__table_1__p_1">No.</p>
+              </th>
+              <th class="akn--text-center" style="center">
+                <p eId="att_23__table_1__p_2">Security plan</p>
+              </th>
+              <th rowspan="1" colspan="2" class="akn--text-center" style="center">
+                <p eId="att_23__table_1__p_3">Check box</p>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_4">1.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_5">The floor plan of the proposed site or area.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_6">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_7">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_8">2.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_9">The access point (entry and exit).</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_10">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_11">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_12">3.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_13">The entry/ exit point to be manned at all times.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_14">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_15">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_16">4.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_17">Patrons to be searched at point of arrival and departure.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_18">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_19">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_20">5.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_21">Storage facilities for licensed firearms to be provided.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_22">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_23">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_24">6.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_25">The point of sale to be cordoned off (indicated on the floor plan submitted).</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_26">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_27">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_28">7.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_29">The restricted part for consumption of liquor to be cordoned off (to be indicated on the floor plan submitted).</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_30">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_31">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_32">8.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_33">Parking to be provided.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_34">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_35">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_23__table_1__p_36">9.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_37">Ablution facilities for males and females to be provided.</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_38">Yes</p>
+              </td>
+              <td>
+                <p eId="att_23__table_1__p_39">No</p>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2" class="akn--text-center" style="center">
+                <p eId="att_23__table_1__p_40"/>
+              </th>
+              <th class="akn--text-center" style="center">
+                <p eId="att_23__table_1__p_41"/>
+              </th>
+            <td><p/></td></tr>
+          </table>
+          <table eId="att_22__table_1" class="border">
+            <colgroup><col width="50.0%"/><col width="50.0%"/></colgroup><tr style="header-row">
+              <th colspan="2" class="akn--text-center" style="center">
+                <p eId="att_22__table_1__p_1">1. Details of licensed outlet or premises</p>
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_2">(a) Name of outlet:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_3">(b) Trade name/s (if any):</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_4">(c) Registration number:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_5">(d) Name of the metropolitan municipality/district municipality or local municipality where the licensed premises are situated:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_6">(e) Physical business address of applicant:</p>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2" class="akn--text-center" style="center">
+                <p eId="att_22__table_1__p_7">2. Personal details of the applicant</p>
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_8">(a) Names and surname:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_9">(b) Designation of applicant:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_10">(c) Contact details:</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_11">Cell: __________________________ Tel: __________________________ Fax: __________________________ Email: _________________________________</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_12"><i><b>(Please attach certified copies of the documents requested in terms of regulation 25(3) to this form)</b></i></p>
+                <p eId="att_22__table_1__p_13">1. During the past 12 months, has the applicant, or any person holding an interest in the applicant, become disqualified from holding this liquor licence, as contemplated in section 40 of the Act?</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_22__table_1__p_14">Yes</p>
+              </td>
+              <td>
+                <p eId="att_22__table_1__p_15">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_16">2. If the answer to the above question is in the affirmative, please provide details of any decision taken by the relevant provincial licensing authority in terms of section 40 of the Act</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_17">3. Has the applicant or any of its owners, directors or subsidiaries been indicted or charged with any criminal offence, excluding traffic offences, during the past 12 months?</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_22__table_1__p_18">Yes</p>
+              </td>
+              <td>
+                <p eId="att_22__table_1__p_19">No</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p eId="att_22__table_1__p_20"/>
+              </td>
+            <td><p/></td></tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_21">4. Has the applicant or any of its subsidiaries been a party to a law suit during the past 12 months?</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p eId="att_22__table_1__p_22">If yes, provide details: __________________________</p>
+              </td>
+            </tr>
+          </table>
+          <table eId="att_13__table_1" class="border">
+            <colgroup><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/><col width="10.0%"/></colgroup><tr>
+              <td colspan="5">
+                <p eId="att_13__table_1__p_1"><b>Notice of intention to apply for a liquor licence for the undermentioned premises and proof of service </b></p>
+                <p eId="att_13__table_1__p_2">Name of premises</p>
+                <p eId="att_13__table_1__p_3">_____________________________________________________________</p>
+              </td>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_13__table_1__p_4">Physical address of the premises:</p>
+                <p eId="att_13__table_1__p_5">_____________________________________________________________</p>
+                <p eId="att_13__table_1__p_6">______________________________________________________________</p>
+                <p eId="att_13__table_1__p_7">Category of licence ________________________________________</p>
+                <p eId="att_13__table_1__p_8">Type of premises ________________________________________</p>
+              </td>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <th>
+                <p eId="att_13__table_1__p_9">Full name</p>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_10">Surname</p>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_11">I.D. Number</p>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_12">Full address</p>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_13">Signature</p>
+              </th>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <th>
+                <p eId="att_13__table_1__p_14"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_15"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_16"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_17"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_18"/>
+              </th>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <th>
+                <p eId="att_13__table_1__p_19"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_20"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_21"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_22"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_23"/>
+              </th>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <th>
+                <p eId="att_13__table_1__p_24"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_25"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_26"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_27"/>
+              </th>
+              <th>
+                <p eId="att_13__table_1__p_28"/>
+              </th>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <td rowspan="2">
+                <p eId="att_13__table_1__p_29"/>
+              </td>
+              <td rowspan="2">
+                <p eId="att_13__table_1__p_30"/>
+              </td>
+              <td rowspan="2">
+                <p eId="att_13__table_1__p_31"/>
+              </td>
+              <td rowspan="3">
+                <p eId="att_13__table_1__p_32"/>
+              </td>
+              <td rowspan="3">
+                <p eId="att_13__table_1__p_33"/>
+              </td>
+            <td><p/></td><td><p/></td><td><p/></td><td><p/></td><td><p/></td></tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_13__table_1__p_34"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <p eId="att_13__table_1__p_35"/>
+              </td>
+            <td><p/></td><td><p/></td><td><p/></td></tr>
           </table>
         </content>
       </part>

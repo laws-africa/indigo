@@ -80,6 +80,15 @@
      * @param {Element[]} newNodes the nodes to replace the old one with, or null to delete the node
      */
     replaceNode: function(oldNode, newNodes) {
+      try {
+        let fixes = indigoAkn.fixTables(newNodes || []);
+        if (fixes.length) {
+          Indigo.errorView.show("These tables have been fixed:", "<ul><li>" + fixes.join("</li><li>") + "</li></ul>");
+        }
+      } catch (e) {
+        Indigo.errorView.show(e);
+        return;
+      }
       var del = !newNodes;
       var first = del ? null : newNodes[0];
 

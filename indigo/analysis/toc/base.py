@@ -635,7 +635,6 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         if p.children and not p.all_descendants_same:
             # don't continue run if we're giving subprovisions
             end_at_next_add = True
-            self.stash_next = True
             # e.g. section 1-5, section 6(1)
             if p.type in [r['type'] for r in self.current_run]:
                 self.stash_current()
@@ -647,9 +646,6 @@ class CommencementsBeautifier(LocaleBasedMatcher):
 
         if end_at_next_add:
             self.stash_current()
-        elif self.stash_next:
-            self.stash_current()
-            self.stash_next = False
 
     def process_provision(self, p):
         # start processing?
@@ -712,7 +708,6 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.current_stash = []
         self.runs = []
         self.previous_in_run = False
-        self.stash_next = False
 
         provisions = self.decorate_provisions(provisions, assess_against)
 

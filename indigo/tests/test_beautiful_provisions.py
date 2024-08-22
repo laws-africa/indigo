@@ -100,6 +100,18 @@ class BeautifulProvisionsTestCase(TestCase):
                                            'section 1–55, section 56(2), section 57–63',
                                            commenceable_provisions=sections_1_to_63)
 
+    def test_one_subsection_missing_in_a_part(self):
+        part_ii = self.make_toc_elements('part_', 'part', ['II'], basic_unit=False, with_brackets=False)
+        sections_2_to_6 = self.make_toc_elements('part_II__sec_', 'section', range(2, 7), basic_unit=True)
+        sections_2_to_6[1].children = self.make_toc_elements('part_II__sec_3__subsec_', 'subsection', range(1, 3), basic_unit=False)
+        part_ii[0].children = sections_2_to_6
+        self.compare_beautiful_description(['part_II__sec_3__subsec_2'],
+                                           'Part II, section 3(2)',
+                                           commenceable_provisions=part_ii)
+        self.compare_beautiful_description(['part_II__sec_2', 'part_II__sec_3__subsec_1', 'part_II__sec_4', 'part_II__sec_5', 'part_II__sec_6'],
+                                           'Part II, section 2, section 3(1), section 4–6',
+                                           commenceable_provisions=part_ii)
+
     def run_nested(self, provision_ids, nested_toc=None):
         nested_toc = nested_toc or self.chapters
         return self.beautifier.make_beautiful(nested_toc, provision_ids)

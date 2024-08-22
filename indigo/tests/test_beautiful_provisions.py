@@ -88,6 +88,18 @@ class BeautifulProvisionsTestCase(TestCase):
         self.compare_beautiful_description(['section-2', 'section-3'],
                                            'section 2–3', commenceable_provisions=commenceable_provisions)
 
+    def test_one_subsection_missing(self):
+        sections_1_to_63 = self.make_toc_elements('sec_', 'section', range(1, 64), basic_unit=True)
+        sections_1_to_63[55].children = self.make_toc_elements('sec_56__subsec_', 'subsection', range(1, 3), basic_unit=False)
+        self.compare_beautiful_description(['sec_56__subsec_1'],
+                                           'section 56(1)',
+                                           commenceable_provisions=sections_1_to_63)
+        eids_1_to_55 = [f'sec_{x}' for x in range(1, 56)]
+        eids_57_to_63 = [f'sec_{x}' for x in range(57, 64)]
+        self.compare_beautiful_description(eids_1_to_55 + ['sec_56__subsec_2'] + eids_57_to_63,
+                                           'section 1–55, section 56(2), section 57, section 58–63',
+                                           commenceable_provisions=sections_1_to_63)
+
     def run_nested(self, provision_ids, nested_toc=None):
         nested_toc = nested_toc or self.chapters
         return self.beautifier.make_beautiful(nested_toc, provision_ids)

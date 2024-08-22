@@ -48,60 +48,45 @@ class BeautifulProvisionsTestCase(TestCase):
             num=get_num(n), basic_unit=basic_unit
         ) for n in list_of_nums]
 
+    def compare_beautiful_description(self, provision_ids, expected, commenceable_provisions=None):
+        commenceable_provisions = commenceable_provisions or self.commenceable_provisions
+        description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
+        self.assertEqual(expected, description)
+
     def test_beautiful_provisions_basic(self):
-        provision_ids = ['section-1', 'section-2', 'section-3', 'section-4']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1–4')
-
-        provision_ids = ['section-2', 'section-3', 'section-4', 'section-5']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 2–5')
-
-        provision_ids = ['section-1', 'section-2', 'section-3']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1–3')
-
-        provision_ids = ['section-1', 'section-3', 'section-4', 'section-5', 'section-6']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1, section 3–6')
-
-        provision_ids = ['section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'section-7']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1–5, section 7')
-
-        provision_ids = ['section-1', 'section-3', 'section-4', 'section-5', 'section-6', 'section-8']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1, section 3–6, section 8')
-
-        provision_ids = ['section-1', 'section-4', 'section-5', 'section-6', 'section-7', 'section-8', 'section-9', 'section-10', 'section-11', 'section-12', 'section-14', 'section-16', 'section-20', 'section-21']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1, section 4–12, section 14, section 16, section 20–21')
+        self.compare_beautiful_description(['section-1', 'section-2', 'section-3', 'section-4'],
+                                           'section 1–4')
+        self.compare_beautiful_description(['section-2', 'section-3', 'section-4', 'section-5'],
+                                           'section 2–5')
+        self.compare_beautiful_description(['section-1', 'section-2', 'section-3'],
+                                           'section 1–3')
+        self.compare_beautiful_description(['section-1', 'section-3', 'section-4', 'section-5', 'section-6'],
+                                           'section 1, section 3–6')
+        self.compare_beautiful_description(['section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'section-7'],
+                                           'section 1–5, section 7')
+        self.compare_beautiful_description(['section-1', 'section-3', 'section-4', 'section-5', 'section-6', 'section-8'],
+                                           'section 1, section 3–6, section 8')
+        self.compare_beautiful_description(['section-1', 'section-4', 'section-5', 'section-6', 'section-7', 'section-8', 'section-9', 'section-10', 'section-11', 'section-12', 'section-14', 'section-16', 'section-20', 'section-21'],
+                                           'section 1, section 4–12, section 14, section 16, section 20–21')
 
     def test_one_item(self):
-        provision_ids = ['section-23']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 23')
+        self.compare_beautiful_description(['section-23'],
+                                           'section 23')
 
     def test_two_items(self):
-        provision_ids = ['section-23', 'section-25']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 23, section 25')
+        self.compare_beautiful_description(['section-23', 'section-25'],
+                                           'section 23, section 25')
 
     def test_three_items(self):
-        provision_ids = ['section-23', 'section-24', 'section-25']
-        description = self.beautifier.make_beautiful(self.commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 23–25')
+        self.compare_beautiful_description(['section-23', 'section-24', 'section-25'],
+                                           'section 23–25')
 
     def test_one_excluded(self):
         commenceable_provisions = self.make_toc_elements('section-', 'section', range(1, 4), basic_unit=True)
-
-        provision_ids = ['section-1', 'section-2']
-        description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 1–2')
-
-        provision_ids = ['section-2', 'section-3']
-        description = self.beautifier.make_beautiful(commenceable_provisions, provision_ids)
-        self.assertEqual(description, 'section 2–3')
+        self.compare_beautiful_description(['section-1', 'section-2'],
+                                           'section 1–2', commenceable_provisions=commenceable_provisions)
+        self.compare_beautiful_description(['section-2', 'section-3'],
+                                           'section 2–3', commenceable_provisions=commenceable_provisions)
 
     def run_nested(self, provision_ids, nested_toc=None):
         nested_toc = nested_toc or self.chapters

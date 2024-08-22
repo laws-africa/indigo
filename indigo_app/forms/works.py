@@ -19,6 +19,12 @@ from indigo_api.models import Work, TaxonomyTopic, Amendment, Subtype, Locality,
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
+def remove_punctuation(value):
+    value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
+    value = re.sub(r'--+', '-', value)
+    return value
+
+
 class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
@@ -257,10 +263,10 @@ class WorkForm(forms.ModelForm):
         return super().has_changed() or any(formset.has_changed() for formset in self.formsets)
 
     def clean_frbr_number(self):
-        value = self.cleaned_data['frbr_number']
-        value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
-        value = re.sub(r'--+', '-', value)
-        return value
+        return remove_punctuation(self.cleaned_data['frbr_number'])
+
+    def clean_frbr_actor(self):
+        return remove_punctuation(self.cleaned_data['frbr_actor'])
 
     def clean(self):
         cleaned_data = super().clean()

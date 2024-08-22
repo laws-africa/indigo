@@ -97,7 +97,7 @@ class BeautifulProvisionsTestCase(TestCase):
         eids_1_to_55 = [f'sec_{x}' for x in range(1, 56)]
         eids_57_to_63 = [f'sec_{x}' for x in range(57, 64)]
         self.compare_beautiful_description(eids_1_to_55 + ['sec_56__subsec_2'] + eids_57_to_63,
-                                           'section 1–55, section 56(2), section 57, section 58–63',
+                                           'section 1–55, section 56(2), section 57–63',
                                            commenceable_provisions=sections_1_to_63)
 
     def run_nested(self, provision_ids, nested_toc=None):

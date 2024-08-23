@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import override_settings
 
 from rest_framework.test import APITestCase
@@ -13,6 +14,8 @@ class TaxonomyTopicsAPIV3Test(APITestCase):
 
     def setUp(self):
         self.client.login(username='api-user@example.com', password='password')
+        user = User.objects.get(username='api-user@example.com')
+        user.user_permissions.add('indigo_api.view_taxonomytopic')
 
     def test_taxonomies(self):
         response = self.client.get(self.api_path + '/taxonomies.json')

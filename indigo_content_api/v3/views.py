@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
 
@@ -74,6 +75,7 @@ class TaxonomyTopicWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericVi
     """ List of work expressions for a taxonomy topic."""
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
     filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
     taxonomy_topic = None
 
     def get_serializer_class(self):
@@ -93,7 +95,7 @@ class TaxonomyTopicWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericVi
     def get_queryset(self):
         queryset = PublishedDocumentDetailViewV3.queryset
         # when drf-spectacular generates the schema, it doesn't have the taxonomy_topic attribute
-        if not getattr(self, 'swagger_fake_view', False):
+        if not getattr(self, 'swagger_fake_view', False) and self.taxonomy_topic:
             works = Work.objects.filter(taxonomy_topics__path__startswith=self.taxonomy_topic.path).distinct("pk")
             queryset = queryset.filter(work__in=works)
         return super().filter_queryset(queryset)

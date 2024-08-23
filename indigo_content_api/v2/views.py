@@ -3,7 +3,7 @@ import re
 from django.http import Http404
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.permissions import IsAuthenticated, BasePermission, DjangoModelPermissions
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
@@ -410,6 +410,7 @@ class TaxonomyTopicView(ContentAPIBase, viewsets.ReadOnlyModelViewSet):
     queryset = TaxonomyTopic.objects.none()
     serializer_class = TaxonomyTopicSerializer
     lookup_field = 'slug'
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
     def get_queryset(self):
         # when listing, just use the top-level public nodes

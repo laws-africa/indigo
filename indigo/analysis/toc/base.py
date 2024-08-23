@@ -551,9 +551,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         new_run = typ not in [r['type'] for r in run] if run else False
         run.append({'type': typ, 'num': p.num, 'new_run': new_run})
 
-    def stringify_run(self, run):
+    def stringify_run(self, run, no_type=False):
         # first (could be only) item, e.g. 'section 1'
         run_str = f"{run[0]['type']} {run[0]['num']}" if run[0]['num'] else run[0]['type']
+        if no_type:
+            run_str = run[0]['num']
         # common case: e.g. section 1–5 (all the same type)
         if len(run) > 1 and not any(r['new_run'] for r in run):
             run_str += f"–{run[-1]['num']}"
@@ -567,8 +569,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             # get all e.g. articles, then all e.g. regulations
             for subsequent_type in [r['type'] for r in run if r['new_run']]:
                 this_type = [r for r in run if r['type'] == subsequent_type]
-                run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
-                run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
+                if no_type:
+                    run_str += f", {this_type[0]['num']}" + f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
+                else:
+                    run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
+                    run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
 
         return run_str
 

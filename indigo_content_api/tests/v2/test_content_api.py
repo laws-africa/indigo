@@ -1,7 +1,7 @@
 import tempfile
 from datetime import date
+from unittest.mock import patch
 
-from mock import patch
 from django.test.utils import override_settings
 from django.conf import settings
 from rest_framework.test import APITestCase

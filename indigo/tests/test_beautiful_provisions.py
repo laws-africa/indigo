@@ -112,6 +112,24 @@ class BeautifulProvisionsTestCase(TestCase):
                                            'Part II, section 2, section 3(1), section 4–6',
                                            commenceable_provisions=part_ii)
 
+    def test_subprovisions_missing_in_a_chapter(self):
+        chapter_7 = self.make_toc_elements('chap_', 'chapter', ['7'], basic_unit=False, with_brackets=False)
+        sections_151_to_164 = self.make_toc_elements('chap_7__sec_', 'section', range(151, 165), basic_unit=True)
+        section_160__subsections = self.make_toc_elements('chap_7__sec_160__subsec_', 'subsection', range(1, 9), basic_unit=False)
+        section_160__subsections[0].children = self.make_toc_elements('chap_7__sec_160__subsec_1__para_', 'paragraph', ['a', 'b', 'c', 'd'], basic_unit=False)
+        sections_151_to_164[9].children = section_160__subsections
+        chapter_7[0].children = sections_151_to_164
+        self.compare_beautiful_description(['chap_7__sec_160__subsec_1__para_b'],
+                                           'Chapter 7, section 160(1)(b)',
+                                           commenceable_provisions=chapter_7)
+        eids_151_to_159 = [f'chap_7__sec_{x}' for x in range(151, 160)]
+        eids_160_1_a_c_d = ['chap_7__sec_160__subsec_1__para_a', 'chap_7__sec_160__subsec_1__para_c', 'chap_7__sec_160__subsec_1__para_d']
+        eids_160_2_to_8 = [f'chap_7__sec_160__subsec_{x}' for x in range(2, 9)]
+        eids_161_to_164 = [f'chap_7__sec_{x}' for x in range(161, 165)]
+        self.compare_beautiful_description(eids_151_to_159 + eids_160_1_a_c_d + eids_160_2_to_8 + eids_161_to_164,
+                                           'Chapter 7, section 151–159, section 160(1)(a), (1)(c)–(d), (2)–(8), section 161–164',
+                                           commenceable_provisions=chapter_7)
+
     def run_nested(self, provision_ids, nested_toc=None):
         nested_toc = nested_toc or self.chapters
         return self.beautifier.make_beautiful(nested_toc, provision_ids)
@@ -209,9 +227,9 @@ class BeautifulProvisionsTestCase(TestCase):
             'chp_2', 'sec_6'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
+        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A)–(B), (1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B), 1(1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
+        self.assertEqual('Chapter 1, Part A, subpart, section 1(1)(a)(ii)(A)–(B), (1)(aA), section 3; Part B, section 5; Chapter 2, section 6', self.run_nested(provision_ids, chapters))
 
     def test_section_then_chapters(self):
         """ Test where a section precedes the first chapter.
@@ -452,18 +470,18 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_1__subsec_1__list_1__item_b', 'sec_1__subsec_1__list_1__item_c'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(b), 1(1)(c)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(ii), (1)(b)–(c)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(b), 1(1)(c)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(ii), (1)(b)–(c)', self.run_nested(provision_ids))
 
         provision_ids = [
             'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_A',
             'sec_1__subsec_1__list_1__item_a__list_1__item_ii__list_1__item_B',
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(ii)(A)–(B)', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(ii)(A), 1(1)(a)(ii)(B)', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(ii)(A)–(B)', self.run_nested(provision_ids))
 
         # If a basic unit isn't fully commenced, don't end up with section 1(1)(a), 1(1)(c), 1(2), 1(3)–2
         provision_ids = [
@@ -481,9 +499,9 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_3'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2), 1(3), section 3', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(iii), (1)(c), (2)–(3), section 3', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2), 1(3), section 3', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(iii), (1)(c), (2)–(3), section 3', self.run_nested(provision_ids))
 
         provision_ids = [
             'chp_1',
@@ -500,9 +518,9 @@ class BeautifulProvisionsTestCase(TestCase):
             'sec_2'
         ]
         self.beautifier.commenced = True
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2), 1(3), section 2', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(iii), (1)(c), (2)–(3), section 2', self.run_nested(provision_ids))
         self.beautifier.commenced = False
-        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i), 1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2), 1(3), section 2', self.run_nested(provision_ids))
+        self.assertEqual('Chapter 1, Part A, section 1(1)(a)(i)–(iii), (1)(c), (2)–(3), section 2', self.run_nested(provision_ids))
 
         provision_ids = ['sec_1__subsec_1__list_1__item_b', 'sec_4']
         self.beautifier.commenced = True

@@ -105,7 +105,8 @@
             "last_login": "2012-01-13 00:14:00+00:00",
             "groups": [],
             "user_permissions": [
-                ["view_published_document", "indigo_api", "document"]
+                ["view_published_document", "indigo_api", "document"],
+                ["view_taxonomytopic", "indigo_api", "taxonomytopic"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "date_joined": "2012-01-13 00:14:00+00:00"

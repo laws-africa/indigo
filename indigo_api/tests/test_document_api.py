@@ -1,5 +1,5 @@
 import tempfile
-from mock import patch
+from unittest.mock import patch
 import datetime
 
 from nose.tools import *  # noqa

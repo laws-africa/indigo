@@ -2,7 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from rest_framework.mixins import ListModelMixin
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
 
@@ -75,7 +74,6 @@ class TaxonomyTopicWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericVi
     """ List of work expressions for a taxonomy topic."""
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
     filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
-    permission_classes = [IsAuthenticated, DjangoModelPermissions]
     taxonomy_topic = None
 
     def get_serializer_class(self):

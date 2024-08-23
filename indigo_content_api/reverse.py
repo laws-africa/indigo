@@ -3,10 +3,11 @@ might be running on a separate domain using django_hosts. In such a case, the Ap
 reverse certain API URLs and by default Django would try to use the App's URLs, not the API's URLs.
 """
 
+from urllib.parse import urlparse, urlunparse
+
 from django.conf import settings
 from django.urls import reverse as django_reverse
 from rest_framework.reverse import reverse as drf_reverse
-
 
 # the host alias that runs the content_api, if django_hosts is in use
 CONTENT_API_HOST = 'api'
@@ -23,10 +24,23 @@ def reverse_content_api(*args, **kwargs):
 
     While the base Indigo doesn't enable django_hosts by default, this allows Indigo users to
     opt-in to django_hosts and host the API on a separate hostname.
+
+    If django_rest_framework returns a non-absolute URL (e.g. because a request isn't given,
+    and/or django_hosts is not in use), then use settings.INDIGO_URL to build the absolute URL.
     """
     if using_django_hosts():
         kwargs.setdefault('host', CONTENT_API_HOST)
-    return drf_reverse(*args, **kwargs)
+    url = drf_reverse(*args, **kwargs)
+
+    parsed_url = urlparse(url)
+    if not parsed_url.scheme:
+        parsed_base_url = urlparse(settings.INDIGO_URL)
+        # combine e.g. http://localhost:8000 with e.g. /api/v3/akn/…
+        url = urlunparse((
+            parsed_base_url.scheme, parsed_base_url.netloc,
+            parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment))
+
+    return url
 
 
 def intercept_drf_reverse():

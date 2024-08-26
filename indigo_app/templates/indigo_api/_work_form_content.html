@@ -211,7 +211,7 @@
             </div>
           {% endfor %}
 
-          <div class="form-group row">
+          <div class="row mb-3">
             <label for="{{ form.frbr_actor.id_for_label }}" class="col-2 col-form-label">{% trans 'Responsible organisation (actor)' %}</label>
             <div class="col-4">
               <input
@@ -219,10 +219,13 @@
                   hx-target=".duplicate-wrapper"
                   hx-post="{% url 'work_form_find_duplicates' place.place_code %}?pk={{ work.pk }}"
                   type="text" class="form-control" id="{{ form.frbr_actor.id_for_label }}"
+                  pattern="[^\s]+"
                   name="{{ form.frbr_actor.html_name }}"
                   value="{{ form.frbr_actor.value|default:'' }}">
             </div>
-            <div class="col-6 form-text text-muted">{% trans 'Organisation that created this work. Not normally used for national legislation.' %}</div>
+            <div class="col-6 form-text text-muted">
+              {% trans "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only." %}
+            </div>
           </div>
 
           <hr>

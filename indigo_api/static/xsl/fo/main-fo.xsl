@@ -44,9 +44,8 @@
       </fo:bookmark-tree>
 
       <!-- front matter & table of contents, Roman page numbers -->
-      <!-- TODO: don't force front matter, toc to be an even number of pages -->
       <!-- TODO: skip first page number, running header -->
-      <fo:page-sequence master-reference="A4" initial-page-number="1" format="i">
+      <fo:page-sequence master-reference="A4" initial-page-number="1" format="i" force-page-count="no-force">
         <fo:static-content flow-name="xsl-region-after">
           <fo:block font-family="{$font-fam-frontmatter}" font-size="{$fontsize-frontmatter-small}" text-align="center" margin-top="1cm">
             <fo:page-number/>
@@ -55,7 +54,9 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block-container font-family="{$font-fam}" font-size="{$fontsize}"
                               line-height="1.3" text-align="start">
-            <xsl:apply-templates select="//akn:frontMatter"/>
+            <fo:block>
+              <xsl:apply-templates select="//akn:frontMatter"/>
+            </fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>

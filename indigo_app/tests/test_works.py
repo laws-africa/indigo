@@ -1,17 +1,18 @@
 import datetime
-
-from django.test import testcases, override_settings
-from django_webtest import WebTest
-from django.contrib.auth.models import User
-from webtest import Upload
+from urllib.parse import unquote
 
 import reversion
+from django.contrib.auth.models import User
+from django.test import testcases, override_settings
+from django_webtest import WebTest
+from webtest import Upload
 
+from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Document
+from indigo_app.tests.utils import TEST_STORAGES
 from indigo_app.views.works import WorkViewBase
-from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country, Document
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class WorksTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'publications', 'commencements']
 
@@ -362,12 +363,12 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(resp.status_code, 404)
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.
     """
-    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'commencements']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published', 'commencements', 'subtype']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
@@ -523,3 +524,34 @@ class WorksWebTest(WebTest):
         form['work-frbr_number'] = '123-45'
         response = form.submit()
         self.assertRedirects(response, '/works/akn/za/statement/2018-02-02/123-45/', fetch_redirect_response=False)
+
+    def test_create_work_dirty_number_author(self):
+        """ The form cleans up spaces and punctuation in the author and number fields.
+        """
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
+        form['work-title'] = "Title"
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_subtype'] = 'si'
+        form['work-frbr_actor'] = 'présidence de   la! république'
+        form['work-frbr_date'] = '2024'
+        form['work-frbr_number'] = '1 2" 3\\n 4'
+        response = form.submit()
+        self.assertRedirects(response, '/works/akn/za/act/si/pr%C3%A9sidence-de-la-r%C3%A9publique/2024/1-2-3-n-4/', fetch_redirect_response=False)
+        self.assertEqual(unquote(response.url), '/works/akn/za/act/si/présidence-de-la-république/2024/1-2-3-n-4/')
+
+    def test_create_work_author_no_subtype(self):
+        """ The actor component of the FRBR URI is ignored when there is no subtype.
+        """
+        form = self.app.get('/places/za/works/new').forms['edit-work-form']
+        form['work-title'] = "Title"
+        form['work-frbr_doctype'] = 'act'
+        form['work-frbr_actor'] = 'ignored-actor'
+        form['work-frbr_date'] = '2024'
+        form['work-frbr_number'] = '1'
+        response = form.submit()
+        self.assertRedirects(response, '/works/akn/za/act/2024/1/', fetch_redirect_response=False)
+
+        # include a subtype though, and now the FRBR URI can be parsed accurately
+        form['work-frbr_subtype'] = 'si'
+        response = form.submit()
+        self.assertRedirects(response, '/works/akn/za/act/si/ignored-actor/2024/1/', fetch_redirect_response=False)

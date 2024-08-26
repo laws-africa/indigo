@@ -1,13 +1,14 @@
 import os
 import tempfile
-from lxml import etree
 
+from django.conf import settings
 from django.test import TestCase
+from lxml import etree
 
 from cobalt.hierarchical import Act
 from indigo_api.exporters import PDFExporter
-from indigo_api.pdf import run_fop
 from indigo_api.models import Document, Work, Language
+from indigo_api.pdf import run_fop
 
 
 class PDFExporterTestCase(TestCase):
@@ -41,6 +42,9 @@ class PDFExporterTestCase(TestCase):
             self.exporter.update_base_xsl_fo_dir(xsl_fo)
             run_fop(outf.name, tmpdir, xml_file, xsl_fo, output_fo=True)
             pretty_xml_out = etree.tostring(etree.fromstring(outf.read()), pretty_print=True, encoding='unicode')
+            # check actual PDF won't throw an error either
+            outf_name = os.path.join(tmpdir, "out.pdf")
+            run_fop(outf_name, tmpdir, xml_file, xsl_fo)
 
             if update:
                 # update the fixture to match the actual
@@ -64,7 +68,7 @@ class PDFExporterTestCase(TestCase):
         doc = Act(xml=xml_in)
         adjustment(doc)
 
-        xml_out = etree.tostring(doc.root, encoding='unicode', pretty_print=True)
+        xml_out = etree.tostring(doc.root, encoding='unicode', pretty_print=True).replace(settings.RESOLVER_URL, 'RRRR')
         if update:
             # update the fixture to match the actual
             with open(output_path, 'w') as f:
@@ -84,8 +88,11 @@ class PDFExporterTestCase(TestCase):
     def test_tables(self):
         self.run_and_compare('tables')
 
+    def test_refs(self):
+        self.run_and_compare('links')
+
     def test_adjust_refs(self):
-        self.adjust_xml('links', self.exporter.adjust_refs)
+        self.adjust_xml('links', self.exporter.adjust_refs, subdirectory='links')
 
     def test_tables_column_widths_basic(self):
         self.adjust_xml('column_widths_basic', self.exporter.resize_tables, subdirectory='tables')

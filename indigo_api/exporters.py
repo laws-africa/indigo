@@ -5,12 +5,12 @@ import re
 import shutil
 import tempfile
 from collections import defaultdict
-from urllib.parse import unquote
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
-from django.utils.translation import override, ugettext as _
+from django.utils.translation import override, gettext_lazy as _
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree
@@ -365,22 +365,46 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     for chunk in attachment.file.chunks():
                         f.write(chunk)
 
+    def escape_url(self, url):
+        parsed_url = urlparse(url)
+        return urlunparse((parsed_url.scheme, parsed_url.netloc, quote(unquote(parsed_url.path), safe='@"/'),
+                           parsed_url.params, urlencode(parse_qsl(parsed_url.query)),
+                           quote(unquote(parsed_url.fragment), safe=":"))).replace(" ", "%20")
+
     def adjust_refs(self, doc):
         """ Prefix absolute hrefs into fully-qualified URLs.
+            Remove hrefs that will break FOP.
         """
         for ref in doc.root.xpath('//a:ref[@href]', namespaces={'a': doc.namespace}):
             href = ref.attrib['href']
             text = ''.join(ref.xpath('.//text()'))
-            # remove links that will break FOP
-            bad_href_re = re.compile(r'\W')
-            bad_href_match = re.match(bad_href_re, unquote(href))
-            if href == 'https://' or href == 'mailto:' or bad_href_match:
-                log.info(f'Removing bad href "{href}" from the text "{text}"')
+            parsed_url = urlparse(href)
+
+            if not parsed_url.scheme:
+                # e.g. /akn/… which should be resolved, or
+                # e.g. #sec_6 which should be left alone, or
+                # e.g. example.com which should be removed
+                if parsed_url.path and parsed_url.path.startswith('/'):
+                    # /akn/… -- resolve it
+                    parsed_resolver_url = urlparse(self.resolver_url)
+                    new_path = parsed_resolver_url.path.rstrip('/') + parsed_url.path
+                    ref.attrib['href'] = self.escape_url(urlunparse(
+                        (parsed_resolver_url.scheme, parsed_resolver_url.netloc, new_path, parsed_url.params,
+                         parsed_url.query, parsed_url.fragment)))
+                elif not parsed_url.fragment:
+                    # example.com -- remove it
+                    log.info(f'Removing href "{href}" from text "{text}"')
+                    del ref.attrib['href']
+                # #sec_6 -- leave it alone
+
+            elif not (parsed_url.netloc or parsed_url.path):
+                # e.g. mailto: or https:// -- remove it
+                log.info(f'Removing href "{href}" from the text "{text}"')
                 del ref.attrib['href']
 
-            # add resolver before /akn/etc links
-            elif href.startswith('/'):
-                ref.attrib['href'] = self.resolver_url + href
+            else:
+                # keep it as is but clean it up a bit
+                ref.attrib['href'] = self.escape_url(urlunparse(parsed_url))
 
     def make_eids_unique(self, doc):
         """ Ensure there are no duplicate eIds.
@@ -404,11 +428,10 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         PDF generation fails.
         """
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
-            # a cell can't span more rows than actually come after it
-            # there should also never be a completely empty row -- check for this first
-            for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
-                if not row.xpath('a:td|a:th', namespaces={'a': doc.namespace}):
-                    table.remove(row)
+            # there should never be a completely empty row (FOP constraint)
+            for empty_row in table.xpath('a:tr[not(a:td|a:th)]', namespaces={'a': doc.namespace}):
+                table.remove(empty_row)
+            # a cell can't span more rows than actually come after it (FOP constraint)
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
                 for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
@@ -434,7 +457,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 missing_cells = n_cols - len(matrix[y])
                 for x in range(missing_cells):
                     log.debug(f"Adding missing cell in table {table.get('eId')} on row {y+1}")
-                    row.append(doc.maker('td'))
+                    cell = doc.maker('td')
+                    cell.append(doc.maker('p'))
+                    row.append(cell)
                 # update the matrix
                 for x in range(n_cols):
                     matrix[y][x] = True
@@ -558,7 +583,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 # mark matrix elements occupied by current cell with true
                 for xx in range(x, x + int(cell.get('colspan', 1))):
                     for yy in range(y, y + int(cell.get('rowspan', 1))):
-                        matrix[yy][xx] = True
+                        # skip already occupied cells due to overlapping spans
+                        xxx = xx
+                        while matrix[yy][xxx]:
+                            xxx += 1
+                        matrix[yy][xxx] = True
 
         return matrix
 

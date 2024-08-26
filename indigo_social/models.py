@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def user_profile_photo_path(instance, filename):
@@ -78,3 +78,25 @@ def retrieve_profile_photo_on_signup(sender, **kwargs):
 
     except (SocialAccount.DoesNotExist, UserProfile.DoesNotExist):
         pass
+
+
+class BadgeAward(models.Model):
+    user = models.ForeignKey(User, related_name="badges_earned", on_delete=models.CASCADE)
+    awarded_at = models.DateTimeField(auto_now_add=True)
+    slug = models.CharField(max_length=255)
+    level = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = "pinax_badges_badgeaward"
+
+    def __getattr__(self, attr):
+        return getattr(self._badge, attr)
+
+    @property
+    def badge(self):
+        return self
+
+    @property
+    def _badge(self):
+        from indigo_social.badges import badges
+        return badges.registry[self.slug]

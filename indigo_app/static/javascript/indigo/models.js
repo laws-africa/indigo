@@ -4,6 +4,15 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   /* A model for the content of a document. The API handles it separately
    * to the document metadata since the content can be very big.
    *
@@ -53,6 +62,8 @@
 
       // rewrite all eIds before setting the content
       new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
+      // rewrite all attachment FRBR URI work components too
+      new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
@@ -69,6 +80,15 @@
      * @param {Element[]} newNodes the nodes to replace the old one with, or null to delete the node
      */
     replaceNode: function(oldNode, newNodes) {
+      try {
+        let fixes = indigoAkn.fixTables(newNodes || []);
+        if (fixes.length) {
+          Indigo.errorView.show("These tables have been fixed:", "<ul><li>" + fixes.join("</li><li>") + "</li></ul>");
+        }
+      } catch (e) {
+        Indigo.errorView.show(e);
+        return;
+      }
       var del = !newNodes;
       var first = del ? null : newNodes[0];
 
@@ -650,17 +670,12 @@
     },
   });
 
-  var showdownConverter = new showdown.Converter({
-    'noHeaderId': true,
-    'simplifiedAutoLink': true,
-    'excludeTrailingPunctuationFromURLs': true,
-    'simpleLineBreaks': true,
-    'openLinksInNewWindow': true,
-  });
-
   Indigo.Annotation = Backbone.Model.extend({
     toHtml: function() {
-      return showdownConverter.makeHtml(this.get('text'));
+      var text = escapeHtml(this.get('text'));
+
+      // split on newlines and wrap each line in a <p> tag
+      return "<p>" + text.replace(/\n+/g, "</p><p>") + "</p>";
     },
 
     parse: function(json) {

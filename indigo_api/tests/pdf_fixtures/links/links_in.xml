@@ -1,0 +1,35 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act">
+    <meta/>
+    <body>
+      <section eId="sec_1">
+        <num>1.</num>
+        <heading>Heading</heading>
+        <content>
+          <p>bad <ref href="mailto:">mailto: <b>add</b>ress</ref></p>
+          <p>bad <ref href="mailto:@">mailto:@ address</ref></p>
+          <p>bad <ref href="mailto:.com">mailto:.com address</ref></p>
+          <p>good <ref href="mailto:info@example.com">mailto:info@example.com address</ref></p>
+          <p>good <ref href='https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]}'>https://hudoc.echr.coe.int/fre#{"itemid":["002-7652"]} address</ref></p>
+          <p>good <ref href="https://example.com/foo%20bar?a=%22x">https://example.com/foo bar?a="x</ref></p>
+          <p>fine <ref href='https://example.com/foo bar?a="x'>https://example.com/foo bar?a="x</ref></p>
+          <p>good <ref href="https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other%20value&amp;a=%22x">https://example.com/?q=query+string+including+an+%26+ampersand&amp;other_key=other%20value&amp;a="x</ref></p>
+          <p>good <ref href="https://example.com/path/name;param1;p2=x%3Da,y%3Bb,z%2Cc;p3?a='x">with params</ref></p>
+          <p>not great, but won't break <ref href="https://example.com/path/name;param1;p2=x=a,y;b,z,c;p3?a='x">with params</ref></p>
+          <p>not great, but won't break <ref href="https://example.com/path/name;param 1;p 2=x=a,y;b,z,c;p 3?a=' x">with params</ref></p>
+          <p>bad <ref href="mailto:.@">mailto:.@ address</ref></p>
+          <p>bad <ref href="mailto:@c.x">mailto:@c.x address</ref></p>
+          <p>bad <ref href="mailto:@.com">mailto:@.com address</ref></p>
+          <p>bad <ref href="https://">https:// address</ref></p>
+          <p>good? <ref href="https://x">https://x address</ref></p>
+          <p>bad <ref href="example.com">no scheme, just example.com</ref> ref</p>
+          <p>bad <ref href="http://example.com/some%20path/with[]=bad chars/?query=value%20with%20spaces?#anchor spaces">bad chars</ref> ref</p>
+          <p>to be resolved <ref href="/akn/za/act/1962/58">Act 58 of 1962</ref></p>
+          <p>to be resolved <ref href="/akn/za/act/1962/58/eng@1999-08-81#sec_3">Act 58 of 1962</ref></p>
+          <p>to be resolved <ref href="/akn/za/act/1962/58/~chp_IV__sec_27">Act 58 of 1962</ref></p>
+          <p>internal <ref href="#sec_6">section 6</ref></p>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>

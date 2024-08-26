@@ -40,7 +40,7 @@ accounts/reauthenticate/\Z
 resolver/(?P<path>.+)$
 resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
-api/$
+api/\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-references\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms\Z

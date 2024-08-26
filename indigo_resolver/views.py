@@ -4,7 +4,7 @@ from django.http import HttpResponseBadRequest, Http404
 from django.conf import settings
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from cobalt.uri import FrbrUri
 

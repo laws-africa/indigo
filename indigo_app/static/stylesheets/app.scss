@@ -3,7 +3,7 @@
 // give other projects a chance to override variables
 @import 'indigo/variables';
 
-@import 'lib/bootstrap-5.3.2/scss/bootstrap';
+@import 'bootstrap/scss/bootstrap';
 
 
 // fontawesome
@@ -14,7 +14,6 @@ $fa-font-path: '../lib/fontawesome-5.2/webfonts';
 @import 'lib/fontawesome-5.2/scss/brands.scss';
 @import 'lib/bootstrap-select/css/bootstrap-select.min';
 
-@import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';
 @import 'bootstrap-menus.scss';
 

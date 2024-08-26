@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # NOTE: This is an example Dockerfile for getting Indigo running in a simple way.
 #       In production, you will probably want to use this as a template and make
@@ -25,16 +25,24 @@ RUN wget -q -O fop.tgz 'http://www.apache.org/dyn/closer.cgi?filename=/xmlgraphi
 
 ENV PATH=/usr/local/share/fop-2.4/fop:$PATH
 
-# dart sass
-RUN wget -q -O dart-sass.tgz 'https://github.com/sass/dart-sass/releases/download/1.53.0/dart-sass-1.53.0-linux-x64.tar.gz' && \
-  tar xzf dart-sass.tgz && \
-  mv dart-sass/sass /usr/local/bin && \
-  rm -rf dart-sass*
+# node
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+# install sass for compiling assets before deploying
+RUN npm i -g sass
 
 WORKDIR /app
 
+# install runtime node dependencies
+# copying this in first means Docker can cache this operation
+COPY package*.json /app/
+RUN npm ci --no-audit --ignore-scripts --omit=dev
+
+# Bring pip up to date; pip <= 22 (the default on ubuntu 22.04) is not supported
+RUN pip install --upgrade pip
+
 # These are production-only dependencies
-RUN pip install psycopg2==2.8.6
+RUN pip install psycopg2==2.9.9
 
 # Copy the code
 COPY . /app
@@ -43,10 +51,8 @@ COPY . /app
 RUN pip install -e .
 
 # Compile static assets.
-#
-# Note that we ignore 'docs' directories because some components
-# have badly formed docs CSS.
-RUN python manage.py compilescss && \
-    python manage.py collectstatic --noinput -i docs -i \*.scss 2>&1
+RUN python manage.py compilescss
+# Note that we ignore 'docs' directories because some components have badly formed docs CSS.
+RUN python manage.py collectstatic --noinput -i docs -i \*.scss 2>&1
 
 CMD python manage.py

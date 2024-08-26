@@ -7,14 +7,16 @@
     </fo:simple-page-master>
   </fo:layout-master-set>
   <fo:bookmark-tree/>
-  <fo:page-sequence format="i" initial-page-number="1" master-reference="A4">
+  <fo:page-sequence force-page-count="no-force" format="i" initial-page-number="1" master-reference="A4">
     <fo:static-content flow-name="xsl-region-after">
       <fo:block margin-top="1cm" text-align="center" font-size="9pt" font-family="PT Sans">
         <fo:page-number/>
       </fo:block>
     </fo:static-content>
     <fo:flow flow-name="xsl-region-body">
-      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif"/>
+      <fo:block-container text-align="start" line-height="1.3" font-size="9pt" font-family="PT Serif">
+        <fo:block/>
+      </fo:block-container>
     </fo:flow>
   </fo:page-sequence>
   <fo:page-sequence format="1" initial-page-number="1" master-reference="A4">

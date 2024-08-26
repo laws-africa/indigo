@@ -14,25 +14,26 @@ jobs:
     runs-on: ubuntu-latest
     name: Compile updated translations and commit changes
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y gettext
           python -m pip install --upgrade pip
-          pip install psycopg2==2.8.6
+          pip install psycopg2==2.9.9
           pip install .
 
       - name: Compile messages
         run: python manage.py compilemessages
 
       - name: Push
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v9
         with:
           add: '*/locale/*/LC_MESSAGES/*.mo'
           message: 'Update compiled translations'

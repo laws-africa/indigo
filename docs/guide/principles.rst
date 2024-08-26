@@ -27,7 +27,7 @@ system wants to ask us about an act.
 The first element, ``akn``, tells us that the Akoma Ntoso naming convention is being used.
 
 .. seealso::
-   For more details on FRBR URIs, see http://www.akomantoso.org/docs/akoma-ntoso-user-documentation/metadata-describes-the-content.
+   For more details on FRBR URIs, see https://www.oasis-open.org/standard/akn-v1-0/docs/akoma-ntoso-user-documentation/metadata-describes-the-content.
 
 Every Indigo work has an FRBR URI associated with it which is used to identify it in the
 public REST API.
@@ -118,14 +118,14 @@ A **compiler** converts this plain text into the different formats listed above,
 Akoma Ntoso
 -----------
 
-Under the hood, Indigo uses the `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legal documents.
+Under the hood, Indigo uses the `Akoma Ntoso <https://www.oasis-open.org/standard/akn-v1-0/>`_ standard for legal documents.
 This is an XML standard that allows us to capture the content and -- most importantly -- the structure of the document.
 Akoma Ntoso supports a wide range of documents (acts, bills, debates, gazettes, etc).
 Documents such as by-laws, statutory instruments and government notices all fall under the ``act`` document type, which is what we use primarily.
 
 .. seealso::
 
-    See http://www.akomantoso.org/ for more background on Akoma Ntoso.
+    See https://www.oasis-open.org/standard/akn-v1-0/ for more background on Akoma Ntoso.
 
 Akoma Ntoso is designed to support the many varying structures of legislative documents used throughout the world. As a result, the format is rich and expressive but quite complicated. Indigo works with only a subset of what is allowed by Akoma Ntoso and does its best to hide this complexity from the user.
 

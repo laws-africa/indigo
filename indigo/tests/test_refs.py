@@ -57,7 +57,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
             language=self.eng)
 
         self.finder.find_references_in_document(document)
-        root = etree.fromstring(expected.content)
+        root = etree.fromstring(expected.content.encode('utf-8'))
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
 
@@ -122,7 +122,7 @@ class RefsFinderCapENGTestCase(TestCase):
             work=work)
 
         self.finder.markup_document_matches(document)
-        root = etree.fromstring(expected.content)
+        root = etree.fromstring(expected.content.encode('utf-8'))
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
         # set back to what it is in settings.py

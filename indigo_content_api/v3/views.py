@@ -93,7 +93,7 @@ class TaxonomyTopicWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericVi
     def get_queryset(self):
         queryset = PublishedDocumentDetailViewV3.queryset
         # when drf-spectacular generates the schema, it doesn't have the taxonomy_topic attribute
-        if not getattr(self, 'swagger_fake_view', False):
+        if not getattr(self, 'swagger_fake_view', False) and self.taxonomy_topic:
             works = Work.objects.filter(taxonomy_topics__path__startswith=self.taxonomy_topic.path).distinct("pk")
             queryset = queryset.filter(work__in=works)
         return super().filter_queryset(queryset)

@@ -9,17 +9,16 @@ from django.http import Http404, FileResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.templatetags.static import static
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from allauth.account.utils import user_display
-from pinax.badges.models import BadgeAward
-from pinax.badges.registry import badges
 
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
 from indigo_app.views.users import set_language_cookie
 from .forms import UserProfileForm, AwardBadgeForm, UnawardBadgeForm
-from .models import UserProfile
+from .models import UserProfile, BadgeAward
+from .badges import badges
 
 
 class ContributorsView(AbstractAuthedIndigoView, ListView):

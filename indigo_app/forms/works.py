@@ -10,13 +10,19 @@ from django.core.validators import URLValidator
 from django.db.models import IntegerField, Case, When, Value
 from django.db.models import Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
     Commencement, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
 from indigo_app.forms.mixins import FormAsUrlMixin
+
+
+def remove_punctuation(value):
+    value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
+    value = re.sub(r'--+', '-', value)
+    return value
 
 
 class WorkForm(forms.ModelForm):
@@ -98,7 +104,7 @@ class WorkForm(forms.ModelForm):
             work=self.instance,
             form_kwargs={'work': self.instance, 'user': self.user},
             prefix="aliases",
-            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance else []
+            initial=[{'alias': x.alias} for x in self.instance.aliases.all()] if self.instance and self.instance.pk else []
         )
         self.formsets.append(self.aliases_formset)
 
@@ -257,10 +263,10 @@ class WorkForm(forms.ModelForm):
         return super().has_changed() or any(formset.has_changed() for formset in self.formsets)
 
     def clean_frbr_number(self):
-        value = self.cleaned_data['frbr_number']
-        value = re.sub(r'[\s!?@#$§±%^&*;:,.<>(){}\[\]\\/|"\'“”‘’‟„‛‚«»‹›]+', '-', value, flags=re.IGNORECASE)
-        value = re.sub(r'--+', '-', value)
-        return value
+        return remove_punctuation(self.cleaned_data['frbr_number'])
+
+    def clean_frbr_actor(self):
+        return remove_punctuation(self.cleaned_data['frbr_actor'])
 
     def clean(self):
         cleaned_data = super().clean()

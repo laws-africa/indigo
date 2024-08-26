@@ -72,9 +72,13 @@
   {% endblock %}
   {% block contact %}
   {% endblock %}
+  {% block citation %}
+    <div name="citation">
+      <p>FRBR URI: {{ document.expression_frbr_uri }}</p>
+    </div>
+  {% endblock %}
   {% block licence %}
     <div name="licence">
-      <p>FRBR URI: {{ document.expression_frbr_uri }}</p>
       <p>
         {% trans "There is no copyright on the legislative content of this document." %}<br/>
         {% trans "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely." %}

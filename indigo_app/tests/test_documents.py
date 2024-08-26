@@ -6,9 +6,10 @@ from django.test import testcases, override_settings
 
 from indigo_api.importers.pdfs import pdf_count_pages
 from indigo_api.models import Work
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+@override_settings(STORAGES=TEST_STORAGES)
 class DocumentViewsTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'editor', 'drafts', 'published']
 

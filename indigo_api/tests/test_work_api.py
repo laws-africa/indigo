@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-
 from nose.tools import assert_equal, assert_not_equal
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
 
 from indigo_api.models import Work
+from indigo_app.tests.utils import TEST_STORAGES
 
 
-# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
+@override_settings(STORAGES=TEST_STORAGES)
 class WorkAPITest(APITestCase):
     fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'drafts', 'published']
 

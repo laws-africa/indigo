@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.10", "3.11"]
 
     services:
       postgres:
-        image: postgres:10
+        image: postgres:15
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -28,28 +28,56 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+
+    - name: Install binary dependencies
+      run: |
+        sudo apt-get install -y poppler-utils
+        wget -q -O fop.tgz 'https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.5-bin.tar.gz' && tar zxf fop.tgz && rm -f fop.tgz && sudo mv fop-2.5 /usr/share
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Set up Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - name: Install dependencies
+        cache: 'pip'
+
+    - name: Install python dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y poppler-utils
-        python -m pip install --upgrade pip
-        pip install psycopg2==2.8.6
+        pip install psycopg2-binary==2.9.9 unittest-xml-reporting
         pip install .[test]
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install node dependencies
+      run: |
+        npm ci --no-audit --prefer-offline --ignore-scripts
         npm install -g jshint sass
-        wget -q -O fop.tgz 'https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.5-bin.tar.gz' && tar zxf fop.tgz && rm -f fop.tgz && sudo mv fop-2.5 /usr/share
+
+    - name: Build javascript
+      run: |
+        git rm -rf --ignore-unmatch indigo_app/static/javascript/monaco/
+        npx webpack
+
+    - name: Compile assets
+      run: |
+        python manage.py compilescss
+        python manage.py collectstatic --noinput -i docs -i \*.scss
+
     - name: Run tests
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
+        TEST_RUNNER: "xmlrunner.extra.djangotestrunner.XMLTestRunner"
       run: |
         PATH=/usr/share/fop-2.5/fop:$PATH
         coverage run manage.py test
         jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/linux@v2
+      if: success() || failure()
+      continue-on-error: true
+      with:
+        files: test-reports/*.xml

@@ -551,9 +551,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         new_run = typ not in [r['type'] for r in run] if run else False
         run.append({'type': typ, 'num': p.num, 'new_run': new_run})
 
-    def stringify_run(self, run):
+    def stringify_run(self, run, no_type=False):
         # first (could be only) item, e.g. 'section 1'
         run_str = f"{run[0]['type']} {run[0]['num']}" if run[0]['num'] else run[0]['type']
+        if no_type:
+            run_str = run[0]['num']
         # common case: e.g. section 1–5 (all the same type)
         if len(run) > 1 and not any(r['new_run'] for r in run):
             run_str += f"–{run[-1]['num']}"
@@ -567,8 +569,11 @@ class CommencementsBeautifier(LocaleBasedMatcher):
             # get all e.g. articles, then all e.g. regulations
             for subsequent_type in [r['type'] for r in run if r['new_run']]:
                 this_type = [r for r in run if r['type'] == subsequent_type]
-                run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
-                run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
+                if no_type:
+                    run_str += f", {this_type[0]['num']}" + f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
+                else:
+                    run_str += f", {subsequent_type} {this_type[0]['num']}" if this_type[0]['num'] else f", {subsequent_type}"
+                    run_str += f"–{this_type[-1]['num']}" if len(this_type) > 1 else ''
 
         return run_str
 
@@ -611,45 +616,56 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.current_run = []
         self.previous_in_run = False
 
+    def process_subprovision(self, subp, prefix, subs_to_add, mini_run):
+        # stop drilling down if the subprovision is fully un/commenced or is the last un/commenced node
+        if subp.commenced == self.commenced and (subp.last_node or subp.all_descendants_same or subp.all_descendants_opposite):
+            if not mini_run:
+                # only prepend the subprovision number to the first sub-subprovision to avoid repetition,
+                # e.g. (1)(a)–(c) rather than (1)(a)–(1)(c) (these can get quite long)
+                subp.num = prefix + subp.num
+            self.add_to_run(subp, mini_run)
+        # keep drilling down if some descendants are different
+        elif not subp.all_descendants_same:
+            if mini_run:
+                # end the mini run before continuing
+                subs_to_add.append(self.stringify_run(mini_run, no_type=True))
+                mini_run = []
+            for subsubp in subp.children:
+                subs_to_add, mini_run = self.process_subprovision(subsubp, prefix + subp.num, subs_to_add, mini_run)
+
+        return subs_to_add, mini_run
+
+    def process_subprovisions(self, p):
+        subs_to_add = []
+        mini_run = []
+
+        # e.g. section 1-5, section 6(1) -- stash section 1–5 before processing section 6
+        if p.type in [r['type'] for r in self.current_run]:
+            self.stash_current()
+
+        for c in p.children:
+            subs_to_add, mini_run = self.process_subprovision(c, '', subs_to_add, mini_run)
+        if mini_run:
+            subs_to_add.append(self.stringify_run(mini_run, no_type=True))
+
+        # update p.num to include all the relevant un/commenced subprovisions
+        p.num += ', '.join(subs_to_add)
+        self.add_to_current(p)
+
+        # now stash e.g. section 6(1)(a)–(c), (2)–(8) before going on to section 7 etc.
+        self.stash_current()
+
     def process_basic_unit(self, p):
         """ Adds the subprovisions that have also (not) commenced to the basic unit's `num`,
         unless the entire provision is (un)commenced.
-        e.g. section 2's `num`: '2' --> '2(1), 2(3), 2(4)'
-        e.g. section 1's `num`: '1' --> '1(1)(a)(ii), 1(1)(a)(iii), 1(1)(c), 1(2)'
+        e.g. section 2's `num`: '2' --> '2(1), (3)–(4)'
+        e.g. section 1's `num`: '1' --> '1(1)(a)(ii)–(iii), (1)(c), (2)'
         """
-        end_at_next_add = False
-        subs_to_add = []
-
-        def add_to_subs(p, prefix):
-            # stop drilling down if the subprovision is fully un/commenced or is the last (un/commenced) node
-            if p.commenced == self.commenced and (
-                    p.last_node or p.all_descendants_same or p.all_descendants_opposite
-            ):
-                # go no further down, prefix with all parent nums
-                subs_to_add.append(prefix + p.num)
-            # keep drilling if some descendants are different
-            elif not p.all_descendants_same:
-                for c in p.children:
-                    add_to_subs(c, prefix + p.num)
 
         if p.children and not p.all_descendants_same:
-            # don't continue run if we're giving subprovisions
-            end_at_next_add = True
-            self.stash_next = True
-            # e.g. section 1-5, section 6(1)
-            if p.type in [r['type'] for r in self.current_run]:
-                self.stash_current()
-            for c in p.children:
-                add_to_subs(c, p.num)
-
-        p.num = ', '.join(subs_to_add) if subs_to_add else p.num
-        self.add_to_current(p)
-
-        if end_at_next_add:
-            self.stash_current()
-        elif self.stash_next:
-            self.stash_current()
-            self.stash_next = False
+            self.process_subprovisions(p)
+        else:
+            self.add_to_current(p)
 
     def process_provision(self, p):
         # start processing?
@@ -712,7 +728,6 @@ class CommencementsBeautifier(LocaleBasedMatcher):
         self.current_stash = []
         self.runs = []
         self.previous_in_run = False
-        self.stash_next = False
 
         provisions = self.decorate_provisions(provisions, assess_against)
 

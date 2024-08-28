@@ -122,6 +122,7 @@ class AnnotationAPITest(APITestCase):
         assert_equal(response.status_code, 201)
         assert_equal(response.data['title'], '"Section 1.": hello')
         assert_equal(response.data['state'], 'open')
+        assert_equal(response.data['code'], 'comment')
         assert_is_none(response.data.get('anchor_id'))
 
     def test_create_annotation_task_anchor_missing(self):

@@ -31,19 +31,19 @@
       </references>
     </meta>
     <staticContent>
-      <container name="running-header">
+      <div name="running-header">
         <span class="left-align">
           Restitution of Land Rights Act, 1994
         </span>
         <span class="right-align">
           South Africa
         </span>
-      </container>
-      <container name="running-footer">
+      </div>
+      <div name="running-footer">
         <span>
           By <a href="https://edit.laws.africa/widgets/pdf-attribution">Laws.Africa</a> and contributors. Licensed under <a href="https://edit.laws.africa/widgets/pdf-cc-by">CC-BY</a>. Share widely and freely.
         </span>
-      </container>
+      </div>
     </staticContent>
     <body>
       <section eId="sec_1">

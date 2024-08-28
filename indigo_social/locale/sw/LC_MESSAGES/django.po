@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"POT-Creation-Date: 2024-08-28 13:29+0200\n"
 "PO-Revision-Date: 2024-07-24 07:37\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
@@ -17,35 +17,35 @@ msgstr ""
 "X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 208\n"
 
-#: forms.py:20
+#: forms.py:19
 msgid "Your username cannot include spaces, punctuation or capital letters."
 msgstr "Jina lako la mtumiaji haliwezi kujumuisha nafasi, uakifishaji au herufi kubwa."
 
-#: forms.py:24
+#: forms.py:23
 msgid "First name"
 msgstr "Jina la kwanza"
 
-#: forms.py:25
+#: forms.py:24
 msgid "Last name"
 msgstr "Jina la familia"
 
-#: forms.py:26
+#: forms.py:25
 msgid "Username"
 msgstr "Jina la mtumiaji"
 
-#: forms.py:27
+#: forms.py:26
 msgid "Country"
 msgstr "Nchi"
 
-#: forms.py:28
+#: forms.py:27
 msgid "Profile photo"
 msgstr "Picha ya wasifu"
 
-#: forms.py:29
+#: forms.py:28
 msgid "Language"
 msgstr "Lugha"
 
-#: forms.py:55
+#: forms.py:54
 msgid "This username is already taken."
 msgstr "Jina hili la mtumiaji tayari limechukuliwa."
 
@@ -274,18 +274,17 @@ msgstr "Toka nje"
 msgid "Log in"
 msgstr "Ingia"
 
-#: views.py:136
+#: views.py:135
 #, python-format
 msgid "%(badge)s badge awarded to %(user)s"
 msgstr "%(badge)s beji iliyotolewa kwa %(user)s"
 
-#: views.py:138
+#: views.py:137
 #, python-format
 msgid "%(badge)s badge couldn't be awarded to %(user)s"
 msgstr "%(badge)s beji haikuweza kutunukiwa %(user)s"
 
-#: views.py:155
+#: views.py:154
 #, python-format
 msgid "%(badge)s badge removed from %(user)s"
 msgstr "%(badge)s beji imeondolewa kutoka %(user)s"
-

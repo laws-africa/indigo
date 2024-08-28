@@ -102,6 +102,7 @@ class Task(models.Model):
         ('check-update-primary', _('Check / update primary work')),
         ('check-update-repeal', _('Check / update repeal')),
         ('commences-on-date-missing', _("'Commences on' date missing")),
+        ('comment', _("Comment")),
         ('link-amendment-active', _('Link amendment (active)')),
         ('link-amendment-passive', _('Link amendment (passive)')),
         ('link-amendment-pending-commencement', _('Link amendment (pending commencement)')),

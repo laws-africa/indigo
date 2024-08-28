@@ -464,6 +464,7 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'code',
             'description',
             'country',
             'locality',

@@ -711,6 +711,7 @@ class Annotation(models.Model):
 
         if not self.task:
             task = Task()
+            task.code = 'comment'
             task.country = self.document.work.country
             task.locality = self.document.work.locality
             task.work = self.document.work

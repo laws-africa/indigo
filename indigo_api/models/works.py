@@ -169,6 +169,9 @@ class WorkMixin(object):
         if latest:
             return latest.date.year
 
+    def amendments_after_date(self, date):
+        return self.amendments.filter(date__gt=date)
+
     def labeled_properties(self):
         props = self.place.settings.work_properties
 
@@ -252,6 +255,11 @@ class WorkMixin(object):
         first = self.commencements.first() if self.pk else None
         if first:
             return first.date
+
+    def latest_commencement_date(self):
+        latest = self.commencements.order_by('-date').first() if self.pk else None
+        if latest:
+            return latest.date
 
     def all_commenceable_provisions(self, date=None):
         """ Returns a list of TOCElement objects that can be commenced.

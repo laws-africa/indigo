@@ -646,4 +646,3 @@ msgstr "%s (prestes a ser importado)"
 #: pipelines/text.py:30
 msgid "There is not enough text in the document to import. You may need to OCR the file first."
 msgstr "Não há texto suficiente no documento para importar. Talvez seja preciso primeiro fazer OCR ao ficheiro."
-

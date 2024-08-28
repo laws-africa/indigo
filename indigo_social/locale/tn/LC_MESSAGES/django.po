@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"POT-Creation-Date: 2024-08-28 13:29+0200\n"
 "PO-Revision-Date: 2024-07-24 08:39\n"
 "Last-Translator: \n"
 "Language-Team: Tswana\n"
@@ -17,35 +17,35 @@ msgstr ""
 "X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 208\n"
 
-#: forms.py:20
+#: forms.py:19
 msgid "Your username cannot include spaces, punctuation or capital letters."
 msgstr ""
 
-#: forms.py:24
+#: forms.py:23
 msgid "First name"
 msgstr ""
 
-#: forms.py:25
+#: forms.py:24
 msgid "Last name"
 msgstr ""
 
-#: forms.py:26
+#: forms.py:25
 msgid "Username"
 msgstr ""
 
-#: forms.py:27
+#: forms.py:26
 msgid "Country"
 msgstr ""
 
-#: forms.py:28
+#: forms.py:27
 msgid "Profile photo"
 msgstr ""
 
-#: forms.py:29
+#: forms.py:28
 msgid "Language"
 msgstr ""
 
-#: forms.py:55
+#: forms.py:54
 msgid "This username is already taken."
 msgstr ""
 
@@ -274,18 +274,17 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: views.py:136
+#: views.py:135
 #, python-format
 msgid "%(badge)s badge awarded to %(user)s"
 msgstr ""
 
-#: views.py:138
+#: views.py:137
 #, python-format
 msgid "%(badge)s badge couldn't be awarded to %(user)s"
 msgstr ""
 
-#: views.py:155
+#: views.py:154
 #, python-format
 msgid "%(badge)s badge removed from %(user)s"
 msgstr ""
-

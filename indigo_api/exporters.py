@@ -1,3 +1,4 @@
+import datetime
 import logging
 import math
 import os
@@ -228,6 +229,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'document': document,
             'ns': document.doc.namespace,
             'place_string': self.get_place_string(document),
+            'notices': self.get_notices(document, short=True),
         }
 
     def get_place_string(self, document):
@@ -269,7 +271,55 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             'toc': toc,
             'include_country': document.country not in self.dont_include_countries,
             'place_string': self.get_place_string(document),
+            'notices': self.get_notices(document),
         }
+
+    def get_notices(self, document, short=False):
+        work = document.work
+        notices = []
+
+        if short:
+            # we only care if it's uncommenced and/or repealed for the running header
+            if not work.commenced and work.repealed_date:
+                return _('Not commenced; Repealed')
+            if not work.commenced:
+                return _('Not commenced')
+            if work.repealed_date:
+                return _('Repealed')
+            return
+
+        # repeal
+        if work.repealed_date:
+            notice = _('This %(friendly_type)s was <b>repealed</b> on %(date)s by <ref href="%(url)s">%(work)s</ref>') % {
+                'friendly_type': work.friendly_type(), 'date': work.repealed_date, 'work': work.repealed_by.title, 'url': work.repealed_by.frbr_uri}
+            notice += f' ({work.repealed_by.numbered_title()}).' if work.repealed_by.numbered_title() else '.'
+            notices.append(notice)
+
+        # commencement
+        if not work.commenced:
+            notices.append(_('This %(friendly_type)s has <b>not yet come into force</b>.') % {'friendly_type': work.friendly_type()})
+        # no notice for an unknown commencement date (commenced is True but there are no commencements)
+        elif work.commencements.exists():
+            latest_commencement_date = work.latest_commencement_date()
+            if work.all_uncommenced_provision_ids(date=document.expression_date, return_bool=True):
+                notices.append(_('This %(friendly_type)s has not yet come into force in full. '
+                                 'See the commencements table for more information.') % {'friendly_type': work.friendly_type()})
+            # no notice for a future commencement if the work also hasn't commenced in full
+            elif latest_commencement_date > datetime.date.today():
+                notices.append(_('This %(friendly_type)s will come into force on %(date)s.') % {'friendly_type': work.friendly_type(), 'date': latest_commencement_date})
+
+        # not the latest expression / amendments outstanding
+        later_amendments = work.amendments_after_date(document.expression_date)
+        if not document.is_latest_expression():
+            notices.append(_('This is not the latest available version of this %(friendly_type)s. '
+                             '<ref href="%(url)s">View it online</ref>.') % {'friendly_type': work.friendly_type(), 'url': work.frbr_uri})
+        # no notice for outstanding amendments if this also isn't the latest expression
+        elif later_amendments:
+            numbered_titles = ', '.join(a.amending_work.numbered_title() or a.amending_work.short_title for a in later_amendments)
+            notices.append(_('There are <b>outstanding amendments</b> that have not yet been applied:<br/>'
+                             '%(numbered_titles)s.') % {'numbered_titles': numbered_titles})
+
+        return notices
 
     def get_base_toc(self, document):
         return document.table_of_contents()

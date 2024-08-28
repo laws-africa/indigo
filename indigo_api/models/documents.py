@@ -241,6 +241,9 @@ class DocumentMixin(object):
                     latest = self.expression_date == max(dates)
         return latest
 
+    def is_latest_expression(self):
+        return not self.work.expressions().filter(expression_date__gt=self.expression_date).exists()
+
     def valid_until(self):
         """ An expression is valid until either:
             - The day before the next non-arbitrary expression on the same work

@@ -79,7 +79,7 @@
   </xsl:template>
 
   <xsl:template match="akn:div[@name='updates-block' or @name='about' or @name='citation' or @name='licence']">
-    <fo:block margin-top="{$para-spacing}*4">
+    <fo:block margin-top="{$para-spacing}*2">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>

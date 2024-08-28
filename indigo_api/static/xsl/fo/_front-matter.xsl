@@ -11,8 +11,6 @@
     </fo:block>
   </xsl:template>
 
-  <!-- don't render the containers in the staticContent tag -->
-  <xsl:template match="akn:staticContent"/>
   <xsl:template match="akn:container">
     <fo:block page-break-after="always">
       <xsl:apply-templates/>
@@ -55,6 +53,29 @@
     <fo:block margin-top="{$para-spacing}*2">
       <xsl:apply-templates/>
     </fo:block>
+  </xsl:template>
+
+  <xsl:template match="akn:div[@name='notices']">
+    <fo:block-container>
+      <fo:list-block start-indent="{$indent}">
+        <xsl:apply-templates/>
+      </fo:list-block>
+    </fo:block-container>
+  </xsl:template>
+
+  <xsl:template match="akn:notice">
+    <fo:list-item>
+      <fo:list-item-label end-indent="label-end()">
+        <fo:block margin-top="{$para-spacing}" text-align="end">
+          <xsl:apply-templates select="akn:n"/>
+        </fo:block>
+      </fo:list-item-label>
+      <fo:list-item-body start-indent="{$indent}*2">
+        <fo:block margin-top="{$para-spacing}">
+          <xsl:apply-templates select="akn:p"/>
+        </fo:block>
+      </fo:list-item-body>
+    </fo:list-item>
   </xsl:template>
 
   <xsl:template match="akn:div[@name='updates-block' or @name='about' or @name='citation' or @name='licence']">

@@ -73,11 +73,14 @@
                     margin-top="-1.5cm">
             <fo:block start-indent="1pt" end-indent="30pt" last-line-end-indent="-29pt">
               <fo:inline>
-                <xsl:value-of select="//akn:staticContent/akn:container[@name='running-header']/akn:span[@class='left-align']"/>
+                <xsl:value-of select="//akn:staticContent/akn:div[@name='running-header']/akn:span[@class='left-align']"/>
                 <fo:leader leader-pattern="space"/>
-                <xsl:value-of select="//akn:staticContent/akn:container[@name='running-header']/akn:span[@class='right-align']"/>
+                <xsl:value-of select="//akn:staticContent/akn:div[@name='running-header']/akn:span[@class='right-align']"/>
               </fo:inline>
             </fo:block>
+          </fo:block>
+          <fo:block font-family="{$font-fam}" font-size="{$fontsize-frontmatter-small}" text-align="end">
+            <xsl:apply-templates select="//akn:staticContent/akn:div[@name='running-header-notices']"/>
           </fo:block>
         </fo:static-content>
         <fo:static-content flow-name="xsl-region-after">
@@ -89,7 +92,7 @@
                     margin-top="1cm" padding-top="3pt">
             <fo:block start-indent="2pt" end-indent="2pt">
               <fo:inline>
-                <xsl:apply-templates select="//akn:staticContent/akn:container[@name='running-footer']/akn:span"/>
+                <xsl:apply-templates select="//akn:staticContent/akn:div[@name='running-footer']/akn:span"/>
                 <fo:leader leader-pattern="space"/>
                 <fo:page-number/>
               </fo:inline>
@@ -111,7 +114,7 @@
   <!-- TODO: add more / all doctypes? -->
   <xsl:template match="akn:act|akn:debate|akn:debateReport|akn:doc|akn:judgment|akn:statement">
     <fo:block>
-      <xsl:apply-templates select="./*[not(self::akn:frontMatter)]"/>
+      <xsl:apply-templates select="./*[not(self::akn:frontMatter or self::akn:staticContent)]"/>
     </fo:block>
   </xsl:template>
 

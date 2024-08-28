@@ -395,6 +395,8 @@ class WorkMixin(object):
             has_uncommenced_provisions = not self.commencements.first().all_provisions
 
         if n_commencements == 0:
+            if self.commenced:
+                return TimelineCommencementEvent(subtype='unknown', description=_('Commencement date unknown'))
             return TimelineCommencementEvent(subtype='uncommenced', description=_('Not commenced'))
 
         # we have 'multiple' commencements if there are more than one,

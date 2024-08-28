@@ -1,22 +1,27 @@
 {% load i18n %}
 <staticContent xmlns="{{ ns }}">
   {% block running-header %}
-    <container name="running-header">
+    <div name="running-header">
       <span class="left-align">
         {{ document.title }}{% if document.work.numbered_title %} ({{ document.work.numbered_title }}){% endif %}
       </span>
       <span class="right-align">
         {{ place_string }}
       </span>
-    </container>
+    </div>
+    {% if notices %}
+      <div name="running-header-notices">
+        <p><b><i>{{ notices }}</i></b></p>
+      </div>
+    {% endif %}
   {% endblock %}
   {% block running-footer %}
-    <container name="running-footer">
+    <div name="running-footer">
       <span>
         {% with lawsafrica="https://edit.laws.africa/widgets/pdf-attribution" ccby="https://edit.laws.africa/widgets/pdf-cc-by" %}
           {% blocktrans %}By <a href="{{ lawsafrica }}">Laws.Africa</a> and contributors. Licensed under <a href="{{ ccby }}">CC-BY</a>. Share widely and freely.{% endblocktrans %}
         {% endwith %}
       </span>
-    </container>
+    </div>
   {% endblock %}
 </staticContent>

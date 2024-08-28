@@ -51,10 +51,12 @@
   {% endblock %}
   {% block updates %}
     <div name="updates-block">
-      <p>{% trans "Please note that there may have been updates since this file was created." %}</p>
-      {% now "j E Y" as current_date %}
-      {% now "H:i" as current_time %}
-      {% blocktrans %}PDF created on {{ current_date }} at {{ current_time }}.{% endblocktrans %}
+      <p>{% trans "There may have been updates since this file was created." %}</p>
+      <p>
+        {% now "j E Y" as current_date %}
+        {% now "H:i" as current_time %}
+        {% blocktrans %}PDF created on {{ current_date }} at {{ current_time }}.{% endblocktrans %}
+      </p>
       {% if document.work.as_at_date %}
         <p>
           <i>{% blocktrans with as_at_date=document.work.as_at_date|date:"j E Y" %}Collection last checked for updates: {{ as_at_date }}{% endblocktrans %}</i>.

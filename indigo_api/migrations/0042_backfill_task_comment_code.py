@@ -18,6 +18,7 @@ WHERE id IN (
     SELECT task_id
     FROM indigo_api_annotation
 )
-            """
+            """,
+            migrations.RunSQL.noop,
         ),
     ]

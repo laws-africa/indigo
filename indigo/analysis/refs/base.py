@@ -146,20 +146,21 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
 
         # sort, longest first
         subtypes = sorted(subtype_names + subtype_abbreviations, key=len, reverse=True)
-        self.subtypes_string = '|'.join(re.escape(s) for s in subtypes)
 
-        # build the xpath; if there are no subtypes, use "false" to not match anything
-        xpath_contains = " or ".join([
-            f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), '{subtype.lower()}')"
-            for subtype in subtypes
-        ]) or "false"
-        self.candidate_xpath = self.candidate_xpath.replace('PATTERNS', xpath_contains)
+        if self.candidate_xpath:
+            # build the xpath; if there are no subtypes, use "false" to not match anything
+            xpath_contains = " or ".join([
+                f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), '{subtype.lower()}')"
+                for subtype in subtypes
+            ]) or "false"
+            self.candidate_xpath = self.candidate_xpath.replace('PATTERNS', xpath_contains)
 
         # TODO: disregard e.g. "6 May" in "GN 34 of 6 May 2020", but catch reference
+        subtypes_string = '|'.join(re.escape(s) for s in subtypes)
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>
-                    (?P<subtype>{self.subtypes_string})\s*
+                    (?P<subtype>{subtypes_string})\s*
                     (No\.?\s*)?
                     (?P<num>[a-z0-9-]+)
                     (\s+of\s+|/)

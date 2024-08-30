@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-30 12:13+0200\n"
-"PO-Revision-Date: 2024-08-30 13:05\n"
+"PO-Revision-Date: 2024-08-30 14:08\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1162,7 +1162,7 @@ msgstr "Acceptée %(date)s"
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Législation en vigueur au %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
@@ -1176,7 +1176,7 @@ msgstr "PDF créé le %(current_date)s à %(current_time)s."
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Dernière vérification des mises à jour de la collection : %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
@@ -1184,19 +1184,19 @@ msgstr "À propos de cette collection"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "La législation de cette collection a été reproduite telle qu'elle a été imprimée à l'origine dans le Journal officiel, avec une mise en forme améliorée et des erreurs typographiques mineures corrigées. Tous les amendements ont été appliqués directement au texte et annotés. Une version numérisée du journal officiel original de chaque texte de loi (y compris les amendements) est disponible pour référence."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Il n’existe aucun droit d’auteur sur le contenu législatif de ce document."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Cette copie PDF est sous licence Creative Commons Attribution 4.0 (CC BY 4.0). Partagez-la largement et librement."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
 msgid "Contents"
-msgstr ""
+msgstr "Contenu"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format

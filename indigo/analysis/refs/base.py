@@ -148,9 +148,11 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
         subtypes = sorted(subtype_names + subtype_abbreviations, key=len, reverse=True)
         self.subtypes_string = '|'.join(re.escape(s) for s in subtypes)
 
-        xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
-                                      f"'{subtype.lower()}')"
-                                      for subtype in subtypes])
+        # build the xpath; if there are no subtypes, use "false" to not match anything
+        xpath_contains = " or ".join([
+            f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), '{subtype.lower()}')"
+            for subtype in subtypes
+        ]) or "false"
         self.candidate_xpath = self.candidate_xpath.replace('PATTERNS', xpath_contains)
 
         # TODO: disregard e.g. "6 May" in "GN 34 of 6 May 2020", but catch reference

@@ -305,7 +305,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 notices.append(_('This %(friendly_type)s has not yet come into force in full. '
                                  'See the commencements table for more information.') % {'friendly_type': work.friendly_type()})
             # no notice for a future commencement if the work also hasn't commenced in full
-            elif latest_commencement_date > datetime.date.today():
+            elif latest_commencement_date and latest_commencement_date > datetime.date.today():
                 notices.append(_('This %(friendly_type)s will come into force on %(date)s.') % {'friendly_type': work.friendly_type(), 'date': latest_commencement_date})
 
         # not the latest expression / amendments outstanding

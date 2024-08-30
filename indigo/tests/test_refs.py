@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from cobalt import FrbrUri
 
-from indigo.analysis.refs.base import RefsFinderSubtypesENG, RefsFinderCapENG, ActNumberCitationMatcherFRA, \
+from indigo.analysis.refs.base import SubtypeNumberCitationMatcherENG, RefsFinderCapENG, ActNumberCitationMatcherFRA, \
     ActNumberCitationMatcherAFR
 
 from indigo_api.models import Document, Language, Work, Country, User
@@ -17,7 +17,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
 
     def setUp(self):
         self.work = Work(frbr_uri='/akn/za/act/1991/1')
-        self.finder = RefsFinderSubtypesENG()
+        self.finder = SubtypeNumberCitationMatcherENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
@@ -32,7 +32,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
           <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with GN no 102 of 2012.</p>
-              <p>And another thing about SI 4 of 1998.</p>
+              <p>And another thing about SI 4a of 1998.</p>
             </content>
           </paragraph>
         </section>"""
@@ -49,14 +49,14 @@ class RefsFinderSubtypesENGTestCase(TestCase):
           <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with <ref href="/akn/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
-              <p>And another thing about <ref href="/akn/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
+              <p>And another thing about <ref href="/akn/za/act/si/1998/4a">SI 4a of 1998</ref>.</p>
             </content>
           </paragraph>
         </section>"""
             ),
             language=self.eng)
 
-        self.finder.find_references_in_document(document)
+        self.finder.markup_document_matches(document)
         root = etree.fromstring(expected.content.encode('utf-8'))
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)

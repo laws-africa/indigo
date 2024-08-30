@@ -4,7 +4,7 @@ import re
 from django.conf import settings
 
 from docpipe.citations import ActMatcher
-from docpipe.matchers import CitationMatcher
+from docpipe.matchers import CitationMatcher, ExtractedMatch
 from indigo.analysis.markup import TextPatternMarker
 from indigo.analysis.matchers import DocumentPatternMatcherMixin
 from indigo.plugins import LocaleBasedMatcher, plugins
@@ -12,12 +12,8 @@ from indigo_api.models import Subtype, Work, Country
 
 
 def markup_document_refs(document):
-    # TODO: these are both old and should be retired
+    # TODO: this is old and should be retired
     finder = plugins.for_document('refs', document)
-    if finder:
-        finder.find_references_in_document(document)
-
-    finder = plugins.for_document('refs-subtypes', document)
     if finder:
         finder.find_references_in_document(document)
 
@@ -123,9 +119,9 @@ class ActNumberCitationMatcherAFR(ActNumberCitationMatcher):
     xml_candidate_xpath = ".//text()[contains(., 'Wet') and not(ancestor::ns:ref)]"
 
 
-@plugins.register('refs-subtypes')
-class RefsFinderSubtypesENG(BaseRefsFinder):
-    """ Finds references to works other than Acts in documents, of the form:
+@plugins.register('refs-subtype-numbers')
+class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatcher):
+    """ Finds references to works based on subtypes, of the form:
 
         P 52 of 2001
         Ordinance no. 52 of 1998
@@ -136,49 +132,52 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
 
-    def setup(self, root):
+    html_candidate_xpath = ".//text()[(PATTERNS) and not(ancestor::a)]"
+    xml_candidate_xpath = ".//text()[(PATTERNS) and not(ancestor::ns:ref)]"
+
+    def setup(self, *args, **kwargs):
         self.setup_subtypes()
-        self.setup_candidate_xpath()
-        self.setup_pattern_re()
-        # If we don't have subtypes, don't let the superclass do setup, because it will fail.
-        # We're going to opt-out of doing any work anyway.
-        if self.subtypes:
-            super().setup(root)
+        super().setup(*args, **kwargs)
 
     def setup_subtypes(self):
         self.subtypes = [s for s in Subtype.objects.all()]
-        self.subtype_names = [s.name for s in self.subtypes]
-        self.subtype_abbreviations = [s.abbreviation for s in self.subtypes]
+        subtype_names = [s.name for s in self.subtypes]
+        subtype_abbreviations = [s.abbreviation for s in self.subtypes]
 
-        self.subtypes_string = '|'.join([re.escape(s) for s in self.subtype_names + self.subtype_abbreviations])
+        # sort, longest first
+        subtypes = sorted(subtype_names + subtype_abbreviations, key=len, reverse=True)
+        self.subtypes_string = '|'.join(re.escape(s) for s in subtypes)
 
-    def setup_candidate_xpath(self):
         xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
                                       f"'{subtype.lower()}')"
-                                      for subtype in self.subtype_names + self.subtype_abbreviations])
-        self.candidate_xpath = f".//text()[({xpath_contains}) and not(ancestor::a:ref)]"
+                                      for subtype in subtypes])
+        self.candidate_xpath = self.candidate_xpath.replace('PATTERNS', xpath_contains)
 
-    def setup_pattern_re(self):
         # TODO: disregard e.g. "6 May" in "GN 34 of 6 May 2020", but catch reference
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>
                     (?P<subtype>{self.subtypes_string})\s*
                     (No\.?\s*)?
-                    (?P<num>\d+)
+                    (?P<num>[a-z0-9-]+)
                     (\s+of\s+|/)
                     (?P<year>\d{{4}})
                 )
             ''', re.X | re.I)
 
-    def markup_patterns(self, root):
+    def extract_paged_text_matches(self):
         # don't do anything if there are no subtypes
         if self.subtypes:
-            super().markup_patterns(root)
+            super().extract_paged_text_matches()
 
-    def make_href(self, match):
+    def run_dom_matching(self):
+        # don't do anything if there are no subtypes
+        if self.subtypes:
+            super().run_dom_matching()
+
+    def make_href(self, match: ExtractedMatch):
         # use correct subtype for FRBR URI
-        subtype = match.group('subtype')
+        subtype = match.groups['subtype']
         for s in self.subtypes:
             if subtype.lower() == s.name.lower() or subtype.lower() == s.abbreviation.lower():
                 subtype = s.abbreviation
@@ -188,7 +187,7 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
         if self.frbr_uri.locality:
             place = f'{self.frbr_uri.country}-{self.frbr_uri.locality}'
 
-        return f'/akn/{place}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+        return f'/akn/{place}/act/{subtype}/{match.groups["year"]}/{match.groups["num"].lower()}'
 
 
 @plugins.register('refs-cap')

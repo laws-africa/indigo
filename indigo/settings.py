@@ -166,7 +166,9 @@ INDIGO = {
     'JS_I18N_NAMESPACES': ['indigo_app'],
 
     # Plugins to use for linking references. The internal-refs must come after work-level plugins.
-    'LINK_REFERENCES_PLUGINS': ['refs-act-numbers', 'refs-act-names', 'refs-aliases', 'refs-cap', 'internal-refs'],
+    'LINK_REFERENCES_PLUGINS': [
+        'refs-act-numbers', 'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'refs-cap', 'internal-refs'
+    ],
 }
 
 # Database

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-28 13:29+0200\n"
+"POT-Creation-Date: 2024-08-30 12:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1147,6 +1147,7 @@ msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
 #: templates/indigo_api/akn/_commencements_table.html:42
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:45
 msgid "Note:"
 msgstr ""
 
@@ -1157,6 +1158,50 @@ msgstr ""
 #: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
+#, python-format
+msgid "Legislation as at %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
+msgid "There may have been updates since this file was created."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
+#, python-format
+msgid "PDF created on %(current_date)s at %(current_time)s."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
+#, python-format
+msgid "Collection last checked for updates: %(as_at_date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
+msgid "About this collection"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
+msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
+msgid "There is no copyright on the legislative content of this document."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
+msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
+msgid "Contents"
+msgstr ""
+
+#: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
+#, python-format
+msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
 msgstr ""
 
 #: templates/indigo_api/akn/export/standalone.html:17

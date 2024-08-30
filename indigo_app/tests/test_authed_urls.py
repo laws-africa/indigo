@@ -35,6 +35,7 @@ accounts/password/set/\Z
 accounts/password/change/\Z
 accounts/logout/\Z
 accounts/login/\Z
+accounts/login/code/confirm/\Z
 accounts/signup/\Z
 accounts/reauthenticate/\Z
 resolver/(?P<path>.+)$

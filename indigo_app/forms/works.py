@@ -758,6 +758,7 @@ class FacetItem:
     count: int
     selected: bool
     icon: str = ''
+    negated: bool = False
 
 
 @dataclass
@@ -891,7 +892,12 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         if exclude != "frbr_date":
             if self.cleaned_data.get('frbr_date'):
-                queryset = queryset.filter(date__in=self.cleaned_data['frbr_date'])
+                includes = [x for x in self.cleaned_data['frbr_date'] if not x.startswith('-')]
+                excludes = [x[1:] for x in self.cleaned_data['frbr_date'] if x.startswith('-')]
+                if includes:
+                    queryset = queryset.filter(date__in=includes)
+                if excludes:
+                    queryset = queryset.exclude(date__in=excludes)
 
         # filter by work in progress
         if exclude != "work_in_progress":
@@ -1104,13 +1110,24 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             label = next(lab for (val, lab) in self.fields[field].choices if val == value)
         except StopIteration:
             raise ValueError(f"Unknown choice {value} for field {field}")
+
+        # is it selected?
+        negated = False
         selected = value in self.cleaned_data.get(field, [])
+        if not selected:
+            # check if it's negated
+            negated = selected = f'-{value}' in self.cleaned_data.get(field, [])
+            if negated:
+                value = f'-{value}'
+
         if not selected and hasattr(self.fields[field], "queryset"):
+            # TODO sanity check with negated
             lookup = self.fields[field].to_field_name or "pk"
             q = {lookup: value}
             check_value = self.fields[field].queryset.filter(**q).first()
             selected = check_value in self.cleaned_data.get(field, [])
-        return FacetItem(label, value, count, selected)
+
+        return FacetItem(label, value, count, selected, negated=negated)
 
     def facet(self, name, type, items):
         items = [self.facet_item(name, value, count) for value, count in items]
@@ -1145,7 +1162,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         counts = {c["date"]: c["count"] for c in qs.values("date").annotate(count=Count("date")).order_by()}
         # inject the choices into the form field
         counts = sorted(counts.items(), key=lambda x: x[0], reverse=True)
-        self.fields["frbr_date"].choices = [(d, d) for d, c in counts]
+        self.fields["frbr_date"].choices = [(d, d) for d, c in counts] + [(f'-{d}', d) for d, c in counts]
         facets.append(self.facet("frbr_date", "checkbox", counts))
 
     def facet_subtype(self, facets, qs):

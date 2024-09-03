@@ -94,13 +94,14 @@ class SuperReviewerBadge(PermissionBadge):
     permissions = ('indigo_api.close_any_task', 'indigo_api.exceed_task_limits')
 
 
-class TaxonomistBadge(PermissionBadge):
+class ContentManagerBadge(PermissionBadge):
     slug = 'taxonomist'
-    name = 'Taxonomist'
+    name = 'Content Manager'
     group_name = name + ' Badge'
-    description = 'Can manage taxonomies'
+    description = 'Can manage taxonomies and task labels'
     permissions = (
         'indigo_api.add_taxonomytopic', 'indigo_api.change_taxonomytopic', 'indigo_api.delete_taxonomytopic',
+        'indigo_api.add_tasklabel', 'indigo_api.change_tasklabel', 'indigo_api.delete_tasklabel',
     )
 
 
@@ -121,7 +122,7 @@ badges.register(PlaceAdminBadge)
 badges.register(ResearcherBadge)
 badges.register(ReviewerBadge)
 badges.register(SuperReviewerBadge)
-badges.register(TaxonomistBadge)
+badges.register(ContentManagerBadge)
 badges.register(ConverterBadge)
 
 

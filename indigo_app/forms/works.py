@@ -875,7 +875,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         self.add_negated_choices()
 
     def add_subtypes(self):
-        if self.country.code == 'all':
+        if not self.country or self.country.code == 'all':
             # doctypes for all countries
             country_doctypes = list(chain(*settings.INDIGO['EXTRA_DOCTYPES'].values()))
         else:

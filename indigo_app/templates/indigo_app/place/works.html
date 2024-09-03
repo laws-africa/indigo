@@ -31,8 +31,27 @@
       </div>
     {% endblock %}
 
-    <div id="work-list">
-      {% include 'indigo_app/place/_works_list.html' %}
+    <div class="row">
+      <div class="col-md-3">
+        <form
+          id="work-facets"
+          hx-post="{% url 'place_works_facets' place=place.place_code %}"
+          hx-include="#work-filter-form input, #work-facets input"
+          hx-target="#work-facets"
+          hx-trigger="change target:.facet, submit from:#work-filter-form"
+          hx-sync="#work-facets:replace"
+        >
+          <ul class="list-group" hx-get="{{ facets_url }}" hx-trigger="load">
+            <li class="list-group-item text-center">
+              <i class="fa fa-spinner fa-spin"></i>
+            </li>
+          </ul>
+        </form>
+      </div>
+
+      <div class="col-md" id="work-list">
+        {% include 'indigo_app/place/_works_list.html' %}
+      </div>
     </div>
 
     {% include 'indigo_api/_work_form_offcanvas.html' with form=None %}

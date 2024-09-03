@@ -552,10 +552,16 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
 
 class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
     template_name = 'indigo_app/place/_works_facets.html'
+    http_method_names = ['get', 'post']
     allow_all_place = True
 
     def get(self, request, *args, **kwargs):
         self.form = PlaceWorksView.filter_form_class(self.country, request.GET)
+        self.form.is_valid()
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.form = PlaceWorksView.filter_form_class(self.country, request.POST)
         self.form.is_valid()
         return super().get(request, *args, **kwargs)
 
@@ -597,6 +603,9 @@ class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
         context["document_facets"] = self.form.document_facets(qs)
 
         return context
+
+    def has_all_country_permission(self):
+        return True
 
 
 class WorkActionsView(PlaceWorksViewBase, FormView):

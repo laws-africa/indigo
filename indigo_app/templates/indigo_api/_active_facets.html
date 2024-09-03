@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{% for facet in facets %}
+  {% for item in facet.items %}
+    {% if item.selected %}
+      <button
+        class="btn btn-outline-primary me-2 mb-2 btn-sm"
+        type="button"
+        title="{% trans "Remove" %}"
+        data-component="RemoveFacetButton"
+        data-form="{{ form }}"
+        data-name="{{ facet.name }}"
+        data-value="{{ item.value }}"
+      >
+        {% if item.icon %}<i class="fa fa-fw {{ item.icon }}"></i>{% endif %}
+        {% if item.negated %}<span class="badge bg-warning text-dark">NOT</span>{% endif %}
+        {{ item.label }} &nbsp;×
+      </button>
+    {% endif %}
+  {% endfor %}
+{% endfor %}

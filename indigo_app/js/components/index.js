@@ -3,7 +3,7 @@ import LinterPopup from './LinterPopup.vue';
 import TaxonomyTOC from './TaxonomyTOC.vue';
 import WorkChooser from './work_chooser';
 import WorkListCard from './work_list_card';
-import { FacetGroup } from './facets';
+import { FacetGroup, RemoveFacetButton } from './facets';
 
 export const vueComponents = {
   DocumentTOCView,
@@ -14,5 +14,6 @@ export const vueComponents = {
 export const components = {
   WorkChooser,
   WorkListCard,
-  FacetGroup
+  FacetGroup,
+  RemoveFacetButton
 };

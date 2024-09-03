@@ -25,3 +25,24 @@ export class FacetGroup {
     }
   }
 }
+
+export class RemoveFacetButton {
+  constructor (root) {
+    this.root = root;
+    this.root.addEventListener('click', (e) => this.removeFacet(e));
+  }
+
+  removeFacet () {
+    const form = document.getElementById(this.root.dataset.form);
+    const name = this.root.dataset.name;
+
+    if (name && form) {
+      for (const input of form[name]) {
+        if (input.value === this.root.dataset.value) {
+          input.checked = false;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    }
+  }
+}

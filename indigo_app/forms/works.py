@@ -775,6 +775,22 @@ class PermissiveMultipleChoiceField(forms.MultipleChoiceField):
         return True
 
 
+class NegatableModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """A model choice field that allows mixing of positive and negative options, by prefixing
+    the fields with a '-' for negative options. The cleaned data is a tuple of (inclusives, exclusives)."""
+
+    def clean(self, value):
+        includes = [v for v in value if not v.startswith('-')]
+        excludes = [v[1:] for v in value if v.startswith('-')]
+
+        if includes:
+            includes = super().clean(includes)
+        if excludes:
+            excludes = super().clean(excludes)
+
+        return includes, excludes
+
+
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
     q = forms.CharField()
 
@@ -862,7 +878,6 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     def add_negated_choices(self):
         for fld in self.fields.values():
             choices = getattr(fld, 'choices', None)
-            # TODO: handle model multiple choice fields
             if choices is not None and isinstance(choices, (list, tuple)):
                 fld.choices = fld.choices + [(f"-{value}", label) for value, label in fld.choices]
 
@@ -901,37 +916,32 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         if exclude != "frbr_date":
             if self.cleaned_data.get('frbr_date'):
-                includes = [x for x in self.cleaned_data['frbr_date'] if not x.startswith('-')]
-                excludes = [x[1:] for x in self.cleaned_data['frbr_date'] if x.startswith('-')]
-                if includes:
-                    queryset = queryset.filter(date__in=includes)
-                if excludes:
-                    queryset = queryset.exclude(date__in=excludes)
+                queryset = self.apply_values_filter(self.cleaned_data["frbr_date"], queryset, "date")
 
         # filter by work in progress
         if exclude != "work_in_progress":
-            queryset = self.apply_filter(self.cleaned_data.get("work_in_progress", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("work_in_progress", []), queryset, {
                 "work_in_progress": Q(work_in_progress=True),
                 "approved": Q(work_in_progress=False),
             })
 
         # filter by stub
         if exclude != "stub":
-            queryset = self.apply_filter(self.cleaned_data.get("stub", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("stub", []), queryset, {
                 "stub": Q(stub=True),
                 "not_stub": Q(stub=False),
             })
 
         # filter by principal
         if exclude != "principal":
-            queryset = self.apply_filter(self.cleaned_data.get("principal", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("principal", []), queryset, {
                 "principal": Q(principal=True),
                 "not_principal": Q(principal=False),
             })
 
         # filter by tasks status
         if exclude != "tasks":
-            queryset = self.apply_filter(self.cleaned_data.get("tasks", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("tasks", []), queryset, {
                 "has_open_tasks": Q(id__in=queryset.filter(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)),
                 "has_unblocked_tasks": Q(id__in=queryset.filter(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)),
                 "has_only_blocked_tasks": Q(id__in=queryset.filter(tasks__state=Task.BLOCKED).exclude(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)),
@@ -940,7 +950,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by primary or subsidiary work
         if exclude != "primary":
-            queryset = self.apply_filter(self.cleaned_data.get('primary', []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get('primary', []), queryset, {
                 "primary": Q(parent_work__isnull=True),
                 "subsidiary": Q(parent_work__isnull=False),
             })
@@ -976,7 +986,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by repeal
         if exclude != "repeal":
-            queryset = self.apply_filter(self.cleaned_data.get("repeal", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("repeal", []), queryset, {
                 "yes": Q(repealed_date__isnull=False),
                 "no": Q(repealed_date__isnull=True),
             })
@@ -988,7 +998,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by amendment
         if exclude != "amendment":
-            queryset = self.apply_filter(self.cleaned_data.get("amendment", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("amendment", []), queryset, {
                 "yes": Q(amendments__date__isnull=False),
                 "no": Q(amendments__date__isnull=True),
             })
@@ -1001,7 +1011,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         # filter by commencement status
         if exclude != "commencement":
             queryset = queryset.annotate(Count("commencements"))
-            queryset = self.apply_filter(self.cleaned_data.get("commencement", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("commencement", []), queryset, {
                 "yes": Q(commenced=True),
                 "no": Q(commenced=False),
                 "date_unknown": Q(commencements__date__isnull=True, commenced=True),
@@ -1015,21 +1025,21 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by consolidation
         if exclude != "consolidation":
-            queryset = self.apply_filter(self.cleaned_data.get("consolidation", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("consolidation", []), queryset, {
                 "has_consolidation": Q(arbitrary_expression_dates__date__isnull=False),
                 "no_consolidation": Q(arbitrary_expression_dates__date__isnull=True),
             })
 
         # filter by publication document
         if exclude != "publication_document":
-            queryset = self.apply_filter(self.cleaned_data.get("publication_document", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("publication_document", []), queryset, {
                 "has_publication_document": Q(publication_document__isnull=False),
                 "no_publication_document": Q(publication_document__isnull=True),
             })
 
         # filter by points in time
         if exclude != "documents":
-            queryset = self.apply_filter(self.cleaned_data.get('documents', []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get('documents', []), queryset, {
                 "one": Q(id__in=queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)),
                 "multiple": Q(id__in=queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)),
                 "none": (
@@ -1045,7 +1055,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by point in time status
         if exclude != "status":
-            queryset = self.apply_filter(self.cleaned_data.get("status", []), queryset, {
+            queryset = self.apply_options_filter(self.cleaned_data.get("status", []), queryset, {
                 "draft": Q(document__draft=True),
                 "published": Q(document__draft=False),
             })
@@ -1061,7 +1071,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         return queryset.distinct()
 
-    def apply_filter(self, values, queryset, filters):
+    def apply_options_filter(self, values, queryset, filters):
         """Apply filters to queryset based on possible values."""
         include_qs = Q()
         exclude_qs = Q()
@@ -1086,27 +1096,55 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         return queryset
 
+    def apply_values_filter(self, values, queryset, field):
+        """Apply filters to a queryset with option values than can be negated."""
+        includes = [x for x in values if not x.startswith('-')]
+        excludes = [x[1:] for x in values if x.startswith('-')]
+        if includes:
+            queryset = queryset.filter(**{f"{field}__in": includes})
+        if excludes:
+            queryset = queryset.exclude(**{f"{field}__in": excludes})
+        return queryset
+
+    def apply_model_choices_filter(self, values, queryset, field):
+        """Apply filters to a queryset from a field using negatable model choices."""
+        includes, excludes = values
+        if includes:
+            queryset = queryset.filter(**{f"{field}__in": includes})
+        if excludes:
+            queryset = queryset.exclude(**{f"{field}__in": excludes})
+        return queryset
+
     def facet_item(self, field, value, count):
         try:
+            # what's the label for this value?
             label = next(lab for (val, lab) in self.fields[field].choices if val == value)
         except StopIteration:
             raise ValueError(f"Unknown choice {value} for field {field}")
 
         # is it selected?
+        selected = False
         negated = False
-        selected = value in self.cleaned_data.get(field, [])
-        if not selected:
-            # check if it's negated
-            negated = selected = f'-{value}' in self.cleaned_data.get(field, [])
-            if negated:
-                value = f'-{value}'
+        field_obj = self.fields[field]
+        if hasattr(field_obj, "queryset"):
+            # model choice field
+            if isinstance(field_obj, NegatableModelMultipleChoiceField):
+                # model choice field that supports negation
+                includes, excludes = self.cleaned_data[field]
+                if value in [field_obj.prepare_value(v) for v in includes]:
+                    selected = True
+                elif value in [field_obj.prepare_value(v) for v in excludes]:
+                    selected = negated = True
+            else:
+                selected = value in [field_obj.prepare_value(v) for v in self.cleaned_data.get(field, [])]
+        else:
+            selected = value in self.cleaned_data.get(field, [])
+            if not selected:
+                # check if it's negated
+                negated = selected = f'-{value}' in self.cleaned_data.get(field, [])
 
-        if not selected and hasattr(self.fields[field], "queryset"):
-            # TODO sanity check with negated
-            lookup = self.fields[field].to_field_name or "pk"
-            q = {lookup: value}
-            check_value = self.fields[field].queryset.filter(**q).first()
-            selected = check_value in self.cleaned_data.get(field, [])
+        if negated:
+            value = f'-{value}'
 
         return FacetItem(label, value, count, selected, negated=negated)
 

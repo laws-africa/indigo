@@ -1,6 +1,6 @@
 <ul class="list-group mb-3">
   {% for facet in facets %}
-    <li class="list-group-item" data-component="FacetGroup">
+    <li class="list-group-item facet-group" data-component="FacetGroup">
       <strong>{{ facet.label }}</strong>
       <div class="facets-scrollable">
         {% for item in facet.items %}

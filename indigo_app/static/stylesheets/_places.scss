@@ -10,24 +10,6 @@
   background: white;
 }
 
-.work-list-facets {
-  label {
-    font-weight: normal;
-  }
-
-  .negate {
-    display: none;
-
-    &:hover {
-      text-decoration: none !important;
-    }
-  }
-
-  .form-check:hover .negate {
-    display: inline;
-  }
-}
-
 .work-detail-toggle {
   &::after {
     content: "▼";

@@ -4,7 +4,8 @@
       id="task-filter-form"
       hx-get="{{ form_url }}"
       hx-target="#task-list"
-      hx-trigger="submit, change, change from:#task-list target:.facet delay:1s"
+      hx-trigger="submit, change, change from:#task-list target:.facet"
+      hx-sync="#task-filter-form:replace"
       >
 
   <div class="d-flex flex-row">

@@ -37,10 +37,15 @@ export class RemoveFacetButton {
     const name = this.root.dataset.name;
 
     if (name && form) {
-      for (const input of form[name]) {
+      let inputs = form[name];
+      if (!inputs.length) {
+        inputs = [inputs];
+      }
+      for (const input of inputs) {
         if (input.value === this.root.dataset.value) {
           input.checked = false;
           input.dispatchEvent(new Event('change', { bubbles: true }));
+          this.root.remove();
         }
       }
     }

@@ -517,60 +517,20 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form
+
         # using .only("pk") makes the query much faster; values_list just gives us the pks
         work_pks_list = list(self.get_queryset().only("pk").values_list("pk", flat=True))
         context['work_pks'] = ' '.join(str(pk) for pk in work_pks_list)
         context['total_works'] = self.get_base_queryset().count()
+
         query_url = (self.request.POST or self.request.GET).urlencode()
-        context['facets_url'] = (
-            reverse('place_works_facets', kwargs={'place': self.kwargs['place']}) +
-            '?' + query_url
-        )
         if self.country.place_code != 'all':
             context['download_xsl_url'] = (
                 reverse('place_works', kwargs={'place': self.kwargs['place']}) +
                 '?' + query_url + '&format=xlsx'
             )
-        return context
 
-    def render_to_response(self, context, **response_kwargs):
-        resp = super().render_to_response(context, **response_kwargs)
-        if self.request.htmx:
-            # encode request.POST as a URL string
-            url = f"{self.request.path}?{self.form.data_as_url()}"
-            resp = push_url(resp, url)
-        return resp
-
-    def get_template_names(self):
-        if self.request.htmx:
-            return ['indigo_app/place/_works_list.html']
-        return super().get_template_names()
-
-    def has_all_country_permission(self):
-        return True
-
-
-class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
-    template_name = 'indigo_app/place/_works_facets.html'
-    http_method_names = ['get', 'post']
-    allow_all_place = True
-
-    def get(self, request, *args, **kwargs):
-        self.form = PlaceWorksView.filter_form_class(self.country, request.GET)
-        self.form.is_valid()
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.form = PlaceWorksView.filter_form_class(self.country, request.POST)
-        self.form.is_valid()
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['form'] = self.form
-        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
-
+        # build facets
         if self.country.place_code == 'all':
             # dump the places tree for the places the user has permissions for
             if self.request.user.is_superuser:
@@ -596,13 +556,26 @@ class PlaceWorksFacetsView(PlaceWorksViewBase, TemplateView):
                 } for loc in country.localities.all()]
             } for country in countries]
 
-        qs = self.get_base_queryset()
+        context['taxonomy_toc'] = TaxonomyTopic.get_toc_tree(self.request.GET)
 
-        # build facets
+        qs = self.get_base_queryset()
         context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'], context.get('places_toc', []))
         context["document_facets"] = self.form.document_facets(qs)
 
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        resp = super().render_to_response(context, **response_kwargs)
+        if self.request.htmx:
+            # encode request.POST as a URL string
+            url = f"{self.request.path}?{self.form.data_as_url()}"
+            resp = push_url(resp, url)
+        return resp
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_app/place/_works_list.html']
+        return super().get_template_names()
 
     def has_all_country_permission(self):
         return True

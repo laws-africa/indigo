@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from functools import cached_property
+from itertools import chain
 from typing import List
 
 from django import forms
@@ -817,6 +818,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
+    subtype = forms.MultipleChoiceField(label=_("Type"), choices=[])
     stub = forms.MultipleChoiceField(label=_("Stubs"), choices=[('stub', _('Stub')), ('not_stub', _('Not a stub'))])
     work_in_progress = forms.MultipleChoiceField(label=_("Work in progress"), choices=[
         ('work_in_progress', _('Work in progress')), ('approved', _('Approved'))
@@ -861,19 +863,28 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super().__init__(*args, **kwargs)
-        doctypes = [(d[1].lower(), d[0]) for d in
-                    settings.INDIGO['DOCTYPES'] +
-                    settings.INDIGO['EXTRA_DOCTYPES'].get(getattr(self.country, "code", None), [])]
-        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
-        self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
+
+        self.add_subtypes()
+
         self.fields['place'].choices = [
             (c.code, c.name) for c in Country.objects.all()
         ] + [
             (loc.place_code, loc.name) for loc in Locality.objects.all()
         ]
-        self.subtypes = Subtype.objects.all()
         # ensure all choice fields have negated choices
         self.add_negated_choices()
+
+    def add_subtypes(self):
+        if self.country.code == 'all':
+            # doctypes for all countries
+            country_doctypes = list(chain(*settings.INDIGO['EXTRA_DOCTYPES'].values()))
+        else:
+            country_doctypes = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
+        doctypes = [(d[1].lower(), d[0]) for d in settings.INDIGO['DOCTYPES'] + country_doctypes]
+
+        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        self.fields['subtype'].choices = doctypes + subtypes
+        self.subtypes = Subtype.objects.all()
 
     def add_negated_choices(self):
         for fld in self.fields.values():
@@ -957,20 +968,14 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # doctype, subtype
         if exclude != "subtype":
-            subtype_filter = self.cleaned_data.get("subtype", [])
-            include_qs = Q()
-            exclude_qs = Q()
-            subtypes = [s.abbreviation for s in self.subtypes]
-            for subtype in subtype_filter:
-                if subtype in subtypes:
-                    include_qs |= Q(subtype=subtype)
-                elif subtype.startswith("-") and subtype[1:] in subtypes:
-                    exclude_qs |= Q(subtype=subtype[1:])
-                else:
-                    # TODO: negation
-                    include_qs |= Q(doctype=subtype, subtype=None)
-
-            queryset = queryset.filter(include_qs & ~exclude_qs)
+            # differentiate between subtypes and doctypes
+            values = self.cleaned_data.get('subtype', [])
+            includes = self.get_doctype_subtype_filter([v for v in values if not v.startswith("-")])
+            excludes = self.get_doctype_subtype_filter([v[1:] for v in values if v.startswith("-")])
+            if includes.children:
+                queryset = queryset.filter(includes)
+            if excludes.children:
+                queryset = queryset.exclude(excludes)
 
         # filter by assent date range
         if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
@@ -1115,6 +1120,21 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             queryset = queryset.exclude(**{f"{field}__in": excludes})
         return queryset
 
+    def get_doctype_subtype_filter(self, values):
+        """Get a Q object for filtering by doctype and subtype from the combined options."""
+        subtypes = [x.abbreviation for x in self.subtypes]
+        subtypes = [v for v in values if v in subtypes]
+        doctypes = [v for v in values if v not in subtypes]
+        q = Q()
+
+        if subtypes:
+            q |= Q(subtype__in=subtypes)
+
+        if doctypes:
+            q |= Q(doctype__in=doctypes, subtype=None)
+
+        return q
+
     def facet_item(self, field, value, count):
         try:
             # what's the label for this value?
@@ -1195,17 +1215,13 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
         counts_subtype = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
         counts.update(counts_subtype)
-        items = [
-            FacetItem(
-                c[1],
-                c[0],
-                counts.get(c[0], 0),
-                c[0] in self.cleaned_data.get("subtype", [])
-            )
-            for c in self.fields["subtype"].choices
-            if counts_in_place.get(c[0])
+
+        counts = [
+            (st, n)
+            for st, n in counts.items()
+            if counts_in_place.get(st)
         ]
-        facets.append(Facet(_("Type"), "subtype", "checkbox", items))
+        facets.append(self.facet("subtype", "checkbox", counts))
 
     def facet_principal(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="principal")

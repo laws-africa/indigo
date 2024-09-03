@@ -865,7 +865,6 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         super().__init__(*args, **kwargs)
 
         self.add_subtypes()
-
         self.fields['place'].choices = [
             (c.code, c.name) for c in Country.objects.all()
         ] + [
@@ -1140,7 +1139,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             # what's the label for this value?
             label = next(lab for (val, lab) in self.fields[field].choices if val == value)
         except StopIteration:
-            raise ValueError(f"Unknown choice {value} for field {field}")
+            # technically the value is not in the choices, but we can still use it
+            label = value
 
         # is it selected?
         selected = False

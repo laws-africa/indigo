@@ -1388,9 +1388,10 @@ class WorkChooserForm(forms.Form):
     q = forms.CharField(required=False)
 
     def clean_locality(self):
+        # always update the queryset on the locality field for rendering (country may be None)
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data.get('country'))
+
         if self.cleaned_data.get('country'):
-            # update the queryset on the locality field for rendering
-            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
             if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
                 return None
         else:

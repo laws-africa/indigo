@@ -1401,8 +1401,7 @@ class WorkChooserForm(forms.Form):
     def filter_queryset(self, qs):
         if self.cleaned_data.get('country'):
             qs = qs.filter(country=self.cleaned_data['country'])
-
-        if self.cleaned_data['locality']:
+            # only (and always) filter on locality if country is set -- locality=None for national works
             qs = qs.filter(locality=self.cleaned_data['locality'])
 
         if self.cleaned_data['q']:

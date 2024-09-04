@@ -1,6 +1,6 @@
 <ul class="list-group mb-3">
   {% for facet in facets %}
-    <li class="list-group-item">
+    <li class="list-group-item facet-group" data-component="FacetGroup">
       <strong>{{ facet.label }}</strong>
       <div class="facets-scrollable">
         {% for item in facet.items %}
@@ -12,8 +12,10 @@
                      form="{{ form_id }}">
               <label class="form-check-label" for="{{ facet.name }}_{{ forloop.counter0 }}">
                 {% if item.icon %}<i class="fa fa-fw {{ item.icon }}"></i>{% endif %}
+                {% if item.negated %}<span class="badge bg-warning text-dark">NOT</span>{% endif %}
                 {{ item.label }}
               </label>
+              <a href="#" class="negate fa fa-fw {% if item.negated %}fa-search-plus{% else %}fa-search-minus{% endif %}"></a>
             </div>
           {% if not hide_counts %}
             <span class="badge text-bg-light">{{ item.count|default_if_none:'' }}</span>

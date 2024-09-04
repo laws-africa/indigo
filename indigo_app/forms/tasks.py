@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.http import QueryDict
 
 from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work
-from indigo_app.forms.works import WorkFilterForm
+from indigo_app.forms.works import WorkFilterForm, NegatableModelMultipleChoiceField
 
 
 class TaskForm(forms.ModelForm):
@@ -137,10 +137,10 @@ class TaskEditLabelsForm(forms.ModelForm):
 
 
 class TaskFilterForm(WorkFilterForm):
-    labels = forms.ModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
+    labels = NegatableModelMultipleChoiceField(label=_("Labels"), queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(label=_('State'), choices=Task.SIMPLE_STATE_CHOICES)
     assigned_to = forms.MultipleChoiceField(label=_('Assigned to'), choices=[])
-    submitted_by = forms.ModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
+    submitted_by = NegatableModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
     sortby = forms.ChoiceField(choices=[
         ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
@@ -161,7 +161,19 @@ class TaskFilterForm(WorkFilterForm):
         super().__init__(country, params, *args, **kwargs)
 
         # ensure assigned_to supports unassigned
-        self.fields['assigned_to'].choices = [('-', _('(Not assigned)'))] + [(str(u.pk), u.username) for u in User.objects.all()]
+        users = User.objects.all()
+        self.fields['assigned_to'].choices = (
+            [
+                ('0', _('(Not assigned)')),
+                ('-0', _('(Not assigned)')),
+            ] + [
+                (str(u.pk), u.username)
+                for u in users
+            ] + [
+                (f'-{u.pk}', u.username)
+                for u in users
+            ]
+        )
 
         self.locality = locality
         if country:
@@ -182,29 +194,23 @@ class TaskFilterForm(WorkFilterForm):
 
         if exclude != 'type':
             if self.cleaned_data.get('type'):
-                queryset = queryset.filter(code__in=self.cleaned_data['type'])
+                queryset = self.apply_values_filter(self.cleaned_data["type"], queryset, "code")
 
         if exclude != 'labels':
             if self.cleaned_data.get('labels'):
-                queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
+                queryset = self.apply_model_choices_filter(self.cleaned_data["labels"], queryset, "labels")
 
         if exclude != 'state':
             if self.cleaned_data.get('state'):
-                queryset = queryset.filter(state__in=self.cleaned_data['state'])
+                queryset = self.apply_values_filter(self.cleaned_data["state"], queryset, "state")
 
         if exclude != 'assigned_to':
             if self.cleaned_data.get('assigned_to'):
-                options = [x for x in self.cleaned_data['assigned_to'] if x != '-']
-                q = Q()
-                if options:
-                    q |= Q(assigned_to__in=options)
-                if '-' in self.cleaned_data['assigned_to']:
-                    q |= Q(assigned_to__isnull=True)
-                queryset = queryset.filter(q)
+                queryset = self.apply_assigned_to_filter(self.cleaned_data["assigned_to"], queryset)
 
         if exclude != 'submitted_by':
             if self.cleaned_data.get('submitted_by'):
-                queryset = queryset.filter(submitted_by_user__in=self.cleaned_data['submitted_by'])
+                queryset = self.apply_model_choices_filter(self.cleaned_data["submitted_by"], queryset, "submitted_by_user")
 
         if exclude != 'taxonomy_topic':
             if self.cleaned_data.get('taxonomy_topic'):
@@ -215,6 +221,27 @@ class TaskFilterForm(WorkFilterForm):
 
         works_queryset = super().filter_queryset(self.works_queryset, exclude=exclude)
         queryset = queryset.filter(Q(work__in=works_queryset) | Q(work__isnull=True))
+
+        return queryset
+
+    def apply_assigned_to_filter(self, values, queryset):
+        # this is the same as the default apply_values_filter, but we need to handle unassigned
+        values = self.cleaned_data['assigned_to']
+        includes = [x for x in values if not x.startswith('-')]
+        excludes = [x[1:] for x in values if x.startswith('-')]
+
+        def make_q(items):
+            q = Q(assigned_to__in=items)
+            # unassigned
+            if '0' in items:
+                q |= Q(assigned_to__isnull=True)
+            return q
+
+        if includes:
+            queryset = queryset.filter(make_q(includes))
+
+        if excludes:
+            queryset = queryset.exclude(make_q(excludes))
 
         return queryset
 
@@ -240,22 +267,26 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_state(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='state')
-        counts = qs.values('state').annotate(count=Count('pk')).order_by()
+        counts = {
+            c['state']: c['count']
+            for c in qs.values('state').annotate(count=Count('pk')).order_by()
+        }
+        # we always want to show all states, even if they are zero
         items = [
-            (c['state'], c['count'])
-            for c in counts
+            (s, counts.get(s, 0))
+            for s in Task.STATES
         ]
-        items.sort(key=lambda x: Task.STATES.index(x[0]))
         facets.append(self.facet("state", "checkbox", items))
 
         for item in facets[-1].items:
-            item.icon = f'task-icon-{item.value} text-{item.value} small'
+            v = item.value[1:] if item.negated else item.value
+            item.icon = f'task-icon-{v} text-{v} small'
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')
         counts = qs.values('assigned_to').annotate(count=Count('pk')).order_by()
         items = [
-            (str(c['assigned_to'] or '-'), c['count'])
+            (str(c['assigned_to'] or '0'), c['count'])
             for c in counts
         ]
         items.sort(key=lambda x: x[0])

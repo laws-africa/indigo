@@ -27,7 +27,6 @@ urlpatterns = [
     path('places/<str:place>', places.PlaceDetailView.as_view(), name='place'),
     path('places/<str:place>/works', places.PlaceWorksView.as_view(), name='place_works'),
 
-    path('places/<str:place>/works/facets', cache_page(30)(places.PlaceWorksFacetsView.as_view()), name='place_works_facets'),
     path('places/<str:place>/works/actions', places.WorkActionsView.as_view(), name='place_works_actions'),
     path('places/<str:place>/works/update', places.WorkBulkUpdateView.as_view(), name='place_works_update'),
     path('places/<str:place>/works/approve', places.WorkBulkApproveView.as_view(), name='place_works_approve'),

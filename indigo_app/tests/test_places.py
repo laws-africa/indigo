@@ -36,14 +36,8 @@ class PlacesTest(testcases.TestCase):
         response = self.client.get('/places/za/works')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get('/places/za/works/facets')
-        self.assertEqual(response.status_code, 200)
-
     def test_all_place_works(self):
         response = self.client.get('/places/all/works')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get('/places/all/works/facets')
         self.assertEqual(response.status_code, 200)
 
     def test_all_place_tasks_404(self):

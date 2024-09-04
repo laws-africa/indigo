@@ -1,17 +1,14 @@
 {% load indigo_app humanize i18n %}
 
 <div class="row">
-  <div class="col-md-3">
-    <div hx-get="{{ facets_url }}" hx-trigger="load" class="work-list-facets">
-      <ul class="list-group">
-        <li class="list-group-item text-center">
-          <i class="fa fa-spinner fa-spin"></i>
-        </li>
-      </ul>
-    </div>
+  <div class="col-md-3" id="work-facets">
+    {% include 'indigo_app/place/_works_facets.html' %}
   </div>
 
   <div class="col-md">
+    {% include 'indigo_api/_active_facets.html' with facets=work_facets form="work-filter-form" %}
+    {% include 'indigo_api/_active_facets.html' with facets=document_facets form="work-filter-form" %}
+  
     <div class="d-flex mb-3">
       <div class="text-muted mb-3">
         {% block works-count %}

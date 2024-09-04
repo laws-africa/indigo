@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from functools import cached_property
+from itertools import chain
 from typing import List
 
 from django import forms
@@ -758,6 +759,7 @@ class FacetItem:
     count: int
     selected: bool
     icon: str = ''
+    negated: bool = False
 
 
 @dataclass
@@ -772,6 +774,22 @@ class PermissiveMultipleChoiceField(forms.MultipleChoiceField):
     def valid_value(self, value):
         # Override this method to skip choice validation and accept any input.
         return True
+
+
+class NegatableModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """A model choice field that allows mixing of positive and negative options, by prefixing
+    the fields with a '-' for negative options. The cleaned data is a tuple of (inclusives, exclusives)."""
+
+    def clean(self, value):
+        includes = [v for v in value if not v.startswith('-')]
+        excludes = [v[1:] for v in value if v.startswith('-')]
+
+        if includes:
+            includes = super().clean(includes)
+        if excludes:
+            excludes = super().clean(excludes)
+
+        return includes, excludes
 
 
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
@@ -800,6 +818,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
 
+    subtype = forms.MultipleChoiceField(label=_("Type"), choices=[])
     stub = forms.MultipleChoiceField(label=_("Stubs"), choices=[('stub', _('Stub')), ('not_stub', _('Not a stub'))])
     work_in_progress = forms.MultipleChoiceField(label=_("Work in progress"), choices=[
         ('work_in_progress', _('Work in progress')), ('approved', _('Approved'))
@@ -844,17 +863,33 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super().__init__(*args, **kwargs)
-        doctypes = [(d[1].lower(), d[0]) for d in
-                    settings.INDIGO['DOCTYPES'] +
-                    settings.INDIGO['EXTRA_DOCTYPES'].get(getattr(self.country, "code", None), [])]
-        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
-        self.fields['subtype'] = forms.MultipleChoiceField(required=False, choices=doctypes + subtypes)
+
+        self.add_subtypes()
         self.fields['place'].choices = [
             (c.code, c.name) for c in Country.objects.all()
         ] + [
             (loc.place_code, loc.name) for loc in Locality.objects.all()
         ]
+        # ensure all choice fields have negated choices
+        self.add_negated_choices()
+
+    def add_subtypes(self):
+        if not self.country or self.country.code == 'all':
+            # doctypes for all countries
+            country_doctypes = list(chain(*settings.INDIGO['EXTRA_DOCTYPES'].values()))
+        else:
+            country_doctypes = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
+        doctypes = [(d[1].lower(), d[0]) for d in settings.INDIGO['DOCTYPES'] + country_doctypes]
+
+        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        self.fields['subtype'].choices = doctypes + subtypes
         self.subtypes = Subtype.objects.all()
+
+    def add_negated_choices(self):
+        for fld in self.fields.values():
+            choices = getattr(fld, 'choices', None)
+            if choices is not None and isinstance(choices, (list, tuple)):
+                fld.choices = fld.choices + [(f"-{value}", label) for value, label in fld.choices]
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
@@ -891,83 +926,55 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         if exclude != "frbr_date":
             if self.cleaned_data.get('frbr_date'):
-                queryset = queryset.filter(date__in=self.cleaned_data['frbr_date'])
+                queryset = self.apply_values_filter(self.cleaned_data["frbr_date"], queryset, "date")
 
         # filter by work in progress
         if exclude != "work_in_progress":
-            work_in_progress_filter = self.cleaned_data.get('work_in_progress', [])
-            work_in_progress_qs = Q()
-            if "work_in_progress" in work_in_progress_filter:
-                work_in_progress_qs |= Q(work_in_progress=True)
-            if "approved" in work_in_progress_filter:
-                work_in_progress_qs |= Q(work_in_progress=False)
-
-            queryset = queryset.filter(work_in_progress_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("work_in_progress", []), queryset, {
+                "work_in_progress": Q(work_in_progress=True),
+                "approved": Q(work_in_progress=False),
+            })
 
         # filter by stub
         if exclude != "stub":
-            stub_filter = self.cleaned_data.get('stub', [])
-            stub_qs = Q()
-            if "stub" in stub_filter:
-                stub_qs |= Q(stub=True)
-            if "not_stub" in stub_filter:
-                stub_qs |= Q(stub=False)
-
-            queryset = queryset.filter(stub_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("stub", []), queryset, {
+                "stub": Q(stub=True),
+                "not_stub": Q(stub=False),
+            })
 
         # filter by principal
         if exclude != "principal":
-            principal_filter = self.cleaned_data.get('principal', [])
-            principal_qs = Q()
-            if "principal" in principal_filter:
-                principal_qs |= Q(principal=True)
-            if "not_principal" in principal_filter:
-                principal_qs |= Q(principal=False)
-
-            queryset = queryset.filter(principal_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("principal", []), queryset, {
+                "principal": Q(principal=True),
+                "not_principal": Q(principal=False),
+            })
 
         # filter by tasks status
         if exclude != "tasks":
-            tasks_filter = self.cleaned_data.get('tasks', [])
-            tasks_qs = Q()
-            if "has_open_tasks" in tasks_filter:
-                open_task_ids = queryset.filter(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
-                tasks_qs |= Q(id__in=open_task_ids)
-            if "has_unblocked_tasks" in tasks_filter:
-                unblocked_task_ids = queryset.filter(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
-                tasks_qs |= Q(id__in=unblocked_task_ids)
-            if "has_only_blocked_tasks" in tasks_filter:
-                only_blocked_task_ids = queryset.filter(tasks__state=Task.BLOCKED).exclude(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)
-                tasks_qs |= Q(id__in=only_blocked_task_ids)
-            if "no_open_tasks" in tasks_filter:
-                no_open_task_ids = queryset.exclude(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)
-                tasks_qs |= Q(id__in=no_open_task_ids)
-
-            queryset = queryset.filter(tasks_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("tasks", []), queryset, {
+                "has_open_tasks": Q(id__in=queryset.filter(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)),
+                "has_unblocked_tasks": Q(id__in=queryset.filter(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)),
+                "has_only_blocked_tasks": Q(id__in=queryset.filter(tasks__state=Task.BLOCKED).exclude(tasks__state__in=Task.UNBLOCKED_STATES).values_list('pk', flat=True)),
+                "no_open_tasks": Q(id__in=queryset.exclude(tasks__state__in=Task.OPEN_STATES).values_list('pk', flat=True)),
+            })
 
         # filter by primary or subsidiary work
         if exclude != "primary":
-            primary_filter = self.cleaned_data.get('primary', [])
-            primary_qs = Q()
-            if "primary" in primary_filter:
-                primary_qs |= Q(parent_work__isnull=True)
-            if "subsidiary" in primary_filter:
-                primary_qs |= Q(parent_work__isnull=False)
-
-            queryset = queryset.filter(primary_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get('primary', []), queryset, {
+                "primary": Q(parent_work__isnull=True),
+                "subsidiary": Q(parent_work__isnull=False),
+            })
 
         # doctype, subtype
         if exclude != "subtype":
-            subtype_filter = self.cleaned_data.get("subtype", [])
-            subtype_qs = Q()
-            subtypes = [s.abbreviation for s in self.subtypes]
-            for subtype in subtype_filter:
-                if subtype in subtypes:
-                    subtype_qs |= Q(subtype=subtype)
-                else:
-                    subtype_qs |= Q(doctype=subtype, subtype=None)
-
-            queryset = queryset.filter(subtype_qs)
+            # differentiate between subtypes and doctypes
+            values = self.cleaned_data.get('subtype', [])
+            includes = self.get_doctype_subtype_filter([v for v in values if not v.startswith("-")])
+            excludes = self.get_doctype_subtype_filter([v[1:] for v in values if v.startswith("-")])
+            if includes.children:
+                queryset = queryset.filter(includes)
+            if excludes.children:
+                queryset = queryset.exclude(excludes)
 
         # filter by assent date range
         if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
@@ -983,14 +990,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by repeal
         if exclude != "repeal":
-            repeal_filter = self.cleaned_data.get('repeal', [])
-            repeal_qs = Q()
-            if "yes" in repeal_filter:
-                repeal_qs |= Q(repealed_date__isnull=False)
-            if "no" in repeal_filter:
-                repeal_qs |= Q(repealed_date__isnull=True)
-
-            queryset = queryset.filter(repeal_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("repeal", []), queryset, {
+                "yes": Q(repealed_date__isnull=False),
+                "no": Q(repealed_date__isnull=True),
+            })
 
         if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
             start_date = self.cleaned_data['repealed_date_start']
@@ -999,14 +1002,10 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by amendment
         if exclude != "amendment":
-            amendment_filter = self.cleaned_data.get('amendment', [])
-            amendment_qs = Q()
-            if "yes" in amendment_filter:
-                amendment_qs |= Q(amendments__date__isnull=False)
-            if 'no' in amendment_filter:
-                amendment_qs |= Q(amendments__date__isnull=True)
-
-            queryset = queryset.filter(amendment_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("amendment", []), queryset, {
+                "yes": Q(amendments__date__isnull=False),
+                "no": Q(amendments__date__isnull=True),
+            })
 
         if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
             start_date = self.cleaned_data['amendment_date_start']
@@ -1015,19 +1014,13 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by commencement status
         if exclude != "commencement":
-            commencement_filter = self.cleaned_data.get('commencement', [])
-            commencement_qs = Q()
-            if 'yes' in commencement_filter:
-                commencement_qs |= Q(commenced=True)
-            if 'no' in commencement_filter:
-                commencement_qs |= Q(commenced=False)
-            if 'date_unknown' in commencement_filter:
-                commencement_qs |= Q(commencements__date__isnull=True, commenced=True)
-            if 'multiple' in commencement_filter:
-                queryset = queryset.annotate(Count("commencements"))
-                commencement_qs |= Q(commencements__count__gt=1)
-
-            queryset = queryset.filter(commencement_qs)
+            queryset = queryset.annotate(Count("commencements"))
+            queryset = self.apply_options_filter(self.cleaned_data.get("commencement", []), queryset, {
+                "yes": Q(commenced=True),
+                "no": Q(commenced=False),
+                "date_unknown": Q(commencements__date__isnull=True, commenced=True),
+                "multiple": Q(commencements__count__gt=1),
+            })
 
         if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
             start_date = self.cleaned_data['commencement_date_start']
@@ -1036,57 +1029,40 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         # filter by consolidation
         if exclude != "consolidation":
-            consolidation_filter = self.cleaned_data.get('consolidation', [])
-            consolidation_qs = Q()
-            if 'has_consolidation' in consolidation_filter:
-                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=False)
-            if 'no_consolidation' in consolidation_filter:
-                consolidation_qs |= Q(arbitrary_expression_dates__date__isnull=True)
-
-            queryset = queryset.filter(consolidation_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("consolidation", []), queryset, {
+                "has_consolidation": Q(arbitrary_expression_dates__date__isnull=False),
+                "no_consolidation": Q(arbitrary_expression_dates__date__isnull=True),
+            })
 
         # filter by publication document
         if exclude != "publication_document":
-            publication_document_filter = self.cleaned_data.get('publication_document', [])
-            publication_document_qs = Q()
-            if 'has_publication_document' in publication_document_filter:
-                publication_document_qs |= Q(publication_document__isnull=False)
-            if 'no_publication_document' in publication_document_filter:
-                publication_document_qs |= Q(publication_document__isnull=True)
-
-            queryset = queryset.filter(publication_document_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("publication_document", []), queryset, {
+                "has_publication_document": Q(publication_document__isnull=False),
+                "no_publication_document": Q(publication_document__isnull=True),
+            })
 
         # filter by points in time
         if exclude != "documents":
-            documents_filter = self.cleaned_data.get('documents', [])
-            documents_qs = Q()
-            if 'one' in documents_filter:
-                one_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)
-                documents_qs |= Q(id__in=one_document_ids)
-            if 'multiple' in documents_filter:
-                multiple_document_ids = queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)
-                documents_qs |= Q(id__in=multiple_document_ids)
-            if 'none' in documents_filter:
-                # either there are no documents at all
-                documents_qs |= Q(document__isnull=True)
-                # or they're all deleted
-                deleted_document_ids = queryset.filter(document__deleted=True).values_list('pk', flat=True)
-                undeleted_document_ids = queryset.filter(document__deleted=False).values_list('pk', flat=True)
-                all_deleted_document_ids = deleted_document_ids.exclude(id__in=undeleted_document_ids)
-                documents_qs |= Q(id__in=all_deleted_document_ids)
-
-            queryset = queryset.filter(documents_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get('documents', []), queryset, {
+                "one": Q(id__in=queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count=1).values_list('pk', flat=True)),
+                "multiple": Q(id__in=queryset.filter(document__deleted=False).annotate(Count('document')).filter(document__count__gt=1).values_list('pk', flat=True)),
+                "none": (
+                    # either there are no documents at all
+                    Q(document__isnull=True) |
+                    # or they're all deleted
+                    Q(id__in=queryset
+                      .filter(document__deleted=True).values_list('pk', flat=True)
+                      .exclude(id__in=queryset.filter(document__deleted=False).values_list('pk', flat=True))
+                      )
+                )
+            })
 
         # filter by point in time status
         if exclude != "status":
-            status_filter = self.cleaned_data.get('status', [])
-            status_qs = Q()
-            if 'draft' in status_filter:
-                status_qs |= Q(document__draft=True)
-            if 'published' in status_filter:
-                status_qs |= Q(document__draft=False)
-
-            queryset = queryset.filter(status_qs)
+            queryset = self.apply_options_filter(self.cleaned_data.get("status", []), queryset, {
+                "draft": Q(document__draft=True),
+                "published": Q(document__draft=False),
+            })
 
         # filter by taxonomy topic
         if exclude != "taxonomy_topic":
@@ -1099,18 +1075,98 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         return queryset.distinct()
 
+    def apply_options_filter(self, values, queryset, filters):
+        """Apply filters to queryset based on possible values."""
+        include_qs = Q()
+        exclude_qs = Q()
+
+        for value in values:
+            negated = False
+            if value.startswith('-'):
+                negated = True
+                value = value[1:]
+
+            if value in filters:
+                if negated:
+                    exclude_qs |= Q(filters[value])
+                else:
+                    include_qs |= Q(filters[value])
+
+        if include_qs.children:
+            queryset = queryset.filter(include_qs)
+
+        if exclude_qs.children:
+            queryset = queryset.exclude(exclude_qs)
+
+        return queryset
+
+    def apply_values_filter(self, values, queryset, field):
+        """Apply filters to a queryset with option values than can be negated."""
+        includes = [x for x in values if not x.startswith('-')]
+        excludes = [x[1:] for x in values if x.startswith('-')]
+        if includes:
+            queryset = queryset.filter(**{f"{field}__in": includes})
+        if excludes:
+            queryset = queryset.exclude(**{f"{field}__in": excludes})
+        return queryset
+
+    def apply_model_choices_filter(self, values, queryset, field):
+        """Apply filters to a queryset from a field using negatable model choices."""
+        includes, excludes = values
+        if includes:
+            queryset = queryset.filter(**{f"{field}__in": includes})
+        if excludes:
+            queryset = queryset.exclude(**{f"{field}__in": excludes})
+        return queryset
+
+    def get_doctype_subtype_filter(self, values):
+        """Get a Q object for filtering by doctype and subtype from the combined options."""
+        subtypes = [x.abbreviation for x in self.subtypes]
+        subtypes = [v for v in values if v in subtypes]
+        doctypes = [v for v in values if v not in subtypes]
+        q = Q()
+
+        if subtypes:
+            q |= Q(subtype__in=subtypes)
+
+        if doctypes:
+            q |= Q(doctype__in=doctypes, subtype=None)
+
+        return q
+
     def facet_item(self, field, value, count):
         try:
+            # what's the label for this value?
             label = next(lab for (val, lab) in self.fields[field].choices if val == value)
         except StopIteration:
-            raise ValueError(f"Unknown choice {value} for field {field}")
-        selected = value in self.cleaned_data.get(field, [])
-        if not selected and hasattr(self.fields[field], "queryset"):
-            lookup = self.fields[field].to_field_name or "pk"
-            q = {lookup: value}
-            check_value = self.fields[field].queryset.filter(**q).first()
-            selected = check_value in self.cleaned_data.get(field, [])
-        return FacetItem(label, value, count, selected)
+            # technically the value is not in the choices, but we can still use it
+            label = value
+
+        # is it selected?
+        selected = False
+        negated = False
+        field_obj = self.fields[field]
+        if hasattr(field_obj, "queryset"):
+            # model choice field
+            if isinstance(field_obj, NegatableModelMultipleChoiceField):
+                # model choice field that supports negation
+                includes, excludes = self.cleaned_data[field]
+                if value in [field_obj.prepare_value(v) for v in includes]:
+                    selected = True
+                elif value in [field_obj.prepare_value(v) for v in excludes]:
+                    selected = negated = True
+            else:
+                selected = value in [field_obj.prepare_value(v) for v in self.cleaned_data.get(field, [])]
+        else:
+            selected = value in self.cleaned_data.get(field, [])
+            if not selected:
+                # check if it's negated
+                negated = selected = f'-{value}' in self.cleaned_data.get(field, [])
+
+        if negated:
+            value = f'-{value}'
+
+        return FacetItem(label, value, count, selected, negated=negated)
 
     def facet(self, name, type, items):
         items = [self.facet_item(name, value, count) for value, count in items]
@@ -1145,7 +1201,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         counts = {c["date"]: c["count"] for c in qs.values("date").annotate(count=Count("date")).order_by()}
         # inject the choices into the form field
         counts = sorted(counts.items(), key=lambda x: x[0], reverse=True)
-        self.fields["frbr_date"].choices = [(d, d) for d, c in counts]
+        self.fields["frbr_date"].choices = [(d, d) for d, c in counts] + [(f'-{d}', d) for d, c in counts]
         facets.append(self.facet("frbr_date", "checkbox", counts))
 
     def facet_subtype(self, facets, qs):
@@ -1159,17 +1215,13 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         counts = {c["doctype"]: c["count"] for c in qs.filter(subtype=None).values("doctype").annotate(count=Count("doctype")).order_by()}
         counts_subtype = {c["subtype"]: c["count"] for c in qs.values("subtype").annotate(count=Count("subtype")).order_by()}
         counts.update(counts_subtype)
-        items = [
-            FacetItem(
-                c[1],
-                c[0],
-                counts.get(c[0], 0),
-                c[0] in self.cleaned_data.get("subtype", [])
-            )
-            for c in self.fields["subtype"].choices
-            if counts_in_place.get(c[0])
+
+        counts = [
+            (st, n)
+            for st, n in counts.items()
+            if counts_in_place.get(st)
         ]
-        facets.append(Facet(_("Type"), "subtype", "checkbox", items))
+        facets.append(self.facet("subtype", "checkbox", counts))
 
     def facet_principal(self, facets, qs):
         qs = self.filter_queryset(qs, exclude="principal")

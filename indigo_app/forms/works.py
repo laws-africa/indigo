@@ -1405,7 +1405,7 @@ class WorkChooserForm(forms.Form):
             qs = qs.filter(locality=self.cleaned_data['locality'])
 
         if self.cleaned_data['q']:
-            qs = qs.filter(title__icontains=self.cleaned_data['q'])
+            qs = qs.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
         return qs
 

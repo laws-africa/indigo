@@ -1399,7 +1399,7 @@ class WorkChooserForm(forms.Form):
         return self.cleaned_data['locality']
 
     def filter_queryset(self, qs):
-        if self.cleaned_data['country']:
+        if self.cleaned_data.get('country'):
             qs = qs.filter(country=self.cleaned_data['country'])
 
         if self.cleaned_data['locality']:

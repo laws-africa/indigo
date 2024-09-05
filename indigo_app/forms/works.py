@@ -1440,9 +1440,10 @@ class WorkChooserForm(forms.Form):
     q = forms.CharField(required=False)
 
     def clean_locality(self):
+        # always update the queryset on the locality field for rendering (country may be None)
+        self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data.get('country'))
+
         if self.cleaned_data.get('country'):
-            # update the queryset on the locality field for rendering
-            self.fields['locality'].queryset = Locality.objects.filter(country=self.cleaned_data['country'])
             if self.cleaned_data.get('locality') and self.cleaned_data['locality'].country != self.cleaned_data['country']:
                 return None
         else:
@@ -1450,14 +1451,13 @@ class WorkChooserForm(forms.Form):
         return self.cleaned_data['locality']
 
     def filter_queryset(self, qs):
-        if self.cleaned_data['country']:
+        if self.cleaned_data.get('country'):
             qs = qs.filter(country=self.cleaned_data['country'])
-
-        if self.cleaned_data['locality']:
+            # only (and always) filter on locality if country is set -- locality=None for national works
             qs = qs.filter(locality=self.cleaned_data['locality'])
 
         if self.cleaned_data['q']:
-            qs = qs.filter(title__icontains=self.cleaned_data['q'])
+            qs = qs.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
         return qs
 

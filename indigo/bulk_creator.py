@@ -396,6 +396,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         self.dry_run = dry_run
 
         self.works = []
+        self.amendments = []
 
         rows = self.get_rows_from_table(table)
 
@@ -412,6 +413,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def create_main_tasks(self):
         works = Work.objects.filter(pk__in=[w.work.pk for w in self.works if hasattr(w, 'work')])
         broker = self.broker_class(works)
+        # override amendments -- only use the ones in the spreadsheet
+        broker.amendments = self.amendments
         # fake form data for the broker
         data = {
             'conversion_task_description': _('Convert the input file into a .docx file and remove automatic numbering.'),
@@ -892,10 +895,8 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                 },
             )
 
-            if new:
-                self.create_task(row.work, row,
-                                 task_type='apply-amendment',
-                                 amendment=amendment)
+            # stash for tasks later
+            self.amendments.append(amendment)
 
     def link_amendment_active(self, row):
         # if the work `amends` something, try linking it (or them)
@@ -930,10 +931,8 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
                     },
                 )
 
-                if new:
-                    self.create_task(amended_work, row,
-                                     task_type='apply-amendment',
-                                     amendment=amendment)
+                # stash for tasks later
+                self.amendments.append(amendment)
 
     def link_taxonomy(self, row):
         topics = [x.strip() for x in row.taxonomy_topic.split(';') if x.strip()]

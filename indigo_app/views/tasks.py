@@ -658,20 +658,6 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
         return context
 
 
-class AvailableTasksView(AllTasksView):
-    template_name = 'indigo_app/tasks/available_tasks.html'
-    tab = 'available_tasks'
-
-    def get_base_queryset(self):
-        return super().get_base_queryset().filter(assigned_to=None)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form_url'] = reverse('available_tasks')
-        context["hide_assigned_to"] = True
-        return context
-
-
 class TaskAssigneesView(TaskViewBase, TemplateView):
     http_method_names = ['post']
     template_name = 'indigo_api/_task_assign_to_menu.html'

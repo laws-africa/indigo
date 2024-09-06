@@ -133,7 +133,6 @@ urlpatterns = [
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),
     path('tasks/all/', tasks.AllTasksView.as_view(), name='all_tasks'),
-    path('tasks/available/', tasks.AvailableTasksView.as_view(), name='available_tasks'),
 
     path('comments/', include('django_comments.urls')),
 

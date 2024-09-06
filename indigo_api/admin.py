@@ -11,9 +11,11 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, QuickLink
+
 
 admin.site.register(Subtype)
+admin.site.register(QuickLink)
 
 
 class TaxonomyForm(MoveNodeForm):

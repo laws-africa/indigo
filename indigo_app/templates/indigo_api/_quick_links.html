@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="dropdown">
+  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    {% trans "Saved searches" %}
+  </button>
+  <ul class="dropdown-menu">
+    {% for link in quick_links %}
+      <li><a class="dropdown-item" href="{{ link.querystring }}">{{ link.name }}</a></li>
+    {% endfor %}
+  </ul>
+</div>

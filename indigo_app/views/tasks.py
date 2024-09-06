@@ -23,6 +23,7 @@ from django_fsm import has_transition_perm
 from django_htmx.http import push_url
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
+from indigo_api.models.quick_links import QuickLink
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskStateChangeForm
@@ -98,6 +99,7 @@ class TaskListView(TaskViewBase, ListView):
         context["taxonomy_toc"] = TaxonomyTopic.get_toc_tree(self.request.GET)
         context["work_facets"] = self.form.work_facets(self.form.works_queryset, context['taxonomy_toc'], [])
         context["task_facets"] = self.form.task_facets(self.get_base_queryset(), [])
+        context["quick_links"] = QuickLink.objects.filter(scope="tasks").all()
 
         # warn when submitting task on behalf of another user
         Task.decorate_submission_message(context['tasks'], self)
@@ -652,6 +654,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
         context['total_tasks'] = self.get_base_queryset().count()
         context["hide_assigned_to"] = False
         context["place"] = True
+        context["quick_links"] = QuickLink.objects.filter(scope="tasks").all()
         return context
 
 

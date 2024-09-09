@@ -102,6 +102,7 @@ class ContentManagerBadge(PermissionBadge):
     permissions = (
         'indigo_api.add_taxonomytopic', 'indigo_api.change_taxonomytopic', 'indigo_api.delete_taxonomytopic',
         'indigo_api.add_tasklabel', 'indigo_api.change_tasklabel', 'indigo_api.delete_tasklabel',
+        'indigo_api.add_savedsearch', 'indigo_api.change_savedsearch', 'indigo_api.delete_savedsearch',
     )
 
 

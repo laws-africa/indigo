@@ -31,6 +31,12 @@
     </div>
 
     <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
+
+    {% if saved_searches %}
+      <div class="ms-3">
+        {% include 'indigo_api/_saved_searches.html' %}
+      </div>
+    {% endif %}
   </div>
 
   <div class="collapse mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">

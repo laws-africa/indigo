@@ -4,8 +4,8 @@
     {% trans "Saved searches" %}
   </button>
   <ul class="dropdown-menu">
-    {% for link in quick_links %}
-      <li><a class="dropdown-item" href="{{ link.querystring }}">{{ link.name }}</a></li>
+    {% for search in saved_searches %}
+      <li><a class="dropdown-item" href="{{ search.querystring }}">{{ search.name }}</a></li>
     {% endfor %}
   </ul>
 </div>

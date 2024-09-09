@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class QuickLink(models.Model):
+class SavedSearch(models.Model):
     SCOPES = {
         "tasks": _("Tasks"),
         "works": _("Works"),
@@ -30,4 +30,4 @@ class QuickLink(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"QuickLink<{self.name}: {self.SCOPES[self.scope]} - {self.querystring}>"
+        return f"SavedSearch<{self.name}: {self.SCOPES[self.scope]} - {self.querystring}>"

@@ -32,9 +32,9 @@
 
     <button type="submit" class="btn btn-primary">{% trans 'Apply' %}</button>
 
-    {% if quick_links %}
+    {% if saved_searches %}
       <div class="ms-3">
-        {% include 'indigo_api/_quick_links.html' %}
+        {% include 'indigo_api/_saved_searches.html' %}
       </div>
     {% endif %}
   </div>

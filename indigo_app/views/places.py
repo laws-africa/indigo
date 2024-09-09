@@ -18,7 +18,7 @@ from django_htmx.http import push_url
 from lxml import etree
 
 from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace, \
-    QuickLink
+    SavedSearch
 from indigo_api.timeline import describe_publication_event
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
     WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
@@ -562,7 +562,7 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
         qs = self.get_base_queryset()
         context["work_facets"] = self.form.work_facets(qs, context['taxonomy_toc'], context.get('places_toc', []))
         context["document_facets"] = self.form.document_facets(qs)
-        context["quick_links"] = QuickLink.objects.filter(scope="works").all()
+        context["saved_searches"] = SavedSearch.objects.filter(scope="works").all()
 
         return context
 

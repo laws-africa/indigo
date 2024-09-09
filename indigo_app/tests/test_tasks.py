@@ -136,10 +136,6 @@ class TasksTest(WebTest):
         response = self.app.get('/tasks/')
         self.assertEqual(response.status_code, 200)
 
-    def test_available_tasks(self):
-        response = self.app.get('/tasks/available/')
-        self.assertEqual(response.status_code, 200)
-
     def test_all_tasks(self):
         response = self.app.get('/tasks/all/')
         self.assertEqual(response.status_code, 200)

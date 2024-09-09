@@ -257,12 +257,14 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_labels(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='labels')
-        counts = qs.values('labels__slug').annotate(count=Count('pk')).filter(labels__isnull=False).order_by()
+        counts = (
+            qs.values('labels__slug', 'labels__title').annotate(count=Count('pk')).filter(labels__isnull=False)
+            .order_by()
+        )
         items = [
             (c['labels__slug'], c['count'])
-            for c in counts
+            for c in sorted(counts, key=lambda x: x['labels__title'])
         ]
-        items.sort(key=lambda x: x[0])
         facets.append(self.facet("labels", "checkbox", items))
 
     def facet_state(self, facets, qs):
@@ -284,22 +286,23 @@ class TaskFilterForm(WorkFilterForm):
 
     def facet_assigned_to(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='assigned_to')
-        counts = qs.values('assigned_to').annotate(count=Count('pk')).order_by()
+        counts = qs.values('assigned_to', 'assigned_to__username').annotate(count=Count('pk')).order_by()
         items = [
             (str(c['assigned_to'] or '0'), c['count'])
-            for c in counts
+            for c in sorted(counts, key=lambda x: x['assigned_to__username'] or '')
         ]
-        items.sort(key=lambda x: x[0])
         facets.append(self.facet("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='submitted_by')
-        counts = qs.values('submitted_by_user').annotate(count=Count('pk')).filter(submitted_by_user__isnull=False).order_by()
+        counts = (
+            qs.values('submitted_by_user', 'submitted_by_user__username').annotate(count=Count('pk'))
+            .filter(submitted_by_user__isnull=False).order_by()
+        )
         items = [
             (c['submitted_by_user'], c['count'])
-            for c in counts
+            for c in sorted(counts, key=lambda x: x['submitted_by_user__username'])
         ]
-        items.sort(key=lambda x: x[0])
         facets.append(self.facet("submitted_by", "checkbox", items))
 
     def facet_task_type(self, facets, qs):

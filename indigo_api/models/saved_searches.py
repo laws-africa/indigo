@@ -13,8 +13,8 @@ class SavedSearch(models.Model):
     querystring = models.CharField(_("querystring"), max_length=2048)
 
     class Meta:
-        verbose_name = _("quick link")
-        verbose_name_plural = _("quick links")
+        verbose_name = _("saved search")
+        verbose_name_plural = _("saved searches")
         ordering = ["name"]
 
     def save(self, *args, **kwargs):

@@ -208,6 +208,8 @@ class PointInTimeSerializer(serializers.Serializer):
 @extend_schema_serializer(component_name="WorkExpression")
 class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Details of a published work expression (document). """
+    work_title = serializers.CharField(help_text="Title of the work, which may be different to the title of the expression.",
+                                       source="work.title")
     country = serializers.CharField(help_text="ISO 3166-1 alpha-2 country code that this work belongs to.")
     locality = serializers.CharField(help_text="The code of the locality within the country.", required=False)
     nature = serializers.CharField(help_text="Doctype component of the work FRBR URI.")
@@ -243,7 +245,7 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     class Meta:
         model = Document
         fields = (
-            'url', 'title',
+            'url', 'title', 'work_title',
             'created_at', 'updated_at',
 
             # frbr_uri components

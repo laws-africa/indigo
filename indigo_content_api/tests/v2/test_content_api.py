@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework.test import APITestCase
 
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Country, Language
+from indigo_api.models import Country, Language, Work
 from indigo_app.tests.utils import TEST_STORAGES
 from languages_plus.models import Language as MasterLanguage
 
@@ -59,6 +59,13 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/act/2014/10')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['numbered_title'], 'Act 10 of 2014')
+
+    def test_published_work_title(self):
+        response = self.client.get(self.api_path + '/akn/za/act/2014/10')
+        self.assertEqual(response.status_code, 200)
+        # note that these titles are slightly different
+        self.assertEqual(response.data['work_title'], 'Water Act')
+        self.assertEqual(response.data['title'], 'Watêr Act')
 
     def test_published_type_name(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10')

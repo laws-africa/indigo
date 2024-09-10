@@ -61,12 +61,10 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.data['numbered_title'], 'Act 10 of 2014')
 
     def test_published_work_title(self):
-        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
-        work.title = 'Work title'
-        work.save()
         response = self.client.get(self.api_path + '/akn/za/act/2014/10')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['work_title'], 'Work title')
+        # note that these titles are slightly different
+        self.assertEqual(response.data['work_title'], 'Water Act')
         self.assertEqual(response.data['title'], 'Watêr Act')
 
     def test_published_type_name(self):

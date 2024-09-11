@@ -1,9 +1,12 @@
 from copy import deepcopy
+from itertools import chain
+import logging
+
 from actstream import action
 from datetime import datetime
-from django.db.models import JSONField
+from django.db.models import JSONField, signals, Q
+from django.db.models.signals import m2m_changed
 from django.db import models, IntegrityError, transaction
-from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
@@ -19,6 +22,9 @@ from treebeard.mp_tree import MP_Node
 from indigo.plugins import plugins
 from indigo_api.signals import work_approved, work_unapproved
 from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
+
+
+log = logging.getLogger()
 
 
 class WorkQuerySet(models.QuerySet):
@@ -51,6 +57,10 @@ class TaxonomyTopic(MP_Node):
                                    help_text=_("Description of the topic"))
     public = models.BooleanField(_("public"), default=True)
     project = models.BooleanField(_("project"), default=False)
+    copy_from_principal = models.BooleanField(
+        _("copy from principal work"), default=False,
+        help_text=_("Copy this topic from principal works to works that amend, commence or repeal the principal work.")
+    )
     node_order_by = ['name']
 
     class Meta:
@@ -73,6 +83,22 @@ class TaxonomyTopic(MP_Node):
         parent = self.get_parent(update=True)
         self.slug = (f"{parent.slug}-" if parent else "") + slugify(self.name)
         super().save(*args, **kwargs)
+
+    def propagate_copy_from_principal(self, works, add):
+        """If this topic has copy_from_principal set to True, propagate the topic to related works for the provided
+        works. If no works are provided, then propagate to related works for all works that have this topic."""
+        if self.copy_from_principal:
+            if works is None:
+                works = self.works.filter(principal=True).all()
+
+            related = Work.get_incoming_related_works(works)
+
+            if add:
+                log.info(f"Adding topic {self} to {len(related)} related works")
+                self.works.add(*related)
+            else:
+                log.info(f"Removing topic {self} from {len(related)} related works")
+                self.works.remove(*related)
 
     @classmethod
     def get_toc_tree(cls, query_dict):
@@ -681,6 +707,21 @@ class Work(WorkMixin, models.Model):
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
+    @classmethod
+    def get_incoming_related_works(cls, works):
+        """ Get a queryset of works that are related to the given works because the related work amends,
+        repeals or commences one of the given works.
+
+        Note that the parent/child relationship is ignored.
+        """
+        if not works:
+            return cls.objects.none()
+
+        q = Q(amendments_made__amended_work__in=works)
+        q |= Q(repealed_works__in=works)
+        q |= Q(commencements_made__commenced_work__in=works)
+        return cls.objects.filter(q).order_by().distinct("pk")
+
 
 @receiver(signals.post_save, sender=Work)
 def post_save_work(sender, instance, **kwargs):
@@ -703,6 +744,35 @@ def post_save_work(sender, instance, **kwargs):
         if instance.updated_by_user:
             action.send(instance.updated_by_user, verb='updated', action_object=instance,
                         place_code=instance.place.place_code)
+
+
+@receiver(m2m_changed, sender=Work.taxonomy_topics.through)
+def taxonomy_topic_copy_from_principal(sender, instance, action, reverse, model, pk_set, **kwargs):
+    """ When a topic is added or removed from a work, add or remove it from related works
+    if the copy_from_principal flag is set."""
+    if action not in ['post_add', 'post_remove']:
+        return
+
+    if reverse:
+        # topic.works was updated with bulk works
+        if not instance.copy_from_principal:
+            return
+
+        # get all the principal works that had the topic added or removed
+        works = Work.objects.filter(pk__in=pk_set, principal=True)
+        if works.exists():
+            instance.propagate_copy_from_principal(works, add=action == 'post_add')
+    else:
+        # the work.taxonomy_topics was updated with bulk topics
+        if not instance.principal:
+            return
+
+        # get all updated topics that have the copy_from_principal flag set
+        topics = TaxonomyTopic.objects.filter(pk__in=pk_set, copy_from_principal=True)
+        if topics.exists():
+            # update all related works
+            for topic in topics:
+                topic.propagate_copy_from_principal([instance], add=action == 'post_add')
 
 
 # version tracking

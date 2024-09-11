@@ -24,6 +24,11 @@ class TaxonomyForm(MoveNodeForm):
         # save all children so that the slugs take into account the potentially updated parent
         for node in self.instance.get_descendants():
             node.save()
+
+        # handle copy_from_principal being turned on
+        if 'copy_from_principal' in self.changed_data and self.cleaned_data['copy_from_principal']:
+            self.instance.propagate_copy_from_principal(works=None, add=True)
+
         return self.instance
 
 

@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
@@ -190,3 +191,40 @@ class WorkTestCase(TestCase):
 
         # the work should now be commenced
         self.assertTrue(uncommenced_work.commenced)
+
+    def test_incoming_related_works(self):
+        commences = Work.objects.create(
+            country=self.work.country,
+            frbr_uri="/akn/za/act/2023/99-commences",
+            title="commences",
+        )
+        Commencement.objects.create(commenced_work=self.work, commencing_work=commences, date=datetime.date.today())
+
+        amends = Work.objects.create(
+            country=self.work.country,
+            frbr_uri="/akn/za/act/2023/99-amends",
+            title="amends",
+        )
+        Amendment.objects.create(amended_work=self.work, amending_work=amends, date=datetime.date.today(),
+                                 created_by_user=User.objects.first())
+
+        repeals = Work.objects.create(
+            country=self.work.country,
+            frbr_uri="/akn/za/act/2023/99-repeals",
+            title="repeals",
+        )
+        self.work.repealed_by = repeals
+        self.work.save()
+
+        # this will be ignored
+        child = Work.objects.create(
+            country=self.work.country,
+            frbr_uri="/akn/za/act/2023/99-child",
+            title="child",
+            parent_work=self.work,
+        )
+
+        self.assertEqual(
+            [amends, commences, repeals],
+            sorted(Work.get_incoming_related_works([self.work]), key=lambda x: x.title)
+        )

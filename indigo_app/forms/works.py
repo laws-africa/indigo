@@ -826,13 +826,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     status = forms.MultipleChoiceField(label=_("Point in time status"), choices=[
         ('published', _('Published')), ('draft', _('Draft'))
     ])
-    sortby = forms.ChoiceField(choices=[
-        ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
-        ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
-        ('title', _('Title (A-Z)')), ('-title', _('Title (Z-A)')),
-        ('date', _('Date (oldest first)')), ('-date', _('Date (newest first)')),
-        ('number', _('Number (ascending)')), ('-number', _('Number (descending)')),
-    ])
+    # add the choices separately as we manually include the opposite of each option
+    sortby = forms.ChoiceField()
     principal = forms.MultipleChoiceField(label=_("Principal"), required=False, choices=[
         ('principal', _('Principal')), ('not_principal', _('Not Principal'))
     ])
@@ -872,6 +867,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         ]
         # ensure all choice fields have negated choices
         self.add_negated_choices()
+        # add these choices after adding negations, as we manually include the opposite of each option
+        self.add_sortby_choices()
 
     def add_subtypes(self):
         if not self.country or self.country.code == 'all':
@@ -884,6 +881,15 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
         self.fields['subtype'].choices = doctypes + subtypes
         self.subtypes = Subtype.objects.all()
+
+    def add_sortby_choices(self):
+        self.fields['sortby'].choices = [
+            ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
+            ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
+            ('-date', _('Date (newest first)')), ('date', _('Date (oldest first)')),
+            ('title', _('Title (A-Z)')), ('-title', _('Title (Z-A)')),
+            ('number', _('Number (ascending)')), ('-number', _('Number (descending)')),
+        ]
 
     def add_negated_choices(self):
         for fld in self.fields.values():

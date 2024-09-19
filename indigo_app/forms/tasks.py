@@ -142,10 +142,6 @@ class TaskFilterForm(WorkFilterForm):
     assigned_to = forms.MultipleChoiceField(label=_('Assigned to'), choices=[])
     submitted_by = NegatableModelMultipleChoiceField(label=_('Submitted by'), queryset=User.objects)
     type = forms.MultipleChoiceField(label=_('Task type'), choices=Task.CODES)
-    sortby = forms.ChoiceField(choices=[
-        ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
-        ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
-    ])
 
     def __init__(self, country, locality, data, *args, **kwargs):
         # allows us to set defaults on the form
@@ -180,6 +176,12 @@ class TaskFilterForm(WorkFilterForm):
             self.works_queryset = Work.objects.filter(country=country, locality=locality)
         else:
             self.works_queryset = Work.objects.all()
+
+    def add_sortby_choices(self):
+        self.fields['sortby'].choices = [
+            ('-created_at', _('Created at (newest first)')), ('created_at', _('Created at (oldest first)')),
+            ('-updated_at', _('Updated at (newest first)')), ('updated_at', _('Updated at (oldest first)')),
+        ]
 
     def filter_queryset(self, queryset, exclude=None):
         if queryset.model is Work:

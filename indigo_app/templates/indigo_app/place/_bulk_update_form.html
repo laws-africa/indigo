@@ -20,18 +20,14 @@
           <input type="hidden" name="works" value="{{ work.pk }}">
         {% endfor %}
 
-        <div class="col-md-10 mb-3">
+        <div class="mb-3">
           <label for="{{ form.add_taxonomy_topics.id_for_label }}">{% trans "Add taxonomy topics" %}</label>
-          <select id="{{ form.add_taxonomy_topics.id_for_label }}" name="{{ form.add_taxonomy_topics.html_name }}"
-                  class="form-control selectpicker" multiple
-                  data-live-search="true" data-size="8" data-selected-text-format="count > 3">
-            {% for topic in form.fields.add_taxonomy_topics.queryset %}
-              <option value="{{ topic.pk }}" data-tokens="{{ topic.get_ancestors }}">
-                {% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}
-              </option>
-            {% endfor %}
-          </select>
+          <div data-vue-component="TaxonomyTOC" data-checkbox="{{ form.add_taxonomy_topics.html_name }}"
+               data-tree="#bulk-update-taxonomy-toc"></div>
+          {{ form.taxonomy_toc|json_script:"bulk-update-taxonomy-toc" }}
         </div>
+
+        <hr>
 
         <div class="mb-3">
           <label>{% trans "Remove taxonomy topics" %}</label>

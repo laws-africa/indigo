@@ -19,7 +19,7 @@
  */
 export default {
   name: 'TaxonomyTOC',
-  props: ['checkbox', 'selected', 'tree', 'form'],
+  props: ['checkbox', 'selected', 'tree', 'form', 'classes'],
   data (self) {
     const taxonomy = JSON.parse(document.querySelector(self.tree || '#taxonomy_toc').textContent);
     const selected = (this.selected || '').split(' ');
@@ -56,10 +56,14 @@ export default {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.name = this.checkbox;
-        checkbox.className = 'facet';
+        if (this.classes) {
+          checkbox.className = this.classes;
+        }
         checkbox.value = tocItem.item.data.slug;
         checkbox.checked = this.selectedSlugs.includes(checkbox.value);
-        checkbox.setAttribute('form', this.form);
+        if (this.form) {
+          checkbox.setAttribute('form', this.form);
+        }
         checkbox.addEventListener('change', (e) => this.checkboxChanged(e, tocItem));
         label.insertBefore(checkbox, label.firstChild);
       }

@@ -56,7 +56,7 @@ class WorkForm(forms.ModelForm):
     delete_publication_document = forms.BooleanField(required=False)
     taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
-        required=False)
+        to_field_name='slug', required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
@@ -342,6 +342,10 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
+
+    @cached_property
+    def taxonomy_toc(self):
+        return TaxonomyTopic.get_toc_tree()
 
 
 class BasePartialWorkFormSet(forms.BaseFormSet):
@@ -1475,6 +1479,10 @@ class WorkBulkActionsForm(forms.Form):
     def clean_all_work_pks(self):
         return self.cleaned_data.get('all_work_pks').split() or []
 
+    def taxonomy_toc(self):
+        # WorkBulkUpdateForm returns the real data when works are selected
+        return []
+
 
 class WorkBulkActionFormBase(forms.Form):
     """Base form for bulk work actions in the works listing view. Ensures that the works queryset is
@@ -1495,7 +1503,7 @@ class WorkBulkUpdateForm(WorkBulkActionFormBase):
     save = forms.BooleanField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
-        queryset=TaxonomyTopic.objects.all(),
+        queryset=TaxonomyTopic.objects.all(), to_field_name='slug',
         required=False)
     del_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
@@ -1509,6 +1517,10 @@ class WorkBulkUpdateForm(WorkBulkActionFormBase):
         if self.cleaned_data.get('del_taxonomy_topics'):
             for work in self.cleaned_data['works']:
                 work.taxonomy_topics.remove(*self.cleaned_data['del_taxonomy_topics'])
+
+    @cached_property
+    def taxonomy_toc(self):
+        return TaxonomyTopic.get_toc_tree()
 
 
 class WorkBulkApproveForm(WorkBulkActionFormBase):

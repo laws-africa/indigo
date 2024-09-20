@@ -101,16 +101,19 @@ class TaxonomyTopic(MP_Node):
                 self.works.remove(*related)
 
     @classmethod
-    def get_toc_tree(cls, query_dict):
+    def get_toc_tree(cls, query_dict=None):
         # capture all preserve all filter parameters and add taxonomy_topic
-        new_query = query_dict.copy()
-        new_query.pop('taxonomy_topic', None)
+        new_query = None
+        if query_dict is not None:
+            new_query = query_dict.copy()
+            new_query.pop('taxonomy_topic', None)
 
         def fix_up(item):
             item["title"] = item["data"]["name"]
-            new_query.update({'taxonomy_topic': item['data']['slug']})
-            item["href"] = f"?{new_query.urlencode()}"
-            new_query.pop('taxonomy_topic', None)
+            if new_query:
+                new_query.update({'taxonomy_topic': item['data']['slug']})
+                item["href"] = f"?{new_query.urlencode()}"
+                new_query.pop('taxonomy_topic', None)
             for kid in item.get("children", []):
                 fix_up(kid)
 

@@ -259,11 +259,9 @@
           <div class="row mb-3">
             <label for="taxonomy_topics" class="col-2 col-form-label">{% trans 'Taxonomy topics' %}</label>
             <div class="col-4">
-              <select id="taxonomy_topics" name="work-taxonomy_topics" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">
-                {% for topic in form.fields.taxonomy_topics.queryset %}
-                  <option {% if topic.pk in form.taxonomy_topics.value %}selected{% endif %} value="{{ topic.pk }}">{% for s in topic.range_space %} &nbsp; {% endfor %}{{ topic.name }}</option>
-                {% endfor %}
-              </select>
+              <div data-vue-component="TaxonomyTOC" data-checkbox="work-taxonomy_topics" data-tree="#taxonomy_toc"
+                   data-form="edit-work-form" data-selected="{{ form.taxonomy_topics.value|join:' ' }}"></div>
+              {{ form.taxonomy_toc|json_script:"taxonomy_toc" }}
             </div>
           </div>
 

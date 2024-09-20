@@ -56,7 +56,7 @@ class WorkForm(forms.ModelForm):
     delete_publication_document = forms.BooleanField(required=False)
     taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),
-        required=False)
+        to_field_name='slug', required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
@@ -342,6 +342,10 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
+
+    @cached_property
+    def taxonomy_toc(self):
+        return TaxonomyTopic.get_toc_tree()
 
 
 class BasePartialWorkFormSet(forms.BaseFormSet):

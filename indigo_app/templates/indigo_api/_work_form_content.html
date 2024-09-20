@@ -260,7 +260,7 @@
             <label for="taxonomy_topics" class="col-2 col-form-label">{% trans 'Taxonomy topics' %}</label>
             <div class="col-4">
               <div data-vue-component="TaxonomyTOC" data-checkbox="work-taxonomy_topics" data-tree="#taxonomy_toc"
-                   data-form="edit-work-form" data-selected="{{ form.taxonomy_topics.value|join:' ' }}"></div>
+                   data-selected="{{ form.taxonomy_topics.value|join:' ' }}"></div>
               {{ form.taxonomy_toc|json_script:"taxonomy_toc" }}
             </div>
           </div>

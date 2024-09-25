@@ -33,3 +33,13 @@ la-akoma-ntoso {
     position: relative;
   }
 }
+
+// give remarks a background colour
+la-akoma-ntoso .akn-remark {
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+// except in jurisdictions where they are already styled differently
+la-akoma-ntoso[frbr-country="na"] .akn-remark {
+  background-color: inherit;
+}

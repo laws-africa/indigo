@@ -61,11 +61,12 @@ class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
 
 
 class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
+    has_trusted_url = serializers.BooleanField(source='trusted_url')
     """Details of the original publication document for a work."""
     class Meta:
         model = PublicationDocument
-        # Don't include the trusted_url field
-        fields = ('url', 'filename', 'mime_type', 'size')
+        # Don't include the trusted_url field (but do include whether the URL is trusted as a boolean)
+        fields = ('url', 'filename', 'mime_type', 'size', 'has_trusted_url')
 
     @extend_schema_field(OpenApiTypes.URI)
     def get_url(self, instance):

@@ -31,6 +31,7 @@
 
     save: function(e) {
       this.model.set('filename', this.$('input').val());
+      this.model.save();
       this.deferred.resolve();
     },
     

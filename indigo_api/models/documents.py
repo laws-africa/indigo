@@ -644,8 +644,20 @@ class Attachment(models.Model):
         ordering = ('filename',)
         verbose_name = _("attachment")
         verbose_name_plural = _("attachments")
+        # TODO: data migration to ensure they're unique first
+        # unique_together = ('document', 'filename')
 
-    # TODO: enforce unique filename for document
+    def ensure_filename_unique(self):
+        filename, extension = self.filename.rsplit('.', 1)
+        other_attachment_filenames = self.document.attachments.only('filename').exclude(pk=self.pk).values_list('filename', flat=True)
+        add_num = 0
+        while self.filename in other_attachment_filenames:
+            add_num += 1
+            self.filename = f'{filename}-{add_num}.{extension}'
+
+    def save(self, **kwargs):
+        self.ensure_filename_unique()
+        super().save(**kwargs)
 
 
 @receiver(signals.pre_delete, sender=Attachment)

@@ -183,7 +183,7 @@ notifier = Notifier()
 def notify_task_action(action_id):
     try:
         notifier.notify_task_action(Action.objects.get(pk=action_id))
-    except Task.DoesNotExist:
+    except Action.DoesNotExist:
         log.warning("Action with id {} doesn't exist, ignoring".format(action_id))
 
 

@@ -64,7 +64,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     # installations should include social account providers, such as
     # allauth.socialaccount.providers.google
-    'captcha',
+    'django_recaptcha',
 
     'django.contrib.sites',
     'django.contrib.admin',
@@ -433,7 +433,7 @@ RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZV
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
 if DEBUG:
     # don't complain about the test keys
-    SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+    SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

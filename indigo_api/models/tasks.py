@@ -461,7 +461,7 @@ class Task(models.Model):
 
                 # unblock related import tasks (if they can be)
                 if task.code in ['convert-document'] and blocked_task.code in ['import-content'] \
-                        and blocked_task.may_unblock(user):
+                        and has_transition_perm(blocked_task.unblock, user):
                     blocked_task.unblock(user)
                     action_verb = self.VERBS['unblock']
 

@@ -441,10 +441,11 @@ class IdentifyAttachmentSubheadings(Stage):
         name_options = ' or '.join(f'@name="{x}"' for x in self.attachment_keywords)
         for block in context.html.xpath(f'./akn-block[{name_options} and not(@subheading)]'):
             first_el = block.getnext()
-            next_el = first_el.getnext()
-            if first_el is not None and first_el.tag == 'p' and not self.is_attachment_or_none(next_el):
-                block.attrib['subheading'] = ''.join(first_el.itertext())
-                first_el.getparent().remove(first_el)
+            if first_el is not None and first_el.tag == 'p':
+                next_el = first_el.getnext()
+                if not self.is_attachment_or_none(next_el):
+                    block.attrib['subheading'] = ''.join(first_el.itertext())
+                    first_el.getparent().remove(first_el)
 
     def is_attachment_or_none(self, elem):
         return elem is None or elem.tag == 'akn-block' and elem.attrib['name'] in self.attachment_keywords

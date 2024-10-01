@@ -1,4 +1,5 @@
 from django.core.files import File
+from django_fsm import has_transition_perm
 from itertools import chain
 
 from indigo_api.models import Task, TaskFile
@@ -119,7 +120,7 @@ class TaskBroker:
 
     def block_or_cancel_tasks(self, tasks, block_or_cancel, user):
         for task in tasks:
-            if block_or_cancel == 'block':
+            if block_or_cancel == 'block' and has_transition_perm(task.block, user):
                 task.block(user)
-            elif block_or_cancel == 'cancel':
+            elif block_or_cancel == 'cancel' and has_transition_perm(task.cancel, user):
                 task.cancel(user)

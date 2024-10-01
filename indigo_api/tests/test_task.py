@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test import TestCase
+from django_fsm import has_transition_perm
 
+from indigo.tasks import TaskBroker
 from indigo_api.models import Task, Work, Country
 
 
@@ -16,6 +17,33 @@ class TaskTestCase(TestCase):
             title='foo',
             description='bar',
             created_by_user=self.user)
+
+    def setup_blocked_tasks(self):
+        self.blocked_task = Task.objects.create(
+            title="Blocked task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+        self.blocking_task = Task.objects.create(
+            title="Blocking task",
+            description="Test description",
+            country_id=1,
+            created_by_user_id=1,
+        )
+        self.blocked_task.blocked_by.add(self.blocking_task)
+        self.assertTrue(has_transition_perm(self.blocked_task.block, self.user))
+        self.blocked_task.block(self.user)
+        self.blocked_task.save()
+        self.assertEqual(Task.BLOCKED, self.blocked_task.state)
+        self.assertEqual([self.blocking_task], list(self.blocked_task.blocked_by.all()))
+        self.assertFalse(has_transition_perm(self.blocked_task.block, self.user))
+
+    def assert_still_blocked_but_by_nothing(self):
+        # task is still blocked, but no longer blocked by anything
+        self.blocked_task.refresh_from_db()
+        self.assertEqual(Task.BLOCKED, self.blocked_task.state)
+        self.assertEqual([], list(self.blocked_task.blocked_by.all()))
 
     def test_discard_bad_work_country(self):
         self.task.country = self.na
@@ -39,6 +67,8 @@ class TaskTestCase(TestCase):
 
     def test_cancel(self):
         self.task.country = self.za
+        # the user has permission, and the task is in the right state to be cancelled
+        self.assertTrue(has_transition_perm(self.task.cancel, self.user))
         self.task.cancel(self.user)
         self.task.save()
         self.task.refresh_from_db()
@@ -46,21 +76,26 @@ class TaskTestCase(TestCase):
         self.assertEqual(Task.CANCELLED, self.task.state)
         self.assertIsNotNone(self.task.closed_at)
         self.assertIsNone(self.task.reviewed_by_user)
+        # the user still has the permission, but the task itself cannot be re-cancelled
+        self.assertFalse(has_transition_perm(self.task.cancel, self.user))
 
     def test_reopen(self):
         self.task.country = self.za
         self.task.cancel(self.user)
         self.task.save()
         self.task.refresh_from_db()
+        self.assertTrue(has_transition_perm(self.task.reopen, self.user))
         self.task.reopen(self.user)
 
         self.assertEqual(Task.OPEN, self.task.state)
         self.assertIsNone(self.task.closed_at)
         self.assertIsNone(self.task.reviewed_by_user)
+        self.assertFalse(has_transition_perm(self.task.reopen, self.user))
 
     def test_close(self):
         self.task.state = Task.PENDING_REVIEW
         self.task.country = self.za
+        self.assertTrue(has_transition_perm(self.task.close, self.user))
         self.task.close(self.user)
         self.task.save()
         self.task.refresh_from_db()
@@ -68,50 +103,108 @@ class TaskTestCase(TestCase):
         self.assertEqual(Task.DONE, self.task.state)
         self.assertIsNotNone(self.task.closed_at)
         self.assertEqual(self.user, self.task.reviewed_by_user)
+        self.assertFalse(has_transition_perm(self.task.close, self.user))
 
     def test_block(self):
         self.task.state = Task.OPEN
         self.task.country = self.za
         self.task.assign_to(User.objects.get(pk=1), self.user)
+        self.assertTrue(has_transition_perm(self.task.block, self.user))
         self.task.block(self.user)
         self.task.save()
         self.task.refresh_from_db()
 
         self.assertEqual(Task.BLOCKED, self.task.state)
         self.assertIsNone(self.task.assigned_to)
+        self.assertFalse(has_transition_perm(self.task.block, self.user))
 
     def test_unblock(self):
         self.task.state = Task.BLOCKED
         self.task.country = self.za
+        self.task.save()
+        self.assertTrue(has_transition_perm(self.task.unblock, self.user))
         self.task.unblock(self.user)
         self.task.save()
         self.task.refresh_from_db()
 
         self.assertEqual(Task.OPEN, self.task.state)
+        self.assertFalse(has_transition_perm(self.task.unblock, self.user))
 
     def test_update_blocked_tasks(self):
-        blocked_task = Task.objects.create(
-            title="Blocked task",
-            description="Test description",
-            country_id=1,
-            created_by_user_id=1,
-        )
-        blocking_task = Task.objects.create(
-            title="Blocking task",
-            description="Test description",
-            country_id=1,
-            created_by_user_id=1,
-        )
+        self.setup_blocked_tasks()
+        # update_blocked_tasks() is called from cancel(), close(), and finish()
+        self.blocking_task.update_blocked_tasks(self.blocking_task, self.user)
+        self.assert_still_blocked_but_by_nothing()
 
-        blocked_task.blocked_by.add(blocking_task)
-        blocked_task.block(self.user)
-        blocked_task.save()
+    def test_update_blocked_tasks_unblock(self):
+        self.setup_blocked_tasks()
+        # extra setup: a conversion task blocking an import task
+        self.blocking_task.code = 'convert-document'
+        self.blocking_task.save()
+        self.blocked_task.code = 'import-content'
+        self.blocked_task.save()
+        # update_blocked_tasks() is called from cancel(), close(), and finish()
+        self.blocking_task.update_blocked_tasks(self.blocking_task, self.user)
 
+        # task has been unblocked
+        self.blocked_task.refresh_from_db()
+        self.assertEqual(Task.OPEN, self.blocked_task.state)
+        self.assertEqual([], list(self.blocked_task.blocked_by.all()))
+
+    def test_update_blocked_tasks_cancelled(self):
+        self.setup_blocked_tasks()
+        # extra setup: a conversion task blocking an import task, BUT the import task is cancelled
+        self.blocking_task.code = 'convert-document'
+        self.blocking_task.save()
+        self.blocked_task.code = 'import-content'
+        self.blocked_task.state = Task.CANCELLED
+        self.blocked_task.save()
+        # update_blocked_tasks() is called from cancel(), close(), and finish()
+        self.blocking_task.update_blocked_tasks(self.blocking_task, self.user)
+
+        # task can't be unblocked, because it's cancelled, but it's no longer blocked by anything
+        self.blocked_task.refresh_from_db()
+        self.assertEqual(Task.CANCELLED, self.blocked_task.state)
+        self.assertEqual([], list(self.blocked_task.blocked_by.all()))
+
+    def test_update_blocked_tasks_from_cancel(self):
+        self.setup_blocked_tasks()
+        # cancel() includes a call to update_blocked_tasks()
+        self.assertTrue(has_transition_perm(self.blocking_task.cancel, self.user))
+        self.blocking_task.cancel(self.user)
+        self.assert_still_blocked_but_by_nothing()
+
+    def test_update_blocked_tasks_from_close(self):
+        self.setup_blocked_tasks()
+        self.blocking_task.state = Task.PENDING_REVIEW
+        # close() includes a call to update_blocked_tasks()
+        self.assertTrue(has_transition_perm(self.blocking_task.close, self.user))
+        self.blocking_task.close(self.user)
+        self.assert_still_blocked_but_by_nothing()
+
+    def test_update_blocked_tasks_from_finish(self):
+        self.setup_blocked_tasks()
+        # finish() includes a call to update_blocked_tasks()
+        self.assertTrue(has_transition_perm(self.blocking_task.finish, self.user))
+        self.blocking_task.finish(self.user)
+        self.assert_still_blocked_but_by_nothing()
+
+
+class TaskBrokerTestCase(TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'drafts']
+
+    def setUp(self):
+        self.broker = TaskBroker(Work.objects.none())
+        self.user = User.objects.get(pk=1)
+
+    def test_block_or_cancel_tasks(self):
+        blocked_task = Task(state=Task.BLOCKED, country_id=1, created_by_user_id=1)
+        self.assertFalse(has_transition_perm(blocked_task.block, self.user))
+        self.broker.block_or_cancel_tasks([blocked_task], 'block', self.user)
         self.assertEqual(Task.BLOCKED, blocked_task.state)
-        self.assertEqual([blocking_task], list(blocked_task.blocked_by.all()))
-
-        blocking_task.cancel(self.user)
-
-        # task is still blocked, but no longer blocked by anything
-        self.assertEqual(Task.BLOCKED, blocked_task.state)
-        self.assertEqual([], list(blocked_task.blocked_by.all()))
+        self.assertTrue(has_transition_perm(blocked_task.cancel, self.user))
+        self.broker.block_or_cancel_tasks([blocked_task], 'cancel', self.user)
+        self.assertEqual(Task.CANCELLED, blocked_task.state)
+        self.assertFalse(has_transition_perm(blocked_task.cancel, self.user))
+        self.broker.block_or_cancel_tasks([blocked_task], 'cancel', self.user)
+        self.assertEqual(Task.CANCELLED, blocked_task.state)

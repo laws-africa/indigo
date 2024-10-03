@@ -391,9 +391,10 @@ class Document(DocumentMixin, models.Model):
         and other attributes -- such as the document title and FRBR URI based on the XML. """
         self.reset_xml(value, from_model=False)
 
-    def amendments(self):
+    def amendments(self, approved_only=False):
         if self.expression_date:
-            return [a for a in self.work.amendments.all() if a.date <= self.expression_date]
+            amendments = self.work.amendments.approved() if approved_only else self.work.amendments.all()
+            return [a for a in amendments if a.date <= self.expression_date]
         else:
             return []
 

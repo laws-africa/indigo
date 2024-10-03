@@ -142,7 +142,7 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
     def setup_subtypes(self):
         self.subtypes = [s for s in Subtype.objects.all()]
         subtype_names = [s.name for s in self.subtypes]
-        subtype_abbreviations = [s.abbreviation for s in self.subtypes]
+        subtype_abbreviations = [s.abbreviation.upper() for s in self.subtypes]
 
         # sort, longest first
         subtypes = sorted(subtype_names + subtype_abbreviations, key=len, reverse=True)
@@ -160,13 +160,13 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>
-                    (?P<subtype>{subtypes_string})\s*
-                    (No\.?\s*)?
+                    \b(?P<subtype>{subtypes_string})\s*
+                    ([nN]o\.?\s*)?
                     (?P<num>[a-z0-9-]+)
                     (\s+of\s+|/)
                     (?P<year>\d{{4}})
                 )
-            ''', re.X | re.I)
+            ''', re.X)
 
     def extract_paged_text_matches(self):
         # don't do anything if there are no subtypes

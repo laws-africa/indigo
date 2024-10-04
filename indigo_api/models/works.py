@@ -902,6 +902,7 @@ class Amendment(models.Model):
                                       help_text=_("Work making the amendment"), related_name='amendments_made')
     date = models.DateField(_("date"), null=False, blank=False,
                             help_text=_("Date on which the amendment comes into operation"))
+    verb = models.CharField(_("verb"), null=False, blank=True, default="amended", help_text=_("Replace with e.g. 'revised' as needed"))
 
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)

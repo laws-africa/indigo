@@ -197,8 +197,9 @@ def get_timeline(work, only_approved_events=False):
 
         # amendment
         for amendment in amendments:
+            description_description = _('Revised by') if amendment.verb == 'revised' else _('Amended by')
             description = TimelineEvent(
-                TimelineEventType.AMENDMENT, description=_('Amended by'), related=amendment,
+                TimelineEventType.AMENDMENT, description=description_description, related=amendment,
                 by_frbr_uri=amendment.amending_work.frbr_uri,
                 by_title=amendment.amending_work.title)
 

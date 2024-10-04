@@ -35,6 +35,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
               <p>And another thing about SI 4a of 1998.</p>
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>
+              <p>don't match where it's at the end of somethiGN no 102 of 2012.</p>
             </content>
           </paragraph>
         </section>"""
@@ -54,6 +55,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
               <p>And another thing about <ref href="/akn/za/act/si/1998/4a">SI 4a of 1998</ref>.</p>
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>
+              <p>don't match where it's at the end of somethiGN no 102 of 2012.</p>
             </content>
           </paragraph>
         </section>"""

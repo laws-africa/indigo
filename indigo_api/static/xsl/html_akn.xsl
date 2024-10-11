@@ -187,6 +187,18 @@
         <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
+    <xsl:if test="self::a:section">
+      <xsl:text>Section </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subchapter">
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Sous-chapitre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Sub-chapter </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:subsection">
+      <xsl:text>Subsection </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:title">
       <xsl:choose>
         <xsl:when test="$lang = 'fra'"><xsl:text>Titre </xsl:text></xsl:when>

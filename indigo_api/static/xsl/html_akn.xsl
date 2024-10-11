@@ -86,8 +86,11 @@
   </xsl:template>
 
   <!-- helper template for rendering just the text of elements' names when rendered before the num / heading -->
-  <!-- TODO: add all elements, translations -->
+  <!-- TODO: add translations -->
   <xsl:template name="hier-heading-name">
+    <xsl:if test="self::a:alinea">
+      <xsl:text>Alinea </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:article">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
@@ -160,6 +163,21 @@
     <xsl:if test="self::a:clause">
       <xsl:text>Clause </xsl:text>
     </xsl:if>
+    <xsl:if test="self::a:division">
+      <xsl:text>Division </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:indent">
+      <xsl:text>Indent </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:level">
+      <xsl:text>Level </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:list">
+      <xsl:text>List </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:paragraph">
+      <xsl:text>Paragraph </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:part">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
@@ -187,6 +205,15 @@
         <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
+    <xsl:if test="self::a:point">
+      <xsl:text>Point </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:proviso">
+      <xsl:text>Proviso </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:rule">
+      <xsl:text>Rule </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:section">
       <xsl:text>Section </xsl:text>
     </xsl:if>
@@ -196,8 +223,29 @@
         <xsl:otherwise><xsl:text>Sub-chapter </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
+    <xsl:if test="self::a:subclause">
+      <xsl:text>Subclause </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subdivision">
+      <xsl:text>Subdivision </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:sublist">
+      <xsl:text>Sublist </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subparagraph">
+      <xsl:text>Subparagraph </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subpart">
+      <xsl:text>Subpart </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subrule">
+      <xsl:text>Subrule </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:subsection">
       <xsl:text>Subsection </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subtitle">
+      <xsl:text>Sub-title </xsl:text>
     </xsl:if>
     <xsl:if test="self::a:title">
       <xsl:choose>
@@ -209,6 +257,9 @@
     </xsl:if>
     <xsl:if test="self::a:tome">
       <xsl:text>Tome </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:transitional">
+      <xsl:text>Transitional </xsl:text>
     </xsl:if>
   </xsl:template>
 

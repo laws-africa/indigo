@@ -85,13 +85,45 @@
     </section>
   </xsl:template>
 
-  <!-- hierarchical elements with h2 headings:
-       - name, e.g. 'Chapter', and num on one line
-       - heading on the next -->
-  <xsl:template name="hier-heading-next-line">
+  <!-- helper template for rendering just the text of elements' names when rendered before the num / heading -->
+  <!-- TODO: add translations -->
+  <xsl:template name="hier-heading-name">
+    <xsl:if test="self::a:alinea">
+      <xsl:text>Alinea </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:article">
+      <xsl:choose>
+        <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ell'"><xsl:text>Άρθρο </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'kor'">
+          <xsl:choose>
+            <xsl:when test="a:num">
+              <xsl:text>제</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>조</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'spa'"><xsl:text>Artículo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'sqi'"><xsl:text>Neni </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'swa'">
+          <xsl:text>Ibara </xsl:text>
+          <xsl:if test="a:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:when test="$lang = 'zho'"><xsl:text>第</xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
     <xsl:if test="self::a:book">
-      <!-- TODO: add translations; use choose (see chapter) -->
-      <xsl:text>Book </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Livre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Book </xsl:text></xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:chapter">
       <xsl:choose>
@@ -131,6 +163,96 @@
         <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:if>
+    <xsl:if test="self::a:clause">
+      <xsl:text>Clause </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:division">
+      <xsl:text>Division </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:indent">
+      <xsl:text>Indent </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:level">
+      <xsl:text>Level </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:list">
+      <xsl:text>List </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:paragraph">
+      <xsl:text>Paragraph </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:part">
+      <xsl:choose>
+        <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'nor'"/>
+        <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'sqi'"><xsl:text>Pjesa </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'swa'">
+          <xsl:text>Sehemu </xsl:text>
+          <xsl:if test="a:num">
+            <xsl:text>ya </xsl:text>
+          </xsl:if>
+        </xsl:when>
+        <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:point">
+      <xsl:text>Point </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:proviso">
+      <xsl:text>Proviso </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:rule">
+      <xsl:text>Rule </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:section">
+      <xsl:text>Section </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subchapter">
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Sous-chapitre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Sub-chapter </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:subclause">
+      <xsl:text>Subclause </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subdivision">
+      <xsl:text>Subdivision </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:sublist">
+      <xsl:text>Sublist </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subparagraph">
+      <xsl:text>Subparagraph </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subpart">
+      <xsl:text>Subpart </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subrule">
+      <xsl:text>Subrule </xsl:text>
+    </xsl:if>
+    <xsl:if test="self::a:subsection">
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Sous-section </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Subsection </xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="self::a:subtitle">
+      <xsl:text>Sub-title </xsl:text>
+    </xsl:if>
     <xsl:if test="self::a:title">
       <xsl:choose>
         <xsl:when test="$lang = 'fra'"><xsl:text>Titre </xsl:text></xsl:when>
@@ -140,9 +262,18 @@
       </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:tome">
-      <!-- TODO: add translations; use choose (see chapter) -->
       <xsl:text>Tome </xsl:text>
     </xsl:if>
+    <xsl:if test="self::a:transitional">
+      <xsl:text>Transitional </xsl:text>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- hierarchical elements with h2 headings:
+       - name, e.g. 'Chapter', and num on one line
+       - heading on the next -->
+  <xsl:template name="hier-heading-next-line">
+    <xsl:call-template name="hier-heading-name"/>
     <xsl:value-of select="a:num" />
     <xsl:if test="./a:heading">
       <br/>
@@ -177,65 +308,7 @@
        - heading
        on one line -->
   <xsl:template name="hier-heading-same-line">
-    <xsl:if test="self::a:article">
-      <xsl:choose>
-        <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'ell'"><xsl:text>Άρθρο </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'kor'">
-          <xsl:choose>
-            <xsl:when test="a:num">
-              <xsl:text>제</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:text>조</xsl:text>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:when>
-        <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'spa'"><xsl:text>Artículo </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'sqi'"><xsl:text>Neni </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'swa'">
-          <xsl:text>Ibara </xsl:text>
-          <xsl:if test="a:num">
-            <xsl:text>ya </xsl:text>
-          </xsl:if>
-        </xsl:when>
-        <xsl:when test="$lang = 'zho'"><xsl:text>第</xsl:text></xsl:when>
-        <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
-    <xsl:if test="self::a:clause">
-      <!-- TODO: add translations; use choose (see article) -->
-      <xsl:text>Clause </xsl:text>
-    </xsl:if>
-    <xsl:if test="self::a:part">
-      <xsl:choose>
-        <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'nor'"/>
-        <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'por'"><xsl:text>Parte </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'sqi'"><xsl:text>Pjesa </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'swa'">
-          <xsl:text>Sehemu </xsl:text>
-          <xsl:if test="a:num">
-            <xsl:text>ya </xsl:text>
-          </xsl:if>
-        </xsl:when>
-        <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
-        <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
-        <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
+    <xsl:call-template name="hier-heading-name"/>
     <xsl:value-of select="a:num" />
     <xsl:if test="./a:heading">
       <xsl:call-template name="optional-dash">

@@ -120,7 +120,10 @@
       </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:book">
-      <xsl:text>Book </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Livre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Book </xsl:text></xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:chapter">
       <xsl:choose>
@@ -242,7 +245,10 @@
       <xsl:text>Subrule </xsl:text>
     </xsl:if>
     <xsl:if test="self::a:subsection">
-      <xsl:text>Subsection </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Sous-section </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Subsection </xsl:text></xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:subtitle">
       <xsl:text>Sub-title </xsl:text>

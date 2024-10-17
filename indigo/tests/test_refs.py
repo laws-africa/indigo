@@ -32,6 +32,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
           <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with GN no 102 of 2012.</p>
+              <p>Something to do with Government Notice R184 of 1995.</p>
               <p>And another thing about SI 4a of 1998.</p>
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>
@@ -52,6 +53,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
           <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with <ref href="/akn/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
+              <p>Something to do with <ref href="/akn/za/act/gn/1995/r184">Government Notice R184 of 1995</ref>.</p>
               <p>And another thing about <ref href="/akn/za/act/si/1998/4a">SI 4a of 1998</ref>.</p>
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>

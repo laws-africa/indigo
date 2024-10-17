@@ -735,6 +735,10 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(0, response.json()['count'])
 
+        response = self.client.get(self.api_path + '/akn/za/act/2014/10/.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual("/akn/za/act/2014/10/eng@2014-02-12", response.json()['expression_frbr_uri'])
+
 
 @override_settings(STORAGES=TEST_STORAGES)
 class ContentAPIV2Test(ContentAPIV2TestMixin, APITestCase):

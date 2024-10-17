@@ -68,15 +68,12 @@ class FrbrUriViewMixin(PlaceAPIBase):
         self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
 
     def parse_frbr_uri(self, frbr_uri):
+        # clear the default language so that we don't get an erroneous language if it hasn't been specified in the url
         FrbrUri.default_language = None
         try:
             frbr_uri = FrbrUri.parse(frbr_uri)
         except ValueError:
             return None
-
-        frbr_uri.default_language = self.country.primary_language.code
-        if not frbr_uri.language:
-            frbr_uri.language = frbr_uri.default_language
 
         return frbr_uri
 
@@ -213,7 +210,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 serializer = self.get_serializer(document)
                 # use the request URI as the basis for this document
                 serializer.context['url'] = serializer.published_doc_url(
-                    document, request, frbr_uri=self.frbr_uri.expression_uri()
+                    document, request, frbr_uri=document.expression_frbr_uri
                 )
                 return Response(serializer.data)
 

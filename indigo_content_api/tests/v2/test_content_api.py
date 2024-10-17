@@ -465,19 +465,19 @@ class ContentAPIV2TestMixin:
         links.sort(key=lambda k: k['title'])
 
         self.assertEqual(links, [
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng.xml',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01.xml',
              'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng.html', 'mediaType': 'text/html',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01.html', 'mediaType': 'text/html',
              'rel': 'alternate', 'title': 'HTML'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng/media.json',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01/media.json',
              'mediaType': 'application/json', 'rel': 'media', 'title': 'Media'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng.pdf',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01.pdf',
              'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng.html?standalone=1',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01.html?standalone=1',
              'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng/toc.json',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01/toc.json',
              'mediaType': 'application/json', 'rel': 'toc', 'title': 'Table of Contents'},
-            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng.epub',
+            {'href': 'http://' + self.api_host + self.api_path + '/akn/za/act/2001/8/eng@2001-10-01.epub',
              'mediaType': 'application/epub+zip', 'rel': 'alternate', 'title': 'ePUB'},
         ])
 
@@ -734,6 +734,10 @@ class ContentAPIV2TestMixin:
         response = self.client.get(self.api_path + '/akn/za/.json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(0, response.json()['count'])
+
+        response = self.client.get(self.api_path + '/akn/za/act/2014/10/.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual("/akn/za/act/2014/10/eng@2014-02-12", response.json()['expression_frbr_uri'])
 
 
 @override_settings(STORAGES=TEST_STORAGES)

@@ -564,8 +564,8 @@
       const wordWrap = this.textEditor.getOption(132);
       this.textEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
       if (e.currentTarget.tagName === 'BUTTON') {
-        e.currentTarget.classList.toggle('active')
-      };
+        e.currentTarget.classList.toggle('active');
+      }
     },
 
     resize: function() {},

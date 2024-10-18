@@ -20,6 +20,7 @@
 
       'click .insert-image': 'insertImage',
       'click .insert-remark': 'insertRemark',
+      'click .toggle-word-wrap': 'toggleWordWrap',
     },
 
     initialize: function(options) {
@@ -498,9 +499,9 @@
     triggerEditorAction: function(e) {
       // an editor action from the toolbar
       e.preventDefault();
-      const action = e.target.getAttribute('data-action');
-      this.textEditor.trigger('indigo', action);
+      const action = e.currentTarget.getAttribute('data-action');
       this.textEditor.focus();
+      this.textEditor.trigger('indigo', action);
     },
 
     /**
@@ -555,6 +556,16 @@
 
       this.grammarModel.insertRemark(this.textEditor, remark);
       this.textEditor.focus();
+    },
+
+    toggleWordWrap: function(e) {
+      e.preventDefault();
+      // 132 = EditorOptions.WordWrap
+      const wordWrap = this.textEditor.getOption(132);
+      this.textEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
+      if (e.currentTarget.tagName === 'BUTTON') {
+        e.currentTarget.classList.toggle('active')
+      };
     },
 
     resize: function() {},

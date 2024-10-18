@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<div class="document-editor-toolbar">
+<div class="document-editor-toolbar flex-grow-1">
   <div class="btn-toolbar general-buttons">
     <div class="btn-group btn-group-sm me-2">
       {% if request.user.is_authenticated %}
@@ -52,9 +52,36 @@
         </a>
       {% endif %}
     </div>
+    <div class="btn-group ms-auto">
+      <div class="btn-group btn-group-sm me-2">
+        <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack me-1"></i>{% trans "Tasks" %}</a>
+      </div>
+
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-cog"></i> {% trans "Settings" %}</button>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="#properties-modal" data-bs-toggle="modal">{% trans "Properties..." %}</a>
+          <div class="dropdown-submenu">
+            <a href="#" class="dropdown-item">{% trans "Download as" %}</a>
+            <div class="dropdown-menu dropdown-menu-right">
+              {% for fmt in download_formats %}
+                <a class="dropdown-item" href="{{ fmt.url }}" target="_blank"><i class="{{ fmt.icon }}"></i> {{ fmt.title }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item delete-document" href="#">{% trans "Delete" %}</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="btn-toolbar text-editor-buttons d-none ms-2">
+  <div class="btn-toolbar text-editor-buttons d-none">
+    <div class="btn-group btn-group-sm me-2">
+      <button class="btn btn-success save"><i class="fas fa-check"></i> {% trans "Update" %}</button>
+      <button class="btn btn-secondary cancel" title="Cancel"><i class="fas fa-times"></i> {% trans "Cancel" %}</button>
+    </div>
     <div class="btn-group btn-group-sm me-2">
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">{% trans "Edit" %}</button>
@@ -68,7 +95,7 @@
           <a class="dropdown-item editor-action" data-action="editor.action.moveLinesDownAction" href="#">{% trans "Move lines down" %}<span class="shortcut win">Ctrl-↓</span><span class="shortcut osx">⌥-↓</span></a>
           <a class="dropdown-item editor-action" data-action="editor.action.joinLines" href="#">{% trans "Join lines" %}<span class="shortcut win">Ctrl-J</span><span class="shortcut osx">^-J</span></a>
           <hr class="dropdown-divider">
-          <a class="dropdown-item editor-action" data-action="editor.action.quickCommand" href="#">{% trans "Command palette..." %}<span class="shortcut">F1</span></a>
+          <a class="dropdown-item editor-action" data-action="editor.action.quickCommand" href="#">{% trans "All commands..." %}<span class="shortcut">F1</span></a>
         </div>
       </div>
       <div class="btn-group btn-group-sm">
@@ -102,13 +129,9 @@
       <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.remark">{% trans "Remark" %}</button>
     </div>
     <div class="btn-group btn-group-sm me-2">
-      <button type="button" class="btn btn-outline-secondary toggle-word-wrap active">Wrap</button>
+      <button type="button" class="btn btn-outline-secondary toggle-word-wrap active">{% trans "Wrap lines" %}</button>
     </div>
-    <div class="btn-group btn-group-sm me-2">
-      <button class="btn btn-success save"><i class="fas fa-check"></i> {% trans "Update" %}</button>
-      <button class="btn btn-secondary cancel" title="Cancel"><i class="fas fa-times"></i> {% trans "Cancel" %}</button>
-    </div>
-    <div class="btn-group btn-group-sm">
+    <div class="btn-group btn-group-sm ms-auto">
       <button class="btn btn-outline-secondary" data-bs-target="#cheatsheet-modal" data-bs-toggle="modal"><i class="fas fa-question-circle fa-fw"></i> {% trans "Help" %}</button>
       {% if place.settings.styleguide_url %}
         <a class="btn btn-outline-secondary" href="{{ place.settings.styleguide_url }}" target="_blank">
@@ -116,29 +139,6 @@
           {% blocktrans trimmed with country=work.country.name %}{{ country }} Style Guide{% endblocktrans %}
         </a>
       {% endif %}
-    </div>
-  </div>
-</div>
-
-<div class="btn-toolbar ms-auto">
-  <div class="btn-group btn-group-sm me-2">
-    <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack me-1"></i>{% trans "Tasks" %}</a>
-  </div>
-
-  <div class="btn-group btn-group-sm">
-    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-cog"></i> {% trans "Settings" %}</button>
-    <div class="dropdown-menu dropdown-menu-right">
-      <a class="dropdown-item" href="#properties-modal" data-bs-toggle="modal">{% trans "Properties..." %}</a>
-      <div class="dropdown-submenu">
-        <a href="#" class="dropdown-item">{% trans "Download as" %}</a>
-        <div class="dropdown-menu dropdown-menu-right">
-          {% for fmt in download_formats %}
-            <a class="dropdown-item" href="{{ fmt.url }}" target="_blank"><i class="{{ fmt.icon }}"></i> {{ fmt.title }}</a>
-          {% endfor %}
-        </div>
-      </div>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item delete-document" href="#">{% trans "Delete" %}</a>
     </div>
   </div>
 </div>

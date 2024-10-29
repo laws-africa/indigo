@@ -35,6 +35,7 @@ class BaseTaskBrokerTestCase(TestCase):
             'update_amendment_tasks': 'cancel',
         }
         for amendment in self.broker.amendments:
+            data[f'amendment_task_create_{amendment.pk}'] = True
             data[f'amendment_task_description_{amendment.pk}'] = 'Apply the amendments made by %(amending_title)s' \
                                                                  ' (%(numbered_title)s) on the given date.' % {
                                                                      'amending_title': amendment.amending_work.title,

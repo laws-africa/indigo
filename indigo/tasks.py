@@ -68,14 +68,15 @@ class TaskBroker:
         # amendment tasks
         self.amendment_tasks = []
         for amendment in self.amendments:
-            # create new amendment tasks so that we don't overwrite descriptions on existing tasks
-            work = amendment.amended_work
-            self.amendment_tasks.append(
-                Task.objects.create(country=work.country, locality=work.locality, work=work,
-                                    code='apply-amendment', title=dict(Task.MAIN_CODES)['apply-amendment'],
-                                    timeline_date=amendment.date,
-                                    description=data[f'amendment_task_description_{amendment.pk}'],
-                                    created_by_user=user))
+            if data.get(f'amendment_task_create_{amendment.pk}'):
+                # create new amendment tasks so that we don't overwrite descriptions on existing tasks
+                work = amendment.amended_work
+                self.amendment_tasks.append(
+                    Task.objects.create(country=work.country, locality=work.locality, work=work,
+                                        code='apply-amendment', title=dict(Task.MAIN_CODES)['apply-amendment'],
+                                        timeline_date=amendment.date,
+                                        description=data[f'amendment_task_description_{amendment.pk}'],
+                                        created_by_user=user))
         if data.get('update_amendment_tasks'):
             self.block_or_cancel_tasks(self.amendment_tasks, data['update_amendment_tasks'], user)
 

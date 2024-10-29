@@ -1548,6 +1548,7 @@ class WorkBulkApproveForm(WorkBulkActionFormBase):
 
     def add_amendment_task_description_fields(self):
         for amendment in self.broker.amendments:
+            self.fields[f'amendment_task_create_{amendment.pk}'] = forms.BooleanField(initial=True, required=False)
             self.fields[f'amendment_task_description_{amendment.pk}'] = forms.CharField()
 
     def save_changes(self, request):

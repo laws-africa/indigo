@@ -5,6 +5,7 @@ from django import template
 from django.conf import settings
 
 from indigo.plugins import plugins
+from indigo_api.models import Task
 from indigo_api.timeline import describe_publication_event
 
 register = template.Library()
@@ -92,3 +93,8 @@ def format_input_date(value):
             return value  # If conversion fails, return the original value
 
     return value.strftime('%Y-%m-%d')
+
+
+@register.simple_tag
+def amendment_date_tasks(amendment):
+    return Task.objects.filter(work=amendment.amended_work, timeline_date=amendment.date, code='apply-amendment')

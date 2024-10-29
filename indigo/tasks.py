@@ -68,6 +68,8 @@ class TaskBroker:
         # amendment tasks
         self.amendment_tasks = []
         for amendment in self.amendments:
+            if data.get(f'amendment_task_skip_{amendment.pk}'):
+                continue
             # create new amendment tasks so that we don't overwrite descriptions on existing tasks
             work = amendment.amended_work
             self.amendment_tasks.append(

@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n indigo %}
 
 <div class="modal-dialog modal-dialog-scrollable modal-xl">
   <div class="modal-content">
@@ -161,6 +161,19 @@ Apply the amendments made by {{ title }} ({{ numbered_title }}) on the given dat
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}
                           <textarea id="amendment_task_description_id_{{ amendment.pk }}" name="amendment_task_description_{{ amendment.pk }}" class="form-control mt-2" required rows="4"
                           >{{ description_default }}</textarea>
+                          <div class="form-check mt-1">
+                            <input class="form-check-input" type="checkbox" id="amendment_task_skip_{{ amendment.pk }}" name="amendment_task_skip_{{ amendment.pk }}">
+                            <label class="form-check-label" for="amendment_task_skip_{{ amendment.pk }}">{% trans "Skip" %}</label>
+                          </div>
+                          {% amendment_date_tasks amendment as potential_duplicates %}
+                          {% for task in potential_duplicates %}
+                            <div class="mt-1"><span title="{% trans 'potential duplicate' %}">
+                              <i class="fas fa-exclamation-triangle text-warning"></i>
+                              <a target="_blank" href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }}</a>
+                              <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-2"></i><br/>
+                              {{ task.description }}
+                            </span></div>
+                          {% endfor %}
                         </div>
                       {% endfor %}
                     </div>

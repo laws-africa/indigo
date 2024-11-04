@@ -19,6 +19,11 @@
   display: flex;
   flex-direction: row;
 
+  .document-pane {
+    flex: 1;
+    display: flex;
+  }
+
   .document-workspace-content,
   .document-xml-editor {
     flex: 1;
@@ -479,5 +484,26 @@ la-table-of-contents-controller {
   &.issue-information::before {
     color: $blue;
     content: "\f071";
+  }
+}
+
+.v-splitter {
+  width: 5px;
+  cursor: col-resize;
+
+  &:hover {
+    background-color: #ccc;
+  }
+
+  &::after {
+    display: block;
+    content: " ";
+    position: relative;
+    top: 50%;
+    left: 1px;
+    width: 3px;
+    height: 2em;
+    background-color: $gray-400;
+    border-radius: 3px;
   }
 }

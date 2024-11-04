@@ -2,7 +2,7 @@
 {% load pipeline static i18n %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} document-editor-view no-site-footer sidebar-minimized
+{% block body-class %}{{ block.super }} document-editor-view no-site-footer
   {% if document.draft %}is-draft{% else %}is-published{% endif %}
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
@@ -77,8 +77,11 @@
 {% block main-content %}
   <div class="document-workspace document-content-view">
     {% include "indigo_api/document/_toc.html" %}
-    {% include "indigo_api/document/_content.html" %}
-    {% include "indigo_api/document/_source_att.html" %}
+    <div class="v-splitter" data-component="VSplitter" id="toc-content-splitter"></div>
+    <div class="document-pane">
+      {% include "indigo_api/document/_content.html" %}
+      {% include "indigo_api/document/_source_att.html" %}
+    </div>
   </div>
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">

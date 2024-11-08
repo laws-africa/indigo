@@ -1,9 +1,10 @@
 export class VSplitter {
   constructor (splitter) {
+    this.cursor = 'col-resize';
     this.splitter = splitter;
     this.container = splitter.parentElement;
-    this.leftPane = splitter.previousElementSibling;
-    this.rightPane = splitter.nextElementSibling;
+    this.firstPane = splitter.previousElementSibling;
+    this.secondPane = splitter.nextElementSibling;
     this.isDragging = false;
 
     this.splitter.addEventListener('mousedown', (e) => this.onMouseDown(e));
@@ -11,7 +12,7 @@ export class VSplitter {
     this.mouseMove = this.onMouseMove.bind(this);
 
     if (this.splitter.id) {
-      this.storageKey = `splitter-${this.splitter.id}`;
+      this.storageKey = `splitter:${this.splitter.id}`;
       this.loadState();
     } else {
       this.storageKey = null;
@@ -19,12 +20,11 @@ export class VSplitter {
   }
 
   loadState () {
-    let width = window.localStorage.getItem(this.storageKey);
-    if (width) {
+    let percentage = window.localStorage.getItem(this.storageKey);
+    if (percentage) {
       try {
-        width = Math.max(10, Math.min(90, parseFloat(width)));
-        this.leftPane.style.flexBasis = `${width}%`;
-        this.rightPane.style.flexBasis = `${100.0 - width}%`;
+        percentage = Math.max(10, Math.min(90, parseFloat(percentage)));
+        this.setLeftPanePercentage(percentage);
       } catch {
         window.localStorage.removeItem(this.storageKey);
       }
@@ -33,13 +33,13 @@ export class VSplitter {
 
   saveState (width) {
     if (this.storageKey) {
-      window.localStorage.setItem(`splitter-${this.splitter.id}`, width.toString());
+      window.localStorage.setItem(this.storageKey, width.toString());
     }
   }
 
   onMouseDown (e) {
     this.isDragging = true;
-    document.body.style.cursor = 'col-resize';
+    document.body.style.cursor = this.cursor;
     document.body.style.userSelect = 'none';
     document.addEventListener('mouseup', this.mouseUp);
     document.addEventListener('mousemove', this.mouseMove);
@@ -62,10 +62,14 @@ export class VSplitter {
     const containerOffsetLeft = this.container.getBoundingClientRect().left;
     const pointerRelativeXpos = e.clientX - containerOffsetLeft;
     const containerWidth = this.container.clientWidth;
+
+    this.setLeftPanePercentage((pointerRelativeXpos / containerWidth) * 100);
+  }
+
+  setLeftPanePercentage (leftPanePercentage) {
+    const containerWidth = this.container.clientWidth;
     const splitterWidth = this.splitter.offsetWidth;
 
-    // Calculate percentage widths
-    let leftPanePercentage = (pointerRelativeXpos / containerWidth) * 100;
     let rightPanePercentage = 100 - leftPanePercentage - (splitterWidth / containerWidth) * 100;
 
     // Set minimum widths to prevent collapse
@@ -80,9 +84,52 @@ export class VSplitter {
     }
 
     // Apply new widths
-    this.leftPane.style.flexBasis = `${leftPanePercentage}%`;
-    this.rightPane.style.flexBasis = `${rightPanePercentage}%`;
+    this.firstPane.style.flexBasis = `${leftPanePercentage}%`;
+    this.secondPane.style.flexBasis = `${rightPanePercentage}%`;
 
     this.saveState(leftPanePercentage);
+  }
+}
+
+export class HSplitter extends VSplitter {
+  constructor(splitter) {
+    super(splitter);
+    this.cursor = 'row-resize';
+  }
+
+  onMouseMove (e) {
+    if (!this.isDragging) return;
+
+    // Calculate new heights
+    const containerOffsetTop = this.container.getBoundingClientRect().top;
+    const pointerRelativeYpos = e.clientY - containerOffsetTop;
+    const containerHeight = this.container.clientHeight;
+
+    // Calculate percentage heights
+    this.setTopPanePercentage((pointerRelativeYpos / containerHeight) * 100);
+  }
+
+  setTopPanePercentage (firstPanePercentage) {
+    const containerHeight = this.container.clientHeight;
+    const splitterHeight = this.splitter.offsetHeight;
+
+    let bottomPanePercentage = 100 - firstPanePercentage - (splitterHeight / containerHeight) * 100;
+
+    // Set minimum widths to prevent collapse
+    const minPercentage = (50 / containerHeight) * 100; // Convert 50px to percentage
+
+    if (firstPanePercentage < minPercentage) {
+      firstPanePercentage = minPercentage;
+      bottomPanePercentage = 100 - minPercentage - (splitterHeight / containerHeight) * 100;
+    } else if (bottomPanePercentage < minPercentage) {
+      bottomPanePercentage = minPercentage;
+      firstPanePercentage = 100 - minPercentage - (splitterHeight / containerHeight) * 100;
+    }
+
+    // Apply new widths
+    this.firstPane.style.flexBasis = `${firstPanePercentage}%`;
+    this.secondPane.style.flexBasis = `${bottomPanePercentage}%`;
+
+    this.saveState(firstPanePercentage);
   }
 }

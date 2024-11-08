@@ -2,7 +2,8 @@
 {% load pipeline static i18n %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} document-editor-view no-site-footer
+{% block body-class %}
+  {{ block.super }} document-editor-view
   {% if document.draft %}is-draft{% else %}is-published{% endif %}
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
@@ -75,44 +76,23 @@
 {% endblock %}
 
 {% block content %}
-<div class="work-view">
   <div class="document-workspace document-content-view">
-    {% include "indigo_api/document/_toc.html" %}
-    <div class="v-splitter" data-component="VSplitter" id="toc-content-splitter"></div>
+    <aside class="document-toc-pane">
+      <div id="toc" class="m-2">
+        <div class="document-toc-view"></div>
+      </div>
+    </aside>
+    <div class="v-splitter" data-component="VSplitter" id="document-workspace-splitter"></div>
     <div class="document-pane">
-      {% include "indigo_api/document/_content.html" %}
-      {% include "indigo_api/document/_source_att.html" %}
+      <div class="document-primary-pane">
+        {% include "indigo_api/document/_content.html" %}
+      </div>
+      <div class="v-splitter" data-component="VSplitter" id="document-pane-splitter"></div>
+      <div class="document-secondary-pane">
+        {% include "indigo_api/document/_source_att.html" %}
+      </div>
     </div>
   </div>
-
-  <script id="breadcrumb-template" type="text/x-handlebars-template">
-  {% verbatim %}
-    <li class="breadcrumb-item"><a href="/places/{{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
-    {{#if locality}}
-    <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
-    {{/if}}
-    <li class="breadcrumb-item">
-      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
-    </li>
-    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
-    <li class="breadcrumb-item expressions">
-      <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
-      <div class="dropdown-menu">
-        {{#each expressions}}
-          {{#each documents}}
-            <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
-              {{ ../date }}
-              · {{ language }}
-              {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
-            </a>
-          {{/each}}
-        {{/each}}
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% endverbatim %}{% trans 'Manage amendments' %}...{% verbatim %}</a>
-      </div>
-    </li>
-  {% endverbatim %}
-  </script>
 
   {% include "indigo_api/document/_defined_terms.html" %}
   {% include "indigo_api/document/_references.html" %}
@@ -125,8 +105,9 @@
   {% include "indigo_api/document/_cheatsheet.html" %}
   {% include "indigo_api/document/_issues.html" %}
   {% include "indigo_api/_work_chooser_modal.html" %}
-</div>
 {% endblock %}
+
+{% block site-footer %}{% endblock %}
 
 {% block js %}
   {{ block.super }}
@@ -146,4 +127,32 @@
 
   <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
   <script src="{% static 'javascript/monaco/monaco.js' %}"></script>
+  <script id="breadcrumb-template" type="text/x-handlebars-template">
+    {% verbatim %}
+    <li class="breadcrumb-item"><a href="/places/{{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    {{#if locality}}
+    <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    {{/if}}
+    <li class="breadcrumb-item">
+      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
+    </li>
+    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item expressions">
+      <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
+      <div class="dropdown-menu">
+        {{#each expressions}}
+        {{#each documents}}
+        <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
+          {{ ../date }}
+          · {{ language }}
+          {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
+        </a>
+        {{/each}}
+        {{/each}}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% endverbatim %}{% trans 'Manage amendments' %}...{% verbatim %}</a>
+      </div>
+    </li>
+    {% endverbatim %}
+  </script>
 {% endblock %}

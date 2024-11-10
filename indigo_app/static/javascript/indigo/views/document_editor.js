@@ -55,7 +55,6 @@
 
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
-
     },
 
     editActivityStarted: function(mode) {
@@ -145,9 +144,6 @@
 
       this.editing = true;
       this.fragment = fragment;
-
-      // ensure source code is hidden
-      this.$('.btn.show-xml-editor.active').click();
 
       // show the edit toolbar
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
@@ -575,7 +571,6 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .btn.show-xml-editor': 'toggleShowXMLEditor',
       'click .btn.show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
       'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
@@ -627,17 +622,6 @@
 
         this.sourceEditor.editFragment(fragment);
         this.xmlEditor.editFragment(fragment);
-      }
-    },
-
-    toggleShowXMLEditor: function(e) {
-      var show = e.currentTarget.classList.toggle('active');
-      this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
-      this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
-      if (show) {
-        this.xmlEditor.show();
-      } else {
-        this.xmlEditor.hide();
       }
     },
 

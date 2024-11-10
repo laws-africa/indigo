@@ -13,13 +13,27 @@
       this.updating = false;
       this.parent = options.parent;
       this.documentContent = options.documentContent;
-      this.documentContent.on('change:dom', () => {
-        // if the fragment has been swapped out, don't use a stale fragment; our parent will
-        // call editFragment() to update our fragment
-        if (this.visible && this.fragment && this.fragment.ownerDocument === this.documentContent.xmlDocument) {
-          this.render();
-        }
-      });
+      this.documentContent.on('change:dom', this.domChanged.bind(this));
+
+      document.querySelector('.document-secondary-pane-nav').addEventListener(
+        'shown.bs.tab', this.navTabChanged.bind(this)
+      );
+    },
+
+    domChanged: function() {
+      // if the fragment has been swapped out, don't use a stale fragment; our parent will
+      // call editFragment() to update our fragment
+      if (this.visible && this.fragment && this.fragment.ownerDocument === this.documentContent.xmlDocument) {
+        this.render();
+      }
+    },
+
+    navTabChanged: function(e) {
+      if (e.target.dataset.bsTarget === '#xml-pane') {
+        this.show();
+      } else {
+        this.hide();
+      }
     },
 
     editFragment: function(fragment) {

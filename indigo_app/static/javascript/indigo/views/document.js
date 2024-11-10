@@ -123,6 +123,7 @@
       'click .document-workspace-buttons .save-and-publish': 'saveAndPublish',
       'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
       'click .document-toolbar-wrapper .delete-document': 'delete',
+      'click .document-secondary-pane-toggle': 'toggleDocumentSecondaryPane',
     },
 
     initialize: function() {
@@ -350,5 +351,15 @@
         this.panes[pane].classList.add('d-none');
       }
     },
+
+    togglePane: function (pane) {
+      if (this.panes[pane]) {
+        this.panes[pane].classList.toggle('d-none');
+      }
+    },
+
+    toggleDocumentSecondaryPane: function () {
+      this.togglePane('document-secondary-pane');
+    }
   });
 })(window);

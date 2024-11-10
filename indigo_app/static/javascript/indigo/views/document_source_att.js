@@ -19,9 +19,9 @@
         this.listenTo(this.attachments, 'add change remove sync', this.rebuildChoices);
         this.choices = [];
 
-        this.$view = this.$('.source-attachment-view');
+        this.view = this.el.querySelector('.source-attachment-view');
         this.$dropdown = this.$('.source-attachment-list');
-        this.$toggle = this.$('.source-attachment-toggle');
+        this.toggleButton = this.el.querySelector('.source-attachment-toggle');
         this.iframe = document.getElementById('source-attachment-iframe');
         this.docx_mimetypes = {
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': true,
@@ -117,19 +117,28 @@
           prevGroup = att.group;
         });
 
-        this.$toggle.attr('disabled', this.choices.length === 0);
+        if (this.choices.length === 0) {
+          this.toggleButton.setAttribute('disabled');
+        } else {
+          this.toggleButton.removeAttribute('disabled');
+        }
       },
 
       toggle: function(e) {
         e.preventDefault();
-        var show = !$(e.target).hasClass('active');
+        const show = !e.target.classList.contains('active');
 
         if (show) {
+          window.Indigo.view.showPane('document-secondary-pane');
+          this.view.classList.remove('d-none');
+          this.toggleButton.classList.add('active');
+
           const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
           this.choose(this.chosen || default_choice);
         } else {
-          this.$view.addClass('d-none');
-          this.$('.source-attachment-toggle').removeClass('active');
+          window.Indigo.view.hidePane('document-secondary-pane');
+          this.view.classList.add('d-none');
+          this.toggleButton.classList.remove('active');
         }
       },
 
@@ -142,8 +151,6 @@
           }
         }
 
-        this.$view.removeClass('d-none');
-        this.$('.source-attachment-toggle').addClass('active');
         this.render();
       },
 

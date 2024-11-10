@@ -134,6 +134,10 @@
       this.dirty = false;
       Indigo.offlineNoticeView.autoShow();
 
+      this.panes = {
+        'document-secondary-pane': document.querySelector('.document-secondary-pane'),
+      }
+
       this.detectUnsupportedBrowsers();
 
       // stop disable menus
@@ -333,6 +337,18 @@
       // stop menu clicks on disabled items from doing anything
       e.preventDefault();
       e.stopImmediatePropagation();
+    },
+
+    showPane: function (pane) {
+      if (this.panes[pane]) {
+        this.panes[pane].classList.remove('d-none');
+      }
+    },
+
+    hidePane: function (pane) {
+      if (this.panes[pane]) {
+        this.panes[pane].classList.add('d-none');
+      }
     },
   });
 })(window);

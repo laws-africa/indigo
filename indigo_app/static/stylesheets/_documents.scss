@@ -48,6 +48,11 @@
     overflow-y: auto;
   }
 
+  .document-primary-pane {
+    // take up full space if the secondary pane is hidden
+    flex-grow: 1;
+  }
+
   .document-workspace-content,
   .document-xml-editor {
     flex: 1;

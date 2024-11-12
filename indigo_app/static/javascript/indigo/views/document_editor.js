@@ -201,6 +201,7 @@
       var deferred = this.pendingTextSave = $.Deferred();
       deferred
         .then(function(response) {
+          // TODO: response.output should be the updated (by the server) version of the edited provision
           var newFragment = $.parseXML(response.output);
 
           if (fragmentRule === 'akomaNtoso') {

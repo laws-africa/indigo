@@ -35,6 +35,7 @@
         this.parent.model.get('frbr_uri'),
         this.parent.model.url() + '/static/xsl/text.xsl');
       this.grammarModel.setup();
+      this.provisionMode = Indigo.Preloads.provisionMode;
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -247,6 +248,7 @@
           data.id_prefix = id.substring(0, id.lastIndexOf('__'));
         }
       }
+      data.provision_mode = self.provisionMode;
 
       $.ajax({
         url: this.parent.model.url() + '/parse',
@@ -318,7 +320,7 @@
       $akn[0].classList.add('spinner-when-empty');
       $akn.empty();
 
-      if (renderCoverpage) {
+      if (renderCoverpage && !this.provisionMode) {
         coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
         $akn.append(coverpage);
@@ -727,6 +729,7 @@
     },
 
     // Save the content of the document, returns a Deferred
+    // TODO: this?
     saveModel: function() {
       return this.documentContent.save();
     },

@@ -61,8 +61,10 @@
       if (options && options.fromContent) return;
 
       // rewrite all eIds before setting the content
+      // TODO: either never or only when not in provisionMode!
       new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
       // rewrite all attachment FRBR URI work components too
+      // TODO: either never or only when not in provisionMode!
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
@@ -179,6 +181,7 @@
       return node;
     },
 
+    // TODO: this!
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.

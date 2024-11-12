@@ -103,8 +103,6 @@
   //
   //   DocumentAttachmentsView - handles managing document attachments
   //
-  //   DocumentRepealView - handles setting a document as repealed
-  //
   //   DocumentEditorView - handles editing the document's body content
   //
   //   DocumentRevisionsView - handles walking through revisions to a document
@@ -126,8 +124,7 @@
     },
 
     initialize: function() {
-      var library = Indigo.library,
-          self = this;
+      let self = this;
 
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
@@ -143,6 +140,7 @@
       this.document = new Indigo.Document(Indigo.Preloads.document);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
+      this.provisionMode = Indigo.Preloads.provisionMode;
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change:draft', this.draftChanged, this);
@@ -171,7 +169,9 @@
         model: this.document,
         documentContent: this.documentContent,
         tocView: this.tocView,
+        // provisionMode: this.provisionMode,
       });
+      this.bodyEditorView.provisionMode = this.provisionMode;
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
       this.bodyEditorView.editorReady.then(function() {
@@ -278,6 +278,7 @@
       var deferred = null;
 
       // always save properties if we save content
+      // TODO: what if we're in provision mode?
       this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;
 
       var fail = function() {

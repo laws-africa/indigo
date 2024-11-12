@@ -1,0 +1,32 @@
+{% for prov in provisions %}
+  <li class="provisions-list__item">
+    <div class="provisions-list__item__body">
+      <input type="radio" class="me-2" id="{{ prov.id }}"
+             value="{{ prov.id }}" name="provision"
+      >
+      <label for="{{ prov.id }}" class="provision-title">
+        {{ prov.title }}
+      </label>
+      {% if prov.children %}
+        <button class="expand-collapse-button"
+                type="button"
+        >
+          <span class="expand-collapse-button__expand-icon">
+            <i class="fas fa-plus"></i>
+          </span>
+          <span class="expand-collapse-button__collapse-icon">
+            <i class="fas fa-minus"></i>
+          </span>
+        </button>
+      {% endif %}
+    </div>
+
+    {% if prov.children %}
+      <div class="collapse">
+        <ul class="mb-3 provisions-list">
+          {% include "indigo_api/document/_provisions_tree.html" with provisions=prov.children %}
+        </ul>
+      </div>
+    {% endif %}
+  </li>
+{% endfor %}

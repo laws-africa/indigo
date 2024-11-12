@@ -315,6 +315,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         if attrs.get('content'):
+            # TODO: either skip validating under certain circumstances only (provision_mode), or force provision XML to be valid
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
@@ -389,6 +390,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # by the other properties.
         content = validated_data.pop('content', None)
         if content is not None:
+            # TODO: this is where we want to intercept the XML update (as well?)
             document.reset_xml(content, from_model=True)
 
         # save rest of changes

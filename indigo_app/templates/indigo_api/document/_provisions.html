@@ -1,0 +1,22 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
+
+{% block view-id %}document-provisions-view{% endblock %}
+{% block title %}{% trans 'Provision' %} – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  <form class="provision-form" method="post">
+    {% csrf_token %}
+    <div class="card-body">
+      {# TODO: use the document ToC (plus radio buttons) instead #}
+      <div class="treelist-wrapper">
+        <ul>
+          {% include "indigo_api/document/_provisions_tree.html" %}
+        </ul>
+      </div>
+    </div>
+    <div class="card-footer text-end">
+      <button type="submit" class="btn btn-success" data-disable-with="{% trans 'Going…' %}">{% trans 'Go!' %}</button>
+    </div>
+  </form>
+{% endblock %}

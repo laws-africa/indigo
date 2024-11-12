@@ -315,7 +315,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                              '<ref href="%(url)s">View it online</ref>.') % {'friendly_type': work.friendly_type(), 'url': work.frbr_uri})
         # no notice for outstanding amendments if this also isn't the latest expression
         elif later_amendments:
-            numbered_titles = ', '.join(a.amending_work.numbered_title() or a.amending_work.short_title for a in later_amendments)
+            numbered_titles = ', '.join(a.amending_work.numbered_title() or a.amending_work.title for a in later_amendments)
             notices.append(_('There are <b>outstanding amendments</b> that have not yet been applied:<br/>'
                              '%(numbered_titles)s.') % {'numbered_titles': numbered_titles})
 

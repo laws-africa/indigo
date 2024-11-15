@@ -85,9 +85,15 @@ button.btn-link.help {
 }
 
 /* editors */
-.monaco-editor {
+.monaco-editor-box {
   height: 100%;
   width: 100%;
+  border: 1px solid $gray-400;
+}
+
+.monaco-editor {
+  // this ensures the editor resizes inside flex boxes
+  position: absolute !important;
 }
 
 .document-sheet-container {

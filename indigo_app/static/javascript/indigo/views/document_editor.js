@@ -68,11 +68,12 @@
 
     setupTextEditor: function() {
       if (!this.textEditor) {
+        const options = this.grammarModel.monacoOptions();
+        options.automaticLayout = true;
         this.textEditor = window.monaco.editor.create(
-          this.el.querySelector('.document-text-editor .monaco-editor'),
-          this.grammarModel.monacoOptions()
+          this.el.querySelector('.document-text-editor .monaco-editor-box'),
+          options,
         );
-        new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
         this.grammarModel.setupEditor(this.textEditor);
       }
     },

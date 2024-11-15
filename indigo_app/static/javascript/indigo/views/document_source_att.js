@@ -10,6 +10,7 @@
       events: {
         'change .source-attachment-list': 'itemChanged',
         'click .source-attachment-toggle': 'toggle',
+        'indigo:pane-toggled': 'paneToggled',
       },
 
       initialize: function(options) {
@@ -19,9 +20,9 @@
         this.listenTo(this.attachments, 'add change remove sync', this.rebuildChoices);
         this.choices = [];
 
-        this.view = this.el.querySelector('.source-attachment-view');
         this.$dropdown = this.$('.source-attachment-list');
         this.toggleButton = this.el.querySelector('.source-attachment-toggle');
+        this.tab = this.el.querySelector('button[data-bs-target="#source-attachment-pane"]');
         this.iframe = document.getElementById('source-attachment-iframe');
         this.docx_mimetypes = {
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': true,
@@ -126,19 +127,30 @@
 
       toggle: function(e) {
         e.preventDefault();
-        const show = !e.target.classList.contains('active');
 
-        if (show) {
-          window.Indigo.view.showPane('document-secondary-pane');
-          this.view.classList.remove('d-none');
-          this.toggleButton.classList.add('active');
-
-          const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
-          this.choose(this.chosen || default_choice);
+        if (e.target.classList.contains('active')) {
+          this.hide();
         } else {
-          window.Indigo.view.hidePane('document-secondary-pane');
-          this.view.classList.add('d-none');
-          this.toggleButton.classList.remove('active');
+          this.show();
+        }
+      },
+
+      show: function () {
+        const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
+        this.choose(this.chosen || default_choice);
+        // this will call paneToggled and ensure the button is active
+        window.Indigo.view.showPane('document-secondary-pane');
+        bootstrap.Tab.getInstance(this.tab).show();
+      },
+
+      hide: function () {
+        window.Indigo.view.hidePane('document-secondary-pane');
+      },
+
+      paneToggled: function (e) {
+        // a pane was toggled, should we update the button's state?
+        if (e.originalEvent.detail.pane === 'document-secondary-pane') {
+          this.toggleButton.classList.toggle('active', e.originalEvent.detail.visible);
         }
       },
 

@@ -343,18 +343,21 @@
     showPane: function (pane) {
       if (this.panes[pane]) {
         this.panes[pane].classList.remove('d-none');
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: true}}));
       }
     },
 
     hidePane: function (pane) {
       if (this.panes[pane]) {
         this.panes[pane].classList.add('d-none');
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: false}}));
       }
     },
 
     togglePane: function (pane) {
       if (this.panes[pane]) {
-        this.panes[pane].classList.toggle('d-none');
+        const hidden = this.panes[pane].classList.toggle('d-none');
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: !hidden}}));
       }
     },
 

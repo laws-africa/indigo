@@ -12,8 +12,11 @@
       this.fragment = null;
       this.updating = false;
       this.parent = options.parent;
+      this.visible = false;
+      this.tab = document.querySelector('button[data-bs-target="#xml-pane"]');
       this.documentContent = options.documentContent;
       this.documentContent.on('change:dom', this.domChanged.bind(this));
+      document.body.addEventListener('indigo:pane-toggled', this.paneToggled.bind(this));
 
       document.querySelector('.document-secondary-pane-nav').addEventListener(
         'shown.bs.tab', this.navTabChanged.bind(this)
@@ -44,13 +47,29 @@
     },
 
     show: function() {
+      console.log('xml shown');
       this.visible = true;
       this.setupXmlEditor();
       this.render();
     },
 
     hide: function() {
+      console.log('xml hidden');
       this.visible = false;
+    },
+
+    paneToggled: function (e) {
+      if (e.detail.pane === 'document-secondary-pane') {
+        if (e.detail.visible) {
+          // the pane is visible AND the tab is visible
+          if (this.tab.classList.contains('active')) {
+            this.show();
+          }
+        } else {
+          // a pane was toggled, we're no longer visible, stop our work
+          this.hide();
+        }
+      }
     },
 
     render: function() {

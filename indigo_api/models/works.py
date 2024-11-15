@@ -703,7 +703,7 @@ class Work(WorkMixin, models.Model):
 
     def get_import_date(self):
         """Return the date at which content should be imported for this work; may be None."""
-        import_timeline_dates = [self.publication_date] if self.publication_date else []
+        import_timeline_dates = [self.publication_date] if self.publication_date else [self.commencement_date] if self.commencement_date else []
         import_timeline_dates.extend(c.date for c in self.arbitrary_expression_dates.all())
         return max(import_timeline_dates) if import_timeline_dates else None
 

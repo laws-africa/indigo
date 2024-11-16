@@ -140,6 +140,9 @@
       this.panes = {
         'document-secondary-pane': document.querySelector('.document-secondary-pane'),
       }
+      this.splitters = {
+        'document-secondary-pane': this.panes['document-secondary-pane'].previousElementSibling,
+      }
 
       this.detectUnsupportedBrowsers();
 
@@ -345,6 +348,7 @@
     showPane: function (pane) {
       if (this.panes[pane] && this.panes[pane].classList.contains('d-none')) {
         this.panes[pane].classList.remove('d-none');
+        this.splitters[pane].classList.remove('d-none');
         this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: true}}));
       }
     },
@@ -352,6 +356,7 @@
     hidePane: function (pane) {
       if (this.panes[pane] && !this.panes[pane].classList.contains('d-none')) {
         this.panes[pane].classList.add('d-none');
+        this.splitters[pane].classList.add('d-none');
         this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: false}}));
       }
     },
@@ -359,6 +364,7 @@
     togglePane: function (pane) {
       if (this.panes[pane]) {
         const hidden = this.panes[pane].classList.toggle('d-none');
+        this.splitters[pane].classList.toggle('d-none', hidden);
         this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: !hidden}}));
       }
     },

@@ -47,14 +47,12 @@
     },
 
     show: function() {
-      console.log('xml shown');
       this.visible = true;
       this.setupXmlEditor();
       this.render();
     },
 
     hide: function() {
-      console.log('xml hidden');
       this.visible = false;
     },
 

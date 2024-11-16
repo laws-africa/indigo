@@ -124,6 +124,7 @@
       'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
       'click .document-toolbar-wrapper .delete-document': 'delete',
       'click .document-secondary-pane-toggle': 'toggleDocumentSecondaryPane',
+      'indigo:pane-toggled': 'paneToggled',
     },
 
     initialize: function() {
@@ -132,6 +133,7 @@
 
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
+      this.secondaryPaneToggle = this.el.querySelector('.document-toolbar-wrapper .document-secondary-pane-toggle');
       this.dirty = false;
       Indigo.offlineNoticeView.autoShow();
 
@@ -341,14 +343,14 @@
     },
 
     showPane: function (pane) {
-      if (this.panes[pane]) {
+      if (this.panes[pane] && this.panes[pane].classList.contains('d-none')) {
         this.panes[pane].classList.remove('d-none');
         this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: true}}));
       }
     },
 
     hidePane: function (pane) {
-      if (this.panes[pane]) {
+      if (this.panes[pane] && !this.panes[pane].classList.contains('d-none')) {
         this.panes[pane].classList.add('d-none');
         this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: false}}));
       }
@@ -363,6 +365,12 @@
 
     toggleDocumentSecondaryPane: function () {
       this.togglePane('document-secondary-pane');
+    },
+
+    paneToggled: function (e) {
+      if (e.originalEvent.detail.pane === 'document-secondary-pane') {
+        this.secondaryPaneToggle.classList.toggle('active', e.originalEvent.detail.visible);
+      }
     }
   });
 })(window);

@@ -9,7 +9,7 @@
       el: 'body',
       events: {
         'change .source-attachment-list': 'itemChanged',
-        'click .source-attachment-toggle': 'toggle',
+        'click .show-source-attachment': 'show',
         'indigo:pane-toggled': 'paneToggled',
       },
 
@@ -21,7 +21,7 @@
         this.choices = [];
 
         this.$dropdown = this.$('.source-attachment-list');
-        this.toggleButton = this.el.querySelector('.source-attachment-toggle');
+        this.toolbarButton = this.el.querySelector('.show-source-attachment');
         this.tab = this.el.querySelector('button[data-bs-target="#source-attachment-pane"]');
         this.iframe = document.getElementById('source-attachment-iframe');
         this.docx_mimetypes = {
@@ -119,39 +119,21 @@
         });
 
         if (this.choices.length === 0) {
-          this.toggleButton.setAttribute('disabled');
+          this.toolbarButton.setAttribute('disabled');
         } else {
-          this.toggleButton.removeAttribute('disabled');
-        }
-      },
-
-      toggle: function(e) {
-        e.preventDefault();
-
-        if (e.target.classList.contains('active')) {
-          this.hide();
-        } else {
-          this.show();
+          this.toolbarButton.removeAttribute('disabled');
         }
       },
 
       show: function () {
         const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
         this.choose(this.chosen || default_choice);
-        // this will call paneToggled and ensure the button is active
         window.Indigo.view.showPane('document-secondary-pane');
         bootstrap.Tab.getInstance(this.tab).show();
       },
 
       hide: function () {
         window.Indigo.view.hidePane('document-secondary-pane');
-      },
-
-      paneToggled: function (e) {
-        // a pane was toggled, should we update the button's state?
-        if (e.originalEvent.detail.pane === 'document-secondary-pane') {
-          this.toggleButton.classList.toggle('active', e.originalEvent.detail.visible);
-        }
       },
 
       choose: function(item) {
@@ -169,5 +151,11 @@
       itemChanged: function(e) {
         this.choose(this.choices[parseInt(e.target.value)]);
       },
+
+      paneToggled: function(e) {
+        if (e.originalEvent.detail.pane === 'document-secondary-pane' && e.originalEvent.detail.visible && this.tab.classList.contains('active')) {
+          this.show();
+        }
+      }
     });
 })(window);

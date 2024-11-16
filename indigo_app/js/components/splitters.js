@@ -39,6 +39,7 @@ export class VSplitter {
 
   onMouseDown (e) {
     this.isDragging = true;
+    document.body.classList.add('splitter-dragging');
     document.body.style.cursor = this.cursor;
     document.body.style.userSelect = 'none';
     document.addEventListener('mouseup', this.mouseUp);
@@ -48,6 +49,7 @@ export class VSplitter {
   onMouseUp (e) {
     if (this.isDragging) {
       this.isDragging = false;
+      document.body.classList.remove('splitter-dragging');
       document.body.style.cursor = 'default';
       document.body.style.userSelect = null;
       document.removeEventListener('mouseup', this.mouseUp);

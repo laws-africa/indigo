@@ -536,3 +536,8 @@ body.document-editor-view {
     border-radius: 3px;
   }
 }
+
+// when splitters are being dragged, prevent iframes from swallowing mouse events
+.splitter-dragging iframe {
+  pointer-events: none;
+}

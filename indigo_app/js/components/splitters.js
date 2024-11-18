@@ -94,7 +94,7 @@ export class VSplitter {
 }
 
 export class HSplitter extends VSplitter {
-  constructor(splitter) {
+  constructor (splitter) {
     super(splitter);
     this.cursor = 'row-resize';
   }

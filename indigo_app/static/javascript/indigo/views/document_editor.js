@@ -72,7 +72,7 @@
         options.automaticLayout = true;
         this.textEditor = window.monaco.editor.create(
           this.el.querySelector('.document-text-editor .monaco-editor-box'),
-          options,
+          options
         );
         this.grammarModel.setupEditor(this.textEditor);
       }

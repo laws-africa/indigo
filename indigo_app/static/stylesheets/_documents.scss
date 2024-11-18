@@ -45,7 +45,7 @@
     flex: 1;
     display: flex;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 
   .document-primary-pane {
@@ -56,6 +56,7 @@
   .document-workspace-content {
     flex: 1;
     position: relative;
+    overflow-y: auto;
   }
 
   .document-secondary-pane {

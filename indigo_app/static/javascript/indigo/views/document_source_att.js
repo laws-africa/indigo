@@ -21,7 +21,6 @@
         this.choices = [];
 
         this.$dropdown = this.$('.source-attachment-list');
-        this.toolbarButton = this.el.querySelector('.show-source-attachment');
         this.tab = this.el.querySelector('button[data-bs-target="#source-attachment-pane"]');
         this.iframe = document.getElementById('source-attachment-iframe');
         this.docx_mimetypes = {
@@ -117,12 +116,6 @@
           ));
           prevGroup = att.group;
         });
-
-        if (this.choices.length === 0) {
-          this.toolbarButton.setAttribute('disabled');
-        } else {
-          this.toolbarButton.removeAttribute('disabled');
-        }
       },
 
       show: function () {

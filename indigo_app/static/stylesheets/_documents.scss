@@ -233,7 +233,6 @@ la-table-of-contents-controller {
     i {
       font-size: 8px;
       padding: 2px;
-      border: 1px solid $blue;
       color: $blue;
     }
   }
@@ -430,8 +429,6 @@ body.document-editor-view {
     flex-grow: 1;
     min-height: unset;
     overflow: hidden;
-
-    border: 2px solid green;
   }
 }
 

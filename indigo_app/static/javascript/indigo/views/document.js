@@ -138,11 +138,11 @@
       Indigo.offlineNoticeView.autoShow();
 
       this.panes = {
-        'document-secondary-pane': document.querySelector('.document-secondary-pane'),
-      }
+        'document-secondary-pane': document.querySelector('.document-secondary-pane')
+      };
       this.splitters = {
-        'document-secondary-pane': this.panes['document-secondary-pane'].previousElementSibling,
-      }
+        'document-secondary-pane': this.panes['document-secondary-pane'].previousElementSibling
+      };
 
       this.detectUnsupportedBrowsers();
 

@@ -1,53 +1,47 @@
-from lxml import etree
 import re
 
-from indigo.analysis.markup import TextPatternMarker
+import unicodedata
+from lxml import etree
+
 from indigo.plugins import LocaleBasedMatcher, plugins
 
 
 @plugins.register('sentence-caser')
-class BaseSentenceCaser(LocaleBasedMatcher, TextPatternMarker):
+class BaseSentenceCaser(LocaleBasedMatcher):
     """ Sentence cases headings in a document.
     """
+    terms = None
+    normalized_terms = None
 
     def sentence_case_headings_in_document(self, document):
-        accented_terms = document.language.accented_terms.first().terms
+        accented_terms = document.language.accented_terms.first()
+        self.terms = accented_terms.terms if accented_terms else []
+        self.terms.sort(key=lambda x: len(x), reverse=True)
+        self.normalized_terms = [''.join(c for c in unicodedata.normalize('NFD', t) if unicodedata.category(c) != 'Mn').lower()
+                                 for t in self.terms]
         root = etree.fromstring(document.content.encode('utf-8'))
-        self.setup_candidate_xpath(accented_terms)
-        self.setup_pattern_re(accented_terms)
-        self.setup(root)
-        self.markup_patterns(root)
+        for heading in etree.XPath('//a:heading', namespaces={'a': root.nsmap[None]})(root):
+            self.capitalized = False
+            for elem in heading.getiterator():
+                elem.text = self.adjust_heading_text(elem.text)
+                elem.tail = self.adjust_heading_text(elem.tail)
+
         document.content = etree.tostring(root, encoding='unicode')
 
-    def setup_candidate_xpath(self, terms):
-        xpath_contains = ' or '.join([f'contains(., "{term}")' for term in [partial for t in terms for partial in t.split('"')]])
-        self.candidate_xpath = f'.//text()[({xpath_contains}) and not(ancestor::a:i)]'
+    def adjust_heading_text(self, text):
+        # text may be None or ' ', for example -- ignore in those cases
+        if text and text.strip():
+            text = self.apply_terms(text.lower())
+            if not self.capitalized:
+                # don't use capitalize() on the whole of `text`, as this interferes with capitalised terms
+                # either way, lstrip if capitalizing here since the first letter would be missed otherwise
+                text = text.lstrip()[0].upper() + (text.lstrip()[1:] if len(text.lstrip()) > 1 else '')
+                self.capitalized = True
+        return text
 
-    def mark_up_italics_in_document(self, document, italics_terms):
-        """ Find and italicise terms in +document+, which is an Indigo Document object.
-        """
-        # we need to use etree, not objectify, so we can't use document.doc.root,
-        # we have to re-parse it
-        root = etree.fromstring(document.content.encode('utf-8'))
-        self.setup_candidate_xpath(italics_terms)
-        self.setup_pattern_re(italics_terms)
-        self.setup(root)
-        self.markup_patterns(root)
-        document.content = etree.tostring(root, encoding='unicode')
-
-    def setup_pattern_re(self, terms):
-        # first, sort longest to shortest, so that e.g. 'ad idem' is marked up before 'ad'
-        terms = sorted(terms, key=len, reverse=True)
-        terms = [t.strip() for t in terms]
-        terms = [re.escape(t) for t in terms if t]
-        terms = '|'.join(terms)
-        terms = fr'\b({terms})\b'
-
-        self.pattern_re = re.compile(terms)
-
-    def markup_match(self, node, match):
-        """ Markup the match with a <i> tag.
-        """
-        italics_term = etree.Element(self.marker_tag)
-        italics_term.text = match.group()
-        return italics_term, match.start(), match.end()
+    def apply_terms(self, text):
+        # save a tiny bit of time by checking for any matches first
+        if any(t in text for t in self.normalized_terms):
+            for i, term in enumerate(self.normalized_terms):
+                text = re.sub(rf'\b{term}\b', self.terms[i], text)
+        return text

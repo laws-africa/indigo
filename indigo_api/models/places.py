@@ -262,3 +262,18 @@ class PlaceSettings(models.Model):
             props['cap'] = "Chapter (Cap.)"
 
         return props
+
+
+class AccentedTerms(models.Model):
+    """ Accented terms for a language.
+    """
+    language = models.ForeignKey(Language, related_name='accented_terms', null=False, blank=False, unique=True,
+                                 on_delete=models.CASCADE, verbose_name=_("language"))
+    terms = ArrayField(models.CharField(_("terms"), max_length=1024), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("accented terms")
+        verbose_name_plural = _("accented terms")
+
+    def __str__(self):
+        return str(self.language)

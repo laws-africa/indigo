@@ -28,6 +28,7 @@ urlpatterns = [
     path('documents/<int:document_id>/analysis/link-terms', documents.LinkTermsView.as_view(), name='link-terms'),
     path('documents/<int:document_id>/analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
     path('documents/<int:document_id>/analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
+    path('documents/<int:document_id>/analysis/sentence-case-headings', documents.SentenceCaseHeadingsView.as_view(), name='sentence-case-headings'),
 
     path('', include(router.urls)),
 ]

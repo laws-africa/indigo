@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.contrib import admin
+from django.contrib.postgres.forms import SimpleArrayField
 from django.shortcuts import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -11,7 +12,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, SavedSearch
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, SavedSearch, AccentedTerms
 
 
 admin.site.register(Subtype)
@@ -95,6 +96,19 @@ class TaskLabelAdmin(admin.ModelAdmin):
 class CitationAliasAdmin(admin.ModelAdmin):
     list_display = ('frbr_uri', 'place', 'aliases',)
     list_filter = ('place',)
+
+
+class AccentedTermsForm(forms.ModelForm):
+    terms = SimpleArrayField(forms.CharField(max_length=1024, required=False), delimiter='\n', required=False, widget=forms.Textarea)
+
+    class Meta:
+        model = AccentedTerms
+        fields = "__all__"
+
+
+@admin.register(AccentedTerms)
+class AccentedTermsAdmin(admin.ModelAdmin):
+    form = AccentedTermsForm
 
 
 def run_now(modeladmin, request, queryset):

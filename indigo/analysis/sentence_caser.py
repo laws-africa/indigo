@@ -15,7 +15,9 @@ class BaseSentenceCaser(LocaleBasedMatcher):
 
     def sentence_case_headings_in_document(self, document):
         accented_terms = document.language.accented_terms.first()
-        self.terms = accented_terms.terms if accented_terms else []
+        # allow tests to specify self.terms
+        if not self.terms:
+            self.terms = accented_terms.terms if accented_terms else []
         self.terms.sort(key=lambda x: len(x), reverse=True)
         self.normalized_terms = [''.join(c for c in unicodedata.normalize('NFD', t) if unicodedata.category(c) != 'Mn').lower()
                                  for t in self.terms]

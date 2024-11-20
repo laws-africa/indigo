@@ -20,9 +20,13 @@ class BaseSentenceCaser(LocaleBasedMatcher):
         self.normalized_terms = [''.join(c for c in unicodedata.normalize('NFD', t) if unicodedata.category(c) != 'Mn').lower()
                                  for t in self.terms]
         root = etree.fromstring(document.content.encode('utf-8'))
-        for heading in etree.XPath('//a:heading', namespaces={'a': root.nsmap[None]})(root):
+        nsmap = {'a': root.nsmap[None]}
+        for heading in root.xpath('//a:heading', namespaces=nsmap):
             self.capitalized = False
-            for elem in heading.getiterator():
+            skip_elements = heading.xpath(".//a:*[ancestor::a:authorialNote]", namespaces=nsmap)
+            for elem in heading.iter():
+                if elem in skip_elements:
+                    continue
                 elem.text = self.adjust_heading_text(elem.text)
                 elem.tail = self.adjust_heading_text(elem.tail)
 

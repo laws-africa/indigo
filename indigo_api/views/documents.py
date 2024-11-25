@@ -434,6 +434,25 @@ class MarkUpItalicsTermsView(DocumentResourceView, APIView):
             italics_terms_finder.mark_up_italics_in_document(document, italics_terms)
 
 
+class SentenceCaseHeadingsView(DocumentResourceView, APIView):
+    """ Sentence case headings. Also apply accents as needed / relevant.
+    """
+    def post(self, request, document_id):
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
+        serializer.is_valid(raise_exception=True)
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
+
+        self.sentence_case(document)
+
+        return Response({'document': {'content': document.document_xml}})
+
+    def sentence_case(self, document):
+        sentence_caser = plugins.for_document('sentence-caser', document)
+        if sentence_caser:
+            sentence_caser.sentence_case_headings_in_document(document)
+
+
 class DocumentDiffView(DocumentResourceView, APIView):
     def post(self, request, document_id):
         serializer = DocumentDiffSerializer(instance=self.document, data=self.request.data)

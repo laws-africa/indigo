@@ -43,6 +43,7 @@ resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 
 api/\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics\Z
+api/documents/(?P<document_id>[0-9]+)/analysis/sentence\-case\-headings\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-references\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms\Z
 api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)\Z

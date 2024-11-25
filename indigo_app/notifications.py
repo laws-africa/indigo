@@ -141,6 +141,11 @@ class Notifier(object):
             log.info("NOT sending templated email {} to INACTIVE USER {} (id {})".format(template_name, recipient_user, recipient_user.pk))
             return
 
+        # don't send notifications to users that don't exist or are missing a related editor
+        if not recipient_user or not recipient_user.editor:
+            log.info("NOT sending templated email {} to USER {} (doesn't exist or missing a related editor)".format(template_name, recipient_user))
+            return
+
         log.info("Sending templated email {} to {}".format(template_name, recipient_user))
 
         with override(recipient_user.editor.language):

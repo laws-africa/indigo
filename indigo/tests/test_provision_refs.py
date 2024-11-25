@@ -905,6 +905,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(a)(2)(iii)(bb) thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(b)(b)(iii)(dd)(A), thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section 31, thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section 31, of that act.</p>
               </content>
             </section>
         """))
@@ -920,6 +921,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, of that act.</p>
               </content>
             </section>
         """))
@@ -944,6 +946,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(a)(2)(iii)(bb) daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(b)(b)(iii)(dd)(A), daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling 31, daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling 31, van daardie wet.</p>
               </content>
             </section>
         """))
@@ -959,6 +962,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, van daardie wet.</p>
               </content>
             </section>
         """))

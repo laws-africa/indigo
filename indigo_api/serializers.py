@@ -265,7 +265,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                               help_text="Description of the repeal of this work, if it has been repealed.")
 
     # only for provision editing
-    provision_eid = serializers.CharField(required=False, default='')
+    provision_eid = serializers.CharField(required=False, allow_blank=True)
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -319,8 +319,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def validate(self, attrs):
-        if attrs.get('content'):
-            # TODO: either skip validating under certain circumstances only (provision_mode), or force provision XML to be valid
+        if attrs.get('content') and not attrs.get('provision_eid'):
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
@@ -331,6 +330,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # ensure the correct namespace
             if doc.namespace != AKN_NAMESPACES['3.0']:
                 raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
+
+        if attrs.get('content') and attrs.get('provision_eid'):
+            # TODO: validate provision-level XML some other way
+            pass
 
         return attrs
 

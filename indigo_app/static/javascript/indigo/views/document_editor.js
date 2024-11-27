@@ -35,7 +35,6 @@
         this.parent.model.get('frbr_uri'),
         this.parent.model.url() + '/static/xsl/text.xsl');
       this.grammarModel.setup();
-      this.provisionMode = Indigo.Preloads.provisionMode;
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -249,7 +248,6 @@
           data.id_prefix = id.substring(0, id.lastIndexOf('__'));
         }
       }
-      data.provision_mode = self.provisionMode;
 
       $.ajax({
         url: this.parent.model.url() + '/parse',
@@ -314,14 +312,14 @@
       if (!this.parent.fragment) return;
 
       var self = this,
-          renderCoverpage = this.parent.fragment.parentElement === null,
+          renderCoverpage = this.parent.fragment.parentElement === null && Indigo.Preloads.provisionEid === "",
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
       $akn[0].classList.add('spinner-when-empty');
       $akn.empty();
 
-      if (renderCoverpage && !this.provisionMode) {
+      if (renderCoverpage) {
         coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
         $akn.append(coverpage);

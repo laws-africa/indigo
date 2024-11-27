@@ -226,6 +226,7 @@ class VersionSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
+    provision_eid = serializers.CharField(required=False, default='')
 
     frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
@@ -284,6 +285,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
+
+            'provision_eid',
         )
         read_only_fields = ('country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'created_at', 'updated_at')
 
@@ -315,17 +318,19 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         if attrs.get('content'):
+            # TODO: look into AKN fragment element
             # TODO: either skip validating under certain circumstances only (provision_mode), or force provision XML to be valid
             # validate the content
-            try:
-                frbr_uri = self.instance.work_uri
-                doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
-            except (LxmlError, ValueError) as e:
-                raise ValidationError("Invalid XML: %s" % str(e))
+            # try:
+            #     frbr_uri = self.instance.work_uri
+            #     doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+            # except (LxmlError, ValueError) as e:
+            #     raise ValidationError("Invalid XML: %s" % str(e))
 
             # ensure the correct namespace
-            if doc.namespace != AKN_NAMESPACES['3.0']:
-                raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
+            # if doc.namespace != AKN_NAMESPACES['3.0']:
+            #     raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
+            pass
 
         return attrs
 
@@ -389,8 +394,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # Document content must always come first so it can be overridden
         # by the other properties.
         content = validated_data.pop('content', None)
+        # TODO: include provision_eid
+        provision_eid = validated_data.pop('provision_eid', None)
         if content is not None:
-            # TODO: this is where we want to intercept the XML update (as well?)
+            if provision_eid:
+                content = document.update_provision_xml(provision_eid=provision_eid, provision_xml=content)
             document.reset_xml(content, from_model=True)
 
         # save rest of changes
@@ -423,6 +431,7 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
+    provision_eid = serializers.CharField(required=False)
 
 
 class DocumentAPISerializer(serializers.Serializer):

@@ -141,11 +141,15 @@
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
       this.provisionMode = Indigo.Preloads.provisionMode;
+      this.provisionEid = Indigo.Preloads.provisionEid;
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change:draft', this.draftChanged, this);
 
-      this.documentContent = new Indigo.DocumentContent({document: this.document});
+      this.documentContent = new Indigo.DocumentContent({
+        document: this.document,
+        provisionEid: this.provisionEid,
+      });
       this.documentContent.on('change', this.setDirty, this);
 
       this.cheatsheetView = new Indigo.CheatsheetView();
@@ -170,9 +174,11 @@
         model: this.document,
         documentContent: this.documentContent,
         tocView: this.tocView,
-        // provisionMode: this.provisionMode,
+        provisionMode: this.provisionMode,
+        provisionEid: this.provisionEid,
       });
       this.bodyEditorView.provisionMode = this.provisionMode;
+      this.bodyEditorView.provisionEid = this.provisionEid;
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
       this.bodyEditorView.editorReady.then(function() {

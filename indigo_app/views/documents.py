@@ -138,6 +138,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['provision_mode'] = self.eid is not None
+        context['provision_eid'] = self.eid
         return context
 
     def get_document_content_json(self, document):
@@ -145,6 +146,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
         elems = component.xpath(f".//a:*[@eId='{self.eid}']", namespaces={'a': self.object.doc.namespace})
         # TODO: throw a useful error including the eId if we don't have exactly one match
         assert len(elems) == 1
+        # TODO: wrap first and only element in valid AKN tags
 
         return json.dumps(etree.tostring(elems[0], encoding='unicode'))
 

@@ -36,6 +36,7 @@
         this.parent.model.url() + '/static/xsl/text.xsl');
       this.grammarModel.setup();
       this.provisionMode = Indigo.Preloads.provisionMode;
+      this.provisionEid = Indigo.Preloads.provisionEid;
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -238,6 +239,7 @@
               .addClass('fa-check');
         });
 
+      // TODO: successfully give the eId of the provision being edited
       var id = this.fragment.getAttribute('eId'),
           data = {
         'content': content,
@@ -249,7 +251,9 @@
           data.id_prefix = id.substring(0, id.lastIndexOf('__'));
         }
       }
-      data.provision_mode = self.provisionMode;
+      if (self.provisionEid) {
+        data.provision_eid = self.provisionEid;
+      }
 
       $.ajax({
         url: this.parent.model.url() + '/parse',
@@ -316,12 +320,13 @@
       var self = this,
           renderCoverpage = this.parent.fragment.parentElement === null,
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
+          provisionMode = Indigo.Preloads.provisionEid !== "",
           coverpage;
 
       $akn[0].classList.add('spinner-when-empty');
       $akn.empty();
 
-      if (renderCoverpage && !this.provisionMode) {
+      if (renderCoverpage && provisionMode) {
         coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
         $akn.append(coverpage);
@@ -588,6 +593,8 @@
       this.dirty = false;
 
       this.documentContent = options.documentContent;
+      this.provisionMode = options.provisionMode;
+      this.provisionEid = options.provisionEid;
       // XXX: check
       this.documentContent.on('change', this.setDirty, this);
       this.documentContent.on('sync', this.setClean, this);
@@ -732,6 +739,7 @@
     // Save the content of the document, returns a Deferred
     // TODO: this?
     saveModel: function() {
+      this.documentContent.attributes.provisionEid = this.provisionEid;
       return this.documentContent.save();
     },
 

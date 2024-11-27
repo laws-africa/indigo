@@ -25,6 +25,7 @@
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
+      this.provisionEid = options.provisionEid;
       this.xmlDocument = null;
       this.on('change:content', this.contentChanged, this);
       this.on('change:dom', this.domChanged, this);
@@ -187,10 +188,13 @@
       // changes in a single revision on the server.
       // We do this by delegating to the document object.
       this.document.attributes.content = this.get('content');
+      // TODO: pass the eId to save() without adding it as a document attribute?
+      this.document.attributes.provision_eid = this.get('provisionEid');
       var result = this.document.save();
       // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
       // the response to the save() call
       delete this.document.attributes.content;
+      delete this.document.attributes.provision_eid;
       this.document.setClean();
       this.trigger('sync');
 

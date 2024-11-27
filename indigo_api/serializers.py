@@ -399,7 +399,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         content = validated_data.pop('content', None)
         provision_eid = validated_data.pop('provision_eid', None)
         if content is not None:
-            if provision_eid is not None:
+            if provision_eid:
                 content = document.update_provision_xml(provision_eid, content)
             document.reset_xml(content, from_model=True)
 

@@ -356,7 +356,7 @@ class ParseView(DocumentResourceView, APIView):
             doc.frbr_uri = frbr_uri
             xml = doc.to_xml(encoding='unicode')
 
-        return Response({'output': xml})
+        return Response({'output': xml, 'provisionEid': serializer.validated_data.get('provision_eid')})
 
 
 class RenderView(DocumentResourceView, APIView):

@@ -19,6 +19,10 @@ from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
+from lxml import etree
+
+from bluebell.parser import AkomaNtosoParser
+from bluebell.xml import XmlGenerator
 
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
@@ -543,6 +547,33 @@ class Document(DocumentMixin, models.Model):
         if self.expression_date != new_date:
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
+
+    def update_provision_xml(self, provision_eid, provision_xml):
+        provision = etree.fromstring(provision_xml)
+        # TODO: a better way to discard the wrapping akn tag (using xpath / getchildren()?)
+        actual_provision = list(provision)[0]
+
+        # TODO: don't need this, just for debugging for now
+        actual_provision_str = etree.tostring(actual_provision, encoding='unicode', pretty_print=True)
+
+        main_tree = self.doc.main
+        # TODO: a better way to grab the (only) element with the given provision_eid
+        elems = main_tree.xpath(f".//a:*[@eId='{provision_eid}']", namespaces={'a': self.doc.namespace})
+        assert len(elems) == 1, f"Expected exactly 1 provision with this eid, found {len(elems)} instead: {provision_eid}"
+        elem = elems[0]
+        elem_parent = elem.getparent()
+        elem_parent.replace(elem, actual_provision)
+
+        # fix up the XML, e.g. rewrite eids, correct tags etc.
+        # generator = XmlGenerator(self.frbr_uri)
+        # updated_xml = generator.to_xml(self.doc.main)
+        parser = AkomaNtosoParser(self.frbr_uri)
+        updated_xml = parser.generator.post_process(self.doc.main)
+        with_akn_tag = parser.generator.wrap_akn(updated_xml)
+        new_document_xml = etree.tostring(with_akn_tag, encoding='unicode')
+        return new_document_xml
+        # TODO: make new_document_xml proper AKN -- don't hand-write the wrapping tag
+        # return f'''<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">{new_document_xml}</akomaNtoso>'''
 
     def _make_doc(self, xml):
         return self.cobalt_class(xml)

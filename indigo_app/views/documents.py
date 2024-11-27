@@ -137,7 +137,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['provision_mode'] = self.eid is not None
+        context['provision_eid'] = self.eid
         return context
 
     def get_document_content_json(self, document):

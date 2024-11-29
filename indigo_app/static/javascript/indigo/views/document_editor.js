@@ -10,9 +10,9 @@
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
+      // TODO: remove these two?
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'onCancelClick',
-      'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
 
@@ -26,7 +26,6 @@
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
-      this.editing = false;
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
@@ -109,11 +108,6 @@
       this.render();
     },
 
-    fullEdit: function(e) {
-      e.preventDefault();
-      this.editFragmentText(this.parent.fragment);
-    },
-
     quickEdit: function(e) {
       var elemId = e.currentTarget.parentElement.parentElement.id,
           node = this.parent.documentContent.xmlDocument;
@@ -141,18 +135,8 @@
         throw e;
       }
 
-      this.editActivityStarted('text');
-
-      this.editing = true;
       this.fragment = fragment;
-
-      // show the edit toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
-      this.$('.document-workspace-buttons').addClass('d-none');
-
-      // show the text editor
-      this.$('.document-content-view').addClass('show-text-editor');
+      this.editActivityStarted('text');
 
       this.setupTextEditor();
       this.textEditor.setValue(text);
@@ -161,12 +145,6 @@
       this.textEditor.setPosition(top);
       this.textEditor.revealPosition(top);
       this.textEditor.focus();
-
-      this.$textEditor
-        .data('fragment', this.fragment.tagName)
-        .show();
-
-      this.$('.document-sheet-container').scrollTop(0);
     },
 
     saveTextEditor: function(e) {
@@ -212,7 +190,6 @@
           } finally {
             this.updating = false;
           }
-          self.closeTextEditor();
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -261,46 +238,27 @@
 
     onCancelClick() {
       this.editActivityCancelled();
-      this.closeTextEditor();
-    },
-
-    closeTextEditor: function(e) {
-      if (this.pendingTextSave) {
-        this.pendingTextSave.reject();
-        this.pendingTextSave = null;
-      }
-
-      this.$('.document-content-view').removeClass('show-text-editor');
-
-      // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.general-buttons').removeClass('d-none');
-      this.$('.document-workspace-buttons').removeClass('d-none');
-
-      this.editing = false;
     },
 
     editFragment: function(node) {
       // edit node, a node in the XML document
       if (!this.updating) {
         this.tableEditor.discardChanges(null, true);
-        this.closeTextEditor();
         this.render();
         this.$('.document-sheet-container').scrollTop(0);
+        this.editFragmentText(node);
       }
     },
 
     // Save the content of the editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.tableEditor.saveChanges();
-      this.closeTextEditor();
       return $.Deferred().resolve();
     },
 
     // Discard the content of the editor, returns a Deferred
     discardChanges: function() {
       this.tableEditor.discardChanges(null, true);
-      this.closeTextEditor();
       return $.Deferred().resolve();
     },
 
@@ -474,10 +432,9 @@
       this.$('.edit-text').hide();
 
       // adjust the toolbar
+      // TODO
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
-
-      this.editing = true;
     },
 
     tableEditFinish: function() {
@@ -486,11 +443,10 @@
       this.$('.edit-table').prop('disabled', false);
 
       // adjust the toolbar
+      // TODO
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').removeClass('d-none');
-
-      this.editing = false;
     },
 
     triggerEditorAction: function(e) {
@@ -595,6 +551,10 @@
       this.editFragment(null);
 
       this.xmlEditor = new Indigo.XMLEditorView({parent: this, documentContent: this.documentContent});
+
+      this.editorReady.then(() => {
+        this.editFragment(this.documentContent.xmlDocument.documentElement);
+      });
     },
 
     tocSelectionChanged: function(selection) {
@@ -678,11 +638,11 @@
     },
 
     isDirty: function() {
-      return this.dirty || this.sourceEditor.editing;
+      return this.dirty;
     },
 
     canCancelEdits: function() {
-      return (!this.sourceEditor.editing || confirm($t("You will lose your changes, are you sure?")));
+      return (!this.isDirty() || confirm($t("You will lose your changes, are you sure?")));
     },
 
     // Save the content of the editor, returns a Deferred

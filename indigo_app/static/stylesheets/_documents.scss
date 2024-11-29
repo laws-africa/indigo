@@ -135,19 +135,6 @@ button.btn-link.help {
   height: 100%;
 }
 
-.document-content-view {
-  // show or hide plaintext editor component
-  &.show-text-editor {
-    .document-sheet-container {
-      //display: none;
-    }
-
-    .document-text-editor {
-      //display: block;
-    }
-  }
-}
-
 .document-text-editor {
   height: 100%;
 

@@ -739,6 +739,11 @@ def bfs_upward_search(root, names, dead_ends, not_outside_of):
     visited = set()
     # the frontier is the set of nodes that we need to check
     frontier = deque([root])
+    # don't search down inside these elements
+    dead_ends = set(dead_ends)
+    # don't go up outside of these elements
+    if not_outside_of is not None:
+        not_outside_of = set(not_outside_of)
 
     while frontier:
         node = frontier.popleft()

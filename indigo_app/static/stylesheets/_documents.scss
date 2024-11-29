@@ -481,7 +481,7 @@ body.document-editor-view {
 }
 
 .v-splitter {
-  width: 5px;
+  width: 7px;
   cursor: col-resize;
 
   &:hover {
@@ -493,16 +493,16 @@ body.document-editor-view {
     content: " ";
     position: relative;
     top: 50%;
-    left: 1px;
+    left: 2px;
     width: 3px;
-    height: 2em;
+    height: 3em;
     background-color: $gray-400;
     border-radius: 3px;
   }
 }
 
 .h-splitter {
-  height: 5px;
+  height: 7px;
   cursor: row-resize;
 
   &:hover {
@@ -514,9 +514,9 @@ body.document-editor-view {
     content: " ";
     position: relative;
     left: 50%;
-    top: 1px;
+    top: 2px;
     height: 3px;
-    width: 2em;
+    width: 3em;
     background-color: $gray-400;
     border-radius: 3px;
   }

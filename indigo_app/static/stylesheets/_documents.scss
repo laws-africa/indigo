@@ -40,27 +40,34 @@
     display: flex;
   }
 
-  .document-primary-pane,
-  .document-secondary-pane {
+  .document-primary-pane {
+    // take up full space if the secondary pane is hidden
     flex: 1;
     display: flex;
+    flex-direction: column;
     overflow-x: hidden;
     overflow-y: hidden;
   }
 
-  .document-primary-pane {
-    // take up full space if the secondary pane is hidden
-    flex-grow: 1;
-  }
-
-  .document-workspace-content {
+  .document-primary-pane-content-pane {
     flex: 1;
-    position: relative;
     overflow-y: auto;
   }
 
+  .document-primary-pane-text-pane {
+    flex: 1;
+  }
+
+  .document-workspace-content {
+    position: relative;
+  }
+
   .document-secondary-pane {
+    flex: 1;
+    display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: hidden;
   }
 
   .source-attachment-view {
@@ -99,12 +106,7 @@ button.btn-link.help {
 
 .document-sheet-container {
   overflow-x: hidden;
-
-  .sheet-inner {
-    // work around a Chrome rendering bug with sections that
-    // are very short
-    min-height: 100%;
-  }
+  overflow-y: hidden;
 
   .quick-editable {
     position: relative;
@@ -137,18 +139,16 @@ button.btn-link.help {
   // show or hide plaintext editor component
   &.show-text-editor {
     .document-sheet-container {
-      display: none;
+      //display: none;
     }
 
     .document-text-editor {
-      display: block;
+      //display: block;
     }
   }
 }
 
 .document-text-editor {
-  // changed when the user chooses to view it
-  display: none;
   height: 100%;
 
   textarea {

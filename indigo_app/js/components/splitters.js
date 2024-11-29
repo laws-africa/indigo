@@ -24,7 +24,7 @@ export class VSplitter {
     if (percentage) {
       try {
         percentage = Math.max(10, Math.min(90, parseFloat(percentage)));
-        this.setLeftPanePercentage(percentage);
+        this.setFirstPanePercentage(percentage);
       } catch {
         window.localStorage.removeItem(this.storageKey);
       }
@@ -65,10 +65,10 @@ export class VSplitter {
     const pointerRelativeXpos = e.clientX - containerOffsetLeft;
     const containerWidth = this.container.clientWidth;
 
-    this.setLeftPanePercentage((pointerRelativeXpos / containerWidth) * 100);
+    this.setFirstPanePercentage((pointerRelativeXpos / containerWidth) * 100);
   }
 
-  setLeftPanePercentage (leftPanePercentage) {
+  setFirstPanePercentage (leftPanePercentage) {
     const containerWidth = this.container.clientWidth;
     const splitterWidth = this.splitter.offsetWidth;
 
@@ -108,10 +108,10 @@ export class HSplitter extends VSplitter {
     const containerHeight = this.container.clientHeight;
 
     // Calculate percentage heights
-    this.setTopPanePercentage((pointerRelativeYpos / containerHeight) * 100);
+    this.setFirstPanePercentage((pointerRelativeYpos / containerHeight) * 100);
   }
 
-  setTopPanePercentage (firstPanePercentage) {
+  setFirstPanePercentage (firstPanePercentage) {
     const containerHeight = this.container.clientHeight;
     const splitterHeight = this.splitter.offsetHeight;
 

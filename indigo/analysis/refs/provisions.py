@@ -190,8 +190,8 @@ class ProvisionRefsResolver:
         "chapters": "chapter",
         "item": "item",
         "items": "item",
-        "paragraph": ["paragraph", "subparagraph", "item", "subsection"],
-        "paragraphs": ["paragraph", "subparagraph", "item", "subsection"],
+        "paragraph":    ["paragraph", "subparagraph", "item", "subsection"],
+        "paragraphs":   ["paragraph", "subparagraph", "item", "subsection"],
         "part": "part",
         "parts": "part",
         "point": "point",
@@ -200,20 +200,20 @@ class ProvisionRefsResolver:
         "regulations": "section",
         "section": "section",
         "sections": "section",
-        "subparagraph": ["subparagraph", "paragraph"],
-        "subparagraphs": ["subparagraph", "paragraph"],
-        "sub-paragraph": ["subparagraph", "paragraph"],
-        "sub-paragraphs": ["subparagraph", "paragraph"],
-        "subregulation": ["subsection", "paragraph", "subparagraph"],
-        "subregulations": ["subsection", "paragraph", "subparagraph"],
-        "sub-regulation": ["subsection", "paragraph", "subparagraph"],
-        "sub-regulations": ["subsection", "paragraph", "subparagraph"],
+        "subparagraph":     ["subparagraph", "paragraph", "item"],
+        "subparagraphs":    ["subparagraph", "paragraph", "item"],
+        "sub-paragraph":    ["subparagraph", "paragraph", "item"],
+        "sub-paragraphs":   ["subparagraph", "paragraph", "item"],
+        "subregulation":    ["subsection", "paragraph", "subparagraph"],
+        "subregulations":   ["subsection", "paragraph", "subparagraph"],
+        "sub-regulation":   ["subsection", "paragraph", "subparagraph"],
+        "sub-regulations":  ["subsection", "paragraph", "subparagraph"],
         "subsection": "subsection",
         "subsections": "subsection",
         "sub-section": "subsection",
         "sub-sections": "subsection",
         # af
-        "artikel": ["article", "section"],
+        "artikel":  ["article", "section"],
         "artikels": ["article", "section"],
         "deel": "part",
         "dele": "part",
@@ -231,6 +231,10 @@ class ProvisionRefsResolver:
         "subafdelings": "subsection"
     }
 
+    # hier elements to look for when we don't have further guidance
+    # we add item here because that is often used in the definitions section
+    hier_elements = AkomaNtoso30.hier_elements + ['item']
+
     # don't look outside of these elements when resolving references to minor_hier_elements
     # that aren't otherwise scoped.
     # ref: https://github.com/laws-africa/indigo-lawsafrica/issues/1067
@@ -245,7 +249,7 @@ class ProvisionRefsResolver:
         "title",
         "tome",
     ]
-    minor_hier_elements = list(set(AkomaNtoso30.hier_elements) - set(major_hier_elements))
+    minor_hier_elements = list(set(hier_elements) - set(major_hier_elements))
 
     def resolve_references(self, main_ref: MainProvisionRef, local_root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
@@ -300,7 +304,7 @@ class ProvisionRefsResolver:
         if names is None. If not_outside_of is not None, then we'll look above the root element, but not go outside of
         the elements in not_outside_of (if any).
         """
-        names = names or AkomaNtoso30.hier_elements
+        names = names or self.hier_elements
         ns = root.nsmap.get(None)
         if not ns:
             # it's not an Akoma Ntoso document, so we can't do anything
@@ -735,6 +739,11 @@ def bfs_upward_search(root, names, dead_ends, not_outside_of):
     visited = set()
     # the frontier is the set of nodes that we need to check
     frontier = deque([root])
+    # don't search down inside these elements
+    dead_ends = set(dead_ends)
+    # don't go up outside of these elements
+    if not_outside_of is not None:
+        not_outside_of = set(not_outside_of)
 
     while frontier:
         node = frontier.popleft()

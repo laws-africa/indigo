@@ -654,10 +654,18 @@ CommencementsFormset = formset_factory(
 
 class CommencementsBaseFormset(CommencementsFormset):
     def clean(self):
-        # TODO: identical to CommencementsMadeBaseFormset except validation message
         super().clean()
         if any(self.errors):
             return
+        if self.forms:
+            # check if the commencements in the form and the commencements on the work are still in sync
+            commencement_ids = {form.cleaned_data.get('id') for form in self.forms if form.cleaned_data.get('id')}
+            # same commenced_work for all forms in the formset
+            commenced_work = self.forms[0].cleaned_data['commenced_work']
+            existing_commencement_ids = {c.pk for c in commenced_work.commencements.all()}
+            if commencement_ids != existing_commencement_ids:
+                raise ValidationError(_("It seems that commencements have been edited elsewhere. Cancel your edits and make them again."))
+
         # check if commencing work and date are unique together
         seen = set()
         for form in self.forms:
@@ -701,17 +709,25 @@ class CommencementsMadeBaseFormset(CommencementsFormset):
         super().clean()
         if any(self.errors):
             return
+        if self.forms:
+            # check if the commencements made in the form and the commencements made on the work are still in sync
+            commencement_made_ids = {form.cleaned_data.get('id') for form in self.forms if form.cleaned_data.get('id')}
+            # same commencing_work for all forms in the formset
+            commencing_work = self.forms[0].cleaned_data['commencing_work']
+            existing_commencement_made_ids = {c.pk for c in commencing_work.commencements_made.all()}
+            if commencement_made_ids != existing_commencement_made_ids:
+                raise ValidationError(_("It seems that commencements have been edited elsewhere. Cancel your edits and make them again."))
         # check if commencing work and date are unique together
         seen = set()
         for form in self.forms:
             if form.cleaned_data.get('DELETE'):
                 continue
-            amending_work = form.cleaned_data.get('commencing_work')
-            amended_work = form.cleaned_data.get('commenced_work')
+            commencing_work = form.cleaned_data.get('commencing_work')
+            commenced_work = form.cleaned_data.get('commenced_work')
             date = form.cleaned_data.get('date')
-            if (amending_work, amended_work, date) in seen:
-                raise ValidationError(_("Commenced work and date must be unique together."))
-            seen.add((amending_work, amended_work, date))
+            if (commencing_work, commenced_work, date) in seen:
+                raise ValidationError(_("Commenced work, commencing work, and date must be unique together."))
+            seen.add((commencing_work, commenced_work, date))
 
     def save(self, *args, **kwargs):
         if self.is_valid() and self.has_changed():

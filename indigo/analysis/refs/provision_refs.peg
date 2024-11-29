@@ -50,7 +50,7 @@ grammar ProvisionRefs
                  / ((WS* comma)? WS* or__i18n WS+) %and_or
                  / (WS* comma WS*) %and_or
 
-  target      <- of_this / of_the_act / thereof / of
+  target      <- of_this / of_the_act / thereof / of_that_act / of
 
                  # of this...
   of_this     <- comma? WS* (of_this__i18n) WS+ %of_this
@@ -63,6 +63,9 @@ grammar ProvisionRefs
 
                  # thereof
   thereof     <- comma? WS* (thereof__i18n) %thereof
+
+                 # of that act (synonym for thereof)
+  of_that_act <- comma? WS* (of_that_act__i18n) %thereof
 
                  # this is simply all text after the reference, which could be none. This is required because
                  # the grammar expects to match the entire input, but we don't care about anything beyond the end
@@ -79,6 +82,7 @@ grammar ProvisionRefs
   and__i18n         <- ""
   of__i18n          <- ""
   of_the_act__i18n  <- ""
+  of_that_act__i18n <- ""
   of_this__i18n     <- ""
   or__i18n          <- ""
   thereof__i18n     <- ""
@@ -151,7 +155,11 @@ grammar ProvisionRefs
 
   of_the_act_eng <- `of the Act` / `of the act`
   of_the_act_afr <- `van die Wet` / `van die wet`
-  of_the_act_fra <- `de la loi` / `de la Loi`
+  of_the_act_fra <- `de la Loi` / `de la loi`
+
+  of_that_act_eng <- `of that Act` / `of that act`
+  of_that_act_afr <- `van daardie Wet` / `van daardie wet`
+  of_that_act_fra <- `de cette Loi` / `de cette loi`
 
   thereof_eng  <- `thereof`
   thereof_afr  <- `daarvan`

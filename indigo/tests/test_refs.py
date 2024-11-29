@@ -37,6 +37,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>
               <p>don't match where it's at the end of somethiGN no 102 of 2012.</p>
+              <p>don't match on Proclamations of 2012</p>
             </content>
           </paragraph>
         </section>"""
@@ -58,6 +59,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
               <p>don't match lowercase gn no 102 of 2012.</p>
               <p>don't match where it's at the end of somethign no 102 of 2012.</p>
               <p>don't match where it's at the end of somethiGN no 102 of 2012.</p>
+              <p>don't match on Proclamations of 2012</p>
             </content>
           </paragraph>
         </section>"""

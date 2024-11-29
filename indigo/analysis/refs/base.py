@@ -160,7 +160,7 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>
-                    \b(?P<subtype>{subtypes_string})\s*
+                    \b(?P<subtype>{subtypes_string})\s+
                     ([nN]o\.?\s*)?
                     (?P<num>[a-zA-Z0-9-]+)
                     (\s+of\s+|/)

@@ -231,6 +231,10 @@ class ProvisionRefsResolver:
         "subafdelings": "subsection"
     }
 
+    # hier elements to look for when we don't have further guidance
+    # we add item here because that is often used in the definitions section
+    hier_elements = AkomaNtoso30.hier_elements + ['item']
+
     # don't look outside of these elements when resolving references to minor_hier_elements
     # that aren't otherwise scoped.
     # ref: https://github.com/laws-africa/indigo-lawsafrica/issues/1067
@@ -245,7 +249,7 @@ class ProvisionRefsResolver:
         "title",
         "tome",
     ]
-    minor_hier_elements = list(set(AkomaNtoso30.hier_elements) - set(major_hier_elements))
+    minor_hier_elements = list(set(hier_elements) - set(major_hier_elements))
 
     def resolve_references(self, main_ref: MainProvisionRef, local_root: Element):
         """Resolve a ref, including subreferences, to element eIds in an Akoma Ntoso document."""
@@ -300,7 +304,7 @@ class ProvisionRefsResolver:
         if names is None. If not_outside_of is not None, then we'll look above the root element, but not go outside of
         the elements in not_outside_of (if any).
         """
-        names = names or AkomaNtoso30.hier_elements
+        names = names or self.hier_elements
         ns = root.nsmap.get(None)
         if not ns:
             # it's not an Akoma Ntoso document, so we can't do anything

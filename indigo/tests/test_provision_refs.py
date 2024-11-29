@@ -186,6 +186,45 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef("2", 10, 11, None))
         ], self.resolve_references_str("Paragraph 2", root))
 
+    def test_items_as_paragraphs(self):
+        self.doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_2">
+          <num>2</num>
+          <content>
+            <blockList eId="sec_2__list_1">
+              <item eId="sec_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="sec_2__list_1__item_a__p_1">some text</p>
+                <blockList eId="sec_2__list_1__item_a__list_1">
+                  <item eId="sec_2__list_1__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <p eId="sec_2__list_1__item_a__list_1__item_i__p_1">item (a)(i)</p>
+                  </item>
+                </blockList>
+              </item>
+              <item eId="sec_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="sec_2__list_1__item_b__p_1">reference to paragraph (a)(i)</p>
+              </item>
+            </blockList>
+          </content>
+        </section>
+        """)).root
+        root = self.doc.xpath('.//*[@eId="sec_2__list_1__item_b"]')[0]
+        item_a = self.doc.xpath('.//*[@eId="sec_2__list_1__item_a"]')[0]
+        item_a_i = self.doc.xpath('.//*[@eId="sec_2__list_1__item_a__list_1__item_i"]')[0]
+        self.assertEqual([
+            MainProvisionRef(
+                'paragraph',
+                ProvisionRef(
+                    '(a)', 10, 13, None,
+                    ProvisionRef('(i)', 13, 16, element=item_a_i, eId='sec_2__list_1__item_a__list_1__item_i'),
+                    item_a,
+                    'sec_2__list_1__item_a'
+                )
+            )
+        ], self.resolve_references_str("paragraph (a)(i)", root))
+
 
 class ProvisionRefsMatcherTestCase(TestCase):
     maxDiff = None

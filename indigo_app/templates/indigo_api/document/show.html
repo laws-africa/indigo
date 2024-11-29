@@ -45,7 +45,7 @@
                     </button>
                     <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                     <div class="dropdown-menu dropdown-menu-right">
-                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %} {% if document.work.work_in_progress %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
+                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document or document.work.work_in_progress or provision_eid %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
                       <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Unpublish &amp; save' %}</a>
                     </div>
                   </div>

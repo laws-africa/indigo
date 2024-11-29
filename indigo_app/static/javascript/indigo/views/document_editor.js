@@ -1,6 +1,201 @@
 (function(exports) {
   "use strict";
 
+  /**
+   * This class handles the text-based AKN editor. It is responsible for unparsing XML into text, re-parsing changed
+   * text into XML, and handling text-based editor actions (like bolding, etc.).
+   */
+  class AknTextEditor {
+    constructor (root, model, onElementUpdate) {
+      this.root = root;
+      this.model = model;
+      this.previousText = null;
+      this.xmlElement = null;
+      this.onElementUpdate = onElementUpdate;
+      // flag to prevent circular updates to the text
+      this.updating = false;
+
+      this.grammarName = model.tradition().settings.grammar.name;
+      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
+        model.get('frbr_uri'),
+        model.url() + '/static/xsl/text.xsl');
+      this.grammarModel.setup();
+
+      // get the appropriate remark style for the tradition
+      this.remarkGenerator = Indigo.remarks[this.model.tradition().settings.remarkGenerator];
+
+      this.setupMonacoEditor();
+      this.setupToolbar();
+    }
+
+    setupMonacoEditor () {
+      const options = this.grammarModel.monacoOptions();
+      options.automaticLayout = true;
+      this.monacoEditor = window.monaco.editor.create(
+        this.root.querySelector('.document-text-editor .monaco-editor-box'),
+        options
+      );
+      this.grammarModel.setupEditor(this.monacoEditor);
+
+      const textChanged = _.debounce(this.textChanged.bind(this), 500);
+      this.monacoEditor.onDidChangeModelContent(textChanged);
+    }
+
+    setupToolbar () {
+      for (const el of this.root.querySelectorAll('.editor-action')) {
+        el.addEventListener('click', (e) => this.triggerEditorAction(e));
+      }
+
+      this.root.querySelector('.toggle-word-wrap').addEventListener('click', (e) => this.toggleWordWrap(e));
+      this.root.querySelector('.insert-image').addEventListener('click', (e) => this.insertImage(e));
+      this.root.querySelector('.insert-remark').addEventListener('click', (e) => this.insertRemark(e));
+    }
+
+    setXmlElement (element) {
+      this.xmlElement = element;
+
+      if (!this.updating) {
+        this.previousText = this.unparse();
+        this.monacoEditor.setValue(this.previousText);
+        const top = {column: 1, lineNumber: 1};
+        this.monacoEditor.setPosition(top);
+        this.monacoEditor.revealPosition(top);
+      }
+    }
+
+    async textChanged () {
+      const text = this.monacoEditor.getValue();
+
+      if (this.previousText !== text) {
+        const elements = await this.parse();
+        // check that the response is still valid
+        if (text === this.monacoEditor.getValue()) {
+          this.previousText = text;
+          this.updating = true;
+          this.onElementUpdate(elements);
+          this.updating = false;
+        }
+      }
+    }
+
+    unparse () {
+      try {
+        return this.grammarModel.xmlToText(this.xmlElement);
+      } catch (e) {
+        // log details and then re-raise the error so that it's reported and we can work out what went wrong
+        console.log("Error converting XML to text");
+        console.log(this.xmlElement);
+        console.log(new XMLSerializer().serializeToString(this.xmlElement));
+        console.log(e);
+        throw e;
+      }
+    }
+
+    /** Parse the text in the editor into XML. Returns an array of new elements. */
+    async parse () {
+      // TODO: what if there is no text?
+
+      const fragmentRule = this.model.tradition().grammarRule(this.xmlElement);
+      const eId = this.xmlElement.getAttribute('eId');
+      const body = {
+        'content': this.monacoEditor.getValue()
+      }
+
+      if (fragmentRule !== 'akomaNtoso') {
+        body.fragment = fragmentRule;
+        if (eId && eId.lastIndexOf('__') > -1) {
+          // retain the eId of the parent element as the prefix
+          body.id_prefix = eId.substring(0, eId.lastIndexOf('__'));
+        }
+      }
+
+      const resp = await fetch(this.model.url() + '/parse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'X-CSRFToken': Indigo.csrfToken,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (resp.ok) {
+        const xml = (await resp.json()).output;
+        let newElement = $.parseXML(xml);
+
+        if (fragmentRule === 'akomaNtoso') {
+          // entire document
+          return [newElement.documentElement];
+        } else {
+          return newElement.documentElement.children;
+        }
+      } else if (resp.status === 400) {
+        Indigo.errorView.show((await resp.json()).content || resp.statusText);
+      } else {
+        Indigo.errorView.show(resp.statusText);
+      }
+    }
+
+    toggleWordWrap (e) {
+      const wordWrap = this.monacoEditor.getOption(132);
+      this.monacoEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
+      if (e.currentTarget.tagName === 'BUTTON') {
+        e.currentTarget.classList.toggle('active');
+      }
+    }
+
+    insertImage (e) {
+      if (!this.insertImageBox) {
+        // setup insert-image box
+        this.insertImageBox = new Indigo.InsertImageView({document: this.model});
+      }
+
+      let image = this.grammarModel.getImageAtCursor(this.monacoEditor);
+      let selected = null;
+
+      if (image) {
+        let filename = image.src;
+        if (filename.startsWith("media/")) filename = filename.substring(6);
+        selected = this.model.attachments().findWhere({filename: filename});
+      }
+
+      this.insertImageBox.show((image) => {
+        this.grammarModel.insertImageAtCursor(this.monacoEditor, 'media/' + image.get('filename'));
+        this.monacoEditor.focus();
+      }, selected);
+    }
+
+    insertRemark (e) {
+      const amendedSection = this.xmlElement.id.replace('-', ' ');
+      const verb = e.currentTarget.getAttribute('data-verb');
+      const amendingWork = this.getAmendingWork();
+      let remark = '<remark>';
+
+      if (this.remarkGenerator && amendingWork) {
+        remark = this.remarkGenerator(this.model, amendedSection, verb, amendingWork, this.grammarModel);
+      }
+
+      this.grammarModel.insertRemark(this.monacoEditor, remark);
+      this.monacoEditor.focus();
+    }
+
+    triggerEditorAction (e) {
+      // an editor action from the toolbar
+      e.preventDefault();
+      const action = e.currentTarget.getAttribute('data-action');
+      this.monacoEditor.focus();
+      this.monacoEditor.trigger('indigo', action);
+    }
+
+    getAmendingWork () {
+      const date = this.model.get('expression_date');
+      const documentAmendments = Indigo.Preloads.amendments;
+      const amendment = documentAmendments.find((a) => a.date === date);
+      if (amendment) {
+        return amendment.amending_work;
+      }
+    }
+  }
+
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
@@ -15,12 +210,6 @@
       'click .text-editor-buttons .btn.cancel': 'onCancelClick',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
-
-      'click .editor-action': 'triggerEditorAction',
-
-      'click .insert-image': 'insertImage',
-      'click .insert-remark': 'insertRemark',
-      'click .toggle-word-wrap': 'toggleWordWrap',
     },
 
     initialize: function(options) {
@@ -29,17 +218,15 @@
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
-      this.grammarName = this.parent.model.tradition().settings.grammar.name;
-      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
-        this.parent.model.get('frbr_uri'),
-        this.parent.model.url() + '/static/xsl/text.xsl');
-      this.grammarModel.setup();
+      this.aknTextEditor = new AknTextEditor(
+        this.el,
+        this.parent.model,
+        this.onElementUpdate.bind(this),
+      );
 
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change', this.documentChanged);
-
-      this.$textEditor = this.$('.document-text-editor');
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -51,9 +238,6 @@
       this.$toolbar = $('.document-editor-toolbar');
 
       this.setupRenderers();
-
-      // get the appropriate remark style for the tradition
-      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
     },
 
     editActivityStarted: function(mode) {
@@ -63,18 +247,6 @@
     },
 
     editActivityCancelled: function() {
-    },
-
-    setupTextEditor: function() {
-      if (!this.textEditor) {
-        const options = this.grammarModel.monacoOptions();
-        options.automaticLayout = true;
-        this.textEditor = window.monaco.editor.create(
-          this.el.querySelector('.document-text-editor .monaco-editor-box'),
-          options
-        );
-        this.grammarModel.setupEditor(this.textEditor);
-      }
     },
 
     documentChanged: function() {
@@ -90,16 +262,6 @@
       this.htmlRenderer = Indigo.render.getHtmlRenderer(this.parent.model);
       this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
-      });
-
-      // setup akn to text transform
-      this.textTransformReady = $.Deferred();
-      $.get(this.parent.model.url() + '/static/xsl/text.xsl').then(function(xml) {
-        var textTransform = new XSLTProcessor();
-        textTransform.importStylesheet(xml);
-
-        self.textTransform = textTransform;
-        self.textTransformReady.resolve();
       });
     },
 
@@ -121,39 +283,30 @@
     },
 
     editFragmentText: function(fragment) {
-      let text;
-
-      // text from node in the actual XML document
-      try {
-        text = this.grammarModel.xmlToText(fragment);
-      } catch (e) {
-        // log details and then re-raise the error so that it's reported and we can work out what went wrong
-        console.log("Error converting XML to text");
-        console.log(fragment);
-        console.log(new XMLSerializer().serializeToString(fragment));
-        console.log(e);
-        throw e;
-      }
-
       this.fragment = fragment;
-      this.editActivityStarted('text');
+      this.aknTextEditor.setXmlElement(fragment);
+      if (!this.updating) {
+        this.editActivityStarted('text');
+        this.aknTextEditor.monacoEditor.focus();
+      }
+    },
 
-      this.setupTextEditor();
-      this.textEditor.setValue(text);
-      this.textEditor.layout();
-      const top = {column: 1, lineNumber: 1};
-      this.textEditor.setPosition(top);
-      this.textEditor.revealPosition(top);
-      this.textEditor.focus();
+    /** There is newly parsed XML from the akn text editor */
+    onElementUpdate: function(elements) {
+      this.updating = true;
+      try {
+        this.parent.updateFragment(this.fragment, elements);
+      } finally {
+        this.updating = false;
+      }
     },
 
     saveTextEditor: function(e) {
       this.editActivityEnded();
       var self = this;
       var $btn = this.$('.text-editor-buttons .btn.save');
-      var content = this.textEditor.getValue();
+      var content = this.monacoEditor.getValue();
       var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
-
 
       // should we delete the item?
       if (!content.trim() && fragmentRule !== 'akomaNtoso') {
@@ -162,6 +315,8 @@
         }
         return;
       }
+
+      // TODO: all this falls away
 
       $btn
         .attr('disabled', true)
@@ -240,13 +395,18 @@
       this.editActivityCancelled();
     },
 
+    // TODO: this should actually be showFragment
     editFragment: function(node) {
       // edit node, a node in the XML document
       if (!this.updating) {
         this.tableEditor.discardChanges(null, true);
-        this.render();
+      }
+
+      this.render();
+      this.editFragmentText(node);
+
+      if (!this.updating) {
         this.$('.document-sheet-container').scrollTop(0);
-        this.editFragmentText(node);
       }
     },
 
@@ -447,78 +607,6 @@
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').removeClass('d-none');
-    },
-
-    triggerEditorAction: function(e) {
-      // an editor action from the toolbar
-      e.preventDefault();
-      const action = e.currentTarget.getAttribute('data-action');
-      this.textEditor.focus();
-      this.textEditor.trigger('indigo', action);
-    },
-
-    /**
-     * Setup the box to insert an image into the document text.
-     */
-    insertImage: function(e) {
-      var self = this;
-
-      e.preventDefault();
-
-      if (!this.insertImageBox) {
-        // setup insert-image box
-        this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
-      }
-
-      let image = this.grammarModel.getImageAtCursor(this.textEditor);
-      let selected = null;
-
-      if (image) {
-        let filename = image.src;
-        if (filename.startsWith("media/")) filename = filename.substr(6);
-        selected = this.parent.model.attachments().findWhere({filename: filename});
-      }
-
-      this.insertImageBox.show(function(image) {
-        self.grammarModel.insertImageAtCursor(self.textEditor, 'media/' + image.get('filename'));
-        self.textEditor.focus();
-      }, selected);
-    },
-
-    getAmendingWork: function(document) {
-      var date = document.get('expression_date'),
-          documentAmendments = Indigo.Preloads.amendments,
-          amendment = _.findWhere(documentAmendments, {date: date});
-
-      if (amendment) {
-        return amendment.amending_work;
-      }
-
-    },
-
-    insertRemark: function(e) {
-      e.preventDefault();
-      var amendedSection = this.fragment.id.replace('-', ' '),
-          verb = e.currentTarget.getAttribute('data-verb'),
-          amendingWork = this.getAmendingWork(this.parent.model),
-          remark = '<remark>';
-
-      if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork, this.grammarModel);
-      }
-
-      this.grammarModel.insertRemark(this.textEditor, remark);
-      this.textEditor.focus();
-    },
-
-    toggleWordWrap: function(e) {
-      e.preventDefault();
-      // 132 = EditorOptions.WordWrap
-      const wordWrap = this.textEditor.getOption(132);
-      this.textEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
-      if (e.currentTarget.tagName === 'BUTTON') {
-        e.currentTarget.classList.toggle('active');
-      }
     },
 
     resize: function() {},

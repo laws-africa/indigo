@@ -1423,6 +1423,74 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_subparagraphs_as_items(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_3">
+          <num>3</num>
+          <intro>
+            <blockList eId="sec_3__intro__list_1">
+              <item eId="sec_3__intro__list_1__item_i">
+                <num>(i)</num>
+                <p eId="sec_3__intro__list_1__item_i__p_1">item (i)</p>
+              </item>
+              <item eId="sec_3__intro__list_1__item_ii">
+                <num>(ii)</num>
+                <p eId="sec_3__intro__list_1__item_ii__p_1">ref to subparagraph (i)</p>
+              </item>
+            </blockList>
+          </intro>
+          <subparagraph eId="sec_3__subpara_i">
+            <num>(i)</num>
+            <content>
+              <p eId="sec_3__subpara_i__p_1">subparagraph (i)</p>
+            </content>
+          </subparagraph>
+          <subparagraph eId="sec_3__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_3__subpara_ii__p_1">subparagraph (i)</p>
+            </content>
+          </subparagraph>
+        </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_3">
+          <num>3</num>
+          <intro>
+            <blockList eId="sec_3__intro__list_1">
+              <item eId="sec_3__intro__list_1__item_i">
+                <num>(i)</num>
+                <p eId="sec_3__intro__list_1__item_i__p_1">item <ref href="#sec_3__intro__list_1__item_i">(i)</ref></p>
+              </item>
+              <item eId="sec_3__intro__list_1__item_ii">
+                <num>(ii)</num>
+                <p eId="sec_3__intro__list_1__item_ii__p_1">ref to subparagraph <ref href="#sec_3__intro__list_1__item_i">(i)</ref></p>
+              </item>
+            </blockList>
+          </intro>
+          <subparagraph eId="sec_3__subpara_i">
+            <num>(i)</num>
+            <content>
+              <p eId="sec_3__subpara_i__p_1">subparagraph <ref href="#sec_3__subpara_i">(i)</ref></p>
+            </content>
+          </subparagraph>
+          <subparagraph eId="sec_3__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_3__subpara_ii__p_1">subparagraph <ref href="#sec_3__subpara_i">(i)</ref></p>
+            </content>
+          </subparagraph>
+        </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_markup_html(self):
         html = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section 26(b) and section 31(a) thereof.</p>'
         expected = '<p>Concerning <a href="/akn/za/act/2009/1">Act 1 of 2009</a> and section <a href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</a> and section <a href="/akn/za/act/2009/1/~sec_31">31</a>(a) thereof.</p>'

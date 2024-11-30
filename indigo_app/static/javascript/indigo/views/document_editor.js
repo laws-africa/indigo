@@ -1,201 +1,6 @@
 (function(exports) {
   "use strict";
 
-  /**
-   * This class handles the text-based AKN editor. It is responsible for unparsing XML into text, re-parsing changed
-   * text into XML, and handling text-based editor actions (like bolding, etc.).
-   */
-  class AknTextEditor {
-    constructor (root, document, onElementParsed) {
-      this.root = root;
-      this.document = document;
-      this.previousText = null;
-      this.xmlElement = null;
-      this.onElementParsed = onElementParsed;
-      // flag to prevent circular updates to the text
-      this.updating = false;
-
-      this.grammarName = document.tradition().settings.grammar.name;
-      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
-        document.get('frbr_uri'),
-        document.url() + '/static/xsl/text.xsl');
-      this.grammarModel.setup();
-
-      // get the appropriate remark style for the tradition
-      this.remarkGenerator = Indigo.remarks[this.document.tradition().settings.remarkGenerator];
-
-      this.setupMonacoEditor();
-      this.setupToolbar();
-    }
-
-    setupMonacoEditor () {
-      const options = this.grammarModel.monacoOptions();
-      options.automaticLayout = true;
-      this.monacoEditor = window.monaco.editor.create(
-        this.root.querySelector('.document-text-editor .monaco-editor-box'),
-        options
-      );
-      this.grammarModel.setupEditor(this.monacoEditor);
-
-      const textChanged = _.debounce(this.textChanged.bind(this), 500);
-      this.monacoEditor.onDidChangeModelContent(textChanged);
-    }
-
-    setupToolbar () {
-      for (const el of this.root.querySelectorAll('.editor-action')) {
-        el.addEventListener('click', (e) => this.triggerEditorAction(e));
-      }
-
-      this.root.querySelector('.toggle-word-wrap').addEventListener('click', (e) => this.toggleWordWrap(e));
-      this.root.querySelector('.insert-image').addEventListener('click', (e) => this.insertImage(e));
-      this.root.querySelector('.insert-remark').addEventListener('click', (e) => this.insertRemark(e));
-    }
-
-    setXmlElement (element) {
-      this.xmlElement = element;
-
-      if (!this.updating) {
-        this.previousText = this.unparse();
-        this.monacoEditor.setValue(this.previousText);
-        const top = {column: 1, lineNumber: 1};
-        this.monacoEditor.setPosition(top);
-        this.monacoEditor.revealPosition(top);
-      }
-    }
-
-    async textChanged () {
-      const text = this.monacoEditor.getValue();
-
-      if (this.previousText !== text) {
-        const elements = await this.parse();
-        // check that the response is still valid
-        if (text === this.monacoEditor.getValue()) {
-          this.previousText = text;
-          this.updating = true;
-          this.onElementParsed(elements);
-          this.updating = false;
-        }
-      }
-    }
-
-    unparse () {
-      try {
-        return this.grammarModel.xmlToText(this.xmlElement);
-      } catch (e) {
-        // log details and then re-raise the error so that it's reported and we can work out what went wrong
-        console.log("Error converting XML to text");
-        console.log(this.xmlElement);
-        console.log(new XMLSerializer().serializeToString(this.xmlElement));
-        console.log(e);
-        throw e;
-      }
-    }
-
-    /** Parse the text in the editor into XML. Returns an array of new elements. */
-    async parse () {
-      // TODO: what if there is no text?
-
-      const fragmentRule = this.document.tradition().grammarRule(this.xmlElement);
-      const eId = this.xmlElement.getAttribute('eId');
-      const body = {
-        'content': this.monacoEditor.getValue()
-      }
-
-      if (fragmentRule !== 'akomaNtoso') {
-        body.fragment = fragmentRule;
-        if (eId && eId.lastIndexOf('__') > -1) {
-          // retain the eId of the parent element as the prefix
-          body.id_prefix = eId.substring(0, eId.lastIndexOf('__'));
-        }
-      }
-
-      const resp = await fetch(this.document.url() + '/parse', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'X-CSRFToken': Indigo.csrfToken,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (resp.ok) {
-        const xml = (await resp.json()).output;
-        let newElement = $.parseXML(xml);
-
-        if (fragmentRule === 'akomaNtoso') {
-          // entire document
-          return [newElement.documentElement];
-        } else {
-          return newElement.documentElement.children;
-        }
-      } else if (resp.status === 400) {
-        Indigo.errorView.show((await resp.json()).content || resp.statusText);
-      } else {
-        Indigo.errorView.show(resp.statusText);
-      }
-    }
-
-    toggleWordWrap (e) {
-      const wordWrap = this.monacoEditor.getOption(132);
-      this.monacoEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
-      if (e.currentTarget.tagName === 'BUTTON') {
-        e.currentTarget.classList.toggle('active');
-      }
-    }
-
-    insertImage (e) {
-      if (!this.insertImageBox) {
-        // setup insert-image box
-        this.insertImageBox = new Indigo.InsertImageView({document: this.document});
-      }
-
-      let image = this.grammarModel.getImageAtCursor(this.monacoEditor);
-      let selected = null;
-
-      if (image) {
-        let filename = image.src;
-        if (filename.startsWith("media/")) filename = filename.substring(6);
-        selected = this.document.attachments().findWhere({filename: filename});
-      }
-
-      this.insertImageBox.show((image) => {
-        this.grammarModel.insertImageAtCursor(this.monacoEditor, 'media/' + image.get('filename'));
-        this.monacoEditor.focus();
-      }, selected);
-    }
-
-    insertRemark (e) {
-      const amendedSection = this.xmlElement.id.replace('-', ' ');
-      const verb = e.currentTarget.getAttribute('data-verb');
-      const amendingWork = this.getAmendingWork();
-      let remark = '<remark>';
-
-      if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.document, amendedSection, verb, amendingWork, this.grammarModel);
-      }
-
-      this.grammarModel.insertRemark(this.monacoEditor, remark);
-      this.monacoEditor.focus();
-    }
-
-    triggerEditorAction (e) {
-      // an editor action from the toolbar
-      e.preventDefault();
-      const action = e.currentTarget.getAttribute('data-action');
-      this.monacoEditor.focus();
-      this.monacoEditor.trigger('indigo', action);
-    }
-
-    getAmendingWork () {
-      const date = this.document.get('expression_date');
-      const documentAmendments = Indigo.Preloads.amendments;
-      const amendment = documentAmendments.find((a) => a.date === date);
-      if (amendment) {
-        return amendment.amending_work;
-      }
-    }
-  }
-
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
@@ -233,10 +38,16 @@
       this.editingXmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
-      this.aknTextEditor = new AknTextEditor(
+      this.aknTextEditor = new Indigo.AknTextEditor(
         this.el,
         this.document,
-        this.onElementParsed.bind(this),
+        this.onTextElementParsed.bind(this),
+      );
+
+      this.xmlEditor = new Indigo.XMLEditor(
+        document.querySelector('.document-xml-editor'),
+        this.document,
+        this.onXmlElementParsed.bind(this),
       );
 
       // setup renderer
@@ -289,6 +100,8 @@
     editXmlElement: function(element) {
       this.editingXmlElement = element;
       this.aknTextEditor.setXmlElement(element);
+      this.xmlEditor.setXmlElement(element);
+
       // if we're not already editing, activate the editor
       if (!this.updating) {
         this.editActivityStarted('text');
@@ -408,10 +221,22 @@
     },
 
     /** There is newly parsed XML from the akn text editor */
-    onElementParsed: function(elements) {
+    onTextElementParsed: function(elements) {
       this.updating = true;
       try {
         this.parent.updateFragment(this.editingXmlElement, elements);
+      } finally {
+        this.updating = false;
+      }
+    },
+
+    /**
+     * The XML editor has parsed its XML into a new element.
+     */
+    onXmlElementParsed: function(element) {
+      this.updating = true;
+      try {
+        this.parent.updateFragment(this.editingXmlElement, [element]);
       } finally {
         this.updating = false;
       }
@@ -698,7 +523,6 @@
 
       // setup the editor views
       this.sourceEditor = new Indigo.SourceEditorView({parent: this});
-      this.xmlEditor = new Indigo.XMLEditorView({parent: this, documentContent: this.documentContent});
 
       // this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
@@ -732,7 +556,6 @@
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.sourceEditor.showXmlElement(fragment);
-        this.xmlEditor.editFragment(fragment);
       }
     },
 
@@ -748,7 +571,6 @@
         if (oldNode === this.fragment) {
           this.fragment = updated;
           this.sourceEditor.showXmlElement(updated);
-          this.xmlEditor.editFragment(updated);
         }
         // TODO: need to set the element?
         this.sourceEditor.render();

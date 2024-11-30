@@ -214,8 +214,11 @@
       // TODO: remove these two?
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'onCancelClick',
-      'click .btn.edit-table': 'editTable',
+      'click .show-structure': 'toggleShowStructure',
+      'click .show-pit-comparison': 'toggleShowComparison',
+      'click .edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
+      'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },
 
     initialize: function(options) {
@@ -631,17 +634,56 @@
       this.$('.document-workspace-buttons').removeClass('d-none');
     },
 
+    toggleShowStructure: function(e) {
+      const show = e.currentTarget.classList.toggle('active');
+      this.el.querySelector('#document-sheet la-akoma-ntoso').classList.toggle('show-structure', show);
+    },
+
+    toggleShowComparison: function(e) {
+      const show = !e.currentTarget.classList.contains('active');
+      const menuItem = e.currentTarget.parentElement.previousElementSibling;
+
+      $(e.currentTarget).siblings().removeClass('active');
+      this.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
+      e.currentTarget.classList.toggle('active');
+
+      menuItem.classList.toggle('btn-outline-secondary', !show);
+      menuItem.classList.toggle('btn-primary', show);
+    },
+
+    refPopup: function (e) {
+      const element = e.target;
+      const href = element.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+      const eId = href.substring(1);
+
+      if (element._tippy) return;
+
+      const target = this.document.content.xpath(
+        `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+
+      if (target) {
+        // render
+        const html = document.createElement('la-akoma-ntoso');
+        html.appendChild(this.htmlRenderer.renderXmlElement(this.document, target));
+
+        tippy(element, {
+          content: html.outerHTML,
+          allowHTML: true,
+          interactive: true,
+          theme: 'light',
+          placement: 'bottom-start',
+          appendTo: document.getElementById("document-sheet"),
+        });
+      }
+    },
+
     resize: function() {},
   });
 
   // Handle the document editor, tracking changes and saving it back to the server.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
-    events: {
-      'click .btn.show-structure': 'toggleShowStructure',
-      'click .show-pit-comparison': 'toggleShowComparison',
-      'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
-    },
 
     initialize: function(options) {
       this.dirty = false;
@@ -692,23 +734,6 @@
         this.sourceEditor.showXmlElement(fragment);
         this.xmlEditor.editFragment(fragment);
       }
-    },
-
-    toggleShowStructure: function(e) {
-      var show = e.currentTarget.classList.toggle('active');
-      this.$el.find('#document-sheet la-akoma-ntoso').toggleClass('show-structure', show);
-    },
-
-    toggleShowComparison: function(e) {
-      var show = !e.currentTarget.classList.contains('active'),
-          menuItem = e.currentTarget.parentElement.previousElementSibling;
-
-      $(e.currentTarget).siblings().removeClass('active');
-      this.sourceEditor.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
-      e.currentTarget.classList.toggle('active');
-
-      menuItem.classList.toggle('btn-outline-secondary', !show);
-      menuItem.classList.toggle('btn-primary', show);
     },
 
     removeFragment: function(fragment) {
@@ -785,31 +810,5 @@
       return this.documentContent.save();
     },
 
-    refPopup: function (e) {
-      const element = e.target;
-      const href = element.getAttribute('href');
-      if (!href || !href.startsWith('#')) return;
-      const eId = href.substring(1);
-
-      if (element._tippy) return;
-
-      const target = this.documentContent.xpath(
-        `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
-
-      if (target) {
-        // render
-        const html = document.createElement('la-akoma-ntoso');
-        html.appendChild(this.sourceEditor.htmlRenderer.renderXmlElement(this.model, target));
-
-        tippy(element, {
-          content: html.outerHTML,
-          allowHTML: true,
-          interactive: true,
-          theme: 'light',
-          placement: 'bottom-start',
-          appendTo: document.getElementById("document-sheet"),
-        });
-      }
-    }
   });
 })(window);

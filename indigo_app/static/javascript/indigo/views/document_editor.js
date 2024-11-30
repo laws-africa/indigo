@@ -6,23 +6,23 @@
    * text into XML, and handling text-based editor actions (like bolding, etc.).
    */
   class AknTextEditor {
-    constructor (root, model, onElementUpdate) {
+    constructor (root, document, onElementParsed) {
       this.root = root;
-      this.model = model;
+      this.document = document;
       this.previousText = null;
       this.xmlElement = null;
-      this.onElementUpdate = onElementUpdate;
+      this.onElementParsed = onElementParsed;
       // flag to prevent circular updates to the text
       this.updating = false;
 
-      this.grammarName = model.tradition().settings.grammar.name;
+      this.grammarName = document.tradition().settings.grammar.name;
       this.grammarModel = new Indigo.grammars.registry[this.grammarName](
-        model.get('frbr_uri'),
-        model.url() + '/static/xsl/text.xsl');
+        document.get('frbr_uri'),
+        document.url() + '/static/xsl/text.xsl');
       this.grammarModel.setup();
 
       // get the appropriate remark style for the tradition
-      this.remarkGenerator = Indigo.remarks[this.model.tradition().settings.remarkGenerator];
+      this.remarkGenerator = Indigo.remarks[this.document.tradition().settings.remarkGenerator];
 
       this.setupMonacoEditor();
       this.setupToolbar();
@@ -72,7 +72,7 @@
         if (text === this.monacoEditor.getValue()) {
           this.previousText = text;
           this.updating = true;
-          this.onElementUpdate(elements);
+          this.onElementParsed(elements);
           this.updating = false;
         }
       }
@@ -95,7 +95,7 @@
     async parse () {
       // TODO: what if there is no text?
 
-      const fragmentRule = this.model.tradition().grammarRule(this.xmlElement);
+      const fragmentRule = this.document.tradition().grammarRule(this.xmlElement);
       const eId = this.xmlElement.getAttribute('eId');
       const body = {
         'content': this.monacoEditor.getValue()
@@ -109,7 +109,7 @@
         }
       }
 
-      const resp = await fetch(this.model.url() + '/parse', {
+      const resp = await fetch(this.document.url() + '/parse', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -146,7 +146,7 @@
     insertImage (e) {
       if (!this.insertImageBox) {
         // setup insert-image box
-        this.insertImageBox = new Indigo.InsertImageView({document: this.model});
+        this.insertImageBox = new Indigo.InsertImageView({document: this.document});
       }
 
       let image = this.grammarModel.getImageAtCursor(this.monacoEditor);
@@ -155,7 +155,7 @@
       if (image) {
         let filename = image.src;
         if (filename.startsWith("media/")) filename = filename.substring(6);
-        selected = this.model.attachments().findWhere({filename: filename});
+        selected = this.document.attachments().findWhere({filename: filename});
       }
 
       this.insertImageBox.show((image) => {
@@ -171,7 +171,7 @@
       let remark = '<remark>';
 
       if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.model, amendedSection, verb, amendingWork, this.grammarModel);
+        remark = this.remarkGenerator(this.document, amendedSection, verb, amendingWork, this.grammarModel);
       }
 
       this.grammarModel.insertRemark(this.monacoEditor, remark);
@@ -187,7 +187,7 @@
     }
 
     getAmendingWork () {
-      const date = this.model.get('expression_date');
+      const date = this.document.get('expression_date');
       const documentAmendments = Indigo.Preloads.amendments;
       const amendment = documentAmendments.find((a) => a.date === date);
       if (amendment) {
@@ -199,9 +199,15 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The SourceEditorView manages the interaction between
-  // the model, the wrapping document editor view, and the source (xml) and
-  // text editor components.
+  /**
+   * The SourceEditorView manages rendering and editing (via text, xml or table editors) of an xml element. It handles
+   * moving between the different editors and updates the document model when changes are made.
+   *
+   * It can have two active xml elements, which are only different in quick edit mode:
+   *
+   * - the one being rendered (xmlElement)
+   * - the one being edited (editingXmlElement)
+   */
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
@@ -215,18 +221,24 @@
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
+      // flag to prevent circular updates
       this.updating = false;
+      this.document = this.parent.model;
+      // the element currently being shown
+      this.xmlElement = null;
+      // the element currently being edited -- can be different to the above during quick edit
+      this.editingXmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       this.aknTextEditor = new AknTextEditor(
         this.el,
-        this.parent.model,
-        this.onElementUpdate.bind(this),
+        this.document,
+        this.onElementParsed.bind(this),
       );
 
       // setup renderer
       this.editorReady = $.Deferred();
-      this.listenTo(this.parent.model, 'change', this.documentChanged);
+      this.listenTo(this.document, 'change', this.onDocumentChanged);
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -240,26 +252,12 @@
       this.setupRenderers();
     },
 
-    editActivityStarted: function(mode) {
-    },
-
-    editActivityEnded: function() {
-    },
-
-    editActivityCancelled: function() {
-    },
-
-    documentChanged: function() {
-      this.coverpageCache = null;
-      this.render();
-    },
-
     setupRenderers: function() {
-      var country = this.parent.model.get('country'),
+      var country = this.document.get('country'),
           self = this;
 
       // setup akn to html transform
-      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.parent.model);
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.document);
       this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
       });
@@ -272,32 +270,26 @@
 
     quickEdit: function(e) {
       var elemId = e.currentTarget.parentElement.parentElement.id,
-          node = this.parent.documentContent.xmlDocument;
+          element = this.parent.documentContent.xmlDocument;
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {
-        node = node.querySelector('[eId="' + id + '"]');
+        element = element.querySelector('[eId="' + id + '"]');
       });
 
-      if (node) this.editFragmentText(node);
+      if (element) this.editXmlElement(element);
     },
 
-    editFragmentText: function(fragment) {
-      this.fragment = fragment;
-      this.aknTextEditor.setXmlElement(fragment);
+    /**
+     * Edit the given XML element in the text editor.
+     */
+    editXmlElement: function(element) {
+      this.editingXmlElement = element;
+      this.aknTextEditor.setXmlElement(element);
+      // if we're not already editing, activate the editor
       if (!this.updating) {
         this.editActivityStarted('text');
         this.aknTextEditor.monacoEditor.focus();
-      }
-    },
-
-    /** There is newly parsed XML from the akn text editor */
-    onElementUpdate: function(elements) {
-      this.updating = true;
-      try {
-        this.parent.updateFragment(this.fragment, elements);
-      } finally {
-        this.updating = false;
       }
     },
 
@@ -306,12 +298,12 @@
       var self = this;
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.monacoEditor.getValue();
-      var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
+      var fragmentRule = this.document.tradition().grammarRule(this.editingXmlElement);
 
       // should we delete the item?
       if (!content.trim() && fragmentRule !== 'akomaNtoso') {
         if (confirm($t('Go ahead and delete this section from the document?'))) {
-          this.parent.removeFragment(this.fragment);
+          this.parent.removeFragment(this.editingXmlElement);
         }
         return;
       }
@@ -341,7 +333,7 @@
 
           this.updating = true;
           try {
-            self.parent.updateFragment(self.fragment, newFragment);
+            self.parent.updateFragment(self.editingXmlElement, newFragment);
           } finally {
             this.updating = false;
           }
@@ -365,7 +357,7 @@
               .addClass('fa-check');
         });
 
-      var id = this.fragment.getAttribute('eId'),
+      var id = this.editingXmlElement.getAttribute('eId'),
           data = {
         'content': content,
       };
@@ -378,7 +370,7 @@
       }
 
       $.ajax({
-        url: this.parent.model.url() + '/parse',
+        url: this.document.url() + '/parse',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -391,23 +383,53 @@
         });
     },
 
-    onCancelClick() {
-      this.editActivityCancelled();
-    },
-
-    // TODO: this should actually be showFragment
-    editFragment: function(node) {
-      // edit node, a node in the XML document
+    /**
+     * Set the XML element that is currently being shown.
+     *
+     * This may be called when the XML editor or the text editor provide an updated element to edit, in which case
+     * this.updating will be true.
+     */
+    showXmlElement: function(element) {
+      // show node, a node in the XML document
       if (!this.updating) {
         this.tableEditor.discardChanges(null, true);
       }
 
+      this.xmlElement = element;
       this.render();
-      this.editFragmentText(node);
+      this.editXmlElement(element);
 
       if (!this.updating) {
         this.$('.document-sheet-container').scrollTop(0);
       }
+    },
+
+    /** There is newly parsed XML from the akn text editor */
+    onElementParsed: function(elements) {
+      this.updating = true;
+      try {
+        this.parent.updateFragment(this.editingXmlElement, elements);
+      } finally {
+        this.updating = false;
+      }
+    },
+
+    onCancelClick() {
+      this.editActivityCancelled();
+    },
+
+    onDocumentChanged: function() {
+      this.coverpageCache = null;
+      this.render();
+    },
+
+    editActivityStarted: function(mode) {
+    },
+
+    editActivityEnded: function() {
+    },
+
+    editActivityCancelled: function() {
     },
 
     // Save the content of the editor into the DOM, returns a Deferred
@@ -423,10 +445,10 @@
     },
 
     render: function() {
-      if (!this.parent.fragment) return;
+      if (!this.xmlElement) return;
 
       var self = this,
-          renderCoverpage = this.parent.fragment.parentElement === null,
+          renderCoverpage = this.xmlElement.parentElement === null,
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
@@ -444,7 +466,7 @@
       }
 
       this.htmlRenderer.ready.then(function() {
-        var html = self.htmlRenderer.renderXmlElement(self.parent.model, self.parent.fragment);
+        var html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
 
         self.makeLinksExternal(html);
         self.addWorkPopups(html);
@@ -464,13 +486,13 @@
 
       if (!this.comparisonDocumentId) return;
 
-      data.document = this.parent.model.toJSON();
+      data.document = this.document.toJSON();
       data.document.content = this.parent.documentContent.toXml();
-      data.element_id = this.parent.fragment.getAttribute('eId');
+      data.element_id = this.xmlElement.getAttribute('eId');
 
-      if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
+      if (!data.element_id && this.xmlElement.tagName !== "akomaNtoso") {
         // for elements without ids (preamble, preface, components)
-        data.element_id = this.parent.fragment.tagName;
+        data.element_id = this.xmlElementxmlElement.tagName;
       }
 
       $.ajax({
@@ -503,9 +525,9 @@
       if (this.coverpageCache) {
         deferred.resolve(this.coverpageCache);
       } else {
-        var data = JSON.stringify({'document': self.parent.model.toJSON()});
+        var data = JSON.stringify({'document': self.document.toJSON()});
         $.ajax({
-          url: this.parent.model.url() + '/render/coverpage',
+          url: this.document.url() + '/render/coverpage',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",
@@ -556,7 +578,7 @@
       var self = this;
 
       $(html)
-        .find(this.parent.model.tradition().settings.grammar.quickEditable)
+        .find(this.document.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .each(function(i, e) {
           self.ensureGutterActions(e).append(self.quickEditTemplate.cloneNode(true));
@@ -634,12 +656,10 @@
 
       // setup the editor views
       this.sourceEditor = new Indigo.SourceEditorView({parent: this});
-      // XXX this is a deferred to indicate when the editor is ready to edit
-      this.editorReady = this.sourceEditor.editorReady;
-      this.editFragment(null);
-
       this.xmlEditor = new Indigo.XMLEditorView({parent: this, documentContent: this.documentContent});
 
+      // this is a deferred to indicate when the editor is ready to edit
+      this.editorReady = this.sourceEditor.editorReady;
       this.editorReady.then(() => {
         this.editFragment(this.documentContent.xmlDocument.documentElement);
       });
@@ -669,7 +689,7 @@
         this.fragment = fragment;
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
-        this.sourceEditor.editFragment(fragment);
+        this.sourceEditor.showXmlElement(fragment);
         this.xmlEditor.editFragment(fragment);
       }
     },
@@ -702,9 +722,10 @@
         var updated = this.documentContent.replaceNode(oldNode, newNodes);
         if (oldNode === this.fragment) {
           this.fragment = updated;
-          this.sourceEditor.editFragment(updated);
+          this.sourceEditor.showXmlElement(updated);
           this.xmlEditor.editFragment(updated);
         }
+        // TODO: need to set the element?
         this.sourceEditor.render();
       } finally {
         this.updating = false;

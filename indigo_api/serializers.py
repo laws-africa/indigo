@@ -264,6 +264,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     repeal = RepealSerializer(read_only=True,
                               help_text="Description of the repeal of this work, if it has been repealed.")
 
+    # only for provision editing
+    provision_eid = serializers.CharField(required=False, allow_blank=True)
+
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
 
@@ -284,6 +287,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
+
+            'provision_eid',
         )
         read_only_fields = ('country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'created_at', 'updated_at')
 
@@ -314,7 +319,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def validate(self, attrs):
-        if attrs.get('content'):
+        if attrs.get('content') and not attrs.get('provision_eid'):
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
@@ -325,6 +330,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # ensure the correct namespace
             if doc.namespace != AKN_NAMESPACES['3.0']:
                 raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
+
+        if attrs.get('content') and attrs.get('provision_eid'):
+            # TODO: validate provision-level XML some other way
+            pass
 
         return attrs
 
@@ -388,7 +397,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # Document content must always come first so it can be overridden
         # by the other properties.
         content = validated_data.pop('content', None)
+        provision_eid = validated_data.pop('provision_eid', None)
         if content is not None:
+            if provision_eid:
+                content = document.update_provision_xml(provision_eid, content)
             document.reset_xml(content, from_model=True)
 
         # save rest of changes

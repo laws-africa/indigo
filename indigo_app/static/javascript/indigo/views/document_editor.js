@@ -200,6 +200,7 @@
       var deferred = this.pendingTextSave = $.Deferred();
       deferred
         .then(function(response) {
+          // TODO: response.output should be the updated (by the server) version of the edited provision
           var newFragment = $.parseXML(response.output);
 
           if (fragmentRule === 'akomaNtoso') {
@@ -311,7 +312,7 @@
       if (!this.parent.fragment) return;
 
       var self = this,
-          renderCoverpage = this.parent.fragment.parentElement === null,
+          renderCoverpage = this.parent.fragment.parentElement === null && Indigo.Preloads.provisionEid === "",
           $akn = this.$('.document-workspace-content la-akoma-ntoso'),
           coverpage;
 
@@ -727,6 +728,7 @@
     },
 
     // Save the content of the document, returns a Deferred
+    // TODO: this?
     saveModel: function() {
       return this.documentContent.save();
     },

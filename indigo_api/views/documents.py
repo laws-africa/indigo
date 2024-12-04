@@ -64,7 +64,7 @@ class DocumentViewMixin:
                           'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work')
 
     def initial(self, request, **kwargs):
-        super(DocumentViewMixin, self).initial(request, **kwargs)
+        super().initial(request, **kwargs)
 
         # some of our renderers want to bypass the serializer, so that we get access to the
         # raw data objects
@@ -107,7 +107,7 @@ class DocumentViewSet(DocumentViewMixin,
         if not DocumentPermissions().update_allowed(self.request, serializer):
             self.permission_denied(self.request)
 
-        super(DocumentViewSet, self).perform_update(serializer)
+        super().perform_update(serializer)
 
     @detail_route_action(detail=True, methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):
@@ -122,6 +122,7 @@ class DocumentViewSet(DocumentViewMixin,
 
         if request.method == 'PUT':
             try:
+                # TODO: don't just reset here, integrate the content IFF in provision mode (or always?)
                 instance.reset_xml(request.data.get('content'))
                 instance.save_with_revision(request.user)
             except LxmlError as e:
@@ -338,6 +339,7 @@ class ParseView(DocumentResourceView, APIView):
 
         text = serializer.validated_data.get('content')
         try:
+            # TODO: this returns technically invalid XML in provision mode (no 'act' etc)
             xml = importer.parse_from_text(text, frbr_uri)
         except ValueError as e:
             log.warning(f"Error during import: {e}", exc_info=e)

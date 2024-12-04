@@ -19,6 +19,9 @@ from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
+from lxml import etree
+
+from bluebell.xml import XmlGenerator
 
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
@@ -543,6 +546,22 @@ class Document(DocumentMixin, models.Model):
         if self.expression_date != new_date:
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
+
+    def update_provision_xml(self, provision_eid, provision_xml):
+        def get_element(tree):
+            # TODO: a better way to do this?
+            elems = tree.xpath(f".//a:*[@eId='{provision_eid}']", namespaces={'a': self.doc.namespace})
+            assert len(elems) == 1, f"Expected exactly 1 provision with this eid, found {len(elems)} instead: {provision_eid}"
+            return elems[0]
+        updated_provision = get_element(etree.fromstring(provision_xml))
+        old_provision = get_element(self.doc.main)
+        elem_parent = old_provision.getparent()
+        elem_parent.replace(old_provision, updated_provision)
+        # fix up the XML: rewrite eids, correct tags etc.
+        generator = XmlGenerator(self.frbr_uri)
+        updated_xml = generator.post_process(self.doc.main)
+        with_akn_tag = generator.wrap_akn(updated_xml)
+        return etree.tostring(with_akn_tag, encoding='unicode')
 
     def _make_doc(self, xml):
         return self.cobalt_class(xml)

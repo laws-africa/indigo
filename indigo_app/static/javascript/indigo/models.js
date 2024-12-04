@@ -60,10 +60,12 @@
       // originally triggered by a content change
       if (options && options.fromContent) return;
 
-      // rewrite all eIds before setting the content
-      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
-      // rewrite all attachment FRBR URI work components too
-      new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
+      if (Indigo.Preloads.provisionEid === "") {
+        // rewrite all eIds before setting the content
+        new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
+        // rewrite all attachment FRBR URI work components too
+        new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
+      }
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
@@ -184,6 +186,7 @@
       // changes in a single revision on the server.
       // We do this by delegating to the document object.
       this.document.attributes.content = this.get('content');
+      this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
       var result = this.document.save();
       // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
       // the response to the save() call

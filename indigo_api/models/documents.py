@@ -548,13 +548,9 @@ class Document(DocumentMixin, models.Model):
             self.save_with_revision(user, comment=comment)
 
     def update_provision_xml(self, provision_eid, provision_xml):
-        def get_element(tree):
-            # TODO: a better way to do this?
-            elems = tree.xpath(f".//a:*[@eId='{provision_eid}']", namespaces={'a': self.doc.namespace})
-            assert len(elems) == 1, f"Expected exactly 1 provision with this eid, found {len(elems)} instead: {provision_eid}"
-            return elems[0]
-        updated_provision = get_element(etree.fromstring(provision_xml))
-        old_provision = get_element(self.doc.main)
+        # TODO: provision_xml will likely change and we'll need to get_portion_element for it too
+        updated_provision = etree.fromstring(provision_xml)
+        old_provision = self.doc.get_portion_element(provision_eid)
         elem_parent = old_provision.getparent()
         elem_parent.replace(old_provision, updated_provision)
         # fix up the XML: rewrite eids, correct tags etc.

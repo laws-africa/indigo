@@ -1,8 +1,10 @@
 import json
 
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView, FormView
 from lxml import etree
 
@@ -20,17 +22,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document/show.html'
     permission_required = ('indigo_api.view_document',)
-    provision_eid = None
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        # TODO: decide on cut-off size
-        if len(self.object.document_xml) >= 5000000:
-            # for large documents, redirect to the provision chooser to edit just a portion
-            return redirect('choose_document_provision', doc_id=self.object.id)
-        # otherwise, follow the normal get() path
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
 
     def get_object(self, queryset=None):
         doc = super().get_object(queryset)
@@ -127,13 +118,16 @@ class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView, FormView
 
 class DocumentProvisionDetailView(DocumentDetailView):
     eid = None
+    provision_xml = None
 
     def get(self, request, *args, **kwargs):
-        # don't call super(), we'll end up in a loop choosing a provision forever
-        self.object = self.get_object()
+        document = self.get_object()
         self.eid = self.kwargs.get('eid')
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
+        self.provision_xml = document.doc.get_portion_element(self.eid)
+        if not self.provision_xml:
+            messages.error(request, _("No provision with this id found: '%(eid)s'") % {"eid": self.eid})
+            return redirect('choose_document_provision', doc_id=document.id)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -141,12 +135,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
         return context
 
     def get_document_content_json(self, document):
-        component = document.doc.main
-        elems = component.xpath(f".//a:*[@eId='{self.eid}']", namespaces={'a': self.object.doc.namespace})
-        # TODO: throw a useful error including the eId if we don't have exactly one match
-        assert len(elems) == 1
-
-        return json.dumps(etree.tostring(elems[0], encoding='unicode'))
+        return json.dumps(etree.tostring(self.provision_xml, encoding='unicode'))
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

@@ -32,6 +32,8 @@
       this.editing = false;
       // flag to prevent circular updates
       this.updating = false;
+      // nonce to prevent concurrent saves
+      this.nonce = null;
       this.document = this.parent.model;
       // the element currently being shown
       this.xmlElement = null;
@@ -126,8 +128,11 @@
 
       let elements;
       try {
-        // TODO: handle cancel mid-way through
+        // use a nonce to check if we're still the current save when the parse completes
+        const nonce = this.nonce = Math.random();
         elements = await this.aknTextEditor.parse() ;
+        // check if we're still the current save
+        if (nonce !== this.nonce) return;
       } finally {
         btn.removeAttribute('disabled');
       }
@@ -147,7 +152,7 @@
     },
 
     closeTextEditor: function(e) {
-      // TODO: cancel any pending update
+      this.nonce = null;
       this.toggleTextEditor(false);
       this.toolbar.classList.remove('is-editing', 'edit-mode-text');
       this.editing = false;

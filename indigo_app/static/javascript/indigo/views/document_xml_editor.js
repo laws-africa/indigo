@@ -140,6 +140,8 @@ class AknTextEditor {
     } else {
       Indigo.errorView.show(resp.statusText);
     }
+
+    return null;
   }
 
   toggleWordWrap (e) {

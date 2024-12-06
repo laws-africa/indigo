@@ -137,12 +137,14 @@
         btn.removeAttribute('disabled');
       }
 
-      if (elements && elements.length) {
-        this.onTextElementParsed(elements);
-        this.closeTextEditor();
-      } else if (confirm($t('Go ahead and delete this section from the document?'))) {
-        this.parent.removeFragment(this.editingXmlElement);
-        this.closeTextEditor();
+      if (elements) {
+        if (elements.length) {
+          this.onTextElementParsed(elements);
+          this.closeTextEditor();
+        } else if (confirm($t('Go ahead and delete this section from the document?'))) {
+          this.parent.removeFragment(this.editingXmlElement);
+          this.closeTextEditor();
+        }
       }
     },
 

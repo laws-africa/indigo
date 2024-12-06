@@ -18,7 +18,7 @@ from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
-from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
+from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument, Portion
 from lxml import etree
 
 from bluebell.xml import XmlGenerator
@@ -548,8 +548,8 @@ class Document(DocumentMixin, models.Model):
             self.save_with_revision(user, comment=comment)
 
     def update_provision_xml(self, provision_eid, provision_xml):
-        # TODO: provision_xml will likely change and we'll need to get_portion_element for it too
-        updated_provision = etree.fromstring(provision_xml)
+        portion = Portion(provision_xml)
+        updated_provision = portion.get_portion_element(provision_eid)
         old_provision = self.doc.get_portion_element(provision_eid)
         elem_parent = old_provision.getparent()
         elem_parent.replace(old_provision, updated_provision)

@@ -11,6 +11,7 @@ class AknTextEditor {
     this.onElementParsed = onElementParsed;
     // flag to prevent circular updates to the text
     this.updating = false;
+    this.liveUpdates = false;
 
     this.grammarName = document.tradition().settings.grammar.name;
     this.grammarModel = new Indigo.grammars.registry[this.grammarName](
@@ -61,21 +62,27 @@ class AknTextEditor {
   }
 
   async onTextChanged () {
-    const text = this.monacoEditor.getValue();
+    if (this.liveUpdates) {
+      const text = this.monacoEditor.getValue();
 
-    if (this.previousText !== text) {
-      const elements = await this.parse();
-      // check that the response is still valid
-      if (text === this.monacoEditor.getValue()) {
-        this.previousText = text;
-        this.updating = true;
-        this.onElementParsed(elements);
-        this.updating = false;
+      if (this.previousText !== text) {
+        const elements = await this.parse();
+        // check that the response is still valid
+        if (text === this.monacoEditor.getValue()) {
+          this.previousText = text;
+          this.updating = true;
+          this.onElementParsed(elements);
+          this.updating = false;
+        }
       }
     }
   }
 
   unparse () {
+    if (!this.xmlElement) {
+      return "";
+    }
+
     try {
       return this.grammarModel.xmlToText(this.xmlElement);
     } catch (e) {
@@ -90,7 +97,10 @@ class AknTextEditor {
 
   /** Parse the text in the editor into XML. Returns an array of new elements. */
   async parse () {
-    // TODO: what if there is no text?
+    const text = this.monacoEditor.getValue();
+    if (!text.trim()) {
+      return [];
+    }
 
     const fragmentRule = this.document.tradition().grammarRule(this.xmlElement);
     const eId = this.xmlElement.getAttribute('eId');

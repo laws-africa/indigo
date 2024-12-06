@@ -16,19 +16,20 @@
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      // TODO: remove these two?
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'onCancelClick',
+      'click .btn.edit-text': 'fullEdit',
+      'click .btn.edit-table': 'editTable',
+      'click .quick-edit': 'quickEdit',
       'click .show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
-      'click .edit-table': 'editTable',
-      'click .quick-edit': 'quickEdit',
       'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },
 
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
+      this.editing = false;
       // flag to prevent circular updates
       this.updating = false;
       this.document = this.parent.model;
@@ -61,7 +62,8 @@
       this.tableEditor.on('discard', this.editActivityCancelled, this);
       this.tableEditor.on('save', this.editActivityEnded, this);
 
-      this.$toolbar = $('.document-editor-toolbar');
+      this.$toolbar = $('.document-toolbar-wrapper');
+      this.toolbar = document.querySelector('.document-toolbar-wrapper');
 
       this.setupRenderers();
     },
@@ -82,6 +84,11 @@
       this.render();
     },
 
+    fullEdit: function(e) {
+      e.preventDefault();
+      this.editXmlElement(this.xmlElement);
+    },
+
     quickEdit: function(e) {
       var elemId = e.currentTarget.parentElement.parentElement.id,
           element = this.parent.documentContent.xmlDocument;
@@ -100,103 +107,50 @@
     editXmlElement: function(element) {
       this.editingXmlElement = element;
       this.aknTextEditor.setXmlElement(element);
-      this.xmlEditor.setXmlElement(element);
+      this.editing = true;
 
       // if we're not already editing, activate the editor
       if (!this.updating) {
         this.editActivityStarted('text');
+        this.toggleTextEditor(true);
         this.aknTextEditor.monacoEditor.focus();
+        this.toolbar.classList.add('is-editing', 'edit-mode-text');
       }
     },
 
-    saveTextEditor: function(e) {
+    saveTextEditor: async function(e) {
       this.editActivityEnded();
-      var self = this;
-      var $btn = this.$('.text-editor-buttons .btn.save');
-      var content = this.monacoEditor.getValue();
-      var fragmentRule = this.document.tradition().grammarRule(this.editingXmlElement);
 
-      // should we delete the item?
-      if (!content.trim() && fragmentRule !== 'akomaNtoso') {
-        if (confirm($t('Go ahead and delete this section from the document?'))) {
-          this.parent.removeFragment(this.editingXmlElement);
-        }
-        return;
+      const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
+      btn.setAttribute('disabled', 'true');
+
+      let elements;
+      try {
+        // TODO: handle cancel mid-way through
+        elements = await this.aknTextEditor.parse() ;
+      } finally {
+        btn.removeAttribute('disabled');
       }
 
-      // TODO: all this falls away
-
-      $btn
-        .attr('disabled', true)
-        .find('.fa')
-          .removeClass('fa-check')
-          .addClass('fa-spinner fa-pulse');
-
-      // The actual response to update the view is done
-      // in a deferred so that we can cancel it if the
-      // user clicks 'cancel'
-      var deferred = this.pendingTextSave = $.Deferred();
-      deferred
-        .then(function(response) {
-          var newFragment = $.parseXML(response.output);
-
-          if (fragmentRule === 'akomaNtoso') {
-            // entire document
-            newFragment = [newFragment.documentElement];
-          } else {
-            newFragment = newFragment.documentElement.children;
-          }
-
-          this.updating = true;
-          try {
-            self.parent.updateFragment(self.editingXmlElement, newFragment);
-          } finally {
-            this.updating = false;
-          }
-        })
-        .fail(function(xhr, status, error) {
-          // this will be null if we've been cancelled without an ajax response
-          if (xhr) {
-            if (xhr.status === 400) {
-              Indigo.errorView.show(xhr.responseJSON.content || error || status);
-            } else {
-              Indigo.errorView.show(error || status);
-            }
-          }
-        })
-        .always(function() {
-          // TODO: this doesn't feel like it's in the right place;
-          $btn
-            .attr('disabled', false)
-            .find('.fa')
-              .removeClass('fa-spinner fa-pulse')
-              .addClass('fa-check');
-        });
-
-      var id = this.editingXmlElement.getAttribute('eId'),
-          data = {
-        'content': content,
-      };
-      if (fragmentRule !== 'akomaNtoso') {
-        data.fragment = fragmentRule;
-        if (id && id.lastIndexOf('__') > -1) {
-          // retain the id of the parent element as the prefix
-          data.id_prefix = id.substring(0, id.lastIndexOf('__'));
-        }
+      if (elements && elements.length) {
+        this.onTextElementParsed(elements);
+        this.closeTextEditor();
+      } else if (confirm($t('Go ahead and delete this section from the document?'))) {
+        this.parent.removeFragment(this.editingXmlElement);
+        this.closeTextEditor();
       }
+    },
 
-      $.ajax({
-        url: this.document.url() + '/parse',
-        type: "POST",
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"})
-        .done(function(response) {
-          deferred.resolve(response);
-        })
-        .fail(function(xhr, status, error) {
-          deferred.reject(xhr, status, error);
-        });
+    onCancelClick() {
+      this.editActivityCancelled();
+      this.closeTextEditor();
+    },
+
+    closeTextEditor: function(e) {
+      // TODO: cancel any pending update
+      this.toggleTextEditor(false);
+      this.toolbar.classList.remove('is-editing', 'edit-mode-text');
+      this.editing = false;
     },
 
     /**
@@ -212,8 +166,8 @@
       }
 
       this.xmlElement = element;
+      this.xmlEditor.setXmlElement(element);
       this.render();
-      this.editXmlElement(element);
 
       if (!this.updating) {
         this.$('.document-sheet-container').scrollTop(0);
@@ -242,10 +196,6 @@
       }
     },
 
-    onCancelClick() {
-      this.editActivityCancelled();
-    },
-
     onDocumentChanged: function() {
       this.coverpageCache = null;
       this.render();
@@ -263,12 +213,14 @@
     // Save the content of the editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.tableEditor.saveChanges();
+      this.closeTextEditor();
       return $.Deferred().resolve();
     },
 
     // Discard the content of the editor, returns a Deferred
     discardChanges: function() {
       this.tableEditor.discardChanges(null, true);
+      this.closeTextEditor();
       return $.Deferred().resolve();
     },
 
@@ -455,7 +407,6 @@
       // adjust the toolbar
       // TODO
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.general-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').removeClass('d-none');
     },
 
@@ -503,6 +454,11 @@
       }
     },
 
+    toggleTextEditor: function (visible) {
+      document.querySelector('.document-primary-pane-content-pane').classList.toggle('d-none', visible);
+      document.querySelector('.document-primary-pane-editor-pane').classList.toggle('d-none', !visible);
+    },
+
     resize: function() {},
   });
 
@@ -526,9 +482,6 @@
 
       // this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
-      this.editorReady.then(() => {
-        this.editFragment(this.documentContent.xmlDocument.documentElement);
-      });
     },
 
     tocSelectionChanged: function(selection) {
@@ -594,11 +547,11 @@
     },
 
     isDirty: function() {
-      return this.dirty;
+      return this.dirty || this.sourceEditor.editing;
     },
 
     canCancelEdits: function() {
-      return (!this.isDirty() || confirm($t("You will lose your changes, are you sure?")));
+      return (!this.sourceEditor.editing || confirm($t("You will lose your changes, are you sure?")));
     },
 
     // Save the content of the editor, returns a Deferred

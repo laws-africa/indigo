@@ -54,8 +54,10 @@
     overflow-y: auto;
   }
 
-  .document-primary-pane-text-pane {
+  .document-primary-pane-editor-pane {
     flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .document-workspace-content {
@@ -78,8 +80,21 @@
 }
 
 .document-toolbar-wrapper {
-  display: flex;
   padding-bottom: 5px;
+
+  .text-editor-buttons {
+    display: none;
+  }
+
+  &.is-editing {
+    .editor-start-buttons {
+      display: none;
+    }
+
+    .text-editor-buttons {
+      display: flex;
+    }
+  }
 }
 
 /* headers with help buttons */

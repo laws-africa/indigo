@@ -124,7 +124,7 @@
       'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
       'click .document-toolbar-wrapper .delete-document': 'delete',
       'click .document-secondary-pane-toggle': 'toggleDocumentSecondaryPane',
-      'indigo:pane-toggled': 'paneToggled',
+      'indigo:pane-toggled': 'onPaneToggled',
     },
 
     initialize: function() {
@@ -374,7 +374,7 @@
       this.togglePane('document-secondary-pane');
     },
 
-    paneToggled: function (e) {
+    onPaneToggled: function (e) {
       if (e.originalEvent.detail.pane === 'document-secondary-pane') {
         this.secondaryPaneToggle.classList.toggle('active', e.originalEvent.detail.visible);
       }

@@ -109,6 +109,7 @@
     editXmlElement: function(element) {
       this.editingXmlElement = element;
       this.aknTextEditor.setXmlElement(element);
+      this.xmlEditor.setXmlElement(element);
       this.editing = true;
 
       // if we're not already editing, activate the editor
@@ -158,6 +159,7 @@
       this.toggleTextEditor(false);
       this.toolbar.classList.remove('is-editing', 'edit-mode-text');
       this.editing = false;
+      this.editingXmlElement = null;
     },
 
     /**
@@ -197,7 +199,7 @@
     onXmlElementParsed: function(element) {
       this.updating = true;
       try {
-        this.parent.updateFragment(this.editingXmlElement, [element]);
+        this.parent.updateFragment(this.editingXmlElement || this.xmlElement, [element]);
       } finally {
         this.updating = false;
       }

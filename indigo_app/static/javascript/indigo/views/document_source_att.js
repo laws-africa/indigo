@@ -9,7 +9,8 @@
       el: 'body',
       events: {
         'change .source-attachment-list': 'itemChanged',
-        'click .source-attachment-toggle': 'toggle',
+        'click .show-source-attachment': 'show',
+        'indigo:pane-toggled': 'paneToggled',
       },
 
       initialize: function(options) {
@@ -19,9 +20,8 @@
         this.listenTo(this.attachments, 'add change remove sync', this.rebuildChoices);
         this.choices = [];
 
-        this.$view = this.$('.source-attachment-view');
         this.$dropdown = this.$('.source-attachment-list');
-        this.$toggle = this.$('.source-attachment-toggle');
+        this.tab = this.el.querySelector('button[data-bs-target="#source-attachment-pane"]');
         this.iframe = document.getElementById('source-attachment-iframe');
         this.docx_mimetypes = {
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': true,
@@ -116,21 +116,17 @@
           ));
           prevGroup = att.group;
         });
-
-        this.$toggle.attr('disabled', this.choices.length === 0);
       },
 
-      toggle: function(e) {
-        e.preventDefault();
-        var show = !$(e.target).hasClass('active');
+      show: function () {
+        const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
+        this.choose(this.chosen || default_choice);
+        window.Indigo.view.showPane('document-secondary-pane');
+        bootstrap.Tab.getInstance(this.tab).show();
+      },
 
-        if (show) {
-          const default_choice = this.choices.find(choice => choice.default_choice) || this.choices[0];
-          this.choose(this.chosen || default_choice);
-        } else {
-          this.$view.addClass('d-none');
-          this.$('.source-attachment-toggle').removeClass('active');
-        }
+      hide: function () {
+        window.Indigo.view.hidePane('document-secondary-pane');
       },
 
       choose: function(item) {
@@ -142,13 +138,17 @@
           }
         }
 
-        this.$view.removeClass('d-none');
-        this.$('.source-attachment-toggle').addClass('active');
         this.render();
       },
 
       itemChanged: function(e) {
         this.choose(this.choices[parseInt(e.target.value)]);
       },
+
+      paneToggled: function(e) {
+        if (e.originalEvent.detail.pane === 'document-secondary-pane' && e.originalEvent.detail.visible && this.tab.classList.contains('active')) {
+          this.show();
+        }
+      }
     });
 })(window);

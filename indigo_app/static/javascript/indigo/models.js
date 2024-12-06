@@ -25,6 +25,7 @@
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
+      this.document.content = this;
       this.xmlDocument = null;
       this.on('change:content', this.contentChanged, this);
       this.on('change:dom', this.domChanged, this);

@@ -86,13 +86,19 @@
     display: none;
   }
 
-  &.is-editing {
+  &.is-editing.edit-mode-text {
     .editor-start-buttons {
       display: none;
     }
 
     .text-editor-buttons {
       display: flex;
+    }
+  }
+
+  &.is-editing.edit-mode-table {
+    .editor-start-buttons {
+      display: none;
     }
   }
 }

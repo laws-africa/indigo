@@ -391,23 +391,13 @@
     },
 
     tableEditStart: function() {
-      this.$('.edit-text').hide();
-
-      // adjust the toolbar
-      // TODO
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$('.document-workspace-buttons').addClass('d-none');
+      this.toolbar.classList.add('is-editing', 'edit-mode-table');
     },
 
     tableEditFinish: function() {
-      this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
-
-      // adjust the toolbar
-      // TODO
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$('.document-workspace-buttons').removeClass('d-none');
+      this.toolbar.classList.remove('is-editing', 'edit-mode-table');
     },
 
     toggleShowStructure: function(e) {

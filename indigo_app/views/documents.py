@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import DetailView, FormView
 from lxml import etree
 
+from cobalt import Portion
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -123,7 +124,11 @@ class DocumentProvisionDetailView(DocumentDetailView):
     def get(self, request, *args, **kwargs):
         document = self.get_object()
         self.eid = self.kwargs.get('eid')
-        self.provision_xml = document.doc.get_portion_element(self.eid)
+        provision_xml = document.doc.get_portion_element(self.eid)
+        portion = Portion()
+        portion.frbr_uri = document.frbr_uri
+        portion.main_content.append(provision_xml)
+        self.provision_xml = portion.main
         if not self.provision_xml:
             messages.error(request, _("No provision with this id found: '%(eid)s'") % {"eid": self.eid})
             return redirect('choose_document_provision', doc_id=document.id)

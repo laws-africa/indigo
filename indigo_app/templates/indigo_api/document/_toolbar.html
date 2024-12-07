@@ -31,11 +31,13 @@
         <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
            href="#references-modal" data-bs-toggle="modal"
         >{% trans "References..." %}</a>
-        <a class="dropdown-item" href="#italics-modal" data-bs-toggle="modal">{% trans "Italicised terms..." %}</a>
+        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+           href="#italics-modal" data-bs-toggle="modal"
+        >{% trans "Italicised terms..." %}</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#" id="sentence-caser">
-          <span class="sentence-case-headings">{% trans "Make headings Sentence case" %}</span>
-        </a>
+        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+           href="#" id="sentence-caser"
+        ><span class="sentence-case-headings">{% trans "Make headings Sentence case" %}</span></a>
       {% endblock %}
     </div>
   </div>

@@ -339,7 +339,6 @@ class ParseView(DocumentResourceView, APIView):
 
         text = serializer.validated_data.get('content')
         try:
-            # TODO: this returns technically invalid XML in provision mode (no 'act' etc)
             xml = importer.parse_from_text(text, frbr_uri)
         except ValueError as e:
             log.warning(f"Error during import: {e}", exc_info=e)

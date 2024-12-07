@@ -128,7 +128,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
         portion = Portion()
         portion.frbr_uri = document.frbr_uri
         portion.main_content.append(provision_xml)
-        self.provision_xml = portion.main.getparent()
+        self.provision_xml = portion.main
         if not self.provision_xml:
             messages.error(request, _("No provision with this id found: '%(eid)s'") % {"eid": self.eid})
             return redirect('choose_document_provision', doc_id=document.id)

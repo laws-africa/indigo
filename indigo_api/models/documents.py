@@ -548,13 +548,15 @@ class Document(DocumentMixin, models.Model):
             self.save_with_revision(user, comment=comment)
 
     def update_provision_xml(self, provision_eid, provision_xml):
-        portion = Portion(provision_xml)
+        generator = XmlGenerator(self.frbr_uri)
+        xml = etree.fromstring(provision_xml)
+        akn_provision = generator.wrap_akn(xml)
+        portion = Portion(etree.tostring(akn_provision, encoding='unicode'))
         updated_provision = portion.get_portion_element(provision_eid)
         old_provision = self.doc.get_portion_element(provision_eid)
         elem_parent = old_provision.getparent()
         elem_parent.replace(old_provision, updated_provision)
         # fix up the XML: rewrite eids, correct tags etc.
-        generator = XmlGenerator(self.frbr_uri)
         updated_xml = generator.post_process(self.doc.main)
         with_akn_tag = generator.wrap_akn(updated_xml)
         return etree.tostring(with_akn_tag, encoding='unicode')

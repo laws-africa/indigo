@@ -142,7 +142,7 @@
         if (elements.length) {
           this.onTextElementParsed(elements);
           this.closeTextEditor();
-        } else if (confirm($t('Go ahead and delete this section from the document?'))) {
+        } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
           this.parent.removeFragment(this.editingXmlElement);
           this.closeTextEditor();
         }

@@ -215,6 +215,7 @@ class XMLEditor {
     this.updating = false;
     this.visible = false;
     this.onElementParsed = onElementParsed;
+    // this will be null if the user doesn't have perms
     this.tab = window.document.querySelector('button[data-bs-target="#xml-pane"]');
     this.documentContent = document.content;
     // TODO: do we still need this if the xmlElement is being set each time the DOM is updated?
@@ -302,7 +303,7 @@ class XMLEditor {
   }
 
   onPaneToggled(e) {
-    if (e.detail.pane === 'document-secondary-pane') {
+    if (e.detail.pane === 'document-secondary-pane' && this.tab) {
       if (e.detail.visible) {
         // the pane is visible AND the tab is visible
         if (this.tab.classList.contains('active')) {

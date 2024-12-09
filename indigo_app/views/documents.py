@@ -1,15 +1,19 @@
 import json
 
-from django.views.generic import DetailView
+from django.contrib import messages
 from django.http import Http404
+from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.generic import DetailView, FormView
+from lxml import etree
 
+from cobalt import Portion
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
-
-from indigo_app.forms import DocumentForm
+from indigo_app.forms import DocumentForm, DocumentProvisionForm
 from .base import AbstractAuthedIndigoView
 
 
@@ -21,13 +25,13 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     permission_required = ('indigo_api.view_document',)
 
     def get_object(self, queryset=None):
-        doc = super(DocumentDetailView, self).get_object(queryset)
+        doc = super().get_object(queryset)
         if doc.deleted:
             raise Http404()
         return doc
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         doc = self.object
 
@@ -48,7 +52,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
 
-        context['document_content_json'] = json.dumps(doc.document_xml)
+        context['document_content_json'] = self.get_document_content_json(doc)
 
         # add 'numbered_title_localised' to each amendment
         amendments = WorkAmendmentSerializer(context={'request': self.request}, many=True)\
@@ -75,6 +79,68 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['download_formats'].sort(key=lambda f: f['title'])
 
         return context
+
+    def get_document_content_json(self, document):
+        return json.dumps(document.document_xml)
+
+
+class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView, FormView):
+    form_class = DocumentProvisionForm
+    model = Document
+    context_object_name = 'document'
+    pk_url_kwarg = 'doc_id'
+    template_name = 'indigo_api/document/_provisions.html'
+    provision = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['provisions'] = self.get_shallow_toc(self.object.table_of_contents())
+        context['country'] = self.object.work.country
+        context['place'] = self.object.work.place
+        context['work'] = self.object.work
+        return context
+
+    def get_shallow_toc(self, toc):
+        # TODO: choose depth somehow; loading the whole thing can take ages
+        #  -- or use htmx to only load children when selected?
+        for e in toc:
+            for c in e.children:
+                for gc in c.children:
+                    gc.children = []
+        return toc
+
+    def form_valid(self, form):
+        self.provision = form.cleaned_data['provision']
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('document_provision', kwargs={'doc_id': int(self.kwargs['doc_id']), 'eid': self.provision})
+
+
+class DocumentProvisionDetailView(DocumentDetailView):
+    eid = None
+    provision_xml = None
+
+    def get(self, request, *args, **kwargs):
+        document = self.get_object()
+        self.eid = self.kwargs.get('eid')
+        provision_xml = document.doc.get_portion_element(self.eid)
+        portion = Portion()
+        portion.frbr_uri = document.frbr_uri
+        portion.main_content.append(provision_xml)
+        self.provision_xml = portion.main
+        if not self.provision_xml:
+            messages.error(request, _("No provision with this id found: '%(eid)s'") % {"eid": self.eid})
+            return redirect('choose_document_provision', doc_id=document.id)
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['provision_eid'] = self.eid
+        return context
+
+    def get_document_content_json(self, document):
+        return json.dumps(etree.tostring(self.provision_xml, encoding='unicode'))
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

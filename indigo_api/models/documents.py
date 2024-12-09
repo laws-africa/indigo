@@ -18,7 +18,10 @@ from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
-from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
+from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument, Portion
+from lxml import etree
+
+from bluebell.xml import XmlGenerator
 
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
@@ -543,6 +546,20 @@ class Document(DocumentMixin, models.Model):
         if self.expression_date != new_date:
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
+
+    def update_provision_xml(self, provision_eid, provision_xml):
+        generator = XmlGenerator(self.frbr_uri)
+        xml = etree.fromstring(provision_xml)
+        akn_provision = generator.wrap_akn(xml)
+        portion = Portion(etree.tostring(akn_provision, encoding='unicode'))
+        updated_provision = portion.get_portion_element(provision_eid)
+        old_provision = self.doc.get_portion_element(provision_eid)
+        elem_parent = old_provision.getparent()
+        elem_parent.replace(old_provision, updated_provision)
+        # fix up the XML: rewrite eids, correct tags etc.
+        updated_xml = generator.post_process(self.doc.main)
+        with_akn_tag = generator.wrap_akn(updated_xml)
+        return etree.tostring(with_akn_tag, encoding='unicode')
 
     def _make_doc(self, xml):
         return self.cobalt_class(xml)

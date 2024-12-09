@@ -382,7 +382,7 @@
    * Handle all the annotations in a document
    */
   Indigo.DocumentAnnotationsView = Backbone.View.extend({
-    el: ".document-workspace-content",
+    el: ".document-primary-pane",
     events: {
       'click #new-annotation-floater': 'newAnnotation',
       'click .next-annotation': 'nextAnnotation',
@@ -624,7 +624,7 @@
       const handler = () => {
         this.gutter.removeEventListener('layoutComplete', handler);
 
-        const container = item.closest('.document-sheet-container');
+        const container = item.closest('.document-primary-pane-content-pane');
         if (container) {
           container.scrollTo({
             top: parseFloat(item.style.top.replace('px', '')) - 50,

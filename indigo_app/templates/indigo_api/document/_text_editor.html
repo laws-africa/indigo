@@ -1,0 +1,55 @@
+{% load i18n %}
+<div class="btn-toolbar text-editor-buttons py-1 pe-2">
+  <div class="btn-group btn-group-sm me-2">
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">{% trans "Edit" %}</button>
+      <div class="dropdown-menu with-shortcuts">
+        <a class="dropdown-item editor-action" data-action="actions.find" href="#">{% trans "Find..." %} <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
+        <a class="dropdown-item editor-action" data-action="editor.action.nextMatchFindAction" href="#">{% trans "Find next" %}<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
+        <a class="dropdown-item editor-action" data-action="editor.action.previousMatchFindAction" href="#">{% trans "Find previous" %}<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
+        <a class="dropdown-item editor-action" data-action="editor.action.startFindReplaceAction" href="#">{% trans "Find and replace..." %}<span class="shortcut win">Ctrl-H</span><span class="shortcut osx">⌘-⌥-F</span></a>
+        <hr class="dropdown-divider">
+        <a class="dropdown-item editor-action" data-action="editor.action.moveLinesUpAction" href="#">{% trans "Move lines up" %}<span class="shortcut win">Ctrl-↑</span><span class="shortcut osx">⌥-↑</span></a>
+        <a class="dropdown-item editor-action" data-action="editor.action.moveLinesDownAction" href="#">{% trans "Move lines down" %}<span class="shortcut win">Ctrl-↓</span><span class="shortcut osx">⌥-↓</span></a>
+        <a class="dropdown-item editor-action" data-action="editor.action.joinLines" href="#">{% trans "Join lines" %}<span class="shortcut win">Ctrl-J</span><span class="shortcut osx">^-J</span></a>
+        <hr class="dropdown-divider">
+        <a class="dropdown-item editor-action" data-action="editor.action.quickCommand" href="#">{% trans "All commands..." %}<span class="shortcut">F1</span></a>
+      </div>
+    </div>
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">{% trans "Insert" %}</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item insert-image" href="#">{% trans "Insert image..." %}</a>
+        <a class="dropdown-item editor-action" data-action="insert.table" href="#">{% trans "Insert table" %}</a>
+        <a class="dropdown-item editor-action" data-action="insert.footnote" href="#">{% trans "Insert footnote" %}</a>
+        <a class="dropdown-item editor-action" data-action="insert.schedule" href="#">{% trans "Insert Schedule" %}</a>
+        <div class="dropdown-item dropdown-submenu">
+          <a class="dropdown-item" href="#" data-bs-toggle="dropdown">{% trans "Insert annotation" %}</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item insert-remark" data-verb="substitution" href="#">{% trans "Substitution" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="amendment" href="#">{% trans "Amendment" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="insertion" href="#">{% trans "Insertion" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="addition" href="#">{% trans "Addition" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="deletion" href="#">{% trans "Deletion" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="repeal" href="#">{% trans "Repeal" %}</a>
+            <a class="dropdown-item insert-remark" data-verb="other" href="#">{% trans "Other" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-group btn-group-sm me-2">
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.bold"><i class="fa fa-bold"></i></button>
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.italics"><i class="fa fa-italic"></i></button>
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.underline"><i class="fa fa-underline"></i></button>
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.superscript"><i class="fa fa-superscript"></i></button>
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.subscript"><i class="fa fa-subscript"></i></button>
+    <button type="button" class="btn btn-outline-secondary editor-action" data-action="format.remark">{% trans "Remark" %}</button>
+  </div>
+  <div class="btn-group btn-group-sm me-2">
+    <button type="button" class="btn btn-outline-secondary toggle-word-wrap active">{% trans "Wrap lines" %}</button>
+  </div>
+</div>
+<div class="document-text-editor">
+  <div class="monaco-editor-box"></div>
+</div>

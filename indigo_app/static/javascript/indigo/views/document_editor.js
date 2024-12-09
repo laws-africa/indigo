@@ -4,9 +4,15 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The SourceEditorView manages the interaction between
-  // the model, the wrapping document editor view, and the source (xml) and
-  // text editor components.
+  /**
+   * The SourceEditorView manages rendering and editing (via text, xml or table editors) of an xml element. It handles
+   * moving between the different editors and updates the document model when changes are made.
+   *
+   * It can have two active xml elements, which are only different in quick edit mode:
+   *
+   * - the one being rendered (xmlElement)
+   * - the one being edited (editingXmlElement)
+   */
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
@@ -15,32 +21,41 @@
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
-
-      'click .editor-action': 'triggerEditorAction',
-
-      'click .insert-image': 'insertImage',
-      'click .insert-remark': 'insertRemark',
-      'click .toggle-word-wrap': 'toggleWordWrap',
+      'click .show-structure': 'toggleShowStructure',
+      'click .show-pit-comparison': 'toggleShowComparison',
+      'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },
 
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
+      // flag to prevent circular updates
       this.updating = false;
+      // nonce to prevent concurrent saves
+      this.nonce = null;
+      this.document = this.parent.model;
+      // the element currently being shown
+      this.xmlElement = null;
+      // the element currently being edited -- can be different to the above during quick edit
+      this.editingXmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
-      this.grammarName = this.parent.model.tradition().settings.grammar.name;
-      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
-        this.parent.model.get('frbr_uri'),
-        this.parent.model.url() + '/static/xsl/text.xsl');
-      this.grammarModel.setup();
+      this.aknTextEditor = new Indigo.AknTextEditor(
+        this.el,
+        this.document,
+        this.onTextElementParsed.bind(this),
+      );
+
+      this.xmlEditor = new Indigo.XMLEditor(
+        document.querySelector('.document-xml-editor'),
+        this.document,
+        this.onXmlElementParsed.bind(this),
+      );
 
       // setup renderer
       this.editorReady = $.Deferred();
-      this.listenTo(this.parent.model, 'change', this.documentChanged);
-
-      this.$textEditor = this.$('.document-text-editor');
+      this.listenTo(this.document, 'change', this.onDocumentChanged);
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -49,58 +64,19 @@
       this.tableEditor.on('discard', this.editActivityCancelled, this);
       this.tableEditor.on('save', this.editActivityEnded, this);
 
-      this.$toolbar = $('.document-editor-toolbar');
+      this.toolbar = document.querySelector('.document-toolbar-wrapper');
 
       this.setupRenderers();
-
-      // get the appropriate remark style for the tradition
-      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
-
-    },
-
-    editActivityStarted: function(mode) {
-    },
-
-    editActivityEnded: function() {
-    },
-
-    editActivityCancelled: function() {
-    },
-
-    setupTextEditor: function() {
-      if (!this.textEditor) {
-        this.textEditor = window.monaco.editor.create(
-          this.el.querySelector('.document-text-editor .monaco-editor'),
-          this.grammarModel.monacoOptions()
-        );
-        new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
-        this.grammarModel.setupEditor(this.textEditor);
-      }
-    },
-
-    documentChanged: function() {
-      this.coverpageCache = null;
-      this.render();
     },
 
     setupRenderers: function() {
-      var country = this.parent.model.get('country'),
+      var country = this.document.get('country'),
           self = this;
 
       // setup akn to html transform
-      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.parent.model);
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.document);
       this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
-      });
-
-      // setup akn to text transform
-      this.textTransformReady = $.Deferred();
-      $.get(this.parent.model.url() + '/static/xsl/text.xsl').then(function(xml) {
-        var textTransform = new XSLTProcessor();
-        textTransform.importStylesheet(xml);
-
-        self.textTransform = textTransform;
-        self.textTransformReady.resolve();
       });
     },
 
@@ -111,155 +87,65 @@
 
     fullEdit: function(e) {
       e.preventDefault();
-      this.editFragmentText(this.parent.fragment);
+      this.editXmlElement(this.xmlElement);
     },
 
     quickEdit: function(e) {
       var elemId = e.currentTarget.parentElement.parentElement.id,
-          node = this.parent.documentContent.xmlDocument;
+          element = this.parent.documentContent.xmlDocument;
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {
-        node = node.querySelector('[eId="' + id + '"]');
+        element = element.querySelector('[eId="' + id + '"]');
       });
 
-      if (node) this.editFragmentText(node);
+      if (element) this.editXmlElement(element);
     },
 
-    editFragmentText: function(fragment) {
-      let text;
-
-      // text from node in the actual XML document
-      try {
-        text = this.grammarModel.xmlToText(fragment);
-      } catch (e) {
-        // log details and then re-raise the error so that it's reported and we can work out what went wrong
-        console.log("Error converting XML to text");
-        console.log(fragment);
-        console.log(new XMLSerializer().serializeToString(fragment));
-        console.log(e);
-        throw e;
-      }
-
-      this.editActivityStarted('text');
-
+    /**
+     * Edit the given XML element in the text editor.
+     */
+    editXmlElement: function(element) {
+      this.editingXmlElement = element;
+      this.aknTextEditor.setXmlElement(element);
+      this.xmlEditor.setXmlElement(element);
       this.editing = true;
-      this.fragment = fragment;
 
-      // ensure source code is hidden
-      this.$('.btn.show-xml-editor.active').click();
-
-      // show the edit toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
-      this.$('.document-workspace-buttons').addClass('d-none');
-
-      // show the text editor
-      this.$('.document-content-view').addClass('show-text-editor');
-
-      this.setupTextEditor();
-      this.textEditor.setValue(text);
-      this.textEditor.layout();
-      const top = {column: 1, lineNumber: 1};
-      this.textEditor.setPosition(top);
-      this.textEditor.revealPosition(top);
-      this.textEditor.focus();
-
-      this.$textEditor
-        .data('fragment', this.fragment.tagName)
-        .show();
-
-      this.$('.document-sheet-container').scrollTop(0);
+      // if we're not already editing, activate the editor
+      if (!this.updating) {
+        this.editActivityStarted('text');
+        this.toggleTextEditor(true);
+        this.aknTextEditor.monacoEditor.focus();
+        this.toolbar.classList.add('is-editing', 'edit-mode-text');
+      }
     },
 
-    saveTextEditor: function(e) {
+    saveTextEditor: async function(e) {
       this.editActivityEnded();
-      var self = this;
-      var $btn = this.$('.text-editor-buttons .btn.save');
-      var content = this.textEditor.getValue();
-      var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
 
+      const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
+      btn.setAttribute('disabled', 'true');
 
-      // should we delete the item?
-      if (!content.trim() && fragmentRule !== 'akomaNtoso') {
-        if (confirm($t('Go ahead and delete this section from the document?'))) {
-          this.parent.removeFragment(this.fragment);
-        }
-        return;
+      let elements;
+      try {
+        // use a nonce to check if we're still the current save when the parse completes
+        const nonce = this.nonce = Math.random();
+        elements = await this.aknTextEditor.parse() ;
+        // check if we're still the current save
+        if (nonce !== this.nonce) return;
+      } finally {
+        btn.removeAttribute('disabled');
       }
 
-      $btn
-        .attr('disabled', true)
-        .find('.fa')
-          .removeClass('fa-check')
-          .addClass('fa-spinner fa-pulse');
-
-      // The actual response to update the view is done
-      // in a deferred so that we can cancel it if the
-      // user clicks 'cancel'
-      var deferred = this.pendingTextSave = $.Deferred();
-      deferred
-        .then(function(response) {
-          var newFragment = $.parseXML(response.output);
-
-          if (fragmentRule === 'akomaNtoso') {
-            // entire document
-            newFragment = [newFragment.documentElement];
-          } else {
-            newFragment = newFragment.documentElement.children;
-          }
-
-          this.updating = true;
-          try {
-            self.parent.updateFragment(self.fragment, newFragment);
-          } finally {
-            this.updating = false;
-          }
-          self.closeTextEditor();
-        })
-        .fail(function(xhr, status, error) {
-          // this will be null if we've been cancelled without an ajax response
-          if (xhr) {
-            if (xhr.status === 400) {
-              Indigo.errorView.show(xhr.responseJSON.content || error || status);
-            } else {
-              Indigo.errorView.show(error || status);
-            }
-          }
-        })
-        .always(function() {
-          // TODO: this doesn't feel like it's in the right place;
-          $btn
-            .attr('disabled', false)
-            .find('.fa')
-              .removeClass('fa-spinner fa-pulse')
-              .addClass('fa-check');
-        });
-
-      var id = this.fragment.getAttribute('eId'),
-          data = {
-        'content': content,
-      };
-      if (fragmentRule !== 'akomaNtoso') {
-        data.fragment = fragmentRule;
-        if (id && id.lastIndexOf('__') > -1) {
-          // retain the id of the parent element as the prefix
-          data.id_prefix = id.substring(0, id.lastIndexOf('__'));
+      if (elements) {
+        if (elements.length) {
+          this.onTextElementParsed(elements);
+          this.closeTextEditor();
+        } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+          this.parent.removeFragment(this.editingXmlElement);
+          this.closeTextEditor();
         }
       }
-
-      $.ajax({
-        url: this.parent.model.url() + '/parse',
-        type: "POST",
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"})
-        .done(function(response) {
-          deferred.resolve(response);
-        })
-        .fail(function(xhr, status, error) {
-          deferred.reject(xhr, status, error);
-        });
     },
 
     onCancelClick() {
@@ -268,29 +154,68 @@
     },
 
     closeTextEditor: function(e) {
-      if (this.pendingTextSave) {
-        this.pendingTextSave.reject();
-        this.pendingTextSave = null;
-      }
-
-      this.$('.document-content-view').removeClass('show-text-editor');
-
-      // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.general-buttons').removeClass('d-none');
-      this.$('.document-workspace-buttons').removeClass('d-none');
-
+      this.nonce = null;
+      this.toggleTextEditor(false);
+      this.toolbar.classList.remove('is-editing', 'edit-mode-text');
       this.editing = false;
+      this.editingXmlElement = null;
     },
 
-    editFragment: function(node) {
-      // edit node, a node in the XML document
+    /**
+     * Set the XML element that is currently being shown.
+     *
+     * This may be called when the XML editor or the text editor provide an updated element to edit, in which case
+     * this.updating will be true.
+     */
+    showXmlElement: function(element) {
+      // show node, a node in the XML document
       if (!this.updating) {
         this.tableEditor.discardChanges(null, true);
-        this.closeTextEditor();
-        this.render();
+      }
+
+      this.xmlElement = element;
+      this.xmlEditor.setXmlElement(element);
+      this.render();
+
+      if (!this.updating) {
         this.$('.document-sheet-container').scrollTop(0);
       }
+    },
+
+    /** There is newly parsed XML from the akn text editor */
+    onTextElementParsed: function(elements) {
+      this.updating = true;
+      try {
+        this.parent.updateFragment(this.editingXmlElement, elements);
+      } finally {
+        this.updating = false;
+      }
+    },
+
+    /**
+     * The XML editor has parsed its XML into a new element.
+     */
+    onXmlElementParsed: function(element) {
+      this.updating = true;
+      try {
+        this.parent.updateFragment(this.editingXmlElement || this.xmlElement, [element]);
+      } finally {
+        this.updating = false;
+      }
+    },
+
+    onDocumentChanged: function() {
+      this.coverpageCache = null;
+      this.render();
+    },
+
+    editActivityStarted: function(mode) {
+    },
+
+    editActivityEnded: function() {
+    },
+
+    editActivityCancelled: function() {
     },
 
     // Save the content of the editor into the DOM, returns a Deferred
@@ -308,11 +233,11 @@
     },
 
     render: function() {
-      if (!this.parent.fragment) return;
+      if (!this.xmlElement) return;
 
       var self = this,
-          renderCoverpage = this.parent.fragment.parentElement === null,
-          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
+          renderCoverpage = this.xmlElement.parentElement === null,
+          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           coverpage;
 
       $akn[0].classList.add('spinner-when-empty');
@@ -329,7 +254,7 @@
       }
 
       this.htmlRenderer.ready.then(function() {
-        var html = self.htmlRenderer.renderXmlElement(self.parent.model, self.parent.fragment);
+        var html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
 
         self.makeLinksExternal(html);
         self.addWorkPopups(html);
@@ -344,18 +269,18 @@
 
     renderComparisonDiff: function() {
       var self = this,
-          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
+          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           data = {};
 
       if (!this.comparisonDocumentId) return;
 
-      data.document = this.parent.model.toJSON();
+      data.document = this.document.toJSON();
       data.document.content = this.parent.documentContent.toXml();
-      data.element_id = this.parent.fragment.getAttribute('eId');
+      data.element_id = this.xmlElement.getAttribute('eId');
 
-      if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
+      if (!data.element_id && this.xmlElement.tagName !== "akomaNtoso") {
         // for elements without ids (preamble, preface, components)
-        data.element_id = this.parent.fragment.tagName;
+        data.element_id = this.xmlElement.tagName;
       }
 
       $.ajax({
@@ -388,9 +313,9 @@
       if (this.coverpageCache) {
         deferred.resolve(this.coverpageCache);
       } else {
-        var data = JSON.stringify({'document': self.parent.model.toJSON()});
+        var data = JSON.stringify({'document': self.document.toJSON()});
         $.ajax({
-          url: this.parent.model.url() + '/render/coverpage',
+          url: this.document.url() + '/render/coverpage',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",
@@ -441,7 +366,7 @@
       var self = this;
 
       $(html)
-        .find(this.parent.model.tradition().settings.grammar.quickEditable)
+        .find(this.document.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .each(function(i, e) {
           self.ensureGutterActions(e).append(self.quickEditTemplate.cloneNode(true));
@@ -474,98 +399,62 @@
     },
 
     tableEditStart: function() {
-      this.$('.edit-text').hide();
-
-      // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$('.document-workspace-buttons').addClass('d-none');
-
-      this.editing = true;
+      this.toolbar.classList.add('is-editing', 'edit-mode-table');
     },
 
     tableEditFinish: function() {
-      this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
-
-      // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.general-buttons').removeClass('d-none');
-      this.$('.document-workspace-buttons').removeClass('d-none');
-
-      this.editing = false;
+      this.toolbar.classList.remove('is-editing', 'edit-mode-table');
     },
 
-    triggerEditorAction: function(e) {
-      // an editor action from the toolbar
-      e.preventDefault();
-      const action = e.currentTarget.getAttribute('data-action');
-      this.textEditor.focus();
-      this.textEditor.trigger('indigo', action);
+    toggleShowStructure: function(e) {
+      const show = e.currentTarget.classList.toggle('active');
+      this.el.querySelector('#document-sheet la-akoma-ntoso').classList.toggle('show-structure', show);
     },
 
-    /**
-     * Setup the box to insert an image into the document text.
-     */
-    insertImage: function(e) {
-      var self = this;
+    toggleShowComparison: function(e) {
+      const show = !e.currentTarget.classList.contains('active');
+      const menuItem = e.currentTarget.parentElement.previousElementSibling;
 
-      e.preventDefault();
+      $(e.currentTarget).siblings().removeClass('active');
+      this.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
+      e.currentTarget.classList.toggle('active');
 
-      if (!this.insertImageBox) {
-        // setup insert-image box
-        this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
-      }
-
-      let image = this.grammarModel.getImageAtCursor(this.textEditor);
-      let selected = null;
-
-      if (image) {
-        let filename = image.src;
-        if (filename.startsWith("media/")) filename = filename.substr(6);
-        selected = this.parent.model.attachments().findWhere({filename: filename});
-      }
-
-      this.insertImageBox.show(function(image) {
-        self.grammarModel.insertImageAtCursor(self.textEditor, 'media/' + image.get('filename'));
-        self.textEditor.focus();
-      }, selected);
+      menuItem.classList.toggle('btn-outline-secondary', !show);
+      menuItem.classList.toggle('btn-primary', show);
     },
 
-    getAmendingWork: function(document) {
-      var date = document.get('expression_date'),
-          documentAmendments = Indigo.Preloads.amendments,
-          amendment = _.findWhere(documentAmendments, {date: date});
+    refPopup: function (e) {
+      const element = e.target;
+      const href = element.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+      const eId = href.substring(1);
 
-      if (amendment) {
-        return amendment.amending_work;
+      if (element._tippy) return;
+
+      const target = this.document.content.xpath(
+        `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+
+      if (target) {
+        // render
+        const html = document.createElement('la-akoma-ntoso');
+        html.appendChild(this.htmlRenderer.renderXmlElement(this.document, target));
+
+        tippy(element, {
+          content: html.outerHTML,
+          allowHTML: true,
+          interactive: true,
+          theme: 'light',
+          placement: 'bottom-start',
+          appendTo: document.getElementById("document-sheet"),
+        });
       }
-
     },
 
-    insertRemark: function(e) {
-      e.preventDefault();
-      var amendedSection = this.fragment.id.replace('-', ' '),
-          verb = e.currentTarget.getAttribute('data-verb'),
-          amendingWork = this.getAmendingWork(this.parent.model),
-          remark = '<remark>';
-
-      if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork, this.grammarModel);
-      }
-
-      this.grammarModel.insertRemark(this.textEditor, remark);
-      this.textEditor.focus();
-    },
-
-    toggleWordWrap: function(e) {
-      e.preventDefault();
-      // 132 = EditorOptions.WordWrap
-      const wordWrap = this.textEditor.getOption(132);
-      this.textEditor.updateOptions({wordWrap: wordWrap === 'off' ? 'on' : 'off'});
-      if (e.currentTarget.tagName === 'BUTTON') {
-        e.currentTarget.classList.toggle('active');
-      }
+    toggleTextEditor: function (visible) {
+      document.querySelector('.document-primary-pane-content-pane').classList.toggle('d-none', visible);
+      document.querySelector('.document-primary-pane-editor-pane').classList.toggle('d-none', !visible);
     },
 
     resize: function() {},
@@ -574,12 +463,6 @@
   // Handle the document editor, tracking changes and saving it back to the server.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
-    events: {
-      'click .btn.show-xml-editor': 'toggleShowXMLEditor',
-      'click .btn.show-structure': 'toggleShowStructure',
-      'click .show-pit-comparison': 'toggleShowComparison',
-      'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
-    },
 
     initialize: function(options) {
       this.dirty = false;
@@ -594,11 +477,9 @@
 
       // setup the editor views
       this.sourceEditor = new Indigo.SourceEditorView({parent: this});
-      // XXX this is a deferred to indicate when the editor is ready to edit
-      this.editorReady = this.sourceEditor.editorReady;
-      this.editFragment(null);
 
-      this.xmlEditor = new Indigo.XMLEditorView({parent: this, documentContent: this.documentContent});
+      // this is a deferred to indicate when the editor is ready to edit
+      this.editorReady = this.sourceEditor.editorReady;
     },
 
     tocSelectionChanged: function(selection) {
@@ -625,37 +506,8 @@
         this.fragment = fragment;
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
-        this.sourceEditor.editFragment(fragment);
-        this.xmlEditor.editFragment(fragment);
+        this.sourceEditor.showXmlElement(fragment);
       }
-    },
-
-    toggleShowXMLEditor: function(e) {
-      var show = e.currentTarget.classList.toggle('active');
-      this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
-      this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
-      if (show) {
-        this.xmlEditor.show();
-      } else {
-        this.xmlEditor.hide();
-      }
-    },
-
-    toggleShowStructure: function(e) {
-      var show = e.currentTarget.classList.toggle('active');
-      this.$el.find('#document-sheet la-akoma-ntoso').toggleClass('show-structure', show);
-    },
-
-    toggleShowComparison: function(e) {
-      var show = !e.currentTarget.classList.contains('active'),
-          menuItem = e.currentTarget.parentElement.previousElementSibling;
-
-      $(e.currentTarget).siblings().removeClass('active');
-      this.sourceEditor.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
-      e.currentTarget.classList.toggle('active');
-
-      menuItem.classList.toggle('btn-outline-secondary', !show);
-      menuItem.classList.toggle('btn-primary', show);
     },
 
     removeFragment: function(fragment) {
@@ -669,9 +521,9 @@
         var updated = this.documentContent.replaceNode(oldNode, newNodes);
         if (oldNode === this.fragment) {
           this.fragment = updated;
-          this.sourceEditor.editFragment(updated);
-          this.xmlEditor.editFragment(updated);
+          this.sourceEditor.showXmlElement(updated);
         }
+        // TODO: need to set the element?
         this.sourceEditor.render();
       } finally {
         this.updating = false;
@@ -731,31 +583,5 @@
       return this.documentContent.save();
     },
 
-    refPopup: function (e) {
-      const element = e.target;
-      const href = element.getAttribute('href');
-      if (!href || !href.startsWith('#')) return;
-      const eId = href.substring(1);
-
-      if (element._tippy) return;
-
-      const target = this.documentContent.xpath(
-        `//a:*[@eId="${eId}"]`, undefined, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
-
-      if (target) {
-        // render
-        const html = document.createElement('la-akoma-ntoso');
-        html.appendChild(this.sourceEditor.htmlRenderer.renderXmlElement(this.model, target));
-
-        tippy(element, {
-          content: html.outerHTML,
-          allowHTML: true,
-          interactive: true,
-          theme: 'light',
-          placement: 'bottom-start',
-          appendTo: document.getElementById("document-sheet"),
-        });
-      }
-    }
   });
 })(window);

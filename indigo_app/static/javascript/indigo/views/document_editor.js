@@ -47,11 +47,12 @@
         this.onTextElementParsed.bind(this),
       );
 
-      this.xmlEditor = new Indigo.XMLEditor(
-        document.querySelector('.document-xml-editor'),
+      const xmlEditorBox = document.querySelector('.document-xml-editor');
+      this.xmlEditor = xmlEditorBox ? new Indigo.XMLEditor(
+        xmlEditorBox,
         this.document,
         this.onXmlElementParsed.bind(this),
-      );
+      ) : null;
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -108,7 +109,7 @@
     editXmlElement: function(element) {
       this.editingXmlElement = element;
       this.aknTextEditor.setXmlElement(element);
-      this.xmlEditor.setXmlElement(element);
+      if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
       this.editing = true;
 
       // if we're not already editing, activate the editor
@@ -174,7 +175,7 @@
       }
 
       this.xmlElement = element;
-      this.xmlEditor.setXmlElement(element);
+      if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
       this.render();
 
       if (!this.updating) {

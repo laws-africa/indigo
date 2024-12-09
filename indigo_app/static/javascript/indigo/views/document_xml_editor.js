@@ -104,7 +104,7 @@ class AknTextEditor {
     const eId = this.xmlElement.getAttribute('eId');
     const body = {
       'content': this.monacoEditor.getValue()
-    }
+    };
 
     if (fragmentRule !== 'akomaNtoso') {
       body.fragment = fragmentRule;
@@ -327,7 +327,7 @@ class XMLEditor {
       return;
     }
 
-    this.onElementParsed(element)
+    this.onElementParsed(element);
   }
 }
 

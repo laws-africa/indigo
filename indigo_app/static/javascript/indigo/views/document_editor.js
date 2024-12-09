@@ -64,7 +64,6 @@
       this.tableEditor.on('discard', this.editActivityCancelled, this);
       this.tableEditor.on('save', this.editActivityEnded, this);
 
-      this.$toolbar = $('.document-toolbar-wrapper');
       this.toolbar = document.querySelector('.document-toolbar-wrapper');
 
       this.setupRenderers();

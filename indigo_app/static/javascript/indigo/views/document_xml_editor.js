@@ -14,9 +14,7 @@ class AknTextEditor {
     this.liveUpdates = false;
 
     this.grammarName = document.tradition().settings.grammar.name;
-    this.grammarModel = new Indigo.grammars.registry[this.grammarName](
-      document.get('frbr_uri'),
-      document.url() + '/static/xsl/text.xsl');
+    this.grammarModel = new Indigo.grammars.registry[this.grammarName](document.get('frbr_uri'));
     this.grammarModel.setup();
 
     // get the appropriate remark style for the tradition

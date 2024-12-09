@@ -85,6 +85,14 @@
     <div class="v-splitter" data-component="VSplitter" id="document-workspace-splitter"></div>
     <div class="document-pane">
       <div class="document-primary-pane">
+        <div id="annotation-nav" class="annotation-nav d-none">
+          <span class="me-2 text-muted">
+            <i class="far fa-comments"></i>
+            <span class="n-threads"></span>
+          </span>
+          <a href="#" class="prev-annotation"><i class="fa fa-fw fa-chevron-up"></i></a>
+          <a href="#" class="next-annotation"><i class="fa fa-fw fa-chevron-down"></i></a>
+        </div>
         <div class="document-primary-pane-content-pane">
           {% include "indigo_api/document/_content.html" %}
         </div>

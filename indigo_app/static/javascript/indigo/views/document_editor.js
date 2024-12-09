@@ -237,7 +237,7 @@
 
       var self = this,
           renderCoverpage = this.xmlElement.parentElement === null,
-          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
+          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           coverpage;
 
       $akn[0].classList.add('spinner-when-empty');
@@ -269,7 +269,7 @@
 
     renderComparisonDiff: function() {
       var self = this,
-          $akn = this.$('.document-workspace-content la-akoma-ntoso'),
+          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           data = {};
 
       if (!this.comparisonDocumentId) return;

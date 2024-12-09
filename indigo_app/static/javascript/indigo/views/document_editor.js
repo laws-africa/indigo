@@ -281,7 +281,7 @@
 
       if (!data.element_id && this.xmlElement.tagName !== "akomaNtoso") {
         // for elements without ids (preamble, preface, components)
-        data.element_id = this.xmlElementxmlElement.tagName;
+        data.element_id = this.xmlElement.tagName;
       }
 
       $.ajax({

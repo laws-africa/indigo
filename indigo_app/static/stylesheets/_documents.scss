@@ -38,7 +38,6 @@
   .document-pane {
     flex: 1;
     display: flex;
-    position: relative;
   }
 
   .document-primary-pane {
@@ -48,6 +47,7 @@
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: hidden;
+    position: relative;
   }
 
   .document-primary-pane-content-pane {

@@ -181,8 +181,12 @@
 
 
       // should we delete the item?
+      if (!content.trim() && Indigo.Preloads.provisionEid !== "" && this.fragment.getAttribute('eId') === Indigo.Preloads.provisionEid) {
+        alert($t('You cannot delete the whole provision in provision editing mode.'));
+        return;
+      }
       if (!content.trim() && fragmentRule !== 'akomaNtoso') {
-        if (confirm($t('Go ahead and delete this section from the document?'))) {
+        if (confirm($t('Go ahead and delete this provision from the document?'))) {
           this.parent.removeFragment(this.fragment);
         }
         return;
@@ -200,7 +204,6 @@
       var deferred = this.pendingTextSave = $.Deferred();
       deferred
         .then(function(response) {
-          // TODO: response.output should be the updated (by the server) version of the edited provision
           var newFragment = $.parseXML(response.output);
 
           if (fragmentRule === 'akomaNtoso') {
@@ -728,7 +731,6 @@
     },
 
     // Save the content of the document, returns a Deferred
-    // TODO: this?
     saveModel: function() {
       return this.documentContent.save();
     },

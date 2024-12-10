@@ -1,8 +1,11 @@
 import json
 
+from django.conf import settings
 from django.views.generic import DetailView
 from django.http import Http404
 from django.urls import reverse
+import bluebell
+import cobalt
 
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
@@ -73,6 +76,12 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
             'title': r.title
         } for r in DocumentViewSet.renderer_classes if hasattr(r, 'icon')]
         context['download_formats'].sort(key=lambda f: f['title'])
+
+        if settings.INDIGO['USE_PYODIDE']:
+            context['pyodide_packages_json'] = json.dumps([
+                f'cobalt=={cobalt.__version__}',
+                f'bluebell-akn=={bluebell.__version__}',
+            ])
 
         return context
 

@@ -169,6 +169,9 @@ INDIGO = {
     'LINK_REFERENCES_PLUGINS': [
         'refs-act-numbers', 'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'refs-cap', 'internal-refs'
     ],
+
+    # should we use pyodide to parse documents on the client?
+    'USE_PYODIDE': True,
 }
 
 # Database

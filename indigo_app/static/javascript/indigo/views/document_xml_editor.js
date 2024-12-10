@@ -44,7 +44,9 @@ class AknTextEditor {
 
     this.root.querySelector('.toggle-word-wrap').addEventListener('click', (e) => this.toggleWordWrap(e));
     this.root.querySelector('.insert-image').addEventListener('click', (e) => this.insertImage(e));
-    this.root.querySelector('.insert-remark').addEventListener('click', (e) => this.insertRemark(e));
+    for (const el of this.root.querySelectorAll('.insert-remark')) {
+      el.addEventListener('click', (e) => this.insertRemark(e));
+    }
   }
 
   setXmlElement (element) {

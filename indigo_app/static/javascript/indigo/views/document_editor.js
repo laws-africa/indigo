@@ -21,7 +21,7 @@
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
-      'click .show-structure': 'toggleShowStructure',
+      'click .btn.show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
       'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },
@@ -505,7 +505,7 @@
         var isRoot = fragment.parentElement === null;
 
         this.fragment = fragment;
-        this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+        this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.sourceEditor.showXmlElement(fragment);
       }

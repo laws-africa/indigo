@@ -33,14 +33,16 @@
 
     show: function(e) {
       e.preventDefault();
-      $('.work-view').addClass('d-none');
-      this.$el.removeClass('d-none');
+      document.querySelector('.main-header').classList.add('d-none');
+      document.querySelector('.document-workspace').classList.add('d-none');
+      this.el.classList.remove('d-none');
     },
 
     dismiss: function(e) {
       e.preventDefault();
-      $('.work-view').removeClass('d-none');
-      this.$el.addClass('d-none');
+      document.querySelector('.main-header').classList.remove('d-none');
+      document.querySelector('.document-workspace').classList.remove('d-none');
+      this.el.classList.add('d-none');
     },
 
     refresh: function() {

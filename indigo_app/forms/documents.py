@@ -26,7 +26,3 @@ class ImportDocumentForm(forms.Form):
             return json.loads(val or '{}')
         except ValueError:
             raise forms.ValidationError(_("Invalid json data"))
-
-
-class DocumentProvisionForm(forms.Form):
-    provision = forms.CharField()

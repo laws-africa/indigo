@@ -5,15 +5,16 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.generic import DetailView, FormView
+from django.views.generic import DetailView
 from lxml import etree
 
 from cobalt import Portion
+from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
-from indigo_app.forms import DocumentForm, DocumentProvisionForm
+from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
 
 
@@ -84,37 +85,31 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         return json.dumps(document.document_xml)
 
 
-class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView, FormView):
-    form_class = DocumentProvisionForm
+class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView):
     model = Document
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document/_provisions.html'
-    provision = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['provisions'] = self.get_shallow_toc(self.object.table_of_contents())
+        context['toc_json'] = self.get_toc_json()
         context['country'] = self.object.work.country
         context['place'] = self.object.work.place
         context['work'] = self.object.work
         return context
 
-    def get_shallow_toc(self, toc):
-        # TODO: choose depth somehow; loading the whole thing can take ages
-        #  -- or use htmx to only load children when selected?
-        for e in toc:
-            for c in e.children:
-                for gc in c.children:
-                    gc.children = []
-        return toc
+    def get_toc_json(self):
+        def descend_toc_dict(items):
+            for item in items:
+                yield item
+                for descendant in descend_toc_dict(item['children']):
+                    yield descendant
 
-    def form_valid(self, form):
-        self.provision = form.cleaned_data['provision']
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('document_provision', kwargs={'doc_id': int(self.kwargs['doc_id']), 'eid': self.provision})
+        toc = [t.as_dict() for t in self.object.table_of_contents()]
+        for elem in descend_toc_dict(toc):
+            elem['href'] = reverse('document_provision', kwargs={'doc_id': int(self.kwargs['doc_id']), 'eid': elem['id']})
+        return json.dumps(toc)
 
 
 class DocumentProvisionDetailView(DocumentDetailView):

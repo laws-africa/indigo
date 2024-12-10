@@ -144,7 +144,6 @@
           this.closeTextEditor();
         } else if (Indigo.Preloads.provisionEid !== "" && this.xmlEditor.xmlElement === this.xmlElement) {
           alert($t('You cannot delete the whole provision in provision editing mode.'));
-          return;
         } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
           this.parent.removeFragment(this.editingXmlElement);
           this.closeTextEditor();

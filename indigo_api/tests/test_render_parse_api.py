@@ -215,8 +215,8 @@ SCHEDULE Annexure B
           <FRBRalias value="This is a title"/>
           <FRBRdate date="2014" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
-          <FRBRcountry value="za"/><FRBRnumber value="10"/>
-        </FRBRWork>
+          <FRBRcountry value="za"/>
+        <FRBRnumber value="10"/></FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2014-02-12/!main"/>
           <FRBRuri value="/akn/za/act/2014/10/eng@2014-02-12"/>

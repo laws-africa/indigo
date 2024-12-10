@@ -276,7 +276,6 @@
       var deferred = null;
 
       // always save properties if we save content
-      // TODO: what if we're in provision mode?
       this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;
 
       var fail = function() {

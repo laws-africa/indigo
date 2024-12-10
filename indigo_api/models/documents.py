@@ -547,12 +547,12 @@ class Document(DocumentMixin, models.Model):
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
 
-    def update_provision_xml(self, provision_eid, provision_xml):
+    def update_provision_xml(self, provision_eid, new_provision_eid, provision_xml):
         generator = XmlGenerator(self.frbr_uri)
         xml = etree.fromstring(provision_xml)
         akn_provision = generator.wrap_akn(xml)
         portion = Portion(etree.tostring(akn_provision, encoding='unicode'))
-        updated_provision = portion.get_portion_element(provision_eid)
+        updated_provision = portion.get_portion_element(new_provision_eid)
         old_provision = self.doc.get_portion_element(provision_eid)
         elem_parent = old_provision.getparent()
         elem_parent.replace(old_provision, updated_provision)

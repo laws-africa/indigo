@@ -25,7 +25,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
 import lxml.html.diff
-from lxml.etree import LxmlError
+from lxml import etree
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
@@ -125,7 +125,7 @@ class DocumentViewSet(DocumentViewMixin,
                 # TODO: don't just reset here, integrate the content IFF in provision mode (or always?)
                 instance.reset_xml(request.data.get('content'))
                 instance.save_with_revision(request.user)
-            except LxmlError as e:
+            except etree.LxmlError as e:
                 raise ValidationError({'content': ["Invalid XML: %s" % str(e)]})
 
             return Response({'content': instance.document_xml})
@@ -331,6 +331,7 @@ class ParseView(DocumentResourceView, APIView):
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
+        provision_eid = serializer.validated_data.get('provision_eid')
         frbr_uri = self.document.expression_uri
 
         importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
@@ -355,7 +356,13 @@ class ParseView(DocumentResourceView, APIView):
             doc.frbr_uri = frbr_uri
             xml = doc.to_xml(encoding='unicode')
 
-        return Response({'output': xml})
+        if provision_eid:
+            # track if the top-level eid changed
+            first_eid = etree.fromstring(xml).xpath('*')[0].get('eId')
+            if not first_eid.startswith(provision_eid):
+                provision_eid = first_eid
+
+        return Response({'output': xml, 'provision_eid': provision_eid})
 
 
 class RenderView(DocumentResourceView, APIView):

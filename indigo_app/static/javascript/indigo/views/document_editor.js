@@ -205,6 +205,7 @@
       deferred
         .then(function(response) {
           var newFragment = $.parseXML(response.output);
+          Indigo.Preloads.newProvisionEid = response.provision_eid;
 
           if (fragmentRule === 'akomaNtoso') {
             // entire document
@@ -243,6 +244,7 @@
       var id = this.fragment.getAttribute('eId'),
           data = {
         'content': content,
+        'provision_eid': Indigo.Preloads.provisionEid,
       };
       if (fragmentRule !== 'akomaNtoso') {
         data.fragment = fragmentRule;
@@ -725,6 +727,11 @@
             self.saveModel().done(ok).fail(fail);
           })
           .fail(fail);
+      }
+
+      // TODO: a better way of reloading the page (will redirect to provision chooser for now)
+      if (Indigo.Preloads.provisionEid !== Indigo.Preloads.newProvisionEid) {
+        window.location.reload();
       }
 
       return deferred;

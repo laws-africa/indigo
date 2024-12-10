@@ -9,7 +9,6 @@ from django.views.generic import DetailView
 from lxml import etree
 
 from cobalt import Portion
-from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer

@@ -505,7 +505,7 @@
         var isRoot = fragment.parentElement === null;
 
         this.fragment = fragment;
-        this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+        this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.sourceEditor.showXmlElement(fragment);
       }

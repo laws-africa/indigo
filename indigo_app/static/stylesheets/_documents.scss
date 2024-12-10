@@ -280,15 +280,9 @@ la-table-of-contents-controller {
 
 /* revision list */
 .document-revisions-view {
-  background-color: $body-bg-color;
-  position: fixed;
-  top: 51px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  height: 100%;
 
   .revisions-header {
     display: flex;
@@ -306,19 +300,15 @@ la-table-of-contents-controller {
   }
 
   .revisions-main {
+    flex: 1;
     display: flex;
-    flex: 1 1 auto;
-    position: absolute;
-    top: 56px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    overflow: hidden;
   }
 
   .revisions-content {
     position: relative;
     flex: 1;
-    height: 100%;
+    overflow-y: auto;
   }
 
   .revisions-container {

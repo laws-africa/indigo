@@ -76,7 +76,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="document-workspace document-content-view">
+  <div class="document-workspace">
     <aside class="document-toc-pane">
       <div id="toc" class="m-2">
         <div class="document-toc-view"></div>
@@ -107,12 +107,12 @@
     </div>
   </div>
 
+  {% include "indigo_api/document/_revisions.html" %}
   {% include "indigo_api/document/_defined_terms.html" %}
   {% include "indigo_api/document/_references.html" %}
   {% include "indigo_api/document/_annotations.html" %}
   {% include "indigo_api/document/_insert_image_modal.html" %}
   {% include "indigo_api/document/_italics_terms.html" %}
-  {% include "indigo_api/document/_revisions.html" %}
   {% include "indigo_api/document/_properties.html" %}
   {% include "indigo_api/document/_attachments.html" %}
   {% include "indigo_api/document/_cheatsheet.html" %}

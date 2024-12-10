@@ -9,12 +9,7 @@ class BluebellParser {
     this.headers = headers;
     this.pyodide = null;
     // python dependencies
-    this.packages = [
-      "lxml",
-      "https://files.pythonhosted.org/packages/6c/0c/f37b6a241f0759b7653ffa7213889d89ad49a2b76eb2ddf3b57b2738c347/iso8601-2.1.0-py3-none-any.whl",
-      "https://files.pythonhosted.org/packages/15/83/d5be80b572064329066b8738e91f6b8dd42712007ae0c13e5e8911cdb1b0/cobalt-9.0.1-py3-none-any.whl",
-      "https://files.pythonhosted.org/packages/c2/92/10103079d1ed56a950235ca23399d6a5bd3a38ea7d0c6c17b67e1dbc2abe/bluebell_akn-3.1.0-py3-none-any.whl",
-    ]
+    this.packages = Indigo.pyodide_packages;
     this.pyBootstrap = `
 from bluebell.parser import AkomaNtosoParser
 from cobalt import FrbrUri
@@ -42,17 +37,23 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
   }
 
   async setup () {
-    // TODO: where does this come from?
-    let pyodide = await loadPyodide();
+    if (window.loadPyodide && this.packages && this.packages.length) {
+      let pyodide = await loadPyodide();
 
-    //await pyodide.loadPackage("micropip");
-    //micropip = pyodide.pyimport("micropip");
-    //await micropip.install('bluebell-akn');
+      // install dependencies
+      console.log('Installing pyodide packages: ' + this.packages);
+      await pyodide.loadPackage("micropip");
+      const micropip = pyodide.pyimport("micropip");
+      await micropip.install(this.packages);
 
-    await pyodide.loadPackage(this.packages);
-    pyodide.runPython(this.pyBootstrap);
+      // run the bootstrap code
+      pyodide.runPython(this.pyBootstrap);
 
-    this.pyodide = pyodide;
+      this.pyodide = pyodide;
+      console.log('Pyodide setup complete');
+    } else {
+      console.log('No pyodide packages to install');
+    }
   }
 
   async parse (text, frbr_uri, fragment, eidPrefix) {
@@ -64,6 +65,7 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
   }
 
   async parseWithPyodide (text, frbr_uri, fragment, eidPrefix) {
+    console.log('Parsing with pyodide');
     return this.pyodide.globals.get('parseBluebellText')(text, frbr_uri, fragment, eidPrefix);
   }
 

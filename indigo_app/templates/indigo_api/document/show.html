@@ -134,11 +134,16 @@
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
   window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
+  {% if pyodide_packages_json %}
+    window.Indigo.pyodide_packages = {{ pyodide_packages_json|safe }};
+  {% endif %}
 
   CKEDITOR_BASEPATH = '/static/ckeditor/';
   </script>
 
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  {% if pyodide_packages_json %}
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  {% endif %}
   <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
   <script src="{% static 'javascript/monaco/monaco.js' %}"></script>
   <script id="breadcrumb-template" type="text/x-handlebars-template">

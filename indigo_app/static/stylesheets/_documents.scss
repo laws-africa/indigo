@@ -18,24 +18,10 @@
 .document-workspace {
   display: flex;
   flex-direction: row;
+  height: 100%;
 
-  .document-workspace-content,
-  .document-xml-editor {
-    flex: 1;
-    position: relative;
-  }
-
-  .source-attachment-view {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* sidebar */
-  .document-sidebar {
+  .document-toc-pane {
     flex: 0 0 15%;
-    // TODO
-    height: calc(100vh - 50px - 96px);
 
     overflow-x: hidden;
     overflow-y: auto;
@@ -48,11 +34,70 @@
       padding: 2px 5px;
     }
   }
+
+  .document-pane {
+    flex: 1;
+    display: flex;
+  }
+
+  .document-primary-pane {
+    // take up full space if the secondary pane is hidden
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: relative;
+  }
+
+  .document-primary-pane-content-pane {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .document-primary-pane-editor-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .document-secondary-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  .source-attachment-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .document-toolbar-wrapper {
-  display: flex;
   padding-bottom: 5px;
+
+  .text-editor-buttons {
+    display: none;
+  }
+
+  &.is-editing.edit-mode-text {
+    .editor-start-buttons {
+      display: none;
+    }
+
+    .text-editor-buttons {
+      display: flex;
+    }
+  }
+
+  &.is-editing.edit-mode-table {
+    .editor-start-buttons {
+      display: none;
+    }
+  }
 }
 
 /* headers with help buttons */
@@ -66,35 +111,21 @@ button.btn-link.help {
 }
 
 /* editors */
-
-.monaco-editor-wrapper {
+.monaco-editor-box {
   height: 100%;
-  padding: 0px !important;
-  overflow: hidden;
+  width: 100%;
+  border: 1px solid $gray-400;
 }
 
 .monaco-editor {
-  height: 100%;
-  width: 100%;
+  // this ensures the editor resizes inside flex boxes
+  position: absolute !important;
 }
 
 .document-sheet-container {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-
-  height: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-
-  margin: 0px;
-
-  .sheet-inner {
-    // work around a Chrome rendering bug with sections that
-    // are very short
-    min-height: 100%;
-  }
+  overflow-y: hidden;
+  min-height: 100%;
 
   .quick-editable {
     position: relative;
@@ -119,45 +150,12 @@ button.btn-link.help {
 }
 
 .document-xml-editor {
-  /* this is changed when the user chooses to show it */
-  display: none;
-  position: absolute;
-  padding-left: 5px;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-}
-
-.document-content-view {
-  // show or hide source code component
-  &.show-xml-editor {
-    .document-xml-editor {
-      display: block;
-    }
-  }
-
-  // show or hide plaintext editor component
-  &.show-text-editor {
-    .document-sheet-container {
-      display: none;
-    }
-
-    .document-text-editor {
-      display: block;
-    }
-  }
+  width: 100%;
+  height: 100%;
 }
 
 .document-text-editor {
-  // changed when the user chooses to view it
-  display: none;
-
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
+  height: 100%;
 
   textarea {
     width: 100%;
@@ -169,7 +167,7 @@ button.btn-link.help {
 
 /* make document sheets look like paper */
 .sheet-outer {
-  padding: 20px;
+  padding: 10px;
 
   .sheet-inner {
     border: 1px solid $gray-400;
@@ -241,7 +239,6 @@ la-table-of-contents-controller {
     i {
       font-size: 8px;
       padding: 2px;
-      border: 1px solid $blue;
       color: $blue;
     }
   }
@@ -283,15 +280,9 @@ la-table-of-contents-controller {
 
 /* revision list */
 .document-revisions-view {
-  background-color: $body-bg-color;
-  position: fixed;
-  top: 51px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  height: 100%;
 
   .revisions-header {
     display: flex;
@@ -309,19 +300,15 @@ la-table-of-contents-controller {
   }
 
   .revisions-main {
+    flex: 1;
     display: flex;
-    flex: 1 1 auto;
-    position: absolute;
-    top: 56px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    overflow: hidden;
   }
 
   .revisions-content {
     position: relative;
     flex: 1;
-    height: 100%;
+    overflow-y: auto;
   }
 
   .revisions-container {
@@ -415,9 +402,29 @@ la-table-of-contents-controller {
 }
 
 // hide the CKEditor toolbar
-.document-editor-view {
+body.document-editor-view {
   .cke.cke_float {
     display: none !important;
+  }
+
+  // config for full-page app using flexbox
+  height: 100%;
+
+  .page-body,
+  .main-container {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .main-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-content {
+    flex-grow: 1;
+    min-height: unset;
+    overflow: hidden;
   }
 }
 
@@ -480,4 +487,51 @@ la-table-of-contents-controller {
     color: $blue;
     content: "\f071";
   }
+}
+
+.v-splitter {
+  width: 7px;
+  cursor: col-resize;
+
+  &:hover {
+    background-color: #ccc;
+  }
+
+  &::after {
+    display: block;
+    content: " ";
+    position: relative;
+    top: 50%;
+    left: 2px;
+    width: 3px;
+    height: 3em;
+    background-color: $gray-400;
+    border-radius: 3px;
+  }
+}
+
+.h-splitter {
+  height: 7px;
+  cursor: row-resize;
+
+  &:hover {
+    background-color: #ccc;
+  }
+
+  &::after {
+    display: block;
+    content: " ";
+    position: relative;
+    left: 50%;
+    top: 2px;
+    height: 3px;
+    width: 3em;
+    background-color: $gray-400;
+    border-radius: 3px;
+  }
+}
+
+// when splitters are being dragged, prevent iframes from swallowing mouse events
+.splitter-dragging iframe {
+  pointer-events: none;
 }

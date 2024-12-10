@@ -121,6 +121,8 @@
       'click .document-workspace-buttons .save-and-publish': 'saveAndPublish',
       'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
       'click .document-toolbar-wrapper .delete-document': 'delete',
+      'click .document-secondary-pane-toggle': 'toggleDocumentSecondaryPane',
+      'indigo:pane-toggled': 'onPaneToggled',
     },
 
     initialize: function() {
@@ -128,8 +130,16 @@
 
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
+      this.secondaryPaneToggle = this.el.querySelector('.document-toolbar-wrapper .document-secondary-pane-toggle');
       this.dirty = false;
       Indigo.offlineNoticeView.autoShow();
+
+      this.panes = {
+        'document-secondary-pane': document.querySelector('.document-secondary-pane')
+      };
+      this.splitters = {
+        'document-secondary-pane': this.panes['document-secondary-pane'].previousElementSibling
+      };
 
       this.detectUnsupportedBrowsers();
 
@@ -194,7 +204,7 @@
         editorView: this.bodyEditorView,
       });
 
-      const akn = this.el.querySelector('.document-workspace-content la-akoma-ntoso');
+      const akn = this.el.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
       this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues));
 
@@ -332,5 +342,39 @@
       e.preventDefault();
       e.stopImmediatePropagation();
     },
+
+    showPane: function (pane) {
+      if (this.panes[pane] && this.panes[pane].classList.contains('d-none')) {
+        this.panes[pane].classList.remove('d-none');
+        this.splitters[pane].classList.remove('d-none');
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: true}}));
+      }
+    },
+
+    hidePane: function (pane) {
+      if (this.panes[pane] && !this.panes[pane].classList.contains('d-none')) {
+        this.panes[pane].classList.add('d-none');
+        this.splitters[pane].classList.add('d-none');
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: false}}));
+      }
+    },
+
+    togglePane: function (pane) {
+      if (this.panes[pane]) {
+        const hidden = this.panes[pane].classList.toggle('d-none');
+        this.splitters[pane].classList.toggle('d-none', hidden);
+        this.el.dispatchEvent(new CustomEvent('indigo:pane-toggled', {detail: {pane, visible: !hidden}}));
+      }
+    },
+
+    toggleDocumentSecondaryPane: function () {
+      this.togglePane('document-secondary-pane');
+    },
+
+    onPaneToggled: function (e) {
+      if (e.originalEvent.detail.pane === 'document-secondary-pane') {
+        this.secondaryPaneToggle.classList.toggle('active', e.originalEvent.detail.visible);
+      }
+    }
   });
 })(window);

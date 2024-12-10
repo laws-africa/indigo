@@ -186,6 +186,45 @@ class ProvisionRefsResolverTestCase(TestCase):
                 ProvisionRef("2", 10, 11, None))
         ], self.resolve_references_str("Paragraph 2", root))
 
+    def test_items_as_paragraphs(self):
+        self.doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_2">
+          <num>2</num>
+          <content>
+            <blockList eId="sec_2__list_1">
+              <item eId="sec_2__list_1__item_a">
+                <num>(a)</num>
+                <p eId="sec_2__list_1__item_a__p_1">some text</p>
+                <blockList eId="sec_2__list_1__item_a__list_1">
+                  <item eId="sec_2__list_1__item_a__list_1__item_i">
+                    <num>(i)</num>
+                    <p eId="sec_2__list_1__item_a__list_1__item_i__p_1">item (a)(i)</p>
+                  </item>
+                </blockList>
+              </item>
+              <item eId="sec_2__list_1__item_b">
+                <num>(b)</num>
+                <p eId="sec_2__list_1__item_b__p_1">reference to paragraph (a)(i)</p>
+              </item>
+            </blockList>
+          </content>
+        </section>
+        """)).root
+        root = self.doc.xpath('.//*[@eId="sec_2__list_1__item_b"]')[0]
+        item_a = self.doc.xpath('.//*[@eId="sec_2__list_1__item_a"]')[0]
+        item_a_i = self.doc.xpath('.//*[@eId="sec_2__list_1__item_a__list_1__item_i"]')[0]
+        self.assertEqual([
+            MainProvisionRef(
+                'paragraph',
+                ProvisionRef(
+                    '(a)', 10, 13, None,
+                    ProvisionRef('(i)', 13, 16, element=item_a_i, eId='sec_2__list_1__item_a__list_1__item_i'),
+                    item_a,
+                    'sec_2__list_1__item_a'
+                )
+            )
+        ], self.resolve_references_str("paragraph (a)(i)", root))
+
 
 class ProvisionRefsMatcherTestCase(TestCase):
     maxDiff = None
@@ -905,6 +944,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(a)(2)(iii)(bb) thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section 26(b)(b)(iii)(dd)(A), thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section 31, thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section 31, of that act.</p>
               </content>
             </section>
         """))
@@ -920,6 +960,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and section <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), thereof.</p>
                 <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, thereof.</p>
+                <p>Concerning <ref href="/akn/za/act/2009/1">Act 1 of 2009</ref> and <i>given</i> a tail section <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, of that act.</p>
               </content>
             </section>
         """))
@@ -944,6 +985,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(a)(2)(iii)(bb) daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling 26(b)(b)(iii)(dd)(A), daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling 31, daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling 31, van daardie wet.</p>
               </content>
             </section>
         """))
@@ -959,6 +1001,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_a__para_2">26(a)(2)</ref>(iii)(bb) daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en afdeling <ref href="/akn/za/act/2009/1/~sec_26__subsec_b">26(b)</ref>(b)(iii)(dd)(A), daarvan.</p>
                 <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, daarvan.</p>
+                <p>Aangaande <ref href="/akn/za/act/2009/1">Wet 1 van 2009</ref> en <i>gegee</i> 'n stert afdeling <ref href="/akn/za/act/2009/1/~sec_31">31</ref>, van daardie wet.</p>
               </content>
             </section>
         """))
@@ -1371,6 +1414,74 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <num>26.</num>
               <heading>Important heading</heading>
             </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_subparagraphs_as_items(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_3">
+          <num>3</num>
+          <intro>
+            <blockList eId="sec_3__intro__list_1">
+              <item eId="sec_3__intro__list_1__item_i">
+                <num>(i)</num>
+                <p eId="sec_3__intro__list_1__item_i__p_1">item (i)</p>
+              </item>
+              <item eId="sec_3__intro__list_1__item_ii">
+                <num>(ii)</num>
+                <p eId="sec_3__intro__list_1__item_ii__p_1">ref to subparagraph (i)</p>
+              </item>
+            </blockList>
+          </intro>
+          <subparagraph eId="sec_3__subpara_i">
+            <num>(i)</num>
+            <content>
+              <p eId="sec_3__subpara_i__p_1">subparagraph (i)</p>
+            </content>
+          </subparagraph>
+          <subparagraph eId="sec_3__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_3__subpara_ii__p_1">subparagraph (i)</p>
+            </content>
+          </subparagraph>
+        </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_3">
+          <num>3</num>
+          <intro>
+            <blockList eId="sec_3__intro__list_1">
+              <item eId="sec_3__intro__list_1__item_i">
+                <num>(i)</num>
+                <p eId="sec_3__intro__list_1__item_i__p_1">item <ref href="#sec_3__intro__list_1__item_i">(i)</ref></p>
+              </item>
+              <item eId="sec_3__intro__list_1__item_ii">
+                <num>(ii)</num>
+                <p eId="sec_3__intro__list_1__item_ii__p_1">ref to subparagraph <ref href="#sec_3__intro__list_1__item_i">(i)</ref></p>
+              </item>
+            </blockList>
+          </intro>
+          <subparagraph eId="sec_3__subpara_i">
+            <num>(i)</num>
+            <content>
+              <p eId="sec_3__subpara_i__p_1">subparagraph <ref href="#sec_3__subpara_i">(i)</ref></p>
+            </content>
+          </subparagraph>
+          <subparagraph eId="sec_3__subpara_ii">
+            <num>(ii)</num>
+            <content>
+              <p eId="sec_3__subpara_ii__p_1">subparagraph <ref href="#sec_3__subpara_i">(i)</ref></p>
+            </content>
+          </subparagraph>
+        </section>
         """))
 
         actual = etree.fromstring(doc.to_xml())

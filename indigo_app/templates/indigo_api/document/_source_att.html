@@ -1,16 +1,13 @@
 {% load i18n %}
 
-<div class="source-attachment-view d-none">
+<div class="source-attachment-view">
   <div class="my-1 me-1 d-flex">
     <div class="flex-grow-1">
       <select class="form-control source-attachment-list"></select>
     </div>
-    <div class="text-end">
-      <a href="" class="btn btn-link source-attachment-pop" target="_blank" rel="noopener">
-        {% trans 'Open' %}<i class="fas fa-external-link-alt ms-2"></i>
-      </a>
-      <a href="#" class="btn btn-outline-secondary source-attachment-toggle">&times;</a>
-    </div>
+    <a href="" class="btn btn-link source-attachment-pop" target="_blank" rel="noopener">
+      {% trans 'Open' %}<i class="fas fa-external-link-alt ms-2"></i>
+    </a>
   </div>
   <iframe id="source-attachment-iframe" class="flex-grow-1" height="100%" width="100%"></iframe>
 </div>

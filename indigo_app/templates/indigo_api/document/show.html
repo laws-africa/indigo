@@ -1,8 +1,9 @@
-{% extends "indigo_api/work_layout.html" %}
+{% extends "main.html" %}
 {% load pipeline static i18n %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} document-editor-view no-site-footer sidebar-minimized
+{% block body-class %}
+  {{ block.super }} document-editor-view
   {% if document.draft %}is-draft{% else %}is-published{% endif %}
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
@@ -74,15 +75,74 @@
   </header>
 {% endblock %}
 
-{% block main-content %}
-  <div class="document-workspace document-content-view">
-    {% include "indigo_api/document/_toc.html" %}
-    {% include "indigo_api/document/_content.html" %}
-    {% include "indigo_api/document/_source_att.html" %}
+{% block content %}
+  <div class="document-workspace">
+    <aside class="document-toc-pane">
+      <div id="toc" class="m-2">
+        <div class="document-toc-view"></div>
+      </div>
+    </aside>
+    <div class="v-splitter" data-component="VSplitter" id="document-workspace-splitter"></div>
+    <div class="document-pane">
+      <div class="document-primary-pane">
+        <div id="annotation-nav" class="annotation-nav d-none">
+          <span class="me-2 text-muted">
+            <i class="far fa-comments"></i>
+            <span class="n-threads"></span>
+          </span>
+          <a href="#" class="prev-annotation"><i class="fa fa-fw fa-chevron-up"></i></a>
+          <a href="#" class="next-annotation"><i class="fa fa-fw fa-chevron-down"></i></a>
+        </div>
+        <div class="document-primary-pane-content-pane">
+          {% include "indigo_api/document/_content.html" %}
+        </div>
+        <div class="document-primary-pane-editor-pane d-none">
+          {% include "indigo_api/document/_text_editor.html" %}
+        </div>
+      </div>
+      <div class="v-splitter d-none" data-component="VSplitter" id="document-pane-splitter"></div>
+      <div class="document-secondary-pane d-none">
+        {% include 'indigo_api/document/_secondary_pane.html' %}
+      </div>
+    </div>
   </div>
 
+  {% include "indigo_api/document/_revisions.html" %}
+  {% include "indigo_api/document/_defined_terms.html" %}
+  {% include "indigo_api/document/_references.html" %}
+  {% include "indigo_api/document/_annotations.html" %}
+  {% include "indigo_api/document/_insert_image_modal.html" %}
+  {% include "indigo_api/document/_italics_terms.html" %}
+  {% include "indigo_api/document/_properties.html" %}
+  {% include "indigo_api/document/_attachments.html" %}
+  {% include "indigo_api/document/_cheatsheet.html" %}
+  {% include "indigo_api/document/_issues.html" %}
+  {% include "indigo_api/_work_chooser_modal.html" %}
+{% endblock %}
+
+{% block site-footer %}{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  window.Indigo.Preloads.country_code = '{{ country.code }}';
+  window.Indigo.Preloads.locality_code = {% if locality %}'{{ locality.code }}'{% else %}null{% endif %};
+  window.Indigo.countries = {{ indigo_countries_json|safe }};
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  window.Indigo.Preloads.document = {{ document_json|safe }};
+  window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+  window.Indigo.Preloads.provisionEid = "{{ provision_eid }}";
+  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
+  window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
+
+  CKEDITOR_BASEPATH = '/static/ckeditor/';
+  </script>
+
+  <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
+  <script src="{% static 'javascript/monaco/monaco.js' %}"></script>
   <script id="breadcrumb-template" type="text/x-handlebars-template">
-  {% verbatim %}
+    {% verbatim %}
     <li class="breadcrumb-item"><a href="/places/{{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
     {{#if locality}}
     <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
@@ -95,50 +155,18 @@
       <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
       <div class="dropdown-menu">
         {{#each expressions}}
-          {{#each documents}}
-            <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
-              {{ ../date }}
-              · {{ language }}
-              {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
-            </a>
-          {{/each}}
+        {{#each documents}}
+        <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
+          {{ ../date }}
+          · {{ language }}
+          {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
+        </a>
+        {{/each}}
         {{/each}}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% endverbatim %}{% trans 'Manage amendments' %}...{% verbatim %}</a>
       </div>
     </li>
-  {% endverbatim %}
+    {% endverbatim %}
   </script>
-
-  {% include "indigo_api/document/_defined_terms.html" %}
-  {% include "indigo_api/document/_references.html" %}
-  {% include "indigo_api/document/_annotations.html" %}
-  {% include "indigo_api/document/_insert_image_modal.html" %}
-  {% include "indigo_api/document/_italics_terms.html" %}
-{% endblock %}
-
-{% block content %}
-  {{ block.super }}
-  {% include "indigo_api/document/_revisions.html" %}
-  {% include "indigo_api/document/_properties.html" %}
-  {% include "indigo_api/document/_attachments.html" %}
-  {% include "indigo_api/document/_cheatsheet.html" %}
-  {% include "indigo_api/document/_issues.html" %}
-{% endblock %}
-
-{% block js %}
-  {{ block.super }}
-  {# include the document as JSON #}
-  <script type="text/javascript">
-  window.Indigo.Preloads.document = {{ document_json|safe }};
-  window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
-  window.Indigo.Preloads.provisionEid = "{{ provision_eid }}";
-  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
-  window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
-
-  CKEDITOR_BASEPATH = '/static/ckeditor/';
-  </script>
-
-  <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
-  <script src="{% static 'javascript/monaco/monaco.js' %}"></script>
 {% endblock %}

@@ -21,7 +21,7 @@
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
-      'click .show-structure': 'toggleShowStructure',
+      'click .btn.show-structure': 'toggleShowStructure',
       'click .show-pit-comparison': 'toggleShowComparison',
       'mouseenter la-akoma-ntoso .akn-ref[href^="#"]': 'refPopup',
     },

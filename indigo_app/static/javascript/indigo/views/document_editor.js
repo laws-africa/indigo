@@ -579,7 +579,7 @@
       }
 
       // TODO: a better way of reloading the page (will redirect to provision chooser for now)
-      if (Indigo.Preloads.provisionEid !== Indigo.Preloads.newProvisionEid) {
+      if (this.sourceEditor.aknTextEditor.reloadOnSave) {
         window.location.reload();
       }
 

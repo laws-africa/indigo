@@ -12,6 +12,8 @@ class AknTextEditor {
     // flag to prevent circular updates to the text
     this.updating = false;
     this.liveUpdates = false;
+    // for provision mode (set to true if the top-level eId changes)
+    this.reloadOnSave = false;
 
     this.grammarName = document.tradition().settings.grammar.name;
     this.grammarModel = new Indigo.grammars.registry[this.grammarName](document.get('frbr_uri'));
@@ -132,7 +134,12 @@ class AknTextEditor {
       );
 
       let newElement = $.parseXML(xml);
-      Indigo.Preloads.newProvisionEid = resp.provision_eid || Indigo.Preloads.newProvisionEid || Indigo.Preloads.provisionEid;
+
+      // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
+      if (this.xmlElement.parentElement.tagName === 'portionBody') {
+        // set it back to false if the eId is changed back before saving too
+        this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
+      }
 
       if (fragmentRule === 'akomaNtoso') {
         // entire document

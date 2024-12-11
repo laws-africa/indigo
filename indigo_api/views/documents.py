@@ -331,7 +331,6 @@ class ParseView(DocumentResourceView, APIView):
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
-        provision_eid = serializer.validated_data.get('provision_eid')
         frbr_uri = self.document.expression_uri
 
         importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
@@ -356,11 +355,7 @@ class ParseView(DocumentResourceView, APIView):
             doc.frbr_uri = frbr_uri
             xml = doc.to_xml(encoding='unicode')
 
-        if provision_eid:
-            # track if the top-level eid changed
-            provision_eid = etree.fromstring(xml).xpath('*')[0].get('eId')
-
-        return Response({'output': xml, 'provision_eid': provision_eid})
+        return Response({'output': xml})
 
 
 class RenderView(DocumentResourceView, APIView):

@@ -266,7 +266,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     # only for provision editing
     provision_eid = serializers.CharField(required=False, allow_blank=True)
-    new_provision_eid = serializers.CharField(required=False, allow_blank=True)
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -289,7 +288,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'links',
 
-            'provision_eid', 'new_provision_eid',
+            'provision_eid',
         )
         read_only_fields = ('country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'created_at', 'updated_at')
 
@@ -408,11 +407,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # by the other properties.
         content = validated_data.pop('content', None)
         provision_eid = validated_data.pop('provision_eid', None)
-        new_provision_eid = validated_data.pop('new_provision_eid', None)
         if content is not None:
             if provision_eid:
-                content = document.update_provision_xml(provision_eid, new_provision_eid, content)
-            document.reset_xml(content, from_model=True)
+                # this will reset the XML on the document
+                document.update_provision_xml(provision_eid, content)
+            else:
+                document.reset_xml(content, from_model=True)
 
         # save rest of changes
         for attr, value in validated_data.items():
@@ -444,8 +444,6 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
-    # only for provision editing
-    provision_eid = serializers.CharField(required=False, allow_blank=True)
 
 
 class DocumentAPISerializer(serializers.Serializer):

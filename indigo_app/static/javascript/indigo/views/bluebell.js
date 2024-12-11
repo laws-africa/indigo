@@ -16,7 +16,7 @@ from cobalt import FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 from lxml import etree
 
-def parseBluebellText(text, frbr_uri, fragment, eid_prefix, provision_eid):
+def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
     # see indigo.pipelines.base.ParseBluebellText for context
     frbr_uri = FrbrUri.parse(frbr_uri)
     frbr_uri.work_component = 'main'
@@ -32,11 +32,7 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix, provision_eid):
         xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
         return xml
 
-    if provision_eid:
-        # track if the top-level eid changed
-        provision_eid = xml.xpath('*')[0].get('eId')
-
-    return {'output': etree.tostring(xml, encoding='unicode'), 'provision_eid': provision_eid}
+    return etree.tostring(xml, encoding='unicode')
 `;
   }
 
@@ -60,20 +56,20 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix, provision_eid):
     }
   }
 
-  async parse (text, frbr_uri, fragment, eidPrefix, provisionEid) {
+  async parse (text, frbr_uri, fragment, eidPrefix) {
     if (this.pyodide) {
-      return this.parseWithPyodide(text, frbr_uri, fragment, eidPrefix, provisionEid);
+      return this.parseWithPyodide(text, frbr_uri, fragment, eidPrefix);
     } else {
-      return this.parseWithServer(text, frbr_uri, fragment, eidPrefix, provisionEid);
+      return this.parseWithServer(text, frbr_uri, fragment, eidPrefix);
     }
   }
 
-  async parseWithPyodide (text, frbr_uri, fragment, eidPrefix, provisionEid) {
+  async parseWithPyodide (text, frbr_uri, fragment, eidPrefix) {
     console.log('Parsing with pyodide');
-    return this.pyodide.globals.get('parseBluebellText')(text, frbr_uri, fragment, eidPrefix, provisionEid);
+    return this.pyodide.globals.get('parseBluebellText')(text, frbr_uri, fragment, eidPrefix);
   }
 
-  async parseWithServer (text, frbr_uri, fragment, eidPrefix, provisionEid) {
+  async parseWithServer (text, frbr_uri, fragment, eidPrefix) {
     const body = {
       content: text,
     };
@@ -86,10 +82,6 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix, provision_eid):
       body.id_prefix = eidPrefix;
     }
 
-    if (provisionEid) {
-      body.provision_eid = provisionEid;
-    }
-
     const resp = await fetch(this.url, {
       method: 'POST',
       headers: this.headers,
@@ -97,7 +89,7 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix, provision_eid):
     });
 
     if (resp.ok) {
-      return await resp.json();
+      return (await resp.json()).output;
     } else if (resp.status === 400) {
       throw (await resp.json()).content || resp.statusText;
     } else {

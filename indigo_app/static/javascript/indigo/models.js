@@ -188,7 +188,6 @@
       // We do this by delegating to the document object.
       this.document.attributes.content = this.get('content');
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
-      this.document.attributes.new_provision_eid = Indigo.Preloads.newProvisionEid;
       var result = this.document.save();
       // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
       // the response to the save() call

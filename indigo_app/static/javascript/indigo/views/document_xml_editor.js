@@ -114,7 +114,6 @@ class AknTextEditor {
     const eId = this.xmlElement.getAttribute('eId');
     let fragment = null;
     let eidPrefix = null;
-    let provisionEid = null;
 
     if (fragmentRule !== 'akomaNtoso') {
       fragment = fragmentRule;
@@ -124,21 +123,14 @@ class AknTextEditor {
       }
     }
 
-    // track eId change, only at the top level in provision mode
-    if (this.xmlElement.parentElement.tagName === 'portionBody') {
-      provisionEid = Indigo.Preloads.provisionEid;
-    }
-
     try {
-      const resp = await this.bluebellParser.parse(
+      const xml = await this.bluebellParser.parse(
         text,
         this.document.get('expression_frbr_uri'),
         fragment,
         eidPrefix,
-        provisionEid,
       );
 
-      let xml = resp.output;
       let newElement = $.parseXML(xml);
       Indigo.Preloads.newProvisionEid = resp.provision_eid || Indigo.Preloads.newProvisionEid || Indigo.Preloads.provisionEid;
 

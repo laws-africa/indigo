@@ -25,7 +25,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
 import lxml.html.diff
-from lxml import etree
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
@@ -109,26 +108,14 @@ class DocumentViewSet(DocumentViewMixin,
 
         super().perform_update(serializer)
 
-    @detail_route_action(detail=True, methods=['GET', 'PUT'])
+    @detail_route_action(detail=True, methods=['GET'])
     def content(self, request, *args, **kwargs):
-        """ This exposes a GET and PUT resource at ``/api/documents/1/content`` which allows
-        the content of the document to be fetched and set independently of the metadata. This
+        """ This exposes a GET resource at ``/api/documents/1/content`` which allows
+        the content of the document to be fetched independently of the metadata. This
         is useful because the content can be large.
         """
-        instance = self.get_object()
-
         if request.method == 'GET':
             return Response({'content': self.get_object().document_xml})
-
-        if request.method == 'PUT':
-            try:
-                # TODO: don't just reset here, integrate the content IFF in provision mode (or always?)
-                instance.reset_xml(request.data.get('content'))
-                instance.save_with_revision(request.user)
-            except etree.LxmlError as e:
-                raise ValidationError({'content': ["Invalid XML: %s" % str(e)]})
-
-            return Response({'content': instance.document_xml})
 
     @detail_route_action(detail=True, methods=['GET'])
     def toc(self, request, *args, **kwargs):

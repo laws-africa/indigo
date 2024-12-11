@@ -131,10 +131,10 @@ class AknTextEditor {
     });
 
     if (resp.ok) {
-      const xml = (await resp.json()).output;
+      const respJson = await resp.json();
+      const xml = respJson.output;
       let newElement = $.parseXML(xml);
-      // TODO: does /parse still return this?
-      Indigo.Preloads.newProvisionEid = resp.provision_eid;
+      Indigo.Preloads.newProvisionEid = respJson.provision_eid || Indigo.Preloads.newProvisionEid || Indigo.Preloads.provisionEid;
 
       if (fragmentRule === 'akomaNtoso') {
         // entire document

@@ -547,19 +547,15 @@ class Document(DocumentMixin, models.Model):
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
 
-    def update_provision_xml(self, provision_eid, new_provision_eid, provision_xml):
-        generator = XmlGenerator(self.frbr_uri)
+    def update_provision_xml(self, provision_eid, provision_xml):
         xml = etree.fromstring(provision_xml)
-        akn_provision = generator.wrap_akn(xml)
-        portion = Portion(etree.tostring(akn_provision, encoding='unicode'))
-        updated_provision = portion.get_portion_element(new_provision_eid)
+        # portionBody will always have exactly one child
+        updated_provision = xml.xpath('a:portion/a:portionBody/a:*', namespaces={'a': self.doc.namespace})[0]
         old_provision = self.doc.get_portion_element(provision_eid)
-        elem_parent = old_provision.getparent()
-        elem_parent.replace(old_provision, updated_provision)
-        # fix up the XML: rewrite eids, correct tags etc.
-        updated_xml = generator.post_process(self.doc.main)
-        with_akn_tag = generator.wrap_akn(updated_xml)
-        return etree.tostring(with_akn_tag, encoding='unicode')
+        old_provision.getparent().replace(old_provision, updated_provision)
+        generator = XmlGenerator(self.frbr_uri)
+        generator.post_process(self.doc.root)
+        self.reset_xml(self.doc.to_xml(encoding='unicode'), from_model=True)
 
     def _make_doc(self, xml):
         return self.cobalt_class(xml)

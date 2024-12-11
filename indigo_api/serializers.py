@@ -319,30 +319,18 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def validate(self, attrs):
-        if attrs.get('content') and not attrs.get('provision_eid'):
+        if attrs.get('content'):
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
-                doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+                doctype = frbr_uri.doctype if not attrs.get('provision_eid') else 'portion'
+                doc = StructuredDocument.for_document_type(doctype)(attrs['content'])
             except (LxmlError, ValueError) as e:
                 raise ValidationError("Invalid XML: %s" % str(e))
 
             # ensure the correct namespace
             if doc.namespace != AKN_NAMESPACES['3.0']:
                 raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
-
-        if attrs.get('content') and attrs.get('provision_eid'):
-            # validate the portion content
-            try:
-                xml = attrs['content']
-                ns = AKN_NAMESPACES[DEFAULT_VERSION]
-                xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
-                portion = StructuredDocument.for_document_type('portion')(xml)
-            except (LxmlError, ValueError) as e:
-                raise ValidationError("Invalid XML: %s" % str(e))
-            # ensure the correct namespace
-            if portion.namespace != ns:
-                raise ValidationError(f"Document must have namespace {ns}, but it has {portion.namespace} instead.")
 
         return attrs
 

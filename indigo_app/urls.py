@@ -129,8 +129,8 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/comments$', works.WorkCommentsView.as_view(), name='work_comments'),
 
     path('documents/<int:doc_id>/', documents.DocumentDetailView.as_view(), name='document'),
-    re_path(r'^documents/(?P<doc_id>\d+)/choose-provision$', documents.ChooseDocumentProvisionView.as_view(), name='choose_document_provision'),
-    re_path(r'^documents/(?P<doc_id>\d+)/(?P<eid>\S+)$', documents.DocumentProvisionDetailView.as_view(), name='document_provision'),
+    path('documents/<int:doc_id>/choose-provision', documents.ChooseDocumentProvisionView.as_view(), name='choose_document_provision'),
+    path('documents/<int:doc_id>/<str:eid>', documents.DocumentProvisionDetailView.as_view(), name='document_provision'),
     path('documents/<int:doc_id>/popup', cache_page(POPUP_CACHE_SECS)(documents.DocumentPopupView.as_view()), name='document_popup'),
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),

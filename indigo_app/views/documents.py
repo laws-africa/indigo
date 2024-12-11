@@ -119,6 +119,9 @@ class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView):
             elem['href'] = reverse('document_provision', kwargs={'doc_id': int(self.kwargs['doc_id']), 'eid': elem['id']})
         return json.dumps(toc)
 
+    def has_permission(self):
+        return self.request.user.is_superuser
+
 
 class DocumentProvisionDetailView(DocumentDetailView):
     eid = None
@@ -144,6 +147,9 @@ class DocumentProvisionDetailView(DocumentDetailView):
 
     def get_document_content_json(self, document):
         return json.dumps(etree.tostring(self.provision_xml, encoding='unicode'))
+
+    def has_permission(self):
+        return self.request.user.is_superuser
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

@@ -106,8 +106,6 @@ class AknTextEditor {
     const eId = this.xmlElement.getAttribute('eId');
     const body = {
       'content': this.monacoEditor.getValue(),
-      // TODO: is this the right place for this?
-      'provision_eid': Indigo.Preloads.provisionEid,
     };
 
     if (fragmentRule !== 'akomaNtoso') {
@@ -116,6 +114,11 @@ class AknTextEditor {
         // retain the eId of the parent element as the prefix
         body.id_prefix = eId.substring(0, eId.lastIndexOf('__'));
       }
+    }
+
+    // track eId change, only at the top level
+    if (this.xmlElement.parentElement.tagName === 'portionBody') {
+      body.provision_eid = Indigo.Preloads.provisionEid;
     }
 
     const resp = await fetch(this.document.url() + '/parse', {

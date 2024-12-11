@@ -43,3 +43,8 @@ la-akoma-ntoso .akn-remark {
 la-akoma-ntoso[frbr-country="na"] .akn-remark {
   background-color: inherit;
 }
+
+la-akoma-ntoso {
+  // prevent long lines of dots and other things that would not normally be broken from overflowing the content box
+  word-break: break-word;
+}

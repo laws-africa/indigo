@@ -212,7 +212,7 @@ def notify_new_user_signed_up(user_id):
 def notify_annotation_reply_posted(annotation_id):
     try:
         notifier.notify_reply_to_annotation(Annotation.objects.get(pk=annotation_id))
-    except Comment.DoesNotExist:
+    except Annotation.DoesNotExist:
         log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
 @background(queue='indigo')

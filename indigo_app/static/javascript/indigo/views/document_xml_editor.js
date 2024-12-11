@@ -22,6 +22,14 @@ class AknTextEditor {
 
     this.setupMonacoEditor();
     this.setupToolbar();
+    this.bluebellParser = new Indigo.BluebellParser(
+      this.document.url() + '/parse',
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'X-CSRFToken': Indigo.csrfToken,
+      }
+    );
+    this.bluebellParser.setup();
   }
 
   setupMonacoEditor () {
@@ -104,41 +112,34 @@ class AknTextEditor {
 
     const fragmentRule = this.document.tradition().grammarRule(this.xmlElement);
     const eId = this.xmlElement.getAttribute('eId');
-    const body = {
-      'content': this.monacoEditor.getValue()
-    };
+    let fragment = null;
+    let eidPrefix = null;
 
     if (fragmentRule !== 'akomaNtoso') {
-      body.fragment = fragmentRule;
+      fragment = fragmentRule;
       if (eId && eId.lastIndexOf('__') > -1) {
         // retain the eId of the parent element as the prefix
-        body.id_prefix = eId.substring(0, eId.lastIndexOf('__'));
+        eidPrefix = eId.substring(0, eId.lastIndexOf('__'));
       }
     }
 
-    const resp = await fetch(this.document.url() + '/parse', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-CSRFToken': Indigo.csrfToken,
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+      const xml = await this.bluebellParser.parse(
+        text,
+        this.document.get('expression_frbr_uri'),
+        fragment,
+        eidPrefix,
+      );
 
-    if (resp.ok) {
-      const xml = (await resp.json()).output;
       let newElement = $.parseXML(xml);
-
       if (fragmentRule === 'akomaNtoso') {
         // entire document
         return [newElement.documentElement];
       } else {
         return newElement.documentElement.children;
       }
-    } else if (resp.status === 400) {
-      Indigo.errorView.show((await resp.json()).content || resp.statusText);
-    } else {
-      Indigo.errorView.show(resp.statusText);
+    } catch (e) {
+      Indigo.errorView.show(e);
     }
 
     return null;

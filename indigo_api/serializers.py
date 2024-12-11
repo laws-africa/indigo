@@ -14,7 +14,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from cobalt import StructuredDocument, FrbrUri
-from cobalt.akn import AKN_NAMESPACES
+from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
@@ -333,8 +333,17 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
 
         if attrs.get('content') and attrs.get('provision_eid'):
-            # TODO: validate provision-level XML some other way
-            pass
+            # validate the portion content
+            try:
+                xml = attrs['content']
+                ns = AKN_NAMESPACES[DEFAULT_VERSION]
+                xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
+                portion = StructuredDocument.for_document_type('portion')(xml)
+            except (LxmlError, ValueError) as e:
+                raise ValidationError("Invalid XML: %s" % str(e))
+            # ensure the correct namespace
+            if portion.namespace != ns:
+                raise ValidationError(f"Document must have namespace {ns}, but it has {portion.namespace} instead.")
 
         return attrs
 

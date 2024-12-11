@@ -61,12 +61,10 @@
       // originally triggered by a content change
       if (options && options.fromContent) return;
 
-      if (Indigo.Preloads.provisionEid === "") {
-        // rewrite all eIds before setting the content
-        new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
-        // rewrite all attachment FRBR URI work components too
-        new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
-      }
+      // rewrite all eIds before setting the content
+      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
+      // rewrite all attachment FRBR URI work components too
+      new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 

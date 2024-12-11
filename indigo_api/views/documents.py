@@ -358,9 +358,7 @@ class ParseView(DocumentResourceView, APIView):
 
         if provision_eid:
             # track if the top-level eid changed
-            first_eid = etree.fromstring(xml).xpath('*')[0].get('eId')
-            if first_eid != provision_eid and not first_eid.startswith(f'{provision_eid}__'):
-                provision_eid = first_eid
+            provision_eid = etree.fromstring(xml).xpath('*')[0].get('eId')
 
         return Response({'output': xml, 'provision_eid': provision_eid})
 

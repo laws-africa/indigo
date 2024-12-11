@@ -10,6 +10,9 @@ mark.active mark {
 }
 
 .content-with-gutter .gutter {
+  // for small portions, if the gutter extends below the screen, allow it to scroll
+  overflow-y: auto;
+
   .annotation-thread {
     border: 1px solid $border-color;
     box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.25);

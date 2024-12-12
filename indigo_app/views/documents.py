@@ -60,7 +60,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         if plugin:
             for a in amendments:
                 amending_work = Work.objects.get(frbr_uri=a['amending_work']['frbr_uri'])
-                a['amending_work']['numbered_title_localised'] = plugin.work_numbered_title(amending_work)
+                a['amending_work']['numbered_title_localised'] = plugin.work_numbered_title(amending_work) or amending_work.title
         context['amendments_json'] = json.dumps(amendments)
 
         context['form'] = DocumentForm(instance=doc)

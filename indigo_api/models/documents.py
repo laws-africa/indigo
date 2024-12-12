@@ -18,7 +18,7 @@ from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
-from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument, Portion
+from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
 from lxml import etree
 
 from bluebell.xml import XmlGenerator
@@ -26,6 +26,7 @@ from bluebell.xml import XmlGenerator
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
+from indigo.xmlutils import rewrite_all_attachment_work_components
 
 log = logging.getLogger(__name__)
 
@@ -554,7 +555,8 @@ class Document(DocumentMixin, models.Model):
         old_provision = self.doc.get_portion_element(provision_eid)
         old_provision.getparent().replace(old_provision, updated_provision)
         generator = XmlGenerator(self.frbr_uri)
-        generator.post_process(self.doc.root)
+        generator.generate_eids(self.doc.root)
+        rewrite_all_attachment_work_components(self.doc)
         self.reset_xml(self.doc.to_xml(encoding='unicode'), from_model=True)
 
     def _make_doc(self, xml):

@@ -4,7 +4,6 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from indigo_api.models import Document, Language
-from django.utils.translation import gettext_lazy as _
 
 
 class DocumentForm(forms.ModelForm):

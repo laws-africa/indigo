@@ -103,8 +103,6 @@
   //
   //   DocumentAttachmentsView - handles managing document attachments
   //
-  //   DocumentRepealView - handles setting a document as repealed
-  //
   //   DocumentEditorView - handles editing the document's body content
   //
   //   DocumentRevisionsView - handles walking through revisions to a document
@@ -128,8 +126,7 @@
     },
 
     initialize: function() {
-      var library = Indigo.library,
-          self = this;
+      let self = this;
 
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');

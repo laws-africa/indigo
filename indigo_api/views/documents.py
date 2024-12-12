@@ -25,7 +25,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
 import lxml.html.diff
-from lxml.etree import LxmlError
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
@@ -64,7 +63,7 @@ class DocumentViewMixin:
                           'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work')
 
     def initial(self, request, **kwargs):
-        super(DocumentViewMixin, self).initial(request, **kwargs)
+        super().initial(request, **kwargs)
 
         # some of our renderers want to bypass the serializer, so that we get access to the
         # raw data objects
@@ -107,27 +106,16 @@ class DocumentViewSet(DocumentViewMixin,
         if not DocumentPermissions().update_allowed(self.request, serializer):
             self.permission_denied(self.request)
 
-        super(DocumentViewSet, self).perform_update(serializer)
+        super().perform_update(serializer)
 
-    @detail_route_action(detail=True, methods=['GET', 'PUT'])
+    @detail_route_action(detail=True, methods=['GET'])
     def content(self, request, *args, **kwargs):
-        """ This exposes a GET and PUT resource at ``/api/documents/1/content`` which allows
-        the content of the document to be fetched and set independently of the metadata. This
+        """ This exposes a GET resource at ``/api/documents/1/content`` which allows
+        the content of the document to be fetched independently of the metadata. This
         is useful because the content can be large.
         """
-        instance = self.get_object()
-
         if request.method == 'GET':
             return Response({'content': self.get_object().document_xml})
-
-        if request.method == 'PUT':
-            try:
-                instance.reset_xml(request.data.get('content'))
-                instance.save_with_revision(request.user)
-            except LxmlError as e:
-                raise ValidationError({'content': ["Invalid XML: %s" % str(e)]})
-
-            return Response({'content': instance.document_xml})
 
     @detail_route_action(detail=True, methods=['GET'])
     def toc(self, request, *args, **kwargs):

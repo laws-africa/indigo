@@ -19,10 +19,14 @@ from iso8601 import parse_date, ParseError
 import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
+from lxml import etree
+
+from bluebell.xml import XmlGenerator
 
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
+from indigo.xmlutils import rewrite_all_attachment_work_components
 
 log = logging.getLogger(__name__)
 
@@ -543,6 +547,17 @@ class Document(DocumentMixin, models.Model):
         if self.expression_date != new_date:
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
+
+    def update_provision_xml(self, provision_eid, provision_xml):
+        xml = etree.fromstring(provision_xml)
+        # portionBody will always have exactly one child
+        updated_provision = xml.xpath('a:portion/a:portionBody/a:*', namespaces={'a': self.doc.namespace})[0]
+        old_provision = self.doc.get_portion_element(provision_eid)
+        old_provision.getparent().replace(old_provision, updated_provision)
+        generator = XmlGenerator(self.frbr_uri)
+        generator.generate_eids(self.doc.root)
+        rewrite_all_attachment_work_components(self.doc)
+        self.reset_xml(self.doc.to_xml(encoding='unicode'), from_model=True)
 
     def _make_doc(self, xml):
         return self.cobalt_class(xml)

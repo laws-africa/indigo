@@ -40,7 +40,12 @@
           $btn = this.$el.find('.mark-up-italics'),
           data = {'document': this.model.document.toJSON()};
 
-      data.document.content = this.model.toXml();
+      let content = this.model.toXml();
+      if (Indigo.Preloads.provisionEid) {
+        content = `<akomaNtoso xmlns="${this.model.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
+        data.document.provision_eid = Indigo.Preloads.provisionEid;
+      }
+      data.document.content = content;
 
       this.$('a[href="#this-document-italics-terms"]').click();
 
@@ -66,9 +71,9 @@
 
     removeItalics: function(e) {
       // remove all italics mark-up
-      var self = this,
-          changed = false;
+      let changed = false;
 
+      // TODO: navigate to 'In this document' first (this click() doesn't do anything)
       this.$('a[href="#this-document-italics-terms"]').click();
 
       this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
@@ -82,7 +87,6 @@
 
       if (changed) {
         this.model.trigger('change:dom');
-        // TODO: refresh content without saving
       }
     }
   });

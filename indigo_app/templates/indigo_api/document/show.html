@@ -46,7 +46,7 @@
                     </button>
                     <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                     <div class="dropdown-menu dropdown-menu-right">
-                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %} {% if document.work.work_in_progress %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
+                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document or document.work.work_in_progress or provision_eid %}disabled{% endif %}" href="#">{% trans 'Save &amp; publish' %}</a>
                       <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">{% trans 'Unpublish &amp; save' %}</a>
                     </div>
                   </div>
@@ -132,6 +132,7 @@
   window.Indigo.Preloads.work = {{ work_json|safe }};
   window.Indigo.Preloads.document = {{ document_json|safe }};
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+  window.Indigo.Preloads.provisionEid = "{{ provision_eid }}";
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
   window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
   {% if pyodide_packages_json %}

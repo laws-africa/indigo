@@ -1,7 +1,10 @@
+from collections import defaultdict
+
+import lxml.html
 import re
 from itertools import chain
 
-import lxml.html
+from cobalt import FrbrUri
 
 
 def fragments_fromstring(html):
@@ -46,6 +49,33 @@ def closest(element, predicate):
 
 html_parser = lxml.html.HTMLParser(encoding='utf-8')
 
+
 def parse_html_str(html):
     """Encode HTML into utf-8 bytes and parse."""
     return lxml.html.fromstring(html.encode('utf-8'), parser=html_parser)
+
+
+def rewrite_all_attachment_work_components(xml_doc):
+    """ Set unique and accurate work components on all attachments.
+    """
+    counter = defaultdict(lambda: 0)
+    ns = xml_doc.namespace
+    for doc in xml_doc.root.xpath('//a:attachment/a:doc', namespaces={'a': ns}):
+        parent = doc.getparent().xpath('ancestor::a:attachment/a:doc/a:meta/a:identification/a:FRBRWork/a:FRBRthis', namespaces={'a': ns})
+        prefix = FrbrUri.parse(parent[-1].attrib['value']).work_component + '/' if parent else ''
+        name = doc.attrib['name']
+        # e.g. schedule, schedule_1/schedule, schedule_2/appendix, etc.
+        prefix_name = f'{prefix}{name}'
+        counter[prefix_name] += 1
+        # e.g. schedule_1/schedule_3, schedule_2/appendix_1, etc.
+        work_component = f'{prefix_name}_{counter[prefix_name]}'
+
+        for part in ['a:FRBRWork', 'a:FRBRExpression', 'a:FRBRManifestation']:
+            for element in doc.xpath('./a:meta/a:identification/' + part + '/a:FRBRthis', namespaces={'a': ns}):
+                frbr_uri = FrbrUri.parse(element.attrib['value'])
+                frbr_uri.work_component = work_component
+                element.attrib['value'] = {
+                    'a:FRBRWork': lambda: frbr_uri.work_uri(),
+                    'a:FRBRExpression': lambda: frbr_uri.expression_uri(),
+                    'a:FRBRManifestation': lambda: frbr_uri.manifestation_uri(),
+                }[part]()

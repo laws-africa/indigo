@@ -31,7 +31,7 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
         ns = AKN_NAMESPACES[DEFAULT_VERSION]
         xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
         return xml
-            
+
     return etree.tostring(xml, encoding='unicode')
 `;
   }

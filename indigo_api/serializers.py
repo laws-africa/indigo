@@ -14,7 +14,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from cobalt import StructuredDocument, FrbrUri
-from cobalt.akn import AKN_NAMESPACES
+from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
@@ -264,6 +264,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     repeal = RepealSerializer(read_only=True,
                               help_text="Description of the repeal of this work, if it has been repealed.")
 
+    # only for provision editing
+    provision_eid = serializers.CharField(required=False, allow_blank=True)
+
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
 
@@ -284,6 +287,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
+
+            'provision_eid',
         )
         read_only_fields = ('country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'created_at', 'updated_at')
 
@@ -318,7 +323,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
-                doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+                doctype = frbr_uri.doctype if not attrs.get('provision_eid') else 'portion'
+                doc = StructuredDocument.for_document_type(doctype)(attrs['content'])
             except (LxmlError, ValueError) as e:
                 raise ValidationError("Invalid XML: %s" % str(e))
 
@@ -388,8 +394,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # Document content must always come first so it can be overridden
         # by the other properties.
         content = validated_data.pop('content', None)
+        provision_eid = validated_data.pop('provision_eid', None)
         if content is not None:
-            document.reset_xml(content, from_model=True)
+            if provision_eid:
+                # this will reset the XML on the document
+                document.update_provision_xml(provision_eid, content)
+            else:
+                document.reset_xml(content, from_model=True)
 
         # save rest of changes
         for attr, value in validated_data.items():

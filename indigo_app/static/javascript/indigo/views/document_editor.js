@@ -142,6 +142,8 @@
         if (elements.length) {
           this.onTextElementParsed(elements);
           this.closeTextEditor();
+        } else if (this.xmlElement.parentElement.tagName === 'portionBody') {
+          alert($t('You cannot delete the whole provision in provision editing mode.'));
         } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
           this.parent.removeFragment(this.editingXmlElement);
           this.closeTextEditor();
@@ -237,7 +239,7 @@
       if (!this.xmlElement) return;
 
       var self = this,
-          renderCoverpage = this.xmlElement.parentElement === null,
+          renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",
           $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           coverpage;
 
@@ -574,6 +576,11 @@
             self.saveModel().done(ok).fail(fail);
           })
           .fail(fail);
+      }
+
+      // TODO: a better way of reloading the page (will redirect to provision chooser for now)
+      if (this.sourceEditor.aknTextEditor.reloadOnSave) {
+        window.location.reload();
       }
 
       return deferred;

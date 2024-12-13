@@ -1,0 +1,16 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'Choose provision' %} – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  <div class="col-8">
+    <la-table-of-contents-controller
+      items="{{ toc_json }}"
+      collapse-all-btn-classes="btn btn-sm btn-secondary"
+      expand-all-btn-classes="btn btn-sm btn-secondary"
+      title-filter-clear-btn-classes="btn btn-sm btn-secondary"
+      title-filter-input-classes="form-field"
+    ></la-table-of-contents-controller>
+  </div>
+{% endblock %}

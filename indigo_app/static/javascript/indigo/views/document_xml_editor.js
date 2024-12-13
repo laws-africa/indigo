@@ -136,7 +136,7 @@ class AknTextEditor {
       let newElement = $.parseXML(xml);
 
       // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
-      if (this.xmlElement.parentElement.tagName === 'portionBody') {
+      if (this.xmlElement.parentNode.tagName === 'portionBody') {
         // set it back to false if the eId is changed back before saving too
         this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
       }

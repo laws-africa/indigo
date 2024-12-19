@@ -21,7 +21,11 @@
     },
 
     getTitle: function() {
-      return this.model.get('title') + ' @ ' + this.model.get('expression_date');
+      let title = this.model.get('title') + ' @ ' + this.model.get('expression_date');
+      if (Indigo.Preloads.provisionEid) {
+        title = title + ` – ${Indigo.Preloads.provisionEid}`;
+      }
+      return title;
     },
 
     render: function() {

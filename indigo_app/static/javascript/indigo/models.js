@@ -62,7 +62,12 @@
       if (options && options.fromContent) return;
 
       // rewrite all eIds before setting the content
-      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement);
+      // in provision mode, retain the eId of the parent element as the prefix
+      let eidPrefix;
+      if (Indigo.Preloads.provisionEid && Indigo.Preloads.provisionEid.lastIndexOf('__') > -1) {
+        eidPrefix = Indigo.Preloads.provisionEid.substring(0, Indigo.Preloads.provisionEid.lastIndexOf('__'));
+      }
+      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
       this.set('content', this.toXml(), {fromXmlDocument: true});

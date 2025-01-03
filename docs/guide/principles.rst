@@ -26,9 +26,6 @@ format and are well-known and so can be guessed. This is useful when an external
 system wants to ask us about an act.
 The first element, ``akn``, tells us that the Akoma Ntoso naming convention is being used.
 
-.. seealso::
-   For more details on FRBR URIs, see https://www.oasis-open.org/standard/akn-v1-0/docs/akoma-ntoso-user-documentation/metadata-describes-the-content.
-
 Every Indigo work has an FRBR URI associated with it which is used to identify it in the
 public REST API.
 

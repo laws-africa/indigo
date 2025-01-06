@@ -27,7 +27,7 @@ system wants to ask us about an act.
 The first element, ``akn``, tells us that the Akoma Ntoso naming convention is being used.
 
 .. seealso::
-   For more details on FRBR URIs, see https://www.oasis-open.org/standard/akn-v1-0/docs/akoma-ntoso-user-documentation/metadata-describes-the-content.
+   For more details on FRBR URIs, see https://docs.oasis-open.org/legaldocml/akn-nc/v1.0/cs01/akn-nc-v1.0-cs01.html
 
 Every Indigo work has an FRBR URI associated with it which is used to identify it in the
 public REST API.
@@ -39,9 +39,6 @@ A new document is created each time a new **amendment** must be applied to an
 existing work. A single piece of legislation that has been amended over
 time is comprised of multiple separate documents, one for each amendment. Each
 amended version of the document has a different ``id``, but the same work URI.
-
-..
-  TODO: update below?
 
 The **application API** uses the numeric IDs to identify documents so that it can
 handle deleted documents, draft documents and amended documents with the same

@@ -130,8 +130,8 @@ urlpatterns = [
 
     path('documents/<int:doc_id>/', documents.DocumentDetailView.as_view(), name='document'),
     path('documents/<int:doc_id>/choose-provision', documents.ChooseDocumentProvisionView.as_view(), name='choose_document_provision'),
-    path('documents/<int:doc_id>/<str:eid>', documents.DocumentProvisionDetailView.as_view(), name='document_provision'),
     path('documents/<int:doc_id>/popup', cache_page(POPUP_CACHE_SECS)(documents.DocumentPopupView.as_view()), name='document_popup'),
+    path('documents/<int:doc_id>/<str:eid>', documents.DocumentProvisionDetailView.as_view(), name='document_provision'),
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),
     path('tasks/all/', tasks.AllTasksView.as_view(), name='all_tasks'),

@@ -16,8 +16,8 @@
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .text-editor-buttons .btn.save': 'saveTextEditor',
-      'click .text-editor-buttons .btn.cancel': 'onCancelClick',
+      'click .text-editor-buttons .btn.save': 'acceptChanges',
+      'click .text-editor-buttons .btn.cancel': 'discardChanges',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
@@ -39,6 +39,8 @@
       this.xmlElement = null;
       // the element currently being edited -- can be different to the above during quick edit
       this.editingXmlElement = null;
+      // copy of the original element being edited, for when changes are discarded
+      this.editingXmlElementOriginal = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       this.aknTextEditor = new Indigo.AknTextEditor(
@@ -46,6 +48,7 @@
         this.document,
         this.onTextElementParsed.bind(this),
       );
+      this.aknTextEditor.liveUpdates = true;
 
       const xmlEditorBox = document.querySelector('.document-xml-editor');
       this.xmlEditor = xmlEditorBox ? new Indigo.XMLEditor(
@@ -100,7 +103,17 @@
         element = element.querySelector('[eId="' + id + '"]');
       });
 
-      if (element) this.editXmlElement(element);
+      if (element) {
+        if (this.editing) {
+          if (confirm($t("You will lose your changes, are you sure?"))) {
+            this.discardChanges();
+          } else {
+            return;
+          }
+        }
+
+        this.editXmlElement(element);
+      }
     },
 
     /**
@@ -110,10 +123,11 @@
       this.editingXmlElement = element;
       this.aknTextEditor.setXmlElement(element);
       if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
-      this.editing = true;
 
       // if we're not already editing, activate the editor
-      if (!this.updating) {
+      if (!this.editing) {
+        this.editing = true;
+        this.editingXmlElementOriginal = element;
         this.editActivityStarted('text');
         this.toggleTextEditor(true);
         this.aknTextEditor.monacoEditor.focus();
@@ -121,38 +135,63 @@
       }
     },
 
-    saveTextEditor: async function(e) {
+    /**
+     * End the edit activity and save the changes made (in text or table edit modes).
+     *
+     * In live edit mode, this effectively re-parses the already parsed text, but that's okay.
+     *
+     * @returns true if the changes were saved, false if the changes could not be accepted.
+     */
+    acceptChanges: async function() {
       this.editActivityEnded();
 
-      const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
-      btn.setAttribute('disabled', 'true');
+      // save table edits, if any
+      this.tableEditor.saveChanges();
 
-      let elements;
-      try {
-        // use a nonce to check if we're still the current save when the parse completes
-        const nonce = this.nonce = Math.random();
-        elements = await this.aknTextEditor.parse() ;
-        // check if we're still the current save
-        if (nonce !== this.nonce) return;
-      } finally {
-        btn.removeAttribute('disabled');
-      }
+      if (this.editing) {
+        const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
+        btn.setAttribute('disabled', 'true');
 
-      if (elements) {
-        if (elements.length) {
-          this.onTextElementParsed(elements);
-          this.closeTextEditor();
-        } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
-          alert($t('You cannot delete the whole provision in provision editing mode.'));
-        } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
-          this.parent.removeFragment(this.editingXmlElement);
-          this.closeTextEditor();
+        let elements;
+        try {
+          // use a nonce to check if we're still the current save when the parse completes
+          const nonce = this.nonce = Math.random();
+          elements = await this.aknTextEditor.parse();
+          // check if we're still the current save
+          if (nonce !== this.nonce) return false;
+        } finally {
+          btn.removeAttribute('disabled');
+        }
+
+        if (elements) {
+          if (elements.length) {
+            this.onTextElementParsed(elements);
+            this.closeTextEditor();
+          } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
+            alert($t('You cannot delete the whole provision in provision editing mode.'));
+            return false;
+          } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+            this.parent.removeFragment(this.editingXmlElement);
+            this.closeTextEditor();
+          } else {
+            return false;
+          }
         }
       }
+
+      return true;
     },
 
-    onCancelClick() {
+    /**
+     * Discard the content of all editors.
+     */
+    discardChanges: function() {
       this.editActivityCancelled();
+      this.tableEditor.discardChanges(null, true);
+      if (this.editing && this.editingXmlElement !== this.editingXmlElementOriginal) {
+        // replace any updated content with the old xml element
+        this.updateEditingElement([this.editingXmlElementOriginal]);
+      }
       this.closeTextEditor();
     },
 
@@ -161,7 +200,9 @@
       this.toggleTextEditor(false);
       this.toolbar.classList.remove('is-editing', 'edit-mode-text');
       this.editing = false;
-      this.editingXmlElement = null;
+      this.editingXmlElement = this.editingXmlElementOriginal = null;
+      // set the xml edit back to using the visible element, in case quick edit was used
+      if (this.xmlEditor) this.xmlEditor.setXmlElement(this.xmlElement);
     },
 
     /**
@@ -171,13 +212,18 @@
      * this.updating will be true.
      */
     showXmlElement: function(element) {
-      // show node, a node in the XML document
-      if (!this.updating) {
-        this.tableEditor.discardChanges(null, true);
+      if (this.xmlElement !== element) {
+        this.xmlElement = element;
+
+        if (this.editing) {
+          // we're in edit mode, so update the element being edited
+          this.editXmlElement(element);
+        } else {
+          if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
+        }
       }
 
-      this.xmlElement = element;
-      if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
+      // render the element as HTML; we always re-render, because the element's descendants may have changed
       this.render();
 
       if (!this.updating) {
@@ -187,21 +233,31 @@
 
     /** There is newly parsed XML from the akn text editor */
     onTextElementParsed: function(elements) {
-      this.updating = true;
-      try {
-        this.parent.updateFragment(this.editingXmlElement, elements);
-      } finally {
-        this.updating = false;
-      }
+      this.updateEditingElement(elements);
     },
 
     /**
      * The XML editor has parsed its XML into a new element.
      */
     onXmlElementParsed: function(element) {
+      this.updateEditingElement([element])
+    },
+
+    /**
+     * Replace the element currently being edited with a new one, both locally and in the
+     * owning document.
+     */
+    updateEditingElement: function(elements) {
       this.updating = true;
       try {
-        this.parent.updateFragment(this.editingXmlElement || this.xmlElement, [element]);
+        const updated = this.parent.updateFragment(this.editingXmlElement || this.xmlElement, elements);
+        if (this.editingXmlElement && this.editingXmlElement !== this.xmlElement) {
+          // We're in quick-edit mode, so we need to tell our editors that the fragment
+          // they're editing has changed. In full edit mode, updating the fragment above
+          // will cause the editors to update.
+          // TODO: what if the element is deleted?
+          this.editXmlElement(updated);
+        }
       } finally {
         this.updating = false;
       }
@@ -224,13 +280,6 @@
     // Save the content of the editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.tableEditor.saveChanges();
-      this.closeTextEditor();
-      return $.Deferred().resolve();
-    },
-
-    // Discard the content of the editor, returns a Deferred
-    discardChanges: function() {
-      this.tableEditor.discardChanges(null, true);
       this.closeTextEditor();
       return $.Deferred().resolve();
     },
@@ -388,6 +437,8 @@
     },
 
     editTable: function(e) {
+      // TODO: warn about losing current changes in non-table editor
+
       this.editActivityStarted('table');
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
@@ -456,7 +507,7 @@
     },
 
     toggleTextEditor: function (visible) {
-      document.querySelector('.document-primary-pane-content-pane').classList.toggle('d-none', visible);
+      document.querySelector('#document-primary-pane-splitter').classList.toggle('d-none', !visible);
       document.querySelector('.document-primary-pane-editor-pane').classList.toggle('d-none', !visible);
     },
 
@@ -469,6 +520,8 @@
 
     initialize: function(options) {
       this.dirty = false;
+      // the xml element currently being shown in the document view
+      this.xmlElement = null;
 
       this.documentContent = options.documentContent;
       // XXX: check
@@ -488,46 +541,42 @@
     tocSelectionChanged: function(selection) {
       var self = this;
 
-      this.stopEditing()
-        .then(function() {
-          if (selection) {
-            self.editFragment(selection.get('element'));
-          }
-        });
-    },
-
-    stopEditing: function() {
-      return this.sourceEditor.discardChanges();
-    },
-
-    editFragment: function(fragment) {
-      if (!this.updating && fragment) {
-        console.log("Editing new fragment");
-
-        var isRoot = fragment.parentElement === null;
-
-        this.fragment = fragment;
-        this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
-
-        this.sourceEditor.showXmlElement(fragment);
+      if (!this.updating) {
+        this.sourceEditor.discardChanges();
+        if (selection) {
+          self.editFragment(selection.get('element'));
+        }
       }
     },
 
-    removeFragment: function(fragment) {
-      fragment = fragment || this.fragment;
-      this.documentContent.replaceNode(fragment, null);
+    editFragment: function(element) {
+      if (!this.updating && element) {
+        console.log("Editing new fragment");
+
+        var isRoot = element.parentElement === null;
+
+        this.xmlElement = element;
+        this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+
+        this.sourceEditor.showXmlElement(element);
+      }
+    },
+
+    removeFragment: function(element) {
+      element = element || this.xmlElement;
+      this.documentContent.replaceNode(element, null);
     },
 
     updateFragment: function(oldNode, newNodes) {
       this.updating = true;
       try {
-        var updated = this.documentContent.replaceNode(oldNode, newNodes);
-        if (oldNode === this.fragment) {
-          this.fragment = updated;
-          this.sourceEditor.showXmlElement(updated);
+        const updated = this.documentContent.replaceNode(oldNode, newNodes);
+        if (oldNode === this.xmlElement) {
+          this.xmlElement = updated;
         }
-        // TODO: need to set the element?
-        this.sourceEditor.render();
+        // even if xmlElement itself wasn't updated, descendants might have been
+        this.sourceEditor.showXmlElement(this.xmlElement);
+        return updated;
       } finally {
         this.updating = false;
       }

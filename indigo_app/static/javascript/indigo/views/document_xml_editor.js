@@ -6,9 +6,14 @@ class AknTextEditor {
   constructor (root, document, onElementParsed) {
     this.root = root;
     this.document = document;
+    this.editing = false;
     this.previousText = null;
     this.xmlElement = null;
+    // copy of the original element being edited, for when changes are discarded
+    this.xmlElementOriginal = null;
     this.onElementParsed = onElementParsed;
+    // nonce to prevent concurrent saves
+    this.nonce = null;
     // flag to prevent circular updates to the text
     this.updating = false;
     this.liveUpdates = false;
@@ -61,6 +66,11 @@ class AknTextEditor {
 
   setXmlElement (element) {
     this.xmlElement = element;
+
+    if (!this.editing) {
+      this.editing = true;
+      this.xmlElementOriginal = element;
+    }
 
     if (!this.updating) {
       this.previousText = this.unparse();
@@ -152,6 +162,49 @@ class AknTextEditor {
     }
 
     return null;
+  }
+
+  /**
+   * Accept the changes in the editor. This re-parses the text one last time and triggers the onElementParsed
+   * callback with the result (which may be an empty list).
+   *
+   * @returns {Promise<boolean>} true if the changes were accepted, false if they were not
+   */
+  async acceptChanges () {
+    if (!this.editing) return false;
+
+    // use a nonce to check if we're still the current save when the parse completes
+    const nonce = this.nonce = Math.random();
+    const elements = await this.parse();
+    // check if we're still the current save
+    if (nonce !== this.nonce) return false;
+
+    if (elements) {
+      if (elements.length) {
+        this.onElementParsed(elements);
+      } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
+        alert($t('You cannot delete the whole provision in provision editing mode.'));
+        return false;
+      } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+        this.onElementParsed([]);
+      } else {
+        return false;
+      }
+    }
+
+    this.editing = false;
+    this.xmlElement = this.xmlElementOriginal = null;
+
+    return true;
+  }
+
+  discardChanges () {
+    if (this.editing) {
+      if (this.xmlElement && this.xmlElement !== this.xmlElementOriginal) {
+        this.onElementParsed([this.xmlElementOriginal]);
+      }
+      this.editing = false;
+    }
   }
 
   toggleWordWrap (e) {

@@ -19,14 +19,18 @@
    * The model also manages an XML DOM form of the document content and keeps
    * the two in sync.
    *
-   * This model fires an additional 'change:dom' event when the XML DOM
-   * tree itself has changed due to a modification by this model.
+   * This model fires custom events:
+   *
+   * - change:dom - when the XML DOM tree itself has changed due to a modification by this model.
+   * - mutation - when the XML DOM is manipulated by any means, based on the MutationObserver class. The parameter
+   *              for the event is a MutationRecord object.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
       this.document.content = this;
       this.xmlDocument = null;
+      this.observer = null;
       this.on('change:content', this.contentChanged, this);
       this.on('change:dom', this.domChanged, this);
     },
@@ -40,16 +44,73 @@
       return this.document.url() + '/content';
     },
 
+    setupMutationObserver: function () {
+      this.observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          console.log('mutation', mutation);
+          this.trigger('mutation', this, mutation);
+        }
+      });
+
+      this.observer.observe(this.xmlDocument, {
+        childList: true,
+        attributes: true,
+        subtree: true,
+      });
+    },
+
+    /**
+     * Determine the impact of a mutation on the provided element.
+     * @param mutation MutationRecord
+     * @param element Element in this XML document
+     * @returns 'changed' if the mutation impacts the element, 'removed' if the element was removed from the tree,
+     *          or null if there is no impact
+     */
+    getMutationImpact(mutation, element) {
+      const target = mutation.target;
+
+      if (mutation.type === 'childList') {
+        if (mutation.removedNodes[0] === element) {
+          // the element has been replaced
+          return 'replaced';
+        }
+
+        const ownerDocument = target.nodeType === Node.DOCUMENT_NODE ? target : target.ownerDocument;
+        if (!ownerDocument.contains(element)) {
+          // the change removed xmlElement from the tree
+          return 'removed';
+        }
+      }
+
+      if (target === element || element.contains(target)) {
+        // the mutated node is xmlElement itself or one of its descendants
+        return 'changed';
+      }
+
+      // we don't care about attribute or character data changes elsewhere in the document
+    },
+
     contentChanged: function(model, newValue, options) {
       // don't bother updating the DOM if the source of this event
       // is already a change to the DOM
       if (options && options.fromXmlDocument) return;
 
+      let root = null;
+
       try {
-        this.xmlDocument = $.parseXML(newValue);
+        root = $.parseXML(newValue);
       } catch(e) {
         Indigo.errorView.show("The document has invalid XML.");
         return;
+      }
+
+      if (!this.xmlDocument) {
+        this.xmlDocument = root;
+        this.setupMutationObserver();
+      } else {
+        root = root.documentElement;
+        this.xmlDocument.adoptNode(root);
+        this.xmlDocument.documentElement.replaceWith(root);
       }
 
       options.fromContent = true;
@@ -100,7 +161,6 @@
 
       if (!oldNode || !oldNode.parentElement) {
         if (del) {
-          // TODO: we don't currently support deleting whole document
           throw "Cannot currently delete the entire document.";
         }
 
@@ -108,8 +168,8 @@
         if (newNodes.length !== 1) {
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
-        console.log('Replacing whole document');
-        this.xmlDocument = first.ownerDocument;
+        this.xmlDocument.adoptNode(first);
+        this.xmlDocument.documentElement.replaceWith(first);
 
       } else {
         if (del) {
@@ -121,7 +181,7 @@
           // just a fragment has changed
           console.log('Replacing node with ' + newNodes.length + ' new node(s)');
 
-          first = oldNode.ownerDocument.importNode(first, true);
+          oldNode.ownerDocument.adoptNode(first);
           oldNode.parentElement.replaceChild(first, oldNode);
 
           // now append the other nodes, starting at the end

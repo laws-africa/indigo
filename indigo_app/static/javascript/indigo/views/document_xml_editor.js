@@ -20,6 +20,8 @@ class AknTextEditor {
     // for provision mode (set to true if the top-level eId changes)
     this.reloadOnSave = false;
 
+    document.content.on('mutation', this.onDocumentMutated.bind(this));
+
     this.grammarName = document.tradition().settings.grammar.name;
     this.grammarModel = new Indigo.grammars.registry[this.grammarName](document.get('frbr_uri'));
     this.grammarModel.setup();
@@ -90,9 +92,15 @@ class AknTextEditor {
         // check that the response is still valid
         if (text === this.monacoEditor.getValue()) {
           this.previousText = text;
-          this.updating = true;
-          this.onElementParsed(elements);
-          this.updating = false;
+          try {
+            this.updating = true;
+            this.onElementParsed(elements);
+          } finally {
+            // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
+            setTimeout(() => {
+              this.updating = false;
+            }, 0);
+          }
         }
       }
     }
@@ -204,6 +212,35 @@ class AknTextEditor {
         this.onElementParsed([this.xmlElementOriginal]);
       }
       this.editing = false;
+    }
+  }
+
+  /**
+   * The XML document has changed, re-render if it impacts our xmlElement.
+   *
+   * @param model documentContent model
+   * @param mutation a MutationRecord object
+   */
+  onDocumentMutated (model, mutation) {
+    if (!this.editing) return;
+
+    switch (model.getMutationImpact(mutation, this.xmlElement)) {
+      case 'replaced':
+        this.xmlElement = mutation.addedNodes[0];
+        // fall through to 'changed'
+      case 'changed':
+        if (!this.updating) {
+          // the XML has changed, update the text in the editor
+          this.previousText = this.unparse();
+          const posn = this.monacoEditor.getPosition();
+          this.monacoEditor.setValue(this.previousText);
+          this.monacoEditor.setPosition(posn);
+        }
+        break;
+      case 'removed':
+        console.log('Mutation removes AknTextEditor.xmlElement from the tree');
+        this.discardChanges();
+        break;
     }
   }
 

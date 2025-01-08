@@ -30,10 +30,7 @@
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
-      // flag to prevent circular updates
-      this.updating = false;
       this.document = this.parent.model;
-      // the element currently being shown
       this.xmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
@@ -54,6 +51,7 @@
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.document, 'change', this.onDocumentChanged);
+      this.listenTo(this.document.content, 'mutation', this.onDocumentMutated);
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -180,9 +178,6 @@
 
     /**
      * Set the XML element that is currently being shown.
-     *
-     * This may be called when the XML editor or the text editor provide an updated element to edit, in which case
-     * this.updating will be true.
      */
     showXmlElement: function(element) {
       if (this.xmlElement !== element) {
@@ -194,22 +189,20 @@
         } else {
           if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
         }
-      }
 
-      // render the element as HTML; we always re-render, because the element's descendants may have changed
-      this.render();
-
-      if (!this.updating) {
+        this.render();
         this.$('.document-sheet-container').scrollTop(0);
       }
     },
 
-    /** There is newly parsed XML from the akn text editor */
+    /**
+     * There is newly parsed XML from the akn text editor
+     */
     onTextElementParsed: function(elements) {
       if (elements && elements.length) {
-        this.updateEditingElement(elements);
+        this.parent.updateFragment(this.aknTextEditor.xmlElement, elements);
       } else {
-        this.removeFragment(this.aknTextEditor.xmlElement);
+        this.parent.removeFragment(this.aknTextEditor.xmlElement);
       }
     },
 
@@ -217,33 +210,35 @@
      * The XML editor has parsed its XML into a new element.
      */
     onXmlElementParsed: function(element) {
-      this.updateEditingElement([element])
-    },
-
-    /**
-     * Replace the element currently being edited with a new one, both locally and in the
-     * owning document.
-     */
-    updateEditingElement: function(elements) {
-      this.updating = true;
-      try {
-        const editingXmlElement = this.aknTextEditor.xmlElement;
-        const updated = this.parent.updateFragment(editingXmlElement || this.xmlElement, elements);
-        if (editingXmlElement && editingXmlElement !== this.xmlElement) {
-          // We're in quick-edit mode, so we need to tell our editors that the fragment
-          // they're editing has changed. In full edit mode, updating the fragment above
-          // will cause the editors to update.
-          // TODO: what if the element is deleted?
-          this.editXmlElement(updated);
-        }
-      } finally {
-        this.updating = false;
-      }
+      this.parent.updateFragment(this.xmlElement, [element]);
     },
 
     onDocumentChanged: function() {
       this.coverpageCache = null;
       this.render();
+    },
+
+    /**
+     * The XML document has changed, re-render if it impacts our xmlElement.
+     *
+     * @param model documentContent model
+     * @param mutation a MutationRecord object
+     */
+    onDocumentMutated: function(model, mutation) {
+      switch (model.getMutationImpact(mutation, this.xmlElement)) {
+        case 'replaced':
+          this.xmlElement = mutation.addedNodes[0];
+          this.render();
+          break;
+        case 'changed':
+          this.render();
+          break;
+        case 'removed':
+          // the change removed xmlElement from the tree
+          console.log('Mutation removes SourceEditor.xmlElement from the tree');
+          this.discardChanges();
+          break;
+      }
     },
 
     editActivityStarted: function(mode) {
@@ -264,6 +259,8 @@
 
     render: function() {
       if (!this.xmlElement) return;
+
+      console.log('rendering');
 
       var self = this,
           renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",
@@ -549,15 +546,12 @@
     updateFragment: function(oldNode, newNodes) {
       this.updating = true;
       try {
-        const updated = this.documentContent.replaceNode(oldNode, newNodes);
-        if (oldNode === this.xmlElement) {
-          this.xmlElement = updated;
-        }
-        // even if xmlElement itself wasn't updated, descendants might have been
-        this.sourceEditor.showXmlElement(this.xmlElement);
-        return updated;
+        this.documentContent.replaceNode(oldNode, newNodes);
       } finally {
-        this.updating = false;
+        // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
+        setTimeout(() => {
+          this.updating = false;
+        }, 0);
       }
     },
 

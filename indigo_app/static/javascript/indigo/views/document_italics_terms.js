@@ -66,24 +66,14 @@
 
     removeItalics: function(e) {
       // remove all italics mark-up
-      var self = this,
-          changed = false;
-
       this.$('a[href="#this-document-italics-terms"]').click();
 
       this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>
-        var parent = term.parentNode;
+        const parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
-
-        changed = true;
       });
-
-      if (changed) {
-        this.model.trigger('change:dom');
-        // TODO: refresh content without saving
-      }
     }
   });
 })(window);

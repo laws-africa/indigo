@@ -13,17 +13,19 @@
       .replace(/'/g, "&#039;");
   }
 
-  /* A model for the content of a document. The API handles it separately
-   * to the document metadata since the content can be very big.
+  /**
+   * A model for the content of a document. The API handles it separately to the document metadata since the content
+   * can be very big.
    *
-   * The model also manages an XML DOM form of the document content and keeps
-   * the two in sync.
+   * The model also manages an XML DOM form of the document content, and updates the DOM if the text content changes.
+   * The reverse is not true: the text content is not kept up to date for performance reasons. If the text content
+   * is required, it must first be serialised with toXml().
    *
    * This model fires custom events:
    *
-   * - change:dom - when the XML DOM tree itself has changed due to a modification by this model.
    * - mutation - when the XML DOM is manipulated by any means, based on the MutationObserver class. The parameter
    *              for the event is a MutationRecord object.
+   * - change:dom - when the XML DOM is manipulated by any means, after all the mutation events have been fired.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
@@ -32,7 +34,6 @@
       this.xmlDocument = null;
       this.observer = null;
       this.on('change:content', this.contentChanged, this);
-      this.on('change:dom', this.domChanged, this);
     },
 
     isNew: function() {
@@ -50,6 +51,8 @@
           console.log('mutation', mutation);
           this.trigger('mutation', this, mutation);
         }
+        this.trigger('change:dom', this);
+        this.trigger('change', this);
       });
 
       this.observer.observe(this.xmlDocument, {
@@ -92,10 +95,6 @@
     },
 
     contentChanged: function(model, newValue, options) {
-      // don't bother updating the DOM if the source of this event
-      // is already a change to the DOM
-      if (options && options.fromXmlDocument) return;
-
       let root = null;
 
       try {
@@ -108,21 +107,24 @@
       if (!this.xmlDocument) {
         this.xmlDocument = root;
         this.setupMutationObserver();
+        this.trigger('change:dom', this);
+        this.trigger('change', this);
       } else {
         root = root.documentElement;
         this.xmlDocument.adoptNode(root);
         this.xmlDocument.documentElement.replaceWith(root);
       }
 
-      options.fromContent = true;
-      this.trigger('change:dom', model, options);
+      // clear the content, so that any change later will always trigger a change event, because we don't keep
+      // the content synced with the changes in the DOM
+      this.set('content', '', {silent: true});
     },
 
-    domChanged: function(model, options) {
-      // don't bother updating the content if this event was
-      // originally triggered by a content change
-      if (options && options.fromContent) return;
-
+    /**
+     * Rewrite all eIds and component names to ensure they are correct. This should be done after the DOM structure
+     * is changed.
+     */
+    rewriteIds: function() {
       // rewrite all eIds before setting the content
       // in provision mode, retain the eId of the parent element as the prefix
       let eidPrefix;
@@ -132,7 +134,6 @@
       new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
-      this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
     // serialise an XML node, or the entire document if node is not given, to a string
@@ -200,8 +201,8 @@
         }
       }
 
-      // domChanged will rewrite all eIds
-      this.trigger('change:dom');
+      this.rewriteIds();
+
       return first;
     },
 
@@ -250,8 +251,11 @@
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.
-      // We do this by delegating to the document object.
-      let content = this.get('content');
+      // We do this by delegating the actual save to the document object.
+
+      // serialise the xml from the live DOM
+      let content = this.toXml();
+
       if (Indigo.Preloads.provisionEid) {
         content = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
       }

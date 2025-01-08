@@ -64,15 +64,11 @@
     },
 
     removeTerms: function(e) {
-      var changed = false;
-
       // unwrap all <def>s
       this.model.xmlDocument.querySelectorAll('def').forEach(function(def) {
         var parent = def.parentNode;
         while (def.firstChild) parent.insertBefore(def.firstChild, def);
         parent.removeChild(def);
-
-        changed = true;
       });
 
       // unwrap all <term>s
@@ -94,8 +90,6 @@
           el.removeAttribute('refersTo');
         }
       });
-
-      if (changed) this.model.trigger('change:dom');
     },
   });
 })(window);

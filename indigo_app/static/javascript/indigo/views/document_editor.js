@@ -30,6 +30,7 @@
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
+      this.updating = false;
       this.document = this.parent.model;
       this.xmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
@@ -201,14 +202,22 @@
       if (this.aknTextEditor.xmlElement) {
         if (elements && elements.length) {
           // regular update
-          this.parent.updateFragment(this.aknTextEditor.xmlElement, elements);
+          this.updating = true;
+          try {
+            this.document.content.replaceNode(this.aknTextEditor.xmlElement, elements);
+          } finally {
+            setTimeout(() => {
+              this.updating = false;
+            }, 0);
+          }
         } else if (this.aknTextEditor.xmlElement.parentNode.tagName === 'portionBody') {
           // we can't delete the whole provision in portion mode
           alert($t('You cannot delete the whole provision in provision editing mode.'));
         } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
           // remove element
-          this.parent.removeFragment(this.aknTextEditor.xmlElement);
+          this.document.content.replaceNode(this.aknTextEditor.xmlElement, null);
         }
+
       }
     },
 
@@ -217,7 +226,14 @@
      */
     onXmlElementParsed: function(element) {
       if (this.xmlEditor.xmlElement) {
-        this.parent.updateFragment(this.xmlEditor.xmlElement, [element]);
+        this.updating = true;
+        try {
+          this.document.content.replaceNode(this.xmlEditor.xmlElement, [element]);
+        } finally {
+          setTimeout(() => {
+            this.updating = false;
+          }, 0);
+        }
       }
     },
 
@@ -501,8 +517,6 @@
 
     initialize: function(options) {
       this.dirty = false;
-      // the xml element currently being shown in the document view
-      this.xmlElement = null;
 
       this.documentContent = options.documentContent;
       // XXX: check
@@ -520,45 +534,21 @@
     },
 
     tocSelectionChanged: function(selection) {
-      var self = this;
-
-      if (!this.updating) {
+      // we must guard with an updating flag because the mutations may not have been processed yet and so
+      // the xmlElement may still be the old one
+      if (!this.sourceEditor.updating && selection && this.sourceEditor.xmlElement !== selection.get('element')) {
         this.sourceEditor.discardChanges();
-        if (selection) {
-          self.editFragment(selection.get('element'));
-        }
+        this.editFragment(selection.get('element'));
       }
     },
 
     editFragment: function(element) {
-      if (!this.updating && element) {
-        console.log("Editing new fragment");
+      console.log("Editing new fragment");
 
-        var isRoot = element.parentElement === null;
+      const isRoot = element.parentElement === null;
+      this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
-        this.xmlElement = element;
-        this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
-
-        this.sourceEditor.showXmlElement(element);
-      }
-    },
-
-    removeFragment: function(element) {
-      element = element || this.xmlElement;
-      this.documentContent.replaceNode(element, null);
-      // TODO: sanity check with live editor
-    },
-
-    updateFragment: function(oldNode, newNodes) {
-      this.updating = true;
-      try {
-        this.documentContent.replaceNode(oldNode, newNodes);
-      } finally {
-        // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
-        setTimeout(() => {
-          this.updating = false;
-        }, 0);
-      }
+      this.sourceEditor.showXmlElement(element);
     },
 
     setDirty: function() {

@@ -188,7 +188,8 @@
           // now append the other nodes, starting at the end
           // because it makes the insert easier
           for (var i = newNodes.length-1; i > 0; i--) {
-            var node = first.ownerDocument.importNode(newNodes[i], true);
+            const node = newNodes[i];
+            first.ownerDocument.adoptNode(node);
 
             if (first.nextElementSibling) {
               first.parentElement.insertBefore(node, first.nextElementSibling);

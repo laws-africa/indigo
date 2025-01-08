@@ -159,7 +159,7 @@
      * Discard the content of all editors.
      */
     discardChanges: function() {
-      this.tableEditor.discardChanges(null, true);
+      this.tableEditor.discardChanges(true);
       this.aknTextEditor.discardChanges();
       if (this.editing) {
         this.editActivityCancelled();

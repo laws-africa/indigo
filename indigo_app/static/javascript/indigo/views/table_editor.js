@@ -30,10 +30,9 @@
     },
 
     initialize: function(options) {
-      var self = this;
-
       this.parent = options.parent;
       this.documentContent = options.documentContent;
+      this.documentContent.on('mutation', this.onDomMutated.bind(this));
       this.tableWrapper = this.$('.table-editor-wrapper').removeClass('d-none').remove()[0];
       this.editing = false;
 
@@ -77,6 +76,30 @@
       return true;
     },
 
+    /**
+     * The XML document has changed, re-render if it impacts our table element.
+     *
+     * @param model documentContent model
+     * @param mutation a MutationRecord object
+     */
+    onDomMutated (model, mutation) {
+      if (!this.editing) return;
+
+      switch (model.getMutationImpact(mutation, this.table)) {
+        case 'replaced':
+          this.discardChanges(true);
+          break;
+        case 'changed':
+          this.discardChanges(true);
+          break;
+        case 'removed':
+          // the change removed xmlElement from the tree
+          console.log('Mutation removes TableEditor.table from the tree');
+          this.discardChanges(true);
+          break;
+      }
+    },
+
     saveChanges: function(e) {
       if (!this.editing || !this.table) return;
 
@@ -111,7 +134,7 @@
       this.trigger('save');
     },
 
-    discardChanges: function(e, force) {
+    discardChanges: function(force) {
       if (!this.editing || !this.table) return;
       if (!force && !confirm($t("You'll lose your changes, are you sure?"))) return;
 

@@ -330,9 +330,7 @@ class XMLEditor {
 
   setXmlElement (element) {
     this.xmlElement = element;
-    if (this.visible) {
-      this.render();
-    }
+    this.render();
   }
 
   show() {
@@ -347,17 +345,19 @@ class XMLEditor {
 
   render() {
     // pretty-print the xml
-    const xml = this.xmlElement ? prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
-    if (this.editor.getValue() !== xml) {
-      const posn = this.editor.getPosition();
+    if (this.visible) {
+      const xml = this.xmlElement ? prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
+      if (this.editor.getValue() !== xml) {
+        const posn = this.editor.getPosition();
 
-      // ignore the onDidChangeModelContent event triggered by setValue
-      this.updating = true;
-      this.editor.setValue(xml);
-      this.updating = false;
+        // ignore the onDidChangeModelContent event triggered by setValue
+        this.updating = true;
+        this.editor.setValue(xml);
+        this.updating = false;
 
-      this.editor.setPosition(posn);
-      this.editor.layout();
+        this.editor.setPosition(posn);
+        this.editor.layout();
+      }
     }
   }
 
@@ -397,18 +397,17 @@ class XMLEditor {
     switch (model.getMutationImpact(mutation, this.xmlElement)) {
       case 'replaced':
         this.xmlElement = mutation.addedNodes[0];
+        this.render();
         break;
       case 'changed':
+        this.render();
         break;
       case 'removed':
         // the change removed xmlElement from the tree
         console.log('Mutation removes SourceEditor.xmlElement from the tree');
         this.xmlElement = null;
+        this.render();
         break;
-    }
-
-    if (this.visible) {
-      this.render();
     }
   }
 

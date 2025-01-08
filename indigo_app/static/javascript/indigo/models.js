@@ -64,6 +64,7 @@
      * @param mutation MutationRecord
      * @param element Element in this XML document
      * @returns 'changed' if the mutation impacts the element, 'removed' if the element was removed from the tree,
+     *          'replaced', if the element has been replaced (with a node in mutation.addedNodes),
      *          or null if there is no impact
      */
     getMutationImpact(mutation, element) {
@@ -98,7 +99,7 @@
       let root = null;
 
       try {
-        root = $.parseXML(newValue);
+        root = Indigo.parseXml(newValue);
       } catch(e) {
         Indigo.errorView.show("The document has invalid XML.");
         return;

@@ -30,4 +30,19 @@ $(function() {
     }
   }
   setTimeout(nukeToasts, 3 * 1000);
+
+  /**
+   * Parses text into an XML document.
+   * @param text
+   * @returns {Document}
+   * @throws {Error} if the text is not valid XML
+   */
+  Indigo.parseXml = function(text) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, "application/xml");
+    if (doc.querySelector("parsererror")) {
+      throw Error("Invalid XML: " + new XMLSerializer().serializeToString(doc));
+    }
+    return doc;
+  }
 });

@@ -436,14 +436,16 @@ class XMLEditor {
   onEditorChanged() {
     const text = this.editor.getValue().trim();
     if (text) {
-      console.log('Parsing changes to XML');
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, "application/xml");
-      if (doc.querySelector("parsererror")) {
-        console.log("Invalid XML:" + new XMLSerializer().serializeToString(doc));
-      } else {
-        this.onElementParsed(doc.documentElement);
+      let doc;
+      try {
+        console.log('Parsing changes to XML');
+        doc = Indigo.parseXml(text);
+      } catch (err) {
+        // squash errors
+        console.log(err);
+        return;
       }
+      this.onElementParsed(doc.documentElement);
     }
   }
 }

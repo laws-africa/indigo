@@ -200,8 +200,13 @@
     onTextElementParsed: function(elements) {
       if (this.aknTextEditor.xmlElement) {
         if (elements && elements.length) {
+          // regular update
           this.parent.updateFragment(this.aknTextEditor.xmlElement, elements);
-        } else {
+        } else if (this.aknTextEditor.xmlElement.parentNode.tagName === 'portionBody') {
+          // we can't delete the whole provision in portion mode
+          alert($t('You cannot delete the whole provision in provision editing mode.'));
+        } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+          // remove element
           this.parent.removeFragment(this.aknTextEditor.xmlElement);
         }
       }
@@ -262,8 +267,6 @@
 
     render: function() {
       if (!this.xmlElement) return;
-
-      console.log('rendering');
 
       var self = this,
           renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",

@@ -181,23 +181,13 @@ class AknTextEditor {
   async acceptChanges () {
     if (!this.editing) return false;
 
-    // use a nonce to check if we're still the current save when the parse completes
-    const nonce = this.nonce = Math.random();
-    const elements = await this.parse();
-    // check if we're still the current save
-    if (nonce !== this.nonce) return false;
-
-    if (elements) {
-      if (elements.length) {
-        this.onElementParsed(elements);
-      } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
-        alert($t('You cannot delete the whole provision in provision editing mode.'));
-        return false;
-      } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
-        this.onElementParsed([]);
-      } else {
-        return false;
-      }
+    if (!this.liveUpdates) {
+      // use a nonce to check if we're still the current save when the parse completes
+      const nonce = this.nonce = Math.random();
+      const elements = await this.parse();
+      // check if we're still the current save
+      if (nonce !== this.nonce) return false;
+      this.onElementParsed(elements);
     }
 
     this.editing = false;

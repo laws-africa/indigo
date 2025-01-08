@@ -320,8 +320,7 @@ class XMLEditor {
     // this will be null if the user doesn't have perms
     this.tab = window.document.querySelector('button[data-bs-target="#xml-pane"]');
     this.documentContent = document.content;
-    // TODO: do we still need this if the xmlElement is being set each time the DOM is updated?
-    this.documentContent.on('change:dom', this.onDomChanged.bind(this));
+    this.documentContent.on('mutation', this.onDomMutated.bind(this));
 
     window.document.body.addEventListener('indigo:pane-toggled', this.onPaneToggled.bind(this));
     window.document.querySelector('.document-secondary-pane-nav').addEventListener(
@@ -348,7 +347,7 @@ class XMLEditor {
 
   render() {
     // pretty-print the xml
-    const xml = prettyPrintXml(Indigo.toXml(this.xmlElement));
+    const xml = this.xmlElement ? prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
     if (this.editor.getValue() !== xml) {
       const posn = this.editor.getPosition();
 
@@ -388,10 +387,27 @@ class XMLEditor {
     }
   }
 
-  onDomChanged () {
-    // if the fragment has been swapped out, don't use a stale fragment; our parent will
-    // call editFragment() to update our fragment
-    if (this.visible && this.fragment && this.xmlElement.ownerDocument === this.documentContent.xmlDocument) {
+  /**
+   * The XML document has changed, re-render if it impacts our xmlElement.
+   *
+   * @param model documentContent model
+   * @param mutation a MutationRecord object
+   */
+  onDomMutated (model, mutation) {
+    switch (model.getMutationImpact(mutation, this.xmlElement)) {
+      case 'replaced':
+        this.xmlElement = mutation.addedNodes[0];
+        break;
+      case 'changed':
+        break;
+      case 'removed':
+        // the change removed xmlElement from the tree
+        console.log('Mutation removes SourceEditor.xmlElement from the tree');
+        this.xmlElement = null;
+        break;
+    }
+
+    if (this.visible) {
       this.render();
     }
   }
@@ -419,18 +435,17 @@ class XMLEditor {
   }
 
   onEditorChanged() {
-    let element;
-
-    try {
+    const text = this.editor.getValue().trim();
+    if (text) {
       console.log('Parsing changes to XML');
-      element = $.parseXML(this.editor.getValue()).documentElement;
-    } catch (err) {
-      // squash errors
-      console.log(err);
-      return;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, "application/xml");
+      if (doc.querySelector("parsererror")) {
+        console.log("Invalid XML:" + new XMLSerializer().serializeToString(doc));
+      } else {
+        this.onElementParsed(doc.documentElement);
+      }
     }
-
-    this.onElementParsed(element);
   }
 }
 

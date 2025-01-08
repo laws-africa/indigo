@@ -51,7 +51,7 @@
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.document, 'change', this.onDocumentChanged);
-      this.listenTo(this.document.content, 'mutation', this.onDocumentMutated);
+      this.listenTo(this.document.content, 'mutation', this.onDomMutated);
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -80,8 +80,7 @@
       this.render();
     },
 
-    fullEdit: function(e) {
-      e.preventDefault();
+    fullEdit: function() {
       this.editXmlElement(this.xmlElement);
     },
 
@@ -199,10 +198,12 @@
      * There is newly parsed XML from the akn text editor
      */
     onTextElementParsed: function(elements) {
-      if (elements && elements.length) {
-        this.parent.updateFragment(this.aknTextEditor.xmlElement, elements);
-      } else {
-        this.parent.removeFragment(this.aknTextEditor.xmlElement);
+      if (this.aknTextEditor.xmlElement) {
+        if (elements && elements.length) {
+          this.parent.updateFragment(this.aknTextEditor.xmlElement, elements);
+        } else {
+          this.parent.removeFragment(this.aknTextEditor.xmlElement);
+        }
       }
     },
 
@@ -210,7 +211,9 @@
      * The XML editor has parsed its XML into a new element.
      */
     onXmlElementParsed: function(element) {
-      this.parent.updateFragment(this.xmlElement, [element]);
+      if (this.xmlEditor.xmlElement) {
+        this.parent.updateFragment(this.xmlEditor.xmlElement, [element]);
+      }
     },
 
     onDocumentChanged: function() {
@@ -224,7 +227,7 @@
      * @param model documentContent model
      * @param mutation a MutationRecord object
      */
-    onDocumentMutated: function(model, mutation) {
+    onDomMutated: function(model, mutation) {
       switch (model.getMutationImpact(mutation, this.xmlElement)) {
         case 'replaced':
           this.xmlElement = mutation.addedNodes[0];

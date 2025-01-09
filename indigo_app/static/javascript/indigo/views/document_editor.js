@@ -96,7 +96,12 @@
 
       if (element && this.confirmAndDiscardChanges()) {
         this.editXmlElement(element);
+
+        this.contentPane.querySelector('.quick-editing')?.classList.remove('quick-editing');
         htmlElement.classList.add('quick-editing');
+
+        // scroll it almost (but not quite) to the top
+        htmlElement.style.scrollMarginTop = '10px';
         htmlElement.scrollIntoView({behavior: "smooth"});
       }
     },

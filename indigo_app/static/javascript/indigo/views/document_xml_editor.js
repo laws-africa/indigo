@@ -65,6 +65,11 @@ class AknTextEditor {
     for (const el of this.root.querySelectorAll('.insert-remark')) {
       el.addEventListener('click', (e) => this.insertRemark(e));
     }
+
+    this.root.querySelector('#live-updates-chk').addEventListener('change', (e) => {
+      this.liveUpdates = e.currentTarget.checked;
+      this.onTextChanged();
+    });
   }
 
   setXmlElement (element) {

@@ -44,5 +44,5 @@ $(function() {
       throw Error("Invalid XML: " + new XMLSerializer().serializeToString(doc));
     }
     return doc;
-  }
+  };
 });

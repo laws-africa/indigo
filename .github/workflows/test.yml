@@ -54,7 +54,10 @@ jobs:
     - name: Install node dependencies
       run: |
         npm ci --no-audit --prefer-offline --ignore-scripts
-        npm install -g jshint sass
+        npm install -g sass
+
+    - name: Run linters
+      run: npm run lint
 
     - name: Build javascript
       run: |
@@ -73,7 +76,6 @@ jobs:
       run: |
         PATH=/usr/share/fop-2.5/fop:$PATH
         coverage run manage.py test
-        jshint indigo_app/static/javascript/indigo/ --exclude indigo_app/static/javascript/indigo/bluebell-monaco.js
 
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/linux@v2

@@ -322,7 +322,7 @@
       parts.push(this.get('number'));
 
       // clean the parts
-      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
+      parts = _.map(parts, function(p) { return (p || "").replace(/[ /]/g, ''); });
 
       this.set('frbr_uri', parts.join('/').toLowerCase());
     },

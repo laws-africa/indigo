@@ -222,19 +222,6 @@
       return this.xmlDocument.evaluate(expression, context, nsLookup, result);
     },
 
-    /** Get an array of <act> and <doc> elements for this document.
-     */
-    componentElements: function() {
-      var components = [],
-          result = this.xpath('/a:akomaNtoso/a:act/a:meta | /a:akomaNtoso/a:act/a:attachments/a:attachment/a:*/a:meta');
-
-      for (var i = 0; i < result.snapshotLength; i++) {
-        components.push(result.snapshotItem(i).parentElement);
-      }
-
-      return components;
-    },
-
     /** Get an element by id, which is potentially scoped to a component (eg. "schedule1/table-1").
      * @param scopedId
      */

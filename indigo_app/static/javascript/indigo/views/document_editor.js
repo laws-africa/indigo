@@ -49,6 +49,8 @@
         this.onXmlElementParsed.bind(this),
       ) : null;
 
+      this.contentPane = document.querySelector('.document-primary-pane-content-pane');
+
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.document, 'change', this.onDocumentChanged);
@@ -86,16 +88,13 @@
     },
 
     quickEdit: function(e) {
-      var elemId = e.currentTarget.parentElement.parentElement.id,
-          element = this.parent.documentContent.xmlDocument;
-
-      // the id might be scoped
-      elemId.split("/").forEach(function(id) {
-        element = element.querySelector('[eId="' + id + '"]');
-      });
+      const htmlElement = e.currentTarget.parentElement.parentElement;
+      const elemId = htmlElement.id;
+      const element = this.parent.documentContent.xmlDocument.querySelector('[eId="' + elemId + '"]');
 
       if (element && this.confirmAndDiscardChanges()) {
         this.editXmlElement(element);
+        htmlElement.scrollIntoView({behavior: "smooth"});
       }
     },
 
@@ -191,7 +190,7 @@
         }
 
         this.render();
-        this.$('.document-sheet-container').scrollTop(0);
+        this.contentPane.scrollTo(0, 0);
       }
     },
 

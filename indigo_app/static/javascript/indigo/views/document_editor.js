@@ -48,6 +48,7 @@
       ) : null;
 
       this.contentPane = document.querySelector('.document-primary-pane-content-pane');
+      this.aknElement = this.contentPane.querySelector('la-akoma-ntoso');
 
       this.tocView = options.tocView;
       this.tocView.selection.on('change', this.onTocSelectionChanged, this);
@@ -95,6 +96,7 @@
 
       if (element && this.confirmAndDiscardChanges()) {
         this.editXmlElement(element);
+        htmlElement.classList.add('quick-editing');
         htmlElement.scrollIntoView({behavior: "smooth"});
       }
     },
@@ -171,6 +173,7 @@
 
     closeTextEditor: function(e) {
       this.toggleTextEditor(false);
+      this.aknElement.querySelector('.quick-editing')?.classList.remove('quick-editing');
       this.toolbar.classList.remove('is-editing', 'edit-mode-text');
       // set the xml edit back to using the visible element, in case quick edit was used
       if (this.xmlEditor) this.xmlEditor.setXmlElement(this.xmlElement);
@@ -281,18 +284,19 @@
 
       var self = this,
           renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",
-          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           coverpage;
 
-      $akn[0].classList.add('spinner-when-empty');
-      $akn.empty();
+      this.aknElement.classList.add('spinner-when-empty');
+      this.aknElement.replaceChildren();
 
       if (renderCoverpage) {
         coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
-        $akn.append(coverpage);
-        this.renderCoverpage().then(function(node) {
-          $(coverpage).append(node);
+        this.aknElement.appendChild(coverpage);
+        this.renderCoverpage().then(function(nodes) {
+          for (const node of nodes) {
+            coverpage.append(node);
+          }
           self.trigger('rendered');
         });
       }
@@ -304,7 +308,8 @@
         self.addWorkPopups(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
-        $akn.append(html);
+        self.highlightQuickEditElement(html);
+        self.aknElement.appendChild(html);
 
         self.trigger('rendered');
         self.renderComparisonDiff();
@@ -313,7 +318,6 @@
 
     renderComparisonDiff: function() {
       var self = this,
-          $akn = this.$('.document-primary-pane-content-pane la-akoma-ntoso'),
           data = {};
 
       if (!this.comparisonDocumentId) return;
@@ -340,9 +344,9 @@
             self.addWorkPopups(html);
             self.makeTablesEditable(html);
             self.makeElementsQuickEditable(html);
-            $akn.empty();
-            $akn.addClass('diffset');
-            $akn.append(html);
+            self.highlightQuickEditElement(html);
+            self.aknElement.classList.add('diffset');
+            self.aknElement.replaceChildren(html);
 
             self.trigger('rendered');
           });
@@ -415,6 +419,18 @@
         .each(function(i, e) {
           self.ensureGutterActions(e).append(self.quickEditTemplate.cloneNode(true));
         });
+    },
+
+    highlightQuickEditElement: function(html) {
+      if (this.aknTextEditor.editing && this.aknTextEditor.xmlElement !== this.xmlElement) {
+        const eid = this.aknTextEditor.xmlElement.getAttribute('eId');
+        if (eid) {
+          const el = html.querySelector('[id="' + eid + '"]');
+          if (el) {
+            el.classList.add('quick-editing');
+          }
+        }
+      }
     },
 
     // Ensure this element has a gutter actions child

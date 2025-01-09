@@ -261,9 +261,8 @@
       }
       this.document.attributes.content = content;
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
-      var result = this.document.save();
-      // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
-      // the response to the save() call
+      const result = this.document.save();
+      // don't re-parse the content in the response to the save() call
       delete this.document.attributes.content;
       this.document.setClean();
       this.trigger('sync');
@@ -509,12 +508,6 @@
       }
 
       return url;
-    },
-
-    setWork: function(work) {
-      this.set('frbr_uri', work.get('frbr_uri'));
-      this.work = work;
-      this.trigger('change change:work');
     },
 
     /** Get the Tradition description for this document's country.

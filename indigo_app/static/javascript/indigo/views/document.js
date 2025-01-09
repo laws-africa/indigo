@@ -155,6 +155,7 @@
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
 
+      this.document.on('sync', this.setClean, this);
       this.document.on('change', this.setDirty, this);
       this.document.on('change:draft', this.draftChanged, this);
 
@@ -164,8 +165,6 @@
       this.cheatsheetView = new Indigo.CheatsheetView();
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
-      this.propertiesView.on('dirty', this.setDirty, this);
-      this.propertiesView.on('clean', this.setClean, this);
 
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
@@ -237,7 +236,7 @@
     },
 
     isDirty: function(e) {
-      return this.propertiesView.dirty || this.bodyEditorView.isDirty();
+      return this.dirty || this.bodyEditorView.isDirty();
     },
 
     setDirty: function() {
@@ -248,7 +247,7 @@
 
     setClean: function() {
       // disable the save button if all views are clean
-      if (!this.propertiesView.dirty && !this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
+      if (!this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
         this.dirty = false;
         this.$saveBtn
           .prop('disabled', true)
@@ -283,44 +282,31 @@
       }
     },
 
-    save: function() {
-      var self = this;
-      var deferred = null;
-
+    save: async function() {
       if (!this.bodyEditorView.canCancelEdits()) return;
-
-      // always save properties if we save content
-      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;
-
-      var fail = function() {
-        self.$saveBtn
-          .prop('disabled', false)
-          .find('.fa')
-            .removeClass('fa-pulse fa-spinner')
-            .addClass('fa-save');
-        self.$menu.find('.save').removeClass('disabled');
-      };
 
       this.$saveBtn
         .prop('disabled', true)
         .find('.fa')
           .removeClass('fa-save')
           .addClass('fa-pulse fa-spinner');
-      this.$menu.find('.save').addClass('disabled');
 
-      deferred = $.Deferred().resolve();
+      try {
+        // this saves the content and the document properties together
+        await Indigo.deferredToAsync(this.documentContent.save());
+        await Indigo.deferredToAsync(this.attachmentsView.save());
 
-      // We save the content first, and then save
-      // the properties on top of it, so that content
-      // properties that change metadata in the content
-      // take precendence.
-      deferred.then(function() {
-        self.bodyEditorView.save().then(function() {
-          self.propertiesView.save().then(function() {
-            self.attachmentsView.save().fail(fail);
-          }).fail(fail);
-        }).fail(fail);
-      }).fail(fail);
+        // TODO: a better way of reloading the page (will redirect to provision chooser for now)
+        if (this.bodyEditorView.sourceEditor.aknTextEditor.reloadOnSave) {
+          window.location.reload();
+        }
+      } catch {
+        this.$saveBtn
+          .prop('disabled', false)
+          .find('.fa')
+          .removeClass('fa-pulse fa-spinner')
+          .addClass('fa-save');
+      }
     },
 
     delete: function() {

@@ -553,42 +553,5 @@
     canCancelEdits: function() {
       return this.sourceEditor.confirmAndDiscardChanges();
     },
-
-    // Save the content of the editor, returns a Deferred
-    save: function() {
-      var self = this,
-          deferred = $.Deferred();
-
-      function ok() { deferred.resolve(); }
-      function fail() { deferred.reject(); }
-
-      if (!this.dirty) {
-        // don't do anything if it hasn't changed
-        ok();
-
-      } else {
-          // ask the editor to returns its contents
-        this.sourceEditor
-          .saveChanges()
-          .done(function() {
-            // save the model
-            self.saveModel().done(ok).fail(fail);
-          })
-          .fail(fail);
-      }
-
-      // TODO: a better way of reloading the page (will redirect to provision chooser for now)
-      if (this.sourceEditor.aknTextEditor.reloadOnSave) {
-        window.location.reload();
-      }
-
-      return deferred;
-    },
-
-    // Save the content of the document, returns a Deferred
-    saveModel: function() {
-      return this.documentContent.save();
-    },
-
   });
 })(window);

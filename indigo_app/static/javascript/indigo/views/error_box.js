@@ -7,7 +7,7 @@
   Indigo.ErrorBoxView = Backbone.View.extend({
     el: $('#error-box'),
     events: {
-      'click .close': 'close',
+      'click .btn-close': 'close',
     },
 
     show: function(message, html) {

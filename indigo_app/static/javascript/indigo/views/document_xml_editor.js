@@ -91,7 +91,14 @@ class AknTextEditor {
 
     if (this.liveUpdates) {
       if (this.previousText !== text) {
-        const elements = await this.parse();
+        let elements;
+        try {
+          elements = await this.parse();
+        } catch (err) {
+          Indigo.errorView.show(err);
+          return;
+        }
+
         // check that the response is still valid
         if (text === this.monacoEditor.getValue()) {
           this.previousText = text;
@@ -126,7 +133,12 @@ class AknTextEditor {
     }
   }
 
-  /** Parse the text in the editor into XML. Returns an array of new elements. */
+  /**
+   * Parse the text in the editor into XML. Returns an array of new elements.
+   *
+   * @returns {Promise<Element[]>} the new elements or an empty list if the text is empty
+   * @throws {Error} if the text cannot be parsed
+   **/
   async parse () {
     const text = this.monacoEditor.getValue();
     if (!text.trim()) {
@@ -146,33 +158,27 @@ class AknTextEditor {
       }
     }
 
-    try {
-      const xml = await this.bluebellParser.parse(
-        text,
-        this.document.get('expression_frbr_uri'),
-        fragment,
-        eidPrefix,
-      );
+    const xml = await this.bluebellParser.parse(
+      text,
+      this.document.get('expression_frbr_uri'),
+      fragment,
+      eidPrefix,
+    );
 
-      let newElement = $.parseXML(xml);
+    let newElement = Indigo.parseXml(xml);
 
-      // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
-      if (this.xmlElement.parentNode.tagName === 'portionBody') {
-        // set it back to false if the eId is changed back before saving too
-        this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
-      }
-
-      if (fragmentRule === 'akomaNtoso') {
-        // entire document
-        return [newElement.documentElement];
-      } else {
-        return newElement.documentElement.children;
-      }
-    } catch (e) {
-      Indigo.errorView.show(e);
+    // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
+    if (this.xmlElement.parentNode.tagName === 'portionBody') {
+      // set it back to false if the eId is changed back before saving too
+      this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
     }
 
-    return null;
+    if (fragmentRule === 'akomaNtoso') {
+      // entire document
+      return [newElement.documentElement];
+    }
+
+    return newElement.documentElement.children;
   }
 
   /**
@@ -187,7 +193,13 @@ class AknTextEditor {
     if (!this.liveUpdates) {
       // use a nonce to check if we're still the current save when the parse completes
       const nonce = this.nonce = Math.random();
-      const elements = await this.parse();
+      let elements;
+      try {
+        elements = await this.parse();
+      } catch(err) {
+        Indigo.errorView.show(err);
+        return false;
+      }
       // check if we're still the current save
       if (nonce !== this.nonce) return false;
       this.onElementParsed(elements);

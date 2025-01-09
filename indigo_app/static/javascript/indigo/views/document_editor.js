@@ -29,7 +29,6 @@
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
-      this.editing = false;
       this.updating = false;
       this.document = this.parent.model;
       this.xmlElement = null;
@@ -102,12 +101,13 @@
      * Edit the given XML element in the text editor.
      */
     editXmlElement: function(element) {
+      const editing = this.aknTextEditor.editing;
+
       this.aknTextEditor.setXmlElement(element);
       if (this.xmlEditor) this.xmlEditor.setXmlElement(element);
 
-      // if we're not already editing, activate the editor
-      if (!this.editing) {
-        this.editing = true;
+      // if we weren't already editing, activate the editor
+      if (!editing) {
         this.editActivityStarted('text');
         this.toggleTextEditor(true);
         this.aknTextEditor.monacoEditor.focus();
@@ -122,7 +122,7 @@
      * If the user is not editing, return true.
      */
     confirmAndDiscardChanges: function() {
-      if (this.editing || this.tableEditor.editing) {
+      if (this.isDirty()) {
         if (confirm($t("You will lose your changes, are you sure?"))) {
           this.discardChanges();
         } else {
@@ -140,7 +140,7 @@
       // save table edits, if any
       this.tableEditor.saveChanges();
 
-      if (this.editing) {
+      if (this.aknTextEditor.editing) {
         const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
         btn.setAttribute('disabled', 'true');
 
@@ -159,18 +159,17 @@
      * Discard the content of all editors.
      */
     discardChanges: function() {
-      this.tableEditor.discardChanges(true);
-      this.aknTextEditor.discardChanges();
-      if (this.editing) {
+      if (this.aknTextEditor.editing) {
         this.editActivityCancelled();
         this.closeTextEditor();
       }
+      this.tableEditor.discardChanges(true);
+      this.aknTextEditor.discardChanges();
     },
 
     closeTextEditor: function(e) {
       this.toggleTextEditor(false);
       this.toolbar.classList.remove('is-editing', 'edit-mode-text');
-      this.editing = false;
       // set the xml edit back to using the visible element, in case quick edit was used
       if (this.xmlEditor) this.xmlEditor.setXmlElement(this.xmlElement);
     },
@@ -182,7 +181,7 @@
       if (this.xmlElement !== element) {
         this.xmlElement = element;
 
-        if (this.editing) {
+        if (this.aknTextEditor.editing) {
           // we're in edit mode, so update the element being edited
           this.editXmlElement(element);
         } else {
@@ -507,6 +506,10 @@
     toggleTextEditor: function (visible) {
       document.querySelector('#document-primary-pane-splitter').classList.toggle('d-none', !visible);
       document.querySelector('.document-primary-pane-editor-pane').classList.toggle('d-none', !visible);
+    },
+
+    isDirty: function () {
+      return this.aknTextEditor.dirty || this.tableEditor.editing;
     }
   });
 
@@ -565,7 +568,7 @@
     },
 
     isDirty: function() {
-      return this.dirty || this.sourceEditor.editing;
+      return this.dirty || this.sourceEditor.isDirty();
     },
 
     canCancelEdits: function() {

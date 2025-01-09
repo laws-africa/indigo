@@ -14,6 +14,7 @@ class AknTextEditor {
     this.onElementParsed = onElementParsed;
     // nonce to prevent concurrent saves
     this.nonce = null;
+    this.dirty = false;
     // flag to prevent circular updates to the text
     this.updating = false;
     this.liveUpdates = false;
@@ -72,6 +73,7 @@ class AknTextEditor {
     if (!this.editing) {
       this.editing = true;
       this.xmlElementOriginal = element;
+      this.dirty = false;
     }
 
     if (!this.updating) {
@@ -84,9 +86,10 @@ class AknTextEditor {
   }
 
   async onTextChanged () {
-    if (this.liveUpdates) {
-      const text = this.monacoEditor.getValue();
+    const text = this.monacoEditor.getValue();
+    this.dirty = this.dirty || text !== this.previousText;
 
+    if (this.liveUpdates) {
       if (this.previousText !== text) {
         const elements = await this.parse();
         // check that the response is still valid
@@ -191,6 +194,7 @@ class AknTextEditor {
     }
 
     this.editing = false;
+    this.dirty = false;
     this.xmlElement = this.xmlElementOriginal = null;
 
     return true;
@@ -202,6 +206,7 @@ class AknTextEditor {
         this.onElementParsed([this.xmlElementOriginal]);
       }
       this.editing = false;
+      this.dirty = false;
     }
   }
 

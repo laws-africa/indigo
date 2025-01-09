@@ -241,11 +241,9 @@
     },
 
     setDirty: function() {
-      if (!this.dirty) {
-        this.dirty = true;
-        this.$saveBtn.prop('disabled', false);
-        this.$menu.find('.save').removeClass('disabled');
-      }
+      this.dirty = true;
+      this.$saveBtn.prop('disabled', false);
+      this.$menu.find('.save').removeClass('disabled');
     },
 
     setClean: function() {
@@ -288,6 +286,8 @@
     save: function() {
       var self = this;
       var deferred = null;
+
+      if (!this.bodyEditorView.canCancelEdits()) return;
 
       // always save properties if we save content
       this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;

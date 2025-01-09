@@ -202,7 +202,8 @@ class AknTextEditor {
 
   discardChanges () {
     if (this.editing) {
-      if (this.xmlElement && this.xmlElement !== this.xmlElementOriginal) {
+      // only replace the element with the original if it has changed through us
+      if (this.dirty && this.xmlElement && this.xmlElement !== this.xmlElementOriginal) {
         this.onElementParsed([this.xmlElementOriginal]);
       }
       this.editing = false;

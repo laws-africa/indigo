@@ -29,10 +29,10 @@
     initialize: function(options) {
       this.parent = options.parent;
       this.name = 'source';
-      this.updating = false;
       this.document = this.parent.model;
       this.xmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
+      this.sheetInner = document.querySelector('.document-workspace .document-sheet-container .sheet-inner');
 
       this.aknTextEditor = new Indigo.AknTextEditor(
         this.el,
@@ -49,6 +49,9 @@
       ) : null;
 
       this.contentPane = document.querySelector('.document-primary-pane-content-pane');
+
+      this.tocView = options.tocView;
+      this.tocView.selection.on('change', this.onTocSelectionChanged, this);
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -193,6 +196,13 @@
       }
     },
 
+    onTocSelectionChanged: function(selection) {
+      if (selection && this.xmlElement !== selection.get('element')) {
+        this.discardChanges();
+        this.showXmlElement(selection.get('element'));
+      }
+    },
+
     /**
      * There is newly parsed XML from the akn text editor
      */
@@ -200,14 +210,7 @@
       if (this.aknTextEditor.xmlElement) {
         if (elements && elements.length) {
           // regular update
-          this.updating = true;
-          try {
-            this.document.content.replaceNode(this.aknTextEditor.xmlElement, elements);
-          } finally {
-            setTimeout(() => {
-              this.updating = false;
-            }, 0);
-          }
+          this.document.content.replaceNode(this.aknTextEditor.xmlElement, elements);
         } else if (this.aknTextEditor.xmlElement.parentNode.tagName === 'portionBody') {
           // we can't delete the whole provision in portion mode
           alert($t('You cannot delete the whole provision in provision editing mode.'));
@@ -224,14 +227,7 @@
      */
     onXmlElementParsed: function(element) {
       if (this.xmlEditor.xmlElement) {
-        this.updating = true;
-        try {
-          this.document.content.replaceNode(this.xmlEditor.xmlElement, [element]);
-        } finally {
-          setTimeout(() => {
-            this.updating = false;
-          }, 0);
-        }
+        this.document.content.replaceNode(this.xmlEditor.xmlElement, [element]);
       }
     },
 
@@ -281,6 +277,8 @@
 
     render: function() {
       if (!this.xmlElement) return;
+
+      this.sheetInner.classList.toggle('is-fragment', this.xmlElement.parentElement !== null);
 
       var self = this,
           renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",
@@ -514,6 +512,8 @@
   });
 
   // Handle the document editor, tracking changes and saving it back to the server.
+  // TODO: this doesn't really do much any more and the remaining functionality could
+  //       be moved into SourceEditorView and/or DocumentDetailView
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
 
@@ -525,32 +525,11 @@
       this.documentContent.on('change', this.setDirty, this);
       this.documentContent.on('sync', this.setClean, this);
 
-      this.tocView = options.tocView;
-      this.tocView.selection.on('change', this.tocSelectionChanged, this);
-
       // setup the editor views
-      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      this.sourceEditor = new Indigo.SourceEditorView({parent: this, tocView: options.tocView});
 
       // this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
-    },
-
-    tocSelectionChanged: function(selection) {
-      // we must guard with an updating flag because the mutations may not have been processed yet and so
-      // the xmlElement may still be the old one
-      if (!this.sourceEditor.updating && selection && this.sourceEditor.xmlElement !== selection.get('element')) {
-        this.sourceEditor.discardChanges();
-        this.editFragment(selection.get('element'));
-      }
-    },
-
-    editFragment: function(element) {
-      console.log("Editing new fragment");
-
-      const isRoot = element.parentElement === null;
-      this.$('.document-workspace .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
-
-      this.sourceEditor.showXmlElement(element);
     },
 
     setDirty: function() {

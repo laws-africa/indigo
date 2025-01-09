@@ -232,7 +232,7 @@ export default {
 
     onTitleClick (e) {
       e.detail.preventDefault();
-      if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
+      if (!Indigo.view.sourceEditorView || Indigo.view.sourceEditorView.confirmAndDiscardChanges()) {
         this.selectItem(e.target.item.index);
       }
     }

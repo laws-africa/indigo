@@ -19,7 +19,7 @@
         this.$akn = this.$('#document-sheet la-akoma-ntoso');
         this.nodes = [];
 
-        this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
+        this.listenTo(this.editorView, 'rendered', this.render);
         this.listenTo(this.model, 'reset change add remove', this.render);
         this.listenTo(this.documentContent, 'change', this.runLinters);
         this.listenTo(this.attachments, 'reset change add remove', this.runLinters);
@@ -81,7 +81,7 @@
           for (var i = 0; i < targets.length; i++) {
             var target = targets[i];
 
-            var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
+            var gutter = self.editorView.ensureGutterActions(target);
             var node = $(self.template(issue.toJSON()))[0];
             self.nodes.push(node);
 

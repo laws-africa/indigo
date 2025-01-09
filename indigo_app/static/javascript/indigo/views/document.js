@@ -178,14 +178,11 @@
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
 
-      this.bodyEditorView = new Indigo.DocumentEditorView({
+      this.sourceEditorView = new Indigo.SourceEditorView({
         model: this.document,
-        documentContent: this.documentContent,
         tocView: this.tocView,
       });
-      this.bodyEditorView.on('dirty', this.setDirty, this);
-      this.bodyEditorView.on('clean', this.setClean, this);
-      this.bodyEditorView.editorReady.then(function() {
+      this.sourceEditorView.editorReady.then(function() {
         // select the appropriate element in the toc
         // TODO: there's a race condition here: the TOC might not be built yet
         if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
@@ -198,13 +195,13 @@
         model: this.document,
         prefocus: parseInt(Indigo.queryParams.anntn),
       });
-      this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
+      this.annotationsView.listenTo(this.sourceEditorView, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});
       this.issuesView = new Indigo.DocumentIssuesView({
         document: this.document,
         documentContent: this.documentContent,
-        editorView: this.bodyEditorView,
+        editorView: this.sourceEditorView,
       });
 
       const akn = this.el.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
@@ -236,7 +233,7 @@
     },
 
     isDirty: function(e) {
-      return this.dirty || this.bodyEditorView.isDirty();
+      return this.dirty || this.sourceEditorView.isDirty();
     },
 
     setDirty: function() {
@@ -247,7 +244,7 @@
 
     setClean: function() {
       // disable the save button if all views are clean
-      if (!this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
+      if (!this.sourceEditorView.isDirty() && !this.attachmentsView.dirty) {
         this.dirty = false;
         this.$saveBtn
           .prop('disabled', true)
@@ -283,7 +280,7 @@
     },
 
     save: async function() {
-      if (!this.bodyEditorView.canCancelEdits()) return;
+      if (!this.sourceEditorView.confirmAndDiscardChanges()) return;
 
       this.$saveBtn
         .prop('disabled', true)
@@ -297,7 +294,7 @@
         await Indigo.deferredToAsync(this.attachmentsView.save());
 
         // TODO: a better way of reloading the page (will redirect to provision chooser for now)
-        if (this.bodyEditorView.sourceEditor.aknTextEditor.reloadOnSave) {
+        if (this.sourceEditorView.aknTextEditor.reloadOnSave) {
           window.location.reload();
         }
       } catch {

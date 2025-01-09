@@ -27,9 +27,8 @@
     },
 
     initialize: function(options) {
-      this.parent = options.parent;
       this.name = 'source';
-      this.document = this.parent.model;
+      this.document = this.model;
       this.xmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
       this.sheetInner = document.querySelector('.document-workspace .document-sheet-container .sheet-inner');
@@ -59,7 +58,7 @@
       this.listenTo(this.document.content, 'mutation', this.onDomMutated);
 
       // setup table editor
-      this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
+      this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.document.content});
       this.tableEditor.on('start', this.onTableEditStart, this);
       this.tableEditor.on('finish', this.onTableEditFinish, this);
       this.tableEditor.on('discard', this.editActivityCancelled, this);
@@ -92,7 +91,7 @@
     quickEdit: function(e) {
       const htmlElement = e.currentTarget.parentElement.parentElement;
       const elemId = htmlElement.id;
-      const element = this.parent.documentContent.xmlDocument.querySelector('[eId="' + elemId + '"]');
+      const element = this.document.content.xmlDocument.querySelector('[eId="' + elemId + '"]');
 
       if (element && this.confirmAndDiscardChanges()) {
         this.editXmlElement(element);
@@ -320,7 +319,7 @@
       if (!this.comparisonDocumentId) return;
 
       data.document = this.document.toJSON();
-      data.document.content = this.parent.documentContent.toXml();
+      data.document.content = this.document.content.toXml();
       data.element_id = this.xmlElement.getAttribute('eId');
 
       if (!data.element_id && this.xmlElement.tagName !== "akomaNtoso") {
@@ -509,49 +508,5 @@
     isDirty: function () {
       return this.aknTextEditor.dirty || this.tableEditor.editing;
     }
-  });
-
-  // Handle the document editor, tracking changes and saving it back to the server.
-  // TODO: this doesn't really do much any more and the remaining functionality could
-  //       be moved into SourceEditorView and/or DocumentDetailView
-  Indigo.DocumentEditorView = Backbone.View.extend({
-    el: 'body',
-
-    initialize: function(options) {
-      this.dirty = false;
-
-      this.documentContent = options.documentContent;
-      // XXX: check
-      this.documentContent.on('change', this.setDirty, this);
-      this.documentContent.on('sync', this.setClean, this);
-
-      // setup the editor views
-      this.sourceEditor = new Indigo.SourceEditorView({parent: this, tocView: options.tocView});
-
-      // this is a deferred to indicate when the editor is ready to edit
-      this.editorReady = this.sourceEditor.editorReady;
-    },
-
-    setDirty: function() {
-      if (!this.dirty) {
-        this.dirty = true;
-        this.trigger('dirty');
-      }
-    },
-
-    setClean: function() {
-      if (this.dirty) {
-        this.dirty = false;
-        this.trigger('clean');
-      }
-    },
-
-    isDirty: function() {
-      return this.dirty || this.sourceEditor.isDirty();
-    },
-
-    canCancelEdits: function() {
-      return this.sourceEditor.confirmAndDiscardChanges();
-    },
   });
 })(window);

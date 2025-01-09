@@ -445,20 +445,23 @@
     },
 
     editTable: function(e) {
-      if (!this.confirmAndDiscardChanges()) {
-        return;
-      }
+      var tableId = $(e.currentTarget).data('table-id');
 
-      this.editActivityStarted('table');
-      var $btn = $(e.currentTarget),
-          table = document.getElementById($btn.data('table-id'));
+      if (this.confirmAndDiscardChanges()) {
+        // we queue this up to run after the click event has finished, because we need the HTML to be re-rendered
+        // after changes are potentially discarded
+        setTimeout(() => {
+          const table = document.getElementById(tableId);
 
-      if (!this.tableEditor.canEditTable(table)) {
-        alert($t('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.'));
-      } else {
-        this.tableEditor.editTable(table);
-        // disable other table edit buttons
-        this.$('.edit-table').prop('disabled', true);
+          if (!this.tableEditor.canEditTable(table)) {
+            alert($t('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.'));
+          } else {
+            this.editActivityStarted('table');
+            this.tableEditor.editTable(table);
+            // disable other table edit buttons
+            this.$('.edit-table').prop('disabled', true);
+          }
+        }, 0);
       }
     },
 

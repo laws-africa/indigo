@@ -30,29 +30,31 @@
       {% endblock %}
 
       {% if work.pk %}
-        <nav class="nav nav-tabs mt-4">
-          {% block work-header-tabs %}
-            <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-book"></i> {% trans 'Overview' %}
-            </a>
-            <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-clock"></i> {% trans 'Points in time' %}
-            </a>
-            <a class="nav-item nav-link {% if view.tab == 'commencements' %}active{% endif %}" href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-rocket fa-rotate-315"></i> {% trans 'Commencements' %}
-            </a>
-            <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-thumbtack"></i> {% trans 'Tasks' %}
-              <span class="badge text-bg-light">{{ work.tasks.unclosed.count }}</span>
-            </a>
-            <a class="nav-item nav-link {% if view.tab == 'related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-sitemap"></i> {% trans 'Related works' %}
-            </a>
-            <a class="nav-item nav-link {% if view.tab == 'versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">
-              <i class="fas fa-fw fa-history"></i> {% trans 'Changes' %}
-            </a>
-          {% endblock %}
-        </nav>
+        {% block work-header-nav-tabs %}
+          <nav class="nav nav-tabs mt-4">
+            {% block work-header-tabs %}
+              <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-book"></i> {% trans 'Overview' %}
+              </a>
+              <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-clock"></i> {% trans 'Points in time' %}
+              </a>
+              <a class="nav-item nav-link {% if view.tab == 'commencements' %}active{% endif %}" href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-rocket fa-rotate-315"></i> {% trans 'Commencements' %}
+              </a>
+              <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-thumbtack"></i> {% trans 'Tasks' %}
+                <span class="badge text-bg-light">{{ work.tasks.unclosed.count }}</span>
+              </a>
+              <a class="nav-item nav-link {% if view.tab == 'related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-sitemap"></i> {% trans 'Related works' %}
+              </a>
+              <a class="nav-item nav-link {% if view.tab == 'versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">
+                <i class="fas fa-fw fa-history"></i> {% trans 'Changes' %}
+              </a>
+            {% endblock %}
+          </nav>
+        {% endblock %}
       {% endif %}
     </div>
   </header>

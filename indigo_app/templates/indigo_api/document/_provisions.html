@@ -3,14 +3,24 @@
 
 {% block title %}{% trans 'Choose provision' %} – {{ block.super }}{% endblock %}
 
+{% block main-header-title %}
+  <h5 class="main-header-title">
+    {{ document.title }} @ {{ document.expression_date|date:'Y-m-d' }} · {{ document.language.code }}
+    {% include 'indigo_api/_work_info_badges.html' %}
+  </h5>
+  {% if work.numbered_title %}<h6>{{ work.numbered_title }}</h6>{% endif %}
+{% endblock %}
+
+{% block work-header-nav-tabs %}{% endblock %}
+
 {% block work-content %}
-  <div class="col-8">
-    <la-table-of-contents-controller
-      items="{{ toc_json }}"
-      collapse-all-btn-classes="btn btn-sm btn-secondary"
-      expand-all-btn-classes="btn btn-sm btn-secondary"
-      title-filter-clear-btn-classes="btn btn-sm btn-secondary"
-      title-filter-input-classes="form-field"
-    ></la-table-of-contents-controller>
-  </div>
+  <h3 class="mb-3">{% trans "Choose a provision to edit" %}</h3>
+
+  <la-table-of-contents-controller
+    items="{{ toc_json }}"
+    collapse-all-btn-classes="btn btn-sm btn-secondary"
+    expand-all-btn-classes="btn btn-sm btn-secondary"
+    title-filter-clear-btn-classes="btn btn-sm btn-secondary"
+    title-filter-input-classes="form-field"
+  ></la-table-of-contents-controller>
 {% endblock %}

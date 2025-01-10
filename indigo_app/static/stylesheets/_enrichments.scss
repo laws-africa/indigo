@@ -1,6 +1,6 @@
 .enrichment {
   &.enrichment--popup {
-    background-color: transparent;
+    background-color: inherit;
 
     &.enrichment--info {
       border-bottom: 3px double $info;

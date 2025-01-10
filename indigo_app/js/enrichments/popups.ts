@@ -1,4 +1,4 @@
-import { IEnrichment, IPopupEnrichmentProvider } from '@lawsafrica/indigo-akn/dist/enrichments/popups';
+import { IEnrichment, IPopupEnrichmentProvider, PopupEnrichmentManager } from '@lawsafrica/indigo-akn/dist/enrichments/popups';
 import { IRangeTarget } from '@lawsafrica/indigo-akn/dist/ranges';
 import { Instance as Tippy } from 'tippy.js';
 // @ts-ignore
@@ -20,12 +20,19 @@ class LinterEnrichment implements IEnrichment {
 export class PopupIssuesProvider implements IPopupEnrichmentProvider {
   protected issues: any;
   protected vue: any;
+  protected popupManager: PopupEnrichmentManager;
 
-  constructor (issues: any) {
+  constructor (issues: any, popupManager: PopupEnrichmentManager) {
     this.issues = issues;
+    this.popupManager = popupManager;
     this.vue = createComponent('LinterPopup', {propsData: {issue: null}});
     this.vue.$on('fix', (issue: any) => issue.fix());
     this.vue.$mount();
+
+    // a new issue may be added asynchronously, in which case we need to re-apply our enrichments
+    // @ts-ignore
+    const reapply = _.debounce(() => this.popupManager.applyProviderEnrichments(this), 200);
+    this.issues.on('add', reapply);
   }
 
   getEnrichments(): IEnrichment[] {

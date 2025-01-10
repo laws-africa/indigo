@@ -39,18 +39,18 @@
       },
 
       runLinters: function() {
-        var issues = [],
-            linters = this.getLinters(this.document),
-            self = this;
+        this.model.reset([]);
 
-        linters.forEach(function(linter) {
-          var iss = linter(self.document, self.documentContent);
-          if (iss && iss.length > 0) {
-            issues = issues.concat(iss);
-          }
-        });
-
-        this.model.reset(issues);
+        // run the linters asynchronously so that the browser UI can be updated in between,
+        // since some linters may be expensive to run
+        for (const linter of this.getLinters(this.document)) {
+          setTimeout(() => {
+            const issues = linter(this.document, this.documentContent);
+            if (issues && issues.length > 0) {
+              this.model.add(issues);
+            }
+          }, 0);
+        }
       },
 
       render: function() {

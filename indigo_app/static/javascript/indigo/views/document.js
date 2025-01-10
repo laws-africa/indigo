@@ -206,7 +206,7 @@
 
       const akn = this.el.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
-      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues));
+      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues, this.popupManager));
 
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');

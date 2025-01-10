@@ -15,7 +15,7 @@ from rest_framework.reverse import reverse
 from typing import List
 
 from cobalt import StructuredDocument, FrbrUri
-from cobalt.akn import AKN_NAMESPACES
+from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
     PublicationDocument, Task, Commencement
 from indigo_api.signals import document_published
@@ -440,7 +440,22 @@ class DocumentAPISerializer(serializers.Serializer):
     language = serializers.CharField(min_length=3, max_length=3)
     is_portion = serializers.BooleanField()
 
-    def update_document(self, document):
+    def validate_xml(self, xml):
+        """ mostly copied from DocumentSerializer.validate()
+        """
+        try:
+            doctype = self.instance.work_uri.doctype if not self.initial_data.get('is_portion') else 'portion'
+            doc = StructuredDocument.for_document_type(doctype)(xml)
+        except (LxmlError, ValueError) as e:
+            raise ValidationError("Invalid XML: %s" % str(e))
+        # ensure the correct namespace
+        if doc.namespace != AKN_NAMESPACES[DEFAULT_VERSION]:
+            raise ValidationError(
+                f"Document must have namespace {AKN_NAMESPACES[DEFAULT_VERSION]}, but it has {doc.namespace} instead.")
+        return xml
+
+    def update_document(self):
+        document = self.instance
         # the language could have been changed but not yet saved during editing, which might affect which plugin is used
         if document.language.code != self.validated_data.get('language'):
             document.language = Language.for_code(self.validated_data.get('language'))
@@ -450,15 +465,11 @@ class DocumentAPISerializer(serializers.Serializer):
         document.content = self.validated_data.get('xml')
         return document
 
-    def updated_xml(self, document):
-        xml = document.document_xml
+    def updated_xml(self):
         # in provision mode, unwrap the akn tag as we don't want the 'Entire document' option for editing
         if self.validated_data.get('is_portion'):
-            root = etree.fromstring(xml)
-            # akn will always have exactly one child, 'portion'
-            portion = root.xpath('a:portion', namespaces={'a': document.doc.namespace})[0]
-            xml = etree.tostring(portion, encoding='unicode')
-        return xml
+            return etree.tostring(self.instance.doc.portion, encoding='unicode')
+        return self.instance.document_xml
 
 
 class NoopSerializer(object):

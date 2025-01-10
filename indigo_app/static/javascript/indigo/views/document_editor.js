@@ -85,11 +85,10 @@
     },
 
     quickEdit: function(e) {
-      const htmlElement = e.currentTarget.parentElement.parentElement;
-      const elemId = htmlElement.id;
-      const element = this.document.content.xmlDocument.querySelector('[eId="' + elemId + '"]');
-
-      if (element && this.confirmAndDiscardChanges()) {
+      if (this.confirmAndDiscardChanges()) {
+        const htmlElement = e.currentTarget.parentElement.parentElement;
+        const elemId = htmlElement.id;
+        const element = this.document.content.xmlDocument.querySelector('[eId="' + elemId + '"]');
         this.editXmlElement(element);
 
         this.contentPane.querySelector('.quick-editing')?.classList.remove('quick-editing');

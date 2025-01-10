@@ -3,7 +3,7 @@
  * text into XML, and handling text-based editor actions (like bolding, etc.).
  */
 class AknTextEditor {
-  constructor (root, document, liveUpdates, onSave, onDiscard) {
+  constructor (root, document, onSave, onDiscard) {
     this.root = root;
     this.document = document;
     this.onSave = onSave;
@@ -18,7 +18,7 @@ class AknTextEditor {
     this.dirty = false;
     // flag to prevent circular updates to the text
     this.updating = false;
-    this.liveUpdates = liveUpdates;
+    this.liveUpdates = true;
     // for provision mode (set to true if the top-level eId changes)
     this.reloadOnSave = false;
 
@@ -67,8 +67,8 @@ class AknTextEditor {
       el.addEventListener('click', (e) => this.insertRemark(e));
     }
 
+    this.setLiveUpdates(this.liveUpdates);
     const checkbox = this.root.querySelector('#live-updates-chk');
-    checkbox.checked = this.liveUpdates;
     checkbox.addEventListener('change', (e) => {
       this.liveUpdates = e.currentTarget.checked;
       this.onTextChanged();
@@ -76,6 +76,11 @@ class AknTextEditor {
 
     this.root.querySelector('.btn.save').addEventListener('click', this.acceptChanges.bind(this));
     this.root.querySelector('.btn.cancel').addEventListener('click', this.discardChanges.bind(this));
+  }
+
+  setLiveUpdates (liveUpdates) {
+    this.liveUpdates = liveUpdates;
+    this.root.querySelector('#live-updates-chk').checked = liveUpdates;
   }
 
   setXmlElement (element) {
@@ -89,6 +94,11 @@ class AknTextEditor {
 
     if (!this.updating) {
       this.previousText = this.unparse();
+
+      // only default liveUpdates to true if the document isn't too long
+      // a 100k document takes about 0.5s to parse, which is our upper limit
+      this.setLiveUpdates(this.previousText.length < 100000);
+
       this.monacoEditor.setValue(this.previousText);
       const top = {column: 1, lineNumber: 1};
       this.monacoEditor.setPosition(top);

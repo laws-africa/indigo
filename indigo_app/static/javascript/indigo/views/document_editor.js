@@ -38,7 +38,6 @@
       this.aknTextEditor = new Indigo.AknTextEditor(
         this.el.querySelector('.document-primary-pane-editor-pane'),
         this.document,
-        true,
         this.onTextEditSaved.bind(this),
         this.onTextEditCancelled.bind(this),
       );

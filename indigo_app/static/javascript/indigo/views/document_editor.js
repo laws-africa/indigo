@@ -236,12 +236,15 @@
     },
 
     editActivityStarted: function(mode) {
+      this.trigger('edit-activity-started', mode);
     },
 
     editActivityEnded: function() {
+      this.trigger('edit-activity-ended');
     },
 
     editActivityCancelled: function() {
+      this.trigger('edit-activity-cancelled');
     },
 
     render: function() {

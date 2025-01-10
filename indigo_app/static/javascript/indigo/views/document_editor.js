@@ -6,7 +6,8 @@
 
   /**
    * The SourceEditorView manages rendering and editing (via text, xml or table editors) of an xml element. It handles
-   * moving between the different editors and updates the document model when changes are made.
+   * rendering itself and coordination between the editors, but editors themselves are responsible for updating the
+   * document DOM.
    *
    * It can have two active xml elements, which are only different in quick edit mode:
    *
@@ -31,30 +32,26 @@
       this.document = this.model;
       this.xmlElement = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
-      this.sheetInner = document.querySelector('.document-workspace .document-sheet-container .sheet-inner');
+      this.contentPane = document.querySelector('.document-primary-pane-content-pane');
+      this.sheetInner = this.contentPane.querySelector('.document-workspace .document-sheet-container .sheet-inner');
+      this.aknElement = this.contentPane.querySelector('la-akoma-ntoso');
+      this.toolbar = document.querySelector('.document-toolbar-wrapper');
 
       this.aknTextEditor = new Indigo.AknTextEditor(
         this.el,
         this.document,
-        this.onTextElementParsed.bind(this),
+        true,
       );
-      this.aknTextEditor.liveUpdates = true;
 
       const xmlEditorBox = document.querySelector('.document-xml-editor');
       this.xmlEditor = xmlEditorBox ? new Indigo.XMLEditor(
         xmlEditorBox,
         this.document,
-        this.onXmlElementParsed.bind(this),
       ) : null;
-
-      this.contentPane = document.querySelector('.document-primary-pane-content-pane');
-      this.aknElement = this.contentPane.querySelector('la-akoma-ntoso');
 
       this.tocView = options.tocView;
       this.tocView.selection.on('change', this.onTocSelectionChanged, this);
 
-      // setup renderer
-      this.editorReady = $.Deferred();
       this.listenTo(this.document, 'change', this.onDocumentChanged);
       this.listenTo(this.document.content, 'mutation', this.onDomMutated);
 
@@ -65,8 +62,8 @@
       this.tableEditor.on('discard', this.editActivityCancelled, this);
       this.tableEditor.on('save', this.editActivityEnded, this);
 
-      this.toolbar = document.querySelector('.document-toolbar-wrapper');
-
+      // setup renderer
+      this.editorReady = $.Deferred();
       this.setupRenderers();
     },
 
@@ -210,34 +207,6 @@
       }
     },
 
-    /**
-     * There is newly parsed XML from the akn text editor
-     */
-    onTextElementParsed: function(elements) {
-      if (this.aknTextEditor.xmlElement) {
-        if (elements && elements.length) {
-          // regular update
-          this.document.content.replaceNode(this.aknTextEditor.xmlElement, elements);
-        } else if (this.aknTextEditor.xmlElement.parentNode.tagName === 'portionBody') {
-          // we can't delete the whole provision in portion mode
-          alert($t('You cannot delete the whole provision in provision editing mode.'));
-        } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
-          // remove element
-          this.document.content.replaceNode(this.aknTextEditor.xmlElement, null);
-        }
-
-      }
-    },
-
-    /**
-     * The XML editor has parsed its XML into a new element.
-     */
-    onXmlElementParsed: function(element) {
-      if (this.xmlEditor.xmlElement) {
-        this.document.content.replaceNode(this.xmlEditor.xmlElement, [element]);
-      }
-    },
-
     onDocumentChanged: function() {
       this.coverpageCache = null;
       this.render();
@@ -273,13 +242,6 @@
     },
 
     editActivityCancelled: function() {
-    },
-
-    // Save the content of the editor into the DOM, returns a Deferred
-    saveChanges: function() {
-      this.tableEditor.saveChanges();
-      this.closeTextEditor();
-      return $.Deferred().resolve();
     },
 
     render: function() {

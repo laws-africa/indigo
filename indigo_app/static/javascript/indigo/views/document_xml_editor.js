@@ -3,7 +3,7 @@
  * text into XML, and handling text-based editor actions (like bolding, etc.).
  */
 class AknTextEditor {
-  constructor (root, document, onElementParsed) {
+  constructor (root, document, liveUpdates) {
     this.root = root;
     this.document = document;
     this.editing = false;
@@ -11,13 +11,12 @@ class AknTextEditor {
     this.xmlElement = null;
     // copy of the original element being edited, for when changes are discarded
     this.xmlElementOriginal = null;
-    this.onElementParsed = onElementParsed;
     // nonce to prevent concurrent saves
     this.nonce = null;
     this.dirty = false;
     // flag to prevent circular updates to the text
     this.updating = false;
-    this.liveUpdates = false;
+    this.liveUpdates = liveUpdates;
     // for provision mode (set to true if the top-level eId changes)
     this.reloadOnSave = false;
 
@@ -66,7 +65,9 @@ class AknTextEditor {
       el.addEventListener('click', (e) => this.insertRemark(e));
     }
 
-    this.root.querySelector('#live-updates-chk').addEventListener('change', (e) => {
+    const checkbox = this.root.querySelector('#live-updates-chk');
+    checkbox.checked = this.liveUpdates;
+    checkbox.addEventListener('change', (e) => {
       this.liveUpdates = e.currentTarget.checked;
       this.onTextChanged();
     });
@@ -109,7 +110,7 @@ class AknTextEditor {
           this.previousText = text;
           try {
             this.updating = true;
-            this.onElementParsed(elements);
+            this.replaceElement(elements);
           } finally {
             // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
             setTimeout(() => {
@@ -187,8 +188,7 @@ class AknTextEditor {
   }
 
   /**
-   * Accept the changes in the editor. This re-parses the text one last time and triggers the onElementParsed
-   * callback with the result (which may be an empty list).
+   * Accept the changes in the editor. This re-parses the text one last time and updates the DOM.
    *
    * @returns {Promise<boolean>} true if the changes were accepted, false if they were not
    */
@@ -207,7 +207,7 @@ class AknTextEditor {
       }
       // check if we're still the current save
       if (nonce !== this.nonce) return false;
-      this.onElementParsed(elements);
+      this.replaceElement(elements);
     }
 
     this.editing = false;
@@ -217,14 +217,36 @@ class AknTextEditor {
     return true;
   }
 
+  /**
+   * Discard the changes in the editor and, if the XML element has changed, replace it with the original.
+   */
   discardChanges () {
     if (this.editing) {
       // only replace the element with the original if it has changed through us
       if (this.dirty && this.xmlElement && this.xmlElement !== this.xmlElementOriginal) {
-        this.onElementParsed([this.xmlElementOriginal]);
+        this.replaceElement([this.xmlElementOriginal]);
       }
       this.editing = false;
       this.dirty = false;
+    }
+  }
+
+  /**
+   * Replace the current XML element with the given elements.
+   */
+  replaceElement (elements) {
+    if (this.xmlElement) {
+      if (elements && elements.length) {
+        // regular update
+        this.document.content.replaceNode(this.xmlElement, elements);
+      } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
+        // we can't delete the whole provision in portion mode
+        alert($t('You cannot delete the whole provision in provision editing mode.'));
+      } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+        // remove element
+        this.document.content.replaceNode(this.xmlElement, null);
+      }
+
     }
   }
 
@@ -324,16 +346,15 @@ window.Indigo.AknTextEditor = AknTextEditor;
  * The XMLEditor manages a monaco editor for editing XML.
  */
 class XMLEditor {
-  constructor(root, document, onElementParsed) {
+  constructor(root, document) {
     this.root = root;
     this.xmlElement = null;
     this.updating = false;
     this.visible = false;
-    this.onElementParsed = onElementParsed;
     // this will be null if the user doesn't have perms
     this.tab = window.document.querySelector('button[data-bs-target="#xml-pane"]');
-    this.documentContent = document.content;
-    this.documentContent.on('mutation', this.onDomMutated.bind(this));
+    this.document = document;
+    this.document.content.on('mutation', this.onDomMutated.bind(this));
 
     window.document.body.addEventListener('indigo:pane-toggled', this.onPaneToggled.bind(this));
     window.document.querySelector('.document-secondary-pane-nav').addEventListener(
@@ -458,7 +479,7 @@ class XMLEditor {
         console.log(err);
         return;
       }
-      this.onElementParsed(doc.documentElement);
+      this.document.content.replaceNode(this.xmlElement, [doc.documentElement]);
     }
   }
 }

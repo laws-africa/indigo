@@ -35,6 +35,7 @@
       this.documentContent.on('mutation', this.onDomMutated.bind(this));
       this.tableWrapper = this.$('.table-editor-wrapper').removeClass('d-none').remove()[0];
       this.editing = false;
+      this.aknElement = document.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
 
       this.ckeditor = null;
       // setup CKEditor
@@ -61,6 +62,18 @@
                         'th(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];' +
                         'td(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];',
       };
+    },
+
+    makeTablesEditable: function(html) {
+      for (const table of html.querySelectorAll('table[id]')) {
+        const w = this.tableWrapper.cloneNode(true);
+
+        w.querySelector('button').dataset.tableId = table.id;
+        table.insertAdjacentElement('beforebegin', w);
+        // we bind the CKEditor instance to this div, since CKEditor can't be
+        // directly attached to the table element
+        w.querySelector('.table-container').append(table);
+      }
     },
 
     /**
@@ -161,6 +174,11 @@
           this.discardChanges(null, true);
         }
 
+        // disable other table edit buttons
+        for (const el of this.aknElement.querySelectorAll('.edit-table')) {
+          el.disabled = true;
+        }
+
         this.observers = [];
 
         // Re-render the table and edit that version. This means that we have the original,
@@ -194,7 +212,6 @@
         this.setupCKEditorInstance(this.ckeditor);
 
         this.editing = true;
-        this.trigger('start');
       } else {
         // clean up observers
         this.observers.forEach(function(observer) { observer.disconnect(); });
@@ -210,6 +227,10 @@
         this.table = null;
         this.editable = null;
         this.editing = false;
+        // enable all table edit buttons
+        for (const el of this.aknElement.querySelectorAll('.edit-table')) {
+          el.disabled = false;
+        }
         this.trigger('finish');
       }
     },

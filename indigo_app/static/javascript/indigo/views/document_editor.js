@@ -57,7 +57,6 @@
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.document.content});
-      this.tableEditor.on('start', this.onTableEditStart, this);
       this.tableEditor.on('finish', this.onTableEditFinish, this);
       this.tableEditor.on('discard', this.editActivityCancelled, this);
       this.tableEditor.on('save', this.editActivityEnded, this);
@@ -253,14 +252,13 @@
       this.sheetInner.classList.toggle('is-fragment', this.xmlElement.parentElement !== null);
 
       var self = this,
-          renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "",
-          coverpage;
+          renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "";
 
       this.aknElement.classList.add('spinner-when-empty');
       this.aknElement.replaceChildren();
 
       if (renderCoverpage) {
-        coverpage = document.createElement('div');
+        const coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
         this.aknElement.appendChild(coverpage);
         this.renderCoverpage().then(function(nodes) {
@@ -272,11 +270,11 @@
       }
 
       this.htmlRenderer.ready.then(function() {
-        var html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
+        const html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
 
         self.makeLinksExternal(html);
         self.addWorkPopups(html);
-        self.makeTablesEditable(html);
+        self.tableEditor.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
         self.highlightQuickEditElement(html);
         self.aknElement.appendChild(html);
@@ -312,7 +310,7 @@
 
             self.makeLinksExternal(html);
             self.addWorkPopups(html);
-            self.makeTablesEditable(html);
+            self.tableEditor.makeTablesEditable(html);
             self.makeElementsQuickEditable(html);
             self.highlightQuickEditElement(html);
             self.aknElement.classList.add('diffset');
@@ -364,22 +362,6 @@
       });
     },
 
-    makeTablesEditable: function(html) {
-      var tables = html.querySelectorAll('table[id]'),
-          self = this;
-
-      tables.forEach(function(table) {
-        var w = self.tableEditor.tableWrapper.cloneNode(true),
-            $w = $(w);
-
-        $w.find('button').data('table-id', table.id);
-        table.insertAdjacentElement('beforebegin', w);
-        // we bind the CKEditor instance to this div, since CKEditor can't be
-        // directly attached to the table element
-        $w.find('.table-container').append(table);
-      });
-    },
-
     makeElementsQuickEditable: function(html) {
       var self = this;
 
@@ -415,7 +397,7 @@
     },
 
     editTable: function(e) {
-      var tableId = $(e.currentTarget).data('table-id');
+      const tableId = e.currentTarget.dataset.tableId;
 
       if (this.confirmAndDiscardChanges()) {
         // we queue this up to run after the click event has finished, because we need the HTML to be re-rendered
@@ -427,27 +409,20 @@
             alert($t('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.'));
           } else {
             this.editActivityStarted('table');
+            this.toolbar.classList.add('is-editing', 'edit-mode-table');
             this.tableEditor.editTable(table);
-            // disable other table edit buttons
-            this.$('.edit-table').prop('disabled', true);
           }
         }, 0);
       }
     },
 
-    onTableEditStart: function() {
-      this.toolbar.classList.add('is-editing', 'edit-mode-table');
-    },
-
     onTableEditFinish: function() {
-      // enable all table edit buttons
-      this.$('.edit-table').prop('disabled', false);
       this.toolbar.classList.remove('is-editing', 'edit-mode-table');
     },
 
     toggleShowStructure: function(e) {
       const show = e.currentTarget.classList.toggle('active');
-      this.el.querySelector('#document-sheet la-akoma-ntoso').classList.toggle('show-structure', show);
+      this.aknElement.classList.toggle('show-structure', show);
     },
 
     toggleShowComparison: function(e) {

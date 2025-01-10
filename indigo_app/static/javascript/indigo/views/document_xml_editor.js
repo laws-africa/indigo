@@ -3,9 +3,11 @@
  * text into XML, and handling text-based editor actions (like bolding, etc.).
  */
 class AknTextEditor {
-  constructor (root, document, liveUpdates) {
+  constructor (root, document, liveUpdates, onSave, onDiscard) {
     this.root = root;
     this.document = document;
+    this.onSave = onSave;
+    this.onDiscard = onDiscard
     this.editing = false;
     this.previousText = null;
     this.xmlElement = null;
@@ -71,6 +73,9 @@ class AknTextEditor {
       this.liveUpdates = e.currentTarget.checked;
       this.onTextChanged();
     });
+
+    this.root.querySelector('.btn.save').addEventListener('click', this.acceptChanges.bind(this));
+    this.root.querySelector('.btn.cancel').addEventListener('click', this.discardChanges.bind(this));
   }
 
   setXmlElement (element) {
@@ -196,15 +201,21 @@ class AknTextEditor {
     if (!this.editing) return false;
 
     if (!this.liveUpdates) {
+      let elements;
       // use a nonce to check if we're still the current save when the parse completes
       const nonce = this.nonce = Math.random();
-      let elements;
+      const btn = this.root.querySelector('.btn.save');
+
       try {
+        btn.setAttribute('disabled', 'true');
         elements = await this.parse();
       } catch(err) {
         Indigo.errorView.show(err);
         return false;
+      } finally {
+        btn.removeAttribute('disabled');
       }
+
       // check if we're still the current save
       if (nonce !== this.nonce) return false;
       this.replaceElement(elements);
@@ -213,6 +224,8 @@ class AknTextEditor {
     this.editing = false;
     this.dirty = false;
     this.xmlElement = this.xmlElementOriginal = null;
+
+    this.onSave();
 
     return true;
   }
@@ -228,6 +241,7 @@ class AknTextEditor {
       }
       this.editing = false;
       this.dirty = false;
+      this.onDiscard();
     }
   }
 

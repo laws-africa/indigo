@@ -49,11 +49,15 @@
   <div class="btn-group btn-group-sm me-2">
     <button type="button" class="btn btn-outline-secondary toggle-word-wrap active">{% trans "Wrap lines" %}</button>
   </div>
-  <div class="ms-auto">
+  <div class="ms-auto me-2">
     <label>
       <input class="form-check-input me-1" type="checkbox" id="live-updates-chk" checked>
       <label class="fw-normal" for="live-updates-chk">{% trans "Preview changes" %}</label>
     </label>
+  </div>
+  <div class="btn-group btn-group-sm">
+    <button class="btn btn-success save"><i class="fas fa-check"></i> {% trans "Update" %}</button>
+    <button class="btn btn-secondary cancel"><i class="fas fa-times"></i> {% trans "Cancel" %}</button>
   </div>
 </div>
 <div class="document-text-editor">

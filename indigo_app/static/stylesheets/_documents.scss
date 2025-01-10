@@ -79,17 +79,9 @@
 .document-toolbar-wrapper {
   padding-bottom: 5px;
 
-  .text-editor-buttons {
-    display: none;
-  }
-
   &.is-editing.edit-mode-text {
     .editor-start-buttons {
       display: none;
-    }
-
-    .text-editor-buttons {
-      display: flex;
     }
   }
 

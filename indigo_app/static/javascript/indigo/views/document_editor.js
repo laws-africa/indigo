@@ -17,8 +17,6 @@
   Indigo.SourceEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .text-editor-buttons .btn.save': 'acceptChanges',
-      'click .text-editor-buttons .btn.cancel': 'discardChanges',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
@@ -38,9 +36,11 @@
       this.toolbar = document.querySelector('.document-toolbar-wrapper');
 
       this.aknTextEditor = new Indigo.AknTextEditor(
-        this.el,
+        this.el.querySelector('.document-primary-pane-editor-pane'),
         this.document,
         true,
+        this.onTextEditSaved.bind(this),
+        this.onTextEditCancelled.bind(this),
       );
 
       const xmlEditorBox = document.querySelector('.document-xml-editor');
@@ -139,35 +139,9 @@
     },
 
     /**
-     * End the edit activity and save the changes made (in text or table edit modes).
-     */
-    acceptChanges: async function() {
-      // save table edits, if any
-      this.tableEditor.saveChanges();
-
-      if (this.aknTextEditor.editing) {
-        const btn = this.toolbar.querySelector('.text-editor-buttons .btn.save');
-        btn.setAttribute('disabled', 'true');
-
-        try {
-          if (await this.aknTextEditor.acceptChanges()) {
-            this.editActivityEnded();
-            this.closeTextEditor();
-          }
-        } finally {
-          btn.removeAttribute('disabled');
-        }
-      }
-    },
-
-    /**
      * Discard the content of all editors.
      */
     discardChanges: function() {
-      if (this.aknTextEditor.editing) {
-        this.editActivityCancelled();
-        this.closeTextEditor();
-      }
       this.tableEditor.discardChanges(true);
       this.aknTextEditor.discardChanges();
     },
@@ -232,6 +206,16 @@
           this.discardChanges();
           break;
       }
+    },
+
+    onTextEditSaved: function() {
+      this.editActivityEnded();
+      this.closeTextEditor();
+    },
+
+    onTextEditCancelled: function() {
+      this.editActivityCancelled();
+      this.closeTextEditor();
     },
 
     editActivityStarted: function(mode) {
@@ -400,6 +384,9 @@
       const tableId = e.currentTarget.dataset.tableId;
 
       if (this.confirmAndDiscardChanges()) {
+        // ensure the text editor is closed, even if there were no changes
+        this.aknTextEditor.discardChanges();
+
         // we queue this up to run after the click event has finished, because we need the HTML to be re-rendered
         // after changes are potentially discarded
         setTimeout(() => {

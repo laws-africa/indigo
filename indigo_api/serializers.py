@@ -1,26 +1,24 @@
-import logging
 import os.path
-from itertools import groupby
-from typing import List
-
-from actstream.signals import action
 from collections import OrderedDict
 
-from lxml.etree import LxmlError
-
-from django.contrib.auth.models import User
-from django.conf import settings
-from rest_framework import serializers
-from rest_framework.reverse import reverse
-from rest_framework.exceptions import ValidationError
-from cobalt import StructuredDocument, FrbrUri
-from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
+import logging
 import reversion
+from actstream.signals import action
+from allauth.account.utils import user_display
+from django.conf import settings
+from django.contrib.auth.models import User
+from lxml import etree
+from lxml.etree import LxmlError
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework.reverse import reverse
+from typing import List
 
+from cobalt import StructuredDocument, FrbrUri
+from cobalt.akn import AKN_NAMESPACES
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
     PublicationDocument, Task, Commencement
 from indigo_api.signals import document_published
-from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
 
@@ -438,11 +436,29 @@ class DocumentAPISerializer(serializers.Serializer):
     """
     Helper to handle input documents for general document APIs
     """
-    document = DocumentSerializer(required=True)
+    xml = serializers.CharField()
+    language = serializers.CharField(min_length=3, max_length=3)
+    is_portion = serializers.BooleanField()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['document'].instance = self.instance
+    def update_document(self, document):
+        # the language could have been changed but not yet saved during editing, which might affect which plugin is used
+        if document.language.code != self.validated_data.get('language'):
+            document.language = Language.for_code(self.validated_data.get('language'))
+        # the FRBR URI doctype needs to match the XML root's child; change it to portion in provision mode
+        if self.validated_data.get('is_portion'):
+            document.work.work_uri.doctype = 'portion'
+        document.content = self.validated_data.get('xml')
+        return document
+
+    def updated_xml(self, document):
+        xml = document.document_xml
+        # in provision mode, unwrap the akn tag as we don't want the 'Entire document' option for editing
+        if self.validated_data.get('is_portion'):
+            root = etree.fromstring(xml)
+            # akn will always have exactly one child, 'portion'
+            portion = root.xpath('a:portion', namespaces={'a': document.doc.namespace})[0]
+            xml = etree.tostring(portion, encoding='unicode')
+        return xml
 
 
 class NoopSerializer(object):

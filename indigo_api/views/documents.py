@@ -14,7 +14,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django_comments.models import Comment
 
-from lxml import etree
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework import mixins, viewsets, renderers, status
@@ -31,7 +30,7 @@ from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
 from indigo.xmlutils import parse_html_str
-from ..models import Document, Annotation, DocumentActivity, Task
+from ..models import Document, Annotation, DocumentActivity, Task, Language, Work
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
@@ -405,37 +404,11 @@ class MarkUpItalicsTermsView(DocumentResourceView, APIView):
     """ Find and mark up italics terms.
     """
     def post(self, request, document_id):
-        # in provision mode, fake a full e.g. <act> using the portion XML
-        data = self.request.data
-        provision_eid = data['document'].pop('provision_eid', None)
-        if provision_eid:
-            data['document']['content'] = self.switch_doctype(data['document']['content'], self.document.work.work_uri.doctype)
-
-        serializer = DocumentAPISerializer(instance=self.document, data=data)
-        serializer.fields['document'].fields['content'].required = True
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
-
+        document = serializer.update_document()
         self.mark_up_italics(document)
-
-        # in provision mode, turn the fake full document back into a portion, minus the wrapping akn tag
-        if provision_eid:
-            document.document_xml = self.switch_doctype(document.document_xml, self.document.work.work_uri.doctype, back_to_portion=True)
-
-        return Response({'document': {'content': document.document_xml}})
-
-    def switch_doctype(self, xml, doctype, back_to_portion=False):
-        old_doc = StructuredDocument.for_document_type(doctype if back_to_portion else 'portion')(xml)
-        new_doc = StructuredDocument.for_document_type('portion' if back_to_portion else doctype)()
-        # delete any empty section in body, for example
-        for blank in new_doc.main_content.xpath('*'):
-            new_doc.main_content.remove(blank)
-        for elem in old_doc.main_content.xpath('*'):
-            new_doc.main_content.append(elem)
-        if back_to_portion:
-            # no wrapping akn tag in provision mode
-            return etree.tostring(new_doc.main, encoding='unicode')
-        return etree.tostring(new_doc.root, encoding='unicode')
+        return Response({'xml': serializer.updated_xml()})
 
     def mark_up_italics(self, document):
         italics_terms_finder = plugins.for_document('italics-terms', document)

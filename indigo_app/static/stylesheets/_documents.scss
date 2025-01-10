@@ -78,17 +78,21 @@
 
 .document-toolbar-wrapper {
   padding-bottom: 5px;
+}
 
-  &.is-editing.edit-mode-text {
-    .editor-start-buttons {
-      display: none;
-    }
+.is-editing .document-workspace-buttons .save-btn-group {
+  display: none;
+}
+
+.is-editing.edit-mode-text {
+  .editor-start-buttons {
+    display: none;
   }
+}
 
-  &.is-editing.edit-mode-table {
-    .editor-start-buttons {
-      display: none;
-    }
+.is-editing.edit-mode-table {
+  .editor-start-buttons {
+    display: none;
   }
 }
 

@@ -116,7 +116,7 @@
         this.editActivityStarted('text');
         this.toggleTextEditor(true);
         this.aknTextEditor.monacoEditor.focus();
-        this.toolbar.classList.add('is-editing', 'edit-mode-text');
+        document.body.classList.add('is-editing', 'edit-mode-text');
       }
     },
 
@@ -149,7 +149,7 @@
     closeTextEditor: function(e) {
       this.toggleTextEditor(false);
       this.aknElement.querySelector('.quick-editing')?.classList.remove('quick-editing');
-      this.toolbar.classList.remove('is-editing', 'edit-mode-text');
+      document.body.classList.remove('is-editing', 'edit-mode-text');
       // set the xml edit back to using the visible element, in case quick edit was used
       if (this.xmlEditor) this.xmlEditor.setXmlElement(this.xmlElement);
     },
@@ -396,7 +396,7 @@
             alert($t('This table contains content that cannot be edited in this mode. Edit the table in text mode instead.'));
           } else {
             this.editActivityStarted('table');
-            this.toolbar.classList.add('is-editing', 'edit-mode-table');
+            document.body.classList.add('is-editing', 'edit-mode-table');
             this.tableEditor.editTable(table);
           }
         }, 0);
@@ -404,7 +404,7 @@
     },
 
     onTableEditFinish: function() {
-      this.toolbar.classList.remove('is-editing', 'edit-mode-table');
+      document.body.classList.remove('is-editing', 'edit-mode-table');
     },
 
     toggleShowStructure: function(e) {

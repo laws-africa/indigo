@@ -73,6 +73,23 @@
       return Indigo.toXml(node || this.xmlDocument);
     },
 
+    // in provision mode, wrap serialized XML in akn tags
+    wrapInAkn: function (xml) {
+      if (Indigo.Preloads.provisionEid) {
+        xml = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${xml}</akomaNtoso>`;
+      }
+      return xml;
+    },
+
+    // serialise the absolute basics of the document for server-side XML manipulation
+    toSimplifiedJSON: function() {
+      return {
+        "xml": this.wrapInAkn(this.toXml()),
+        "language": this.document.attributes.language,
+        "is_portion": Indigo.Preloads.provisionEid !== ""
+      };
+    },
+
     /**
      * Replaces (or deletes) an existing node (or the whole tree) with a new node or nodes.
      * Triggers a change event.
@@ -184,11 +201,7 @@
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.
       // We do this by delegating to the document object.
-      let content = this.get('content');
-      if (Indigo.Preloads.provisionEid) {
-        content = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
-      }
-      this.document.attributes.content = content;
+      this.document.attributes.content = this.wrapInAkn(this.get('content'));
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
       var result = this.document.save();
       // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing

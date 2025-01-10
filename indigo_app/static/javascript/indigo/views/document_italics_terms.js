@@ -36,16 +36,9 @@
     },
 
     markUpItalics: function(e) {
-      var self = this,
+      let self = this,
           $btn = this.$el.find('.mark-up-italics'),
-          data = {'document': this.model.document.toJSON()};
-
-      let content = this.model.toXml();
-      if (Indigo.Preloads.provisionEid) {
-        content = `<akomaNtoso xmlns="${this.model.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
-        data.document.provision_eid = Indigo.Preloads.provisionEid;
-      }
-      data.document.content = content;
+          data = this.model.toSimplifiedJSON();
 
       this.$('a[href="#this-document-italics-terms"]').click();
 
@@ -60,7 +53,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          self.model.set('content', response.document.content);
+          self.model.set('content', response.xml);
         })
         .always(function() {
           $btn

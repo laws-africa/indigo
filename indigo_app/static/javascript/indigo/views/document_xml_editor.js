@@ -13,8 +13,6 @@ class AknTextEditor {
     this.xmlElement = null;
     // copy of the original element being edited, for when changes are discarded
     this.xmlElementOriginal = null;
-    // nonce to prevent concurrent saves
-    this.nonce = null;
     this.dirty = false;
     // flag to prevent circular updates to the text
     this.updating = false;
@@ -110,28 +108,18 @@ class AknTextEditor {
     const text = this.monacoEditor.getValue();
     this.dirty = this.dirty || text !== this.previousText;
 
-    if (this.liveUpdates) {
-      if (this.previousText !== text) {
-        let elements;
+    if (this.liveUpdates && this.previousText !== text) {
+      const elements = await this.parseSafely();
+      if (elements !== false) {
+        this.previousText = text;
+        this.updating = true;
         try {
-          elements = await this.parse();
-        } catch (err) {
-          Indigo.errorView.show(err);
-          return;
-        }
-
-        // check that the response is still valid
-        if (text === this.monacoEditor.getValue()) {
-          this.previousText = text;
-          try {
-            this.updating = true;
-            this.replaceElement(elements);
-          } finally {
-            // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
-            setTimeout(() => {
-              this.updating = false;
-            }, 0);
-          }
+          this.replaceElement(elements);
+        } finally {
+          // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
+          setTimeout(() => {
+            this.updating = false;
+          }, 0);
         }
       }
     }
@@ -203,41 +191,50 @@ class AknTextEditor {
   }
 
   /**
+   * Parse the text in the editor and ensure that it hasn't changed underneath us.
+   * @returns {Promise<Element[]|boolean>}
+   */
+  async parseSafely () {
+    const text = this.monacoEditor.getValue();
+
+    try {
+      const elements = await this.parse();
+      // check that the response is still valid
+      if (text === this.monacoEditor.getValue()) {
+        return elements;
+      }
+    } catch (err) {
+      Indigo.errorView.show(err);
+    }
+
+    return false;
+  }
+
+  /**
    * Accept the changes in the editor. This re-parses the text one last time and updates the DOM.
-   *
-   * @returns {Promise<boolean>} true if the changes were accepted, false if they were not
    */
   async acceptChanges () {
-    if (!this.editing) return false;
+    if (!this.editing) return;
 
     if (!this.liveUpdates) {
-      let elements;
-      // use a nonce to check if we're still the current save when the parse completes
-      const nonce = this.nonce = Math.random();
       const btn = this.root.querySelector('.btn.save');
+      btn.setAttribute('disabled', 'true');
 
       try {
-        btn.setAttribute('disabled', 'true');
-        elements = await this.parse();
-      } catch(err) {
-        Indigo.errorView.show(err);
-        return false;
+        const elements = await this.parseSafely();
+        if (elements === false) {
+          return;
+        }
+        this.replaceElement(elements);
       } finally {
         btn.removeAttribute('disabled');
       }
-
-      // check if we're still the current save
-      if (nonce !== this.nonce) return false;
-      this.replaceElement(elements);
     }
 
     this.editing = false;
     this.dirty = false;
     this.xmlElement = this.xmlElementOriginal = null;
-
     this.onSave();
-
-    return true;
   }
 
   /**

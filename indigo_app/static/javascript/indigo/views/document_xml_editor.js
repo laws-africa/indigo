@@ -90,18 +90,16 @@ class AknTextEditor {
       this.dirty = false;
     }
 
-    if (!this.updating) {
-      this.previousText = this.unparse();
+    this.previousText = this.unparse();
 
-      // only default liveUpdates to true if the document isn't too long
-      // a 100k document takes about 0.5s to parse, which is our upper limit
-      this.setLiveUpdates(this.previousText.length < 100000);
+    // only default liveUpdates to true if the document isn't too long
+    // a 100k document takes about 0.5s to parse, which is our upper limit
+    this.setLiveUpdates(this.previousText.length < 100000);
 
-      this.monacoEditor.setValue(this.previousText);
-      const top = {column: 1, lineNumber: 1};
-      this.monacoEditor.setPosition(top);
-      this.monacoEditor.revealPosition(top);
-    }
+    this.monacoEditor.setValue(this.previousText);
+    const top = {column: 1, lineNumber: 1};
+    this.monacoEditor.setPosition(top);
+    this.monacoEditor.revealPosition(top);
   }
 
   async onTextChanged () {

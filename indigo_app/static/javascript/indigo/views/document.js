@@ -208,12 +208,9 @@
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
       this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues, this.popupManager));
 
-      // pretend we've fetched it, this sets up additional handlers
-      this.document.trigger('sync');
-
       // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);
-      this.documentContent.trigger('sync');
+      this.document.trigger('sync');
 
       // make menu peers behave like real menus on hover
       $('.menu .btn-link').on('mouseover', function(e) {

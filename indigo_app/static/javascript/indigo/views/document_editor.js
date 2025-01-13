@@ -254,13 +254,8 @@
       this.htmlRenderer.ready.then(function() {
         const html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
 
-        self.makeLinksExternal(html);
-        self.addWorkPopups(html);
-        self.tableEditor.makeTablesEditable(html);
-        self.makeElementsQuickEditable(html);
-        self.highlightQuickEditElement(html);
+        self.prepareHtmlForRender(html);
         self.aknElement.appendChild(html);
-
         self.trigger('rendered');
         self.renderComparisonDiff();
       });
@@ -290,16 +285,19 @@
           .then(function(response) {
             var html = $.parseHTML(response.html_diff)[0];
 
-            self.makeLinksExternal(html);
-            self.addWorkPopups(html);
-            self.tableEditor.makeTablesEditable(html);
-            self.makeElementsQuickEditable(html);
-            self.highlightQuickEditElement(html);
+            self.prepareHtmlForRender(html);
             self.aknElement.classList.add('diffset');
             self.aknElement.replaceChildren(html);
-
             self.trigger('rendered');
           });
+    },
+
+    prepareHtmlForRender: function(html) {
+      this.makeLinksExternal(html);
+      this.addWorkPopups(html);
+      this.tableEditor.makeTablesEditable(html);
+      this.makeElementsQuickEditable(html);
+      this.highlightQuickEditElement(html);
     },
 
     renderCoverpage: function() {

@@ -33,6 +33,41 @@ DOCUMENT_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/n
 </akomaNtoso>
 """
 
+PORTION_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <portion name="portion">
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/1900/1/!main"/>
+          <FRBRuri value="/akn/za/act/1900/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/!main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/!main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="2005-07-24" name="Province of Western Cape: σπαθιοῦ Gazette" number="6277" showAs="Province of Western Cape: 😀 Provincial Gazette"/>
+    </meta>
+    <portionBody>
+      %s
+    </portionBody>
+  </portion>
+</akomaNtoso>
+"""
+
 BODY_FIXTURE = """
 <body>
   <section eId="sec_1">
@@ -128,6 +163,13 @@ def document_fixture(text=None, xml=None):
         xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return DOCUMENT_FIXTURE % xml
+
+
+def portion_fixture(text=None, xml=None):
+    if text:
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
+
+    return PORTION_FIXTURE % xml
 
 
 def component_fixture(text=None, xml=None):

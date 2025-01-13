@@ -17,6 +17,8 @@
       let self = this,
           data = {'document': this.model.document.toJSON()};
 
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
       data.document.content = this.model.toXml();
 
       $.ajax({

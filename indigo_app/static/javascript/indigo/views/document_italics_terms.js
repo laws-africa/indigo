@@ -28,17 +28,19 @@
 
     /** Find italics terms in this document */
     listItalicsTerms: function() {
-      var terms = {};
-
-      return _.unique(_.map(this.model.xmlDocument.querySelectorAll('i'), function(elem) {
-        return elem.textContent;
-      }).sort());
+      const terms = new Set();
+      for (const term of this.model.xmlDocument.querySelectorAll('i')) {
+        terms.add(term.textContent);
+      }
+      return [...terms].sort();
     },
 
     markUpItalics: function(e) {
       var self = this,
           $btn = this.$el.find('.mark-up-italics'),
           data = {'document': this.model.document.toJSON()};
+
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
       data.document.content = this.model.toXml();
 

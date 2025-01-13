@@ -55,6 +55,8 @@
           $btn = this.$el.find('.find-references'),
           data = {'document': this.model.document.toJSON()};
 
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
       data.document.content = this.model.toXml();
 
       $btn

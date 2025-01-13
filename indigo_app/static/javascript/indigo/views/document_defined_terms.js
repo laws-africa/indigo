@@ -38,10 +38,7 @@
     linkTerms: function(e) {
       var self = this,
           $btn = this.$el.find('.link-terms'),
-          data = {};
-
-      data.document = this.model.document.toJSON();
-      data.document.content = this.model.toXml();
+          data = this.model.toSimplifiedJSON();
 
       $btn
         .prop('disabled', true)
@@ -54,7 +51,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          self.model.set('content', response.document.content);
+          self.model.set('content', response.xml);
         })
         .always(function() {
           $btn

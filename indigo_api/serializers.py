@@ -463,7 +463,6 @@ class DocumentAPISerializer(serializers.Serializer):
         if self.validated_data.get('is_portion'):
             document.work.work_uri.doctype = 'portion'
         document.content = self.validated_data.get('xml')
-        return document
 
     def updated_xml(self):
         # in provision mode, unwrap the akn tag as we don't want the 'Entire document' option for editing

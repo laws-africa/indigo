@@ -364,76 +364,53 @@ class RenderView(DocumentResourceView, APIView):
             return Response({'output': document.to_html()})
 
 
-class LinkTermsView(DocumentResourceView, APIView):
-    """ Support for running term discovery and linking on a document.
-    """
-    def post(self, request, document_id):
-        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
-        serializer.fields['document'].fields['content'].required = True
-        serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
-
-        self.link_terms(document)
-
-        return Response({'document': {'content': document.document_xml}})
-
-    def link_terms(self, doc):
-        finder = plugins.for_document('terms', doc)
-        if finder:
-            finder.find_terms_in_document(doc)
-
-
-class LinkReferencesView(DocumentResourceView, APIView):
-    """ Find and link internal references and references to other works.
-    """
-    def post(self, request, document_id):
-        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
-        serializer.fields['document'].fields['content'].required = True
-        serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
-
-        self.find_references(document)
-
-        return Response({'document': {'content': document.document_xml}})
-
-    def find_references(self, document):
-        markup_document_refs(document)
-
-
-class MarkUpItalicsTermsView(DocumentResourceView, APIView):
-    """ Find and mark up italics terms.
-    """
+class ManipulateXmlView(DocumentResourceView, APIView):
     def post(self, request, document_id):
         serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.is_valid(raise_exception=True)
-        document = serializer.update_document()
-        self.mark_up_italics(document)
+        serializer.update_document()
+        self.manipulate_xml()
         return Response({'xml': serializer.updated_xml()})
 
-    def mark_up_italics(self, document):
-        italics_terms_finder = plugins.for_document('italics-terms', document)
-        italics_terms = document.work.country.italics_terms
+    def manipulate_xml(self):
+        raise NotImplementedError()
+
+
+class LinkTermsView(ManipulateXmlView):
+    """ Support for running term discovery and linking on a document.
+    """
+    def manipulate_xml(self):
+        # TODO: do the two different steps separately and a bit differently in provision mode
+        finder = plugins.for_document('terms', self.document)
+        if finder:
+            finder.find_terms_in_document(self.document)
+
+
+class LinkReferencesView(ManipulateXmlView):
+    """ Find and link internal references and references to other works.
+    """
+    def manipulate_xml(self):
+        # TODO: markup all references and only return the relevant portion in provision mode?
+        markup_document_refs(self.document)
+
+
+class MarkUpItalicsTermsView(ManipulateXmlView):
+    """ Find and mark up italics terms.
+    """
+    def manipulate_xml(self):
+        italics_terms_finder = plugins.for_document('italics-terms', self.document)
+        italics_terms = self.document.work.country.italics_terms
         if italics_terms_finder and italics_terms:
-            italics_terms_finder.mark_up_italics_in_document(document, italics_terms)
+            italics_terms_finder.mark_up_italics_in_document(self.document, italics_terms)
 
 
-class SentenceCaseHeadingsView(DocumentResourceView, APIView):
+class SentenceCaseHeadingsView(ManipulateXmlView):
     """ Sentence case headings. Also apply accents as needed / relevant.
     """
-    def post(self, request, document_id):
-        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
-        serializer.fields['document'].fields['content'].required = True
-        serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
-
-        self.sentence_case(document)
-
-        return Response({'document': {'content': document.document_xml}})
-
-    def sentence_case(self, document):
-        sentence_caser = plugins.for_document('sentence-caser', document)
+    def manipulate_xml(self):
+        sentence_caser = plugins.for_document('sentence-caser', self.document)
         if sentence_caser:
-            sentence_caser.sentence_case_headings_in_document(document)
+            sentence_caser.sentence_case_headings_in_document(self.document)
 
 
 class DocumentDiffView(DocumentResourceView, APIView):

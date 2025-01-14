@@ -75,6 +75,11 @@
 
       if (mutation.type === 'childList') {
         if (mutation.removedNodes[0] === element) {
+          if (mutation.addedNodes.length === 0) {
+            // the element itself was removed
+            return 'removed';
+          }
+
           // the element has been replaced
           return 'replaced';
         }

@@ -7,7 +7,7 @@ class AknTextEditor {
     this.root = root;
     this.document = document;
     this.onSave = onSave;
-    this.onDiscard = onDiscard
+    this.onDiscard = onDiscard;
     this.editing = false;
     this.previousText = null;
     this.xmlElement = null;

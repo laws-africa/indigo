@@ -30,12 +30,12 @@
     },
 
     initialize: function(options) {
-      var self = this;
-
       this.parent = options.parent;
       this.documentContent = options.documentContent;
+      this.documentContent.on('mutation', this.onDomMutated.bind(this));
       this.tableWrapper = this.$('.table-editor-wrapper').removeClass('d-none').remove()[0];
       this.editing = false;
+      this.aknElement = document.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
 
       this.ckeditor = null;
       // setup CKEditor
@@ -64,6 +64,18 @@
       };
     },
 
+    makeTablesEditable: function(html) {
+      for (const table of html.querySelectorAll('table[id]')) {
+        const w = this.tableWrapper.cloneNode(true);
+
+        w.querySelector('button').dataset.tableId = table.id;
+        table.insertAdjacentElement('beforebegin', w);
+        // we bind the CKEditor instance to this div, since CKEditor can't be
+        // directly attached to the table element
+        w.querySelector('.table-container').append(table);
+      }
+    },
+
     /**
      * Can we edit this html table? Tables with complex content can't be edited with this editor.
      */
@@ -75,6 +87,30 @@
         return result.snapshotLength === 0;
       }
       return true;
+    },
+
+    /**
+     * The XML document has changed, re-render if it impacts our table element.
+     *
+     * @param model documentContent model
+     * @param mutation a MutationRecord object
+     */
+    onDomMutated (model, mutation) {
+      if (!this.editing) return;
+
+      switch (model.getMutationImpact(mutation, this.table)) {
+        case 'replaced':
+          this.discardChanges(true);
+          break;
+        case 'changed':
+          this.discardChanges(true);
+          break;
+        case 'removed':
+          // the change removed xmlElement from the tree
+          console.log('Mutation removes TableEditor.table from the tree');
+          this.discardChanges(true);
+          break;
+      }
     },
 
     saveChanges: function(e) {
@@ -111,7 +147,7 @@
       this.trigger('save');
     },
 
-    discardChanges: function(e, force) {
+    discardChanges: function(force) {
       if (!this.editing || !this.table) return;
       if (!force && !confirm($t("You'll lose your changes, are you sure?"))) return;
 
@@ -136,6 +172,11 @@
         // cancel existing edit
         if (this.table) {
           this.discardChanges(null, true);
+        }
+
+        // disable other table edit buttons
+        for (const el of this.aknElement.querySelectorAll('.edit-table')) {
+          el.disabled = true;
         }
 
         this.observers = [];
@@ -171,7 +212,6 @@
         this.setupCKEditorInstance(this.ckeditor);
 
         this.editing = true;
-        this.trigger('start');
       } else {
         // clean up observers
         this.observers.forEach(function(observer) { observer.disconnect(); });
@@ -187,6 +227,10 @@
         this.table = null;
         this.editable = null;
         this.editing = false;
+        // enable all table edit buttons
+        for (const el of this.aknElement.querySelectorAll('.edit-table')) {
+          el.disabled = false;
+        }
         this.trigger('finish');
       }
     },

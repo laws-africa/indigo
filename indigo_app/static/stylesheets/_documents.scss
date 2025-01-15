@@ -78,25 +78,21 @@
 
 .document-toolbar-wrapper {
   padding-bottom: 5px;
+}
 
-  .text-editor-buttons {
+.is-editing .document-workspace-buttons .save-btn-group {
+  display: none;
+}
+
+.is-editing.edit-mode-text {
+  .editor-start-buttons {
     display: none;
   }
+}
 
-  &.is-editing.edit-mode-text {
-    .editor-start-buttons {
-      display: none;
-    }
-
-    .text-editor-buttons {
-      display: flex;
-    }
-  }
-
-  &.is-editing.edit-mode-table {
-    .editor-start-buttons {
-      display: none;
-    }
+.is-editing.edit-mode-table {
+  .editor-start-buttons {
+    display: none;
   }
 }
 
@@ -129,6 +125,10 @@ button.btn-link.help {
 
   .quick-editable {
     position: relative;
+  }
+
+  .quick-editing {
+    background-color: #ffff98;
   }
 
   .gutter-actions {

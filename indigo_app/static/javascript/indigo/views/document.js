@@ -21,7 +21,11 @@
     },
 
     getTitle: function() {
-      return this.model.get('title') + ' @ ' + this.model.get('expression_date');
+      let title = this.model.get('title') + ' @ ' + this.model.get('expression_date');
+      if (Indigo.Preloads.provisionEid) {
+        title = title + ` – ${Indigo.Preloads.provisionEid}`;
+      }
+      return title;
     },
 
     render: function() {
@@ -151,6 +155,7 @@
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
 
+      this.document.on('sync', this.setClean, this);
       this.document.on('change', this.setDirty, this);
       this.document.on('change:draft', this.draftChanged, this);
 
@@ -160,8 +165,6 @@
       this.cheatsheetView = new Indigo.CheatsheetView();
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
-      this.propertiesView.on('dirty', this.setDirty, this);
-      this.propertiesView.on('clean', this.setClean, this);
 
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
@@ -175,14 +178,11 @@
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
 
-      this.bodyEditorView = new Indigo.DocumentEditorView({
+      this.sourceEditorView = new Indigo.SourceEditorView({
         model: this.document,
-        documentContent: this.documentContent,
         tocView: this.tocView,
       });
-      this.bodyEditorView.on('dirty', this.setDirty, this);
-      this.bodyEditorView.on('clean', this.setClean, this);
-      this.bodyEditorView.editorReady.then(function() {
+      this.sourceEditorView.editorReady.then(function() {
         // select the appropriate element in the toc
         // TODO: there's a race condition here: the TOC might not be built yet
         if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
@@ -195,25 +195,22 @@
         model: this.document,
         prefocus: parseInt(Indigo.queryParams.anntn),
       });
-      this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
+      this.annotationsView.listenTo(this.sourceEditorView, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});
       this.issuesView = new Indigo.DocumentIssuesView({
         document: this.document,
         documentContent: this.documentContent,
-        editorView: this.bodyEditorView,
+        editorView: this.sourceEditorView,
       });
 
       const akn = this.el.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
-      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues));
-
-      // pretend we've fetched it, this sets up additional handlers
-      this.document.trigger('sync');
+      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues, this.popupManager));
 
       // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);
-      this.documentContent.trigger('sync');
+      this.document.trigger('sync');
 
       // make menu peers behave like real menus on hover
       $('.menu .btn-link').on('mouseover', function(e) {
@@ -233,20 +230,18 @@
     },
 
     isDirty: function(e) {
-      return this.propertiesView.dirty || this.bodyEditorView.isDirty();
+      return this.dirty || this.sourceEditorView.isDirty();
     },
 
     setDirty: function() {
-      if (!this.dirty) {
-        this.dirty = true;
-        this.$saveBtn.prop('disabled', false);
-        this.$menu.find('.save').removeClass('disabled');
-      }
+      this.dirty = true;
+      this.$saveBtn.prop('disabled', false);
+      this.$menu.find('.save').removeClass('disabled');
     },
 
     setClean: function() {
       // disable the save button if all views are clean
-      if (!this.propertiesView.dirty && !this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
+      if (!this.sourceEditorView.isDirty() && !this.attachmentsView.dirty) {
         this.dirty = false;
         this.$saveBtn
           .prop('disabled', true)
@@ -281,42 +276,31 @@
       }
     },
 
-    save: function() {
-      var self = this;
-      var deferred = null;
-
-      // always save properties if we save content
-      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;
-
-      var fail = function() {
-        self.$saveBtn
-          .prop('disabled', false)
-          .find('.fa')
-            .removeClass('fa-pulse fa-spinner')
-            .addClass('fa-save');
-        self.$menu.find('.save').removeClass('disabled');
-      };
+    save: async function() {
+      if (!this.sourceEditorView.confirmAndDiscardChanges()) return;
 
       this.$saveBtn
         .prop('disabled', true)
         .find('.fa')
           .removeClass('fa-save')
           .addClass('fa-pulse fa-spinner');
-      this.$menu.find('.save').addClass('disabled');
 
-      deferred = $.Deferred().resolve();
+      try {
+        // this saves the content and the document properties together
+        await Indigo.deferredToAsync(this.documentContent.save());
+        await Indigo.deferredToAsync(this.attachmentsView.save());
 
-      // We save the content first, and then save
-      // the properties on top of it, so that content
-      // properties that change metadata in the content
-      // take precendence.
-      deferred.then(function() {
-        self.bodyEditorView.save().then(function() {
-          self.propertiesView.save().then(function() {
-            self.attachmentsView.save().fail(fail);
-          }).fail(fail);
-        }).fail(fail);
-      }).fail(fail);
+        // TODO: a better way of reloading the page (will redirect to provision chooser for now)
+        if (this.sourceEditorView.aknTextEditor.reloadOnSave) {
+          window.location.reload();
+        }
+      } catch {
+        this.$saveBtn
+          .prop('disabled', false)
+          .find('.fa')
+          .removeClass('fa-pulse fa-spinner')
+          .addClass('fa-save');
+      }
     },
 
     delete: function() {

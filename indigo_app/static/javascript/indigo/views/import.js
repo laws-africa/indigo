@@ -174,7 +174,7 @@
 
       this.file = file;
       this.$('.file-detail').text(this.file.name);
-      this.$('button.import').prop('disabled', !(!!this.work));
+      this.$('button.import').prop('disabled', !this.work);
 
       if (this.file.type == "application/pdf") {
         var reader = new FileReader();

@@ -3,17 +3,24 @@
  * text into XML, and handling text-based editor actions (like bolding, etc.).
  */
 class AknTextEditor {
-  constructor (root, document, onElementParsed) {
+  constructor (root, document, onSave, onDiscard) {
     this.root = root;
     this.document = document;
+    this.onSave = onSave;
+    this.onDiscard = onDiscard;
+    this.editing = false;
     this.previousText = null;
     this.xmlElement = null;
-    this.onElementParsed = onElementParsed;
+    // copy of the original element being edited, for when changes are discarded
+    this.xmlElementOriginal = null;
+    this.dirty = false;
     // flag to prevent circular updates to the text
     this.updating = false;
-    this.liveUpdates = false;
+    this.liveUpdates = true;
     // for provision mode (set to true if the top-level eId changes)
     this.reloadOnSave = false;
+
+    document.content.on('mutation', this.onDocumentMutated.bind(this));
 
     this.grammarName = document.tradition().settings.grammar.name;
     this.grammarModel = new Indigo.grammars.registry[this.grammarName](document.get('frbr_uri'));
@@ -57,32 +64,60 @@ class AknTextEditor {
     for (const el of this.root.querySelectorAll('.insert-remark')) {
       el.addEventListener('click', (e) => this.insertRemark(e));
     }
+
+    this.setLiveUpdates(this.liveUpdates);
+    const checkbox = this.root.querySelector('#live-updates-chk');
+    checkbox.addEventListener('change', (e) => {
+      this.liveUpdates = e.currentTarget.checked;
+      this.onTextChanged();
+    });
+
+    this.root.querySelector('.btn.save').addEventListener('click', this.acceptChanges.bind(this));
+    this.root.querySelector('.btn.cancel').addEventListener('click', this.discardChanges.bind(this));
+  }
+
+  setLiveUpdates (liveUpdates) {
+    this.liveUpdates = liveUpdates;
+    this.root.querySelector('#live-updates-chk').checked = liveUpdates;
   }
 
   setXmlElement (element) {
     this.xmlElement = element;
 
-    if (!this.updating) {
-      this.previousText = this.unparse();
-      this.monacoEditor.setValue(this.previousText);
-      const top = {column: 1, lineNumber: 1};
-      this.monacoEditor.setPosition(top);
-      this.monacoEditor.revealPosition(top);
+    if (!this.editing) {
+      this.editing = true;
+      this.xmlElementOriginal = element;
+      this.dirty = false;
     }
+
+    this.previousText = this.unparse();
+
+    // only default liveUpdates to true if the document isn't too long
+    // a 100k document takes about 0.5s to parse, which is our upper limit
+    this.setLiveUpdates(this.previousText.length < 100000);
+
+    this.monacoEditor.setValue(this.previousText);
+    const top = {column: 1, lineNumber: 1};
+    this.monacoEditor.setPosition(top);
+    this.monacoEditor.revealPosition(top);
   }
 
   async onTextChanged () {
-    if (this.liveUpdates) {
-      const text = this.monacoEditor.getValue();
+    const text = this.monacoEditor.getValue();
+    this.dirty = this.dirty || text !== this.previousText;
 
-      if (this.previousText !== text) {
-        const elements = await this.parse();
-        // check that the response is still valid
-        if (text === this.monacoEditor.getValue()) {
-          this.previousText = text;
-          this.updating = true;
-          this.onElementParsed(elements);
-          this.updating = false;
+    if (this.liveUpdates && this.previousText !== text) {
+      const elements = await this.parseSafely();
+      if (elements !== false) {
+        this.previousText = text;
+        this.updating = true;
+        try {
+          this.replaceElement(elements);
+        } finally {
+          // clear the flag after the next event loop, which gives mutation events a chance to be dispatched
+          setTimeout(() => {
+            this.updating = false;
+          }, 0);
         }
       }
     }
@@ -105,7 +140,12 @@ class AknTextEditor {
     }
   }
 
-  /** Parse the text in the editor into XML. Returns an array of new elements. */
+  /**
+   * Parse the text in the editor into XML. Returns an array of new elements.
+   *
+   * @returns {Promise<Element[]>} the new elements or an empty list if the text is empty
+   * @throws {Error} if the text cannot be parsed
+   **/
   async parse () {
     const text = this.monacoEditor.getValue();
     if (!text.trim()) {
@@ -125,33 +165,137 @@ class AknTextEditor {
       }
     }
 
-    try {
-      const xml = await this.bluebellParser.parse(
-        text,
-        this.document.get('expression_frbr_uri'),
-        fragment,
-        eidPrefix,
-      );
+    const xml = await this.bluebellParser.parse(
+      text,
+      this.document.get('expression_frbr_uri'),
+      fragment,
+      eidPrefix,
+    );
 
-      let newElement = $.parseXML(xml);
+    let newElement = Indigo.parseXml(xml);
 
-      // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
-      if (this.xmlElement.parentElement.tagName === 'portionBody') {
-        // set it back to false if the eId is changed back before saving too
-        this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
-      }
-
-      if (fragmentRule === 'akomaNtoso') {
-        // entire document
-        return [newElement.documentElement];
-      } else {
-        return newElement.documentElement.children;
-      }
-    } catch (e) {
-      Indigo.errorView.show(e);
+    // if the top-level eId changed in provision mode, reload the page when saving later (just set the flag here)
+    if (this.xmlElement.parentNode.tagName === 'portionBody') {
+      // set it back to false if the eId is changed back before saving too
+      this.reloadOnSave = newElement.firstChild.firstChild.getAttribute('eId') !== Indigo.Preloads.provisionEid;
     }
 
-    return null;
+    if (fragmentRule === 'akomaNtoso') {
+      // entire document
+      return [newElement.documentElement];
+    }
+
+    return newElement.documentElement.children;
+  }
+
+  /**
+   * Parse the text in the editor and ensure that it hasn't changed underneath us.
+   * @returns {Promise<Element[]|boolean>}
+   */
+  async parseSafely () {
+    const text = this.monacoEditor.getValue();
+
+    try {
+      const elements = await this.parse();
+      // check that the response is still valid
+      if (text === this.monacoEditor.getValue()) {
+        return elements;
+      }
+    } catch (err) {
+      Indigo.errorView.show(err);
+    }
+
+    return false;
+  }
+
+  /**
+   * Accept the changes in the editor. This re-parses the text one last time and updates the DOM.
+   */
+  async acceptChanges () {
+    if (!this.editing) return;
+
+    if (!this.liveUpdates) {
+      const btn = this.root.querySelector('.btn.save');
+      btn.setAttribute('disabled', 'true');
+
+      try {
+        const elements = await this.parseSafely();
+        if (elements === false) {
+          return;
+        }
+        this.replaceElement(elements);
+      } finally {
+        btn.removeAttribute('disabled');
+      }
+    }
+
+    this.editing = false;
+    this.dirty = false;
+    this.xmlElement = this.xmlElementOriginal = null;
+    this.onSave();
+  }
+
+  /**
+   * Discard the changes in the editor and, if the XML element has changed, replace it with the original.
+   */
+  discardChanges () {
+    if (this.editing) {
+      // only replace the element with the original if it has changed through us
+      if (this.dirty && this.xmlElement && this.xmlElement !== this.xmlElementOriginal) {
+        this.replaceElement([this.xmlElementOriginal]);
+      }
+      this.editing = false;
+      this.dirty = false;
+      this.onDiscard();
+    }
+  }
+
+  /**
+   * Replace the current XML element with the given elements.
+   */
+  replaceElement (elements) {
+    if (this.xmlElement) {
+      if (elements && elements.length) {
+        // regular update
+        this.document.content.replaceNode(this.xmlElement, elements);
+      } else if (this.xmlElement.parentNode.tagName === 'portionBody') {
+        // we can't delete the whole provision in portion mode
+        alert($t('You cannot delete the whole provision in provision editing mode.'));
+      } else if (confirm($t('Go ahead and delete this provision from the document?'))) {
+        // remove element
+        this.document.content.replaceNode(this.xmlElement, null);
+      }
+
+    }
+  }
+
+  /**
+   * The XML document has changed, re-render if it impacts our xmlElement.
+   *
+   * @param model documentContent model
+   * @param mutation a MutationRecord object
+   */
+  onDocumentMutated (model, mutation) {
+    if (!this.editing) return;
+
+    switch (model.getMutationImpact(mutation, this.xmlElement)) {
+      case 'replaced':
+        this.xmlElement = mutation.addedNodes[0];
+        // fall through to 'changed'
+      case 'changed':
+        if (!this.updating) {
+          // the XML has changed, update the text in the editor
+          this.previousText = this.unparse();
+          const posn = this.monacoEditor.getPosition();
+          this.monacoEditor.setValue(this.previousText);
+          this.monacoEditor.setPosition(posn);
+        }
+        break;
+      case 'removed':
+        console.log('Mutation removes AknTextEditor.xmlElement from the tree');
+        this.discardChanges();
+        break;
+    }
   }
 
   toggleWordWrap (e) {
@@ -221,17 +365,15 @@ window.Indigo.AknTextEditor = AknTextEditor;
  * The XMLEditor manages a monaco editor for editing XML.
  */
 class XMLEditor {
-  constructor(root, document, onElementParsed) {
+  constructor(root, document) {
     this.root = root;
     this.xmlElement = null;
     this.updating = false;
     this.visible = false;
-    this.onElementParsed = onElementParsed;
     // this will be null if the user doesn't have perms
     this.tab = window.document.querySelector('button[data-bs-target="#xml-pane"]');
-    this.documentContent = document.content;
-    // TODO: do we still need this if the xmlElement is being set each time the DOM is updated?
-    this.documentContent.on('change:dom', this.onDomChanged.bind(this));
+    this.document = document;
+    this.document.content.on('mutation', this.onDomMutated.bind(this));
 
     window.document.body.addEventListener('indigo:pane-toggled', this.onPaneToggled.bind(this));
     window.document.querySelector('.document-secondary-pane-nav').addEventListener(
@@ -241,9 +383,7 @@ class XMLEditor {
 
   setXmlElement (element) {
     this.xmlElement = element;
-    if (this.visible) {
-      this.render();
-    }
+    this.render();
   }
 
   show() {
@@ -258,17 +398,19 @@ class XMLEditor {
 
   render() {
     // pretty-print the xml
-    const xml = prettyPrintXml(Indigo.toXml(this.xmlElement));
-    if (this.editor.getValue() !== xml) {
-      const posn = this.editor.getPosition();
+    if (this.visible) {
+      const xml = this.xmlElement ? prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
+      if (this.editor.getValue() !== xml) {
+        const posn = this.editor.getPosition();
 
-      // ignore the onDidChangeModelContent event triggered by setValue
-      this.updating = true;
-      this.editor.setValue(xml);
-      this.updating = false;
+        // ignore the onDidChangeModelContent event triggered by setValue
+        this.updating = true;
+        this.editor.setValue(xml);
+        this.updating = false;
 
-      this.editor.setPosition(posn);
-      this.editor.layout();
+        this.editor.setPosition(posn);
+        this.editor.layout();
+      }
     }
   }
 
@@ -298,11 +440,27 @@ class XMLEditor {
     }
   }
 
-  onDomChanged () {
-    // if the fragment has been swapped out, don't use a stale fragment; our parent will
-    // call editFragment() to update our fragment
-    if (this.visible && this.fragment && this.xmlElement.ownerDocument === this.documentContent.xmlDocument) {
-      this.render();
+  /**
+   * The XML document has changed, re-render if it impacts our xmlElement.
+   *
+   * @param model documentContent model
+   * @param mutation a MutationRecord object
+   */
+  onDomMutated (model, mutation) {
+    switch (model.getMutationImpact(mutation, this.xmlElement)) {
+      case 'replaced':
+        this.xmlElement = mutation.addedNodes[0];
+        this.render();
+        break;
+      case 'changed':
+        this.render();
+        break;
+      case 'removed':
+        // the change removed xmlElement from the tree
+        console.log('Mutation removes SourceEditor.xmlElement from the tree');
+        this.xmlElement = null;
+        this.render();
+        break;
     }
   }
 
@@ -329,18 +487,19 @@ class XMLEditor {
   }
 
   onEditorChanged() {
-    let element;
-
-    try {
-      console.log('Parsing changes to XML');
-      element = $.parseXML(this.editor.getValue()).documentElement;
-    } catch (err) {
-      // squash errors
-      console.log(err);
-      return;
+    const text = this.editor.getValue().trim();
+    if (text) {
+      let doc;
+      try {
+        console.log('Parsing changes to XML');
+        doc = Indigo.parseXml(text);
+      } catch (err) {
+        // squash errors
+        console.log(err);
+        return;
+      }
+      this.document.content.replaceNode(this.xmlElement, [doc.documentElement]);
     }
-
-    this.onElementParsed(element);
   }
 }
 

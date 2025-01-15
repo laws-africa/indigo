@@ -28,18 +28,22 @@
 
     /** Find italics terms in this document */
     listItalicsTerms: function() {
-      var terms = {};
-
-      return _.unique(_.map(this.model.xmlDocument.querySelectorAll('i'), function(elem) {
-        return elem.textContent;
-      }).sort());
+      const terms = new Set();
+      for (const term of this.model.xmlDocument.querySelectorAll('i')) {
+        terms.add(term.textContent);
+      }
+      return [...terms].sort();
     },
 
     markUpItalics: function(e) {
       let self = this,
-          $btn = this.$el.find('.mark-up-italics'),
-          data = this.model.toSimplifiedJSON();
+          $btn = this.$el.find('.mark-up-italics');
 
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
+      const data = this.model.toSimplifiedJSON();
+
+      // TODO: this doesn't work; nuke this line or fix it
       this.$('a[href="#this-document-italics-terms"]').click();
 
       $btn
@@ -64,23 +68,15 @@
 
     removeItalics: function(e) {
       // remove all italics mark-up
-      let changed = false;
-
-      // TODO: navigate to 'In this document' first (this click() doesn't do anything)
+      // TODO: this doesn't work; nuke this line or fix it
       this.$('a[href="#this-document-italics-terms"]').click();
 
       this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>
-        var parent = term.parentNode;
+        const parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
-
-        changed = true;
       });
-
-      if (changed) {
-        this.model.trigger('change:dom');
-      }
     }
   });
 })(window);

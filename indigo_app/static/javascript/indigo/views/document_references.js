@@ -51,9 +51,12 @@
     },
 
     findReferences: function(e) {
-      var self = this,
-          $btn = this.$el.find('.find-references'),
-          data = this.model.toSimplifiedJSON();
+      let self = this,
+          $btn = this.$el.find('.find-references');
+
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
+      const data = this.model.toSimplifiedJSON();
 
       $btn
         .prop('disabled', true)
@@ -77,20 +80,14 @@
 
     removeReferences: function(e) {
       // remove all non-absolute refs
-      var changed = false;
-
       this.model.xmlDocument.querySelectorAll('ref').forEach(function(ref) {
         if ((ref.getAttribute('href') || "").startsWith('/') || (ref.getAttribute('href') || "").startsWith('#')) {
           // get rid of ref
-          var parent = ref.parentNode;
+          const parent = ref.parentNode;
           while (ref.firstChild) parent.insertBefore(ref.firstChild, ref);
           parent.removeChild(ref);
-
-          changed = true;
         }
       });
-
-      if (changed) this.model.trigger('change:dom');
     },
   });
 })(window);

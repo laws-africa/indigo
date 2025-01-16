@@ -96,7 +96,7 @@
       });
 
       // set the content once for one mutation record
-      this.model.xmlDocument.documentElement.replace(xml);
+      this.model.xmlDocument.documentElement.replaceWith(xml.documentElement);
     },
   });
 })(window);

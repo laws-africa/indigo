@@ -109,7 +109,7 @@
   </div>
 
   {% include "indigo_api/document/_revisions.html" %}
-  {% include "indigo_api/document/_defined_terms.html" %}
+  {% include "indigo_api/document/_defined_terms.html" with provision_eid=provision_eid %}
   {% include "indigo_api/document/_references.html" %}
   {% include "indigo_api/document/_annotations.html" %}
   {% include "indigo_api/document/_insert_image_modal.html" %}

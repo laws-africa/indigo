@@ -566,9 +566,6 @@ class Document(DocumentMixin, models.Model):
         generator = XmlGenerator(self.frbr_uri)
         generator.generate_eids(self.doc.root)
         rewrite_all_attachment_work_components(self.doc)
-        finder = plugins.for_document('terms', self)
-        if finder:
-            finder.fix_terms_in_document(self)
         self.reset_xml(self.doc.to_xml(encoding='unicode'), from_model=True)
 
     def _make_doc(self, xml):

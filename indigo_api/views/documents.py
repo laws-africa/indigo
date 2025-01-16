@@ -365,15 +365,16 @@ class RenderView(DocumentResourceView, APIView):
 
 
 class ManipulateXmlView(DocumentResourceView, APIView):
+    serializer = None
     use_full_xml = False
 
     def post(self, request, document_id):
-        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
-        serializer.use_full_xml = self.use_full_xml
-        serializer.is_valid(raise_exception=True)
-        serializer.update_document()
+        self.serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
+        self.serializer.use_full_xml = self.use_full_xml
+        self.serializer.is_valid(raise_exception=True)
+        self.serializer.update_document()
         self.manipulate_xml()
-        return Response({'xml': serializer.updated_xml()})
+        return Response({'xml': self.serializer.updated_xml()})
 
     def manipulate_xml(self):
         raise NotImplementedError()
@@ -387,7 +388,10 @@ class LinkTermsView(ManipulateXmlView):
     def manipulate_xml(self):
         finder = plugins.for_document('terms', self.document)
         if finder:
-            finder.find_terms_in_document(self.document)
+            if self.serializer.validated_data.get('provision_eid'):
+                finder.link_terms_in_provision(self.document)
+            else:
+                finder.find_terms_in_document(self.document)
 
 
 class LinkReferencesView(ManipulateXmlView):

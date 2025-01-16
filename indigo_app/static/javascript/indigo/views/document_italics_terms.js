@@ -82,7 +82,7 @@
       });
 
       // set the content once for one mutation record
-      this.model.set('content', Indigo.toXml(xml));
+      this.model.xmlDocument.documentElement.replace(xml);
     }
   });
 })(window);

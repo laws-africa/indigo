@@ -11,28 +11,33 @@ class BluebellParser {
     // python dependencies
     this.packages = Indigo.pyodide_packages;
     this.pyBootstrap = `
-from bluebell.parser import AkomaNtosoParser
+from bluebell.parser import AkomaNtosoParser, ParseError
 from cobalt import FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 from lxml import etree
 
+# parse bluebell text and return an [error, result] tuple
 def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
     # see indigo.pipelines.base.ParseBluebellText for context
     frbr_uri = FrbrUri.parse(frbr_uri)
     frbr_uri.work_component = 'main'
     root = fragment or frbr_uri.doctype
 
-    parser = AkomaNtosoParser(frbr_uri, eid_prefix or '')
-    xml = parser.parse_to_xml(text, root)
+    try:
+        parser = AkomaNtosoParser(frbr_uri, eid_prefix or '')
+        xml = parser.parse_to_xml(text, root)
+    except ParseError as e:
+        return True, str(e)
 
     if fragment:
         # fragment must be wrapped in AKN tags
         xml = etree.tostring(xml, encoding='unicode')
         ns = AKN_NAMESPACES[DEFAULT_VERSION]
         xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
-        return xml
+        return False, xml
 
-    return etree.tostring(xml, encoding='unicode')
+    xml = etree.tostring(xml, encoding='unicode')
+    return False, xml
 `;
   }
 
@@ -66,7 +71,12 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
 
   async parseWithPyodide (text, frbr_uri, fragment, eidPrefix) {
     console.log('Parsing with pyodide');
-    return this.pyodide.globals.get('parseBluebellText')(text, frbr_uri, fragment, eidPrefix);
+    const [error, resp] = this.pyodide.globals.get('parseBluebellText')(text, frbr_uri, fragment, eidPrefix);
+    // check for error
+    if (error) {
+      throw resp;
+    }
+    return resp;
   }
 
   async parseWithServer (text, frbr_uri, fragment, eidPrefix) {

@@ -28,17 +28,19 @@
 
     /** Find italics terms in this document */
     listItalicsTerms: function() {
-      var terms = {};
-
-      return _.unique(_.map(this.model.xmlDocument.querySelectorAll('i'), function(elem) {
-        return elem.textContent;
-      }).sort());
+      const terms = new Set();
+      for (const term of this.model.xmlDocument.querySelectorAll('i')) {
+        terms.add(term.textContent);
+      }
+      return [...terms].sort();
     },
 
     markUpItalics: function(e) {
       var self = this,
           $btn = this.$el.find('.mark-up-italics'),
           data = {'document': this.model.document.toJSON()};
+
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
       data.document.content = this.model.toXml();
 
@@ -65,25 +67,17 @@
     },
 
     removeItalics: function(e) {
-      // remove all italics mark-up
-      var self = this,
-          changed = false;
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
+      // remove all italics mark-up
       this.$('a[href="#this-document-italics-terms"]').click();
 
       this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>
-        var parent = term.parentNode;
+        const parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
-
-        changed = true;
       });
-
-      if (changed) {
-        this.model.trigger('change:dom');
-        // TODO: refresh content without saving
-      }
     }
   });
 })(window);

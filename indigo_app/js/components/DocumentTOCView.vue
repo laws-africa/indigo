@@ -114,10 +114,16 @@ export default {
       };
 
       function generateToc (node) {
-        const $node = $(node);
+        let num = null;
+        for (const n of node.children) {
+          if (n.localName === 'num') {
+            num = n;
+            break;
+          }
+        }
 
         const item = {
-          num: $node.children('num').text(),
+          num: num ? num.textContent : '',
           heading: getHeadingText(node),
           element: node,
           type: node.localName,
@@ -226,7 +232,7 @@ export default {
 
     onTitleClick (e) {
       e.detail.preventDefault();
-      if (!Indigo.view.bodyEditorView || Indigo.view.bodyEditorView.canCancelEdits()) {
+      if (!Indigo.view.sourceEditorView || Indigo.view.sourceEditorView.confirmAndDiscardChanges()) {
         this.selectItem(e.target.item.index);
       }
     }

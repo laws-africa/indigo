@@ -28,17 +28,20 @@
 
     /** Find defined terms in this document */
     findTerms: function() {
-      var terms = {};
-
-      return _.map(this.model.xmlDocument.querySelectorAll('def'), function(elem) {
-        return elem.textContent;
-      }).sort();
+      const terms = [];
+      for (const term of this.model.xmlDocument.querySelectorAll('def')) {
+        terms.push(term.textContent);
+      }
+      terms.sort();
+      return terms;
     },
 
     linkTerms: function(e) {
       var self = this,
           $btn = this.$el.find('.link-terms'),
           data = {};
+
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
       data.document = this.model.document.toJSON();
       data.document.content = this.model.toXml();
@@ -64,15 +67,13 @@
     },
 
     removeTerms: function(e) {
-      var changed = false;
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
       // unwrap all <def>s
       this.model.xmlDocument.querySelectorAll('def').forEach(function(def) {
         var parent = def.parentNode;
         while (def.firstChild) parent.insertBefore(def.firstChild, def);
         parent.removeChild(def);
-
-        changed = true;
       });
 
       // unwrap all <term>s
@@ -94,8 +95,6 @@
           el.removeAttribute('refersTo');
         }
       });
-
-      if (changed) this.model.trigger('change:dom');
     },
   });
 })(window);

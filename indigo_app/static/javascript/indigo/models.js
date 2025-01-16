@@ -13,22 +13,27 @@
       .replace(/'/g, "&#039;");
   }
 
-  /* A model for the content of a document. The API handles it separately
-   * to the document metadata since the content can be very big.
+  /**
+   * A model for the content of a document. The API handles it separately to the document metadata since the content
+   * can be very big.
    *
-   * The model also manages an XML DOM form of the document content and keeps
-   * the two in sync.
+   * The model also manages an XML DOM form of the document content, and updates the DOM if the text content changes.
+   * The reverse is not true: the text content is not kept up to date for performance reasons. If the text content
+   * is required, it must first be serialised with toXml().
    *
-   * This model fires an additional 'change:dom' event when the XML DOM
-   * tree itself has changed due to a modification by this model.
+   * This model fires custom events:
+   *
+   * - mutation - when the XML DOM is manipulated by any means, based on the MutationObserver class. The parameter
+   *              for the event is a MutationRecord object.
+   * - change:dom - when the XML DOM is manipulated by any means, after all the mutation events have been fired.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
       this.document.content = this;
       this.xmlDocument = null;
+      this.observer = null;
       this.on('change:content', this.contentChanged, this);
-      this.on('change:dom', this.domChanged, this);
     },
 
     isNew: function() {
@@ -40,27 +45,91 @@
       return this.document.url() + '/content';
     },
 
+    setupMutationObserver: function () {
+      this.observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          console.log('mutation', mutation);
+          this.trigger('mutation', this, mutation);
+        }
+        this.trigger('change:dom', this);
+        this.trigger('change', this);
+      });
+
+      this.observer.observe(this.xmlDocument, {
+        childList: true,
+        attributes: true,
+        subtree: true,
+      });
+    },
+
+    /**
+     * Determine the impact of a mutation on the provided element.
+     * @param mutation MutationRecord
+     * @param element Element in this XML document
+     * @returns 'changed' if the mutation impacts the element, 'removed' if the element was removed from the tree,
+     *          'replaced', if the element has been replaced (with a node in mutation.addedNodes),
+     *          or null if there is no impact
+     */
+    getMutationImpact(mutation, element) {
+      const target = mutation.target;
+
+      if (mutation.type === 'childList') {
+        if (mutation.removedNodes[0] === element) {
+          if (mutation.addedNodes.length === 0) {
+            // the element itself was removed
+            return 'removed';
+          }
+
+          // the element has been replaced
+          return 'replaced';
+        }
+
+        const ownerDocument = target.nodeType === Node.DOCUMENT_NODE ? target : target.ownerDocument;
+        if (!ownerDocument.contains(element)) {
+          // the change removed xmlElement from the tree
+          return 'removed';
+        }
+      }
+
+      if (target === element || element.contains(target)) {
+        // the mutated node is xmlElement itself or one of its descendants
+        return 'changed';
+      }
+
+      // we don't care about attribute or character data changes elsewhere in the document
+    },
+
     contentChanged: function(model, newValue, options) {
-      // don't bother updating the DOM if the source of this event
-      // is already a change to the DOM
-      if (options && options.fromXmlDocument) return;
+      let root = null;
 
       try {
-        this.xmlDocument = $.parseXML(newValue);
+        root = Indigo.parseXml(newValue);
       } catch(e) {
         Indigo.errorView.show("The document has invalid XML.");
         return;
       }
 
-      options.fromContent = true;
-      this.trigger('change:dom', model, options);
+      if (!this.xmlDocument) {
+        this.xmlDocument = root;
+        this.setupMutationObserver();
+        this.trigger('change:dom', this);
+        this.trigger('change', this);
+      } else {
+        root = root.documentElement;
+        this.xmlDocument.adoptNode(root);
+        this.xmlDocument.documentElement.replaceWith(root);
+      }
+
+      // clear the content, so that any change later will always trigger a change event, because we don't keep
+      // the content synced with the changes in the DOM
+      this.set('content', '', {silent: true});
     },
 
-    domChanged: function(model, options) {
-      // don't bother updating the content if this event was
-      // originally triggered by a content change
-      if (options && options.fromContent) return;
-
+    /**
+     * Rewrite all eIds and component names to ensure they are correct. This should be done after the DOM structure
+     * is changed.
+     */
+    rewriteIds: function() {
       // rewrite all eIds before setting the content
       // in provision mode, retain the eId of the parent element as the prefix
       let eidPrefix;
@@ -70,7 +139,6 @@
       new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
-      this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
     // serialise an XML node, or the entire document if node is not given, to a string
@@ -100,7 +168,6 @@
 
       if (!oldNode || !oldNode.parentElement) {
         if (del) {
-          // TODO: we don't currently support deleting whole document
           throw "Cannot currently delete the entire document.";
         }
 
@@ -108,8 +175,8 @@
         if (newNodes.length !== 1) {
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
-        console.log('Replacing whole document');
-        this.xmlDocument = first.ownerDocument;
+        this.xmlDocument.adoptNode(first);
+        this.xmlDocument.documentElement.replaceWith(first);
 
       } else {
         if (del) {
@@ -121,13 +188,14 @@
           // just a fragment has changed
           console.log('Replacing node with ' + newNodes.length + ' new node(s)');
 
-          first = oldNode.ownerDocument.importNode(first, true);
+          oldNode.ownerDocument.adoptNode(first);
           oldNode.parentElement.replaceChild(first, oldNode);
 
           // now append the other nodes, starting at the end
           // because it makes the insert easier
           for (var i = newNodes.length-1; i > 0; i--) {
-            var node = first.ownerDocument.importNode(newNodes[i], true);
+            const node = newNodes[i];
+            first.ownerDocument.adoptNode(node);
 
             if (first.nextElementSibling) {
               first.parentElement.insertBefore(node, first.nextElementSibling);
@@ -138,8 +206,8 @@
         }
       }
 
-      // domChanged will rewrite all eIds
-      this.trigger('change:dom');
+      this.rewriteIds();
+
       return first;
     },
 
@@ -159,19 +227,6 @@
       return this.xmlDocument.evaluate(expression, context, nsLookup, result);
     },
 
-    /** Get an array of <act> and <doc> elements for this document.
-     */
-    componentElements: function() {
-      var components = [],
-          result = this.xpath('/a:akomaNtoso/a:act/a:meta | /a:akomaNtoso/a:act/a:attachments/a:attachment/a:*/a:meta');
-
-      for (var i = 0; i < result.snapshotLength; i++) {
-        components.push(result.snapshotItem(i).parentElement);
-      }
-
-      return components;
-    },
-
     /** Get an element by id, which is potentially scoped to a component (eg. "schedule1/table-1").
      * @param scopedId
      */
@@ -188,16 +243,18 @@
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.
-      // We do this by delegating to the document object.
-      let content = this.get('content');
+      // We do this by delegating the actual save to the document object.
+
+      // serialise the xml from the live DOM
+      let content = this.toXml();
+
       if (Indigo.Preloads.provisionEid) {
         content = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
       }
       this.document.attributes.content = content;
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
-      var result = this.document.save();
-      // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
-      // the response to the save() call
+      const result = this.document.save();
+      // don't re-parse the content in the response to the save() call
       delete this.document.attributes.content;
       this.document.setClean();
       this.trigger('sync');
@@ -256,7 +313,7 @@
       parts.push(this.get('number'));
 
       // clean the parts
-      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
+      parts = _.map(parts, function(p) { return (p || "").replace(/[ /]/g, ''); });
 
       this.set('frbr_uri', parts.join('/').toLowerCase());
     },
@@ -443,12 +500,6 @@
       }
 
       return url;
-    },
-
-    setWork: function(work) {
-      this.set('frbr_uri', work.get('frbr_uri'));
-      this.work = work;
-      this.trigger('change change:work');
     },
 
     /** Get the Tradition description for this document's country.

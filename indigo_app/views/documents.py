@@ -130,7 +130,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
     def get(self, request, *args, **kwargs):
         document = self.get_object()
         self.eid = self.kwargs.get('eid')
-        self.provision_xml = document.get_provision_xml(self.eid)
+        self.provision_xml = document.get_provision_element(self.eid)
         if self.provision_xml is None:
             messages.error(request, _("No provision with this id found: '%(eid)s'") % {"eid": self.eid})
             return redirect('choose_document_provision', doc_id=document.id)

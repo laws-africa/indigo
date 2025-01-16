@@ -548,7 +548,7 @@ class Document(DocumentMixin, models.Model):
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
 
-    def get_provision_xml(self, provision_eid):
+    def get_provision_element(self, provision_eid):
         provision_xml = self.doc.get_portion_element(provision_eid)
         if provision_xml is None:
             return None

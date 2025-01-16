@@ -59,7 +59,7 @@ class AnalysisTestCase(APITestCase):
 </section>
 """),
             'language': 'eng',
-            'is_portion': False
+            'provision_eid': ""
         })
         assert_equal(response.status_code, 200)
 
@@ -108,7 +108,7 @@ class AnalysisTestCase(APITestCase):
 </section>
 """),
             'language': 'eng',
-            'is_portion': True
+            'provision_eid': "section-1"
         })
         assert_equal(response.status_code, 200)
 
@@ -134,7 +134,7 @@ class AnalysisTestCase(APITestCase):
 </section>
 """),
             'language': 'eng',
-            'is_portion': False
+            'provision_eid': ""
         }
 
         # user doesn't have perms

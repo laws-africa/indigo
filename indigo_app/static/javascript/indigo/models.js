@@ -159,7 +159,7 @@
       return {
         "xml": this.wrapInAkn(this.toXml()),
         "language": this.document.attributes.language,
-        "is_portion": Indigo.Preloads.provisionEid !== ""
+        "provision_eid": Indigo.Preloads.provisionEid
       };
     },
 

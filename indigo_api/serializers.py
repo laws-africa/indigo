@@ -438,13 +438,13 @@ class DocumentAPISerializer(serializers.Serializer):
     """
     xml = serializers.CharField()
     language = serializers.CharField(min_length=3, max_length=3)
-    is_portion = serializers.BooleanField()
+    provision_eid = serializers.CharField(allow_blank=True)
 
     def validate_xml(self, xml):
         """ mostly copied from DocumentSerializer.validate()
         """
         try:
-            doctype = self.instance.work_uri.doctype if not self.initial_data.get('is_portion') else 'portion'
+            doctype = self.instance.work_uri.doctype if not self.initial_data.get('provision_eid') else 'portion'
             doc = StructuredDocument.for_document_type(doctype)(xml)
         except (LxmlError, ValueError) as e:
             raise ValidationError("Invalid XML: %s" % str(e))

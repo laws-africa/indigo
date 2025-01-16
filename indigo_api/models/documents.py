@@ -550,7 +550,7 @@ class Document(DocumentMixin, models.Model):
 
     def get_provision_xml(self, provision_eid):
         provision_xml = self.doc.get_portion_element(provision_eid)
-        if not provision_xml:
+        if provision_xml is None:
             return None
         portion = StructuredDocument.for_document_type('portion')()
         portion.frbr_uri = self.frbr_uri

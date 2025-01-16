@@ -116,7 +116,7 @@ class AnalysisTestCase(APITestCase):
 
         assert_true(content.startswith('<portion '))
         assert_in('<def ', content)
-        assert_in('<TLCTerm ', content)
+        # TLCTerms get set on save only for portions, since they need to go on the document's meta and not the portion's
 
     def test_link_terms_no_perms(self):
         self.client.logout()

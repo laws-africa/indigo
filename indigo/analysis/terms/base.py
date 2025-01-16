@@ -51,6 +51,18 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.find_term_references(doc, terms)
         self.renumber_terms(doc)
 
+    def fix_terms_in_document(self, document):
+        """ Do everything other than guessing at defined terms in a Document.
+            Run this before saving an updated document when a portion was edited separately.
+        """
+        root = etree.fromstring(document.doc.to_xml(encoding='unicode'))
+        self.setup(root)
+        terms = self.find_definitions(root)
+        self.add_terms_to_references(root, terms)
+        self.find_term_references(root, terms)
+        self.renumber_terms(root)
+        document.content = etree.tostring(root, encoding='unicode')
+
     def setup(self, doc):
         self.ns = doc.nsmap[None]
         self.nsmap = {'a': self.ns}

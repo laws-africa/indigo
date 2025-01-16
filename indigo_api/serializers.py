@@ -457,18 +457,39 @@ class DocumentAPISerializer(serializers.Serializer):
     def update_document(self):
         document = self.instance
         # the language could have been changed but not yet saved during editing, which might affect which plugin is used
-        if document.language.code != self.validated_data.get('language'):
-            document.language = Language.for_code(self.validated_data.get('language'))
-        # the FRBR URI doctype needs to match the XML root's child; change it to portion in provision mode
-        if self.validated_data.get('is_portion'):
-            document.work.work_uri.doctype = 'portion'
-        document.content = self.validated_data.get('xml')
+        language_code = self.validated_data.get('language')
+        if document.language.code != language_code:
+            document.language = Language.for_code(language_code)
+        # update the content with updated but unsaved changes too
+        self.set_content()
+
+    def set_content(self):
+        document = self.instance
+        xml = self.validated_data.get('xml')
+        provision_eid = self.validated_data.get('provision_eid')
+        if not provision_eid:
+            # update the document's full XML with what's in the editor
+            document.content = xml
+        else:
+            if self.use_full_xml:
+                # we'll need the document's full XML for the analysis,
+                # but update the relevant provision with what's in the editor first
+                document.update_provision_xml(provision_eid, xml)
+            else:
+                # update the document to be a 'portion' and use only what's in the editor as the content
+                document.work.work_uri.doctype = 'portion'
+                document.content = xml
 
     def updated_xml(self):
-        # in provision mode, unwrap the akn tag as we don't want the 'Entire document' option for editing
-        if self.validated_data.get('is_portion'):
-            return etree.tostring(self.instance.doc.portion, encoding='unicode')
-        return self.instance.document_xml
+        document = self.instance
+        provision_eid = self.validated_data.get('provision_eid')
+        if not provision_eid:
+            # return the document's full updated XML
+            return document.document_xml
+        # otherwise, return only the provision being edited (NOT including the outer akn tag)
+        # if we used the full XML for the analysis, grab only the appropriate provision as a portion
+        xml = document.get_provision_xml(provision_eid) if self.use_full_xml else document.doc.portion
+        return etree.tostring(xml, encoding='unicode')
 
 
 class NoopSerializer(object):

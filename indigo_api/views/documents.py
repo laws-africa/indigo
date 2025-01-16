@@ -365,8 +365,11 @@ class RenderView(DocumentResourceView, APIView):
 
 
 class ManipulateXmlView(DocumentResourceView, APIView):
+    use_full_xml = False
+
     def post(self, request, document_id):
         serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
+        serializer.use_full_xml = self.use_full_xml
         serializer.is_valid(raise_exception=True)
         serializer.update_document()
         self.manipulate_xml()
@@ -379,8 +382,9 @@ class ManipulateXmlView(DocumentResourceView, APIView):
 class LinkTermsView(ManipulateXmlView):
     """ Support for running term discovery and linking on a document.
     """
+    use_full_xml = True
+
     def manipulate_xml(self):
-        # TODO: do the two different steps separately and a bit differently in provision mode
         finder = plugins.for_document('terms', self.document)
         if finder:
             finder.find_terms_in_document(self.document)
@@ -389,8 +393,9 @@ class LinkTermsView(ManipulateXmlView):
 class LinkReferencesView(ManipulateXmlView):
     """ Find and link internal references and references to other works.
     """
+    use_full_xml = True
+
     def manipulate_xml(self):
-        # TODO: markup all references and only return the relevant portion in provision mode?
         markup_document_refs(self.document)
 
 

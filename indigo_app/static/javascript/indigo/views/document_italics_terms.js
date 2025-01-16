@@ -68,17 +68,21 @@
 
     removeItalics: function(e) {
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+      let xml = this.model.xmlDocument.cloneNode(true);
 
       // remove all italics mark-up
       // TODO: this doesn't work; nuke this line or fix it
       this.$('a[href="#this-document-italics-terms"]').click();
 
-      this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
+      xml.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>
         const parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
       });
+
+      // set the content once for one mutation record
+      this.model.set('content', Indigo.toXml(xml));
     }
   });
 })(window);

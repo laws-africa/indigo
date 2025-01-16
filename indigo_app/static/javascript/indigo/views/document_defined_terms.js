@@ -66,33 +66,37 @@
 
     removeTerms: function(e) {
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+      let xml = this.model.xmlDocument.cloneNode(true);
 
       // unwrap all <def>s
-      this.model.xmlDocument.querySelectorAll('def').forEach(function(def) {
+      xml.querySelectorAll('def').forEach(function(def) {
         var parent = def.parentNode;
         while (def.firstChild) parent.insertBefore(def.firstChild, def);
         parent.removeChild(def);
       });
 
       // unwrap all <term>s
-      this.model.xmlDocument.querySelectorAll('term').forEach(function(term) {
+      xml.querySelectorAll('term').forEach(function(term) {
         var parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
       });
 
       // remove all <TLCTerm>s
-      this.model.xmlDocument.querySelectorAll('TLCTerm').forEach(function(tlcTerm) {
+      xml.querySelectorAll('TLCTerm').forEach(function(tlcTerm) {
         var parent = tlcTerm.parentNode;
         parent.removeChild(tlcTerm);
       });
 
       // remove all refersTo attributes that start with '#term-'
-      this.model.xmlDocument.querySelectorAll('[refersTo]').forEach(function(el) {
+      xml.querySelectorAll('[refersTo]').forEach(function(el) {
         if ((el.getAttribute('refersTo') || '').startsWith('#term-')) {
           el.removeAttribute('refersTo');
         }
       });
+
+      // set the content once for one mutation record
+      this.model.set('content', Indigo.toXml(xml));
     },
   });
 })(window);

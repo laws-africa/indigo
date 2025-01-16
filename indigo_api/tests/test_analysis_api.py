@@ -108,7 +108,7 @@ class AnalysisTestCase(APITestCase):
 </section>
 """),
             'language': 'eng',
-            'provision_eid': "section-1"
+            'provision_eid': "sec_1"
         })
         assert_equal(response.status_code, 200)
 

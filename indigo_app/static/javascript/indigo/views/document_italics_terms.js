@@ -67,6 +67,8 @@
     },
 
     removeItalics: function(e) {
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
       // remove all italics mark-up
       this.$('a[href="#this-document-italics-terms"]').click();
 

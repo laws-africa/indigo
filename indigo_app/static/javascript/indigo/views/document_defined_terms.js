@@ -67,6 +67,8 @@
     },
 
     removeTerms: function(e) {
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
       // unwrap all <def>s
       this.model.xmlDocument.querySelectorAll('def').forEach(function(def) {
         var parent = def.parentNode;

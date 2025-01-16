@@ -79,6 +79,8 @@
     },
 
     removeReferences: function(e) {
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
       // remove all non-absolute refs
       this.model.xmlDocument.querySelectorAll('ref').forEach(function(ref) {
         if ((ref.getAttribute('href') || "").startsWith('/') || (ref.getAttribute('href') || "").startsWith('#')) {

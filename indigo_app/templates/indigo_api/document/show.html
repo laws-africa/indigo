@@ -163,7 +163,7 @@
       <div class="dropdown-menu">
         {{#each expressions}}
         {{#each documents}}
-        <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
+        <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}{% endverbatim %}{% if provision_eid %}/{{ provision_eid }}{% endif %}{% verbatim %}">
           {{ ../date }}
           · {{ language }}
           {{#if current}} – {% endverbatim %}{% trans 'this document' %}{% verbatim %}{{/if}}
@@ -175,5 +175,8 @@
       </div>
     </li>
     {% endverbatim %}
+    {% if provision_eid %}
+      <li class="breadcrumb-item"><a href="{% url 'choose_document_provision' document.pk %}">{{ provision_eid }}</a></li>
+    {% endif %}
   </script>
 {% endblock %}

@@ -115,8 +115,7 @@ class AnalysisTestCase(APITestCase):
         content = response.data['xml']
 
         assert_true(content.startswith('<portion '))
-        assert_in('<def ', content)
-        # TLCTerms get set on save only for portions, since they need to go on the document's meta and not the portion's
+        # definitions aren't found, only linked, in provision mode
 
     def test_link_terms_no_perms(self):
         self.client.logout()

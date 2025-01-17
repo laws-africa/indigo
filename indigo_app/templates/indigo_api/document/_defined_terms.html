@@ -8,7 +8,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        {% if provision_eid == "" %}
+        {% if not provision_eid %}
           <p>{% trans 'These are terms that are explicitly defined in this document. Always refresh defined terms before publishing a document to ensure that all references to terms are captured.' %}</p>
           <div class="card bg-light scrollable">
           <div class="card-body">
@@ -27,7 +27,7 @@
         <button type="button" class="btn btn-outline-secondary remove-terms pull-left"><i class="fas fa-times"></i> {% trans 'Remove defined terms' %}</button>
         <button class="btn btn-outline-secondary link-terms">
           <i class="fas fa-sync"></i>
-          {% if provision_eid == "" %}
+          {% if not provision_eid %}
             {% trans 'Find and link defined terms' %}
           {% else %}
             {% trans 'Link defined terms' %}

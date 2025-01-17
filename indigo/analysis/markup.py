@@ -16,7 +16,7 @@ class TextPatternMarker:
     """ Xpath for candidate text nodes that should be tested for matches. Must be defined by subclasses.
     """
 
-    ancestors = ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions']
+    ancestors = ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'portionBody', 'conclusions']
     """ Tags that the candidate_xpath should be run against.
     """
 

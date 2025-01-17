@@ -36,14 +36,14 @@
     },
 
     markUpItalics: function(e) {
-      var self = this,
-          $btn = this.$el.find('.mark-up-italics'),
-          data = {'document': this.model.document.toJSON()};
+      let self = this,
+          $btn = this.$el.find('.mark-up-italics');
 
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
-      data.document.content = this.model.toXml();
+      const data = this.model.toSimplifiedJSON();
 
+      // TODO: this doesn't work; nuke this line or fix it
       this.$('a[href="#this-document-italics-terms"]').click();
 
       $btn
@@ -57,7 +57,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          self.model.set('content', response.document.content);
+          self.model.set('content', response.xml);
         })
         .always(function() {
           $btn
@@ -68,16 +68,21 @@
 
     removeItalics: function(e) {
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+      let xml = this.model.xmlDocument.cloneNode(true);
 
       // remove all italics mark-up
+      // TODO: this doesn't work; nuke this line or fix it
       this.$('a[href="#this-document-italics-terms"]').click();
 
-      this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
+      xml.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>
         const parent = term.parentNode;
         while (term.firstChild) parent.insertBefore(term.firstChild, term);
         parent.removeChild(term);
       });
+
+      // set the content once for one mutation record
+      this.model.xmlDocument.documentElement.replaceWith(xml.documentElement);
     }
   });
 })(window);

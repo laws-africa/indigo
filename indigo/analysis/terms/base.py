@@ -51,6 +51,16 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.find_term_references(doc, terms)
         self.renumber_terms(doc)
 
+    def link_terms_in_document(self, document):
+        """ Passively link defined terms in a Document while editing in provision mode.
+        """
+        root = etree.fromstring(document.doc.to_xml(encoding='unicode'))
+        self.setup(root)
+        terms = self.find_definitions(root)
+        self.find_term_references(root, terms)
+        self.renumber_terms(root)
+        document.content = etree.tostring(root, encoding='unicode')
+
     def setup(self, doc):
         self.ns = doc.nsmap[None]
         self.nsmap = {'a': self.ns}

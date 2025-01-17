@@ -14,12 +14,11 @@
     },
 
     sentenceCaseHeadings: function(e) {
-      let self = this,
-          data = {'document': this.model.document.toJSON()};
+      let self = this;
 
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
-      data.document.content = this.model.toXml();
+      const data = this.model.toSimplifiedJSON();
 
       $.ajax({
         url: this.model.document.url() + '/analysis/sentence-case-headings',
@@ -28,7 +27,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
           .then(function(response) {
-            self.model.set('content', response.document.content);
+            self.model.set('content', response.xml);
           });
     },
   });

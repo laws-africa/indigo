@@ -1,26 +1,24 @@
-import logging
 import os.path
-from itertools import groupby
-from typing import List
-
-from actstream.signals import action
 from collections import OrderedDict
 
-from lxml.etree import LxmlError
-
-from django.contrib.auth.models import User
+import logging
+import reversion
+from actstream.signals import action
+from allauth.account.utils import user_display
 from django.conf import settings
+from django.contrib.auth.models import User
+from lxml import etree
+from lxml.etree import LxmlError
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
+from rest_framework.reverse import reverse
+from typing import List
+
 from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
-import reversion
-
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
     PublicationDocument, Task, Commencement
 from indigo_api.signals import document_published
-from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
 
@@ -438,11 +436,60 @@ class DocumentAPISerializer(serializers.Serializer):
     """
     Helper to handle input documents for general document APIs
     """
-    document = DocumentSerializer(required=True)
+    xml = serializers.CharField()
+    language = serializers.CharField(min_length=3, max_length=3)
+    provision_eid = serializers.CharField(allow_blank=True)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['document'].instance = self.instance
+    def validate_xml(self, xml):
+        """ mostly copied from DocumentSerializer.validate()
+        """
+        try:
+            doctype = self.instance.work_uri.doctype if not self.initial_data.get('provision_eid') else 'portion'
+            doc = StructuredDocument.for_document_type(doctype)(xml)
+        except (LxmlError, ValueError) as e:
+            raise ValidationError("Invalid XML: %s" % str(e))
+        # ensure the correct namespace
+        if doc.namespace != AKN_NAMESPACES[DEFAULT_VERSION]:
+            raise ValidationError(
+                f"Document must have namespace {AKN_NAMESPACES[DEFAULT_VERSION]}, but it has {doc.namespace} instead.")
+        return xml
+
+    def update_document(self):
+        document = self.instance
+        # the language could have been changed but not yet saved during editing, which might affect which plugin is used
+        language_code = self.validated_data.get('language')
+        if document.language.code != language_code:
+            document.language = Language.for_code(language_code)
+        # update the content with updated but unsaved changes too
+        self.set_content()
+
+    def set_content(self):
+        document = self.instance
+        xml = self.validated_data.get('xml')
+        provision_eid = self.validated_data.get('provision_eid')
+        if not provision_eid:
+            # update the document's full XML with what's in the editor
+            document.content = xml
+        else:
+            if self.use_full_xml:
+                # we'll need the document's full XML for the analysis,
+                # but update the relevant provision with what's in the editor first
+                document.update_provision_xml(provision_eid, xml)
+            else:
+                # update the document to be a 'portion' and use only what's in the editor as the content
+                document.work.work_uri.doctype = 'portion'
+                document.content = xml
+
+    def updated_xml(self):
+        document = self.instance
+        provision_eid = self.validated_data.get('provision_eid')
+        if not provision_eid:
+            # return the document's full updated XML
+            return document.document_xml
+        # otherwise, return only the provision being edited (NOT including the outer akn tag)
+        # if we used the full XML for the analysis, grab only the appropriate provision as a portion
+        xml = document.get_provision_element(provision_eid) if self.use_full_xml else document.doc.portion
+        return etree.tostring(xml, encoding='unicode')
 
 
 class NoopSerializer(object):

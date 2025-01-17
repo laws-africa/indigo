@@ -51,13 +51,12 @@
     },
 
     findReferences: function(e) {
-      var self = this,
-          $btn = this.$el.find('.find-references'),
-          data = {'document': this.model.document.toJSON()};
+      let self = this,
+          $btn = this.$el.find('.find-references');
 
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
 
-      data.document.content = this.model.toXml();
+      const data = this.model.toSimplifiedJSON();
 
       $btn
         .prop('disabled', true)
@@ -70,7 +69,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          self.model.set('content', response.document.content);
+          self.model.set('content', response.xml);
         })
         .always(function() {
           $btn
@@ -81,9 +80,10 @@
 
     removeReferences: function(e) {
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+      let xml = this.model.xmlDocument.cloneNode(true);
 
       // remove all non-absolute refs
-      this.model.xmlDocument.querySelectorAll('ref').forEach(function(ref) {
+      xml.querySelectorAll('ref').forEach(function(ref) {
         if ((ref.getAttribute('href') || "").startsWith('/') || (ref.getAttribute('href') || "").startsWith('#')) {
           // get rid of ref
           const parent = ref.parentNode;
@@ -91,6 +91,9 @@
           parent.removeChild(ref);
         }
       });
+
+      // set the content once for one mutation record
+      this.model.xmlDocument.documentElement.replaceWith(xml.documentElement);
     },
   });
 })(window);

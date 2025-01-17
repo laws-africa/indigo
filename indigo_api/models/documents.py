@@ -548,6 +548,15 @@ class Document(DocumentMixin, models.Model):
             self.expression_date = new_date
             self.save_with_revision(user, comment=comment)
 
+    def get_provision_element(self, provision_eid):
+        provision_xml = self.doc.get_portion_element(provision_eid)
+        if provision_xml is None:
+            return None
+        portion = StructuredDocument.for_document_type('portion')()
+        portion.frbr_uri = self.frbr_uri
+        portion.main_content.append(provision_xml)
+        return portion.main
+
     def update_provision_xml(self, provision_eid, provision_xml):
         xml = etree.fromstring(provision_xml)
         # portionBody will always have exactly one child

@@ -29,17 +29,17 @@
     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-magic"></i> {% trans "Analysis" %}</button>
     <div class="dropdown-menu">
       {% block document-analysis-menu-items %}
-        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+        <a class="dropdown-item"
            href="#defined-terms-modal" data-bs-toggle="modal"
         >{% trans "Defined terms..." %}</a>
-        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+        <a class="dropdown-item"
            href="#references-modal" data-bs-toggle="modal"
         >{% trans "References..." %}</a>
-        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+        <a class="dropdown-item"
            href="#italics-modal" data-bs-toggle="modal"
         >{% trans "Italicised terms..." %}</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item {% if provision_eid %}disabled{% endif %}"
+        <a class="dropdown-item"
            href="#" id="sentence-caser"
         ><span class="sentence-case-headings">{% trans "Make headings Sentence case" %}</span></a>
       {% endblock %}

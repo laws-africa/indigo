@@ -146,6 +146,23 @@
       return Indigo.toXml(node || this.xmlDocument);
     },
 
+    // in provision mode, wrap serialized XML in akn tags
+    wrapInAkn: function (xml) {
+      if (Indigo.Preloads.provisionEid) {
+        xml = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${xml}</akomaNtoso>`;
+      }
+      return xml;
+    },
+
+    // serialise the absolute basics of the document for server-side XML manipulation
+    toSimplifiedJSON: function() {
+      return {
+        "xml": this.wrapInAkn(this.toXml()),
+        "language": this.document.attributes.language,
+        "provision_eid": Indigo.Preloads.provisionEid
+      };
+    },
+
     /**
      * Replaces (or deletes) an existing node (or the whole tree) with a new node or nodes.
      * Triggers a change event.
@@ -246,12 +263,7 @@
       // We do this by delegating the actual save to the document object.
 
       // serialise the xml from the live DOM
-      let content = this.toXml();
-
-      if (Indigo.Preloads.provisionEid) {
-        content = `<akomaNtoso xmlns="${this.xmlDocument.firstChild.getAttribute('xmlns')}">${content}</akomaNtoso>`;
-      }
-      this.document.attributes.content = content;
+      this.document.attributes.content = this.wrapInAkn(this.toXml());
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
       const result = this.document.save();
       // don't re-parse the content in the response to the save() call

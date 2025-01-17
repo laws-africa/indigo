@@ -389,7 +389,7 @@ class LinkTermsView(ManipulateXmlView):
         finder = plugins.for_document('terms', self.document)
         if finder:
             if self.serializer.validated_data.get('provision_eid'):
-                finder.link_terms_in_provision(self.document)
+                finder.link_terms_in_document(self.document)
             else:
                 finder.find_terms_in_document(self.document)
 

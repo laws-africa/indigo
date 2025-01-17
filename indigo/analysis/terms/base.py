@@ -51,7 +51,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.find_term_references(doc, terms)
         self.renumber_terms(doc)
 
-    def link_terms_in_provision(self, document):
+    def link_terms_in_document(self, document):
         """ Passively link defined terms in a Document while editing in provision mode.
         """
         root = etree.fromstring(document.doc.to_xml(encoding='unicode'))

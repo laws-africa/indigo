@@ -49,37 +49,27 @@
     {% endif %}
   </div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <button class="btn btn-success btn-block mb-3" type="submit">{% trans 'Log in' %}</button>
-    </div>
-
-    <div class="col-md-6">
-      <a class="btn btn-outline-primary btn-block mb-3" href="{{ signup_url }}">{% trans 'Sign up' %}</a>
-    </div>
+  <div>
+    <button class="btn btn-success btn-block mb-3 me-3" type="submit">{% trans 'Log in' %}</button>
+    <a class="btn btn-outline-primary btn-block mb-3" href="{{ signup_url }}">{% trans 'Sign up' %}</a>
   </div>
 </form>
 
 {% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-<hr class="my-4">
-{% endif %}
+{% for provider in socialaccount_providers %}
+  <form method="POST" class="mt-4" action="{% provider_login_url provider.id process='login' %}">
+    {% csrf_token %}
+    <button class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" type="submit">
+      {% if provider.name == "Google" %}
+        <img src="{% static 'images/google-logo.png' %}" style="height: 20px; margin-right: 5px">
+      {% else %}
+        <i class="fab fa-fw fa-{{ provider.id }}"></i>
+      {% endif %}
 
-<div class="row">
-  <div class="col-lg-7 mx-auto">
-    {% for provider in socialaccount_providers %}
-      <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
-        {% if provider.name == "Google" %}
-          <img src="{% static 'images/google-logo.png' %}" style="height: 20px; margin-right: 5px">
-        {% else %}
-          <i class="fab fa-fw fa-{{ provider.id }}"></i>
-        {% endif %}
-
-        {% blocktrans with provider=provider.name %}Log in with {{provider}}{% endblocktrans %}
-      </a>
-    {% endfor %}
-  </div>
-</div>
+      {% blocktrans with provider=provider.name %}Log in with {{provider}}{% endblocktrans %}
+    </button>
+  </form>
+{% endfor %}
 
 <div class="mt-3 text-muted text-center">
   {% url 'terms_of_use' as tos_url %}

@@ -262,13 +262,12 @@
     },
 
     renderComparisonDiff: function() {
-      var self = this,
-          data = {};
+      let self = this;
 
       if (!this.comparisonDocumentId) return;
 
-      data.document = this.document.toJSON();
-      data.document.content = this.document.content.toXml();
+      const data = this.document.content.toSimplifiedJSON();
+      // slight difference to provision_eid -- doesn't treat the document XML as a portion
       data.element_id = this.xmlElement.getAttribute('eId');
 
       if (!data.element_id && this.xmlElement.tagName !== "akomaNtoso") {

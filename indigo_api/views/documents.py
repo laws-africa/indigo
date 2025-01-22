@@ -24,6 +24,7 @@ from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
+from lxml import etree
 import lxml.html.diff
 
 from indigo.analysis.differ import AKNHTMLDiffer
@@ -31,7 +32,7 @@ from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
 from indigo.xmlutils import parse_html_str
 from ..models import Document, Annotation, DocumentActivity, Task, Language, Work
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions, RelatedDocumentPermissions, \
@@ -424,7 +425,8 @@ class SentenceCaseHeadingsView(ManipulateXmlView):
 
 class DocumentDiffView(DocumentResourceView, APIView):
     def post(self, request, document_id):
-        serializer = DocumentDiffSerializer(instance=self.document, data=self.request.data)
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
+        serializer.use_full_xml = False
         serializer.is_valid(raise_exception=True)
 
         differ = AKNHTMLDiffer()
@@ -433,10 +435,23 @@ class DocumentDiffView(DocumentResourceView, APIView):
 
         # set this up to be the modified document
         remote_doc = Document.objects.get(pk=local_doc.pk)
-        serializer.fields['document'].update_document(local_doc, serializer.validated_data['document'])
 
+        # this will set the local_doc's content as the <portion> in provision mode,
+        # and update it with the latest unsaved changes regardless
+        serializer.set_content()
         local_doc.content = differ.preprocess_xml_str(local_doc.document_xml).decode('utf-8')
-        remote_doc.content = differ.preprocess_xml_str(remote_doc.document_xml).decode('utf-8')
+
+        provision_eid = serializer.validated_data.get('provision_eid')
+        if provision_eid:
+            portion = remote_doc.get_portion(provision_eid)
+            # the same structure as the 'xml' we're getting from the browser: akn/portion/portionBody/element
+            remote_xml = etree.tostring(portion.root, encoding='unicode')
+            remote_doc.work.work_uri.doctype = 'portion'
+            remote_doc.content = differ.preprocess_xml_str(remote_xml)
+
+        else:
+            # full document mode
+            remote_doc.content = differ.preprocess_xml_str(remote_doc.document_xml).decode('utf-8')
 
         element_id = serializer.validated_data.get('element_id')
         if element_id:

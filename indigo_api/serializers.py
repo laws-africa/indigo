@@ -488,7 +488,7 @@ class DocumentAPISerializer(serializers.Serializer):
             return document.document_xml
         # otherwise, return only the provision being edited (NOT including the outer akn tag)
         # if we used the full XML for the analysis, grab only the appropriate provision as a portion
-        xml = document.get_provision_element(provision_eid) if self.use_full_xml else document.doc.portion
+        xml = document.get_portion(provision_eid).main if self.use_full_xml else document.doc.portion
         return etree.tostring(xml, encoding='unicode')
 
 

@@ -31,7 +31,7 @@ from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
 from indigo.xmlutils import parse_html_str
-from ..models import Document, Annotation, DocumentActivity, Task, Language, Work
+from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
@@ -439,7 +439,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
         # this will set the local_doc's content as the <portion> in provision mode,
         # and update it with the latest unsaved changes regardless
         serializer.set_content()
-        local_doc.content = differ.preprocess_xml_str(local_doc.document_xml).decode('utf-8')
+        local_doc.content = differ.preprocess_xml_str(local_doc.document_xml)
 
         provision_eid = serializer.validated_data.get('provision_eid')
         if provision_eid:
@@ -451,7 +451,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
 
         else:
             # full document mode
-            remote_doc.content = differ.preprocess_xml_str(remote_doc.document_xml).decode('utf-8')
+            remote_doc.content = differ.preprocess_xml_str(remote_doc.document_xml)
 
         element_id = serializer.validated_data.get('element_id')
         if element_id:

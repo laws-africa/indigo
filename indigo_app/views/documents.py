@@ -98,6 +98,7 @@ class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView):
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document/_provisions.html'
+    permission_required = ('indigo_api.publish_document',)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -119,13 +120,11 @@ class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView):
             elem['href'] = reverse('document_provision', kwargs={'doc_id': int(self.kwargs['doc_id']), 'eid': elem['id']})
         return json.dumps(toc)
 
-    def has_permission(self):
-        return self.request.user.is_superuser
-
 
 class DocumentProvisionDetailView(DocumentDetailView):
     eid = None
     provision_xml = None
+    permission_required = ('indigo_api.publish_document',)
 
     def get(self, request, *args, **kwargs):
         document = self.get_object()
@@ -143,9 +142,6 @@ class DocumentProvisionDetailView(DocumentDetailView):
 
     def get_document_content_json(self, document):
         return json.dumps(etree.tostring(self.provision_xml, encoding='unicode'))
-
-    def has_permission(self):
-        return self.request.user.is_superuser
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

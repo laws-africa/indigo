@@ -80,6 +80,15 @@
             <div class="ms-4">{{ task.description|linebreaks|urlize }}</div>
           {% endfor %}
         </div>
+        {% if perms.indigo_api.publish_document %}
+          <div class="mt-1 ms-1">
+            {% for document in entry.expressions %}
+              <div>
+                <i class="fas fa-list published"></i> <a href="{% url 'choose_document_provision' doc_id=document.id %}">{% trans "Provision editor" %}</a> · {{ document.language }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       {% if editable and entry.create_import_document %}

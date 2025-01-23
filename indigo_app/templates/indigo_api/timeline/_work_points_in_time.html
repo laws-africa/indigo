@@ -69,7 +69,12 @@
         {% endfor %}
         <div class="documents mt-3">
           {% for document in entry.expressions %}
-            <div><i class="fas fa-circle fa-fw {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
+            <div>
+              <i class="fas fa-circle fa-fw {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}
+              {% if perms.indigo_api.publish_document %}
+                <i class="fas fa-list published ms-3"></i> <a href="{% url 'choose_document_provision' doc_id=document.id %}">{% trans "Provision editor" %}</a>
+              {% endif %}
+            </div>
           {% endfor %}
           {% for task in entry.tasks %}
             <div class="h6 mt-3">
@@ -80,15 +85,6 @@
             <div class="ms-4">{{ task.description|linebreaks|urlize }}</div>
           {% endfor %}
         </div>
-        {% if perms.indigo_api.publish_document %}
-          <div class="mt-1 ms-1">
-            {% for document in entry.expressions %}
-              <div>
-                <i class="fas fa-list published"></i> <a href="{% url 'choose_document_provision' doc_id=document.id %}">{% trans "Provision editor" %}</a> · {{ document.language }}
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
       </div>
 
       {% if editable and entry.create_import_document %}

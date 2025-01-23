@@ -175,8 +175,8 @@
       </div>
     </li>
     {% endverbatim %}
-    {% if provision_eid %}
-      <li class="breadcrumb-item"><a href="{% url 'choose_document_provision' document.pk %}">{{ provision_eid }}</a></li>
+    {% if provision_eid or perms.indigo_api.publish_document %}
+      <li class="breadcrumb-item"><i class="fas fa-list published"></i> <a href="{% url 'choose_document_provision' document.pk %}">{% trans "Provision editor" %}</a></li>
     {% endif %}
   </script>
 {% endblock %}

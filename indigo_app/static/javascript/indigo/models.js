@@ -84,8 +84,7 @@
           return 'replaced';
         }
 
-        const ownerDocument = target.nodeType === Node.DOCUMENT_NODE ? target : target.ownerDocument;
-        if (!ownerDocument.contains(element)) {
+        if (!this.xmlDocument.contains(element)) {
           // the change removed xmlElement from the tree
           return 'removed';
         }
@@ -182,6 +181,11 @@
       }
       var del = !newNodes;
       var first = del ? null : newNodes[0];
+
+      if (oldNode && !this.xmlDocument.contains(oldNode)) {
+        console.log('Old node is not in the document');
+        return;
+      }
 
       if (!oldNode || !oldNode.parentElement) {
         if (del) {

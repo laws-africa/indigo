@@ -192,7 +192,7 @@
      * @param mutation a MutationRecord object
      */
     onDomMutated: function(model, mutation) {
-      let eid = mutation.target?.getAttribute('eId');
+      let eid = mutation.target.getAttribute ? mutation.target.getAttribute('eId') : null;
 
       switch (model.getMutationImpact(mutation, this.xmlElement)) {
         case 'replaced':

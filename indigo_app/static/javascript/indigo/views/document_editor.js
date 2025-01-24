@@ -214,7 +214,7 @@
                   // it was replaced but retained the eid
                   eid = this.quickEditEid;
                 } else {
-                  // it was replaced with a different eId; re-render the target but track the new eid
+                  // it was replaced with a different eid; re-render the target but track the new eid
                   this.quickEditEid = mutation.addedNodes[0].getAttribute('eId');
                 }
               } else {
@@ -297,7 +297,7 @@
         oldElement = null;
       }
 
-      // ensure the rendered is ready
+      // ensure the renderer is ready
       await Indigo.deferredToAsync(this.htmlRenderer.ready);
 
       const html = this.htmlRenderer.renderXmlElement(this.document, toRender);

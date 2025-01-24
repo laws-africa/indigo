@@ -84,8 +84,7 @@
           return 'replaced';
         }
 
-        const ownerDocument = target.nodeType === Node.DOCUMENT_NODE ? target : target.ownerDocument;
-        if (!ownerDocument.contains(element)) {
+        if (!this.xmlDocument.contains(element)) {
           // the change removed xmlElement from the tree
           return 'removed';
         }
@@ -183,6 +182,11 @@
       var del = !newNodes;
       var first = del ? null : newNodes[0];
 
+      if (oldNode && !this.xmlDocument.contains(oldNode)) {
+        console.log('Old node is not in the document');
+        return;
+      }
+
       if (!oldNode || !oldNode.parentElement) {
         if (del) {
           throw "Cannot currently delete the entire document.";
@@ -193,12 +197,14 @@
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
         this.xmlDocument.adoptNode(first);
+        // mutation record will have both add and remove in one record (a replace)
         this.xmlDocument.documentElement.replaceWith(first);
 
       } else {
         if (del) {
           // delete this node
           console.log('Deleting node');
+          // mutation record will have a remove
           oldNode.remove();
 
         } else {
@@ -206,6 +212,7 @@
           console.log('Replacing node with ' + newNodes.length + ' new node(s)');
 
           oldNode.ownerDocument.adoptNode(first);
+          // mutation record will have both add and remove in one record (a replace)
           oldNode.parentElement.replaceChild(first, oldNode);
 
           // now append the other nodes, starting at the end
@@ -215,8 +222,10 @@
             first.ownerDocument.adoptNode(node);
 
             if (first.nextElementSibling) {
+              // mutation record will have an add
               first.parentElement.insertBefore(node, first.nextElementSibling);
             } else {
+              // mutation record will have an add
               first.parentElement.appendChild(node);
             }
           }

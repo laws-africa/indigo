@@ -29,6 +29,7 @@
       this.name = 'source';
       this.document = this.model;
       this.xmlElement = null;
+      this.quickEditEid = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
       this.contentPane = document.querySelector('.document-primary-pane-content-pane');
       this.sheetInner = this.contentPane.querySelector('.document-workspace .document-sheet-container .sheet-inner');
@@ -81,14 +82,15 @@
     },
 
     fullEdit: function() {
+      this.quickEditEid = null;
       this.editXmlElement(this.xmlElement);
     },
 
     quickEdit: function(e) {
       if (this.confirmAndDiscardChanges()) {
         const htmlElement = e.currentTarget.parentElement.parentElement;
-        const elemId = htmlElement.id;
-        const element = this.document.content.xmlDocument.querySelector('[eId="' + elemId + '"]');
+        this.quickEditEid = htmlElement.id;
+        const element = this.document.content.xmlDocument.querySelector('[eId="' + this.quickEditEid + '"]');
         this.editXmlElement(element);
 
         this.contentPane.querySelector('.quick-editing')?.classList.remove('quick-editing');
@@ -190,13 +192,40 @@
      * @param mutation a MutationRecord object
      */
     onDomMutated: function(model, mutation) {
+      let eid = mutation.target.getAttribute ? mutation.target.getAttribute('eId') : null;
+
       switch (model.getMutationImpact(mutation, this.xmlElement)) {
         case 'replaced':
           this.xmlElement = mutation.addedNodes[0];
           this.render();
           break;
         case 'changed':
-          this.render();
+          if (this.quickEditEid && eid !== this.quickEditEid) {
+            // Check for the special case of the quick-edited element being replaced, so that we can re-render
+            // just that element (if possible). In this case the mutation target is the parent and its children have
+            // changed.
+
+            if (mutation.type === 'childList' && mutation.removedNodes.length === 1 &&
+              mutation.removedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+              // the quick-edited element was removed or replaced
+
+              if (mutation.addedNodes.length === 1) {
+                if (mutation.addedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+                  // it was replaced but retained the eid
+                  eid = this.quickEditEid;
+                } else {
+                  // it was replaced with a different eid; re-render the target but track the new eid
+                  this.quickEditEid = mutation.addedNodes[0].getAttribute('eId');
+                }
+              } else {
+                // it was removed
+                this.quickEditEid = null;
+              }
+            }
+          }
+
+          // eid can be null, in which case everything is re-rendered
+          this.render(eid);
           break;
         case 'removed':
           // the change removed xmlElement from the tree
@@ -228,37 +257,60 @@
       this.trigger('edit-activity-cancelled');
     },
 
-    render: function() {
+    /**
+     * Render the XML element into HTML, add quick edit buttons, make links external, etc.
+     * @param eid only re-render a specific element, if possible. The element must be in the old and new trees.
+     */
+    render: async function(eid) {
       if (!this.xmlElement) return;
 
       this.sheetInner.classList.toggle('is-fragment', this.xmlElement.parentElement !== null);
 
-      var self = this,
-          renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "";
+      if (!eid) {
+        this.aknElement.classList.add('spinner-when-empty');
+        this.aknElement.replaceChildren();
 
-      this.aknElement.classList.add('spinner-when-empty');
-      this.aknElement.replaceChildren();
-
-      if (renderCoverpage) {
-        const coverpage = document.createElement('div');
-        coverpage.className = 'spinner-when-empty';
-        this.aknElement.appendChild(coverpage);
-        this.renderCoverpage().then(function(nodes) {
-          for (const node of nodes) {
+        if (this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "") {
+          // render the coverpage
+          const coverpage = document.createElement('div');
+          coverpage.className = 'spinner-when-empty';
+          this.aknElement.appendChild(coverpage);
+          for (const node of await this.renderCoverpage()) {
             coverpage.append(node);
           }
-          self.trigger('rendered');
-        });
+        }
       }
 
-      this.htmlRenderer.ready.then(function() {
-        const html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
+      // what xml element must be rendered, and where must it be placed into the tree?
+      let toRender, oldElement;
+      if (eid && this.xmlElement.getAttribute('eId') !== eid) {
+        // we're rendering a child element; try to find the old element to replace
+        // if the new element has a changed eId, then we may not be able to find the old element, in which case
+        // we'll just re-render everything
+        toRender = this.xmlElement.querySelector('[eId="' + eid + '"]');
+        oldElement = this.aknElement.querySelector('[data-eid="' + eid + '"]');
+      }
 
-        self.prepareHtmlForRender(html);
-        self.aknElement.appendChild(html);
-        self.trigger('rendered');
-        self.renderComparisonDiff();
-      });
+      if (!toRender || !oldElement) {
+        // if we can't find the element or where to put it, just render everything
+        toRender = this.xmlElement;
+        oldElement = null;
+      }
+
+      // ensure the renderer is ready
+      await Indigo.deferredToAsync(this.htmlRenderer.ready);
+
+      const html = this.htmlRenderer.renderXmlElement(this.document, toRender);
+      this.prepareHtmlForRender(html);
+
+      if (oldElement) {
+        oldElement.replaceWith(html);
+      } else {
+        this.aknElement.replaceChildren(html);
+      }
+
+      this.trigger('rendered');
+      this.renderComparisonDiff();
     },
 
     renderComparisonDiff: function() {
@@ -299,30 +351,22 @@
       this.highlightQuickEditElement(html);
     },
 
-    renderCoverpage: function() {
-      // Render a coverpage and return it via a deferred.
-      // Uses a cached coverpage, if available.
-      var deferred = $.Deferred(),
-          self = this;
-
-      if (this.coverpageCache) {
-        deferred.resolve(this.coverpageCache);
-      } else {
-        var data = JSON.stringify({'document': self.document.toJSON()});
-        $.ajax({
-          url: this.document.url() + '/render/coverpage',
-          type: "POST",
-          data: data,
-          contentType: "application/json; charset=utf-8",
-          dataType: "json"})
-          .then(function(response) {
-            var html = $.parseHTML(response.output);
-            self.coverpageCache = html;
-            deferred.resolve(html);
-          });
+    renderCoverpage: async function() {
+      if (!this.coverpageCache) {
+        const data = JSON.stringify({'document': this.document.toJSON()});
+        const resp = await fetch(this.document.url() + '/render/coverpage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'X-CSRFToken': Indigo.csrfToken,
+          },
+          body: data,
+        });
+        if (resp.ok) {
+          this.coverpageCache = $.parseHTML((await resp.json())['output']);
+        }
       }
-
-      return deferred;
+      return this.coverpageCache;
     },
 
     makeLinksExternal: function(html) {

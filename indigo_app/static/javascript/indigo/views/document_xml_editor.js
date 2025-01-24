@@ -265,7 +265,6 @@ class AknTextEditor {
         // remove element
         this.document.content.replaceNode(this.xmlElement, null);
       }
-
     }
   }
 

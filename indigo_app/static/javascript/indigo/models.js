@@ -193,12 +193,14 @@
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
         this.xmlDocument.adoptNode(first);
+        // mutation record will have both add and remove in one record (a replace)
         this.xmlDocument.documentElement.replaceWith(first);
 
       } else {
         if (del) {
           // delete this node
           console.log('Deleting node');
+          // mutation record will have a remove
           oldNode.remove();
 
         } else {
@@ -206,6 +208,7 @@
           console.log('Replacing node with ' + newNodes.length + ' new node(s)');
 
           oldNode.ownerDocument.adoptNode(first);
+          // mutation record will have both add and remove in one record (a replace)
           oldNode.parentElement.replaceChild(first, oldNode);
 
           // now append the other nodes, starting at the end
@@ -215,8 +218,10 @@
             first.ownerDocument.adoptNode(node);
 
             if (first.nextElementSibling) {
+              // mutation record will have an add
               first.parentElement.insertBefore(node, first.nextElementSibling);
             } else {
+              // mutation record will have an add
               first.parentElement.appendChild(node);
             }
           }

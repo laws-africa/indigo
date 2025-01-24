@@ -29,6 +29,7 @@
       this.name = 'source';
       this.document = this.model;
       this.xmlElement = null;
+      this.quickEditEid = null;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
       this.contentPane = document.querySelector('.document-primary-pane-content-pane');
       this.sheetInner = this.contentPane.querySelector('.document-workspace .document-sheet-container .sheet-inner');
@@ -81,14 +82,15 @@
     },
 
     fullEdit: function() {
+      this.quickEditEid = null;
       this.editXmlElement(this.xmlElement);
     },
 
     quickEdit: function(e) {
       if (this.confirmAndDiscardChanges()) {
         const htmlElement = e.currentTarget.parentElement.parentElement;
-        const elemId = htmlElement.id;
-        const element = this.document.content.xmlDocument.querySelector('[eId="' + elemId + '"]');
+        this.quickEditEid = htmlElement.id;
+        const element = this.document.content.xmlDocument.querySelector('[eId="' + this.quickEditEid + '"]');
         this.editXmlElement(element);
 
         this.contentPane.querySelector('.quick-editing')?.classList.remove('quick-editing');
@@ -190,15 +192,40 @@
      * @param mutation a MutationRecord object
      */
     onDomMutated: function(model, mutation) {
+      let eid = mutation.target?.getAttribute('eId');
+
       switch (model.getMutationImpact(mutation, this.xmlElement)) {
         case 'replaced':
           this.xmlElement = mutation.addedNodes[0];
           this.render();
           break;
         case 'changed':
-          // either the xmlElement itself has changed, or a child has changed; we want to re-render only what changed
-          // (if possible)
-          this.render(mutation.target.getAttribute('eId'));
+          if (this.quickEditEid && eid !== this.quickEditEid) {
+            // Check for the special case of the quick-edited element being replaced, so that we can re-render
+            // just that element (if possible). In this case the mutation target is the parent and its children have
+            // changed.
+
+            if (mutation.type === 'childList' && mutation.removedNodes.length === 1 &&
+              mutation.removedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+              // the quick-edited element was removed or replaced
+
+              if (mutation.addedNodes.length === 1) {
+                if (mutation.addedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+                  // it was replaced but retained the eid
+                  eid = this.quickEditEid;
+                } else {
+                  // it was replaced with a different eId; re-render the target but track the new eid
+                  this.quickEditEid = mutation.addedNodes[0].getAttribute('eId');
+                }
+              } else {
+                // it was removed
+                this.quickEditEid = null;
+              }
+            }
+          }
+
+          // eid can be null, in which case everything is re-rendered
+          this.render(eid);
           break;
         case 'removed':
           // the change removed xmlElement from the tree
@@ -232,7 +259,7 @@
 
     /**
      * Render the XML element into HTML, add quick edit buttons, make links external, etc.
-     * @param eid only re-render a specific element, if possible
+     * @param eid only re-render a specific element, if possible. The element must be in the old and new trees.
      */
     render: async function(eid) {
       if (!this.xmlElement) return;

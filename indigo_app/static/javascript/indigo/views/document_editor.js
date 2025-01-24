@@ -196,7 +196,9 @@
           this.render();
           break;
         case 'changed':
-          this.render();
+          // either the xmlElement itself has changed, or a child has changed; we want to re-render only what changed
+          // (if possible)
+          this.render(mutation.target.getAttribute('eId'));
           break;
         case 'removed':
           // the change removed xmlElement from the tree
@@ -228,36 +230,60 @@
       this.trigger('edit-activity-cancelled');
     },
 
-    render: function() {
+    /**
+     * Render the XML element into HTML, add quick edit buttons, make links external, etc.
+     * @param eid only re-render a specific element, if possible
+     */
+    render: async function(eid) {
       if (!this.xmlElement) return;
 
       this.sheetInner.classList.toggle('is-fragment', this.xmlElement.parentElement !== null);
 
-      var self = this,
-          renderCoverpage = this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "";
+      if (!eid) {
+        this.aknElement.classList.add('spinner-when-empty');
+        this.aknElement.replaceChildren();
 
-      this.aknElement.classList.add('spinner-when-empty');
-      this.aknElement.replaceChildren();
-
-      if (renderCoverpage) {
-        const coverpage = document.createElement('div');
-        coverpage.className = 'spinner-when-empty';
-        this.aknElement.appendChild(coverpage);
-        const nodes = await this.renderCoverpage();
-        for (const node of nodes) {
-          coverpage.append(node);
+        if (this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "") {
+          // render the coverpage
+          const coverpage = document.createElement('div');
+          coverpage.className = 'spinner-when-empty';
+          this.aknElement.appendChild(coverpage);
+          for (const node of await this.renderCoverpage()) {
+            coverpage.append(node);
+          }
         }
-        this.trigger('rendered');
       }
 
-      this.htmlRenderer.ready.then(function() {
-        const html = self.htmlRenderer.renderXmlElement(self.document, self.xmlElement);
+      // what xml element must be rendered, and where must it be placed into the tree?
+      let toRender, oldElement;
+      if (eid && this.xmlElement.getAttribute('eId') !== eid) {
+        // we're rendering a child element; try to find the old element to replace
+        // if the new element has a changed eId, then we may not be able to find the old element, in which case
+        // we'll just re-render everything
+        toRender = this.xmlElement.querySelector('[eId="' + eid + '"]');
+        oldElement = this.aknElement.querySelector('[data-eid="' + eid + '"]');
+      }
 
-        self.prepareHtmlForRender(html);
-        self.aknElement.appendChild(html);
-        self.trigger('rendered');
-        self.renderComparisonDiff();
-      });
+      if (!toRender || !oldElement) {
+        // if we can't find the element or where to put it, just render everything
+        toRender = this.xmlElement;
+        oldElement = null;
+      }
+
+      // ensure the rendered is ready
+      await Indigo.deferredToAsync(this.htmlRenderer.ready);
+
+      const html = this.htmlRenderer.renderXmlElement(this.document, toRender);
+      this.prepareHtmlForRender(html);
+
+      if (oldElement) {
+        oldElement.replaceWith(html);
+      } else {
+        this.aknElement.replaceChildren(html);
+      }
+
+      this.trigger('rendered');
+      this.renderComparisonDiff();
     },
 
     renderComparisonDiff: function() {

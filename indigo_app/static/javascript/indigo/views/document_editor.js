@@ -243,12 +243,11 @@
         const coverpage = document.createElement('div');
         coverpage.className = 'spinner-when-empty';
         this.aknElement.appendChild(coverpage);
-        this.renderCoverpage().then(function(nodes) {
-          for (const node of nodes) {
-            coverpage.append(node);
-          }
-          self.trigger('rendered');
-        });
+        const nodes = await this.renderCoverpage();
+        for (const node of nodes) {
+          coverpage.append(node);
+        }
+        this.trigger('rendered');
       }
 
       this.htmlRenderer.ready.then(function() {
@@ -299,30 +298,22 @@
       this.highlightQuickEditElement(html);
     },
 
-    renderCoverpage: function() {
-      // Render a coverpage and return it via a deferred.
-      // Uses a cached coverpage, if available.
-      var deferred = $.Deferred(),
-          self = this;
-
-      if (this.coverpageCache) {
-        deferred.resolve(this.coverpageCache);
-      } else {
-        var data = JSON.stringify({'document': self.document.toJSON()});
-        $.ajax({
-          url: this.document.url() + '/render/coverpage',
-          type: "POST",
-          data: data,
-          contentType: "application/json; charset=utf-8",
-          dataType: "json"})
-          .then(function(response) {
-            var html = $.parseHTML(response.output);
-            self.coverpageCache = html;
-            deferred.resolve(html);
-          });
+    renderCoverpage: async function() {
+      if (!this.coverpageCache) {
+        const data = JSON.stringify({'document': this.document.toJSON()});
+        const resp = await fetch(this.document.url() + '/render/coverpage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'X-CSRFToken': Indigo.csrfToken,
+          },
+          body: data,
+        });
+        if (resp.ok) {
+          this.coverpageCache = $.parseHTML((await resp.json())['output']);
+        }
       }
-
-      return deferred;
+      return this.coverpageCache;
     },
 
     makeLinksExternal: function(html) {

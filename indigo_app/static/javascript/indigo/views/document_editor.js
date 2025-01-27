@@ -266,21 +266,6 @@
 
       this.sheetInner.classList.toggle('is-fragment', this.xmlElement.parentElement !== null);
 
-      if (!eid) {
-        this.aknElement.classList.add('spinner-when-empty');
-        this.aknElement.replaceChildren();
-
-        if (this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "") {
-          // render the coverpage
-          const coverpage = document.createElement('div');
-          coverpage.className = 'spinner-when-empty';
-          this.aknElement.appendChild(coverpage);
-          for (const node of await this.renderCoverpage()) {
-            coverpage.append(node);
-          }
-        }
-      }
-
       // what xml element must be rendered, and where must it be placed into the tree?
       let toRender, oldElement;
       if (eid && this.xmlElement.getAttribute('eId') !== eid) {
@@ -307,6 +292,18 @@
         oldElement.replaceWith(html);
       } else {
         this.aknElement.replaceChildren(html);
+      }
+
+      // render the coverpage asynchronously
+      if (!eid && this.xmlElement.parentElement === null && Indigo.Preloads.provisionEid === "") {
+        const coverpage = document.createElement('div');
+        coverpage.className = 'spinner-when-empty';
+        this.aknElement.insertAdjacentElement('afterbegin', coverpage);
+        this.renderCoverpage().then((nodes) => {
+          for (const node of nodes) {
+            coverpage.append(node);
+          }
+        });
       }
 
       this.trigger('rendered');

@@ -34,7 +34,7 @@
             <a class="dropdown-item insert-remark" data-verb="repeal" href="#">{% trans "Repeal" %}</a>
             <a class="dropdown-item insert-remark" data-verb="other" href="#">{% trans "Other" %}</a>
             {% for common_annotation in document.language.common_annotations.all %}
-              <a class="dropdown-item insert-remark" data-verb="{{ common_annotation.content }}" href="#">{{ common_annotation.title }}</a>
+              <a class="dropdown-item insert-remark" data-common="true" data-verb="{{ common_annotation.content }}" href="#">{{ common_annotation.title }}</a>
             {% endfor %}
           </div>
         </div>

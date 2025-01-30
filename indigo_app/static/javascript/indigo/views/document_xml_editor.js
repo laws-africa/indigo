@@ -329,10 +329,11 @@ class AknTextEditor {
   insertRemark (e) {
     const amendedSection = this.xmlElement.id.replace('-', ' ');
     const verb = e.currentTarget.getAttribute('data-verb');
+    const common = e.currentTarget.getAttribute('data-common');
     const amendingWork = this.getAmendingWork();
     let remark = verb;
 
-    if (this.remarkGenerator && amendingWork) {
+    if (this.remarkGenerator && amendingWork && !common) {
       remark = this.remarkGenerator(this.document, amendedSection, verb, amendingWork, this.grammarModel);
     }
 

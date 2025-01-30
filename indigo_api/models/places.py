@@ -277,3 +277,12 @@ class AccentedTerms(models.Model):
 
     def __str__(self):
         return str(self.language)
+
+
+class CommonAnnotation(models.Model):
+    title = models.CharField(_("annotation title"), max_length=32, help_text=_("to be shown in the document's drop-down menu"))
+    content = models.CharField(_("annotation content"), max_length=512, help_text=_("will always be wrapped in []s — don't include them again"))
+    language = models.ForeignKey(Language, verbose_name=_("language"), related_name='common_annotations', null=False, blank=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.title)

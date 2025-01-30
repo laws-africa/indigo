@@ -330,7 +330,7 @@ class AknTextEditor {
     const amendedSection = this.xmlElement.id.replace('-', ' ');
     const verb = e.currentTarget.getAttribute('data-verb');
     const amendingWork = this.getAmendingWork();
-    let remark = '<remark>';
+    let remark = verb;
 
     if (this.remarkGenerator && amendingWork) {
       remark = this.remarkGenerator(this.document, amendedSection, verb, amendingWork, this.grammarModel);

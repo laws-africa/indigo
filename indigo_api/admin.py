@@ -12,7 +12,8 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, SavedSearch, AccentedTerms
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, SavedSearch,\
+    AccentedTerms, CommonAnnotation
 
 
 admin.site.register(Subtype)
@@ -109,6 +110,12 @@ class AccentedTermsForm(forms.ModelForm):
 @admin.register(AccentedTerms)
 class AccentedTermsAdmin(admin.ModelAdmin):
     form = AccentedTermsForm
+
+
+@admin.register(CommonAnnotation)
+class CommonAnnotationAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'language', 'content',)
+    list_filter = ('language',)
 
 
 def run_now(modeladmin, request, queryset):

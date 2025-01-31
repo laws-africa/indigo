@@ -1,17 +1,15 @@
 import re
 from dataclasses import dataclass, field
-from functools import cached_property
-from itertools import chain
-from typing import List
-
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.db.models import IntegerField, Case, When, Value
-from django.db.models import Q, Count
+from django.db.models import IntegerField, Case, When, Value, Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
 from django.utils.translation import gettext_lazy as _
+from functools import cached_property
+from itertools import chain
+from typing import List
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
@@ -1414,8 +1412,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         qs = self.filter_queryset(qs, exclude="taxonomy_topic")
         # count works per taxonomy topic
         counts = {
-            x["taxonomy_topics__slug"]: x["count"]
-            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("taxonomy_topics__slug")).order_by()
+            x: qs.filter(taxonomy_topics__slug=x).count()
+            for x in qs.only("taxonomy_topics__slug").values_list("taxonomy_topics__slug", flat=True).order_by()
         }
 
         # fold the counts into the taxonomy tree

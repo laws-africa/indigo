@@ -1201,17 +1201,17 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     def work_facets(self, queryset, taxonomy_toc, places_toc):
         work_facets = []
         self.facet_subtype(work_facets, queryset)
-        self.facet_work_in_progress(work_facets, queryset)
         self.facet_principal(work_facets, queryset)
-        self.facet_frbr_date(work_facets, queryset)
         self.facet_stub(work_facets, queryset)
-        self.facet_tasks(work_facets, queryset)
-        self.facet_publication_document(work_facets, queryset)
         self.facet_primary(work_facets, queryset)
+        self.facet_frbr_date(work_facets, queryset)
         self.facet_commencement(work_facets, queryset)
         self.facet_amendment(work_facets, queryset)
         self.facet_consolidation(work_facets, queryset)
         self.facet_repeal(work_facets, queryset)
+        self.facet_publication_document(work_facets, queryset)
+        self.facet_work_in_progress(work_facets, queryset)
+        self.facet_tasks(work_facets, queryset)
         self.facet_taxonomy(taxonomy_toc, queryset)
         self.facet_place(places_toc, queryset)
         return work_facets

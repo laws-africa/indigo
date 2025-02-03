@@ -1,17 +1,15 @@
 import re
 from dataclasses import dataclass, field
-from functools import cached_property
-from itertools import chain
-from typing import List
-
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.db.models import IntegerField, Case, When, Value
-from django.db.models import Q, Count
+from django.db.models import IntegerField, Case, When, Value, Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
 from django.utils.translation import gettext_lazy as _
+from functools import cached_property
+from itertools import chain
+from typing import List
 
 from cobalt import FrbrUri
 from indigo.tasks import TaskBroker
@@ -1201,17 +1199,17 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
     def work_facets(self, queryset, taxonomy_toc, places_toc):
         work_facets = []
         self.facet_subtype(work_facets, queryset)
-        self.facet_work_in_progress(work_facets, queryset)
         self.facet_principal(work_facets, queryset)
-        self.facet_frbr_date(work_facets, queryset)
         self.facet_stub(work_facets, queryset)
-        self.facet_tasks(work_facets, queryset)
-        self.facet_publication_document(work_facets, queryset)
         self.facet_primary(work_facets, queryset)
+        self.facet_frbr_date(work_facets, queryset)
         self.facet_commencement(work_facets, queryset)
         self.facet_amendment(work_facets, queryset)
         self.facet_consolidation(work_facets, queryset)
         self.facet_repeal(work_facets, queryset)
+        self.facet_publication_document(work_facets, queryset)
+        self.facet_work_in_progress(work_facets, queryset)
+        self.facet_tasks(work_facets, queryset)
         self.facet_taxonomy(taxonomy_toc, queryset)
         self.facet_place(places_toc, queryset)
         return work_facets
@@ -1415,7 +1413,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         # count works per taxonomy topic
         counts = {
             x["taxonomy_topics__slug"]: x["count"]
-            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("taxonomy_topics__slug")).order_by()
+            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("pk", distinct=True)).order_by().values("taxonomy_topics__slug", "count")
         }
 
         # fold the counts into the taxonomy tree

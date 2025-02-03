@@ -1412,8 +1412,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         qs = self.filter_queryset(qs, exclude="taxonomy_topic")
         # count works per taxonomy topic
         counts = {
-            x: qs.filter(taxonomy_topics__slug=x).count()
-            for x in qs.only("taxonomy_topics__slug").values_list("taxonomy_topics__slug", flat=True).order_by()
+            x["taxonomy_topics__slug"]: x["count"]
+            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("pk", distinct=True)).order_by().values("taxonomy_topics__slug", "count")
         }
 
         # fold the counts into the taxonomy tree

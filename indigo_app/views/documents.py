@@ -1,5 +1,4 @@
 import json
-
 from django.conf import settings
 from django.contrib import messages
 from django.http import Http404
@@ -11,7 +10,7 @@ from lxml import etree
 
 import bluebell
 import cobalt
-from cobalt import Portion
+from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -139,10 +138,40 @@ class DocumentProvisionDetailView(DocumentDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['provision_eid'] = self.eid
+        context['provision_counters'], context['eid_counter'] = self.get_counters()
         return context
 
     def get_document_content_json(self, document):
         return json.dumps(etree.tostring(self.provision_xml, encoding='unicode'))
+
+    def get_counters(self):
+        """ Generate provision and eid counters based on the content preceding our element.
+            This way we don't end up 'correcting' e.g. part_II_2 to part_II,
+             because the context will now be aware of the preceding part_II that isn't being edited.
+        """
+        root = etree.fromstring(self.object.document_xml)
+        element = root.xpath(f'.//a:*[@eId="{self.eid}"]', namespaces={'a': self.object.doc.namespace})[0]
+        parent = element.getparent()
+        # remove everything from (and including) our element from the tree
+        for sibling in element.itersiblings():
+            # this will remove e.g. parts III, IV, etc -- or if we're lower down, e.g. part_II__sec_3__subsec_2 etc
+            parent.remove(sibling)
+        # now remove all the ancestors' following siblings too, e.g. attachments,
+        # or e.g. part_II__sec_4, part_III, up to attachments
+        self.nuke_following(element)
+        # remove our element last
+        parent.remove(element)
+
+        generator = XmlGenerator(self.object.frbr_uri)
+        generator.generate_eids(root)
+        return json.dumps(generator.ids.counters), json.dumps(generator.ids.eid_counter)
+
+    def nuke_following(self, element):
+        parent = element.getparent()
+        if parent is not None:
+            for sibling in parent.itersiblings():
+                sibling.getparent().remove(sibling)
+            self.nuke_following(parent)
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

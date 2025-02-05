@@ -135,7 +135,8 @@
       if (Indigo.Preloads.provisionEid && Indigo.Preloads.provisionEid.lastIndexOf('__') > -1) {
         eidPrefix = Indigo.Preloads.provisionEid.substring(0, Indigo.Preloads.provisionEid.lastIndexOf('__'));
       }
-      new indigoAkn.EidRewriter().rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
+      new indigoAkn.EidRewriter(Indigo.Preloads.provisionCounters, Indigo.Preloads.eidCounter)
+        .rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
     },

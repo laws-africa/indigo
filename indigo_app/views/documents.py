@@ -156,22 +156,17 @@ class DocumentProvisionDetailView(DocumentDetailView):
         for sibling in element.itersiblings():
             # this will remove e.g. parts III, IV, etc -- or if we're lower down, e.g. part_II__sec_3__subsec_2 etc
             parent.remove(sibling)
+        parent.remove(element)
         # now remove all the ancestors' following siblings too, e.g. attachments,
         # or e.g. part_II__sec_4, part_III, up to attachments
-        self.nuke_following(element)
-        # remove our element last
-        parent.remove(element)
+        while parent is not None:
+            for aunt in parent.itersiblings():
+                aunt.getparent().remove(aunt)
+            parent = parent.getparent()
 
         generator = XmlGenerator(self.object.frbr_uri)
         generator.generate_eids(root)
         return json.dumps(generator.ids.counters), json.dumps(generator.ids.eid_counter)
-
-    def nuke_following(self, element):
-        parent = element.getparent()
-        if parent is not None:
-            for sibling in parent.itersiblings():
-                sibling.getparent().remove(sibling)
-            self.nuke_following(parent)
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

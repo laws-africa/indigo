@@ -140,7 +140,7 @@
       }
       if (Indigo.Preloads.provisionEid) {
         eidRewriter.counters = JSON.parse(JSON.stringify(Indigo.Preloads.provisionCounters));
-        eidRewriter.eidCounter = JSON.parse(JSON.stringify(Indigo.Preloads.eidCounter));
+        eidRewriter.eIdCounter = JSON.parse(JSON.stringify(Indigo.Preloads.eidCounter));
         workComponentRewriter.counters = JSON.parse(JSON.stringify(Indigo.Preloads.attachmentCounters));
       }
       eidRewriter.rewriteEid(this.xmlDocument.documentElement, eidPrefix);

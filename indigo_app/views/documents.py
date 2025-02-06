@@ -12,6 +12,7 @@ import bluebell
 import cobalt
 from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
+from indigo.xmlutils import rewrite_all_attachment_work_components
 from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
@@ -138,7 +139,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['provision_eid'] = self.eid
-        context['provision_counters'], context['eid_counter'] = self.get_counters()
+        context['provision_counters'], context['eid_counter'], context['attachment_counters'] = self.get_counters()
         return context
 
     def get_document_content_json(self, document):
@@ -166,7 +167,9 @@ class DocumentProvisionDetailView(DocumentDetailView):
 
         generator = XmlGenerator(self.object.frbr_uri)
         generator.generate_eids(root)
-        return json.dumps(generator.ids.counters), json.dumps(generator.ids.eid_counter)
+        doc = cobalt.StructuredDocument.for_document_type(self.object.work.work_uri.doctype)(etree.tostring(root, encoding='unicode'))
+        attachment_counters = {'__attachments': rewrite_all_attachment_work_components(doc)}
+        return json.dumps(generator.ids.counters), json.dumps(generator.ids.eid_counter), json.dumps(attachment_counters)
 
 
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):

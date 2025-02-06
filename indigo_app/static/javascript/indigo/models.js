@@ -133,17 +133,19 @@
       // in provision mode, retain the eId of the parent element as the prefix
       // and use the counters of all preceding provisions for context
       let eidPrefix,
-          rewriter = new indigoAkn.EidRewriter();
+          eidRewriter = new indigoAkn.EidRewriter(),
+          workComponentRewriter = new indigoAkn.WorkComponentRewriter();
       if (Indigo.Preloads.provisionEid && Indigo.Preloads.provisionEid.lastIndexOf('__') > -1) {
         eidPrefix = Indigo.Preloads.provisionEid.substring(0, Indigo.Preloads.provisionEid.lastIndexOf('__'));
       }
       if (Indigo.Preloads.provisionEid) {
-        rewriter.counters = Indigo.Preloads.provisionCounters;
-        rewriter.eidCounter = Indigo.Preloads.eidCounter;
+        eidRewriter.counters = Indigo.Preloads.provisionCounters;
+        eidRewriter.eidCounter = Indigo.Preloads.eidCounter;
+        workComponentRewriter.counters = Indigo.Preloads.attachmentCounters;
       }
-      rewriter.rewriteEid(this.xmlDocument.documentElement, eidPrefix);
+      eidRewriter.rewriteEid(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
-      new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
+      workComponentRewriter.rewriteAttachmentWorkComponent(this.xmlDocument.documentElement);
     },
 
     // serialise an XML node, or the entire document if node is not given, to a string

@@ -139,9 +139,9 @@
         eidPrefix = Indigo.Preloads.provisionEid.substring(0, Indigo.Preloads.provisionEid.lastIndexOf('__'));
       }
       if (Indigo.Preloads.provisionEid) {
-        eidRewriter.counters = Indigo.Preloads.provisionCounters;
-        eidRewriter.eidCounter = Indigo.Preloads.eidCounter;
-        workComponentRewriter.counters = Indigo.Preloads.attachmentCounters;
+        eidRewriter.counters = JSON.parse(JSON.stringify(Indigo.Preloads.provisionCounters));
+        eidRewriter.eidCounter = JSON.parse(JSON.stringify(Indigo.Preloads.eidCounter));
+        workComponentRewriter.counters = JSON.parse(JSON.stringify(Indigo.Preloads.attachmentCounters));
       }
       eidRewriter.rewriteEid(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too

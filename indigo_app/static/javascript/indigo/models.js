@@ -131,12 +131,17 @@
     rewriteIds: function() {
       // rewrite all eIds before setting the content
       // in provision mode, retain the eId of the parent element as the prefix
-      let eidPrefix;
+      // and use the counters of all preceding provisions for context
+      let eidPrefix,
+          rewriter = new indigoAkn.EidRewriter();
       if (Indigo.Preloads.provisionEid && Indigo.Preloads.provisionEid.lastIndexOf('__') > -1) {
         eidPrefix = Indigo.Preloads.provisionEid.substring(0, Indigo.Preloads.provisionEid.lastIndexOf('__'));
       }
-      new indigoAkn.EidRewriter(Indigo.Preloads.provisionCounters, Indigo.Preloads.eidCounter)
-        .rewriteAllEids(this.xmlDocument.documentElement, eidPrefix);
+      if (Indigo.Preloads.provisionEid) {
+        rewriter.counters = Indigo.Preloads.provisionCounters;
+        rewriter.eidCounter = Indigo.Preloads.eidCounter;
+      }
+      rewriter.rewriteEid(this.xmlDocument.documentElement, eidPrefix);
       // rewrite all attachment FRBR URI work components too
       new indigoAkn.WorkComponentRewriter().rewriteAllAttachmentWorkComponents(this.xmlDocument.documentElement);
     },

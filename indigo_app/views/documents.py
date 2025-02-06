@@ -152,7 +152,7 @@ class DocumentProvisionDetailView(DocumentDetailView):
         root = etree.fromstring(self.object.document_xml)
         element = root.xpath(f'.//a:*[@eId="{self.eid}"]', namespaces={'a': self.object.doc.namespace})[0]
         parent = element.getparent()
-        # remove everything from (and including) our element from the tree
+        # remove everything from our element onwards (inclusive) from the tree
         for sibling in element.itersiblings():
             # this will remove e.g. parts III, IV, etc -- or if we're lower down, e.g. part_II__sec_3__subsec_2 etc
             parent.remove(sibling)

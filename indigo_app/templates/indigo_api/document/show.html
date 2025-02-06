@@ -134,6 +134,9 @@
   window.Indigo.Preloads.document = {{ document_json|safe }};
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
   window.Indigo.Preloads.provisionEid = "{{ provision_eid }}";
+  window.Indigo.Preloads.provisionCounters = {% if provision_counters %}{{ provision_counters|safe }}{% else %}null{% endif %};
+  window.Indigo.Preloads.eidCounter = {% if eid_counter %}{{ eid_counter|safe }}{% else %}null{% endif %};
+  window.Indigo.Preloads.attachmentCounters = {% if attachment_counters %}{{ attachment_counters|safe }}{% else %}null{% endif %};
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
   window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
   {% if pyodide_packages_json %}

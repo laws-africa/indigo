@@ -79,3 +79,4 @@ def rewrite_all_attachment_work_components(xml_doc):
                     'a:FRBRExpression': lambda: frbr_uri.expression_uri(),
                     'a:FRBRManifestation': lambda: frbr_uri.manifestation_uri(),
                 }[part]()
+    return counter

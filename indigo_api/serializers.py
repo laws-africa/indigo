@@ -430,6 +430,8 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
+    provision_counters = serializers.JSONField(required=False)
+    eid_counter = serializers.JSONField(required=False)
 
 
 class DocumentAPISerializer(serializers.Serializer):

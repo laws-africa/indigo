@@ -22,6 +22,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action as detail_route_action
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
+
+from bluebell.parser import AkomaNtosoParser
 from cobalt import StructuredDocument
 
 from lxml import etree
@@ -328,6 +330,7 @@ class ParseView(DocumentResourceView, APIView):
         text = serializer.validated_data.get('content')
         try:
             xml = importer.parse_from_text(text, frbr_uri)
+            xml = self.check_rewrite_eids(xml, serializer.validated_data)
         except ValueError as e:
             log.warning(f"Error during import: {e}", exc_info=e)
             log.warning(f"Full text being parsed (delimited with ---XXX---):\n---XXX---\n{text}\n---XXX---")
@@ -344,6 +347,23 @@ class ParseView(DocumentResourceView, APIView):
             xml = doc.to_xml(encoding='unicode')
 
         return Response({'output': xml})
+
+    def check_rewrite_eids(self, xml, data):
+        """ In provision mode, the optional counters will be included.
+            We need to take them into account when calculating our provision's eids.
+            However, we only need to do this at the top level, i.e. when there's no eid prefix.
+        """
+        provision_counters = data.get('provision_counters')
+        eid_counter = data.get('eid_counter')
+        if data.get('id_prefix') or not (provision_counters or eid_counter):
+            return xml
+
+        parser = AkomaNtosoParser(self.document.expression_uri, '')
+        parser.generator.ids.counters = provision_counters
+        parser.generator.ids.eid_counter = eid_counter
+        xml = etree.fromstring(xml)
+        parser.generator.ids.rewrite_eid(xml, parser.eid_prefix)
+        return etree.tostring(xml, encoding='unicode')
 
 
 class RenderView(DocumentResourceView, APIView):

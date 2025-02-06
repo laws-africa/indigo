@@ -92,6 +92,12 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
       body.id_prefix = eidPrefix;
     }
 
+    if (Indigo.Preloads.provisionEid) {
+      body.provision_counters = JSON.parse(JSON.stringify(Indigo.Preloads.provisionCounters));
+      body.eid_counter = JSON.parse(JSON.stringify(Indigo.Preloads.eidCounter));
+      body.attachment_counters = JSON.parse(JSON.stringify(Indigo.Preloads.attachmentCounters));
+    }
+
     const resp = await fetch(this.url, {
       method: 'POST',
       headers: this.headers,

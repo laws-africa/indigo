@@ -11,6 +11,7 @@ class BluebellParser {
     // python dependencies
     this.packages = Indigo.pyodide_packages;
     this.pyBootstrap = `
+import json
 from bluebell.parser import AkomaNtosoParser, ParseError
 from cobalt import FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
@@ -38,6 +39,16 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
 
     xml = etree.tostring(xml, encoding='unicode')
     return False, xml
+
+def rewriteEids(xml, frbr_uri, provision_counters, eid_counter):
+    # see indigo_api.views.documents.ParseView.check_rewrite_eids for context
+    frbr_uri = FrbrUri.parse(frbr_uri)
+    parser = AkomaNtosoParser(frbr_uri)
+    parser.generator.ids.counters = json.loads(provision_counters)
+    parser.generator.ids.eid_counter = json.loads(eid_counter)
+    xml = etree.fromstring(xml)
+    parser.generator.ids.rewrite_eid(xml)
+    return etree.tostring(xml, encoding='unicode')
 `;
   }
 
@@ -76,6 +87,12 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
     if (error) {
       throw resp;
     }
+    // in provision mode at the top level only, re-write the eids taking into account the injected counters
+    if (Indigo.Preloads.provisionEid && !eidPrefix) {
+      const provision_counters = JSON.stringify(Indigo.Preloads.provisionCounters);
+      const eid_counter = JSON.stringify(Indigo.Preloads.eidCounter);
+      return this.pyodide.globals.get('rewriteEids')(resp, frbr_uri, provision_counters, eid_counter);
+    }
     return resp;
   }
 
@@ -95,7 +112,6 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
     if (Indigo.Preloads.provisionEid) {
       body.provision_counters = JSON.parse(JSON.stringify(Indigo.Preloads.provisionCounters));
       body.eid_counter = JSON.parse(JSON.stringify(Indigo.Preloads.eidCounter));
-      body.attachment_counters = JSON.parse(JSON.stringify(Indigo.Preloads.attachmentCounters));
     }
 
     const resp = await fetch(this.url, {

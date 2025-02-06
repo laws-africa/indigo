@@ -358,11 +358,11 @@ class ParseView(DocumentResourceView, APIView):
         if data.get('id_prefix') or not (provision_counters or eid_counter):
             return xml
 
-        parser = AkomaNtosoParser(self.document.expression_uri, '')
+        parser = AkomaNtosoParser(self.document.expression_uri)
         parser.generator.ids.counters = provision_counters
         parser.generator.ids.eid_counter = eid_counter
         xml = etree.fromstring(xml)
-        parser.generator.ids.rewrite_eid(xml, parser.eid_prefix)
+        parser.generator.ids.rewrite_eid(xml)
         return etree.tostring(xml, encoding='unicode')
 
 

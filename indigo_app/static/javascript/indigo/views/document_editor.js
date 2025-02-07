@@ -189,49 +189,52 @@
      * The XML document has changed, re-render if it impacts our xmlElement.
      *
      * @param model documentContent model
-     * @param mutation a MutationRecord object
+     * @param mutations an array of MutationRecord objects
      */
-    onDomMutated: function(model, mutation) {
-      let eid = mutation.target.getAttribute ? mutation.target.getAttribute('eId') : null;
+    onDomMutated: function(model, mutations) {
+      // process each mutation in order; we stop processing after finding the first one that significantly impacts us
+      for (const mutation of mutations) {
+        let eid = mutation.target.getAttribute ? mutation.target.getAttribute('eId') : null;
 
-      switch (model.getMutationImpact(mutation, this.xmlElement)) {
-        case 'replaced':
-          this.xmlElement = mutation.addedNodes[0];
-          this.render();
-          break;
-        case 'changed':
-          if (this.quickEditEid && eid !== this.quickEditEid) {
-            // Check for the special case of the quick-edited element being replaced, so that we can re-render
-            // just that element (if possible). In this case the mutation target is the parent and its children have
-            // changed.
+        switch (model.getMutationImpact(mutation, this.xmlElement)) {
+          case 'replaced':
+            this.xmlElement = mutation.addedNodes[0];
+            this.render();
+            return;
+          case 'changed':
+            if (this.quickEditEid && eid !== this.quickEditEid) {
+              // Check for the special case of the quick-edited element being replaced, so that we can re-render
+              // just that element (if possible). In this case the mutation target is the parent and its children have
+              // changed.
 
-            if (mutation.type === 'childList' && mutation.removedNodes.length === 1 &&
-              mutation.removedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
-              // the quick-edited element was removed or replaced
+              if (mutation.type === 'childList' && mutation.removedNodes.length === 1 &&
+                mutation.removedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+                // the quick-edited element was removed or replaced
 
-              if (mutation.addedNodes.length === 1) {
-                if (mutation.addedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
-                  // it was replaced but retained the eid
-                  eid = this.quickEditEid;
+                if (mutation.addedNodes.length === 1) {
+                  if (mutation.addedNodes[0]?.getAttribute('eId') === this.quickEditEid) {
+                    // it was replaced but retained the eid
+                    eid = this.quickEditEid;
+                  } else {
+                    // it was replaced with a different eid; re-render the target but track the new eid
+                    this.quickEditEid = mutation.addedNodes[0].getAttribute('eId');
+                  }
                 } else {
-                  // it was replaced with a different eid; re-render the target but track the new eid
-                  this.quickEditEid = mutation.addedNodes[0].getAttribute('eId');
+                  // it was removed
+                  this.quickEditEid = null;
                 }
-              } else {
-                // it was removed
-                this.quickEditEid = null;
               }
             }
-          }
 
-          // eid can be null, in which case everything is re-rendered
-          this.render(eid);
-          break;
-        case 'removed':
-          // the change removed xmlElement from the tree
-          console.log('Mutation removes SourceEditor.xmlElement from the tree');
-          this.discardChanges();
-          break;
+            // eid can be null, in which case everything is re-rendered
+            this.render(eid);
+            return;
+          case 'removed':
+            // the change removed xmlElement from the tree
+            console.log('Mutation removes SourceEditor.xmlElement from the tree');
+            this.discardChanges();
+            return;
+        }
       }
     },
 

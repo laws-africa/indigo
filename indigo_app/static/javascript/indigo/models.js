@@ -24,7 +24,7 @@
    * This model fires custom events:
    *
    * - mutation - when the XML DOM is manipulated by any means, based on the MutationObserver class. The parameter
-   *              for the event is a MutationRecord object.
+   *              for the event is list of MutationRecord objects.
    * - change:dom - when the XML DOM is manipulated by any means, after all the mutation events have been fired.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
@@ -47,10 +47,8 @@
 
     setupMutationObserver: function () {
       this.observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          console.log('mutation', mutation);
-          this.trigger('mutation', this, mutation);
-        }
+        console.log('mutations', mutations);
+        this.trigger('mutation', this, mutations);
         this.trigger('change:dom', this);
         this.trigger('change', this);
       });

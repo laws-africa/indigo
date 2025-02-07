@@ -272,28 +272,31 @@ class AknTextEditor {
    * The XML document has changed, re-render if it impacts our xmlElement.
    *
    * @param model documentContent model
-   * @param mutation a MutationRecord object
+   * @param mutations an array of MutationRecord objects
    */
-  onDocumentMutated (model, mutation) {
+  onDocumentMutated (model, mutations) {
     if (!this.editing) return;
 
-    switch (model.getMutationImpact(mutation, this.xmlElement)) {
-      case 'replaced':
-        this.xmlElement = mutation.addedNodes[0];
-        // fall through to 'changed'
-      case 'changed':
-        if (!this.updating) {
-          // the XML has changed, update the text in the editor
-          this.previousText = this.unparse();
-          const posn = this.monacoEditor.getPosition();
-          this.monacoEditor.setValue(this.previousText);
-          this.monacoEditor.setPosition(posn);
-        }
-        break;
-      case 'removed':
-        console.log('Mutation removes AknTextEditor.xmlElement from the tree');
-        this.discardChanges();
-        break;
+    // process each mutation in order; we stop processing after finding the first one that significantly impacts us
+    for (const mutation of mutations) {
+      switch (model.getMutationImpact(mutation, this.xmlElement)) {
+        case 'replaced':
+          this.xmlElement = mutation.addedNodes[0];
+          // fall through to 'changed'
+        case 'changed':
+          if (!this.updating) {
+            // the XML has changed, update the text in the editor
+            this.previousText = this.unparse();
+            const posn = this.monacoEditor.getPosition();
+            this.monacoEditor.setValue(this.previousText);
+            this.monacoEditor.setPosition(posn);
+          }
+          return;
+        case 'removed':
+          console.log('Mutation removes AknTextEditor.xmlElement from the tree');
+          this.discardChanges();
+          return;
+      }
     }
   }
 

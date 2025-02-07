@@ -93,23 +93,26 @@
      * The XML document has changed, re-render if it impacts our table element.
      *
      * @param model documentContent model
-     * @param mutation a MutationRecord object
+     * @param mutations an array of MutationRecord objects
      */
-    onDomMutated (model, mutation) {
+    onDomMutated (model, mutations) {
       if (!this.editing) return;
 
-      switch (model.getMutationImpact(mutation, this.table)) {
-        case 'replaced':
-          this.discardChanges(true);
-          break;
-        case 'changed':
-          this.discardChanges(true);
-          break;
-        case 'removed':
-          // the change removed xmlElement from the tree
-          console.log('Mutation removes TableEditor.table from the tree');
-          this.discardChanges(true);
-          break;
+      // process each mutation in order; we stop processing after finding the first one that significantly impacts us
+      for (const mutation of mutations) {
+        switch (model.getMutationImpact(mutation, this.table)) {
+          case 'replaced':
+            this.discardChanges(true);
+            return;
+          case 'changed':
+            this.discardChanges(true);
+            return;
+          case 'removed':
+            // the change removed xmlElement from the tree
+            console.log('Mutation removes TableEditor.table from the tree');
+            this.discardChanges(true);
+            return;
+        }
       }
     },
 

@@ -20,7 +20,7 @@
         this.nodes = [];
 
         this.listenTo(this.editorView, 'rendered', this.render);
-        this.listenTo(this.model, 'reset change add remove', this.render);
+        this.listenTo(this.model, 'reset change add remove', _.debounce(this.render, 100));
         this.listenTo(this.documentContent, 'change', this.runLinters);
         this.listenTo(this.attachments, 'reset change add remove', this.runLinters);
       },

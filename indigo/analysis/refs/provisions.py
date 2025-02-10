@@ -118,7 +118,13 @@ def parse_provision_refs(text, lang_code='eng'):
             return [MainProvisionRef("attachment", ref)]
 
         def the_attachment_ref(self, input, start, end, elements):
-            ref = ProvisionRef(input[start:end], start, end)
+            text = input[start:end]
+            if ' ' in text:
+                # assume the first word is the definite article, and skip it
+                posn = text.index(' ')
+                text = text[posn + 1:]
+                start = start + posn + 1
+            ref = ProvisionRef(text, start, end)
             return [MainProvisionRef("attachment", ref)]
 
         def unit_refs(self, input, start, end, elements):
@@ -135,10 +141,6 @@ def parse_provision_refs(text, lang_code='eng'):
                 ref.child = sub_refs[0]
                 sub_refs = sub_refs[1:]
             return MainProvisionRef("", ref, sub_refs or None)
-
-        def main_num(self, input, start, end, elements):
-            text = input[start:end]
-            return ProvisionRef(text, start, end)
 
         def sub_refs(self, input, start, end, elements):
             refs = [elements[0]]
@@ -203,9 +205,9 @@ class ProvisionRefsResolver:
         "points": "point",
         "regulation": "section",
         "regulations": "section",
-        "schedule": "attachment",
         "section": "section",
         "sections": "section",
+        "schedule": "attachment",
         "subparagraph":     ["subparagraph", "paragraph", "item"],
         "subparagraphs":    ["subparagraph", "paragraph", "item"],
         "sub-paragraph":    ["subparagraph", "paragraph", "item"],
@@ -227,6 +229,8 @@ class ProvisionRefsResolver:
         # af
         "artikel":  ["article", "section"],
         "artikels": ["article", "section"],
+        "bylaag": "attachment",
+        "bylae": "attachment",
         "deel": "part",
         "dele": "part",
         "hoofstuk": "chapter",
@@ -380,7 +384,8 @@ class ProvisionRefsMatcher(CitationMatcher):
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())
-    pattern_re = re.compile(fr'\b({pattern_names})\s+(\d|\([a-z0-9])', re.IGNORECASE)
+    the_schedule_patterns = '|'.join(['the schedule', 'die bylaag'])
+    pattern_re = re.compile(fr'\b(({pattern_names})\s+(\d|\([a-z0-9]))|({the_schedule_patterns})', re.IGNORECASE)
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None

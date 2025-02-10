@@ -373,7 +373,7 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "attachment",
-                ProvisionRef("the Schedule", 0, 12)
+                ProvisionRef("Schedule", 4, 12)
             ),
         ], result.references)
         self.assertIsNone(result.target)
@@ -382,7 +382,7 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "attachment",
-                ProvisionRef("the Schedule", 0, 12)
+                ProvisionRef("Schedule", 4, 12)
             ),
         ], result.references)
         self.assertIsNone(result.target)
@@ -391,7 +391,63 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual([
             MainProvisionRef(
                 "attachment",
-                ProvisionRef("the Schedule", 0, 12)
+                ProvisionRef("Schedule", 4, 12)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_the_afr(self):
+        result = parse_provision_refs("die Bylaag", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("die Bylaag.", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("die Bylaag en ook", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_the_fra(self):
+        result = parse_provision_refs("l'annexe", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("l'annexe.", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("l'annexe et aussi", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
             ),
         ], result.references)
         self.assertIsNone(result.target)

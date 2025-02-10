@@ -494,6 +494,81 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_num_punct(self):
+        # nums can be surrounded by () or have . or º at the end
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section 26, blah.</p>
+                <p>As given in section 26(a), blah.</p>
+                <p>As given in section 26(a)(1)(iii), blah.</p>
+                <p>As given in section 26B, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26Bº</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section <ref href="#sec_26">26</ref>, blah.</p>
+                <p>As given in section <ref href="#sec_26__subsec_a">26(a)</ref>, blah.</p>
+                <p>As given in section <ref href="#sec_26__subsec_a__para_1">26(a)(1)</ref>(iii), blah.</p>
+                <p>As given in section <ref href="#sec_26B">26B</ref>, blah.</p>
+              </content>
+            </section>
+            <section eId="sec_26">
+              <num>26.</num>
+              <heading>Important heading</heading>
+              <subsection eId="sec_26__subsec_a">
+                <num>a)</num>
+                <paragraph eId="sec_26__subsec_a__para_1">
+                  <num>1)</num>
+                </paragraph>
+                <paragraph eId="sec_26__subsec_a__para_2">
+                  <num>(2)</num>
+                </paragraph>
+              </subsection>
+            </section>
+            <section eId="sec_26B">
+              <num>26Bº</num>
+              <heading>Another important heading</heading>
+              <content>
+                <p>Another important provision.</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_local_ambiugous_levels(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">
@@ -744,7 +819,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <num>(4)</num>
                 <content>
                   <p>For the purposes of subsection (1)(b) of section 2 the intention is that</p>
-                  <p>For the purposes of subsection (3)(b) of section 2 the intention is that</p>
+                  <p>For the purposes of sub section (3)(b) of section 2 the intention is that</p>
                   <p>The particulars of subsection (3)(b) of section 2 and paragraph (a) of subsection (3) are</p>
                   <p>referred to in sub-section (1), (2) or (3)(b), to the extent that...</p>
                 </content>
@@ -793,7 +868,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <num>(4)</num>
                 <content>
                   <p>For the purposes of subsection <ref href="#sec_2__subsec_1">(1)</ref>(b) of section <ref href="#sec_2">2</ref> the intention is that</p>
-                  <p>For the purposes of subsection <ref href="#sec_2__subsec_3__para_b">(3)(b)</ref> of section <ref href="#sec_2">2</ref> the intention is that</p>
+                  <p>For the purposes of sub section <ref href="#sec_2__subsec_3__para_b">(3)(b)</ref> of section <ref href="#sec_2">2</ref> the intention is that</p>
                   <p>The particulars of subsection <ref href="#sec_2__subsec_3__para_b">(3)(b)</ref> of section <ref href="#sec_2">2</ref> and paragraph <ref href="#sec_1__subsec_3__para_a">(a)</ref> of subsection <ref href="#sec_1__subsec_3">(3)</ref> are</p>
                   <p>referred to in sub-section <ref href="#sec_1__subsec_1">(1)</ref>, <ref href="#sec_1__subsec_2">(2)</ref> or <ref href="#sec_1__subsec_3__para_b">(3)(b)</ref>, to the extent that...</p>
                 </content>

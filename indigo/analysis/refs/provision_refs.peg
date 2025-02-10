@@ -104,10 +104,13 @@ grammar ProvisionRefs
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
                  `sub-paragraphs` / `sub-paragraph` /
+                 `sub paragraphs` / `sub paragraph` /
                  `subregulations` / `subregulation` /
                  `sub-regulations` / `sub-regulation` /
+                 `sub regulations` / `sub regulation` /
                  `subsections` / `subsection` /
-                 `sub-sections` / `sub-section`
+                 `sub-sections` / `sub-section` /
+                 `sub sections` / `sub section`
 
                  # afrikaans
   unit_afr     <- `afdelings` / `afdeling` /

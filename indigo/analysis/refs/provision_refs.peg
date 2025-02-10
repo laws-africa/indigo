@@ -13,8 +13,8 @@ grammar ProvisionRefs
 
                  # Schedule 1
                  # Schedule 1A
-                 # TODO: Schedule 1 and 2
-  attachment_num_ref <- schedule__i18n WS+ main_num %attachment_num_ref
+                 # Schedule 1 and 2
+  attachment_num_ref <- schedule__i18n WS+ main_num (to_and_or main_num)* %attachment_num_ref
 
                  # the Schedule
                  # TODO: the First Schedule etc.

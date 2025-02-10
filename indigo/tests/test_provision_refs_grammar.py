@@ -349,7 +349,7 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertEqual("of", result.target)
         self.assertEqual(result.end, 49)
 
-    def test_schedules_num_eng(self):
+    def test_schedules_num(self):
         result = parse_provision_refs("Schedule 2a")
         self.assertEqual([
             MainProvisionRef(
@@ -365,6 +365,14 @@ class ProvisionRefsGrammarTest(TestCase):
                 "attachment",
                 ProvisionRef("Schedule 2a", 0, 11)
             ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_num_range(self):
+        result = parse_provision_refs("Schedule 2 to 30")
+        self.assertEqual([
+            MainProvisionRef('attachment', ProvisionRef('Schedule 2', 0, 10)),
+            MainProvisionRef('attachment', ProvisionRef('Schedule 30', 14, 16, separator='range')),
         ], result.references)
         self.assertIsNone(result.target)
 

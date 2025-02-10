@@ -1518,6 +1518,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>In Schedule 2</p>
                 <p>In Schedule 2.</p>
                 <p>In Schedule 2 and Schedule 2.</p>
+                <p>In Schedule 2 to 2.</p>
                 <p>In Scheduled work...</p>
                 <p>In the Schedule</p>
               </content>
@@ -1532,6 +1533,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>In <ref href="#att_1">Schedule 2</ref></p>
                 <p>In <ref href="#att_1">Schedule 2</ref>.</p>
                 <p>In <ref href="#att_1">Schedule 2</ref> and <ref href="#att_1">Schedule 2</ref>.</p>
+                <p>In <ref href="#att_1">Schedule 2</ref> to <ref href="#att_1">2</ref>.</p>
                 <p>In Scheduled work...</p>
                 <p>In the Schedule</p>
               </content>

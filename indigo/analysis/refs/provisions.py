@@ -114,8 +114,21 @@ def parse_provision_refs(text, lang_code='eng'):
             return ParseResult(refs, target, elements[3].offset)
 
         def attachment_num_ref(self, input, start, end, elements):
-            ref = ProvisionRef(input[start:end], start, end)
-            return [MainProvisionRef("attachment", ref)]
+            # extend the ref to cover the full thing, not just the number
+            ref = elements[2]
+            refs = [MainProvisionRef("attachment", ref)]
+            # "2" -> "Schedule 2"
+            ref.start_pos = start
+            ref.text = input[start:ref.end_pos]
+
+            for el in elements[3].elements or []:
+                ref = MainProvisionRef("attachment", el.main_num)
+                # "2" -> "Schedule 2"
+                ref.ref.text = elements[0].text + elements[1].text + ref.ref.text
+                ref.ref.separator = el.elements[0]
+                refs.append(ref)
+
+            return refs
 
         def the_attachment_ref(self, input, start, end, elements):
             text = input[start:end]

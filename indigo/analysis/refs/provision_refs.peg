@@ -24,7 +24,7 @@ grammar ProvisionRefs
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  unit_refs    <- unit__i18n WS+ main_ref (to_and_or main_ref)* %unit_refs
+  unit_refs   <- unit__i18n WS+ main_ref (to_and_or main_ref)* %unit_refs
 
   main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 

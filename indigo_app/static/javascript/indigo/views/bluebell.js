@@ -63,10 +63,14 @@ def parseBluebellText(text, frbr_uri, fragment, eid_prefix):
 
   async parse (text, frbr_uri, fragment, eidPrefix) {
     if (this.pyodide) {
-      return this.parseWithPyodide(text, frbr_uri, fragment, eidPrefix);
-    } else {
-      return this.parseWithServer(text, frbr_uri, fragment, eidPrefix);
+      try {
+        return await this.parseWithPyodide(text, frbr_uri, fragment, eidPrefix);
+      } catch (e) {
+        console.error('Error parsing with pyodide, will fall back to server:', e);
+      }
     }
+
+    return await this.parseWithServer(text, frbr_uri, fragment, eidPrefix);
   }
 
   async parseWithPyodide (text, frbr_uri, fragment, eidPrefix) {

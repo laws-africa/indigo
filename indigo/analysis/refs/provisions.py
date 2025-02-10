@@ -320,6 +320,7 @@ class ProvisionRefsResolver:
         names = [f'{{{ns}}}{n}' for n in names]
         dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
         not_outside_of = None if not_outside_of is None else [f'{{{ns}}}{n}' for n in not_outside_of]
+        clean_num = self.clean_num(num)
 
         # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
         for elem in bfs_upward_search(root, names, dead_ends, not_outside_of):
@@ -327,8 +328,11 @@ class ProvisionRefsResolver:
             if elem == root:
                 continue
             num_elem = elem.find('a:num', {'a': ns})
-            if num_elem is not None and num_elem.text.rstrip(".") == num:
+            if num_elem is not None and self.clean_num(num_elem.text) == clean_num:
                 return elem
+
+    def clean_num(self, num):
+        return num.strip("()").rstrip(".º")
 
 
 class ProvisionRefsMatcher(CitationMatcher):

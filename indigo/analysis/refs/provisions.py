@@ -113,7 +113,15 @@ def parse_provision_refs(text, lang_code='eng'):
             target = elements[2] if not hasattr(elements[2], 'elements') else None
             return ParseResult(refs, target, elements[3].offset)
 
-        def references(self, input, start, end, elements):
+        def attachment_num_ref(self, input, start, end, elements):
+            ref = ProvisionRef(input[start:end], start, end)
+            return [MainProvisionRef("attachment", ref)]
+
+        def the_attachment_ref(self, input, start, end, elements):
+            ref = ProvisionRef(input[start:end], start, end)
+            return [MainProvisionRef("attachment", ref)]
+
+        def unit_refs(self, input, start, end, elements):
             refs = [elements[2]]
             refs.extend(e.main_ref for e in elements[3].elements)
             for r in refs:
@@ -130,11 +138,6 @@ def parse_provision_refs(text, lang_code='eng'):
 
         def main_num(self, input, start, end, elements):
             text = input[start:end]
-            # strip right trailing dots
-            if text.endswith("."):
-                stripped = text[:-1]
-                end = end - (len(text) - len(stripped))
-                text = stripped
             return ProvisionRef(text, start, end)
 
         def sub_refs(self, input, start, end, elements):
@@ -183,6 +186,8 @@ class ProvisionRefsResolver:
     """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
 
     element_names = {
+        # all languages
+        "attachment": "attachment",
         # en
         "article": "article",
         "articles": "article",
@@ -198,6 +203,7 @@ class ProvisionRefsResolver:
         "points": "point",
         "regulation": "section",
         "regulations": "section",
+        "schedule": "attachment",
         "section": "section",
         "sections": "section",
         "subparagraph":     ["subparagraph", "paragraph", "item"],
@@ -316,10 +322,15 @@ class ProvisionRefsResolver:
             # it's not an Akoma Ntoso document, so we can't do anything
             return None
 
+        # handle attachment differently, by looking up on the full heading
+        if 'attachment' in names:
+            return self.find_attachment(root, num)
+
         # prefix with namespace
         names = [f'{{{ns}}}{n}' for n in names]
         dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
         not_outside_of = None if not_outside_of is None else [f'{{{ns}}}{n}' for n in not_outside_of]
+
         clean_num = self.clean_num(num)
 
         # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
@@ -333,6 +344,14 @@ class ProvisionRefsResolver:
 
     def clean_num(self, num):
         return num.strip("()").rstrip(".º")
+
+    def find_attachment(self, root: Element, heading: str):
+        """Find a named attachment. The whole document is searched, not just below root."""
+        ns = root.nsmap.get(None)
+        for heading_el in root.xpath('//a:attachment/a:heading', namespaces={'a': ns}):
+            heading_text = ''.join(heading_el.itertext())
+            if heading_text == heading:
+                return heading_el.getparent()
 
 
 class ProvisionRefsMatcher(CitationMatcher):

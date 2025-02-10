@@ -115,8 +115,8 @@ COMPONENT_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/
     </body>
     <attachments>
       <attachment eId="att_1">
-        <heading>Schedule 1</heading>
-        <subheading>Subheading</subheading>
+        <heading>%(heading)s</heading>
+        <subheading>%(subheading)s</subheading>
         <doc name="schedule">
           <meta>
             <identification source="#slaw">
@@ -144,7 +144,7 @@ COMPONENT_FIXTURE = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/
             </identification>
           </meta>
           <mainBody>
-            %s
+            %(body)s
           </mainBody>
         </doc>
       </attachment>
@@ -172,8 +172,8 @@ def portion_fixture(text=None, xml=None):
     return PORTION_FIXTURE % xml
 
 
-def component_fixture(text=None, xml=None):
+def component_fixture(text=None, xml=None, heading="Schedule 1", subheading="Subheading"):
     if text:
         xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
-    return COMPONENT_FIXTURE % xml
+    return COMPONENT_FIXTURE % {'body': xml, 'heading': heading, 'subheading': subheading}

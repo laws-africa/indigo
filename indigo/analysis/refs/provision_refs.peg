@@ -7,18 +7,29 @@ grammar ProvisionRefs
 
   root        <- references (to_and_or references)* target? tail %root
 
+  references  <- attachment_ref / unit_refs
+
+  attachment_ref <- attachment_num_ref / the_attachment_ref
+
+                 # Schedule 1
+                 # Schedule 1A
+  attachment_num_ref <- "Schedule" WS+ main_num %attachment_num_ref
+
+  # TODO: the First Schedule etc.
+  the_attachment_ref <- "the Schedule" ![a-zA-Z] %the_attachment_ref
+
                  # section 32
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  references  <- unit__i18n WS+ main_ref (to_and_or main_ref)* %references
+  unit_refs    <- unit__i18n WS+ main_ref (to_and_or main_ref)* %unit_refs
 
   main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 
                  # section 32
                  # section 32A
                  # section 32.1a.2
-  main_num    <- digit alpha_num_dot* %main_num
+  main_num    <- digit alpha_num_no_trailing_dot* %main_num
 
                  # (a)(ii) to (iv)
                  # (a), (b) and (f)(ii)
@@ -176,4 +187,5 @@ grammar ProvisionRefs
   comma       <- [,;]
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]
+  alpha_num_no_trailing_dot <- [a-zA-Z0-9-] / ('.' [a-zA-Z0-9])
   WS          <- " " / "\t" / "\n"

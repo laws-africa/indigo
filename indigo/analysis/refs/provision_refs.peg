@@ -154,9 +154,11 @@ grammar ProvisionRefs
                   `sous-reglements` / `sous-reglement` /
                   `sous-sections` / `sous-section`
 
+  # changes or additions to these must also be made in attachment_num_ref in provisions.py
   schedule_eng <- `schedules` / `schedule`
   schedule_afr <- `bylae` / `bylaag`
   schedule_fra <- `annexes` / `annexe`
+
   the_schedule_eng <- `the schedule`
   the_schedule_afr <- `die bylaag`
   the_schedule_fra <- `l'annexe`

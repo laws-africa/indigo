@@ -359,7 +359,7 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result.references)
         self.assertIsNone(result.target)
 
-        result = parse_provision_refs("Schedule 2a.")
+        result = parse_provision_refs("schedule 2a.")
         self.assertEqual([
             MainProvisionRef(
                 "attachment",
@@ -369,10 +369,17 @@ class ProvisionRefsGrammarTest(TestCase):
         self.assertIsNone(result.target)
 
     def test_schedules_num_range(self):
-        result = parse_provision_refs("Schedule 2 to 30")
+        result = parse_provision_refs("schedule 2 to 30")
         self.assertEqual([
             MainProvisionRef('attachment', ProvisionRef('Schedule 2', 0, 10)),
             MainProvisionRef('attachment', ProvisionRef('Schedule 30', 14, 16, separator='range')),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("Schedules 2 and 30")
+        self.assertEqual([
+            MainProvisionRef('attachment', ProvisionRef('Schedule 2', 0, 11)),
+            MainProvisionRef('attachment', ProvisionRef('Schedule 30', 16, 18, separator='and_or')),
         ], result.references)
         self.assertIsNone(result.target)
 

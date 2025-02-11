@@ -106,6 +106,9 @@ grammar ProvisionRefs
 
   # --------
   # translated terminals
+  #
+  # NB: if items are changed or added here, the list of the XML elements they correspond to must be updated in
+  #     ProvisionRefsReslover.element_names in indigo/analysis/refs/provisions.py
   # --------
 
                  # english

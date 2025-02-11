@@ -200,6 +200,12 @@ def parse_provision_refs(text, lang_code='eng'):
 class ProvisionRefsResolver:
     """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
 
+    # These are the keywords that can be matched in the text, and their corresponding element names to search for.
+    # If these items change, then the grammar must be updated to match them
+    # (see 'translated terminals' in provision_refs.peg)
+    #
+    # These also act as the basis of the pattern to look for potential references in the text to which the grammar
+    # must be applied.
     element_names = {
         # all languages
         "attachment": "attachment",

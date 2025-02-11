@@ -237,6 +237,7 @@ class ProvisionRefsResolver:
         "section": "section",
         "sections": "section",
         "schedule": "attachment",
+        "schedules": "attachment",
         "subparagraph":     ["subparagraph", "paragraph", "item"],
         "subparagraphs":    ["subparagraph", "paragraph", "item"],
         "sub-paragraph":    ["subparagraph", "paragraph", "item"],

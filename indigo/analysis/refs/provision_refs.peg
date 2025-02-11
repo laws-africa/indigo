@@ -7,18 +7,31 @@ grammar ProvisionRefs
 
   root        <- references (to_and_or references)* target? tail %root
 
+  references  <- attachment_ref / unit_refs
+
+  attachment_ref <- attachment_num_ref / the_attachment_ref
+
+                 # Schedule 1
+                 # Schedule 1A
+                 # Schedule 1 and 2
+  attachment_num_ref <- schedule__i18n WS+ main_num (to_and_or main_num)* %attachment_num_ref
+
+                 # the Schedule
+                 # TODO: the First Schedule etc.
+  the_attachment_ref <- the_schedule__i18n ![a-zA-Z] %the_attachment_ref
+
                  # section 32
                  # section (a)
                  # section 32(a)(c)
                  # section 32.1a.2
-  references  <- unit__i18n WS+ main_ref (to_and_or main_ref)* %references
+  unit_refs   <- unit__i18n WS+ main_ref (to_and_or main_ref)* %unit_refs
 
   main_ref    <- (main_num / num) (WS* sub_refs)? %main_ref
 
                  # section 32
                  # section 32A
                  # section 32.1a.2
-  main_num    <- digit alpha_num_dot* %main_num
+  main_num    <- digit alpha_num_no_trailing_dot* %num
 
                  # (a)(ii) to (iv)
                  # (a), (b) and (f)(ii)
@@ -88,9 +101,14 @@ grammar ProvisionRefs
   thereof__i18n     <- ""
   to__i18n          <- ""
   unit__i18n        <- ""
+  schedule__i18n    <- ""
+  the_schedule__i18n <- ""
 
   # --------
   # translated terminals
+  #
+  # NB: if items are changed or added here, the list of the XML elements they correspond to must be updated in
+  #     ProvisionRefsReslover.element_names in indigo/analysis/refs/provisions.py
   # --------
 
                  # english
@@ -136,6 +154,13 @@ grammar ProvisionRefs
                   `sous-reglements` / `sous-reglement` /
                   `sous-sections` / `sous-section`
 
+  schedule_eng <- `schedules` / `schedule`
+  schedule_afr <- `bylae` / `bylaag`
+  schedule_fra <- `annexes` / `annexe`
+  the_schedule_eng <- `the schedule`
+  the_schedule_afr <- `die bylaag`
+  the_schedule_fra <- `l'annexe`
+
   and_eng      <- `and`
   and_afr      <- `en`
   and_fra      <- `et`
@@ -176,4 +201,5 @@ grammar ProvisionRefs
   comma       <- [,;]
   digit       <- [0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]
+  alpha_num_no_trailing_dot <- [a-zA-Z0-9-] / ('.' [a-zA-Z0-9])
   WS          <- " " / "\t" / "\n"

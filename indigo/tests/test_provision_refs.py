@@ -9,7 +9,7 @@ from docpipe.matchers import ExtractedCitation
 
 from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_provision_refs, MainProvisionRef
 from indigo.xmlutils import parse_html_str
-from indigo_api.tests.fixtures import document_fixture
+from indigo_api.tests.fixtures import document_fixture, component_fixture
 
 
 unittest.util._MAX_LENGTH = 999999999
@@ -224,6 +224,17 @@ class ProvisionRefsResolverTestCase(TestCase):
                 )
             )
         ], self.resolve_references_str("paragraph (a)(i)", root))
+
+    def test_schedule(self):
+        self.doc = AkomaNtosoDocument(component_fixture(text="test", heading="Schedule 2")).root
+        # xpath for the body element with any namespace
+        root = self.doc.xpath('//*[local-name()="body"]')[0]
+        att_1 = self.doc.xpath('//*[@eId="att_1"]')[0]
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule 2", 0, 10, element=att_1, eId='att_1'))
+        ], self.resolve_references_str("Schedule 2", root))
 
 
 class ProvisionRefsMatcherTestCase(TestCase):
@@ -1490,6 +1501,78 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <heading>Important heading</heading>
             </section>
         """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_schedule_num(self):
+        doc = AkomaNtosoDocument(component_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>In Schedule 2</p>
+                <p>In Schedule 2.</p>
+                <p>In Schedule 2 and Schedule 2.</p>
+                <p>In Schedule 2 to 2.</p>
+                <p>In Scheduled work...</p>
+                <p>In the Schedule</p>
+              </content>
+            </section>
+        """, heading="Schedule 2"))
+
+        expected = AkomaNtosoDocument(component_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>In <ref href="#att_1">Schedule 2</ref></p>
+                <p>In <ref href="#att_1">Schedule 2</ref>.</p>
+                <p>In <ref href="#att_1">Schedule 2</ref> and <ref href="#att_1">Schedule 2</ref>.</p>
+                <p>In <ref href="#att_1">Schedule 2</ref> to <ref href="#att_1">2</ref>.</p>
+                <p>In Scheduled work...</p>
+                <p>In the Schedule</p>
+              </content>
+            </section>
+        """, heading="Schedule 2"))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_schedule_name(self):
+        doc = AkomaNtosoDocument(component_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>In the Schedule</p>
+                <p>In the Schedule.</p>
+                <p>In the Schedule and the Schedule.</p>
+                <p>In Scheduled work...</p>
+              </content>
+            </section>
+        """, heading="Schedule"))
+
+        expected = AkomaNtosoDocument(component_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>In the <ref href="#att_1">Schedule</ref></p>
+                <p>In the <ref href="#att_1">Schedule</ref>.</p>
+                <p>In the <ref href="#att_1">Schedule</ref> and the <ref href="#att_1">Schedule</ref>.</p>
+                <p>In Scheduled work...</p>
+              </content>
+            </section>
+        """, heading="Schedule"))
 
         actual = etree.fromstring(doc.to_xml())
         self.finder.markup_xml_matches(self.frbr_uri, actual)

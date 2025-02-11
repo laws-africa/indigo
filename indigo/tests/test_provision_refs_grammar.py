@@ -3,6 +3,7 @@ import unittest.util
 from django.test import TestCase
 
 from indigo.analysis.refs.provisions import ProvisionRef, parse_provision_refs, MainProvisionRef
+from indigo.analysis.refs.provision_refs import ParseError
 
 
 unittest.util._MAX_LENGTH = 999999999
@@ -26,6 +27,14 @@ class ProvisionRefsGrammarTest(TestCase):
             MainProvisionRef(
                 "paragraph",
                 ProvisionRef("(a)", 10, 13)
+            )
+        ], result.references)
+
+        result = parse_provision_refs("Section 1.2")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("1.2", 8, 11)
             )
         ], result.references)
 
@@ -339,6 +348,123 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result.references)
         self.assertEqual("of", result.target)
         self.assertEqual(result.end, 49)
+
+    def test_schedules_num(self):
+        result = parse_provision_refs("Schedule 2a")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule 2a", 0, 11)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("Schedule 2a.")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule 2a", 0, 11)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_num_range(self):
+        result = parse_provision_refs("Schedule 2 to 30")
+        self.assertEqual([
+            MainProvisionRef('attachment', ProvisionRef('Schedule 2', 0, 10)),
+            MainProvisionRef('attachment', ProvisionRef('Schedule 30', 14, 16, separator='range')),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_the_eng(self):
+        result = parse_provision_refs("the Schedule")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule", 4, 12)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("the Schedule.")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule", 4, 12)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("the Schedule and also")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Schedule", 4, 12)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_the_afr(self):
+        result = parse_provision_refs("die Bylaag", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("die Bylaag.", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("die Bylaag en ook", "afr")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("Bylaag", 4, 10)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_the_fra(self):
+        result = parse_provision_refs("l'annexe", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("l'annexe.", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+        result = parse_provision_refs("l'annexe et aussi", "fra")
+        self.assertEqual([
+            MainProvisionRef(
+                "attachment",
+                ProvisionRef("l'annexe", 0, 8)
+            ),
+        ], result.references)
+        self.assertIsNone(result.target)
+
+    def test_schedules_no_match(self):
+        # these must not match as schedule references
+        for s in ["the Scheduled work", "the Schedules are also"]:
+            with self.assertRaises(ParseError):
+                result = parse_provision_refs(s)
 
     def test_target(self):
         result = parse_provision_refs("Section 2 of this Act")

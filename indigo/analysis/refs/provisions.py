@@ -113,7 +113,34 @@ def parse_provision_refs(text, lang_code='eng'):
             target = elements[2] if not hasattr(elements[2], 'elements') else None
             return ParseResult(refs, target, elements[3].offset)
 
-        def references(self, input, start, end, elements):
+        def attachment_num_ref(self, input, start, end, elements):
+            # extend the ref to cover the full thing, not just the number
+            ref = elements[2]
+            refs = [MainProvisionRef("attachment", ref)]
+            # "2" -> "Schedule 2"
+            ref.start_pos = start
+            ref.text = input[start:ref.end_pos]
+
+            for el in elements[3].elements or []:
+                ref = MainProvisionRef("attachment", el.main_num)
+                # "2" -> "Schedule 2"
+                ref.ref.text = elements[0].text + elements[1].text + ref.ref.text
+                ref.ref.separator = el.elements[0]
+                refs.append(ref)
+
+            return refs
+
+        def the_attachment_ref(self, input, start, end, elements):
+            text = input[start:end]
+            if ' ' in text:
+                # assume the first word is the definite article, and skip it
+                posn = text.index(' ')
+                text = text[posn + 1:]
+                start = start + posn + 1
+            ref = ProvisionRef(text, start, end)
+            return [MainProvisionRef("attachment", ref)]
+
+        def unit_refs(self, input, start, end, elements):
             refs = [elements[2]]
             refs.extend(e.main_ref for e in elements[3].elements)
             for r in refs:
@@ -127,15 +154,6 @@ def parse_provision_refs(text, lang_code='eng'):
                 ref.child = sub_refs[0]
                 sub_refs = sub_refs[1:]
             return MainProvisionRef("", ref, sub_refs or None)
-
-        def main_num(self, input, start, end, elements):
-            text = input[start:end]
-            # strip right trailing dots
-            if text.endswith("."):
-                stripped = text[:-1]
-                end = end - (len(text) - len(stripped))
-                text = stripped
-            return ProvisionRef(text, start, end)
 
         def sub_refs(self, input, start, end, elements):
             refs = [elements[0]]
@@ -182,7 +200,15 @@ def parse_provision_refs(text, lang_code='eng'):
 class ProvisionRefsResolver:
     """Resolves references such as Section 32(a) to eIds in an Akoma Ntoso document."""
 
+    # These are the keywords that can be matched in the text, and their corresponding element names to search for.
+    # If these items change, then the grammar must be updated to match them
+    # (see 'translated terminals' in provision_refs.peg)
+    #
+    # These also act as the basis of the pattern to look for potential references in the text to which the grammar
+    # must be applied.
     element_names = {
+        # all languages
+        "attachment": "attachment",
         # en
         "article": "article",
         "articles": "article",
@@ -200,6 +226,7 @@ class ProvisionRefsResolver:
         "regulations": "section",
         "section": "section",
         "sections": "section",
+        "schedule": "attachment",
         "subparagraph":     ["subparagraph", "paragraph", "item"],
         "subparagraphs":    ["subparagraph", "paragraph", "item"],
         "sub-paragraph":    ["subparagraph", "paragraph", "item"],
@@ -221,6 +248,8 @@ class ProvisionRefsResolver:
         # af
         "artikel":  ["article", "section"],
         "artikels": ["article", "section"],
+        "bylaag": "attachment",
+        "bylae": "attachment",
         "deel": "part",
         "dele": "part",
         "hoofstuk": "chapter",
@@ -316,10 +345,15 @@ class ProvisionRefsResolver:
             # it's not an Akoma Ntoso document, so we can't do anything
             return None
 
+        # handle attachment differently, by looking up on the full heading
+        if 'attachment' in names:
+            return self.find_attachment(root, num)
+
         # prefix with namespace
         names = [f'{{{ns}}}{n}' for n in names]
         dead_ends = [f'{{{ns}}}{n}' for n in ['quotedStructure', 'embeddedStructure', 'content']]
         not_outside_of = None if not_outside_of is None else [f'{{{ns}}}{n}' for n in not_outside_of]
+
         clean_num = self.clean_num(num)
 
         # do a breadth-first search, starting at root, and walk upwards, expanding until we find something or reach the top
@@ -333,6 +367,14 @@ class ProvisionRefsResolver:
 
     def clean_num(self, num):
         return num.strip("()").rstrip(".º")
+
+    def find_attachment(self, root: Element, heading: str):
+        """Find a named attachment. The whole document is searched, not just below root."""
+        ns = root.nsmap.get(None)
+        for heading_el in root.xpath('//a:attachment/a:heading', namespaces={'a': ns}):
+            heading_text = ''.join(heading_el.itertext())
+            if heading_text == heading:
+                return heading_el.getparent()
 
 
 class ProvisionRefsMatcher(CitationMatcher):
@@ -361,7 +403,8 @@ class ProvisionRefsMatcher(CitationMatcher):
 
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())
-    pattern_re = re.compile(fr'\b({pattern_names})\s+(\d|\([a-z0-9])', re.IGNORECASE)
+    the_schedule_patterns = '|'.join(['the schedule', 'die bylaag'])
+    pattern_re = re.compile(fr'\b(({pattern_names})\s+(\d|\([a-z0-9]))|({the_schedule_patterns})', re.IGNORECASE)
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None

@@ -71,7 +71,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>Some text <span class="diff-pair"><del>bold text and a tail.</del><ins>&#xA0;</ins></span><b class="ins ">bold text</b><ins> and a tail.</ins></p>',
+            '<p>Some text <span class="diff-pair"><del>bold text and a tail.</del><b class="ins ">bold text</b></span><ins> and a tail.</ins></p>',
             diff,
         )
 

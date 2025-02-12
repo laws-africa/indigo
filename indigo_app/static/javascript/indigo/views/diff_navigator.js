@@ -14,12 +14,26 @@
     },
 
     initialize: function (options) {
+      this.counterEl = this.el.querySelector('.diff-counter');
       this.refresh();
     },
 
     refresh: function() {
-      this.changedElements = $(this.el.getAttribute('data-bs-target')).find('ins, del, .ins, .del');
+      const target = document.querySelector(this.el.getAttribute('data-bs-target'));
+      const changedElements = target.querySelectorAll('.diff-pair, ins, del, .ins, .del');
+
+      this.changedElements = [];
+
+      for (let i = 0; i < changedElements.length; i++) {
+        const el = changedElements[i];
+        // don't go inside diff-pairs
+        if (!el.parentElement.classList.contains('diff-pair')) {
+          this.changedElements.push(el);
+        }
+      }
+
       this.currentElementIndex = -1;
+      this.updateCounter();
     },
 
     prevChange: function (e) {
@@ -30,11 +44,23 @@
         this.currentElementIndex--;
       }
       if (this.currentElementIndex > -1) this.changedElements[this.currentElementIndex].scrollIntoView();
+      this.updateCounter();
     },
 
     nextChange: function (e) {
       this.currentElementIndex = (this.currentElementIndex + 1) % this.changedElements.length;
       if (this.currentElementIndex > -1) this.changedElements[this.currentElementIndex].scrollIntoView();
-    }
+      this.updateCounter();
+    },
+
+    updateCounter: function () {
+      if (this.counterEl) {
+        if (this.changedElements.length === 0) {
+          this.counterEl.textContent = '0';
+        } else {
+          this.counterEl.textContent = (this.currentElementIndex + 1) + ' / ' + this.changedElements.length;
+        }
+      }
+    },
   });
 })(window);

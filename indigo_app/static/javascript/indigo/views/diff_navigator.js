@@ -26,8 +26,9 @@
 
       for (let i = 0; i < changedElements.length; i++) {
         const el = changedElements[i];
-        // don't go inside diff-pairs
-        if (!el.parentElement.classList.contains('diff-pair')) {
+        // don't go inside diff-pairs, and ignore adjacent diffs
+        if (!el.parentElement.classList.contains('diff-pair') && (
+          this.changedElements.length === 0 || this.changedElements[this.changedElements.length - 1] !== el.previousElementSibling)) {
           this.changedElements.push(el);
         }
       }

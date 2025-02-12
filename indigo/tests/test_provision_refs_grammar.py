@@ -383,6 +383,14 @@ class ProvisionRefsGrammarTest(TestCase):
         ], result.references)
         self.assertIsNone(result.target)
 
+        result = parse_provision_refs("Schedules 10, 11 and 12")
+        self.assertEqual([
+            MainProvisionRef('attachment', ProvisionRef('Schedule 10', 0, 12)),
+            MainProvisionRef('attachment', ProvisionRef('Schedule 11', 14, 16, separator='and_or')),
+            MainProvisionRef('attachment', ProvisionRef('Schedule 12', 21, 23, separator='and_or')),
+        ], result.references)
+        self.assertIsNone(result.target)
+
     def test_schedules_the_eng(self):
         result = parse_provision_refs("the Schedule")
         self.assertEqual([

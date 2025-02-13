@@ -30,6 +30,14 @@
 }
 
 .diffset {
+  .diff-pair,
+  .ins,
+  ins,
+  .del,
+  del {
+    scroll-margin-top: 3em;
+  }
+
   ins,
   .ins,
   .ins > .akn-num {

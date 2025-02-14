@@ -52,6 +52,9 @@ class IndigoApp {
 
   setupHtmx () {
     window.htmx = htmx;
+    // disable htmx's AJAX history; we don't use it, it causes problems with the back button and the cache, and
+    // and it re-executes all javascript on the page
+    htmx.config.refreshOnHistoryMiss = true;
     document.body.addEventListener('htmx:configRequest', (e) => {
       e.detail.headers['X-CSRFToken'] = window.Indigo.csrfToken;
     });

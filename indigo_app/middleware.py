@@ -1,6 +1,9 @@
 from django.contrib.messages import get_messages
 import json
 
+from django.utils.cache import patch_vary_headers
+from django.utils.deprecation import MiddlewareMixin
+
 
 class HtmxMessagesMiddleware:
     """ Adds a message to the Django messages framework if the request is an htmx request.
@@ -46,4 +49,10 @@ class HtmxMessagesMiddleware:
         # Add or update the HX-Trigger
         response.headers["HX-Trigger"] = json.dumps(hx_trigger)
 
+        return response
+
+
+class VaryOnHxHeadersMiddleware(MiddlewareMixin):
+    def process_response(self, request, response):
+        patch_vary_headers(response, ["Hx-Request", "Hx-Target"])
         return response

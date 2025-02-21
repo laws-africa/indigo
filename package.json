@@ -12,7 +12,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@fortawesome/fontawesome-free": "^5.2.0",
-    "@lawsafrica/bluebell-monaco": "^4.8.1",
+    "@lawsafrica/bluebell-monaco": "^4.8.2",
     "@lawsafrica/indigo-akn": "^5.6.0",
     "@lawsafrica/law-widgets": "^2.0.1",
     "bootstrap-select": "^1.13.18",

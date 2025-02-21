@@ -15,7 +15,7 @@ BODY
         TH.cls{style background-color:purple}
           Heading with attribs
 
-  CROSSHEADING.cls{style background-color:pink} Crossheading with attribs (not yet supported)
+  CROSSHEADING.cls{style background-color:pink} Crossheading with attribs (now supported :))
 
   SEC 3 - Items
 

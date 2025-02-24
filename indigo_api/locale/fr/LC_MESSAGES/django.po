@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-30 12:13+0200\n"
-"PO-Revision-Date: 2024-07-24 08:38\n"
+"PO-Revision-Date: 2025-02-24 10:05\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -26,50 +26,46 @@ msgid "Set run time to now"
 msgstr "Définir le temps d'exécution sur maintenant"
 
 #: exporters.py:284
-#, fuzzy
-#| msgid "Not commenced"
 msgid "Not commenced; Repealed"
-msgstr "Non commencé"
+msgstr "Non commencé; Abrogé"
 
 #: exporters.py:286 models/works.py:400
 msgid "Not commenced"
 msgstr "Non commencé"
 
 #: exporters.py:288
-#, fuzzy
-#| msgid "Repealed by"
 msgid "Repealed"
-msgstr "Abrogé par"
+msgstr "Abrogé"
 
 #: exporters.py:293
 #, python-format
 msgid "This %(friendly_type)s was <b>repealed</b> on %(date)s by <ref href=\"%(url)s\">%(work)s</ref>"
-msgstr ""
+msgstr "Ce %(friendly_type)s a été <b>abrogé</b> le %(date)s par <ref href=\"%(url)s\">%(work)s</ref>"
 
 #: exporters.py:300
 #, python-format
 msgid "This %(friendly_type)s has <b>not yet come into force</b>."
-msgstr ""
+msgstr "Ce %(friendly_type)s n'est <b>pas encore entré en vigueur</b>."
 
 #: exporters.py:305
 #, python-format
 msgid "This %(friendly_type)s has not yet come into force in full. See the commencements table for more information."
-msgstr ""
+msgstr "Cette %(friendly_type)s n'est pas encore entrée en vigueur dans son intégralité. Consultez le tableau des entrées en vigueur pour plus d'informations."
 
 #: exporters.py:309
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "Ce %(friendly_type)s entrera en vigueur le %(date)s."
 
 #: exporters.py:314
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "Ceci n'est pas la dernière version disponible de ce %(friendly_type)s. <ref href=\"%(url)s\">Voir en ligne</ref>."
 
 #: exporters.py:319
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "Il y a <b>amendements en suspens</b> qui n'ont pas encore été appliqués :<br/>%(numbered_titles)s."
 
 #: models/citations.py:14 models/works.py:532
 msgid "Invalid FRBR URI"
@@ -725,10 +721,8 @@ msgid "taxonomy topics"
 msgstr "sujets de taxonomie"
 
 #: models/works.py:399
-#, fuzzy
-#| msgid "Commencement note: %(note)s"
 msgid "Commencement date unknown"
-msgstr "Note de début : %(note)s"
+msgstr "Date de commencement inconnue"
 
 #: models/works.py:405
 msgid "There are multiple commencements"
@@ -1168,52 +1162,48 @@ msgstr "Acceptée %(date)s"
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Législation en vigueur au %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "Il peut y avoir eu des mises à jour depuis la création de ce fichier."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "PDF créé le %(current_date)s à %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Dernière vérification des mises à jour de la collection : %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "À propos de cette collection"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "La législation de cette collection a été reproduite telle qu'elle a été imprimée à l'origine dans le Journal officiel, avec une mise en forme améliorée et des erreurs typographiques mineures corrigées. Tous les amendements ont été appliqués directement au texte et annotés. Une version numérisée du journal officiel original de chaque texte de loi (y compris les amendements) est disponible pour référence."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Il n’existe aucun droit d’auteur sur le contenu législatif de ce document."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Cette copie PDF est sous licence Creative Commons Attribution 4.0 (CC BY 4.0). Partagez-la largement et librement."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Contents"
-msgstr "Table des matières"
+msgstr "Contenu"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "Par <a href=\"%(lawsafrica)s\">Laws.Africa</a> et contributeurs. Sous licence <a href=\"%(ccby)s\">CC-BY</a>. Partagez largement et librement."
 
 #: templates/indigo_api/akn/export/standalone.html:17
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Table of Contents"
 msgstr "Table des matières"
 
@@ -1301,3 +1291,4 @@ msgstr "Impossible de créer une tâche pour une annotation de réponse."
 #: views/documents.py:345
 msgid "Error during import"
 msgstr "Erreur lors de l'importation"
+

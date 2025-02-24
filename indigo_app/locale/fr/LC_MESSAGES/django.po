@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-28 13:29+0200\n"
-"PO-Revision-Date: 2024-07-24 08:38\n"
+"PO-Revision-Date: 2025-02-24 10:05\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -188,7 +188,7 @@ msgstr "Impossible de spécifier toutes les dispositions et une liste de disposi
 
 #: forms/works.py:594
 msgid "A commencement at this date and with this commencing work already exists."
-msgstr ""
+msgstr "Un début à cette date et avec ce début des travaux existent déjà."
 
 #: forms/works.py:665
 msgid "Commencing work and date must be unique together."
@@ -1225,10 +1225,8 @@ msgid "Responsible organisation (actor)"
 msgstr "Organisation responsable (acteur)"
 
 #: templates/indigo_api/_work_form_content.html:227
-#, fuzzy
-#| msgid "Organisation that created this work. Not normally used for national legislation."
 msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
-msgstr "Organisation qui a créé cette œuvre. Normalement non utilisé pour la législation nationale."
+msgstr "Organisation qui a créé cette œuvre. N'est généralement pas utilisée pour la législation nationale. Chiffres, lettres et « - » uniquement."
 
 #: templates/indigo_api/_work_form_content.html:234
 msgid "Principal work"
@@ -1505,7 +1503,7 @@ msgstr "Un début ne peut commencer toutes les dispositions que s'il est le seul
 
 #: templates/indigo_api/commencement_form.html:136
 msgid "Discard all changes to this commencement?"
-msgstr ""
+msgstr "Annuler toutes les modifications apportées à ce commencement ?"
 
 #: templates/indigo_api/commencement_form.html:138
 #: templates/indigo_api/work_form.html:19
@@ -2532,7 +2530,7 @@ msgstr "Ces travaux comportent <a href=\"#uncommenced-provisions\">dispositions 
 
 #: templates/indigo_api/work_commencements.html:30
 msgid "A commencement without a date or a commencing work already exists. Edit it before adding another one."
-msgstr ""
+msgstr "Un commencement sans date ou sans début de travaux existe déjà. Modifiez-le avant d'en ajouter un autre."
 
 #: templates/indigo_api/work_commencements.html:37
 msgid "Add a commencement"
@@ -2692,12 +2690,10 @@ msgstr "Il semble que vous soyez hors ligne ou que le serveur soit indisponible.
 
 #: templates/indigo_app/actions/_action_amendment.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    un amendement à %(date)s le\n"
 "  "
 
@@ -2709,23 +2705,19 @@ msgstr "par"
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    une consolidation à %(date)s le\n"
 "  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    un début à %(date)s le\n"
 "  "
 
@@ -2776,20 +2768,16 @@ msgstr "%(org)s est en cours de maintenance. Nous reviendrons bientôt."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Approuver %(works_length)s travaux en cours\n"
 "        "
 
@@ -2803,7 +2791,7 @@ msgstr "Des tâches de conversion et d'importation seront créées – Les tâch
 
 #: templates/indigo_app/place/_bulk_approve_form.html:72
 msgid "Import date missing – add a publication date or a consolidation date"
-msgstr ""
+msgstr "Date d'importation manquante – ajouter une date de publication ou une date de consolidation"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:78
 msgid "Task description: Conversion tasks"
@@ -2839,26 +2827,20 @@ msgstr "Des tâches de modification seront créées"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:154
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
-msgstr ""
-"\n"
+msgstr "\n"
 "                              Description de la tâche : %(amended_title)s (%(amended_numbered_title)s) modifiée par %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:158
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) à la date indiquée.\n"
-"\n"
+msgstr "\n"
+"Appliquer les modifications apportées par %(title)s (%(numbered_title)s) à la date indiquée.\n\n"
 "L'amendement a déjà été lié, alors commencez à l'étape 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:191
@@ -3115,38 +3097,30 @@ msgid "Your account"
 msgstr "Votre compte"
 
 #: templates/place/_place_cards.html:15
-msgid ""
-"\n"
+msgid "\n"
 "                    Work\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Works\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Travail\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Fonctionne\n"
 "                  "
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                    Task\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Tasks\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Tâche\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Tâches\n"
 "                  "
 
@@ -3515,11 +3489,3 @@ msgstr "Impossible de récupérer les informations de la feuille de calcul. Votr
 msgid "Error during import: %(error)s"
 msgstr "Erreur lors de l'importation : %(error)s"
 
-#~ msgid "Complete"
-#~ msgstr "Complet"
-
-#~ msgid "Works complete"
-#~ msgstr "Travaux terminés"
-
-#~ msgid "Metrics"
-#~ msgstr "Métrique"

@@ -303,8 +303,10 @@
         coverpage.className = 'spinner-when-empty';
         this.aknElement.insertAdjacentElement('afterbegin', coverpage);
         this.renderCoverpage().then((nodes) => {
-          for (const node of nodes) {
-            coverpage.append(node);
+          if (nodes) {
+            for (const node of nodes) {
+              coverpage.append(node);
+            }
           }
         });
       }

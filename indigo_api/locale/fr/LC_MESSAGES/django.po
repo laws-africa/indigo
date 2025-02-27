@@ -1107,12 +1107,12 @@ msgstr "[Modifié par <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(am
 #: templates/indigo_api/akn/_amendments.html:24
 #, python-format
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr "[Abandonné par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> le <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Abrogé par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> le <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:26
 #, python-format
 msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-msgstr "[Abandonné par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> le <span class=\"repeal-date\">%(date)s</span>]"
+msgstr "[Abrogé par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> le <span class=\"repeal-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_commencements_table.html:6
 msgid "Provisions"

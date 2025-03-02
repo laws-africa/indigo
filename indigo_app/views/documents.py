@@ -1,6 +1,7 @@
 import json
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -185,3 +186,14 @@ class DocumentPopupView(AbstractAuthedIndigoView, DetailView):
         if doc.deleted:
             raise Http404()
         return doc
+
+
+class DocumentTasksView(AbstractAuthedIndigoView, DetailView):
+    model = Document
+    context_object_name = 'document'
+    template_name_suffix = '_tasks'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = self.object.work.tasks.filter(Q(timeline_date=self.object.expression_date) | Q(document=self.object))
+        return context

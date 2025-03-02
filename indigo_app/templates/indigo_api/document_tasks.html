@@ -1,0 +1,26 @@
+{% load i18n indigo_app %}
+
+{% if tasks %}
+  <table class="table table-striped table-sm mb-0">
+    <tbody>
+      {% for task in tasks %}
+        <tr>
+          <td>
+            <div class="text-nowrap">
+              <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-2"></i>
+              <span class="text-muted">#{{ task.id }}</span>
+            </div>
+          </td>
+          <td>
+            <!-- TODO: htmx / accordion / something to show full details and comments (read-only) -->
+            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="card-body">
+    <p class="alert alert-info">{% trans 'No tasks found' %}</p>
+  </div>
+{% endif %}

@@ -1,0 +1,51 @@
+{% load i18n %}
+
+<div class="modal-dialog modal-dialog-scrollable modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {% blocktrans with works_length=works|length %}Link references for {{ works_length }} works{% endblocktrans %}
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body max-vh-60">
+      <form
+          method="POST"
+          action="{% url 'place_works_link_refs' place.place_code %}"
+          id="bulk-link-refs-form"
+      >
+        {% csrf_token %}
+        {% for work in works %}
+          <input type="hidden" name="works" value="{{ work.pk }}">
+        {% endfor %}
+        <div class="mb-3">
+          <p>{% trans "References will be linked for all documents." %}</p>
+          <div class="form-check mb-3">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="yes" name="unlink">
+              {% trans "Remove existing references first" %}
+            </label>
+          </div>
+          <ul>
+            {% for work in works %}
+              <li><a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button
+          type="submit"
+          class="btn btn-warning"
+          name="link_refs"
+          value="1"
+          form="bulk-link-refs-form"
+          data-disable-with="{% blocktrans %}Linking references...{% endblocktrans %}"
+      >{% trans "Link references" %}</button>
+    </div>
+  </div>
+</div>

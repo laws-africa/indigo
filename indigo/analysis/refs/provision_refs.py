@@ -73,7 +73,7 @@ class TreeNode8(TreeNode):
 class TreeNode9(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode9, self).__init__(text, offset, elements)
-        self.digit = elements[0]
+        self.digit_or_roman = elements[0]
 
 
 class TreeNode10(TreeNode):
@@ -191,7 +191,7 @@ FAILURE = object()
 class Grammar(object):
     REGEX_1 = re.compile('^[a-zA-Z]')
     REGEX_2 = re.compile('^[,;]')
-    REGEX_3 = re.compile('^[0-9]')
+    REGEX_3 = re.compile('^[IVXLCDM0-9]')
     REGEX_4 = re.compile('^[a-zA-Z0-9.-]')
     REGEX_5 = re.compile('^[a-zA-Z0-9-]')
     REGEX_6 = re.compile('^[a-zA-Z0-9]')
@@ -598,7 +598,7 @@ class Grammar(object):
             return cached[0]
         index1, elements0 = self._offset, []
         address1 = FAILURE
-        address1 = self._read_digit()
+        address1 = self._read_digit_or_roman()
         if address1 is not FAILURE:
             elements0.append(address1)
             address2 = FAILURE
@@ -3961,9 +3961,9 @@ class Grammar(object):
         self._cache['comma'][index0] = (address0, self._offset)
         return address0
 
-    def _read_digit(self):
+    def _read_digit_or_roman(self):
         address0, index0 = FAILURE, self._offset
-        cached = self._cache['digit'].get(index0)
+        cached = self._cache['digit_or_roman'].get(index0)
         if cached:
             self._offset = cached[1]
             return cached[0]
@@ -3979,8 +3979,8 @@ class Grammar(object):
                 self._failure = self._offset
                 self._expected = []
             if self._offset == self._failure:
-                self._expected.append(('ProvisionRefs::digit', '[0-9]'))
-        self._cache['digit'][index0] = (address0, self._offset)
+                self._expected.append(('ProvisionRefs::digit_or_roman', '[IVXLCDM0-9]'))
+        self._cache['digit_or_roman'][index0] = (address0, self._offset)
         return address0
 
     def _read_alpha_num_dot(self):

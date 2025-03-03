@@ -225,6 +225,39 @@ class ProvisionRefsResolverTestCase(TestCase):
             )
         ], self.resolve_references_str("paragraph (a)(i)", root))
 
+    def test_roman_nums(self):
+        self.doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_V">
+          <num>V</num>
+          <content>
+            <p eId="sec_V__p_1">some text</p>
+          </content>
+        </section>
+        <section eId="sec_VII">
+          <num>VII</num>
+          <content>
+            <p eId="sec_VII__p_1">some text</p>
+          </content>
+        </section>
+        """)).root
+        root = self.doc.xpath('.//*[@eId="sec_V__p_1"]')[0]
+        sec_v = self.doc.xpath('.//*[@eId="sec_V"]')[0]
+        sec_vii = self.doc.xpath('.//*[@eId="sec_VII"]')[0]
+
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('V', 8, 9, element=sec_v, eId='sec_V')
+            )
+        ], self.resolve_references_str("Section V", root))
+
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('VII', 8, 11, element=sec_vii, eId='sec_VII')
+            )
+        ], self.resolve_references_str("Section VII", root))
+
     def test_schedule(self):
         self.doc = AkomaNtosoDocument(component_fixture(text="test", heading="Schedule 2")).root
         # xpath for the body element with any namespace

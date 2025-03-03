@@ -225,6 +225,39 @@ class ProvisionRefsResolverTestCase(TestCase):
             )
         ], self.resolve_references_str("paragraph (a)(i)", root))
 
+    def test_roman_nums(self):
+        self.doc = AkomaNtosoDocument(document_fixture(xml="""
+        <section eId="sec_V">
+          <num>V</num>
+          <content>
+            <p eId="sec_V__p_1">some text</p>
+          </content>
+        </section>
+        <section eId="sec_VII">
+          <num>VII</num>
+          <content>
+            <p eId="sec_VII__p_1">some text</p>
+          </content>
+        </section>
+        """)).root
+        root = self.doc.xpath('.//*[@eId="sec_V__p_1"]')[0]
+        sec_v = self.doc.xpath('.//*[@eId="sec_V"]')[0]
+        sec_vii = self.doc.xpath('.//*[@eId="sec_VII"]')[0]
+
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('V', 8, 9, element=sec_v, eId='sec_V')
+            )
+        ], self.resolve_references_str("Section V", root))
+
+        self.assertEqual([
+            MainProvisionRef(
+                'Section',
+                ProvisionRef('VII', 8, 11, element=sec_vii, eId='sec_VII')
+            )
+        ], self.resolve_references_str("Section VII", root))
+
     def test_schedule(self):
         self.doc = AkomaNtosoDocument(component_fixture(text="test", heading="Schedule 2")).root
         # xpath for the body element with any namespace
@@ -304,6 +337,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section 26, 30 and 31.</p>
                 <p>under sections 26,30 or 31 of this Act, blah.</p>
                 <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
+                <p>As given in section V and VII.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -336,6 +370,20 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <section eId="sec_V">
+              <num>V</num>
+              <heading>Roman 5</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_VII">
+              <num>VII</num>
+              <heading>Roman 7</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
         """))
 
         expected = AkomaNtosoDocument(document_fixture(xml="""
@@ -362,6 +410,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, 30 and <ref href="#sec_31">31</ref>.</p>
                 <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
+                <p>As given in section <ref href="#sec_V">V</ref> and <ref href="#sec_VII">VII</ref>.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -390,6 +439,20 @@ class ProvisionRefsMatcherTestCase(TestCase):
             <section eId="sec_31">
               <num>31.</num>
               <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_V">
+              <num>V</num>
+              <heading>Roman 5</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_VII">
+              <num>VII</num>
+              <heading>Roman 7</heading>
               <content>
                 <p>Hi!</p>
               </content>

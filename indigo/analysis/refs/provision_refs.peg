@@ -31,7 +31,7 @@ grammar ProvisionRefs
                  # section 32
                  # section 32A
                  # section 32.1a.2
-  main_num    <- digit alpha_num_no_trailing_dot* %num
+  main_num    <- digit_or_roman alpha_num_no_trailing_dot* %num
 
                  # (a)(ii) to (iv)
                  # (a), (b) and (f)(ii)
@@ -201,7 +201,7 @@ grammar ProvisionRefs
 
   dash        <- `-` / `–` / `—`
   comma       <- [,;]
-  digit       <- [0-9]
+  digit_or_roman <- [IVXLCDM0-9]
   alpha_num_dot <- [a-zA-Z0-9.-]
   alpha_num_no_trailing_dot <- [a-zA-Z0-9-] / ('.' [a-zA-Z0-9])
   WS          <- " " / "\t" / "\n"

@@ -56,6 +56,24 @@ class ProvisionRefsGrammarTest(TestCase):
             )
         ], result.references)
 
+    def test_single_roman(self):
+        result = parse_provision_refs("Section V\n")
+        self.assertEqual([
+            MainProvisionRef(
+                "Section",
+                ProvisionRef("V", 8, 9)
+            )
+        ], result.references)
+        self.assertEqual(result.end, 9)
+
+        result = parse_provision_refs("Chapter VII\n")
+        self.assertEqual([
+            MainProvisionRef(
+                "Chapter",
+                ProvisionRef("VII", 8, 11)
+            )
+        ], result.references)
+
     def test_multiple_main_numbers(self):
         result = parse_provision_refs("Section 1, 32 and 33")
         self.assertEqual([

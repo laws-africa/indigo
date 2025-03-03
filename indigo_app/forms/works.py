@@ -1577,6 +1577,11 @@ class WorkBulkUnapproveForm(WorkBulkActionFormBase):
     unapprove = forms.BooleanField(required=False)
 
 
+class WorkBulkLinkRefsForm(WorkBulkActionFormBase):
+    link_refs = forms.BooleanField(required=False)
+    unlink = forms.BooleanField(required=False)
+
+
 class BatchCreateWorkForm(forms.Form):
     spreadsheet_url = forms.URLField(required=True, validators=[
         URLValidator(

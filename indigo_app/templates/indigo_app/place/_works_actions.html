@@ -79,6 +79,30 @@
             </div>
           {% endblock %}
         {% endif %}
+
+        {% block action-bulk-link-refs %}
+          <div class="me-2">
+            <form
+              hx-post="{% url 'place_works_link_refs' place.place_code %}"
+              hx-target="#bulk-link-refs-modal"
+            >
+              {% csrf_token %}
+              {% for work in works %}
+                <input type="hidden" name="works" value="{{ work.pk }}">
+              {% endfor %}
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#bulk-link-refs-modal"
+              >
+                {% blocktrans with works_length=works|length %}Link references for {{ works_length }} selected...{% endblocktrans %}
+              </button>
+            </form>
+          </div>
+          <div class="modal fade" tabindex="-1" id="bulk-link-refs-modal">
+            {% include 'indigo_app/place/_bulk_link_refs_form.html' %}
+          </div>
+        {% endblock %}
       {% endblock actions-toolbar %}
     </div>
   {% endblock actions %}

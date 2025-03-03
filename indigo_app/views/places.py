@@ -17,11 +17,13 @@ from django.views.generic.list import MultipleObjectMixin
 from django_htmx.http import push_url
 from lxml import etree
 
+from docpipe.xmlutils import unwrap_element
+from indigo.analysis.refs.base import markup_document_refs
 from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace, \
     SavedSearch
 from indigo_api.timeline import describe_publication_event
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
-    WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm
+    WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm, WorkBulkLinkRefsForm
 from indigo_app.xlsx_exporter import XlsxExporter
 from indigo_social.badges import badges
 from .base import AbstractAuthedIndigoView, PlaceViewBase, PlaceWorksViewBase
@@ -698,6 +700,49 @@ class WorkBulkUnapproveView(WorkBulkActionBase):
             for work in form.cleaned_data["works"]:
                 work.unapprove(self.request.user)
             messages.success(self.request, _("Unapproved %(works_count)s works.") % {"works_count": form.cleaned_data['works'].count()})
+            return redirect(self.request.headers["Referer"])
+        return self.form_invalid(form)
+
+
+class WorkBulkLinkRefsView(WorkBulkActionBase):
+    form_class = WorkBulkLinkRefsForm
+    template_name = "indigo_app/place/_bulk_link_refs_form.html"
+    permission_required = ('indigo_api.view_country', 'indigo_api.change_work')
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["works"] = form.cleaned_data.get("works").order_by("-created_at")
+        return context
+
+    def form_valid(self, form):
+        if form.cleaned_data.get("link_refs"):
+            n_docs = 0
+            n_changed = 0
+            for work in form.cleaned_data["works"]:
+                for doc in Document.objects.undeleted().filter(work=work):
+                    n_docs += 1
+                    old_content = doc.content
+                    root = etree.fromstring(doc.content)
+
+                    if form.cleaned_data["unlink"]:
+                        # remove existing refs
+                        for ref in root.xpath('.//a:ref[starts-with(@href, "/") or starts-with(@href, "#")]',
+                                              namespaces={'a': doc.doc.namespace}):
+                            unwrap_element(ref)
+                        doc.content = etree.tostring(root, encoding='unicode')
+
+                    markup_document_refs(doc)
+
+                    if doc.content != old_content:
+                        doc.save_with_revision(user=self.request.user, comment='Re-link refs')
+                        n_changed += 1
+
+            messages.success(
+                self.request,
+                _("Linked references for %(n_docs)s documents, with %(n_changed)s documents changed.") % {
+                    "n_docs": n_docs,
+                    "n_changed": n_changed,
+                })
             return redirect(self.request.headers["Referer"])
         return self.form_invalid(form)
 

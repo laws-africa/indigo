@@ -415,7 +415,7 @@ class ProvisionRefsMatcher(CitationMatcher):
     # this just finds the start of a potential match, the grammar looks for the rest
     pattern_names = '|'.join(ProvisionRefsResolver.element_names.keys())
     the_schedule_patterns = '|'.join(['the schedule', 'die bylaag'])
-    pattern_re = re.compile(fr'\b(({pattern_names})\s+(\d|\([a-z0-9]))|({the_schedule_patterns})', re.IGNORECASE)
+    pattern_re = re.compile(fr'\b(({pattern_names})\s+([IVXLCDM0-9]|\([a-z0-9]))|({the_schedule_patterns})', re.IGNORECASE)
 
     resolver = ProvisionRefsResolver()
     target_root_cache = None

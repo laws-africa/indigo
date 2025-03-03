@@ -337,6 +337,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section 26, 30 and 31.</p>
                 <p>under sections 26,30 or 31 of this Act, blah.</p>
                 <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
+                <p>As given in section V and VII.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -369,6 +370,20 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <section eId="sec_V">
+              <num>V</num>
+              <heading>Roman 5</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_VII">
+              <num>VII</num>
+              <heading>Roman 7</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
         """))
 
         expected = AkomaNtosoDocument(document_fixture(xml="""
@@ -395,6 +410,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, 30 and <ref href="#sec_31">31</ref>.</p>
                 <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
+                <p>As given in section <ref href="#sec_V">V</ref> and <ref href="#sec_VII">VII</ref>.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -423,6 +439,20 @@ class ProvisionRefsMatcherTestCase(TestCase):
             <section eId="sec_31">
               <num>31.</num>
               <heading>More important</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_V">
+              <num>V</num>
+              <heading>Roman 5</heading>
+              <content>
+                <p>Hi!</p>
+              </content>
+            </section>
+            <section eId="sec_VII">
+              <num>VII</num>
+              <heading>Roman 7</heading>
               <content>
                 <p>Hi!</p>
               </content>

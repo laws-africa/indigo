@@ -27,14 +27,14 @@ export default {
     // Set expanded state of current item and its parents
     function formatItem (x) {
       const children = (x.children || []).map(y => formatItem(y));
-      x.expanded = selected.includes(x.data.slug) || children.some(y => y.expanded);
+      x.expanded = selected.includes(x.id.toString()) || children.some(y => y.expanded);
       return x;
     }
     taxonomy.map(x => formatItem(x));
 
     return {
       taxonomy,
-      selectedSlugs: selected
+      selectedIds: selected
     };
   },
   mounted () {
@@ -59,8 +59,8 @@ export default {
         if (this.classes) {
           checkbox.className = this.classes;
         }
-        checkbox.value = tocItem.item.data.slug;
-        checkbox.checked = this.selectedSlugs.includes(checkbox.value);
+        checkbox.value = tocItem.item.id;
+        checkbox.checked = this.selectedIds.includes(checkbox.value);
         if (this.form) {
           checkbox.setAttribute('form', this.form);
         }
@@ -68,7 +68,7 @@ export default {
         label.insertBefore(checkbox, label.firstChild);
       }
 
-      if (!this.checkbox && this.selectedSlugs.includes(tocItem.item.data?.slug)) {
+      if (!this.checkbox && this.selectedIds.includes(tocItem.item.id.toString())) {
         action.querySelector('.content__action__title').classList.add('active');
       }
 

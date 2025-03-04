@@ -111,7 +111,7 @@ class TaxonomyTopic(MP_Node):
         def fix_up(item):
             item["title"] = item["data"]["name"]
             if new_query:
-                new_query.update({'taxonomy_topic': item['data']['slug']})
+                new_query.update({'taxonomy_topic': item['id']})
                 item["href"] = f"?{new_query.urlencode()}"
                 new_query.pop('taxonomy_topic', None)
             for kid in item.get("children", []):

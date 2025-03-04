@@ -8,14 +8,7 @@
       <button class="nav-link" data-bs-toggle="tab" data-bs-target="#xml-pane">Akoma Ntoso</button>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" data-bs-toggle="tab"
-       href="#tasks-pane"
-       hx-trigger="click once" hx-target="#tasks-pane"
-       hx-get="{% url 'document_tasks' document.pk %}"
-       hx-swap="innerHTML"
-    >{% trans "Tasks" %}</a>
-  </li>
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tasks-pane">{% trans "Tasks" %}</button>
   <li class="ms-auto">
     <button class="btn btn-sm btn-close mt-2 me-2 document-secondary-pane-toggle"></button>
   </li>
@@ -31,6 +24,7 @@
       </div>
     </div>
   {% endif %}
-  <!-- TODO: scroll if many -->
-  <div class="tab-pane h-100" id="tasks-pane"></div>
+  <div class="tab-pane h-100" id="tasks-pane">
+    {% include "indigo_api/document/_tasks.html" %}
+  </div>
 </div>

@@ -1,0 +1,24 @@
+{% load i18n indigo %}
+<div class="d-flex">
+  <div class="mt-1 mb-2 ms-auto me-2">
+    <a href="{% url 'work_tasks' frbr_uri=document.frbr_uri %}" target="_blank">
+      {% trans "All tasks" %}<i class="fas fa-external-link-alt ms-1"></i>
+    </a>
+  </div>
+</div>
+{% related_tasks document as tasks %}
+{% if tasks %}
+  <div class="mt-1 me-1 scrollable">
+    {% for task in tasks %}
+      {% include "indigo_api/document/_task.html" %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card-body mt-1 me-1">
+    <p class="alert alert-info">
+      {% blocktrans with expression_date=document.expression_date|date:'Y-m-d' %}
+        No tasks at {{ expression_date }}.
+      {% endblocktrans %}
+    </p>
+  </div>
+{% endif %}

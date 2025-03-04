@@ -1,0 +1,35 @@
+{% load i18n %}
+
+<!-- TODO: new class, data component, toggle for task -->
+<div class="d-flex">
+  <div class="flex-fill">
+    <div class="border bg-white mb-2">
+      <div class="d-flex p-2 pl-3 collapsed work-list-card-heading" id="task-heading-{{ task.pk }}"
+           data-component="WorkListCard"
+           hx-get="{% url 'document_task' place=task.place.place_code pk=task.pk %}"
+           hx-target="#task-detail-{{ task.pk }}"
+           hx-swap="innerHTML"
+           hx-trigger="click once"
+      >
+        <div>
+          <span class="work-detail-toggle text-muted"></span>
+          {% if task.state == 'open' and task.assigned_to %}
+            <i class="fas fa-fw task-icon-assigned text-assigned small me-1" title="{% trans 'assigned' %}"></i>
+          {% else %}
+            <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-1" title="{% trans task.state %}"></i>
+          {% endif %}
+          <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+          {% if task.changes_requested %}
+            <span class="badge text-bg-secondary ms-1">{% trans 'Changes requested' %}</span>
+          {% endif %}
+          <span class="text-muted small">#{{ task.id }}</span>
+        </div>
+      </div>
+      <div class="collapse" id="task-detail-{{ task.pk }}" aria-labelledby="task-heading-{{ task.pk }}">
+        <div>
+          <i class="fa fa-spinner fa-spin"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

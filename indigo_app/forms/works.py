@@ -52,9 +52,7 @@ class WorkForm(forms.ModelForm):
     # are applicable in each case.
     publication_document_file = forms.FileField(required=False)
     delete_publication_document = forms.BooleanField(required=False)
-    taxonomy_topics = forms.ModelMultipleChoiceField(
-        queryset=TaxonomyTopic.objects.all(),
-        to_field_name='slug', required=False)
+    taxonomy_topics = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects.all(), required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
@@ -867,7 +865,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         ('one', _('Has one point in time')), ('multiple', _('Has multiple points in time')),
         ('none', _('Has no points in time'))
     ])
-    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, to_field_name='slug', required=False)
+    taxonomy_topic = forms.ModelMultipleChoiceField(queryset=TaxonomyTopic.objects, required=False)
     frbr_uris = forms.CharField(required=False)
     frbr_date = PermissiveMultipleChoiceField(label=_("Date"), required=False)
 
@@ -1412,8 +1410,8 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
         qs = self.filter_queryset(qs, exclude="taxonomy_topic")
         # count works per taxonomy topic
         counts = {
-            x["taxonomy_topics__slug"]: x["count"]
-            for x in qs.values("taxonomy_topics__slug").annotate(count=Count("pk", distinct=True)).order_by().values("taxonomy_topics__slug", "count")
+            x["taxonomy_topics__id"]: x["count"]
+            for x in qs.values("taxonomy_topics__id").annotate(count=Count("pk", distinct=True)).order_by().values("taxonomy_topics__id", "count")
         }
 
         # fold the counts into the taxonomy tree
@@ -1422,7 +1420,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             for child in item.get('children', []):
                 total = total + decorate(child)
             # count for this item
-            item['data']['count'] = counts.get(item["data"]["slug"])
+            item['data']['count'] = counts.get(item["id"])
             # total of count for descendants
             item['data']['total'] = total
             return total + (item['data']['count'] or 0)
@@ -1517,7 +1515,7 @@ class WorkBulkUpdateForm(WorkBulkActionFormBase):
     save = forms.BooleanField(required=False)
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
     add_taxonomy_topics = forms.ModelMultipleChoiceField(
-        queryset=TaxonomyTopic.objects.all(), to_field_name='slug',
+        queryset=TaxonomyTopic.objects.all(),
         required=False)
     del_taxonomy_topics = forms.ModelMultipleChoiceField(
         queryset=TaxonomyTopic.objects.all(),

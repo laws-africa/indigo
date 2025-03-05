@@ -1,16 +1,15 @@
 {% load i18n %}
 
-<!-- TODO: new class, data component, toggle for task (or rename) -->
 <div class="border mb-2">
-  <div class="p-2 pl-3 collapsed work-list-card-heading bg-white" id="task-heading-{{ task.pk }}"
-       data-component="WorkListCard"
+  <div class="p-2 pl-3 collapsed list-card-heading bg-white" id="task-heading-{{ task.pk }}"
+       data-component="ListCard"
        hx-get="{% url 'document_task' place=task.place.place_code pk=task.pk %}"
        hx-target="#task-detail-{{ task.pk }}"
        hx-swap="innerHTML"
        hx-trigger="click once"
   >
     <div>
-      <span class="work-detail-toggle text-muted"></span>
+      <span class="detail-toggle text-muted"></span>
       {% if task.state == 'open' and task.assigned_to %}
         <i class="fas fa-fw task-icon-assigned text-assigned small me-1" title="{% trans 'assigned' %}"></i>
       {% else %}

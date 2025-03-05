@@ -22,7 +22,7 @@
     {% get_comment_form for task as comment_form %}
     <form
         hx-post="{% comment_form_target %}"
-        hx-target="#task-comment-list-{{ task.pk }}"
+        hx-target="#task-timeline-{{ task.pk }}"
     >
       <div class="card-body">
         {% csrf_token %}

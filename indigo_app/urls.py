@@ -62,6 +62,8 @@ urlpatterns = [
     path('places/<str:place>/tasks/block', tasks.TaskBulkChangeStateView.as_view(change='block'), name='bulk_task_block'),
     path('places/<str:place>/tasks/assignees', tasks.TaskAssigneesView.as_view(), name='task_assignees_menu'),
     path('places/<str:place>/tasks/<int:pk>', tasks.TaskDetailView.as_view(), name='task_detail'),
+    path('places/<str:place>/tasks/<int:pk>/document', tasks.TaskDetailView.as_view(mode='document'), name='document_task'),
+    path('places/<str:place>/tasks/<int:pk>/comments', tasks.TaskDetailView.as_view(mode='timeline'), name='task_comments'),
     path('places/<str:place>/tasks/<int:pk>/edit', tasks.TaskEditView.as_view(), name='task_edit'),
     path('places/<str:place>/tasks/<int:pk>/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
     path('places/<str:place>/tasks/<int:pk>/assign-to', tasks.TaskAssignToView.as_view(), name='assign_task_to'),

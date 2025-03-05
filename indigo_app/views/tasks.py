@@ -110,6 +110,7 @@ class TaskListView(TaskViewBase, ListView):
 
 class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
+    mode = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,29 +118,24 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
         # merge actions and comments
         actions = task.action_object_actions.all()
-        task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = list(Comment.objects.filter(content_type=task_content_type, object_pk=task.id).select_related('user'))
-
-        # get the annotation for the particular task
+        comments = list(Comment.objects.for_model(Task).filter(object_pk=task.id).select_related('user'))
+        # get the annotation if there is one, and any replies as comments
         try:
             task_annotation = task.annotation
-        except Annotation.DoesNotExist:
-            task_annotation = None
-
-        # for the annotation that is linked to the task, get all the replies
-        if task_annotation:
-            # get the replies to the annotation
-            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)\
-                    .select_related('created_by_user')
-
+            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation).select_related('created_by_user')
             comments.extend([Comment(user=a.created_by_user,
                                      comment=a.text,
                                      submit_date=a.created_at)
-                            for a in annotation_replies])
-
+                             for a in annotation_replies])
+        except Annotation.DoesNotExist:
+            pass
         context['task_timeline'] = sorted(
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
+
+        # document-mode and timeline-mode tasks only need the timeline in the context
+        if self.mode in ['document', 'timeline']:
+            return context
 
         # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
         context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
@@ -161,6 +157,10 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         return context
 
     def get_template_names(self):
+        if self.mode == 'timeline':
+            return ['indigo_api/_task_timeline.html']
+        if self.mode == 'document':
+            return ['indigo_api/document/_task_detail.html']
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()

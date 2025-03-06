@@ -10,7 +10,7 @@
   background: white;
 }
 
-.work-detail-toggle {
+.detail-toggle {
   &::after {
     content: "▼";
   }
@@ -19,11 +19,11 @@
   width: 1em;
 }
 
-.work-list-card-heading {
+.list-card-heading {
   cursor: pointer;
 
   &.collapsed {
-    .work-detail-toggle::after {
+    .detail-toggle::after {
       content: "▶";
     }
   }

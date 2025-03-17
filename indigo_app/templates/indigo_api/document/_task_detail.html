@@ -6,5 +6,6 @@
   </div>
 </div>
 <div id="task-timeline-{{ task.pk }}">
-  {% include 'indigo_api/_task_timeline.html' %}
+  {% url 'document_task_overview' place=task.place.place_code pk=task.pk as next_url%}
+  {% include 'indigo_api/_task_timeline.html' with next_url=next_url %}
 </div>

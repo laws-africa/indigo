@@ -2,7 +2,7 @@
 
 <div class="p-2 pl-3 collapsed list-card-heading bg-white" id="task-heading-{{ task.pk }}"
      data-component="ListCard"
-     hx-get="{% url 'document_task' place=task.place.place_code pk=task.pk %}"
+     hx-get="{% url 'document_task_detail' place=task.place.place_code pk=task.pk %}"
      hx-target="#task-detail-{{ task.pk }}"
      hx-swap="innerHTML"
      hx-trigger="click once"
@@ -14,7 +14,7 @@
     {% else %}
       <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small me-1" title="{% trans task.state %}"></i>
     {% endif %}
-    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" target="_blank">{{ task.title }}</a>
     {% if task.changes_requested %}
       <span class="badge text-bg-secondary ms-1">{% trans 'Changes requested' %}</span>
     {% endif %}

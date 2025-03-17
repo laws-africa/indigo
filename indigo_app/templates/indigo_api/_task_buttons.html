@@ -1,0 +1,44 @@
+{% load i18n %}
+
+{% if task.change_task_permission %}
+  {% if task.state == 'pending_review' %}
+    {% if task.unsubmit_task_permission %}
+      <button
+          class="btn btn-primary me-2" type="button"
+          hx-post="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
+          hx-confirm="{% trans 'Are you sure you want to request changes to this task?' %}"
+      >{% trans "Request changes" %}</button>
+    {% endif %}
+    {% if task.customised.close_url %}
+      <a class="btn btn-primary me-2" href="{{ task.customised.close_url }}">{% trans 'Review changes' %}</a>
+    {% elif task.close_task_permission %}
+      <button
+          class="btn btn-success me-2" type="button"
+          hx-post="{% url 'close_task' place=place.place_code pk=task.pk %}"
+          hx-confirm="{% trans 'Are you sure you want to approve this task?' %}"
+      >{% trans "Approve" %}</button>
+    {% endif %}
+  {% elif task.state == 'cancelled' or task.state == 'done' %}
+    {% if task.reopen_task_permission %}
+      <button
+          class="btn btn-primary me-2" type="button"
+          hx-post="{% url 'reopen_task' place=place.place_code pk=task.pk %}"
+          hx-confirm="{% trans 'Are you sure you want to reopen this task?' %}"
+      >{% trans "Reopen" %}</button>
+    {% endif %}
+  {% elif task.code == 'convert-document' and task.state == 'open' and task.finish_task_permission %}
+    <button
+        class="btn btn-primary me-2" type="button"
+        hx-post="{% url 'finish_task' place=place.place_code pk=task.pk %}"
+        hx-disabled-elt="this"
+        hx-confirm="{% trans 'Are you sure you want to finish this task?' %}"
+        {% if not task.output_file %}disabled{% endif %}
+    >{% trans "Finish" %}</button>
+  {% elif task.state == 'open' and task.submit_task_permission %}
+    <button
+        class="btn btn-primary me-2" type="button"
+        hx-post="{% url 'submit_task' place=place.place_code pk=task.pk %}"
+        hx-confirm="{% trans 'Are you sure you want to submit this task for review?' %}"
+    >{% trans "Submit for review" %}</button>
+  {% endif %}
+{% endif %}

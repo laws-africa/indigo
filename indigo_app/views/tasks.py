@@ -114,8 +114,16 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        task = self.object
+        self.add_timeline(context)
+        self.decorate_permissions()
+        self.add_possible_blocking_tasks(context)
+        self.add_blocked_by(context)
+        self.add_work(context)
+        self.add_labels_form(context)
+        return context
 
+    def add_timeline(self, context):
+        task = self.object
         # merge actions and comments
         actions = task.action_object_actions.all()
         comments = list(Comment.objects.for_model(Task).filter(object_pk=task.id).select_related('user'))
@@ -133,37 +141,79 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
 
-        # document-mode and timeline-mode tasks only need the timeline in the context
-        if self.mode in ['document', 'timeline']:
-            return context
+    def decorate_permissions(self):
+        Task.decorate_permissions([self.object], self.request.user)
 
+    def add_possible_blocking_tasks(self, context):
         # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
-        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
-        context['blocked_by'] = task.blocked_by.all()
+        context['possible_blocking_tasks'] = Task.objects.filter(country=self.object.country, locality=self.object.locality, state__in=Task.OPEN_STATES).all()
 
-        # warn when submitting task on behalf of another user
-        Task.decorate_submission_message([task], self)
-        Task.decorate_permissions([task], self.request.user)
+    def add_blocked_by(self, context):
+        context['blocked_by'] = self.object.blocked_by.all()
 
-        # add work to context
+    def add_work(self, context):
+        task = self.object
         if task.work:
             context['work'] = task.work
             context['work_json'] = json.dumps(
                 WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
-        # include labels form
-        context['labels_form'] = TaskEditLabelsForm(instance=task)
-
-        return context
+    def add_labels_form(self, context):
+        context['labels_form'] = TaskEditLabelsForm(instance=self.object)
 
     def get_template_names(self):
-        if self.mode == 'timeline':
-            return ['indigo_api/_task_timeline.html']
-        if self.mode == 'document':
-            return ['indigo_api/document/_task_detail.html']
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
+
+
+class DocumentTaskOverviewView(SingleTaskViewBase, DetailView):
+    context_object_name = 'task'
+    template_name = 'indigo_api/document/_task_overview.html'
+
+
+class DocumentTaskDetailView(TaskDetailView):
+    def add_possible_blocking_tasks(self, context):
+        pass
+
+    def add_blocked_by(self, context):
+        pass
+
+    def add_work(self, context):
+        pass
+
+    def add_labels_form(self, context):
+        pass
+
+    def get_template_names(self):
+        return ['indigo_api/document/_task_detail.html']
+
+
+class TaskDetailDetailView(TaskDetailView):
+    def get_template_names(self):
+        return ['indigo_api/_task_detail.html']
+
+
+class TaskTimelineView(TaskDetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next_url'] = self.request.GET.get('next_url', reverse('task_detail_detail', kwargs={'place': self.place.place_code, 'pk': self.object.pk}))
+        return context
+
+    def add_possible_blocking_tasks(self, context):
+        pass
+
+    def add_blocked_by(self, context):
+        pass
+
+    def add_work(self, context):
+        pass
+
+    def add_labels_form(self, context):
+        pass
+
+    def get_template_names(self):
+        return ['indigo_api/_task_timeline.html']
 
 
 class TaskFileView(SingleTaskViewBase, DetailView):

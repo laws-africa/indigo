@@ -9,7 +9,14 @@
     {% related_tasks document as tasks %}
     {% if tasks %}
       {% for task in tasks %}
-        {% include "indigo_api/document/_task.html" %}
+        <div class="border mb-2"
+             id="task-listing-{{ task.pk }}"
+             hx-get="{% url 'document_task_listing' place=task.place.place_code pk=task.pk %}"
+             hx-target="#task-listing-{{ task.pk }}"
+             hx-trigger="load"
+        >
+          {% include 'indigo_api/document/_task_listing.html' %}
+        </div>
       {% endfor %}
     {% else %}
       <div class="alert alert-info">

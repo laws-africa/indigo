@@ -103,4 +103,4 @@ def amendment_date_tasks(amendment):
 
 @register.simple_tag
 def related_tasks(document):
-    return document.work.tasks.filter(Q(timeline_date=document.expression_date) | Q(document=document))
+    return document.work.tasks.filter(Q(timeline_date=document.expression_date) | Q(document=document)).order_by('pk')

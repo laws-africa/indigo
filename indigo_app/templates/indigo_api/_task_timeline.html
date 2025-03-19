@@ -35,7 +35,6 @@
         </div>
         <div class="card-footer d-flex">
           {% include 'indigo_api/_task_buttons.html' %}
-          <!-- TODO: disable button if there's no comment -->
           <button
               class="btn btn-primary ms-auto" type="submit"
               hx-target="#task-timeline-{{ task.pk }}"
@@ -45,7 +44,6 @@
         </div>
       </form>
     {% else %}
-      <!-- TODO: don't load the login page when in a partial view -->
       <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to leave a comment.{% endblocktrans %}</p>
     {% endif %}
   </li>

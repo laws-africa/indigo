@@ -21,7 +21,7 @@
   <li class="activity-item card">
     {% if user.is_authenticated %}
       {% get_comment_form for task as comment_form %}
-      <form hx-target="#task-{{ task.pk }}">
+      <form hx-target="#task-{{ task.pk }}" hx-post="{% comment_form_target %}">
         <div class="card-body">
           {% csrf_token %}
           {{ comment_form.honeypot.as_hidden }}
@@ -38,7 +38,6 @@
           <!-- TODO: disable button if there's no comment -->
           <button
               class="btn btn-primary ms-auto" type="submit"
-              hx-post="{% comment_form_target %}"
               hx-target="#task-timeline-{{ task.pk }}"
               name="next"
               value="{% url 'task_timeline' place=task.place.place_code pk=task.pk %}?next_url={{ next_url }}"

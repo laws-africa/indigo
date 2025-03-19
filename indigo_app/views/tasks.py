@@ -110,60 +110,110 @@ class TaskListView(TaskViewBase, ListView):
 
 class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
+    mode = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        task = self.object
+        self.add_timeline(context)
+        self.decorate_permissions()
+        self.add_possible_blocking_tasks(context)
+        self.add_blocked_by(context)
+        self.add_work(context)
+        self.add_labels_form(context)
+        return context
 
+    def add_timeline(self, context):
+        task = self.object
         # merge actions and comments
         actions = task.action_object_actions.all()
-        task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = list(Comment.objects.filter(content_type=task_content_type, object_pk=task.id).select_related('user'))
-
-        # get the annotation for the particular task
+        comments = list(Comment.objects.for_model(Task).filter(object_pk=task.id).select_related('user'))
+        # get the annotation if there is one, and any replies as comments
         try:
             task_annotation = task.annotation
-        except Annotation.DoesNotExist:
-            task_annotation = None
-
-        # for the annotation that is linked to the task, get all the replies
-        if task_annotation:
-            # get the replies to the annotation
-            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)\
-                    .select_related('created_by_user')
-
+            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation).select_related('created_by_user')
             comments.extend([Comment(user=a.created_by_user,
                                      comment=a.text,
                                      submit_date=a.created_at)
-                            for a in annotation_replies])
-
+                             for a in annotation_replies])
+        except Annotation.DoesNotExist:
+            pass
         context['task_timeline'] = sorted(
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
 
+    def decorate_permissions(self):
+        Task.decorate_permissions([self.object], self.request.user)
+
+    def add_possible_blocking_tasks(self, context):
         # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
-        context['possible_blocking_tasks'] = Task.objects.filter(country=task.country, locality=task.locality, state__in=Task.OPEN_STATES).all()
-        context['blocked_by'] = task.blocked_by.all()
+        context['possible_blocking_tasks'] = Task.objects.filter(country=self.object.country, locality=self.object.locality, state__in=Task.OPEN_STATES).all()
 
-        # warn when submitting task on behalf of another user
-        Task.decorate_submission_message([task], self)
-        Task.decorate_permissions([task], self.request.user)
+    def add_blocked_by(self, context):
+        context['blocked_by'] = self.object.blocked_by.all()
 
-        # add work to context
+    def add_work(self, context):
+        task = self.object
         if task.work:
             context['work'] = task.work
             context['work_json'] = json.dumps(
                 WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
-        # include labels form
-        context['labels_form'] = TaskEditLabelsForm(instance=task)
-
-        return context
+    def add_labels_form(self, context):
+        context['labels_form'] = TaskEditLabelsForm(instance=self.object)
 
     def get_template_names(self):
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
+
+
+class DocumentTaskOverviewView(SingleTaskViewBase, DetailView):
+    context_object_name = 'task'
+    template_name = 'indigo_api/document/_task_overview.html'
+
+
+class DocumentTaskDetailView(TaskDetailView):
+    def add_possible_blocking_tasks(self, context):
+        pass
+
+    def add_blocked_by(self, context):
+        pass
+
+    def add_work(self, context):
+        pass
+
+    def add_labels_form(self, context):
+        pass
+
+    def get_template_names(self):
+        return ['indigo_api/document/_task_detail.html']
+
+
+class TaskDetailDetailView(TaskDetailView):
+    def get_template_names(self):
+        return ['indigo_api/_task_detail.html']
+
+
+class TaskTimelineView(TaskDetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next_url'] = self.request.GET.get('next_url', reverse('task_detail_detail', kwargs={'place': self.place.place_code, 'pk': self.object.pk}))
+        return context
+
+    def add_possible_blocking_tasks(self, context):
+        pass
+
+    def add_blocked_by(self, context):
+        pass
+
+    def add_work(self, context):
+        pass
+
+    def add_labels_form(self, context):
+        pass
+
+    def get_template_names(self):
+        return ['indigo_api/_task_timeline.html']
 
 
 class TaskFileView(SingleTaskViewBase, DetailView):
@@ -388,9 +438,8 @@ class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
         return redirect(self.get_redirect_url())
 
     def get_redirect_url(self):
-        if self.request.GET.get('next'):
-            return self.request.GET.get('next')
-        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+        next_url = self.request.POST.get('next', self.request.GET.get('next'))
+        return next_url or reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
 class TaskAssignToView(SingleTaskViewBase, DetailView):

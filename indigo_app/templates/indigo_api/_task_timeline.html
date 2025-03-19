@@ -1,0 +1,50 @@
+{% load i18n indigo_app comments %}
+
+<ul class="activity-list open-top pt-3">
+  {% for entry in task_timeline %}
+    {% if entry.comment %}
+      <li class="activity-item card">
+        <div class="card-header">
+          {% user_profile entry.user %} {% trans 'commented' %}
+          <span class="time-ago" data-timestamp="{{ entry.submit_date|date:'c' }}">{{ entry.submit_date|date:"Y-m-d H:i" }}</span>:
+        </div>
+        <div class="card-body">
+          {{ entry.comment|urlize|linebreaksbr }}
+        </div>
+      </li>
+    {% else %}
+      <li class="activity-item">
+        {% include 'indigo_app/actions/_action.html' with action=entry this_task=True ignore_place=True %}
+      </li>
+    {% endif %}
+  {% endfor %}
+  <li class="activity-item card">
+    {% if user.is_authenticated %}
+      {% get_comment_form for task as comment_form %}
+      <form hx-target="#task-{{ task.pk }}" hx-post="{% comment_form_target %}">
+        <div class="card-body">
+          {% csrf_token %}
+          {{ comment_form.honeypot.as_hidden }}
+          {{ comment_form.content_type }}
+          {{ comment_form.object_pk }}
+          {{ comment_form.timestamp }}
+          {{ comment_form.security_hash }}
+          <input type="hidden" name="next" value="{{ next_url }}">
+          <textarea name="comment" class="form-control" maxlength="3000" rows="3"
+                    cols="80" placeholder="{% trans "Add a comment" %}" required></textarea>
+        </div>
+        <div class="card-footer d-flex">
+          {% include 'indigo_api/_task_buttons.html' %}
+          <button
+              class="btn btn-primary ms-auto" type="submit"
+              hx-target="#task-timeline-{{ task.pk }}"
+              name="next"
+              value="{% url 'task_timeline' place=task.place.place_code pk=task.pk %}?next_url={{ next_url }}"
+          >{% trans "Comment" %}</button>
+        </div>
+      </form>
+    {% else %}
+      <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to leave a comment.{% endblocktrans %}</p>
+    {% endif %}
+  </li>
+</ul>

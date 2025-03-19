@@ -1,4 +1,4 @@
-export default class WorkListCard {
+export default class ListCard {
   constructor (element) {
     this.element = element;
     this.element.addEventListener('click', (e) => this.clicked(e));

@@ -8,11 +8,12 @@
       <button class="nav-link" data-bs-toggle="tab" data-bs-target="#xml-pane">Akoma Ntoso</button>
     </li>
   {% endif %}
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tasks-pane">{% trans "Tasks" %}</button>
   <li class="ms-auto">
     <button class="btn btn-sm btn-close mt-2 me-2 document-secondary-pane-toggle"></button>
   </li>
 </ul>
-<div class="tab-content flex-grow-1">
+<div class="tab-content flex-grow-1 overflow-y-hidden">
   <div class="tab-pane show active h-100" id="source-attachment-pane">
     {% include "indigo_api/document/_source_att.html" %}
   </div>
@@ -23,4 +24,7 @@
       </div>
     </div>
   {% endif %}
+  <div class="tab-pane h-100" id="tasks-pane">
+    {% include "indigo_api/document/_task_list.html" %}
+  </div>
 </div>

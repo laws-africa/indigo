@@ -8,7 +8,7 @@
   <xsl:template match="akn:authorialNote">
     <fo:footnote>
       <fo:inline>
-        <xsl:apply-templates select="@marker"/>
+        <xsl:apply-templates select="@marker"/><xsl:text>&#8203;</xsl:text>
       </fo:inline>
       <fo:footnote-body>
         <fo:block-container margin="0">

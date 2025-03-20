@@ -12,6 +12,10 @@
       </fo:inline>
       <fo:footnote-body>
         <fo:block-container margin-left="0" margin-top="{$para-spacing}" font-size="{$fontsize-footnote}">
+          <!-- don't bold footnotes in headings -->
+          <xsl:if test="ancestor::akn:heading">
+            <xsl:attribute name="font-weight">normal</xsl:attribute>
+          </xsl:if>
           <fo:list-block start-indent="0" provisional-label-separation="{$indent}" text-align="start">
             <fo:list-item>
               <fo:list-item-label end-indent="label-end()">

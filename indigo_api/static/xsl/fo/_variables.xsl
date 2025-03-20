@@ -25,9 +25,9 @@
   </xsl:variable>
   <!-- 9pt -->
   <xsl:variable name="fontsize-h4" select="$fontsize"/>
-  <!-- 7.2pt -->
+  <!-- 7.65pt -->
   <xsl:variable name="fontsize-footnote">
-    <xsl:value-of select="$fontsize"/> * 0.8
+    <xsl:value-of select="$fontsize"/> * 0.85
   </xsl:variable>
   <!-- 11.25pt -->
   <xsl:variable name="fontsize-frontmatter" select="$fontsize-h2"/>

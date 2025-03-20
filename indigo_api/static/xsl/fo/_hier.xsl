@@ -130,7 +130,8 @@
    -->
   <xsl:template name="hier-container">
     <fo:block-container>
-      <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2" keep-with-next="always" id="{@eId}" start-indent="0" font-weight="bold">
+      <fo:block margin-top="{$para-spacing}*2" font-size="{$fontsize-h2}" text-align="center" widows="2" orphans="2"
+                keep-with-next="always" keep-together.within-page="always" id="{@eId}" start-indent="0" font-weight="bold">
         <!-- optionally include startQuote character -->
         <xsl:if test="parent::akn:embeddedStructure and not(preceding-sibling::*)">
           <xsl:call-template name="start-quote">

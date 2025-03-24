@@ -8,19 +8,30 @@
   <xsl:template match="akn:authorialNote">
     <fo:footnote>
       <fo:inline>
-        <xsl:apply-templates select="@marker"/>
+        <xsl:apply-templates select="@marker"/><xsl:text>&#8203;</xsl:text>
       </fo:inline>
       <fo:footnote-body>
-        <fo:block-container margin="0">
-          <fo:block margin-top="{$para-spacing}" font-size="{$fontsize-footnote}">
-            <fo:inline-container width="0" margin-left="-{$indent}"
-                                 baseline-shift="super" font-size="{$fontsize-small}">
-              <fo:block>
-                <xsl:apply-templates select="@marker"/>
-              </fo:block>
-            </fo:inline-container>
-            <xsl:apply-templates/>
-          </fo:block>
+        <fo:block-container margin-left="0" margin-top="{$para-spacing}" font-size="{$fontsize-footnote}">
+          <!-- don't bold footnotes in headings -->
+          <xsl:if test="ancestor::akn:heading">
+            <xsl:attribute name="font-weight">normal</xsl:attribute>
+          </xsl:if>
+          <fo:list-block start-indent="0" provisional-label-separation="{$indent}" text-align="start">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block margin-top="{$para-spacing}" font-size="{$fontsize-small}">
+                  <fo:inline baseline-shift="super">
+                    <xsl:apply-templates select="@marker"/>
+                  </fo:inline>
+                </fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>
+                  <xsl:apply-templates/>
+                </fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
         </fo:block-container>
       </fo:footnote-body>
     </fo:footnote>

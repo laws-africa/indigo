@@ -27,10 +27,6 @@
               </fo:list-item-label>
               <fo:list-item-body start-indent="body-start()">
                 <fo:block>
-                  <!-- don't bold footnotes in headings -->
-                  <xsl:if test="ancestor::akn:heading">
-                    <xsl:attribute name="font-weight">normal</xsl:attribute>
-                  </xsl:if>
                   <xsl:apply-templates/>
                 </fo:block>
               </fo:list-item-body>

@@ -251,7 +251,10 @@
       </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:subtitle">
-      <xsl:text>Sub-title </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$lang = 'fra'"><xsl:text>Sous-titre </xsl:text></xsl:when>
+        <xsl:otherwise><xsl:text>Sub-title </xsl:text></xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:if test="self::a:title">
       <xsl:choose>

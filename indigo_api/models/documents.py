@@ -671,6 +671,9 @@ class Attachment(models.Model):
         verbose_name_plural = _("attachments")
         unique_together = ('document', 'filename')
 
+    def clean_filename(self):
+        self.filename = self.filename.replace('#', '')
+
     def ensure_filename_unique(self):
         try:
             filename, extension = self.filename.rsplit('.', 1)
@@ -685,6 +688,7 @@ class Attachment(models.Model):
             self.filename = f'{filename}-{add_num}{extension}'
 
     def save(self, **kwargs):
+        self.clean_filename()
         self.ensure_filename_unique()
         super().save(**kwargs)
 

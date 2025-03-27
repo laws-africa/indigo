@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import datetime
 import logging
 import math
@@ -5,9 +7,6 @@ import os
 import re
 import shutil
 import tempfile
-from collections import defaultdict
-from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
-
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
@@ -17,7 +16,9 @@ from languages_plus.models import Language
 from lxml import etree
 from lxml import etree as ET
 from sass_processor.processor import SassProcessor
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
+from docpipe.xmlutils import wrap_text
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo.xmlutils import parse_html_str
@@ -176,10 +177,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             self.make_eids_unique(document.doc)
             # fix tables to have the right number of columns and rows; else FOP complains
             self.resize_tables(document.doc)
+            # any final adjustments to the XML
+            xml = self.final_tweaks(document.doc)
             # write the XML to file
-            xml = etree.tostring(document.doc.main, encoding='unicode')
-            # any final adjustments to the XML string
-            xml = self.final_tweaks(xml)
             xml_file = os.path.join(tmpdir, 'raw.xml')
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
@@ -630,12 +630,30 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             f.seek(0)
             f.write(out)
 
-    def final_tweaks(self, xml_str):
-        # inline glyphs
-        # TODO: do this in the XML rather than as a string replacement?
+    def wrap_inline_glyph(self, glyph, node, in_tail, m, ns):
+        span = etree.Element(f'{{{ns}}}span')
+        span.text = glyph
+        span.set('class', 'inline-glyph')
+        wrap_text(node, in_tail, lambda t: span, m.start(), m.end())
+
+    def wrap_inline_glyphs(self, xml, ns):
         for glyph in self.inline_glyphs:
-            xml_str = xml_str.replace(glyph, f'<span class="inline-glyph">{glyph}</span>')
-        return xml_str
+            candidate_xpath = etree.XPath(f'.//text()[contains(., "{glyph}")]', namespaces={'a': ns})
+            for ancestor in xml:
+                candidates = candidate_xpath(ancestor)
+                for candidate in reversed(candidates):
+                    node = candidate.getparent()
+                    tail_glyphs = list(re.finditer(glyph, node.tail)) if node.tail else []
+                    text_glyphs = list(re.finditer(glyph, node.text)) if node.text else []
+                    for tail_glyph in reversed(tail_glyphs):
+                        self.wrap_inline_glyph(glyph, node, True, tail_glyph, ns)
+                    for text_glyph in reversed(text_glyphs):
+                        self.wrap_inline_glyph(glyph, node, False, text_glyph, ns)
+
+    def final_tweaks(self, doc):
+        xml = etree.fromstring(etree.tostring(doc.main, encoding='unicode'))
+        self.wrap_inline_glyphs(xml, doc.namespace)
+        return etree.tostring(xml, encoding='unicode')
 
 
 class EPUBExporter(HTMLExporter):

@@ -56,7 +56,7 @@
         <xsl:if test="self::akn:th">
           <xsl:attribute name="font-weight">bold</xsl:attribute>
           <xsl:attribute name="text-align">center</xsl:attribute>
-          <xsl:attribute name="keep-with-next">1</xsl:attribute>
+          <xsl:attribute name="keep-with-next">always</xsl:attribute>
         </xsl:if>
         <!-- honour alignment -->
         <xsl:if test="@style='right'">

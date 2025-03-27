@@ -453,7 +453,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
                 for cell in row.xpath('a:td[@rowspan] | a:th[@rowspan]', namespaces={'a': doc.namespace}):
-                    rowspan = int(cell.get('rowspan', 1))
+                    _, rowspan = self.get_spans(cell)
                     if rowspan > 1:
                         # rowspan is the smaller of the current rowspan, and the actual number of rows (plus this one)
                         cell.set('rowspan', str(min(rowspan, actual + 1)))
@@ -490,9 +490,8 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 offset = 0
                 for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
                     # take colspan into account to set False on the correct cell in the matrix
-                    colspan = int(cell.get('colspan', '1'))
+                    colspan, rowspan = self.get_spans(cell)
                     offset += colspan - 1
-                    rowspan = int(cell.get('rowspan', '1'))
                     if rowspan > 1:
                         for r in range(rowspan - 1):
                             matrix[y + 1 + r][x + offset] = False
@@ -503,7 +502,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
                     # ignore cells with a colspan other than 1
                     # (assumes that if there is a colspan it's a positive integer)
-                    colspan = int(cell.get('colspan', '1'))
+                    colspan, _ = self.get_spans(cell)
                     offset += colspan - 1
                     # also increase offset if rowspan(s) in a previous row affect this row (indicated by a 'False' cell)
                     for col in range(n_cols):
@@ -560,7 +559,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             if n_rows > 1:
                 for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                     cells = row.xpath('./a:*', namespaces={'a': doc.namespace})
-                    if all(cell.tag == f'{{{doc.namespace}}}th' for cell in cells) and not any(int(cell.get('rowspan', 1)) > 1 for cell in cells):
+                    if all(cell.tag == f'{{{doc.namespace}}}th' for cell in cells) and not any(self.get_spans(cell)[1] > 1 for cell in cells):
                         row.set('style', 'header-row')
                     # only check the first row
                     break
@@ -599,8 +598,9 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                     x += 1
 
                 # mark matrix elements occupied by current cell with true
-                for xx in range(x, x + int(cell.get('colspan', 1))):
-                    for yy in range(y, y + int(cell.get('rowspan', 1))):
+                colspan, rowspan = self.get_spans(cell)
+                for xx in range(x, x + colspan):
+                    for yy in range(y, y + rowspan):
                         # skip already occupied cells due to overlapping spans
                         xxx = xx
                         while matrix[yy][xxx]:
@@ -608,6 +608,13 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                         matrix[yy][xxx] = True
 
         return matrix
+
+    def get_spans(self, cell):
+        colspan = cell.get('colspan')
+        colspan = int(colspan) if colspan else 1
+        rowspan = cell.get('rowspan')
+        rowspan = int(rowspan) if rowspan else 1
+        return colspan, rowspan
 
     def find_xsl_fo(self, document):
         """ Return the filename of an XSL-FO template to use to render this document.

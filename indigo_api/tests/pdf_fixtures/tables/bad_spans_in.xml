@@ -911,6 +911,25 @@
               </td>
             </tr>
           </table>
+          <table eId="att_2__subpart_TableA__part_IV__table_1">
+            <tr>
+              <th colspan="3" rowspan="1" class="akn--text-center">
+                <p eId="att_2__subpart_TableA__part_IV__table_1__p_1">Item</p>
+              </th>
+              <th colspan="" rowspan="1" class="akn--text-center">
+                <p eId="att_2__subpart_TableA__part_IV__table_1__p_2">Scale A</p>
+              </th>
+              <th rowspan="" class="akn--text-center">
+                <p eId="att_2__subpart_TableA__part_IV__table_1__p_3">Scale B</p>
+              </th>
+              <th style="width: 12.0527%;" class="akn--text-center">
+                <p eId="att_2__subpart_TableA__part_IV__table_1__p_4">Scale C</p>
+              </th>
+              <th style="width: 13.1827%;" class="akn--text-center">
+                <p eId="att_2__subpart_TableA__part_IV__table_1__p_5">Scale D</p>
+              </th>
+            </tr>
+          </table>
         </content>
       </part>
     </body>

@@ -232,7 +232,7 @@
                   </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:value-of select="akn:num"/>
+                  <xsl:apply-templates select="akn:num"/>
                 </xsl:otherwise>
               </xsl:choose>
             </fo:block>
@@ -302,7 +302,7 @@
                   </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:value-of select="akn:num"/>
+                  <xsl:apply-templates select="akn:num"/>
                 </xsl:otherwise>
               </xsl:choose>
               <!-- bullets for li -->

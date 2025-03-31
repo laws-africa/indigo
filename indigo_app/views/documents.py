@@ -1,6 +1,7 @@
 import json
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -87,7 +88,14 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 f'bluebell-akn=={bluebell.__version__}',
             ])
 
+        context['related_tasks'] = self.get_related_tasks()
+
         return context
+
+    def get_related_tasks(self):
+        return self.object.work.tasks.filter(
+            Q(timeline_date=self.object.expression_date) | Q(document=self.object)
+        ).order_by('pk')
 
     def get_document_content_json(self, document):
         return json.dumps(document.document_xml)

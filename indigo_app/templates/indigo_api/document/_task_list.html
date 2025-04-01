@@ -1,4 +1,4 @@
-{% load i18n indigo %}
+{% load i18n %}
 <div class="d-flex flex-column me-2 h-100">
   <div class="my-2 ms-auto">
     <a href="{% url 'work_tasks' frbr_uri=document.frbr_uri %}" target="_blank">
@@ -6,24 +6,21 @@
     </a>
   </div>
   <div class="overflow-y-scroll">
-    {% related_tasks document as tasks %}
-    {% if tasks %}
-      {% for task in tasks %}
-        <div class="border mb-2"
-             id="task-{{ task.pk }}"
-             hx-get="{% url 'document_task_overview' place=task.place.place_code pk=task.pk %}"
-             hx-target="#task-{{ task.pk }}"
-             hx-trigger="load"
-        >
-          {% include 'indigo_api/document/_task_overview.html' %}
-        </div>
-      {% endfor %}
-    {% else %}
+    {% for task in related_tasks %}
+      <div class="border mb-2"
+           id="task-{{ task.pk }}"
+           hx-get="{% url 'document_task_overview' place=task.place.place_code pk=task.pk %}"
+           hx-target="#task-{{ task.pk }}"
+           hx-trigger="load"
+      >
+        {% include 'indigo_api/document/_task_overview.html' %}
+      </div>
+    {% empty %}
       <div class="alert alert-info">
         {% blocktrans with expression_date=document.expression_date|date:'Y-m-d' %}
           No tasks at {{ expression_date }}.
         {% endblocktrans %}
       </div>
-    {% endif %}
+    {% endfor %}
   </div>
 </div>

@@ -1,9 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
-
 from django import template
 from django.conf import settings
-from django.db.models import Q
 
 from indigo.plugins import plugins
 from indigo_api.models import Task
@@ -99,8 +97,3 @@ def format_input_date(value):
 @register.simple_tag
 def amendment_date_tasks(amendment):
     return Task.objects.filter(work=amendment.amended_work, timeline_date=amendment.date, code='apply-amendment')
-
-
-@register.simple_tag
-def related_tasks(document):
-    return document.work.tasks.filter(Q(timeline_date=document.expression_date) | Q(document=document)).order_by('pk')

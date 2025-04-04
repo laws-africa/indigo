@@ -292,15 +292,13 @@ class PlaceExplorerView(PlaceViewBase, ListView):
     template_name = 'place/explorer.html'
     tab = 'insights'
     insights_tab = 'explorer'
-    paginate_by = 50
+    permission_required = ('indigo_api.change_placesettings',)
+    paginate_by = 100
     context_object_name = 'matches'
 
     def get(self, request, *args, **kwargs):
         self.form = ExplorerForm(request.GET)
         return super().get(request, *args, **kwargs)
-
-    def has_permission(self):
-        return self.request.user.is_staff
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

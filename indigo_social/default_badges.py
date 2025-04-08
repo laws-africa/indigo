@@ -112,7 +112,7 @@ class ConverterBadge(PermissionBadge):
     group_name = name + ' Badge'
     description = 'Can do conversion tasks'
     permissions = (
-        'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
+        'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task', 'indigo_api.block_task',
     )
 
 

@@ -5,7 +5,7 @@
   <span class="badge text-bg-success">{% trans 'principal' %}</span>
 {% endif %}
 {% if work.repealed_date %}
-  <span class="badge text-bg-danger">{% trans 'repealed' %}</span>
+  <span class="badge text-bg-danger">{% trans work.repealed_verb %}</span>
 {% endif %}
 {% if work.stub %}
   <span class="badge text-bg-info">{% trans 'stub' %}</span>

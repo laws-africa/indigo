@@ -21,7 +21,7 @@ from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
 from indigo_api.signals import work_approved, work_unapproved
-from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
+from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline, describe_repeal
 
 
 log = logging.getLogger()
@@ -442,6 +442,15 @@ class WorkMixin(object):
 
     def commencement_description_external(self):
         return self.commencement_description()
+
+    def repeal_description(self, friendly_date=True):
+        return describe_repeal(self, with_date=True, friendly_date=friendly_date)
+
+    def repeal_description_internal(self):
+        return self.repeal_description(friendly_date=False)
+
+    def repeal_description_external(self):
+        return self.repeal_description(friendly_date=True)
 
     def get_serialized_timeline(self):
         return get_serialized_timeline(self)

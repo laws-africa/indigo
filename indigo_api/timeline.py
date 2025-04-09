@@ -97,6 +97,37 @@ def describe_single_commencement(commencement, with_date=True, friendly_date=Tru
     return description
 
 
+def describe_repeal(work, with_date=True, friendly_date=True):
+    event = TimelineEvent(TimelineEventType.REPEAL, note=work.repealed_note)
+
+    repealed_date = work.repealed_date
+    if with_date and friendly_date:
+        repealed_date = date_format(work.repealed_date, 'j E Y')
+
+    if work.repealed_by:
+        event.by_frbr_uri = work.repealed_by.frbr_uri
+        event.by_title = work.repealed_by.title
+        if with_date:
+            event.description = _('%(verbed)s on %(date)s by') % {
+                'verbed': _(work.repealed_verb).capitalize(),
+                'date': repealed_date,
+            }
+        else:
+            event.description = _('%(verbed)s by') % {
+                'verbed': _(work.repealed_verb).capitalize(),
+            }
+    else:
+        if with_date:
+            event.description = _('%(verbed)s on %(date)s') % {
+                'verbed': _(work.repealed_verb).capitalize(),
+                'date': repealed_date,
+            }
+        else:
+            event.description = _(work.repealed_verb).capitalize()
+
+    return event
+
+
 def describe_publication_event(work, with_date=True, friendly_date=True, placeholder=False):
     """ Based on the information available, return a TimelineEvent describing the publication document for a work.
         If `placeholder` is True, return a minimum placeholder string as the TimelineEvent's `description`.
@@ -223,10 +254,8 @@ def get_timeline(work, only_approved_events=False):
             entry.events.append(TimelineEvent(
                 TimelineEventType.CONSOLIDATION, description=_('Consolidation'), related=consolidation))
         # repeal
-        if date == work.repealed_date:
-            entry.events.append(TimelineEvent(
-                TimelineEventType.REPEAL, description=_('Repealed by'), by_frbr_uri=work.repealed_by.frbr_uri,
-                by_title=work.repealed_by.title))
+        if date == work.repealed_date and repealed_date:
+            entry.events.append(describe_repeal(work, with_date=False))
 
         entries.append(entry)
 

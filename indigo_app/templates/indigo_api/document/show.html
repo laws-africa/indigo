@@ -25,10 +25,7 @@
             <span class="document-title">{{ document.title }}</span>
             <span class="badge text-bg-info if-published">{% trans 'published' %}</span>
             <span class="badge text-bg-warning if-draft">{% trans 'draft' %}</span>
-            <span class="badge text-bg-info if-repealed">{% trans 'repealed' %}</span>
-            {% if document.work.work_in_progress %}
-              <span class="badge text-bg-warning">{% trans 'work in progress' %}</span>
-            {% endif %}
+            {% include 'indigo_api/_work_info_badges.html' with work=document.work%}
           </h5>
         </div>
 

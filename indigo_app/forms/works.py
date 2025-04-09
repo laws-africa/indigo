@@ -29,7 +29,7 @@ class WorkForm(forms.ModelForm):
         model = Work
         fields = (
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced',
-            'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+            'repealed_by', 'repealed_date', 'repealed_verb', 'repealed_note', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
             'stub', 'principal', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
@@ -56,6 +56,8 @@ class WorkForm(forms.ModelForm):
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
+
+    repealed_verb = forms.ChoiceField(required=False, choices=Work.REPEALED_VERB_CHOICES)
 
     # custom work properties that shouldn't be rendered automatically.
     # this assumes that these properties are rendered manually on the form

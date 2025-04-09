@@ -1153,8 +1153,10 @@ class WorkFormRepealView(PartialWorkFormView):
 
         class Meta:
             model = Work
-            fields = ('repealed_by', 'repealed_date')
+            fields = ('repealed_by', 'repealed_date', 'repealed_verb', 'repealed_note')
             exclude = ('frbr_uri',)
+
+        repealed_verb = forms.ChoiceField(required=False, choices=Work.REPEALED_VERB_CHOICES)
 
     def update_work(self, work):
         form = super().update_work(work)

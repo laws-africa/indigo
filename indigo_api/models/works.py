@@ -452,6 +452,21 @@ class Work(WorkMixin, models.Model):
     allows us to track works that we don't have documents for, and provides a
     logical parent for documents, which are expressions of a work.
     """
+    REPEALED = 'repealed'
+    REVOKED = 'revoked'
+    WITHDRAWN = 'withdrawn'
+    LAPSED = 'lapsed'
+    RETIRED = 'retired'
+    EXPIRED = 'expired'
+    REPEALED_VERB_CHOICES = (
+        (REPEALED, _('repealed')),
+        (REVOKED, _('revoked')),
+        (WITHDRAWN, _('withdrawn')),
+        (LAPSED, _('lapsed')),
+        (RETIRED, _('retired')),
+        (EXPIRED, _('expired')),
+    )
+
     class Meta:
         permissions = (
             ('review_work', _('Can review work details')),
@@ -580,8 +595,14 @@ class Work(WorkMixin, models.Model):
         if self.parent_work == self:
             self.parent_work = None
 
-        if not self.repealed_by:
-            self.repealed_date = None
+        # a work can be repealed without being 'repealed_by' something, but it needs a repealed_date
+        if not self.repealed_date:
+            self.repealed_by = None
+            self.repealed_verb = None
+            self.repealed_note = None
+        # if a work is repealed and doesn't have a verb, use the default ('repealed')
+        elif not self.repealed_verb:
+            self.repealed_verb = self.REPEALED
 
         self.set_frbr_uri_fields()
         return super(Work, self).save(*args, **kwargs)

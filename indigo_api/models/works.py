@@ -494,6 +494,10 @@ class Work(WorkMixin, models.Model):
                                     help_text=_("Work that repealed this work"), related_name='repealed_works',
                                     verbose_name=_("repealed by"))
     repealed_date = models.DateField(_("repealed date"), null=True, blank=True, help_text=_("Date of repeal of this work"))
+    repealed_verb = models.CharField(_("repealed verb"), null=True, blank=True, max_length=256,
+                                     help_text=_("Specify if it should be anything other than 'repealed' (the default)"))
+    repealed_note = models.CharField(_("repealed note"), null=True, blank=True, max_length=512,
+                                     help_text=_("Optional note giving extra detail about the repeal"))
 
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,

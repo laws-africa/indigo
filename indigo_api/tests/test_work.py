@@ -214,6 +214,7 @@ class WorkTestCase(TestCase):
             title="repeals",
         )
         self.work.repealed_by = repeals
+        self.work.repealed_date = '2025-04-09'
         self.work.save()
 
         # this will be ignored

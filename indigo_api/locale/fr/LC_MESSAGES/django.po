@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-02-24 10:05\n"
+"PO-Revision-Date: 2025-04-10 13:49\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -30,12 +30,14 @@ msgid "Not commenced"
 msgstr "Non commencé"
 
 #: exporters.py:297
+#, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> le %(date)s par <ref href=\"%(url)s\">%(title)s</ref>."
+msgstr ""
 
 #: exporters.py:301
+#, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> le %(date)s."
+msgstr ""
 
 #: exporters.py:310
 #, python-format
@@ -438,36 +440,28 @@ msgid "accented terms"
 msgstr ""
 
 #: models/places.py:283
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation title"
-msgstr "annotation"
+msgstr ""
 
 #: models/places.py:283
 msgid "to be shown in the document's drop-down menu"
 msgstr ""
 
 #: models/places.py:284
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation content"
-msgstr "annotation"
+msgstr ""
 
 #: models/places.py:284
 msgid "will always be wrapped in []s — don't include them again"
 msgstr ""
 
 #: models/saved_searches.py:7
-#, fuzzy
-#| msgid "tasks"
 msgid "Tasks"
-msgstr "Tâches"
+msgstr ""
 
 #: models/saved_searches.py:8
-#, fuzzy
-#| msgid "works"
 msgid "Works"
-msgstr "travaux"
+msgstr ""
 
 #: models/saved_searches.py:12
 msgid "scope"
@@ -538,10 +532,8 @@ msgid "'Commences on' date missing"
 msgstr "La date \"commence le\" manque"
 
 #: models/tasks.py:105
-#, fuzzy
-#| msgid "Commenced"
 msgid "Comment"
-msgstr "Commencé"
+msgstr ""
 
 #: models/tasks.py:106
 msgid "Link amendment (active)"
@@ -796,7 +788,7 @@ msgstr "Il y a plusieurs commencements"
 
 #: models/works.py:471
 msgid "repealed"
-msgstr "abrogé"
+msgstr ""
 
 #: models/works.py:472
 msgid "revoked"
@@ -936,20 +928,16 @@ msgid "Date of repeal of this work"
 msgstr "Date d'abrogation de cet ouvrage"
 
 #: models/works.py:521
-#, fuzzy
-#| msgid "repealed by"
 msgid "repealed verb"
-msgstr "abrogé par"
+msgstr ""
 
 #: models/works.py:522
 msgid "Specify if it should be anything other than 'repealed' (the default)"
 msgstr ""
 
 #: models/works.py:523
-#, fuzzy
-#| msgid "repealed date"
 msgid "repealed note"
-msgstr "date d'abrogation"
+msgstr ""
 
 #: models/works.py:524
 msgid "Optional note giving extra detail about the repeal"
@@ -1213,10 +1201,9 @@ msgid "Expand all"
 msgstr "Développer tout"
 
 #: templates/indigo_api/akn/_amendments.html:11
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Modifié par <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> le <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1224,10 +1211,9 @@ msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amend
 msgstr "[Modifié par <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> le <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Modifié par <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> le <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1351,10 +1337,9 @@ msgid "Commenced"
 msgstr "Commencé"
 
 #: timeline.py:111
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s by"
+#, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr "Commencé le %(date)s par"
+msgstr ""
 
 #: timeline.py:116
 #, python-format
@@ -1362,10 +1347,9 @@ msgid "%(verbed)s by"
 msgstr ""
 
 #: timeline.py:121
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr "commencé le %(date)s"
+msgstr ""
 
 #: timeline.py:148
 #, python-format
@@ -1401,10 +1385,8 @@ msgid "Assented to"
 msgstr "Consenti à"
 
 #: timeline.py:231
-#, fuzzy
-#| msgid "Repealed by"
 msgid "Revised by"
-msgstr "Abrogé par"
+msgstr ""
 
 #: timeline.py:231
 msgid "Amended by"
@@ -1431,13 +1413,3 @@ msgstr "Impossible de créer une tâche pour une annotation de réponse."
 msgid "Error during import"
 msgstr "Erreur lors de l'importation"
 
-#~ msgid "Not commenced; Repealed"
-#~ msgstr "Non commencé; Abrogé"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Abrogé par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> le <span class=\"repeal-date\">%(date)s</span>]"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Abrogé par <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> le <span class=\"repeal-date\">%(date)s</span>]"

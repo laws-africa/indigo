@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2024-07-24 08:38\n"
+"PO-Revision-Date: 2025-04-10 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -188,7 +188,7 @@ msgstr "Não é possível especificar todas as disposições e uma lista de disp
 
 #: forms/works.py:597
 msgid "A commencement at this date and with this commencing work already exists."
-msgstr ""
+msgstr "Um início nesta data e com este início o trabalho já existe."
 
 #: forms/works.py:665 forms/works.py:717
 msgid "It seems that commencements have been edited elsewhere. Cancel your edits and make them again."
@@ -199,10 +199,8 @@ msgid "Commencing work and date must be unique together."
 msgstr "O início do trabalho e a data devem ser únicos juntos."
 
 #: forms/works.py:727
-#, fuzzy
-#| msgid "Commencing work and date must be unique together."
 msgid "Commenced work, commencing work, and date must be unique together."
-msgstr "O início do trabalho e a data devem ser únicos juntos."
+msgstr ""
 
 #: forms/works.py:824 templates/indigo_app/place/_work_detail.html:35
 msgid "Amendments"
@@ -725,16 +723,12 @@ msgid "Need help? Please <a href=\"mailto:%(email)s\">email us</a>"
 msgstr "Preciso de ajuda? Por favor, envie-nos <a href=\"mailto:%(email)s\">e-mail</a>"
 
 #: templates/comments/preview.html:3
-#, fuzzy
-#| msgid "Whoops, something went wrong."
 msgid "You're not logged in, or something went wrong."
-msgstr "Opa, algo deu errado."
+msgstr ""
 
 #: templates/indigo_api/_saved_searches.html:4
-#, fuzzy
-#| msgid "Save changes"
 msgid "Saved searches"
-msgstr "Salvar alterações"
+msgstr ""
 
 #: templates/indigo_api/_task_assign_to_menu.html:4
 #: templates/indigo_api/_task_card_single.html:83
@@ -814,10 +808,8 @@ msgid "Finish"
 msgstr "Terminar"
 
 #: templates/indigo_api/_task_buttons.html:46
-#, fuzzy
-#| msgid "Are you sure you want to unblock this task?"
 msgid "Are you sure you want to submit this task for review?"
-msgstr "Tem certeza de que deseja desbloquear esta tarefa?"
+msgstr ""
 
 #: templates/indigo_api/_task_buttons.html:47
 msgid "Submit for review"
@@ -1255,10 +1247,8 @@ msgid "Responsible organisation (actor)"
 msgstr "Organização responsável (ator)"
 
 #: templates/indigo_api/_work_form_content.html:227
-#, fuzzy
-#| msgid "Organisation that created this work. Not normally used for national legislation."
 msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
-msgstr "Organização que criou este trabalho. Normalmente não é usado para legislação nacional."
+msgstr "Organização que criou este trabalho. Normalmente não é usado para legislação nacional. Números, letras e '-' apenas."
 
 #: templates/indigo_api/_work_form_content.html:234
 msgid "Principal work"
@@ -1470,16 +1460,12 @@ msgid "The default date of repeal is the date of commencement of the selected re
 msgstr "A data padrão de revogação é a data de início do trabalho de revogação selecionado."
 
 #: templates/indigo_api/_work_repeal_form.html:56
-#, fuzzy
-#| msgid "Repealed"
 msgid "Repeal verb"
-msgstr "Revogado"
+msgstr ""
 
 #: templates/indigo_api/_work_repeal_form.html:68
-#, fuzzy
-#| msgid "Repeal date"
 msgid "Repeal note"
-msgstr "Data de revogação"
+msgstr ""
 
 #: templates/indigo_api/_work_subsidiary_tables.html:20
 #: templates/indigo_api/work_overview.html:84
@@ -1541,7 +1527,7 @@ msgstr "Um início só pode iniciar todas as disposições se for o único."
 
 #: templates/indigo_api/commencement_form.html:136
 msgid "Discard all changes to this commencement?"
-msgstr ""
+msgstr "Descartar todas as alterações neste início?"
 
 #: templates/indigo_api/commencement_form.html:138
 #: templates/indigo_api/work_form.html:19
@@ -1846,10 +1832,8 @@ msgid "Find and link defined terms"
 msgstr "Localizar e vincular termos definidos"
 
 #: templates/indigo_api/document/_defined_terms.html:33
-#, fuzzy
-#| msgid "No defined terms."
 msgid "Link defined terms"
-msgstr "Sem termos definidos."
+msgstr ""
 
 #: templates/indigo_api/document/_defined_terms.html:54
 msgid "No defined terms."
@@ -1932,16 +1916,12 @@ msgid "Published URL:"
 msgstr "URL publicado:"
 
 #: templates/indigo_api/document/_provisions.html:4
-#, fuzzy
-#| msgid "Commences all provisions"
 msgid "Choose provision"
-msgstr "Inicia todas as disposições"
+msgstr ""
 
 #: templates/indigo_api/document/_provisions.html:17
-#, fuzzy
-#| msgid "Choose a project topic"
 msgid "Choose a provision to edit"
-msgstr "Escolha um tema de projeto"
+msgstr ""
 
 #: templates/indigo_api/document/_references.html:7
 msgid "References"
@@ -1978,10 +1958,8 @@ msgid "Restore this revision"
 msgstr "Restaurar esta revisão"
 
 #: templates/indigo_api/document/_secondary_pane.html:4
-#, fuzzy
-#| msgid "Show source"
 msgid "Source"
-msgstr "Mostrar fonte"
+msgstr ""
 
 #: templates/indigo_api/document/_source_att.html:9 views/places.py:230
 msgid "Open"
@@ -1995,8 +1973,7 @@ msgstr "Todas as tarefas"
 
 #: templates/indigo_api/document/_task_list.html:20
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          No tasks at %(expression_date)s.\n"
 "        "
 msgstr ""
@@ -2097,10 +2074,8 @@ msgid "Wrap lines"
 msgstr ""
 
 #: templates/indigo_api/document/_text_editor.html:58
-#, fuzzy
-#| msgid "Review changes"
 msgid "Preview changes"
-msgstr "Rever alterações"
+msgstr ""
 
 #: templates/indigo_api/document/_text_editor.html:62
 #: templates/indigo_api/document/_toolbar.html:99
@@ -2264,10 +2239,8 @@ msgstr "esse documento"
 
 #: templates/indigo_api/document/show.html:179
 #: templates/indigo_api/timeline/_work_points_in_time.html:76
-#, fuzzy
-#| msgid "Permission Denied"
 msgid "Provision editor"
-msgstr "Permissão negada"
+msgstr ""
 
 #: templates/indigo_api/task_form.html:4 templates/indigo_api/task_list.html:25
 msgid "New task"
@@ -2621,7 +2594,7 @@ msgstr "Este trabalho tem <a href=\"#uncommenced-provisions\">disposições não
 
 #: templates/indigo_api/work_commencements.html:30
 msgid "A commencement without a date or a commencing work already exists. Edit it before adding another one."
-msgstr ""
+msgstr "Um início sem data ou um trabalho de início já existe. Edite-o antes de adicionar outro."
 
 #: templates/indigo_api/work_commencements.html:37
 msgid "Add a commencement"
@@ -2781,12 +2754,10 @@ msgstr "Parece que você está offline ou o servidor não está disponível."
 
 #: templates/indigo_app/actions/_action_amendment.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma alteração em %(date)s em\n"
 "  "
 
@@ -2798,23 +2769,19 @@ msgstr "por"
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    uma consolidação em %(date)s em\n"
 "  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    um início em %(date)s em\n"
 "  "
 
@@ -2865,20 +2832,16 @@ msgstr "%(org)s está em manutenção. Voltaremos em breve."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Aprovar %(works_length)s trabalho em andamento\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Aprovar %(works_length)s trabalhos em andamento\n"
 "        "
 
@@ -2927,70 +2890,49 @@ msgid "Amendment tasks will be created"
 msgstr "Tarefas de alteração serão criadas"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:158
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                              Task description: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
-#| "                            "
-msgid ""
-"\n"
+#, python-format
+msgid "\n"
 "                                Create task: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                              "
 msgstr ""
-"\n"
-"                              Descrição da tarefa: %(amended_title)s (%(amended_numbered_title)s) alterada por %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
-"                            "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:163
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Aplicar as alterações feitas até %(title)s (%(numbered_title)s) na data indicada.\n"
-"\n"
+msgstr "\n"
+"Aplicar as alterações feitas até %(title)s (%(numbered_title)s) na data indicada.\n\n"
 "A alteração já foi vinculada, então comece na Etapa 3 de https://docs.laws.africa/managing-works/amending-works."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:174
-#, fuzzy
-#| msgid "initial publication"
 msgid "Potential duplicates"
-msgstr "publicação inicial"
+msgstr ""
 
 #: templates/indigo_app/place/_bulk_approve_form.html:213
 msgid "Approving..."
 msgstr "Aprovando..."
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:7
-#, fuzzy, python-format
-#| msgid "Unapprove %(works_length)s works"
+#, python-format
 msgid "Link references for %(works_length)s works"
-msgstr "Desaprovar %(works_length)s funciona"
+msgstr ""
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:23
 msgid "References will be linked for all documents."
 msgstr ""
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:27
-#, fuzzy
-#| msgid "Remove references"
 msgid "Remove existing references first"
-msgstr "Remover referências"
+msgstr ""
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:47
-#, fuzzy
-#| msgid "Find references"
 msgid "Linking references..."
-msgstr "Encontrar referências"
+msgstr ""
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:48
-#, fuzzy
-#| msgid "Find references"
 msgid "Link references"
-msgstr "Encontrar referências"
+msgstr ""
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:7
 #, python-format
@@ -3035,11 +2977,9 @@ msgid "Created"
 msgstr "Criada"
 
 #: templates/indigo_app/place/_work_chooser_list.html:5
-#, fuzzy, python-format
-#| msgid "%(count)s task"
-#| msgid_plural "%(count)s tasks"
+#, python-format
 msgid "%(count)s total"
-msgstr "%(count)s tarefa"
+msgstr ""
 
 #: templates/indigo_app/place/_work_detail_overview.html:55
 msgid "Topics"
@@ -3061,10 +3001,9 @@ msgid "Unapprove %(works_length)s selected..."
 msgstr "Desaprovar %(works_length)s selecionado..."
 
 #: templates/indigo_app/place/_works_actions.html:98
-#, fuzzy, python-format
-#| msgid "Unapprove %(works_length)s selected..."
+#, python-format
 msgid "Link references for %(works_length)s selected..."
-msgstr "Desaprovar %(works_length)s selecionado..."
+msgstr ""
 
 #: templates/indigo_app/place/_works_actions.html:114
 #, python-format
@@ -3242,38 +3181,30 @@ msgid "Your account"
 msgstr "Sua conta"
 
 #: templates/place/_place_cards.html:15
-msgid ""
-"\n"
+msgid "\n"
 "                    Work\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Works\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Trabalho\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Funciona\n"
 "                  "
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                    Task\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Tasks\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Tarefa\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Tarefas\n"
 "                  "
 
@@ -3656,47 +3587,3 @@ msgstr "Não foi possível buscar informações da planilha. Sua planilha é com
 msgid "Error during import: %(error)s"
 msgstr "Erro durante a importação: %(error)s"
 
-#~ msgid "Commenced work and date must be unique together."
-#~ msgstr "O trabalho iniciado e a data devem ser únicos juntos."
-
-#~ msgid "Finishing"
-#~ msgstr "Acabamento"
-
-#~ msgid "Akoma Ntoso"
-#~ msgstr "Akoma Ntoso"
-
-#~ msgid "Markup"
-#~ msgstr "Marcação"
-
-#~ msgid "Bold"
-#~ msgstr "Audacioso"
-
-#~ msgid "Italics"
-#~ msgstr "Itálico"
-
-#~ msgid "Underline"
-#~ msgstr "Sublinhado"
-
-#~ msgid "Superscript"
-#~ msgstr "Sobrescrito"
-
-#~ msgid "Subscript"
-#~ msgstr "Subscrito"
-
-#~ msgid "Editor help..."
-#~ msgstr "Ajuda do editor..."
-
-#~ msgid "Available tasks"
-#~ msgstr "Tarefas disponíveis"
-
-#~ msgid "All available tasks"
-#~ msgstr "Todas as tarefas disponíveis"
-
-#~ msgid "Complete"
-#~ msgstr "Completo"
-
-#~ msgid "Works complete"
-#~ msgstr "Trabalhos completos"
-
-#~ msgid "Metrics"
-#~ msgstr "Métricas"

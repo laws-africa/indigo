@@ -165,7 +165,10 @@ class WorkMixin(object):
         """
         if self._repeal is None:
             if self.repealed_date:
-                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+                if self.repealed_by:
+                    self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+                else:
+                    self._repeal = RepealEvent(self.repealed_date)
         return self._repeal
 
     @property

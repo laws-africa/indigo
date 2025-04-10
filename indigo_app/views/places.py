@@ -57,7 +57,7 @@ def get_work_overview_data(work):
         overview_data.append(OverviewDataEntry(_("Commenced"), format_date(work.commencement_date)))
 
     if work.repealed_date:
-        overview_data.append(OverviewDataEntry(_("Repealed"), format_date(work.repealed_date)))
+        overview_data.append(OverviewDataEntry(_(work.repealed_verb).capitalize(), format_date(work.repealed_date)))
 
     # properties, e.g. Chapter number
     for prop in work.labeled_properties():

@@ -21,7 +21,7 @@ from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
 from indigo_api.signals import work_approved, work_unapproved
-from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline
+from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline, describe_repeal
 
 
 log = logging.getLogger()
@@ -164,8 +164,11 @@ class WorkMixin(object):
         None if this work hasn't been repealed.
         """
         if self._repeal is None:
-            if self.repealed_by:
-                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+            if self.repealed_date:
+                if self.repealed_by:
+                    self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+                else:
+                    self._repeal = RepealEvent(self.repealed_date)
         return self._repeal
 
     @property
@@ -443,6 +446,15 @@ class WorkMixin(object):
     def commencement_description_external(self):
         return self.commencement_description()
 
+    def repeal_description(self, friendly_date=True):
+        return describe_repeal(self, with_date=True, friendly_date=friendly_date)
+
+    def repeal_description_internal(self):
+        return self.repeal_description(friendly_date=False)
+
+    def repeal_description_external(self):
+        return self.repeal_description(friendly_date=True)
+
     def get_serialized_timeline(self):
         return get_serialized_timeline(self)
 
@@ -452,6 +464,21 @@ class Work(WorkMixin, models.Model):
     allows us to track works that we don't have documents for, and provides a
     logical parent for documents, which are expressions of a work.
     """
+    REPEALED = 'repealed'
+    REVOKED = 'revoked'
+    WITHDRAWN = 'withdrawn'
+    LAPSED = 'lapsed'
+    RETIRED = 'retired'
+    EXPIRED = 'expired'
+    REPEALED_VERB_CHOICES = (
+        (REPEALED, _('repealed')),
+        (REVOKED, _('revoked')),
+        (WITHDRAWN, _('withdrawn')),
+        (LAPSED, _('lapsed')),
+        (RETIRED, _('retired')),
+        (EXPIRED, _('expired')),
+    )
+
     class Meta:
         permissions = (
             ('review_work', _('Can review work details')),
@@ -494,6 +521,10 @@ class Work(WorkMixin, models.Model):
                                     help_text=_("Work that repealed this work"), related_name='repealed_works',
                                     verbose_name=_("repealed by"))
     repealed_date = models.DateField(_("repealed date"), null=True, blank=True, help_text=_("Date of repeal of this work"))
+    repealed_verb = models.CharField(_("repealed verb"), null=True, blank=True, max_length=256,
+                                     help_text=_("Specify if it should be anything other than 'repealed' (the default)"))
+    repealed_note = models.CharField(_("repealed note"), null=True, blank=True, max_length=512,
+                                     help_text=_("Optional note giving extra detail about the repeal"))
 
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
@@ -576,8 +607,14 @@ class Work(WorkMixin, models.Model):
         if self.parent_work == self:
             self.parent_work = None
 
-        if not self.repealed_by:
-            self.repealed_date = None
+        # a work can be repealed without being 'repealed_by' something, but it needs a repealed_date
+        if not self.repealed_date:
+            self.repealed_by = None
+            self.repealed_verb = None
+            self.repealed_note = None
+        # if a work is repealed and doesn't have a verb, use the default ('repealed')
+        elif not self.repealed_verb:
+            self.repealed_verb = self.REPEALED
 
         self.set_frbr_uri_fields()
         return super(Work, self).save(*args, **kwargs)

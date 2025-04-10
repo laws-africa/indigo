@@ -63,6 +63,7 @@ class DocumentTestCase(TestCase):
 
     def test_repeal_from_work(self):
         rep = Work.objects.get(id=2)
+        rep.publication_date = date(2025, 4, 9)
         d = Document.objects.get(id=1)
         w = d.work
         w.repealed_by = rep

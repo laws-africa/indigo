@@ -1,4 +1,6 @@
+import datetime
 from django.test import TestCase
+
 from indigo_api.models import Work, TaxonomyTopic, Country
 
 
@@ -17,6 +19,7 @@ class TaxonomyTopicSignalTestCase(TestCase):
             frbr_uri="/akn/za/act/2005/1",
             title='Principal work',
             principal=True,
+            repealed_date=datetime.date(2025, 4, 9),
             repealed_by=self.repealing_work,
         )
 

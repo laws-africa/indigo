@@ -82,6 +82,7 @@
       "consolidation_note_override": "A special consolidation note just for this work",
       "repealed_by_id": 1,
       "repealed_date": "2014-02-12",
+      "repealed_verb": "repealed",
       "work_in_progress": false
     }
   },

@@ -24,18 +24,24 @@
   {% endfor %}
 
   {% if document.work.repealed_date %}
-    <li class="amendment repeal">
-      {% with title=document.work.repealed_by.title numtitle=document.work.repealed_by.numbered_title date=document.work.repealed_date|date:"j E Y" %}
-        {% work_resolver_url document.work.repealed_by as resolver_uri %}
-        {% block repealed_wording %}
-          {% if numtitle %}
-            {% blocktrans %}[Repealed by <a href="{{ resolver_uri }}" class="repealing-title">{{ title }} ({{ numtitle }})</a> on <span class="repeal-date">{{ date }}</span>]{% endblocktrans %}
-          {% else %}
-            {% blocktrans %}[Repealed by <a href="{{ resolver_uri }}" class="repealing-title">{{ title }}</a> on <span class="repeal-date">{{ date }}</span>]{% endblocktrans %}
-          {% endif %}
-        {% endblock %}
-      {% endwith %}
-    </li>
+    {% with document.work.repeal_description_external as repeal_event %}
+      <li class="amendment repeal">
+        {% if repeal_event.by_frbr_uri %}
+          {% work_resolver_url document.work.repealed_by as resolver_uri %}
+          {% with numtitle=document.work.repealed_by.numbered_title %}
+            [{{ repeal_event.description }}
+            <a href="{{ resolver_uri }}">{{ repeal_event.by_title }}{% if numtitle %} ({{ numtitle }}){% endif %}</a>]
+          {% endwith %}
+        {% else %}
+          [{{ repeal_event.description }}]
+        {% endif %}
+      </li>
+      {% if repeal_event.note %}
+        <li class="amendment">
+          {{ repeal_event.note }}
+        </li>
+      {% endif %}
+    {% endwith %}
   {% endif %}
 </ol>
 {% endif %}

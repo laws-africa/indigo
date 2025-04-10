@@ -17,7 +17,7 @@
       <button
           class="btn btn-outline-primary"
           type="button"
-          hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by"
+          hx-get="{% url 'place_work_chooser' place.place_code %}?submit={{ edit_url|urlencode }}&target={{ "#work-form-repeal"|urlencode }}&field=work-repealed_by&include={{ "#verb-note"|urlencode }}"
           hx-target="#work-chooser-modal"
           hx-trigger="click"
           data-bs-toggle="modal"
@@ -35,17 +35,43 @@
   </div>
 </div>
 
-{% if work.repealed_by %}
-  <div class="mb-3 row">
-    <label class="col-2 col-form-label required">{% trans 'Repeal date' %}</label>
-    <div class="col-4">
-      <input type="date" class="form-control"
-             id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}"
-             required
-             value="{{ form.repealed_date.value|format_input_date }}">
-    </div>
+<div class="mb-3 row">
+  <label class="col-2 col-form-label {% if work.repealed_by %}required{% endif %}">{% trans 'Repeal date' %}</label>
+  <div class="col-4">
+    <input type="date" class="form-control"
+           id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}"
+           {% if work.repealed_by %}required{% endif %}
+           value="{{ form.repealed_date.value|format_input_date|default_if_none:'' }}">
+  </div>
+  {% if work.repealed_by %}
     <div class="col-6 form-text text-muted">
       {% trans 'The default date of repeal is the date of commencement of the selected repealing work.' %}
+    </div>
+  {% endif %}
+</div>
+
+{% if work.repealed_date %}
+  <div id="verb-note">
+    <div class="mb-3 row">
+      <label class="col-2 col-form-label">{% trans 'Repeal verb' %}</label>
+      <div class="col-4">
+        <select class="selectpicker col-12"
+                id="{{ form.repealed_verb.id_for_label }}"
+                name="{{ form.repealed_verb.html_name }}">
+          {% for opt in form.repealed_verb %}
+            {{ opt }}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label class="col-2 col-form-label">{% trans 'Repeal note' %}</label>
+      <div class="col-4">
+        <input type="text" class="form-control"
+               id="{{ form.repealed_note.id_for_label }}"
+               name="{{ form.repealed_note.html_name }}"
+               value="{{ form.repealed_note.value|default:'' }}">
+      </div>
     </div>
   </div>
 {% endif %}

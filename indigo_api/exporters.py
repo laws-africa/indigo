@@ -281,18 +281,28 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         if short:
             # we only care if it's uncommenced and/or repealed for the running header
             if not work.commenced and work.repealed_date:
-                return _('Not commenced; Repealed')
+                return _('Not commenced') + '; ' + _(work.repealed_verb).capitalize()
             if not work.commenced:
                 return _('Not commenced')
             if work.repealed_date:
-                return _('Repealed')
+                return _(work.repealed_verb).capitalize()
             return
 
         # repeal
         if work.repealed_date:
-            notice = _('This %(friendly_type)s was <b>repealed</b> on %(date)s by <ref href="%(url)s">%(work)s</ref>') % {
-                'friendly_type': work.friendly_type(), 'date': work.repealed_date, 'work': work.repealed_by.title, 'url': work.repealed_by.frbr_uri}
-            notice += f' ({work.repealed_by.numbered_title()}).' if work.repealed_by.numbered_title() else '.'
+            if work.repealed_by:
+                title = work.repealed_by.title
+                numbered_title = work.repealed_by.numbered_title()
+                title += f' ({numbered_title})' if numbered_title else ''
+                notice = _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href="%(url)s">%(title)s</ref>.') % {
+                    'friendly_type': work.friendly_type(), 'repealed_verb': _(work.repealed_verb),
+                    'date': work.repealed_date, 'title': title, 'url': work.repealed_by.frbr_uri}
+            else:
+                notice = _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s.') % {
+                    'friendly_type': work.friendly_type(), 'repealed_verb': _(work.repealed_verb),
+                    'date': work.repealed_date}
+            if work.repealed_note:
+                notice += f' {work.repealed_note}' + '.' if not work.repealed_note.endswith('.') else ''
             notices.append(notice)
 
         # commencement

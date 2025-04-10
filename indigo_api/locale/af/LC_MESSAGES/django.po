@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2024-07-24 07:36\n"
+"PO-Revision-Date: 2025-04-10 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -779,10 +779,8 @@ msgid "taxonomy topics"
 msgstr ""
 
 #: models/works.py:428
-#, fuzzy
-#| msgid "Commenced on %(date)s"
 msgid "Commencement date unknown"
-msgstr "Inwerking getree op %(date)s"
+msgstr "Aanvangsdatum onbekend"
 
 #: models/works.py:434
 msgid "There are multiple commencements"
@@ -1203,10 +1201,9 @@ msgid "Expand all"
 msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:11
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1214,10 +1211,9 @@ msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amend
 msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1305,10 +1301,8 @@ msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 Licens
 msgstr ""
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Contents"
-msgstr "Inhoudsopgawe"
+msgstr ""
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
@@ -1343,10 +1337,9 @@ msgid "Commenced"
 msgstr ""
 
 #: timeline.py:111
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr "begin op%(date)s"
+msgstr ""
 
 #: timeline.py:116
 #, python-format
@@ -1354,10 +1347,9 @@ msgid "%(verbed)s by"
 msgstr ""
 
 #: timeline.py:121
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr "begin op%(date)s"
+msgstr ""
 
 #: timeline.py:148
 #, python-format
@@ -1421,15 +1413,3 @@ msgstr ""
 msgid "Error during import"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Not commenced"
-#~ msgid "Not commenced; Repealed"
-#~ msgstr "Nog nie in werking"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s(%(numtitle)s)</a> op <span class=\"repeal-date\">%(date)s</span>"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Herroep deur <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> op<span class=\"repeal-date\">%(date)s</span>]"

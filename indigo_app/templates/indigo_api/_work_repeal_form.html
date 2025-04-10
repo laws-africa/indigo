@@ -41,7 +41,7 @@
     <input type="date" class="form-control"
            id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}"
            {% if work.repealed_by %}required{% endif %}
-           value="{{ form.repealed_date.value|format_input_date }}">
+           value="{{ form.repealed_date.value|format_input_date|default_if_none:'' }}">
   </div>
   {% if work.repealed_by %}
     <div class="col-6 form-text text-muted">

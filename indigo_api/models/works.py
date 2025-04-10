@@ -1096,3 +1096,15 @@ class WorkAlias(models.Model):
 
     def __str__(self):
         return self.alias
+
+
+class ChapterNumber(models.Model):
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("work"), related_name='chapter_numbers')
+    validity_start_date = models.DateField(_("validity start date"), null=True, blank=True, help_text=_("Date from which this Chapter number applied to the work"))
+    validity_end_date = models.DateField(_("validity end date"), null=True, blank=True, help_text=_("Date until which this Chapter number applied to the work"))
+    revision_name = models.CharField(_("revision name"), max_length=64, null=True, blank=True, help_text=_("Name of the publication in which this Chapter number was assigned to the work"))
+
+    class Meta:
+        ordering = ('validity_start_date',)
+        verbose_name = _("chapter number")
+        verbose_name_plural = _("chapter numbers")

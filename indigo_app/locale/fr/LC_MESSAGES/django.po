@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 13:49\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -192,7 +192,7 @@ msgstr "Un début à cette date et avec ce début des travaux existent déjà."
 
 #: forms/works.py:665 forms/works.py:717
 msgid "It seems that commencements have been edited elsewhere. Cancel your edits and make them again."
-msgstr ""
+msgstr "Il semble que les débuts aient été modifiés ailleurs. Annulez vos modifications et recommencez."
 
 #: forms/works.py:676
 msgid "Commencing work and date must be unique together."
@@ -200,7 +200,7 @@ msgstr "Le début du travail et la date doivent être uniques ensemble."
 
 #: forms/works.py:727
 msgid "Commenced work, commencing work, and date must be unique together."
-msgstr ""
+msgstr "Les termes « travail commencé », « début des travaux » et « date » doivent être uniques."
 
 #: forms/works.py:824 templates/indigo_app/place/_work_detail.html:35
 msgid "Amendments"
@@ -724,11 +724,11 @@ msgstr "Besoin d'aide? Veuillez <a href=\"mailto:%(email)s\">nous envoyer un e-m
 
 #: templates/comments/preview.html:3
 msgid "You're not logged in, or something went wrong."
-msgstr ""
+msgstr "Vous n'êtes pas connecté ou quelque chose s'est mal passé."
 
 #: templates/indigo_api/_saved_searches.html:4
 msgid "Saved searches"
-msgstr ""
+msgstr "Recherches enregistrées"
 
 #: templates/indigo_api/_task_assign_to_menu.html:4
 #: templates/indigo_api/_task_card_single.html:83
@@ -809,7 +809,7 @@ msgstr "Finition"
 
 #: templates/indigo_api/_task_buttons.html:46
 msgid "Are you sure you want to submit this task for review?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour examen ?"
 
 #: templates/indigo_api/_task_buttons.html:47
 msgid "Submit for review"
@@ -1461,11 +1461,11 @@ msgstr "La date d'abrogation par défaut est la date de début des travaux d'abr
 
 #: templates/indigo_api/_work_repeal_form.html:56
 msgid "Repeal verb"
-msgstr ""
+msgstr "verbe abroger"
 
 #: templates/indigo_api/_work_repeal_form.html:68
 msgid "Repeal note"
-msgstr ""
+msgstr "Note d'abrogation"
 
 #: templates/indigo_api/_work_subsidiary_tables.html:20
 #: templates/indigo_api/work_overview.html:84
@@ -1817,11 +1817,11 @@ msgstr "Ce sont des termes qui sont explicitement définis dans ce document. Act
 
 #: templates/indigo_api/document/_defined_terms.html:21
 msgid "Only uses of defined terms can be linked while editing a provision."
-msgstr ""
+msgstr "Seules les utilisations de termes définis peuvent être liées lors de la modification d'une disposition."
 
 #: templates/indigo_api/document/_defined_terms.html:22
 msgid "To mark up definitions, edit the full document."
-msgstr ""
+msgstr "Pour marquer les définitions, modifiez le document complet."
 
 #: templates/indigo_api/document/_defined_terms.html:27
 msgid "Remove defined terms"
@@ -1833,7 +1833,7 @@ msgstr "Rechercher et lier des termes définis"
 
 #: templates/indigo_api/document/_defined_terms.html:33
 msgid "Link defined terms"
-msgstr ""
+msgstr "Lien termes définis"
 
 #: templates/indigo_api/document/_defined_terms.html:54
 msgid "No defined terms."
@@ -1917,11 +1917,11 @@ msgstr "URL publiée :"
 
 #: templates/indigo_api/document/_provisions.html:4
 msgid "Choose provision"
-msgstr ""
+msgstr "Choisir la disposition"
 
 #: templates/indigo_api/document/_provisions.html:17
 msgid "Choose a provision to edit"
-msgstr ""
+msgstr "Choisissez une disposition à modifier"
 
 #: templates/indigo_api/document/_references.html:7
 msgid "References"
@@ -1959,7 +1959,7 @@ msgstr "Restaurer cette révision"
 
 #: templates/indigo_api/document/_secondary_pane.html:4
 msgid "Source"
-msgstr ""
+msgstr "Source"
 
 #: templates/indigo_api/document/_source_att.html:9 views/places.py:230
 msgid "Open"
@@ -1976,7 +1976,9 @@ msgstr "Toutes les tâches"
 msgid "\n"
 "          No tasks at %(expression_date)s.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"          Aucune tâche à %(expression_date)s.\n"
+"        "
 
 #: templates/indigo_api/document/_text_editor.html:7
 msgid "Find..."
@@ -1996,19 +1998,19 @@ msgstr "Trouver et remplacer..."
 
 #: templates/indigo_api/document/_text_editor.html:12
 msgid "Move lines up"
-msgstr ""
+msgstr "Déplacer les lignes vers le haut"
 
 #: templates/indigo_api/document/_text_editor.html:13
 msgid "Move lines down"
-msgstr ""
+msgstr "Déplacer les lignes vers le bas"
 
 #: templates/indigo_api/document/_text_editor.html:14
 msgid "Join lines"
-msgstr ""
+msgstr "Joindre les lignes"
 
 #: templates/indigo_api/document/_text_editor.html:16
 msgid "All commands..."
-msgstr ""
+msgstr "Toutes les commandes..."
 
 #: templates/indigo_api/document/_text_editor.html:20
 #: templates/indigo_api/document/_toolbar.html:106
@@ -2071,11 +2073,11 @@ msgstr "Remarque"
 
 #: templates/indigo_api/document/_text_editor.html:53
 msgid "Wrap lines"
-msgstr ""
+msgstr "Lignes d'enroulement"
 
 #: templates/indigo_api/document/_text_editor.html:58
 msgid "Preview changes"
-msgstr ""
+msgstr "Aperçu des modifications"
 
 #: templates/indigo_api/document/_text_editor.html:62
 #: templates/indigo_api/document/_toolbar.html:99
@@ -2128,7 +2130,7 @@ msgstr "Termes en italique..."
 
 #: templates/indigo_api/document/_toolbar.html:44
 msgid "Make headings Sentence case"
-msgstr ""
+msgstr "Créer des titres en minuscules"
 
 #: templates/indigo_api/document/_toolbar.html:63
 #: templates/place/settings.html:4 templates/place/settings.html:11
@@ -2152,7 +2154,7 @@ msgstr "Aide"
 
 #: templates/indigo_api/document/_toolbar.html:83
 msgid "Sidebar"
-msgstr ""
+msgstr "Barre latérale"
 
 #: templates/indigo_api/document/_toolbar.html:93
 msgid "Edit table"
@@ -2240,7 +2242,7 @@ msgstr "ce document"
 #: templates/indigo_api/document/show.html:179
 #: templates/indigo_api/timeline/_work_points_in_time.html:76
 msgid "Provision editor"
-msgstr ""
+msgstr "Éditeur de dispositions"
 
 #: templates/indigo_api/task_form.html:4 templates/indigo_api/task_list.html:25
 msgid "New task"
@@ -2855,7 +2857,7 @@ msgstr "Des tâches de conversion et d'importation seront créées – Les tâch
 
 #: templates/indigo_app/place/_bulk_approve_form.html:72
 msgid "Import date missing – add a publication date, a commencement date, or a consolidation date"
-msgstr ""
+msgstr "Date d'importation manquante – ajoutez une date de publication, une date de début ou une date de consolidation"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:78
 msgid "Task description: Conversion tasks"
@@ -2894,7 +2896,9 @@ msgstr "Des tâches de modification seront créées"
 msgid "\n"
 "                                Create task: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                              "
-msgstr ""
+msgstr "\n"
+"                                Créer une tâche : %(amended_title)s (%(amended_numbered_title)s) modifié par %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                              "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:163
 #, python-format
@@ -2907,7 +2911,7 @@ msgstr "\n"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:174
 msgid "Potential duplicates"
-msgstr ""
+msgstr "Doublons potentiels"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:213
 msgid "Approving..."
@@ -2916,23 +2920,23 @@ msgstr "Approuvant..."
 #: templates/indigo_app/place/_bulk_link_refs_form.html:7
 #, python-format
 msgid "Link references for %(works_length)s works"
-msgstr ""
+msgstr "Références de liens pour %(works_length)s œuvres"
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:23
 msgid "References will be linked for all documents."
-msgstr ""
+msgstr "Des références seront liées pour tous les documents."
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:27
 msgid "Remove existing references first"
-msgstr ""
+msgstr "Supprimez d'abord les références existantes"
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:47
 msgid "Linking references..."
-msgstr ""
+msgstr "Liens de référence..."
 
 #: templates/indigo_app/place/_bulk_link_refs_form.html:48
 msgid "Link references"
-msgstr ""
+msgstr "Références de liens"
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:7
 #, python-format
@@ -2941,7 +2945,7 @@ msgstr "Désapprouver les travaux de %(works_length)s"
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:23
 msgid "Any documents will be unpublished."
-msgstr ""
+msgstr "Tous les documents seront inédits."
 
 #: templates/indigo_app/place/_bulk_unapprove_form.html:41
 msgid "Unapproving..."
@@ -2979,7 +2983,7 @@ msgstr "Créé"
 #: templates/indigo_app/place/_work_chooser_list.html:5
 #, python-format
 msgid "%(count)s total"
-msgstr ""
+msgstr "%(count)s total"
 
 #: templates/indigo_app/place/_work_detail_overview.html:55
 msgid "Topics"
@@ -3003,7 +3007,7 @@ msgstr "Annuler l'approbation de %(works_length)s sélectionné..."
 #: templates/indigo_app/place/_works_actions.html:98
 #, python-format
 msgid "Link references for %(works_length)s selected..."
-msgstr ""
+msgstr "Références de liens pour %(works_length)s sélectionné..."
 
 #: templates/indigo_app/place/_works_actions.html:114
 #, python-format
@@ -3392,7 +3396,7 @@ msgstr "L'équipe %(INDIGO_ORGANISATION)s"
 #: views/documents.py:142
 #, python-format
 msgid "No provision with this id found: '%(eid)s'"
-msgstr ""
+msgstr "Aucune disposition avec cet identifiant n'a été trouvée : '%(eid)s'"
 
 #: views/places.py:51
 msgid "Publication"
@@ -3486,7 +3490,7 @@ msgstr "Travaux %(works_count)s non approuvés."
 #: views/places.py:744
 #, python-format
 msgid "Linked references for %(n_docs)s documents, with %(n_changed)s documents changed."
-msgstr ""
+msgstr "Références liées pour %(n_docs)s documents, avec %(n_changed)s documents modifiés."
 
 #: views/tasks.py:431
 msgid "submitted for review"

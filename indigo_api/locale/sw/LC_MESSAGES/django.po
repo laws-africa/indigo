@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 13:49\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -933,15 +933,15 @@ msgstr "kitenzi kilichofutwa"
 
 #: models/works.py:522
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Bainisha ikiwa inapaswa kuwa kitu kingine chochote isipokuwa 'kufutwa' (chaguo-msingi)"
 
 #: models/works.py:523
 msgid "repealed note"
-msgstr ""
+msgstr "noti iliyofutwa"
 
 #: models/works.py:524
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Dokezo la hiari linalotoa maelezo ya ziada kuhusu kubatilisha"
 
 #: models/works.py:528
 msgid "Parent (primary) work for subsidiary legislation"
@@ -1130,7 +1130,7 @@ msgstr "kitenzi"
 
 #: models/works.py:941
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Badilisha kwa mfano 'iliyorekebishwa' inapohitajika"
 
 #: models/works.py:953
 msgid "amendment"
@@ -1203,7 +1203,7 @@ msgstr "Panua zote"
 #: templates/indigo_api/akn/_amendments.html:11
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Imerekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1213,7 +1213,7 @@ msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\
 #: templates/indigo_api/akn/_amendments.html:17
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Imerekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwenye <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1339,17 +1339,17 @@ msgstr "Imeanza"
 #: timeline.py:111
 #, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr ""
+msgstr "%(verbed)s on %(date)s by"
 
 #: timeline.py:116
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s by"
 
 #: timeline.py:121
 #, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr ""
+msgstr "%(verbed)s on %(date)s"
 
 #: timeline.py:148
 #, python-format
@@ -1386,7 +1386,7 @@ msgstr "Imeidhinishwa"
 
 #: timeline.py:231
 msgid "Revised by"
-msgstr ""
+msgstr "Imesahihishwa na"
 
 #: timeline.py:231
 msgid "Amended by"

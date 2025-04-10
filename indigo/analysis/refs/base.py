@@ -193,6 +193,7 @@ class SubtypeNumberCitationMatcherENG(DocumentPatternMatcherMixin, CitationMatch
         return f'/akn/{place}/act/{subtype}/{match.groups["year"]}/{match.groups["num"].lower()}'
 
 
+# TODO: no longer used in LINK_REFERENCES_PLUGINS; either update and add back in, or nuke
 @plugins.register('refs-cap')
 class RefsFinderCapENG(DocumentPatternMatcherMixin, CitationMatcher):
     """ Finds references to works with cap numbers, of the form:

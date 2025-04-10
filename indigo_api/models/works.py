@@ -164,7 +164,7 @@ class WorkMixin(object):
         None if this work hasn't been repealed.
         """
         if self._repeal is None:
-            if self.repealed_by:
+            if self.repealed_date:
                 self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
         return self._repeal
 

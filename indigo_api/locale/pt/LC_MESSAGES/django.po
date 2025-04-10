@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 13:49\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -32,12 +32,12 @@ msgstr "Não iniciado"
 #: exporters.py:297
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> em %(date)s por <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:301
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> em %(date)s."
 
 #: exporters.py:310
 #, python-format
@@ -433,51 +433,51 @@ msgstr "configurações de lugares"
 
 #: models/places.py:272
 msgid "terms"
-msgstr ""
+msgstr "termos"
 
 #: models/places.py:275 models/places.py:276
 msgid "accented terms"
-msgstr ""
+msgstr "termos acentuados"
 
 #: models/places.py:283
 msgid "annotation title"
-msgstr ""
+msgstr "título da anotação"
 
 #: models/places.py:283
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "para ser exibido no menu suspenso do documento"
 
 #: models/places.py:284
 msgid "annotation content"
-msgstr ""
+msgstr "conteúdo de anotação"
 
 #: models/places.py:284
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "sempre serão encapsulados em []s — não os inclua novamente"
 
 #: models/saved_searches.py:7
 msgid "Tasks"
-msgstr ""
+msgstr "Tarefas"
 
 #: models/saved_searches.py:8
 msgid "Works"
-msgstr ""
+msgstr "Funciona"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "escopo"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "sequência de consulta"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "pesquisa salva"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "pesquisas salvas"
 
 #: models/tasks.py:67 models/tasks.py:76
 msgid "Open"
@@ -533,7 +533,7 @@ msgstr "Data da menção 'Em Falta"
 
 #: models/tasks.py:105
 msgid "Comment"
-msgstr ""
+msgstr "Comentário"
 
 #: models/tasks.py:106
 msgid "Link amendment (active)"
@@ -764,11 +764,11 @@ msgstr "projeto"
 
 #: models/works.py:61
 msgid "copy from principal work"
-msgstr ""
+msgstr "cópia da obra principal"
 
 #: models/works.py:62
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "Copie este tópico de obras principais para obras que alteram, iniciam ou revogam a obra principal."
 
 #: models/works.py:67
 msgid "taxonomy topic"
@@ -788,27 +788,27 @@ msgstr "Existem vários começos"
 
 #: models/works.py:471
 msgid "repealed"
-msgstr ""
+msgstr "revogado"
 
 #: models/works.py:472
 msgid "revoked"
-msgstr ""
+msgstr "revogado"
 
 #: models/works.py:473
 msgid "withdrawn"
-msgstr ""
+msgstr "retirado"
 
 #: models/works.py:474
 msgid "lapsed"
-msgstr ""
+msgstr "caducou"
 
 #: models/works.py:475
 msgid "retired"
-msgstr ""
+msgstr "aposentado"
 
 #: models/works.py:476
 msgid "expired"
-msgstr ""
+msgstr "expirado"
 
 #: models/works.py:481
 msgid "Can review work details"
@@ -929,19 +929,19 @@ msgstr "Data de revogação desta obra"
 
 #: models/works.py:521
 msgid "repealed verb"
-msgstr ""
+msgstr "verbo revogado"
 
 #: models/works.py:522
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Especifique se deve ser algo diferente de 'revogado' (o padrão)"
 
 #: models/works.py:523
 msgid "repealed note"
-msgstr ""
+msgstr "nota revogada"
 
 #: models/works.py:524
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Nota opcional com detalhes adicionais sobre a revogação"
 
 #: models/works.py:528
 msgid "Parent (primary) work for subsidiary legislation"
@@ -1126,11 +1126,11 @@ msgstr "Data em que a alteração entra em vigor"
 
 #: models/works.py:941
 msgid "verb"
-msgstr ""
+msgstr "verbo"
 
 #: models/works.py:941
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Substitua por, por exemplo, 'revisado' conforme necessário"
 
 #: models/works.py:953
 msgid "amendment"
@@ -1203,7 +1203,7 @@ msgstr "Expandir tudo"
 #: templates/indigo_api/akn/_amendments.html:11
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1213,7 +1213,7 @@ msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(am
 #: templates/indigo_api/akn/_amendments.html:17
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1339,17 +1339,17 @@ msgstr "Iniciado"
 #: timeline.py:111
 #, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr ""
+msgstr "%(verbed)s em %(date)s por"
 
 #: timeline.py:116
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s por"
 
 #: timeline.py:121
 #, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr ""
+msgstr "%(verbed)s em %(date)s"
 
 #: timeline.py:148
 #, python-format
@@ -1386,7 +1386,7 @@ msgstr "Assentiu em"
 
 #: timeline.py:231
 msgid "Revised by"
-msgstr ""
+msgstr "Revisado por"
 
 #: timeline.py:231
 msgid "Amended by"

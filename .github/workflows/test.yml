@@ -32,6 +32,7 @@ jobs:
 
     - name: Install binary dependencies
       run: |
+        sudo apt-get update
         sudo apt-get install -y poppler-utils
         wget -q -O fop.tgz 'https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.5-bin.tar.gz' && tar zxf fop.tgz && rm -f fop.tgz && sudo mv fop-2.5 /usr/share
 

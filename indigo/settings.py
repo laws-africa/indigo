@@ -168,7 +168,7 @@ INDIGO = {
 
     # Plugins to use for linking references. The internal-refs must come after work-level plugins.
     'LINK_REFERENCES_PLUGINS': [
-        'refs-act-numbers', 'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'refs-cap', 'internal-refs'
+        'refs-act-numbers', 'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'internal-refs'
     ],
 
     # should we use pyodide to parse documents on the client?

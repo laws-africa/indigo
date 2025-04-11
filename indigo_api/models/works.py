@@ -1099,6 +1099,7 @@ class WorkAlias(models.Model):
 
 
 class ChapterNumber(models.Model):
+    number = models.CharField(_("number"), max_length=32, null=True, blank=True, help_text=_("The Chapter number"))
     work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("work"), related_name='chapter_numbers')
     validity_start_date = models.DateField(_("validity start date"), null=True, blank=True, help_text=_("Date from which this Chapter number applied to the work"))
     validity_end_date = models.DateField(_("validity end date"), null=True, blank=True, help_text=_("Date until which this Chapter number applied to the work"))

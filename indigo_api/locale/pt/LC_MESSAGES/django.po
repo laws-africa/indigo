@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2024-07-24 08:38\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -32,12 +32,12 @@ msgstr "Não iniciado"
 #: exporters.py:297
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> em %(date)s por <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:301
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> em %(date)s."
 
 #: exporters.py:310
 #, python-format
@@ -47,22 +47,22 @@ msgstr ""
 #: exporters.py:315
 #, python-format
 msgid "This %(friendly_type)s has not yet come into force in full. See the commencements table for more information."
-msgstr ""
+msgstr "Este %(friendly_type)s ainda não entrou em vigor integralmente. Veja a tabela de inícios para mais informações."
 
 #: exporters.py:319
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "Este %(friendly_type)s entrará em vigor em %(date)s."
 
 #: exporters.py:324
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "Esta não é a versão mais recente disponível deste %(friendly_type)s. <ref href=\"%(url)s\">Veja online</ref>."
 
 #: exporters.py:329
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "Há <b>emendas pendentes</b> que ainda não foram aplicadas:<br/>%(numbered_titles)s."
 
 #: models/citations.py:14 models/works.py:589
 msgid "Invalid FRBR URI"
@@ -433,59 +433,51 @@ msgstr "configurações de lugares"
 
 #: models/places.py:272
 msgid "terms"
-msgstr ""
+msgstr "termos"
 
 #: models/places.py:275 models/places.py:276
 msgid "accented terms"
-msgstr ""
+msgstr "termos acentuados"
 
 #: models/places.py:283
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation title"
-msgstr "anotação"
+msgstr "título da anotação"
 
 #: models/places.py:283
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "para ser exibido no menu suspenso do documento"
 
 #: models/places.py:284
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation content"
-msgstr "anotação"
+msgstr "conteúdo de anotação"
 
 #: models/places.py:284
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "sempre serão encapsulados em []s — não os inclua novamente"
 
 #: models/saved_searches.py:7
-#, fuzzy
-#| msgid "tasks"
 msgid "Tasks"
-msgstr "tarefas"
+msgstr "Tarefas"
 
 #: models/saved_searches.py:8
-#, fuzzy
-#| msgid "works"
 msgid "Works"
-msgstr "obras"
+msgstr "Funciona"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "escopo"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "sequência de consulta"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "pesquisa salva"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "pesquisas salvas"
 
 #: models/tasks.py:67 models/tasks.py:76
 msgid "Open"
@@ -540,10 +532,8 @@ msgid "'Commences on' date missing"
 msgstr "Data da menção 'Em Falta"
 
 #: models/tasks.py:105
-#, fuzzy
-#| msgid "Commenced"
 msgid "Comment"
-msgstr "Iniciado"
+msgstr "Comentário"
 
 #: models/tasks.py:106
 msgid "Link amendment (active)"
@@ -774,11 +764,11 @@ msgstr "projeto"
 
 #: models/works.py:61
 msgid "copy from principal work"
-msgstr ""
+msgstr "cópia da obra principal"
 
 #: models/works.py:62
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "Copie este tópico de obras principais para obras que alteram, iniciam ou revogam a obra principal."
 
 #: models/works.py:67
 msgid "taxonomy topic"
@@ -789,40 +779,36 @@ msgid "taxonomy topics"
 msgstr "tópicos de taxonomia"
 
 #: models/works.py:428
-#, fuzzy
-#| msgid "Commencement note: %(note)s"
 msgid "Commencement date unknown"
-msgstr "Nota de início: %(note)s"
+msgstr "Data de início desconhecida"
 
 #: models/works.py:434
 msgid "There are multiple commencements"
 msgstr "Existem vários começos"
 
 #: models/works.py:471
-#, fuzzy
-#| msgid "Repealed by"
 msgid "repealed"
-msgstr "Repetido por"
+msgstr "revogado"
 
 #: models/works.py:472
 msgid "revoked"
-msgstr ""
+msgstr "revogado"
 
 #: models/works.py:473
 msgid "withdrawn"
-msgstr ""
+msgstr "retirado"
 
 #: models/works.py:474
 msgid "lapsed"
-msgstr ""
+msgstr "caducou"
 
 #: models/works.py:475
 msgid "retired"
-msgstr ""
+msgstr "aposentado"
 
 #: models/works.py:476
 msgid "expired"
-msgstr ""
+msgstr "expirado"
 
 #: models/works.py:481
 msgid "Can review work details"
@@ -942,24 +928,20 @@ msgid "Date of repeal of this work"
 msgstr "Data de revogação desta obra"
 
 #: models/works.py:521
-#, fuzzy
-#| msgid "repealed by"
 msgid "repealed verb"
-msgstr "revogado por"
+msgstr "verbo revogado"
 
 #: models/works.py:522
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Especifique se deve ser algo diferente de 'revogado' (o padrão)"
 
 #: models/works.py:523
-#, fuzzy
-#| msgid "repealed date"
 msgid "repealed note"
-msgstr "data revogada"
+msgstr "nota revogada"
 
 #: models/works.py:524
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Nota opcional com detalhes adicionais sobre a revogação"
 
 #: models/works.py:528
 msgid "Parent (primary) work for subsidiary legislation"
@@ -1144,11 +1126,11 @@ msgstr "Data em que a alteração entra em vigor"
 
 #: models/works.py:941
 msgid "verb"
-msgstr ""
+msgstr "verbo"
 
 #: models/works.py:941
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Substitua por, por exemplo, 'revisado' conforme necessário"
 
 #: models/works.py:953
 msgid "amendment"
@@ -1219,10 +1201,9 @@ msgid "Expand all"
 msgstr "Expandir tudo"
 
 #: templates/indigo_api/akn/_amendments.html:11
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1230,10 +1211,9 @@ msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amend
 msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Alterado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> em <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1288,52 +1268,48 @@ msgstr "Aprovado em %(date)s"
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Legislação em %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "Pode ter havido atualizações desde que este arquivo foi criado."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "PDF criado em %(current_date)s às %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Coleção verificada pela última vez para atualizações: %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "Sobre esta coleção"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "A legislação nesta coleção foi reproduzida como foi originalmente impressa no Government Gazette, com formatação melhorada e com pequenos erros tipográficos corrigidos. Todas as emendas foram aplicadas diretamente ao texto e anotadas. Uma digitalização do gazette original de cada parte da legislação (incluindo emendas) está disponível para referência."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Não há direitos autorais sobre o conteúdo legislativo deste documento."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Esta cópia em PDF é licenciada sob uma Licença Creative Commons Attribution 4.0 (CC BY 4.0). Compartilhe ampla e livremente."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Contents"
-msgstr "Índice"
+msgstr "Conteúdo"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "Por <a href=\"%(lawsafrica)s\">Laws.Africa</a> e colaboradores. Licenciado sob <a href=\"%(ccby)s\">CC-BY</a>. Compartilhe ampla e livremente."
 
 #: templates/indigo_api/akn/export/standalone.html:17
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Table of Contents"
 msgstr "Índice"
 
@@ -1361,21 +1337,19 @@ msgid "Commenced"
 msgstr "Iniciado"
 
 #: timeline.py:111
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s by"
+#, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr "Iniciado em %(date)s por"
+msgstr "%(verbed)s em %(date)s por"
 
 #: timeline.py:116
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s por"
 
 #: timeline.py:121
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr "iniciada em %(date)s"
+msgstr "%(verbed)s em %(date)s"
 
 #: timeline.py:148
 #, python-format
@@ -1411,10 +1385,8 @@ msgid "Assented to"
 msgstr "Assentiu em"
 
 #: timeline.py:231
-#, fuzzy
-#| msgid "Repealed by"
 msgid "Revised by"
-msgstr "Repetido por"
+msgstr "Revisado por"
 
 #: timeline.py:231
 msgid "Amended by"
@@ -1441,15 +1413,3 @@ msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
 msgid "Error during import"
 msgstr "Erro durante a importação"
 
-#, fuzzy
-#~| msgid "Not commenced"
-#~ msgid "Not commenced; Repealed"
-#~ msgstr "Não iniciado"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> em <span class=\"repeal-date\">%(date)s</span>]"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Revogado por <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> em <span class=\"repeal-date\">%(date)s</span>]"

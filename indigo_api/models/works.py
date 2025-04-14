@@ -168,7 +168,7 @@ class WorkMixin(object):
                 if self.repealed_by:
                     self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
                 else:
-                    self._repeal = RepealEvent(self.repealed_date)
+                    self._repeal = RepealEvent(self.repealed_date, 'No repealing work', '')
         return self._repeal
 
     @property

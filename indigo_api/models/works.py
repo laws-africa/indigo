@@ -1107,6 +1107,6 @@ class ChapterNumber(models.Model):
     revision_name = models.CharField(_("revision name"), max_length=64, null=True, blank=True, help_text=_("Name of the publication in which this Chapter number was assigned to the work"))
 
     class Meta:
-        ordering = ('validity_start_date',)
+        ordering = ('-validity_start_date',)
         verbose_name = _("chapter number")
         verbose_name_plural = _("chapter numbers")

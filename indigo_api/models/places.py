@@ -257,10 +257,6 @@ class PlaceSettings(models.Model):
         if props is None:
             props = places.get(self.country.place_code, {})
 
-        # optionally add / overwrite cap
-        if self.uses_chapter:
-            props['cap'] = "Chapter (Cap.)"
-
         return props
 
 

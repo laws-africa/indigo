@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 14:04+0200\n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
 "PO-Revision-Date: 2024-07-24 07:37\n"
 "Last-Translator: \n"
 "Language-Team: Xhosa\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Invalid json data"
 msgstr ""
 
-#: forms/places.py:25 forms/works.py:1590
+#: forms/places.py:25 forms/works.py:1638
 msgid "Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"
 msgstr ""
 
@@ -59,7 +59,7 @@ msgstr ""
 msgid "Global search"
 msgstr ""
 
-#: forms/tasks.py:23 forms/works.py:839
+#: forms/tasks.py:23 forms/works.py:887
 #: templates/indigo_api/work_batch_create.html:151
 #: templates/indigo_api/work_batch_create.html:285
 msgid "Type"
@@ -109,19 +109,19 @@ msgstr ""
 msgid "(Not assigned)"
 msgstr ""
 
-#: forms/tasks.py:182 forms/works.py:905
+#: forms/tasks.py:182 forms/works.py:953
 msgid "Created at (newest first)"
 msgstr ""
 
-#: forms/tasks.py:182 forms/works.py:905
+#: forms/tasks.py:182 forms/works.py:953
 msgid "Created at (oldest first)"
 msgstr ""
 
-#: forms/tasks.py:183 forms/works.py:906
+#: forms/tasks.py:183 forms/works.py:954
 msgid "Updated at (newest first)"
 msgstr ""
 
-#: forms/tasks.py:183 forms/works.py:906
+#: forms/tasks.py:183 forms/works.py:954
 msgid "Updated at (oldest first)"
 msgstr ""
 
@@ -158,131 +158,152 @@ msgstr ""
 msgid "Creating new accounts is currently not allowed."
 msgstr ""
 
-#: forms/works.py:281
+#: forms/works.py:294
 msgid "Error building FRBR URI"
 msgstr ""
 
-#: forms/works.py:370
+#: forms/works.py:383
 msgid "Alias"
 msgstr ""
 
-#: forms/works.py:458
+#: forms/works.py:471
 msgid "Amending work and date must be unique together."
 msgstr ""
 
-#: forms/works.py:539
+#: forms/works.py:476 templates/indigo_api/work_batch_create.html:152
+#: templates/indigo_api/work_batch_create.html:286
+msgid "Number"
+msgstr ""
+
+#: forms/works.py:477
+msgid "Validity start date"
+msgstr ""
+
+#: forms/works.py:478
+msgid "Validity end date"
+msgstr ""
+
+#: forms/works.py:479
+msgid "Revision name"
+msgstr ""
+
+#: forms/works.py:487
+msgid "Name"
+msgstr ""
+
+#: forms/works.py:587
 msgid "Consolidation dates must be unique."
 msgstr ""
 
-#: forms/works.py:573
+#: forms/works.py:621
 msgid "A main commencement already exists."
 msgstr ""
 
-#: forms/works.py:583
+#: forms/works.py:631
 msgid "A commencement for all provisions must be the only commencement."
 msgstr ""
 
-#: forms/works.py:590
+#: forms/works.py:638
 msgid "Cannot specify all provisions, and a list of provisions."
 msgstr ""
 
-#: forms/works.py:597
+#: forms/works.py:645
 msgid "A commencement at this date and with this commencing work already exists."
 msgstr ""
 
-#: forms/works.py:665 forms/works.py:717
+#: forms/works.py:713 forms/works.py:765
 msgid "It seems that commencements have been edited elsewhere. Cancel your edits and make them again."
 msgstr ""
 
-#: forms/works.py:676
+#: forms/works.py:724
 msgid "Commencing work and date must be unique together."
 msgstr ""
 
-#: forms/works.py:727
+#: forms/works.py:775
 msgid "Commenced work, commencing work, and date must be unique together."
 msgstr ""
 
-#: forms/works.py:824 templates/indigo_app/place/_work_detail.html:35
+#: forms/works.py:872 templates/indigo_app/place/_work_detail.html:35
 msgid "Amendments"
 msgstr ""
 
-#: forms/works.py:828 templates/indigo_api/work_related.html:18
+#: forms/works.py:876 templates/indigo_api/work_related.html:18
 msgid "Commencement"
 msgstr ""
 
-#: forms/works.py:829
+#: forms/works.py:877
 msgid "Not commenced"
 msgstr "Ayiqalanga"
 
-#: forms/works.py:829
+#: forms/works.py:877
 msgid "Commencement date unknown"
 msgstr "Umhla wokuqalisa awaziwa"
 
-#: forms/works.py:829 views/places.py:57
+#: forms/works.py:877 views/places.py:57
 msgid "Commenced"
 msgstr ""
 
-#: forms/works.py:830
+#: forms/works.py:878
 msgid "Partially commenced"
 msgstr ""
 
-#: forms/works.py:830
+#: forms/works.py:878
 msgid "Multiple commencements"
 msgstr ""
 
-#: forms/works.py:835 templates/indigo_app/place/_work_detail.html:43
+#: forms/works.py:883 templates/indigo_app/place/_work_detail.html:43
 msgid "Repeals"
 msgstr ""
 
-#: forms/works.py:835
+#: forms/works.py:883
 msgid "Not repealed"
 msgstr ""
 
-#: forms/works.py:835
+#: forms/works.py:883
 msgid "Repealed"
 msgstr ""
 
-#: forms/works.py:840 templates/place/detail.html:63
+#: forms/works.py:888 templates/place/detail.html:63
 msgid "Stubs"
 msgstr ""
 
-#: forms/works.py:840 templates/indigo_api/_work_form_content.html:242
+#: forms/works.py:888 templates/indigo_api/_work_form_content.html:253
 msgid "Stub"
 msgstr ""
 
-#: forms/works.py:840
+#: forms/works.py:888
 msgid "Not a stub"
 msgstr ""
 
-#: forms/works.py:841 forms/works.py:842
+#: forms/works.py:889 forms/works.py:890
 msgid "Work in progress"
 msgstr ""
 
-#: forms/works.py:842 templates/indigo_api/work_overview.html:101
+#: forms/works.py:890 templates/indigo_api/work_overview.html:101
 msgid "Approved"
 msgstr ""
 
-#: forms/works.py:844
+#: forms/works.py:892
 msgid "Point in time status"
 msgstr ""
 
-#: forms/works.py:845
+#: forms/works.py:893
 msgid "Published"
 msgstr ""
 
-#: forms/works.py:845
+#: forms/works.py:893
 msgid "Draft"
 msgstr ""
 
-#: forms/works.py:849 forms/works.py:850 views/places.py:83
+#: forms/works.py:897 forms/works.py:898 views/places.py:83
 msgid "Principal"
 msgstr ""
 
-#: forms/works.py:850
+#: forms/works.py:898
 msgid "Not Principal"
 msgstr ""
 
-#: forms/works.py:852 templates/indigo_api/document/_secondary_pane.html:11
+#: forms/works.py:900 templates/indigo_api/document/_secondary_pane.html:11
 #: templates/indigo_api/task_list.html:4
 #: templates/indigo_api/work_batch_create.html:160
 #: templates/indigo_api/work_batch_create.html:293
@@ -293,81 +314,81 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#: forms/works.py:853
+#: forms/works.py:901
 msgid "Has open tasks"
 msgstr ""
 
-#: forms/works.py:853
+#: forms/works.py:901
 msgid "Has unblocked tasks"
 msgstr ""
 
-#: forms/works.py:854
+#: forms/works.py:902
 msgid "Has only blocked tasks"
 msgstr ""
 
-#: forms/works.py:854
+#: forms/works.py:902
 msgid "Has no open tasks"
 msgstr ""
 
-#: forms/works.py:856
+#: forms/works.py:904
 msgid "Primary and subsidiary"
 msgstr ""
 
-#: forms/works.py:857 templates/place/detail.html:69
+#: forms/works.py:905 templates/place/detail.html:69
 msgid "Primary"
 msgstr ""
 
-#: forms/works.py:857 templates/indigo_api/work_related.html:11
+#: forms/works.py:905 templates/indigo_api/work_related.html:11
 #: templates/indigo_app/place/_work_detail.html:51
 #: templates/place/detail.html:78
 msgid "Subsidiary"
 msgstr ""
 
-#: forms/works.py:859 templates/indigo_api/_work_form_consolidations.html:4
+#: forms/works.py:907 templates/indigo_api/_work_form_consolidations.html:4
 msgid "Consolidations"
 msgstr ""
 
-#: forms/works.py:860
+#: forms/works.py:908
 msgid "Has consolidation"
 msgstr ""
 
-#: forms/works.py:860
+#: forms/works.py:908
 msgid "No consolidation"
 msgstr ""
 
-#: forms/works.py:862 templates/indigo_api/_work_publication_document.html:4
+#: forms/works.py:910 templates/indigo_api/_work_publication_document.html:4
 #: templates/indigo_app/place/_work_detail_overview.html:17
 msgid "Publication document"
 msgstr ""
 
-#: forms/works.py:863
+#: forms/works.py:911
 msgid "Has publication document"
 msgstr ""
 
-#: forms/works.py:864
+#: forms/works.py:912
 msgid "No publication document"
 msgstr ""
 
-#: forms/works.py:866 templates/indigo_api/work_amendments.html:5
+#: forms/works.py:914 templates/indigo_api/work_amendments.html:5
 #: templates/indigo_api/work_amendments.html:8
 #: templates/indigo_api/work_layout.html:40
 #: templates/indigo_app/place/_work_detail.html:17
 msgid "Points in time"
 msgstr ""
 
-#: forms/works.py:867
+#: forms/works.py:915
 msgid "Has one point in time"
 msgstr ""
 
-#: forms/works.py:867
+#: forms/works.py:915
 msgid "Has multiple points in time"
 msgstr ""
 
-#: forms/works.py:868
+#: forms/works.py:916
 msgid "Has no points in time"
 msgstr ""
 
-#: forms/works.py:872 templates/indigo_api/_work_amendment_tables.html:10
+#: forms/works.py:920 templates/indigo_api/_work_amendment_tables.html:10
 #: templates/indigo_api/_work_amendment_tables.html:38
 #: templates/indigo_api/_work_commencement_tables.html:10
 #: templates/indigo_api/_work_commencement_tables.html:46
@@ -376,43 +397,43 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: forms/works.py:907
+#: forms/works.py:955
 msgid "Date (newest first)"
 msgstr ""
 
-#: forms/works.py:907
+#: forms/works.py:955
 msgid "Date (oldest first)"
 msgstr ""
 
-#: forms/works.py:908
+#: forms/works.py:956
 msgid "Title (A-Z)"
 msgstr ""
 
-#: forms/works.py:908
+#: forms/works.py:956
 msgid "Title (Z-A)"
 msgstr ""
 
-#: forms/works.py:909
+#: forms/works.py:957
 msgid "Number (ascending)"
 msgstr ""
 
-#: forms/works.py:909
+#: forms/works.py:957
 msgid "Number (descending)"
 msgstr ""
 
-#: forms/works.py:1541
+#: forms/works.py:1589
 msgid "Create and block tasks"
 msgstr ""
 
-#: forms/works.py:1541
+#: forms/works.py:1589
 msgid "Create and cancel tasks"
 msgstr ""
 
-#: forms/works.py:1603
+#: forms/works.py:1651
 msgid "Import content"
 msgstr ""
 
-#: forms/works.py:1603
+#: forms/works.py:1651
 msgid "Link gazette"
 msgstr ""
 
@@ -1186,6 +1207,21 @@ msgstr ""
 msgid "Add amendment"
 msgstr ""
 
+#: templates/indigo_api/_work_form_chapter_numbers_form.html:51
+msgid "e.g. Revised Laws 2004"
+msgstr ""
+
+#: templates/indigo_api/_work_form_chapter_numbers_form.html:78
+#: templates/indigo_api/_work_form_content.html:616
+#: templates/indigo_api/commencement_detail.html:16
+#: templates/indigo_api/document/_annotations.html:24
+#: templates/indigo_api/document/_toolbar.html:75
+#: templates/indigo_api/document/_toolbar.html:119
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+msgid "Delete"
+msgstr ""
+
 #: templates/indigo_api/_work_form_commencements.html:20
 #: templates/indigo_api/_work_form_commencements_made.html:22
 msgid "Add commencement"
@@ -1242,117 +1278,111 @@ msgstr ""
 msgid "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:215
+#: templates/indigo_api/_work_form_content.html:216
+msgid "Chapter numbers"
+msgstr ""
+
+#: templates/indigo_api/_work_form_content.html:226
 msgid "Responsible organisation (actor)"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:227
+#: templates/indigo_api/_work_form_content.html:238
 msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:234
+#: templates/indigo_api/_work_form_content.html:245
 msgid "Principal work"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:238 views/places.py:84
+#: templates/indigo_api/_work_form_content.html:249 views/places.py:84
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:247
+#: templates/indigo_api/_work_form_content.html:258
 msgid "Check this option for commencing or amending works, or other works for which content won't be marked up."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:260
+#: templates/indigo_api/_work_form_content.html:271
 #: templates/indigo_api/work_batch_create.html:159
 msgid "Taxonomy topics"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:271 views/places.py:54
+#: templates/indigo_api/_work_form_content.html:282 views/places.py:54
 msgid "Assent date"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:291
+#: templates/indigo_api/_work_form_content.html:302
 msgid "Publication date"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:307
+#: templates/indigo_api/_work_form_content.html:318
 msgid "Publication name"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:323
+#: templates/indigo_api/_work_form_content.html:334
 msgid "Usually the Government Gazette."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:327
+#: templates/indigo_api/_work_form_content.html:338
 msgid "Publication number"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:337
+#: templates/indigo_api/_work_form_content.html:348
 msgid "Usually the gazette number."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:361
+#: templates/indigo_api/_work_form_content.html:372
 msgid "Check if this work has come into force, or has a future commencement date."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:364
+#: templates/indigo_api/_work_form_content.html:375
 #, python-format
 msgid "Add basic commencement details below, or go to the <a href=\"%(comm_url)s\" target=\"_blank\">Commencements</a> page for more options."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:370
+#: templates/indigo_api/_work_form_content.html:381
 #, python-format
 msgid "Changes to commencement dates will not automatically update the <a href=\"%(related_url)s\" target=\"_blank\">commencements, amendments, and repeals made</a> by this work."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:467
+#: templates/indigo_api/_work_form_content.html:478
 #: templates/indigo_app/place/_work_detail_overview.html:40
 msgid "Aliases"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:488
+#: templates/indigo_api/_work_form_content.html:499
 msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:502
+#: templates/indigo_api/_work_form_content.html:513
 #, python-format
 msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:522
+#: templates/indigo_api/_work_form_content.html:533
 #, python-format
 msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:543
+#: templates/indigo_api/_work_form_content.html:554
 msgid "Disclaimer for this work; it will be shown on all expressions."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:560
+#: templates/indigo_api/_work_form_content.html:571
 msgid "Change country or locality"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:564
+#: templates/indigo_api/_work_form_content.html:575
 msgid "Country and locality (advanced)"
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:597
+#: templates/indigo_api/_work_form_content.html:608
 #, python-format
 msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
 msgstr ""
 
-#: templates/indigo_api/_work_form_content.html:604
+#: templates/indigo_api/_work_form_content.html:615
 msgid "Are you sure you want to delete this work?"
-msgstr ""
-
-#: templates/indigo_api/_work_form_content.html:605
-#: templates/indigo_api/commencement_detail.html:16
-#: templates/indigo_api/document/_annotations.html:24
-#: templates/indigo_api/document/_toolbar.html:75
-#: templates/indigo_api/document/_toolbar.html:119
-#: templates/indigo_api/timeline/_edit_amendment.html:15
-#: templates/indigo_api/timeline/_edit_consolidation.html:15
-msgid "Delete"
 msgstr ""
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:9
@@ -2429,11 +2459,6 @@ msgstr ""
 msgid "Title / Error message"
 msgstr ""
 
-#: templates/indigo_api/work_batch_create.html:152
-#: templates/indigo_api/work_batch_create.html:286
-msgid "Number"
-msgstr ""
-
 #: templates/indigo_api/work_batch_create.html:158
 #: templates/indigo_api/work_batch_create.html:292
 msgid "Taxonomy"
@@ -3415,68 +3440,68 @@ msgstr ""
 msgid "Pending review"
 msgstr ""
 
-#: views/places.py:313
+#: views/places.py:311
 msgid "List introductions containing remarks"
 msgstr ""
 
-#: views/places.py:314
+#: views/places.py:312
 msgid "Adjacent block lists"
 msgstr ""
 
-#: views/places.py:378
+#: views/places.py:376
 #, python-format
 msgid "Expression must produce elements, but found %(classname)s instead."
 msgstr ""
 
-#: views/places.py:427
+#: views/places.py:425
 msgid "Settings updated."
 msgstr ""
 
-#: views/places.py:453
+#: views/places.py:451
 msgid "Users updated."
 msgstr ""
 
-#: views/places.py:466
+#: views/places.py:464
 #, python-format
 msgid "Full index for %(place)s.xlsx"
 msgstr ""
 
-#: views/places.py:512
+#: views/places.py:510
 #, python-format
 msgid "legislation %(place)s.xlsx"
 msgstr ""
 
-#: views/places.py:655
+#: views/places.py:653
 #, python-format
 msgid "Updated %(works_count)s works."
 msgstr ""
 
-#: views/places.py:681
+#: views/places.py:679
 #, python-format
 msgid "Approved %(works_count)s works."
 msgstr ""
 
-#: views/places.py:683
+#: views/places.py:681
 #, python-format
 msgid "Created %(import_tasks_count)s Import tasks."
 msgstr ""
 
-#: views/places.py:685
+#: views/places.py:683
 #, python-format
 msgid "Created %(gazette_tasks_count)s Gazette tasks."
 msgstr ""
 
-#: views/places.py:687
+#: views/places.py:685
 #, python-format
 msgid "Created %(amendment_tasks_count)s Amendment tasks."
 msgstr ""
 
-#: views/places.py:704
+#: views/places.py:702
 #, python-format
 msgid "Unapproved %(works_count)s works."
 msgstr ""
 
-#: views/places.py:744
+#: views/places.py:742
 #, python-format
 msgid "Linked references for %(n_docs)s documents, with %(n_changed)s documents changed."
 msgstr ""
@@ -3578,4 +3603,12 @@ msgstr ""
 #: views/works.py:1086
 #, python-format
 msgid "Error during import: %(error)s"
+msgstr ""
+
+#: views/works.py:1199
+msgid "Match on title"
+msgstr ""
+
+#: views/works.py:1200
+msgid "Match on year and number"
 msgstr ""

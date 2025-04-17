@@ -1195,7 +1195,10 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
             return duplicate.first()
 
         def find_possible_duplicates(self, pk):
-            # TODO: translations for keys
+            keys_choices = {
+                'match_on_title': _('Match on title'),
+                'match_on_date_number': _('Match on year and number'),
+            }
             qs = Work.objects.filter(country=self.country, locality=self.locality)
             qs = qs.exclude(pk=pk) if pk else qs
             possible_duplicates = {}
@@ -1203,7 +1206,7 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
             # exact match on title
             match_title = qs.filter(title=self.cleaned_data.get('title'))
             if match_title:
-                possible_duplicates['Match on title'] = match_title
+                possible_duplicates[keys_choices['match_on_title']] = match_title
 
             # match on date and number, e.g. BN 37 of 2002 and GN 37 of 2002
             frbr_date = self.cleaned_data.get('frbr_date')
@@ -1212,15 +1215,7 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
                 match_date = qs.filter(date__startswith=frbr_date[:4])
                 match_date_and_number = match_date.filter(number=self.cleaned_data.get('frbr_number'))
                 if match_date_and_number:
-                    possible_duplicates['Match on year and number'] = match_date_and_number
-
-            # match on Cap. number
-            # TODO: match on other work properties per place too
-            cap_number = self.cleaned_data.get('property_cap')
-            if cap_number:
-                match_cap_number = qs.filter(properties__contains={'cap': cap_number})
-                if match_cap_number:
-                    possible_duplicates['Match on Chapter number'] = match_cap_number
+                    possible_duplicates[keys_choices['match_on_date_number']] = match_date_and_number
 
             return possible_duplicates
 

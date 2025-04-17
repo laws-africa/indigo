@@ -36,7 +36,7 @@ from indigo_app.revisions import decorate_versions
 from indigo_app.views.places import get_work_overview_data
 from indigo_app.forms import BatchCreateWorkForm, BatchUpdateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, \
     FindPubDocForm, RepealMadeBaseFormSet, AmendmentsBaseFormSet, CommencementsMadeBaseFormset, \
-    ConsolidationsBaseFormset, CommencementsBaseFormset
+    ConsolidationsBaseFormset, CommencementsBaseFormset, WorkChapterNumbersFormSet
 
 from .base import PlaceViewBase, AbstractAuthedIndigoView
 
@@ -1418,6 +1418,38 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
         }
         context["work"] = self.work
         return context
+
+
+class WorkFormChapterNumbersView(WorkViewBase, TemplateView):
+    template_name = 'indigo_api/_work_form_chapter_numbers_form.html'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        formset = WorkChapterNumbersFormSet(self.request.POST,
+                                            user=self.request.user,
+                                            work=self.work,
+                                            prefix='chapter_numbers',
+                                            form_kwargs={"work": self.work,
+                                                         "user": self.request.user})
+        if not formset.is_valid():
+            context_data['formset'] = formset
+        else:
+            initial = [form.cleaned_data for form in formset
+                       # skip empty extra and deleted unsaved forms
+                       if form.cleaned_data and not
+                       (form.cleaned_data.get('DELETE') and not form.cleaned_data.get('id'))]
+            context_data['formset'] = WorkChapterNumbersFormSet(
+                user=self.request.user,
+                work=self.work,
+                prefix='chapter_numbers',
+                initial=initial,
+                form_kwargs={"work": self.work,
+                             "user": self.request.user}
+            )
+        return context_data
 
 
 class WorkFormAmendmentsView(WorkViewBase, TemplateView):

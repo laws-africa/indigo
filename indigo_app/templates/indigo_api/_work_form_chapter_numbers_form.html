@@ -1,0 +1,85 @@
+{% load indigo i18n %}
+
+{{ formset.management_form }}
+
+{% for form in formset %}
+  <div class="{% if form.DELETE.value %}d-none{% else %}mb-3{% endif %}">
+    {{ form.id.as_hidden }}
+    {{ form.number.as_hidden }}
+    {% if form.name.value %}
+      {{ form.name.as_hidden }}
+    {% endif %}
+    {{ form.validity_start_date.as_hidden }}
+    {{ form.validity_end_date.as_hidden }}
+    {{ form.revision_name.as_hidden }}
+    {% if form.DELETE.value %}
+      {{ form.DELETE.as_hidden }}
+    {% endif %}
+    {% if forloop.counter > 1 %}<hr>{% endif %}
+    <div class="row mb-2">
+      <div class="col">
+        <label class="form-label" for="{{ form.number.id_for_label }}">{{ form.number.label }}</label>
+        <input class="form-control"
+               id="{{ form.number.id_for_label }}"
+               type="text"
+               value="{{ form.number.value|default_if_none:"" }}"
+               name="{{ form.number.html_name }}">
+      </div>
+      <div class="col">
+        <label class="form-label" for="{{ form.validity_start_date.id_for_label }}">{{ form.validity_start_date.label }}</label>
+        <input class="form-control"
+               id="{{ form.validity_start_date.id_for_label }}"
+               type="date"
+               value="{{ form.validity_start_date.value|format_input_date|default_if_none:"" }}"
+               name="{{ form.validity_start_date.html_name }}">
+      </div>
+      <div class="col">
+        <label class="form-label" for="{{ form.validity_end_date.id_for_label }}">{{ form.validity_end_date.label }}</label>
+        <input class="form-control"
+               id="{{ form.validity_end_date.id_for_label }}"
+               type="date"
+               value="{{ form.validity_end_date.value|format_input_date|default_if_none:"" }}"
+               name="{{ form.validity_end_date.html_name }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label class="form-label" for="{{ form.revision_name.id_for_label }}">{{ form.revision_name.label }}</label>
+        <input class="form-control"
+               id="{{ form.revision_name.id_for_label }}"
+               type="text"
+               placeholder="{% trans 'e.g. Revised Laws 2004' %}"
+               value="{{ form.revision_name.value|default_if_none:"" }}"
+               name="{{ form.revision_name.html_name }}">
+      </div>
+      {% if form.name and form.id.value %}
+        <div class="col">
+          <label class="form-label" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+          <select class="selectpicker col-12"
+                  id="{{ form.name.id_for_label }}"
+                  name="{{ form.name.html_name }}">
+            {% for opt in form.name %}
+              {{ opt }}
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+      <div class="col">
+        {% if not form.DELETE.value %}
+          <label class="form-label">&nbsp;</label>
+          <div>
+            <button hx-post="{% url 'work_form_chapter_numbers' work.frbr_uri %}?delete=chapter_numbers"
+                    hx-target="#work-form-chapter_numbers-formset"
+                    hx-include="#work-form-chapter_numbers-formset"
+                    type="button"
+                    name="{{ form.DELETE.html_name }}"
+                    value="1"
+                    class="btn btn-outline-danger">
+              {% trans 'Delete' %}
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

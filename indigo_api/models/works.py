@@ -1110,3 +1110,8 @@ class ChapterNumber(models.Model):
         ordering = ('-validity_start_date',)
         verbose_name = _("chapter number")
         verbose_name_plural = _("chapter numbers")
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = "chapter"
+        return super().save(*args, **kwargs)

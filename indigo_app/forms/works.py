@@ -6,15 +6,17 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.models import IntegerField, Case, When, Value, Q, Count
 from django.forms import SelectMultiple, RadioSelect, formset_factory
+from django.forms.models import model_to_dict
 from django.utils.translation import gettext_lazy as _
 from functools import cached_property
 from itertools import chain
 from typing import List
 
 from cobalt import FrbrUri
+from indigo.plugins import plugins
 from indigo.tasks import TaskBroker
 from indigo_api.models import Work, TaxonomyTopic, Amendment, Subtype, Locality, PublicationDocument, \
-    Commencement, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace
+    Commencement, Task, Country, WorkAlias, ArbitraryExpressionDate, AllPlace, ChapterNumber
 from indigo_app.forms.mixins import FormAsUrlMixin
 
 
@@ -108,6 +110,17 @@ class WorkForm(forms.ModelForm):
         self.formsets.append(self.aliases_formset)
 
         if self.instance.pk:
+            # chapter numbers formset
+            if self.instance.place.settings.uses_chapter:
+                self.chapter_numbers_formset = WorkChapterNumbersFormSet(
+                    self.data if self.is_bound else None,
+                    work=self.instance,
+                    user=self.user,
+                    form_kwargs={'work': self.instance, 'user': self.user},
+                    prefix="chapter_numbers",
+                    initial=[model_to_dict(chapter_number) for chapter_number in self.instance.chapter_numbers.all()]
+                )
+                self.formsets.append(self.chapter_numbers_formset)
             # repeal formset
             repeals_made_formset_kwargs = {
                 "work": self.instance,
@@ -457,6 +470,41 @@ class AmendmentsBaseFormSet(AmendmentsFormSet):
             if (amending_work, amended_work, date) in seen:
                 raise ValidationError(_("Amending work and date must be unique together."))
             seen.add((amending_work, amended_work, date))
+
+
+class WorkChapterNumberForm(BasePartialWorkForm):
+    number = forms.CharField(label=_('Number'), max_length=32, required=True)
+    validity_start_date = forms.DateField(label=_('Validity start date'), required=False)
+    validity_end_date = forms.DateField(label=_('Validity end date'), required=False)
+    revision_name = forms.CharField(label=_('Revision name'), max_length=64, required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # optionally add 'name' field and choices
+        plugin = plugins.for_work('work-detail', self.work)
+        if plugin and len(plugin.chapter_names_choices) > 1:
+            self.fields['name'] = forms.ChoiceField(label=_('Name'), required=False, choices=plugin.chapter_names_choices)
+
+    def save(self, *args, **kwargs):
+        if self.cleaned_data.get('DELETE'):
+            ChapterNumber.objects.get(pk=self.cleaned_data['id']).delete()
+        else:
+            default_data = {k: v for k, v in self.cleaned_data.items() if k not in ['id', 'DELETE']}
+            default_data.update({'work': self.work})
+            ChapterNumber.objects.update_or_create(id=self.cleaned_data['id'], defaults=default_data)
+
+
+WorkChapterNumbersBaseFormSet = formset_factory(
+    WorkChapterNumberForm,
+    extra=1,
+    can_delete=True,
+    formset=BasePartialWorkFormSet,
+)
+
+
+class WorkChapterNumbersFormSet(WorkChapterNumbersBaseFormSet):
+    pass
 
 
 class RepealMadeForm(BasePartialWorkForm):

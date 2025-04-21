@@ -32,7 +32,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
         chapter_number = self.work_chapter_number(work)
         if chapter_number:
             return _('%(name)s %(number)s') % {
-                'name': dict(self.chapter_names_choices).get(chapter_number.name, _("Chapter")),
+                'name': self.chapter_number_name(chapter_number),
                 'number': chapter_number.number}
 
         number = work.number
@@ -55,6 +55,9 @@ class BaseWorkDetail(LocaleBasedMatcher):
 
         work_type = self.work_friendly_type(work)
         return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number.upper(), 'year': work.year}
+
+    def chapter_number_name(self, chapter_number):
+        return dict(self.chapter_names_choices).get(chapter_number.name, _("Chapter"))
 
     def work_chapter_number(self, work):
         """ Returns the latest or only related ChapterNumber object.

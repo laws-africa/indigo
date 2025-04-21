@@ -1115,3 +1115,11 @@ class ChapterNumber(models.Model):
         if not self.name:
             self.name = "chapter"
         return super().save(*args, **kwargs)
+
+    def get_name(self):
+        """ The preferred way to manage different chapter names is through the work-detail plugin,
+            where all the options are given in chapter_names_choices so that their translations can be stored too.
+            BaseWorkDetail only has one option, 'chapter' --> _('Chapter').
+        """
+        plugin = plugins.for_work('work-detail', self.work)
+        return plugin.chapter_number_name(self) if plugin else _("Chapter")

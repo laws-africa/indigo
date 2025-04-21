@@ -12,7 +12,6 @@ def move_chapter_numbers(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     place_properties = settings.INDIGO['WORK_PROPERTIES']
 
-    # for work in Work.objects.using(db_alias).filter(properties__contains='cap').only('properties').iterator(300):
     for work in Work.objects.using(db_alias).all().only('properties').iterator():
         if work.properties:
             cap_strings = [p for p in work.properties if 'cap' in p]
@@ -31,7 +30,7 @@ def move_chapter_numbers(apps, schema_editor):
 
 
 def move_chapter_numbers_back(apps, schema_editor):
-    """ Move ChapterNumbers' numbers back into properties on their works. One per work only.
+    """ Move ChapterNumbers' numbers back into properties on their works. One per work only; will lose some information.
     """
     ChapterNumber = apps.get_model('indigo_api', 'ChapterNumber')
     db_alias = schema_editor.connection.alias

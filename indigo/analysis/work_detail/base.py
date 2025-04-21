@@ -64,9 +64,10 @@ class BaseWorkDetail(LocaleBasedMatcher):
             If there's more than one and they don't all have start dates,
              don't return anything as we don't know which is currently valid.
         """
-        chapter_numbers = work.chapter_numbers.all()
-        if work.chapter_numbers.count() == 1 or all(x.validity_start_date for x in chapter_numbers):
-            return chapter_numbers.first()
+        if work.pk:
+            chapter_numbers = work.chapter_numbers.all()
+            if work.chapter_numbers.count() == 1 or all(x.validity_start_date for x in chapter_numbers):
+                return chapter_numbers.first()
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

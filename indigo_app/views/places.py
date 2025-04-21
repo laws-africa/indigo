@@ -1,10 +1,10 @@
-import logging
 from collections import Counter
-from dataclasses import dataclass
-from datetime import timedelta
 
+import logging
 from actstream import action
 from actstream.models import Action
+from dataclasses import dataclass
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef
@@ -19,6 +19,7 @@ from lxml import etree
 
 from docpipe.xmlutils import unwrap_element
 from indigo.analysis.refs.base import markup_document_refs
+from indigo.plugins import plugins
 from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace, \
     SavedSearch
 from indigo_api.timeline import describe_publication_event
@@ -59,7 +60,15 @@ def get_work_overview_data(work):
     if work.repealed_date:
         overview_data.append(OverviewDataEntry(_(work.repealed_verb).capitalize(), format_date(work.repealed_date)))
 
-    # properties, e.g. Chapter number
+    # Chapter numbers
+    plugin = plugins.for_work('work-detail', work)
+    for chapter_number in work.chapter_numbers.all():
+        detail = chapter_number.number
+        if chapter_number.revision_name:
+            detail += f' — {chapter_number.revision_name}'
+        overview_data.append(OverviewDataEntry(plugin.chapter_number_name(chapter_number), detail))
+
+    # extra properties
     for prop in work.labeled_properties():
         overview_data.append(OverviewDataEntry(_(prop["label"]), prop["value"]))
 

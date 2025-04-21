@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2024-07-24 07:37\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -32,37 +32,37 @@ msgstr "Haijaanza"
 #: exporters.py:297
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:301
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
 
 #: exporters.py:310
 #, python-format
 msgid "This %(friendly_type)s has <b>not yet come into force</b>."
-msgstr ""
+msgstr "Hii %(friendly_type)s has <b>bado haijaanza kutumika</b>."
 
 #: exporters.py:315
 #, python-format
 msgid "This %(friendly_type)s has not yet come into force in full. See the commencements table for more information."
-msgstr ""
+msgstr "Hii %(friendly_type)s bado haijaanza kutumika kikamilifu. Tazama jedwali la kuanza kwa habari zaidi."
 
 #: exporters.py:319
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "Hii %(friendly_type)s itaanza kutumika tarehe %(date)s."
 
 #: exporters.py:324
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "Hili si toleo la hivi punde linalopatikana la hili %(friendly_type)s. <ref href=\"%(url)s\">Itazame mtandaoni</ref>."
 
 #: exporters.py:329
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "Kuna <b>marekebisho bora</b> ambayo bado hayajatekelezwa:<br/>%(numbered_titles)s."
 
 #: models/citations.py:14 models/works.py:589
 msgid "Invalid FRBR URI"
@@ -433,59 +433,51 @@ msgstr "mipangilio ya maeneo"
 
 #: models/places.py:272
 msgid "terms"
-msgstr ""
+msgstr "masharti"
 
 #: models/places.py:275 models/places.py:276
 msgid "accented terms"
-msgstr ""
+msgstr "masharti ya lafudhi"
 
 #: models/places.py:283
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation title"
-msgstr "maelezo"
+msgstr "kichwa cha maelezo"
 
 #: models/places.py:283
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "itaonyeshwa kwenye menyu kunjuzi ya hati"
 
 #: models/places.py:284
-#, fuzzy
-#| msgid "annotation"
 msgid "annotation content"
-msgstr "maelezo"
+msgstr "maudhui ya maelezo"
 
 #: models/places.py:284
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "daima zitafungwa katika [] - usizijumuishe tena"
 
 #: models/saved_searches.py:7
-#, fuzzy
-#| msgid "tasks"
 msgid "Tasks"
-msgstr "kazi"
+msgstr "Kazi"
 
 #: models/saved_searches.py:8
-#, fuzzy
-#| msgid "works"
 msgid "Works"
-msgstr "kazi"
+msgstr "Inafanya kazi"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "upeo"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "msururu wa maswali"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "utafutaji uliohifadhiwa"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "utafutaji uliohifadhiwa"
 
 #: models/tasks.py:67 models/tasks.py:76
 msgid "Open"
@@ -540,10 +532,8 @@ msgid "'Commences on' date missing"
 msgstr "Tarehe ya 'Kuanza' haipo"
 
 #: models/tasks.py:105
-#, fuzzy
-#| msgid "Commenced"
 msgid "Comment"
-msgstr "Imeanza"
+msgstr "Maoni"
 
 #: models/tasks.py:106
 msgid "Link amendment (active)"
@@ -774,11 +764,11 @@ msgstr "mradi"
 
 #: models/works.py:61
 msgid "copy from principal work"
-msgstr ""
+msgstr "nakala kutoka kwa kazi kuu"
 
 #: models/works.py:62
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "Nakili mada hii kutoka kazi kuu hadi kazi zinazorekebisha, kuanza au kufuta kazi kuu."
 
 #: models/works.py:67
 msgid "taxonomy topic"
@@ -789,40 +779,36 @@ msgid "taxonomy topics"
 msgstr "mada za taxonomia"
 
 #: models/works.py:428
-#, fuzzy
-#| msgid "Commencement note: %(note)s"
 msgid "Commencement date unknown"
-msgstr "Ujumbe wa kuanza: %(note)s"
+msgstr "Tarehe ya kuanza haijulikani"
 
 #: models/works.py:434
 msgid "There are multiple commencements"
 msgstr "Kuna kuanza nyingi"
 
 #: models/works.py:471
-#, fuzzy
-#| msgid "Repealed by"
 msgid "repealed"
-msgstr "Imefutwa na"
+msgstr "kufutwa"
 
 #: models/works.py:472
 msgid "revoked"
-msgstr ""
+msgstr "kubatilishwa"
 
 #: models/works.py:473
 msgid "withdrawn"
-msgstr ""
+msgstr "kuondolewa"
 
 #: models/works.py:474
 msgid "lapsed"
-msgstr ""
+msgstr "imeisha"
 
 #: models/works.py:475
 msgid "retired"
-msgstr ""
+msgstr "mstaafu"
 
 #: models/works.py:476
 msgid "expired"
-msgstr ""
+msgstr "muda wake umeisha"
 
 #: models/works.py:481
 msgid "Can review work details"
@@ -942,24 +928,20 @@ msgid "Date of repeal of this work"
 msgstr "Tarehe ya kufutwa kwa kazi hii"
 
 #: models/works.py:521
-#, fuzzy
-#| msgid "repealed by"
 msgid "repealed verb"
-msgstr "kufutwa na"
+msgstr "kitenzi kilichofutwa"
 
 #: models/works.py:522
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Bainisha ikiwa inapaswa kuwa kitu kingine chochote isipokuwa 'kufutwa' (chaguo-msingi)"
 
 #: models/works.py:523
-#, fuzzy
-#| msgid "repealed date"
 msgid "repealed note"
-msgstr "tarehe iliyofutwa"
+msgstr "noti iliyofutwa"
 
 #: models/works.py:524
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Dokezo la hiari linalotoa maelezo ya ziada kuhusu kubatilisha"
 
 #: models/works.py:528
 msgid "Parent (primary) work for subsidiary legislation"
@@ -1144,11 +1126,11 @@ msgstr "Tarehe ambayo marekebisho yanaanza kutumika"
 
 #: models/works.py:941
 msgid "verb"
-msgstr ""
+msgstr "kitenzi"
 
 #: models/works.py:941
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Badilisha kwa mfano 'iliyorekebishwa' inapohitajika"
 
 #: models/works.py:953
 msgid "amendment"
@@ -1219,10 +1201,9 @@ msgid "Expand all"
 msgstr "Panua zote"
 
 #: templates/indigo_api/akn/_amendments.html:11
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> hadi <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Imerekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
@@ -1230,10 +1211,9 @@ msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amend
 msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> hadi <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
-#, fuzzy, python-format
-#| msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+#, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Iliyorekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwenye <span class=\"amendment-date\">%(date)s</span>]"
+msgstr "[Imerekebishwa na <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> kwenye <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
@@ -1288,52 +1268,48 @@ msgstr "Imeidhinishwa tarehe %(date)s"
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Sheria kama ilivyo %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "Huenda kulikuwa na masasisho tangu faili hii kuundwa."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "PDF imeundwa kwa %(current_date)s saa %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Mkusanyiko ulikaguliwa mara ya mwisho kwa masasisho: %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "Kuhusu mkusanyiko huu"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "Sheria katika mkusanyo huu imetolewa tena kama ilivyochapishwa kwenye Gazeti la Serikali, na uumbizaji ulioboreshwa na makosa madogo ya uchapaji kusahihishwa. Marekebisho yote yametumiwa moja kwa moja kwenye maandishi na maelezo. Uchanganuzi wa gazeti asilia la kila kifungu cha sheria (pamoja na marekebisho) unapatikana kwa marejeleo."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Hakuna hakimiliki kwenye maudhui ya kisheria ya hati hii."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Nakala hii ya PDF imeidhinishwa chini ya Leseni ya Creative Commons Attribution 4.0 (CC BY 4.0). Shiriki kwa upana na kwa uhuru."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Contents"
-msgstr "Jedwali la Yaliyomo"
+msgstr "Yaliyomo"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "Na <a href=\"%(lawsafrica)s\">Sheria.Afrika</a> na wachangiaji. Imepewa leseni chini ya <a href=\"%(ccby)s\">CC-BY</a>. Shiriki kwa upana na kwa uhuru."
 
 #: templates/indigo_api/akn/export/standalone.html:17
-#, fuzzy
-#| msgid "Table of Contents"
 msgid "Table of Contents"
 msgstr "Jedwali la Yaliyomo"
 
@@ -1361,21 +1337,19 @@ msgid "Commenced"
 msgstr "Imeanza"
 
 #: timeline.py:111
-#, fuzzy, python-format
-#| msgid "Commenced on %(date)s by"
+#, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr "Ilianza %(date)s kwa"
+msgstr "%(verbed)s on %(date)s by"
 
 #: timeline.py:116
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s by"
 
 #: timeline.py:121
-#, fuzzy, python-format
-#| msgid "commenced on %(date)s"
+#, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr "ilianza tarehe %(date)s"
+msgstr "%(verbed)s on %(date)s"
 
 #: timeline.py:148
 #, python-format
@@ -1411,10 +1385,8 @@ msgid "Assented to"
 msgstr "Imeidhinishwa"
 
 #: timeline.py:231
-#, fuzzy
-#| msgid "Repealed by"
 msgid "Revised by"
-msgstr "Imefutwa na"
+msgstr "Imesahihishwa na"
 
 #: timeline.py:231
 msgid "Amended by"
@@ -1441,15 +1413,3 @@ msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 msgid "Error during import"
 msgstr "Hitilafu wakati wa kuingiza"
 
-#, fuzzy
-#~| msgid "Not commenced"
-#~ msgid "Not commenced; Repealed"
-#~ msgstr "Haijaanza"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Imebatilishwa na <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> kwenye <span class=\"repeal-date\">%(date)s</span>]"
-
-#, python-format
-#~ msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
-#~ msgstr "[Imebatilishwa na <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> kwenye <span class=\"repeal-date\">%(date)s</span>]"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-23 21:07+0200\n"
-"PO-Revision-Date: 2024-07-24 07:36\n"
+"PO-Revision-Date: 2025-04-10 14:44\n"
 "Last-Translator: \n"
 "Language-Team: Southern Sotho\n"
 "Language: st_ZA\n"
@@ -600,3 +600,4 @@ msgstr ""
 #: pipelines/text.py:30
 msgid "There is not enough text in the document to import. You may need to OCR the file first."
 msgstr ""
+

@@ -222,12 +222,13 @@ def get_timeline(work, only_approved_events=False):
             amendments = Amendment.order_further(amendments)
         commencements = [c for c in all_commencements if c.date == date]
         consolidations = [c for c in all_consolidations if c.date == date]
+        chapter_numbers = [c for c in all_chapter_numbers if c.validity_start_date == date]
 
         # even though the timeline is given in reverse chronological order,
         # each date on the timeline is described in regular order: assent first, repeal last
 
         # chapter number (start of validity)
-        for chapter_number in all_chapter_numbers.filter(validity_start_date=date):
+        for chapter_number in chapter_numbers:
             entry.events.append(TimelineEvent(
                 TimelineEventType.CHAPTER,
                 description=f'{plugin.chapter_number_name(chapter_number)} {chapter_number.number}',

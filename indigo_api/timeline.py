@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
-
 from django.db.models import TextChoices
 from django.utils.formats import date_format
 from django.utils.translation import gettext as _
+
+from indigo.plugins import plugins
 
 
 class TimelineEventType(TextChoices):
@@ -12,6 +13,7 @@ class TimelineEventType(TextChoices):
     CONSOLIDATION = 'consolidation'
     PUBLICATION = 'publication'
     REPEAL = 'repeal'
+    CHAPTER = 'chapter'
 
 
 @dataclass
@@ -187,10 +189,14 @@ def get_timeline(work, only_approved_events=False):
     from indigo_api.models import Amendment
     entries = []
 
+    # chapter numbers
+    plugin = plugins.for_work('work-detail', work)
+
     all_amendments = work.amendments.approved() if only_approved_events else work.amendments.all()
     all_commencements = work.commencements.approved() if only_approved_events else work.commencements.all()
     # consolidations can't be approved or not, as there's no related work
     all_consolidations = work.arbitrary_expression_dates.all()
+    all_chapter_numbers = work.chapter_numbers.all()
     repealed_date = work.repealed_date
     if only_approved_events and work.repealed_by and work.repealed_by.work_in_progress:
         repealed_date = None
@@ -198,9 +204,10 @@ def get_timeline(work, only_approved_events=False):
     amendment_dates = [c.date for c in all_amendments]
     commencement_dates = [c.date for c in all_commencements]
     consolidation_dates = [c.date for c in all_consolidations]
+    chapter_dates = [c.validity_start_date for c in all_chapter_numbers]
     other_dates = [work.assent_date, work.publication_date, repealed_date]
     # don't include None
-    all_dates = [e for e in amendment_dates + commencement_dates + consolidation_dates + other_dates if e]
+    all_dates = [e for e in amendment_dates + commencement_dates + consolidation_dates + chapter_dates + other_dates if e]
     all_dates = set(all_dates)
 
     # the initial date is the publication date, or the earliest of the consolidation and commencement dates, or None
@@ -215,9 +222,17 @@ def get_timeline(work, only_approved_events=False):
             amendments = Amendment.order_further(amendments)
         commencements = [c for c in all_commencements if c.date == date]
         consolidations = [c for c in all_consolidations if c.date == date]
+        chapter_numbers = [c for c in all_chapter_numbers if c.validity_start_date == date]
 
         # even though the timeline is given in reverse chronological order,
         # each date on the timeline is described in regular order: assent first, repeal last
+
+        # chapter number (start of validity)
+        for chapter_number in chapter_numbers:
+            entry.events.append(TimelineEvent(
+                TimelineEventType.CHAPTER,
+                description=f'{plugin.chapter_number_name(chapter_number)} {chapter_number.number}',
+                note=chapter_number.revision_name))
 
         # assent
         if date == work.assent_date:

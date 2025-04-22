@@ -211,6 +211,17 @@
             </div>
           {% endfor %}
 
+          {% if work.pk and form.chapter_numbers_formset %}
+            <div class="row mb-3">
+              <label class="col-2 col-form-label">{% trans "Chapter numbers" %}</label>
+              <div class="col">
+                <div id="work-form-chapter_numbers-formset">
+                  {% include 'indigo_api/_work_form_chapter_numbers_form.html' with formset=form.chapter_numbers_formset %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
           <div class="row mb-3">
             <label for="{{ form.frbr_actor.id_for_label }}" class="col-2 col-form-label">{% trans 'Responsible organisation (actor)' %}</label>
             <div class="col-4">

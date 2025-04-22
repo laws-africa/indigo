@@ -1096,3 +1096,30 @@ class WorkAlias(models.Model):
 
     def __str__(self):
         return self.alias
+
+
+class ChapterNumber(models.Model):
+    number = models.CharField(_("number"), max_length=32, null=True, blank=True, help_text=_("The Chapter number"))
+    name = models.CharField(_("name"), max_length=64, null=False, blank=True, default="chapter", help_text=_("Specify if it should be anything other than 'chapter' (the default)"))
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, verbose_name=_("work"), related_name='chapter_numbers')
+    validity_start_date = models.DateField(_("validity start date"), null=True, blank=True, help_text=_("Date from which this Chapter number applied to the work"))
+    validity_end_date = models.DateField(_("validity end date"), null=True, blank=True, help_text=_("Date until which this Chapter number applied to the work"))
+    revision_name = models.CharField(_("revision name"), max_length=64, null=True, blank=True, help_text=_("Name of the publication in which this Chapter number was assigned to the work"))
+
+    class Meta:
+        ordering = ('-validity_start_date',)
+        verbose_name = _("chapter number")
+        verbose_name_plural = _("chapter numbers")
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = "chapter"
+        return super().save(*args, **kwargs)
+
+    def get_name(self):
+        """ The preferred way to manage different chapter names is through the work-detail plugin,
+            where all the options are given in chapter_names_choices so that their translations can be stored too.
+            BaseWorkDetail only has one option, 'chapter' --> _('Chapter').
+        """
+        plugin = plugins.for_work('work-detail', self.work)
+        return plugin.chapter_number_name(self) if plugin else _("Chapter")

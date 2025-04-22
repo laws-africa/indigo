@@ -19,15 +19,19 @@ class BaseWorkDetail(LocaleBasedMatcher):
     """ These numbers don't have numbered titles. """
     number_must_be_digit_doctypes = ['act']
     """ These doctypes only have numbered titles if the number starts with a digit."""
+    chapter_names_choices = (
+        ("chapter", _("Chapter")),
+    )
+    """ Subclasses can give choices in the Work form which will be used in the numbered title. """
 
     def work_numbered_title(self, work):
         """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
         This usually differs from the short title. May return None.
         """
         # check chapter first
-        if work.place.settings.uses_chapter and work.properties.get('cap'):
-            # eg. Chapter 2
-            return _('Chapter %(cap)s') % {'cap': work.properties['cap']}
+        chapter_number = self.work_chapter_number(work)
+        if chapter_number:
+            return f'{self.chapter_number_name(chapter_number)} {chapter_number.number}'
 
         number = work.number
         doctype = work.work_uri.doctype
@@ -49,6 +53,19 @@ class BaseWorkDetail(LocaleBasedMatcher):
 
         work_type = self.work_friendly_type(work)
         return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number.upper(), 'year': work.year}
+
+    def chapter_number_name(self, chapter_number):
+        return dict(self.chapter_names_choices).get(chapter_number.name, _("Chapter"))
+
+    def work_chapter_number(self, work):
+        """ Returns the latest or only related ChapterNumber object.
+            If there's more than one and they don't all have start dates,
+             don't return anything as we don't know which is currently valid.
+        """
+        if work.pk:
+            chapter_numbers = work.chapter_numbers.all()
+            if work.chapter_numbers.count() == 1 or all(x.validity_start_date for x in chapter_numbers):
+                return chapter_numbers.first()
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

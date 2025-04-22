@@ -31,9 +31,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
         # check chapter first
         chapter_number = self.work_chapter_number(work)
         if chapter_number:
-            return _('%(name)s %(number)s') % {
-                'name': self.chapter_number_name(chapter_number),
-                'number': chapter_number.number}
+            return f'{self.chapter_number_name(chapter_number)} {chapter_number.number}'
 
         number = work.number
         doctype = work.work_uri.doctype

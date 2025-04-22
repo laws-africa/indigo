@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 14:44\n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
+"PO-Revision-Date: 2025-04-22 08:15\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -177,21 +177,19 @@ msgstr "Nombre"
 
 #: forms/works.py:477
 msgid "Validity start date"
-msgstr ""
+msgstr "Date de début de validité"
 
 #: forms/works.py:478
 msgid "Validity end date"
-msgstr ""
+msgstr "Date de fin de validité"
 
 #: forms/works.py:479
-#, fuzzy
-#| msgid "Publication name"
 msgid "Revision name"
-msgstr "Nom de publication"
+msgstr "Nom de la révision"
 
 #: forms/works.py:487
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: forms/works.py:587
 msgid "Consolidation dates must be unique."
@@ -221,7 +219,7 @@ msgstr "Il semble que les débuts aient été modifiés ailleurs. Annulez vos mo
 msgid "Commencing work and date must be unique together."
 msgstr "Le début du travail et la date doivent être uniques ensemble."
 
-#: forms/works.py:727
+#: forms/works.py:775
 msgid "Commenced work, commencing work, and date must be unique together."
 msgstr "Les termes « travail commencé », « début des travaux » et « date » doivent être uniques."
 
@@ -1211,7 +1209,7 @@ msgstr "Ajouter un amendement"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:51
 msgid "e.g. Revised Laws 2004"
-msgstr ""
+msgstr "par exemple Lois révisées de 2004"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:78
 #: templates/indigo_api/_work_form_content.html:616
@@ -1282,7 +1280,7 @@ msgstr "Numéro ou nom abrégé qui identifie de manière unique cette législat
 
 #: templates/indigo_api/_work_form_content.html:216
 msgid "Chapter numbers"
-msgstr ""
+msgstr "Numéros de chapitre"
 
 #: templates/indigo_api/_work_form_content.html:226
 msgid "Responsible organisation (actor)"
@@ -3619,47 +3617,10 @@ msgid "Error during import: %(error)s"
 msgstr "Erreur lors de l'importation : %(error)s"
 
 #: views/works.py:1199
-#, fuzzy
-#| msgid "Markup the long title"
 msgid "Match on title"
-msgstr "Balisage du titre long"
+msgstr "Match sur le titre"
 
 #: views/works.py:1200
 msgid "Match on year and number"
-msgstr ""
+msgstr "Correspondance sur l'année et le numéro"
 
-#~ msgid "Commenced work and date must be unique together."
-#~ msgstr "Le début du travail et la date doivent être uniques ensemble."
-
-#~ msgid "Finishing"
-#~ msgstr "Finition"
-
-#~ msgid "Akoma Ntoso"
-#~ msgstr "Akoma Ntoso"
-
-#~ msgid "Markup"
-#~ msgstr "Balisage"
-
-#~ msgid "Bold"
-#~ msgstr "Audacieux"
-
-#~ msgid "Italics"
-#~ msgstr "Italique"
-
-#~ msgid "Underline"
-#~ msgstr "Souligner"
-
-#~ msgid "Superscript"
-#~ msgstr "Exposant"
-
-#~ msgid "Subscript"
-#~ msgstr "Indice"
-
-#~ msgid "Editor help..."
-#~ msgstr "Aide de l'éditeur..."
-
-#~ msgid "Available tasks"
-#~ msgstr "Tâches disponibles"
-
-#~ msgid "All available tasks"
-#~ msgstr "Toutes les tâches disponibles"

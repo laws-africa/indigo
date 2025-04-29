@@ -459,6 +459,7 @@ body.document-editor-view {
     padding: 10px;
     border: 1px solid $gray-200;
     background-color: $gray-100;
+    white-space: pre-wrap;
   }
 
   .akoma-ntoso-snippet {

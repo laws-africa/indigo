@@ -15,6 +15,33 @@ $(function() {
 
   $('body').on('click', 'a[data-confirm], button[data-confirm], input[data-confirm]', handleConfirm);
 
+  /* On buttons with a copy-to-clipboard class,
+   * copy the related data-value to the clipboard when the button is clicked.
+   */
+  function copyText(e) {
+    this.disabled = true;
+    const originalTextContent = this.textContent;
+    let textToCopy = this.getAttribute('data-value');
+
+    // TODO: hack for getting the live text editor value when the button is clicked
+    if (textToCopy === 'getTextEditorValue') {
+      textToCopy = Indigo.view.sourceEditorView.aknTextEditor.monacoEditor.getValue();
+    }
+
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        this.textContent = this.getAttribute('data-confirmation');
+      });
+    } else {
+      this.textContent = this.getAttribute('data-failure');
+    }
+    setTimeout(()=> {
+      this.textContent = originalTextContent;
+      this.disabled = false;
+    }, 500);
+  }
+  $('body').on('click', 'button.copy-to-clipboard', copyText);
+
   /* Handle forms submitted via ajax */
   function submitFormAjax(e) {
     var form = e.target;

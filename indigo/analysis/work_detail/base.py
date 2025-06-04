@@ -59,13 +59,42 @@ class BaseWorkDetail(LocaleBasedMatcher):
 
     def work_chapter_number(self, work):
         """ Returns the latest or only related ChapterNumber object.
-            If there's more than one and they don't all have start dates,
-             don't return anything as we don't know which is currently valid.
+            If there are multiple, the latest is the (only) one with the latest validity_start_date,
+            compared to all the others' validity_start_dates OR validity_end_dates (but they need at least one).
         """
         if work.pk:
             chapter_numbers = work.chapter_numbers.all()
-            if work.chapter_numbers.count() == 1 or all(x.validity_start_date for x in chapter_numbers):
-                return chapter_numbers.first()
+            if chapter_numbers:
+                if work.chapter_numbers.count() == 1:
+                    # there's only one -- easy peasy
+                    return chapter_numbers.first()
+                # if any of them doesn't have a start or end date, we can't go further
+                if all(x.validity_start_date or x.validity_end_date for x in chapter_numbers):
+                    with_start = chapter_numbers.filter(validity_start_date__isnull=False)
+                    # if at least one of them doesn't have a start date, we can't go further
+                    if with_start:
+                        latest_start_date = max(x.validity_start_date for x in with_start)
+                        latest = with_start.filter(validity_start_date=latest_start_date)
+                        # if there's more than one at the latest start date, we can't go further
+                        if latest.count() == 1:
+                            latest = latest.first()
+                            if all(x.validity_start_date for x in chapter_numbers):
+                                # all have start dates, and there's only one that's latest
+                                return latest
+                            others = chapter_numbers.exclude(pk=latest.pk)
+                            others_with_end = others.filter(validity_end_date__isnull=False)
+                            latest_other_end_date = max(x.validity_end_date for x in others_with_end)
+                            if all(x.validity_end_date for x in others):
+                                if latest.validity_start_date > latest_other_end_date:
+                                    # all the others have end dates, and they're all before the latest
+                                    return latest
+                            else:
+                                others_with_start = others.filter(validity_start_date__isnull=False)
+                                latest_other_start_date = max(x.validity_start_date for x in others_with_start)
+                                if latest.validity_start_date > latest_other_start_date and latest.validity_start_date > latest_other_end_date:
+                                    # all the others have either start or end dates, and they're all before the latest
+                                    return latest
+
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

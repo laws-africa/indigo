@@ -62,7 +62,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
             If there are multiple, the latest is the (only) one with the latest validity_start_date,
             compared to all the others' validity_start_dates OR validity_end_dates (but they need at least one).
         """
-        if work.pk:
+        try:
             chapter_numbers = work.chapter_numbers.all()
             if chapter_numbers:
                 if work.chapter_numbers.count() == 1:
@@ -94,7 +94,8 @@ class BaseWorkDetail(LocaleBasedMatcher):
                                 if latest.validity_start_date > latest_other_start_date and latest.validity_start_date > latest_other_end_date:
                                     # all the others have either start or end dates, and they're all before the latest
                                     return latest
-
+        except ValueError:
+            pass
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

@@ -10,7 +10,10 @@
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-exchange-alt"></i> {% trans "Compare to" %}</button>
         <div class="dropdown-menu">
           {% for exp in comparison_expressions %}
-            <button class="dropdown-item show-pit-comparison" data-id="{{ exp.id }}">
+            <button
+                class="dropdown-item show-pit-comparison {% if forloop.counter0 == 1 %}most-recent{% endif %}"
+                data-id="{{ exp.id }}"
+            >
               {{ exp.expression_date|date:"Y-m-d" }}
               {% if exp.id == document.id %}– {% trans "current point in time" %}{% endif %}
             </button>

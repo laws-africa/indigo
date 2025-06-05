@@ -64,6 +64,12 @@
       // setup renderer
       this.editorReady = $.Deferred();
       this.setupRenderers();
+
+      // fake a click on the most recent point in time for comparison
+      let mostRecent = document.querySelector('.show-pit-comparison.most-recent');
+      if (mostRecent) {
+        mostRecent.click();
+      }
     },
 
     setupRenderers: function() {

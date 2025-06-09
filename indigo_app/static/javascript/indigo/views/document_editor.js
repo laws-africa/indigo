@@ -65,10 +65,10 @@
       this.editorReady = $.Deferred();
       this.setupRenderers();
 
-      // fake a click on the most recent point in time for comparison
-      let mostRecent = document.querySelector('.show-pit-comparison.most-recent');
-      if (mostRecent) {
-        mostRecent.click();
+      // fake a click on the previous point in time for comparison, if there is one
+      let defaultCompareTo = document.querySelector('.show-pit-comparison.default-compare-to');
+      if (defaultCompareTo) {
+        defaultCompareTo.click();
       }
     },
 

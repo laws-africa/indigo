@@ -49,6 +49,8 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 doc.work.expressions().all()
             ))
         context['comparison_expressions'] = doc.work.expressions().filter(language=doc.language).order_by('-expression_date')
+        previous_documents = context['comparison_expressions'].exclude(expression_date__gte=doc.expression_date)
+        context['default_comparison_id'] = previous_documents.first().pk if previous_documents else None
         context['place'] = doc.work.place
         context['country'] = doc.work.country
         context['locality'] = doc.work.locality

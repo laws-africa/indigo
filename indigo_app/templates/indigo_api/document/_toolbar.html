@@ -11,7 +11,7 @@
         <div class="dropdown-menu">
           {% for exp in comparison_expressions %}
             <button
-                class="dropdown-item show-pit-comparison {% if forloop.counter0 == 1 %}most-recent{% endif %}"
+                class="dropdown-item show-pit-comparison {% if exp.id == default_comparison_id %}default-compare-to{% endif %}"
                 data-id="{{ exp.id }}"
             >
               {{ exp.expression_date|date:"Y-m-d" }}

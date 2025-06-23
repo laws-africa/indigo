@@ -815,6 +815,6 @@ class DocumentActivity(models.Model):
         return (timezone.now() - self.updated_at).total_seconds() > self.ASLEEP_SECS
 
     @classmethod
-    def vacuum(cls, document):
+    def vacuum(cls):
         threshold = timezone.now() - datetime.timedelta(seconds=cls.DEAD_SECS)
-        cls.objects.filter(document=document, updated_at__lte=threshold).delete()
+        cls.objects.filter(updated_at__lte=threshold).delete()

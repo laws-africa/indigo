@@ -12,7 +12,7 @@ from background_task.models import Task
 from django.db.utils import OperationalError
 from django.dispatch import receiver
 
-from indigo_api.models import Document
+from indigo_api.models import Document, DocumentActivity
 
 # get specific task logger
 log = logging.getLogger('indigo.tasks')
@@ -88,9 +88,23 @@ def prune_document_versions():
         raise e
 
 
+@background(queue="indigo", remove_existing_tasks=True)
+def prune_document_activity():
+    """ Prune out old DocumentActivity entries.
+    """
+    try:
+        DocumentActivity.vacuum()
+    except Exception as e:
+        log.error(f"Error pruning document activity: {e}", exc_info=e)
+        raise e
+
+
 def setup_pruning():
     # schedule task to run in 12 hours time, and repeat daily
-    prune_deleted_documents(schedule=timedelta(hours=12), repeat=Task.DAILY)
+    prune_deleted_documents(schedule=timedelta(hours=11), repeat=Task.DAILY)
 
     # schedule task to run in 12 hours time, and repeat daily
     prune_document_versions(schedule=timedelta(hours=12), repeat=Task.DAILY)
+
+    # schedule task to run in 12 hours time, and repeat daily
+    prune_document_activity(schedule=timedelta(hours=13), repeat=Task.DAILY)

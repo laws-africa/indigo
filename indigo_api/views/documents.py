@@ -286,11 +286,6 @@ class DocumentActivityViewSet(DocumentResourceView,
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()
 
-    def list(self, request, *args, **kwargs):
-        # clean up old activity
-        DocumentActivity.vacuum(self.document)
-        return super(DocumentActivityViewSet, self).list(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         # if they've provided additional finished nonces, clear those out
         if request.data.get('finished_nonces'):

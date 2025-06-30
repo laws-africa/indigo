@@ -1,3 +1,4 @@
+import datetime
 import logging
 import copy
 
@@ -285,6 +286,11 @@ class DocumentActivityViewSet(DocumentResourceView,
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()
+
+    def filter_queryset(self, queryset):
+        # only return entries that aren't stale
+        threshold = timezone.now() - datetime.timedelta(seconds=DocumentActivity.DEAD_SECS)
+        return queryset.filter(updated_at__gt=threshold)
 
     def create(self, request, *args, **kwargs):
         # if they've provided additional finished nonces, clear those out

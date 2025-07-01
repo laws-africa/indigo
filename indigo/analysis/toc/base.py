@@ -624,14 +624,15 @@ class CommencementsBeautifier(LocaleBasedMatcher):
                 # e.g. (1)(a)–(c) rather than (1)(a)–(1)(c) (these can get quite long)
                 subp.num = prefix + subp.num
             self.add_to_run(subp, mini_run)
-        # keep drilling down if some descendants are different
-        elif not subp.all_descendants_same:
+        else:
+            # end the mini run before maybe continuing
             if mini_run:
-                # end the mini run before continuing
                 subs_to_add.append(self.stringify_run(mini_run, no_type=True))
                 mini_run = []
-            for subsubp in subp.children:
-                subs_to_add, mini_run = self.process_subprovision(subsubp, prefix + subp.num, subs_to_add, mini_run)
+            # keep drilling down if some descendants are different
+            if not subp.all_descendants_same:
+                for subsubp in subp.children:
+                    subs_to_add, mini_run = self.process_subprovision(subsubp, prefix + subp.num, subs_to_add, mini_run)
 
         return subs_to_add, mini_run
 

@@ -232,7 +232,14 @@ class WorkMixin(object):
         """ A queryset of expressions of this work, in ascending expression date order.
         """
         from .documents import Document
-        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
+        return (
+            Document.objects
+            .undeleted()
+            .no_xml()
+            .select_related("language", "language__language")
+            .filter(work=self)
+            .order_by('expression_date')
+        )
 
     def initial_expressions(self):
         """ Queryset of expressions at initial publication date.
@@ -327,8 +334,8 @@ class WorkMixin(object):
         to_load = [d['id'] for d in documents if d['id'] not in self._provision_cache]
         tocs = {}
         if to_load:
-            docs_for_toc = self.expressions().filter(pk__in=to_load) \
-                .select_related('language', 'language__language', 'work__locality', 'work__country', 'work__country__country')
+            docs_for_toc = self.expressions().defer(None).filter(pk__in=to_load) \
+                .select_related('work', 'work__locality', 'work__country', 'work__country__country')
             for doc in docs_for_toc:
                 toc = doc.table_of_contents()
                 for p in descend_toc_pre_order(toc):

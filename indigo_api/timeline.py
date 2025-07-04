@@ -192,8 +192,12 @@ def get_timeline(work, only_approved_events=False):
     # chapter numbers
     plugin = plugins.for_work('work-detail', work)
 
-    all_amendments = work.amendments.approved() if only_approved_events else work.amendments.all()
-    all_commencements = work.commencements.approved() if only_approved_events else work.commencements.all()
+    all_amendments = (
+        work.amendments.approved() if only_approved_events else work.amendments.all()
+    ).select_related("amending_work")
+    all_commencements = (
+        work.commencements.approved() if only_approved_events else work.commencements.all()
+    ).select_related("commencing_work")
     # consolidations can't be approved or not, as there's no related work
     all_consolidations = work.arbitrary_expression_dates.all()
     all_chapter_numbers = work.chapter_numbers.all()

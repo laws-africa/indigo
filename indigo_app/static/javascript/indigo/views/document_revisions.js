@@ -28,7 +28,7 @@
 
       $('.show-revisions').on('click', _.bind(this.show, this));
 
-      this.diffNavigator = new Indigo.DiffNavigator({el: document.querySelector('.diff-navigator')});
+      this.diffNavigator = new indigoApp.componentLibrary.DiffNavigator(document.querySelector('.diff-navigator'));
     },
 
     show: function(e) {
@@ -98,7 +98,7 @@
 
       $.get(revision.url() + '/diff')
         .then(function(response) {
-          var $akn = self.$el.find('.revision-preview la-akoma-ntoso').html(response.content);
+          self.$el.find('.revision-preview la-akoma-ntoso').html(response.content);
           self.diffNavigator.refresh();
         });
     },

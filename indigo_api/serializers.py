@@ -649,7 +649,6 @@ class WorkSerializer(serializers.ModelSerializer):
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
-    commencements = CommencementSerializer(many=True)
     commencement_date = serializers.DateField(required=False, allow_null=True)
     commencement_note = serializers.CharField(required=False, allow_null=True)
     country = serializers.CharField(source='country.code', required=True)
@@ -666,7 +665,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'id', 'url',
             'title', 'numbered_title',
             'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencements', 'commencing_work', 'commencement_date', 'commencement_note',
+            'commenced', 'commencing_work', 'commencement_date', 'commencement_note',
             'assent_date', 'stub', 'principal',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',

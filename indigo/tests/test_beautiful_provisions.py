@@ -100,6 +100,16 @@ class BeautifulProvisionsTestCase(TestCase):
                                            'section 1–55, section 56(2), section 57–63',
                                            commenceable_provisions=sections_1_to_63)
 
+    def test_subsection_2_with_paras_missing(self):
+        section_26 = self.make_toc_elements('sec_', 'section', [26], basic_unit=True)
+        paras_2 = self.make_toc_elements('sec_26__subsec_2__para_', 'paragraph', ['a', 'b', 'c'], basic_unit=False)
+        subsecs = self.make_toc_elements('sec_26__subsec_', 'subsection', range(1, 4), basic_unit=False)
+        subsecs[1].children = paras_2
+        section_26[0].children = subsecs
+        self.compare_beautiful_description(['sec_26', 'sec_26__subsec_1', 'sec_26__subsec_3'],
+                                           'section 26(1), (3)',
+                                           commenceable_provisions=section_26)
+
     def test_one_subsection_missing_in_a_part(self):
         part_ii = self.make_toc_elements('part_', 'part', ['II'], basic_unit=False, with_brackets=False)
         sections_2_to_6 = self.make_toc_elements('part_II__sec_', 'section', range(2, 7), basic_unit=True)

@@ -1,3 +1,4 @@
+import { DiffNavigator } from './diffs';
 import DocumentTOCView from './DocumentTOCView.vue';
 import LinterPopup from './LinterPopup.vue';
 import TaxonomyTOC from './TaxonomyTOC.vue';
@@ -13,6 +14,7 @@ export const vueComponents = {
 };
 
 export const components = {
+  DiffNavigator,
   WorkChooser,
   ListCard,
   FacetGroup,

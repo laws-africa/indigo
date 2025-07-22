@@ -405,7 +405,7 @@ class Document(DocumentMixin, models.Model):
     def amendments_in_order(self):
         if self.expression_date:
             from indigo_api.models import Amendment
-            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date))
+            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date).prefetch_related('amending_work'))
         else:
             return []
 

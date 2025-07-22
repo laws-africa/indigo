@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.http import QueryDict
 
 from indigo_api.models import Task, TaskLabel, Country, TaskFile, Work
-from indigo_app.forms.works import WorkFilterForm, NegatableModelMultipleChoiceField
+from indigo_app.forms.works import WorkFilterForm, NegatableModelMultipleChoiceField, Facet
 
 
 class TaskForm(forms.ModelForm):
@@ -257,6 +257,11 @@ class TaskFilterForm(WorkFilterForm):
         self.facet_place(places_toc, queryset)
         return facets
 
+    def facet_with_label(self, name, type, items):
+        """ Copied from WorkFilterForm.facet, with the addition of label """
+        items = [self.facet_item(name, value, count, label=label) for value, label, count in items]
+        return Facet(self.fields[name].label, name, type, items)
+
     def facet_labels(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='labels')
         counts = (
@@ -264,10 +269,10 @@ class TaskFilterForm(WorkFilterForm):
             .order_by()
         )
         items = [
-            (c['labels__slug'], c['count'])
+            (c['labels__slug'], c['labels__title'], c['count'])
             for c in sorted(counts, key=lambda x: x['labels__title'])
         ]
-        facets.append(self.facet("labels", "checkbox", items))
+        facets.append(self.facet_with_label("labels", "checkbox", items))
 
     def facet_state(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='state')
@@ -290,10 +295,10 @@ class TaskFilterForm(WorkFilterForm):
         qs = self.filter_queryset(qs, exclude='assigned_to')
         counts = qs.values('assigned_to', 'assigned_to__username').annotate(count=Count('pk')).order_by()
         items = [
-            (str(c['assigned_to'] or '0'), c['count'])
+            (str(c['assigned_to'] or '0'), c['assigned_to__username'] or _('(Not assigned)'), c['count'])
             for c in sorted(counts, key=lambda x: x['assigned_to__username'] or '')
         ]
-        facets.append(self.facet("assigned_to", "checkbox", items))
+        facets.append(self.facet_with_label("assigned_to", "checkbox", items))
 
     def facet_submitted_by(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='submitted_by')
@@ -302,10 +307,10 @@ class TaskFilterForm(WorkFilterForm):
             .filter(submitted_by_user__isnull=False).order_by()
         )
         items = [
-            (c['submitted_by_user'], c['count'])
+            (c['submitted_by_user'], c['submitted_by_user__username'], c['count'])
             for c in sorted(counts, key=lambda x: x['submitted_by_user__username'])
         ]
-        facets.append(self.facet("submitted_by", "checkbox", items))
+        facets.append(self.facet_with_label("submitted_by", "checkbox", items))
 
     def facet_task_type(self, facets, qs):
         qs = self.filter_queryset(qs, exclude='type')

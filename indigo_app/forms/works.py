@@ -944,7 +944,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             country_doctypes = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
         doctypes = [(d[1].lower(), d[0]) for d in settings.INDIGO['DOCTYPES'] + country_doctypes]
 
-        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        subtypes = list(Subtype.objects.all().values_list('abbreviation', 'name'))
         self.fields['subtype'].choices = doctypes + subtypes
         self.subtypes = Subtype.objects.all()
 

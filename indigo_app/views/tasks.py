@@ -205,6 +205,11 @@ class TaskTimelineView(TaskDetailView):
         return ['indigo_api/_task_timeline.html']
 
 
+class TaskAnnotationAnchorView(DetailView):
+    model = Task
+    template_name = 'indigo_api/_task_annotation_anchor.html'
+
+
 class TaskFileView(SingleTaskViewBase, DetailView):
     task_file = None
 

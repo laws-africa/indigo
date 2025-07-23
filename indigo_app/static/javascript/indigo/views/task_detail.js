@@ -15,17 +15,19 @@
     },
 
     initialize: function() {
-      this.$('[data-highlight]').each(function(i, container) {
-        var target = JSON.parse(container.getAttribute('data-highlight')),
-            range = window.indigoAkn.targetToRange(target, container);
+      window.addEventListener('htmx:afterRequest', () => {
+        this.$('[data-highlight]').each(function(i, container) {
+          var target = JSON.parse(container.getAttribute('data-highlight')),
+              range = window.indigoAkn.targetToRange(target, container);
 
-        if (range) {
-          window.indigoAkn.markRange(range, 'mark', function(m) {
-            m.classList.add('active');
-            return m;
-          });
-        }
-      });
+          if (range) {
+            window.indigoAkn.markRange(range, 'mark', function(m) {
+              m.classList.add('active');
+              return m;
+            });
+          }
+        });
+      })
     },
 
     commentChanged: function(e) {

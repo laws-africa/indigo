@@ -205,8 +205,9 @@ class TaskTimelineView(TaskDetailView):
         return ['indigo_api/_task_timeline.html']
 
 
-class TaskAnnotationAnchorView(DetailView):
+class TaskAnnotationAnchorView(AbstractAuthedIndigoView, DetailView):
     model = Task
+    permission_required = ('indigo_api.view_task',)
     template_name = 'indigo_api/_task_annotation_anchor.html'
 
 

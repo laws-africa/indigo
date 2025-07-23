@@ -198,41 +198,6 @@
           </div>
         </div>
 
-
-        <div class="card mb-3">
-          <h6 class="card-header">{% trans 'Blocked by' %}</h6>
-          <div class="card-body">
-            {% if task.change_task_permission %}
-              <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
-                    id="task-blocked_by-form">
-                {% csrf_token %}
-
-                <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
-                        data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
-                        {% if task.is_closed %}disabled{% endif %}
-                        data-none-selected-text="{% trans 'Choose tasks' %}" data-selected-text-format="static"
-                        data-live-search="true" data-size="7">
-
-                  {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
-                    <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
-                      #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
-                  {% endfor %}
-                </select>
-              </form>
-            {% endif %}
-            {% if blocked_by %}
-              <ul class="list-unstyled mb-2">
-                {% for blocking_task in blocked_by|dictsort:'pk' %}
-                  <li>
-                    <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
-                      – {{ blocking_task.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </div>
-        </div>
-
         {% with task.blocking.all as blocking %}
           {% if blocking %}
             <div class="card mb-3">

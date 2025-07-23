@@ -1,0 +1,17 @@
+<div class="mb-3 row">
+  <label for="{{ form.blocked_by.id_for_label }}" class="col-2 col-form-label">{{ form.blocked_by.label }}</label>
+  <div class="col-10">
+    <select
+        class="selectpicker col-12" multiple
+        id="{{ form.blocked_by.id_for_label }}"
+        name="{{ form.blocked_by.html_name }}"
+        {% if task.is_closed %}disabled{% endif %}
+        data-live-search="true"
+        data-size="7"
+    >
+      {% for opt in form.blocked_by %}
+        {{ opt }}
+      {% endfor %}
+    </select>
+  </div>
+</div>

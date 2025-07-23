@@ -15,18 +15,21 @@ from indigo_app.forms.works import WorkFilterForm, NegatableModelMultipleChoiceF
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('code', 'description', 'work', 'document', 'timeline_date', 'labels', 'title')
+        fields = ('code', 'description', 'work', 'document', 'timeline_date', 'labels', 'title', 'blocked_by')
 
     title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
     timeline_date = forms.DateField(required=False)
     code = forms.ChoiceField(label=_('Type'), choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
+    blocked_by = forms.ModelMultipleChoiceField(label=_('Blocked by'), queryset=Task.objects, required=False)
 
     def __init__(self, country, locality, data=None, files=None, *args, **kwargs):
         super().__init__(data, files, *args, **kwargs)
         self.country = country
         self.locality = locality
         self.fields['labels'].choices = [(label.pk, label.title) for label in self.fields['labels'].queryset]
+        self.fields['blocked_by'].queryset = self.fields['blocked_by'].queryset.filter(country=country, locality=locality, state__in=Task.OPEN_STATES)
+        self.fields['blocked_by'].choices = [(blocker.pk, self.blocking_task_label(blocker)) for blocker in self.fields['blocked_by'].queryset]
         task = self.instance
         if task and task.work:
             # don't limit the queryset, just the choices, because the work might change (see TaskFormWorkView)
@@ -36,6 +39,9 @@ class TaskForm(forms.ModelForm):
                                             instance=task.input_file or TaskFile())
         self.output_file_form = TaskFileForm(self.instance, data=data, files=files, prefix='output_file',
                                              instance=task.output_file or TaskFile())
+
+    def blocking_task_label(self, task):
+        return f"#{task.pk} – {' '.join(task.title.split()[:4]) + (' …' if len(task.title.split()) > 4 else '')}"
 
     def clean_timeline_date(self):
         timeline_date = self.cleaned_data['timeline_date']

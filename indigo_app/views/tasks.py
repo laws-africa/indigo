@@ -116,7 +116,6 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         context = super().get_context_data(**kwargs)
         self.add_timeline(context)
         self.decorate_permissions()
-        self.add_possible_blocking_tasks(context)
         self.add_blocked_by(context)
         self.add_work(context)
         self.add_labels_form(context)
@@ -144,10 +143,6 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
     def decorate_permissions(self):
         Task.decorate_permissions([self.object], self.request.user)
 
-    def add_possible_blocking_tasks(self, context):
-        # TODO: filter this to fewer tasks to not load too many tasks in the dropdown?
-        context['possible_blocking_tasks'] = Task.objects.filter(country=self.object.country, locality=self.object.locality, state__in=Task.OPEN_STATES).all()
-
     def add_blocked_by(self, context):
         context['blocked_by'] = self.object.blocked_by.all()
 
@@ -173,9 +168,6 @@ class DocumentTaskOverviewView(SingleTaskViewBase, DetailView):
 
 
 class DocumentTaskDetailView(TaskDetailView):
-    def add_possible_blocking_tasks(self, context):
-        pass
-
     def add_blocked_by(self, context):
         pass
 
@@ -199,9 +191,6 @@ class TaskTimelineView(TaskDetailView):
         context = super().get_context_data(**kwargs)
         context['next_url'] = self.request.GET.get('next_url', reverse('task_detail_detail', kwargs={'place': self.place.place_code, 'pk': self.object.pk}))
         return context
-
-    def add_possible_blocking_tasks(self, context):
-        pass
 
     def add_blocked_by(self, context):
         pass

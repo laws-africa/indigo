@@ -65,7 +65,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
         try:
             chapter_numbers = work.chapter_numbers.all()
             if chapter_numbers:
-                if work.chapter_numbers.count() == 1:
+                if chapter_numbers.count() == 1:
                     # there's only one -- easy peasy
                     return chapter_numbers.first()
                 # if any of them doesn't have a start or end date, we can't go further

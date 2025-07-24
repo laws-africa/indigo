@@ -3,6 +3,7 @@ import copy
 import os
 import re
 import tempfile
+import logging
 
 import lxml.html
 from lxml import etree
@@ -11,6 +12,8 @@ from xmldiff.diff import Differ
 from cobalt.schemas import AkomaNtoso30
 from docpipe.xmlutils import unwrap_element
 from indigo.xmlutils import parse_html_str
+
+log = logging.getLogger(__name__)
 
 
 class IgnoringDiffer(Differ):
@@ -152,6 +155,7 @@ class AKNHTMLDiffer:
             f2.flush()
 
             # do the actual diff in a subprocess
+            log.debug("Running diff_akn on %s and %s", f1.name, f2.name)
             proc = await asyncio.create_subprocess_exec(
                 "python", "-m", "indigo_lib.diff_akn", f1.name, f2.name,
                 stdout=asyncio.subprocess.PIPE,
@@ -159,6 +163,7 @@ class AKNHTMLDiffer:
             )
 
             stdout, stderr = await proc.communicate()
+            log.debug("diff_akn finished with return code %d", proc.returncode)
             return stdout.decode('utf-8')
 
     def diff_html(self, old_tree, new_tree):

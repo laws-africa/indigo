@@ -1,19 +1,23 @@
 import datetime
+import json
 import logging
 import copy
 
 from actstream import action
+from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_control
 from django.contrib.contenttypes.models import ContentType
 from django.templatetags.static import static
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django_comments.models import Comment
+from exceptiongroup import catch
+from llama_index.core.tools.function_tool import sync_to_async
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -424,15 +428,19 @@ class SentenceCaseHeadingsView(ManipulateXmlView):
             sentence_caser.sentence_case_headings_in_document(self.document)
 
 
-class DocumentDiffView(DocumentResourceView, APIView):
-    def post(self, request, document_id):
-        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
+class DocumentDiffView(DocumentResourceView, View):
+    # disabled atomic requests
+    dispatch = transaction.non_atomic_requests(View.dispatch)
+
+    @sync_to_async
+    def prepare(self):
+        """Do database-related preparation in a sync manner, including rendering."""
+        local_doc = self.lookup_document()
+
+        data = json.loads(self.request.body)
+        serializer = DocumentAPISerializer(instance=local_doc, data=data)
         serializer.use_full_xml = False
         serializer.is_valid(raise_exception=True)
-
-        differ = AKNHTMLDiffer()
-
-        local_doc = self.document
 
         # set this up to be the modified document
         remote_doc = Document.objects.get(pk=local_doc.pk)
@@ -440,6 +448,8 @@ class DocumentDiffView(DocumentResourceView, APIView):
         # this will set the local_doc's content as the <portion> in provision mode,
         # and update it with the latest unsaved changes regardless
         serializer.set_content()
+
+        differ = AKNHTMLDiffer()
         local_doc.content = differ.preprocess_xml_str(local_doc.document_xml)
 
         provision_eid = serializer.validated_data.get('provision_eid')
@@ -473,19 +483,16 @@ class DocumentDiffView(DocumentResourceView, APIView):
             local_html = local_doc.to_html()
             remote_html = remote_doc.to_html()
 
-        # we have to explicitly tell the HTML parser that we're dealing with utf-8
-        local_tree = parse_html_str(local_html or "<div></div>")
-        remote_tree = parse_html_str(remote_html) if remote_html else None
+        return differ, remote_html, local_html
 
-        diff = differ.diff_html(remote_tree, local_tree)
-        n_changes = differ.count_differences(diff)
-        diff = lxml.html.tostring(diff, encoding='unicode')
+    async def post(self, request, document_id):
+        differ, remote_html, local_html = await self.prepare()
+        diff = await differ.adiff_html_str(remote_html, local_html)
+        # diff is None if there is no difference, in which case just return the remote HTML
+        diff = diff or ("<div>" + remote_html + "</div>")
 
-        # TODO: include other diff'd attributes
-
-        return Response({
-            'html_diff': diff,
-            'n_changes': n_changes,
+        return JsonResponse({
+            'html_diff': diff
         })
 
 

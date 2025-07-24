@@ -16,7 +16,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django_comments.models import Comment
-from exceptiongroup import catch
 from llama_index.core.tools.function_tool import sync_to_async
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed

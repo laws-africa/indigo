@@ -944,7 +944,7 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
             country_doctypes = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])
         doctypes = [(d[1].lower(), d[0]) for d in settings.INDIGO['DOCTYPES'] + country_doctypes]
 
-        subtypes = [(s.abbreviation, s.name) for s in Subtype.objects.all()]
+        subtypes = list(Subtype.objects.all().values_list('abbreviation', 'name'))
         self.fields['subtype'].choices = doctypes + subtypes
         self.subtypes = Subtype.objects.all()
 
@@ -1206,13 +1206,14 @@ class WorkFilterForm(forms.Form, FormAsUrlMixin):
 
         return q
 
-    def facet_item(self, field, value, count):
-        try:
-            # what's the label for this value?
-            label = next(lab for (val, lab) in self.fields[field].choices if val == value)
-        except StopIteration:
-            # technically the value is not in the choices, but we can still use it
-            label = value
+    def facet_item(self, field, value, count, label=None):
+        if not label:
+            try:
+                # what's the label for this value?
+                label = next(lab for (val, lab) in self.fields[field].choices if val == value)
+            except StopIteration:
+                # technically the value is not in the choices, but we can still use it
+                label = value
 
         # is it selected?
         selected = False

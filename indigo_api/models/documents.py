@@ -397,7 +397,10 @@ class Document(DocumentMixin, models.Model):
 
     def amendments(self, approved_only=False):
         if self.expression_date:
-            amendments = self.work.amendments.approved() if approved_only else self.work.amendments.all()
+            if approved_only:
+                amendments = self.work.amendments.approved().prefetch_related('amending_work', 'amending_work__chapter_numbers')
+            else:
+                amendments = self.work.amendments.all().prefetch_related('amending_work', 'amending_work__chapter_numbers')
             return [a for a in amendments if a.date <= self.expression_date]
         else:
             return []
@@ -405,7 +408,7 @@ class Document(DocumentMixin, models.Model):
     def amendments_in_order(self):
         if self.expression_date:
             from indigo_api.models import Amendment
-            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date))
+            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date).prefetch_related('amending_work', 'amending_work__chapter_numbers'))
         else:
             return []
 

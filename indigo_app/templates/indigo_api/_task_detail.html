@@ -105,33 +105,12 @@
           {% url 'task_detail_detail' place=task.place.place_code pk=task.pk as next_url %}
           {% include 'indigo_api/_task_timeline.html' with next_url=next_url %}
         </div>
-        {% with task.resolve_anchor as anchor %}
-          {% if anchor %}
-            <div class="activity-item">
-              {% if anchor.element %}
-                {% url 'document' doc_id=task.document.pk as doc_url %}
-                {% with qid=anchor.toc_entry.qualified_id|default:'' anntn_id=task.annotation.id|slugify %}
-                  {% blocktrans trimmed with item_url=doc_url|add:"?toc="|add:qid|add:"&anntn="|add:anntn_id title=anchor.toc_entry.title|default:anchor.anchor_id %}
-                    Here is <a href="{{ item_url }}">{{ title }}</a> as it appears currently
-                  {% endblocktrans %}
-                {% endwith %}
-                {% if not anchor.exact_match %}
-                  {% blocktrans with a=anchor.anchor_id %}(<b>{{ a }}</b> may have been moved or removed){% endblocktrans %}
-                {% endif %}
-                <div class="sheet-outer"
-                     {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
-                  <div class="sheet-inner is-fragment">
-                    <la-akoma-ntoso frbr-expression-uri="{{ anchor.document.expression_frbr_uri }}">{{ anchor.toc_element_html|default:anchor.element_html|safe }}</la-akoma-ntoso>
-                  </div>
-                </div>
-              {% else %}
-                {% blocktrans trimmed with a=anchor.toc_entry.title|default:anchor.anchor_id %}
-                  The content at <b>{{ a }}</b> is not available and may have been moved or removed.
-                {% endblocktrans %}
-              {% endif %}
-            </div>
-          {% endif %}
-        {% endwith %}
+        {% if task.annotation %}
+          <div class="activity-item spinner-when-empty"
+               hx-get="{% url 'task_annotation_anchor' place=task.place.place_code pk=task.pk %}"
+               hx-trigger="load"
+          ></div>
+        {% endif %}
       </div>
 
       <div class="col-3">
@@ -195,41 +174,6 @@
             <div id="task-labels-list">
               {% include 'indigo_api/_task_labels.html' %}
             </div>
-          </div>
-        </div>
-
-
-        <div class="card mb-3">
-          <h6 class="card-header">{% trans 'Blocked by' %}</h6>
-          <div class="card-body">
-            {% if task.change_task_permission %}
-              <form action="{% url 'task_blocked_by' place=place.place_code pk=task.pk %}" method="POST"
-                    id="task-blocked_by-form">
-                {% csrf_token %}
-
-                <select class="selectpicker" multiple name="blocked_by" onchange="this.form.submit();"
-                        data-dropdown-align-right="true" data-style="btn-link ps-0 text-dark"
-                        {% if task.is_closed %}disabled{% endif %}
-                        data-none-selected-text="{% trans 'Choose tasks' %}" data-selected-text-format="static"
-                        data-live-search="true" data-size="7">
-
-                  {% for blocking_task in possible_blocking_tasks|dictsort:'pk' %}
-                    <option value="{{ blocking_task.id }}" {% if blocking_task in blocked_by %}selected{% endif %}>
-                      #{{ blocking_task.pk }} – {{ blocking_task.title }}</option>
-                  {% endfor %}
-                </select>
-              </form>
-            {% endif %}
-            {% if blocked_by %}
-              <ul class="list-unstyled mb-2">
-                {% for blocking_task in blocked_by|dictsort:'pk' %}
-                  <li>
-                    <a href="{% url 'task_detail' place=place.place_code pk=blocking_task.pk %}">#{{ blocking_task.pk }}
-                      – {{ blocking_task.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
           </div>
         </div>
 

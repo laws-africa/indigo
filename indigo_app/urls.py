@@ -68,6 +68,7 @@ urlpatterns = [
     path('places/<str:place>/tasks/<int:pk>/document-task-overview', tasks.DocumentTaskOverviewView.as_view(), name='document_task_overview'),
     path('places/<str:place>/tasks/<int:pk>/document-task-detail', tasks.DocumentTaskDetailView.as_view(), name='document_task_detail'),
     path('places/<str:place>/tasks/<int:pk>/edit', tasks.TaskEditView.as_view(), name='task_edit'),
+    path('places/<str:place>/tasks/<int:pk>/annotation-anchor', tasks.TaskAnnotationAnchorView.as_view(), name='task_annotation_anchor'),
     path('places/<str:place>/tasks/<int:pk>/assign', tasks.TaskAssignView.as_view(), name='assign_task'),
     path('places/<str:place>/tasks/<int:pk>/assign-to', tasks.TaskAssignToView.as_view(), name='assign_task_to'),
     path('places/<str:place>/tasks/<int:pk>/unassign', tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),

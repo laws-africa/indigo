@@ -682,6 +682,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
         countries = countries.prefetch_related('country', 'localities')
         context['places_toc'] = [{
             'title': country.name,
+            'id': country.code,
             'data': {
                 'slug': country.code,
                 'count': 0,
@@ -689,6 +690,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
             },
             'children': [{
                 'title': loc.name,
+                'id': loc.place_code,
                 'data': {
                     'slug': loc.place_code,
                     'count': 0,

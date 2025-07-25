@@ -4,9 +4,8 @@ import datetime
 
 from actstream import action
 from django.conf import settings
-from django.db import models
+from django.db import models, connection
 from django.db.models import signals
-from django.core.management import call_command
 from django.contrib.auth.models import User
 from django.db.models import JSONField, Case, When, Value, F
 from django.dispatch import receiver
@@ -632,7 +631,39 @@ class Document(DocumentMixin, models.Model):
             return
 
         log.info(f"Pruning old document versions created over {days} days ago, except the {keep} most recent.")
-        call_command("deleterevisions", "indigo_api.Document", f"--keep={keep}", f"--days={days}")
+
+        to_delete_sql = """
+            WITH ranked_revisions AS (
+                SELECT
+                    r.id AS revision_id,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY v.object_id, v.content_type_id
+                        ORDER BY r.date_created DESC
+                    ) AS revision_rank
+                FROM reversion_revision r
+                INNER JOIN reversion_version v ON v.revision_id = r.id
+                WHERE r.date_created <= CURRENT_DATE - INTERVAL %s
+            ),
+            to_delete AS (
+                SELECT revision_id
+                FROM ranked_revisions
+                WHERE revision_rank > %s
+            )
+        """
+
+        with connection.cursor() as cursor:
+            # Step 1: Delete from reversion_version
+            cursor.execute(to_delete_sql + """
+                DELETE FROM reversion_version
+                WHERE revision_id IN (SELECT revision_id FROM to_delete);
+            """, [f'{days} days', keep])
+
+            # Step 2: Delete from reversion_revision
+            cursor.execute(to_delete_sql + """
+                DELETE FROM reversion_revision
+                WHERE id IN (SELECT revision_id FROM to_delete);
+            """, [f'{days} days', keep])
+
         log.info("Pruning complete.")
 
 

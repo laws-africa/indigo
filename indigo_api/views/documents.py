@@ -488,7 +488,7 @@ class DocumentDiffView(DocumentResourceView, View):
         remote_html, local_html = await self.prepare()
         diff = await AKNHTMLDiffer().adiff_html_str(remote_html, local_html)
         # diff is None if there is no difference, in which case just return the remote HTML
-        diff = diff or ("<div>" + remote_html + "</div>")
+        diff = diff or ("<div>" + (remote_html or '') + "</div>")
 
         return JsonResponse({
             'html_diff': diff

@@ -87,6 +87,9 @@ class TaskForm(forms.ModelForm):
                 self.output_file_form.instance.save()
             task.output_file = self.output_file_form.instance
             task.save()
+        # if a 'blocked by' task was selected for the first time, block the task too
+        if commit and task.blocked_by.exists() and task.state in Task.UNBLOCKED_STATES:
+            task.block(task.updated_by_user or task.created_by_user)
         return task
 
 

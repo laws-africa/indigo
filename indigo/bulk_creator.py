@@ -676,7 +676,7 @@ The amendment has already been linked, so start at Step 3 of https://docs.laws.a
             pub_doc.save()
 
     def create_link_gazette_task(self, work, row):
-        existing_task = Task.objects.filter(work=work, code='link-gazette').first()
+        existing_task = Task.objects.filter(work=work, code='link-gazette').first() if work.pk else None
         if not existing_task:
             self.create_task(work, row, task_type='link-gazette')
 

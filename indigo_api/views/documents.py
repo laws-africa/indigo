@@ -245,8 +245,10 @@ class RevisionDiffView(DocumentResourceView, DetailView):
     This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet
     support. So we have to re-implement some basics like permissions checks.
     """
-
     permission_classes = RevisionViewSet.permission_classes
+
+    # disabled atomic requests
+    dispatch = transaction.non_atomic_requests(View.dispatch)
 
     def get_queryset(self):
         return self.document.versions().defer('serialized_data')
@@ -262,7 +264,8 @@ class RevisionDiffView(DocumentResourceView, DetailView):
                 if not perm().has_object_permission(request, self, object):
                     raise PermissionDenied()
 
-    def get(self, request, *args, **kwargs):
+    @sync_to_async
+    def prepare(self, request):
         self.document = self.lookup_document()
         self.check_permissions(request)
 
@@ -286,19 +289,16 @@ class RevisionDiffView(DocumentResourceView, DetailView):
         new_document.document_xml = differ.preprocess_xml_str(new_document.document_xml)
         new_html = new_document.to_html()
 
-        # we have to explicitly tell the HTML parser that we're dealing with utf-8
-        old_tree = parse_html_str(old_html) if old_html else None
-        new_tree = parse_html_str(new_html)
+        return old_html, new_html
 
-        diff = differ.diff_html(old_tree, new_tree)
-        n_changes = differ.count_differences(diff)
-        diff = lxml.html.tostring(diff, encoding='unicode')
-
+    async def get(self, request, *args, **kwargs):
+        old_html, new_html = await self.prepare(request)
+        diff = await AKNHTMLDiffer().adiff_html_str(old_html, new_html)
+        # show whole document if it hasn't changed
+        diff = diff or ("<div>" + new_html + "</div>")
         return JsonResponse({
             'content': diff,
-            'n_changes': n_changes,
         })
-
 
 
 class DocumentActivityViewSet(DocumentResourceView,

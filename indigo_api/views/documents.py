@@ -4,6 +4,7 @@ import logging
 import copy
 
 from actstream import action
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -15,6 +16,7 @@ from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.views.generic import DetailView
 from django_comments.models import Comment
 from asgiref.sync import sync_to_async
 
@@ -29,12 +31,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
 from lxml import etree
-import lxml.html.diff
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
-from indigo.xmlutils import parse_html_str
+from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
@@ -139,7 +140,7 @@ class DocumentResourceView:
 
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
-        super(DocumentResourceView, self).initial(request, **kwargs)
+        super().initial(request, **kwargs)
 
     def lookup_document(self):
         qs = Document.objects.undeleted().no_xml()
@@ -147,7 +148,7 @@ class DocumentResourceView:
         return get_object_or_404(qs, id=doc_id)
 
     def get_serializer_context(self):
-        context = super(DocumentResourceView, self).get_serializer_context()
+        context = super().get_serializer_context()
         context['document'] = self.document
         return context
 
@@ -233,12 +234,43 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
         return Response(status=200)
 
-    @detail_route_action(detail=True, methods=['GET'])
-    @method_decorator(cache_control(public=True, max_age=24 * 3600))
-    def diff(self, request, *args, **kwargs):
-        # this can be cached because the underlying data won't change (although
-        # the formatting might)
+    def get_queryset(self):
+        return self.document.versions().defer('serialized_data')
+
+
+class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentResourceView):
+    """Helper mixin to replicate some DRF functionality for use with async views."""
+    def check_permissions(self, request):
+        for perm in self.permission_classes:
+            if not perm().has_permission(request, self):
+                raise PermissionDenied()
+
+    def check_object_permissions(self, request, object):
+        for perm in self.permission_classes:
+            if hasattr(perm, 'has_object_permission'):
+                if not perm().has_object_permission(request, self, object):
+                    raise PermissionDenied()
+
+
+class RevisionDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, DetailView):
+    """Handles diffs between two revisions of a document.
+
+    This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet
+    support. So we have to re-implement some basics like permissions checks.
+    """
+    permission_classes = RevisionViewSet.permission_classes
+
+    def get_queryset(self):
+        return self.document.versions().defer('serialized_data')
+
+    @sync_to_async
+    def prepare(self, request):
+        self.document = self.lookup_document()
+        self.check_permissions(request)
+
+        # this can be cached because the underlying data won't change (although the formatting might)
         version = self.get_object()
+        self.check_object_permissions(request, version)
 
         # most recent version just before this one
         old_version = self.get_queryset().filter(id__lt=version.id).first()
@@ -256,23 +288,16 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_document.document_xml = differ.preprocess_xml_str(new_document.document_xml)
         new_html = new_document.to_html()
 
-        # we have to explicitly tell the HTML parser that we're dealing with utf-8
-        old_tree = parse_html_str(old_html) if old_html else None
-        new_tree = parse_html_str(new_html)
+        return old_html, new_html
 
-        diff = differ.diff_html(old_tree, new_tree)
-        n_changes = differ.count_differences(diff)
-        diff = lxml.html.tostring(diff, encoding='unicode')
-
-        # TODO: include other diff'd attributes
-
-        return Response({
+    async def get(self, request, *args, **kwargs):
+        old_html, new_html = await self.prepare(request)
+        diff = await AKNHTMLDiffer().adiff_html_str(old_html, new_html)
+        # show whole document if it hasn't changed
+        diff = diff or ("<div>" + new_html + "</div>")
+        return JsonResponse({
             'content': diff,
-            'n_changes': n_changes,
         })
-
-    def get_queryset(self):
-        return self.document.versions().defer('serialized_data')
 
 
 class DocumentActivityViewSet(DocumentResourceView,
@@ -427,14 +452,12 @@ class SentenceCaseHeadingsView(ManipulateXmlView):
             sentence_caser.sentence_case_headings_in_document(self.document)
 
 
-class DocumentDiffView(DocumentResourceView, View):
-    # disabled atomic requests
-    dispatch = transaction.non_atomic_requests(View.dispatch)
-
+class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, View):
     @sync_to_async
-    def prepare(self):
+    def prepare(self, request):
         """Do database-related preparation in a sync manner, including rendering."""
-        local_doc = self.lookup_document()
+        self.document = local_doc = self.lookup_document()
+        self.check_permissions(request)
 
         data = json.loads(self.request.body)
         serializer = DocumentAPISerializer(instance=local_doc, data=data)
@@ -485,7 +508,7 @@ class DocumentDiffView(DocumentResourceView, View):
         return remote_html, local_html
 
     async def post(self, request, document_id):
-        remote_html, local_html = await self.prepare()
+        remote_html, local_html = await self.prepare(request)
         diff = await AKNHTMLDiffer().adiff_html_str(remote_html, local_html)
         # diff is None if there is no difference, in which case just return the remote HTML
         diff = diff or ("<div>" + (remote_html or '') + "</div>")

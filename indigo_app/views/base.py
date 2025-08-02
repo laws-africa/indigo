@@ -1,5 +1,7 @@
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
@@ -25,6 +27,23 @@ class IndigoJSViewMixin(object):
         if self.js_view is None:
             return self.__class__.__name__
         return self.js_view
+
+
+class AsyncDispatchMixin:
+    """ This mixin helps makes class-based async-friendly when dispatch() performs database access. This is common
+    for most Indigo views since they use AbstractAuthedIndigoView. This mixin will ensure that the dispatch method
+    works correctly for async views.
+
+    The get/post method on the view must be async, and the dispatch method will call them accordingly.
+    """
+
+    # disabled atomic requests
+    @transaction.non_atomic_requests
+    async def dispatch(self, request, *args, **kwargs):
+        # when dispatch calls the actual view, it will get back a coroutine result
+        resp = await sync_to_async(super().dispatch)(request, *args, **kwargs)
+        # now wait on the coroutine result
+        return await resp
 
 
 class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):

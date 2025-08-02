@@ -31,12 +31,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import StructuredDocument
 
 from lxml import etree
-import lxml.html.diff
 
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
-from indigo.xmlutils import parse_html_str
+from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
@@ -239,20 +238,8 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return self.document.versions().defer('serialized_data')
 
 
-class RevisionDiffView(DocumentResourceView, DetailView):
-    """Handles diffs between two revisions of a document.
-
-    This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet
-    support. So we have to re-implement some basics like permissions checks.
-    """
-    permission_classes = RevisionViewSet.permission_classes
-
-    # disabled atomic requests
-    dispatch = transaction.non_atomic_requests(DetailView.dispatch)
-
-    def get_queryset(self):
-        return self.document.versions().defer('serialized_data')
-
+class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentResourceView):
+    """Helper mixin to replicate some DRF functionality for use with async views."""
     def check_permissions(self, request):
         for perm in self.permission_classes:
             if not perm().has_permission(request, self):
@@ -263,6 +250,18 @@ class RevisionDiffView(DocumentResourceView, DetailView):
             if hasattr(perm, 'has_object_permission'):
                 if not perm().has_object_permission(request, self, object):
                     raise PermissionDenied()
+
+
+class RevisionDiffView(AsyncDocumentResourceViewMixin, DetailView):
+    """Handles diffs between two revisions of a document.
+
+    This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet
+    support. So we have to re-implement some basics like permissions checks.
+    """
+    permission_classes = RevisionViewSet.permission_classes
+
+    def get_queryset(self):
+        return self.document.versions().defer('serialized_data')
 
     @sync_to_async
     def prepare(self, request):
@@ -453,14 +452,12 @@ class SentenceCaseHeadingsView(ManipulateXmlView):
             sentence_caser.sentence_case_headings_in_document(self.document)
 
 
-class DocumentDiffView(DocumentResourceView, View):
-    # disabled atomic requests
-    dispatch = transaction.non_atomic_requests(View.dispatch)
-
+class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, View):
     @sync_to_async
-    def prepare(self):
+    def prepare(self, request):
         """Do database-related preparation in a sync manner, including rendering."""
-        local_doc = self.lookup_document()
+        self.document = local_doc = self.lookup_document()
+        self.check_permissions(request)
 
         data = json.loads(self.request.body)
         serializer = DocumentAPISerializer(instance=local_doc, data=data)
@@ -511,7 +508,7 @@ class DocumentDiffView(DocumentResourceView, View):
         return remote_html, local_html
 
     async def post(self, request, document_id):
-        remote_html, local_html = await self.prepare()
+        remote_html, local_html = await self.prepare(request)
         diff = await AKNHTMLDiffer().adiff_html_str(remote_html, local_html)
         # diff is None if there is no difference, in which case just return the remote HTML
         diff = diff or ("<div>" + (remote_html or '') + "</div>")

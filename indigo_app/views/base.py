@@ -1,3 +1,5 @@
+import asyncio
+
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -6,6 +8,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
+from tornado.gen import is_coroutine_function
 
 from indigo_api.authz import is_maintenance_mode
 from indigo_api.models import Country, Work, AllPlace
@@ -43,7 +46,9 @@ class AsyncDispatchMixin:
         # when dispatch calls the actual view, it will get back a coroutine result
         resp = await sync_to_async(super().dispatch)(request, *args, **kwargs)
         # now wait on the coroutine result
-        return await resp
+        if asyncio.iscoroutine(resp):
+            return await resp
+        return resp
 
 
 class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):

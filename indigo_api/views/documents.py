@@ -252,7 +252,7 @@ class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentResourceView):
                     raise PermissionDenied()
 
 
-class RevisionDiffView(AsyncDocumentResourceViewMixin, DetailView):
+class RevisionDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, DetailView):
     """Handles diffs between two revisions of a document.
 
     This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet

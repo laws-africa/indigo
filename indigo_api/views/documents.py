@@ -248,7 +248,7 @@ class RevisionDiffView(DocumentResourceView, DetailView):
     permission_classes = RevisionViewSet.permission_classes
 
     # disabled atomic requests
-    dispatch = transaction.non_atomic_requests(View.dispatch)
+    dispatch = transaction.non_atomic_requests(DetailView.dispatch)
 
     def get_queryset(self):
         return self.document.versions().defer('serialized_data')

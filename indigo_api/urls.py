@@ -1,4 +1,5 @@
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_control
 from rest_framework.routers import DefaultRouter
 
 import indigo_api.views.attachments as attachments
@@ -29,6 +30,8 @@ urlpatterns = [
     path('documents/<int:document_id>/analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
     path('documents/<int:document_id>/analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
     path('documents/<int:document_id>/analysis/sentence-case-headings', documents.SentenceCaseHeadingsView.as_view(), name='sentence-case-headings'),
+
+    path('documents/<int:document_id>/revisions/<int:pk>/diff', cache_control(public=True, max_age=24 * 3600)(documents.RevisionDiffView.as_view()), name='document-revisions-diff'),
 
     path('', include(router.urls)),
 ]

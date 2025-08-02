@@ -4,6 +4,7 @@ import logging
 import copy
 
 from actstream import action
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -15,6 +16,7 @@ from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.views.generic import DetailView
 from django_comments.models import Comment
 from asgiref.sync import sync_to_async
 
@@ -139,7 +141,7 @@ class DocumentResourceView:
 
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
-        super(DocumentResourceView, self).initial(request, **kwargs)
+        super().initial(request, **kwargs)
 
     def lookup_document(self):
         qs = Document.objects.undeleted().no_xml()
@@ -147,7 +149,7 @@ class DocumentResourceView:
         return get_object_or_404(qs, id=doc_id)
 
     def get_serializer_context(self):
-        context = super(DocumentResourceView, self).get_serializer_context()
+        context = super().get_serializer_context()
         context['document'] = self.document
         return context
 
@@ -233,12 +235,40 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
         return Response(status=200)
 
-    @detail_route_action(detail=True, methods=['GET'])
-    @method_decorator(cache_control(public=True, max_age=24 * 3600))
-    def diff(self, request, *args, **kwargs):
-        # this can be cached because the underlying data won't change (although
-        # the formatting might)
+    def get_queryset(self):
+        return self.document.versions().defer('serialized_data')
+
+
+class RevisionDiffView(DocumentResourceView, DetailView):
+    """Handles diffs between two revisions of a document.
+
+    This could be implemented as a detail view of RevisionViewSet, but it runs asynchronously which DRF doesn't yet
+    support. So we have to re-implement some basics like permissions checks.
+    """
+
+    permission_classes = RevisionViewSet.permission_classes
+
+    def get_queryset(self):
+        return self.document.versions().defer('serialized_data')
+
+    def check_permissions(self, request):
+        for perm in self.permission_classes:
+            if not perm().has_permission(request, self):
+                raise PermissionDenied()
+
+    def check_object_permissions(self, request, object):
+        for perm in self.permission_classes:
+            if hasattr(perm, 'has_object_permission'):
+                if not perm().has_object_permission(request, self, object):
+                    raise PermissionDenied()
+
+    def get(self, request, *args, **kwargs):
+        self.document = self.lookup_document()
+        self.check_permissions(request)
+
+        # this can be cached because the underlying data won't change (although the formatting might)
         version = self.get_object()
+        self.check_object_permissions(request, version)
 
         # most recent version just before this one
         old_version = self.get_queryset().filter(id__lt=version.id).first()
@@ -264,15 +294,11 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         n_changes = differ.count_differences(diff)
         diff = lxml.html.tostring(diff, encoding='unicode')
 
-        # TODO: include other diff'd attributes
-
-        return Response({
+        return JsonResponse({
             'content': diff,
             'n_changes': n_changes,
         })
 
-    def get_queryset(self):
-        return self.document.versions().defer('serialized_data')
 
 
 class DocumentActivityViewSet(DocumentResourceView,

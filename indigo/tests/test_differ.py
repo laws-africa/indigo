@@ -89,6 +89,195 @@ class AKNHTMLDifferTestCase(TestCase):
             diff,
         )
 
+    def test_remarks(self):
+        diff = self.differ.diff_html_str(
+            """
+<section class="akn-chapter" id="chp_3" data-eId="chp_3">
+  <h2>Chapter 3<br />Remark diff debugging</h2>
+  <section class="akn-section" id="chp_3__sec_4" data-eId="chp_3__sec_4">
+    <h3>4 Definitions</h3>
+    <span class="akn-content"
+      ><span class="akn-p" id="chp_3__sec_4__p_1" data-eId="chp_3__sec_4__p_1"
+        >In this Act, unless the context otherwise indicates—</span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-amendment"
+        id="chp_3__sec_4__p_2"
+        data-eId="chp_3__sec_4__p_2"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-amendment"
+          id="chp_3__sec_4__p_2__def_1"
+          data-eId="chp_3__sec_4__p_2__def_1"
+          >amendment</span
+        >" means a deletion, addition, alteration or interlineation;</span
+      ><span class="akn-p" id="chp_3__sec_4__p_3" data-eId="chp_3__sec_4__p_3"
+        ><span class="akn-remark" data-status="editorial"
+          >[definition of "amendment" inserted by section 2(a) of
+          <a
+            data-href="/akn/za/act/1992/43"
+            class="akn-ref"
+            href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43"
+            id="chp_3__sec_4__p_3__ref_1"
+            data-eId="chp_3__sec_4__p_3__ref_1"
+            >Act 43 of 1992</a
+          >]</span
+        ></span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-Court"
+        id="chp_3__sec_4__p_4"
+        data-eId="chp_3__sec_4__p_4"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-Court"
+          id="chp_3__sec_4__p_4__def_1"
+          data-eId="chp_3__sec_4__p_4__def_1"
+          >Court</span
+        >" means a provincial or local division of the Supreme Court of South
+        Africa or the High Court of South-West Africa or any judge
+        thereof;</span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-deletion"
+        id="chp_3__sec_4__p_5"
+        data-eId="chp_3__sec_4__p_5"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-deletion"
+          id="chp_3__sec_4__p_5__def_1"
+          data-eId="chp_3__sec_4__p_5__def_1"
+          >deletion</span
+        >" means a deletion, cancellation or obliteration in whatever manner
+        effected, excluding a deletion, cancellation or obliteration that
+        contemplates the revocation of the entire will;</span
+      ><span class="akn-p" id="chp_3__sec_4__p_6" data-eId="chp_3__sec_4__p_6"
+        ><span class="akn-remark" data-status="editorial"
+          >[definition of "deletion" inserted by section 2(b) of
+          <a
+            data-href="/akn/za/act/1992/43"
+            class="akn-ref"
+            href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43"
+            id="chp_3__sec_4__p_6__ref_1"
+            data-eId="chp_3__sec_4__p_6__ref_1"
+            >Act 43 of 1992</a
+          >]</span
+        ></span
+      ></span
+    >
+  </section>
+</section>
+            """,
+            """
+<section class="akn-chapter" id="chp_3" data-eId="chp_3">
+  <h2>Chapter 3<br />Remark diff debugging</h2>
+  <section class="akn-section" id="chp_3__sec_4" data-eId="chp_3__sec_4">
+    <h3>4 Definitions</h3>
+    <span class="akn-content"
+      ><span class="akn-p" id="chp_3__sec_4__p_1" data-eId="chp_3__sec_4__p_1"
+        >In this Act, unless the context otherwise indicates—</span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-amendment"
+        id="chp_3__sec_4__p_2"
+        data-eId="chp_3__sec_4__p_2"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-amendment"
+          id="chp_3__sec_4__p_2__def_1"
+          data-eId="chp_3__sec_4__p_2__def_1"
+          >amendment</span
+        >" means a deletion, addition, alteration or interlineation;</span
+      ><span class="akn-p" id="chp_3__sec_4__p_3" data-eId="chp_3__sec_4__p_3"
+        ><span class="akn-remark" data-status="editorial"
+          >[definition of "amendment" inserted by section 2(a) of
+          <a
+            data-href="/akn/za/act/1992/43"
+            class="akn-ref"
+            href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43"
+            id="chp_3__sec_4__p_3__ref_1"
+            data-eId="chp_3__sec_4__p_3__ref_1"
+            >Act 43 of 1992</a
+          >]</span
+        ></span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-Court"
+        id="chp_3__sec_4__p_4"
+        data-eId="chp_3__sec_4__p_4"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-Court"
+          id="chp_3__sec_4__p_4__def_1"
+          data-eId="chp_3__sec_4__p_4__def_1"
+          >Court</span
+        >" means a provincial or local division of the Supreme Court of South
+        Africa or any judge thereof;</span
+      ><span class="akn-p" id="chp_3__sec_4__p_5" data-eId="chp_3__sec_4__p_5"
+        ><span class="akn-remark" data-status="editorial"
+          >[definition of "court" amended by
+          <a
+            data-href="/akn/za/act/1996/49"
+            class="akn-ref"
+            href="http://localhost:8000/resolver/resolve/akn/za/act/1996/49"
+            id="chp_3__sec_4__p_5__ref_1"
+            data-eId="chp_3__sec_4__p_5__ref_1"
+            >Act 49 of 1996</a
+          >]</span
+        ></span
+      ><span
+        class="akn-p"
+        data-refersTo="#term-deletion"
+        id="chp_3__sec_4__p_6"
+        data-eId="chp_3__sec_4__p_6"
+        >"<span
+          class="akn-def"
+          data-refersTo="#term-deletion"
+          id="chp_3__sec_4__p_6__def_1"
+          data-eId="chp_3__sec_4__p_6__def_1"
+          >deletion</span
+        >" means a deletion, cancellation or obliteration in whatever manner
+        effected, excluding a deletion, cancellation or obliteration that
+        contemplates the revocation of the entire will;</span
+      ><span class="akn-p" id="chp_3__sec_4__p_7" data-eId="chp_3__sec_4__p_7"
+        ><span class="akn-remark" data-status="editorial"
+          >[definition of "deletion" inserted by section 2(b) of
+          <a
+            data-href="/akn/za/act/1992/43"
+            class="akn-ref"
+            href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43"
+            id="chp_3__sec_4__p_7__ref_1"
+            data-eId="chp_3__sec_4__p_7__ref_1"
+            >Act 43 of 1992</a
+          >]</span
+        ></span
+      ></span
+    >
+  </section>
+</section>
+            """
+        )
+
+        # TODO: this diff is bad, it shouldn't have the <ins> and <del> tags in the remarks.
+        self.assertMultiLineEqual(
+            """<section class="akn-chapter" id="chp_3" data-eid="chp_3">
+  <h2>Chapter 3<br>Remark diff debugging</h2>
+  <section class="akn-section" id="chp_3__sec_4" data-eid="chp_3__sec_4">
+    <h3>4 Definitions</h3>
+    <span class="akn-content"><span class="akn-p" data-eid="chp_3__sec_4__p_1" id="chp_3__sec_4__p_1">In this Act, unless the context otherwise indicates&#x2014;</span><span class="akn-p" data-refersto="#term-amendment" data-eid="chp_3__sec_4__p_2" id="chp_3__sec_4__p_2">"<span class="akn-def" data-refersto="#term-amendment">amendment</span>" means a deletion, addition, alteration or interlineation;</span><span class="akn-p" data-eid="chp_3__sec_4__p_3" id="chp_3__sec_4__p_3"><span class="akn-remark">[definition of "amendment" inserted by section 2(a) of
+          <a data-href="/akn/za/act/1992/43" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43" data-eid="chp_3__sec_4__p_3__ref_1" id="chp_3__sec_4__p_3__ref_1">Act 43 of 1992</a>]</span></span><span class="akn-p" data-refersto="#term-Court" data-eid="chp_3__sec_4__p_4" id="chp_3__sec_4__p_4">"<span class="akn-def" data-refersto="#term-Court">Court</span>" means a provincial or local division of the Supreme Court of South
+        Africa or <span class="diff-pair"><del>the High Court of South-West Africa or&#xA0;</del><ins>&#xA0;</ins></span>any judge<span class="diff-pair"><del>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</del><ins>&#xA0;</ins></span> thereof;</span><span class="ins akn-p" data-eid="chp_3__sec_4__p_5" id="chp_3__sec_4__p_5"><span class="akn-remark">[definition of "court" amended by
+          <a data-href="/akn/za/act/1996/49" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1996/49" data-eid="chp_3__sec_4__p_5__ref_1" id="chp_3__sec_4__p_5__ref_1">Act 49 of 1996</a>]</span></span><span class="akn-p" data-refersto="#term-deletion" data-eid="chp_3__sec_4__p_6" id="chp_3__sec_4__p_6">"<span class="akn-def" data-refersto="#term-deletion">deletion</span>" means a deletion, cancellation or obliteration in whatever manner
+        effected, excluding a deletion, cancellation or obliteration that
+        contemplates the revocation of the entire will;</span><span class="akn-p" data-eid="chp_3__sec_4__p_7" id="chp_3__sec_4__p_7"><span class="del akn-remark">[definition of "deletion" inserted by section 2(b) of
+          <a data-href="/akn/za/act/1992/43" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43" data-eid="chp_3__sec_4__p_6__ref_1" id="chp_3__sec_4__p_6__ref_1">Act 43 of 1992</a>]</span><span class="ins akn-remark">[definition of "deletion" inserted by section 2(b) of
+          <a data-href="/akn/za/act/1992/43" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43" data-eid="chp_3__sec_4__p_7__ref_1" id="chp_3__sec_4__p_7__ref_1">Act 43 of 1992</a>]</span></span></span>
+  </section>
+</section>""",
+            diff.strip()
+        )
+
 
 class AttributeDifferTestCase(TestCase):
     maxDiff = None

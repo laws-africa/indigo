@@ -1,4 +1,5 @@
 from django.test import TestCase
+from xmldiff.formatting import XMLFormatter
 
 from indigo.analysis.differ import AttributeDiffer, AKNHTMLDiffer
 
@@ -86,6 +87,26 @@ class AKNHTMLDifferTestCase(TestCase):
 
         self.assertEqual(
             '<p class="akn-p">Some text <a class="ins akn-ref" href="https://example.com">new</a><ins> and </ins><a class="akn-ref" href="https://example.com">link</a>.</p>',
+            diff,
+        )
+
+    def test_p_inserted(self):
+        diff = self.differ.diff_html_str(
+            '<p>First p.</p><p>Second p.</p>',
+            '<p>First p.</p><p>Inserted text.</p><p>Second p.</p>',
+        )
+        self.assertEqual(
+            '<div><p>First p.</p><p><span class="diff-pair"><del>Second p</del><ins>Inserted text</ins></span>.</p><p class="ins ">Second p.</p></div>',
+            diff,
+        )
+
+    def test_p_inserted_with_ids(self):
+        diff = self.differ.diff_html_str(
+            '<p id="p_1">First p.</p><p id="p_2">Second p.</p>',
+            '<p id="p_1">First p.</p><p id="p_2">Inserted text.</p><p id="p_3">Second p.</p>',
+        )
+        self.assertEqual(
+            '<div><p id="p_1">First p.</p><p id="p_2"><span class="diff-pair"><del>Second p</del><ins>Inserted text</ins></span>.</p><p class="ins " id="p_3">Second p.</p></div>',
             diff,
         )
 

@@ -43,6 +43,9 @@ class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
                     del element.attrib[k]
         return super().get_placeholder(element, ttype, close_ph)
 
+    def is_formatting(self, element):
+        return element.get('class') in ['akn-remark']
+
 
 class HTMLFormatter(formatting.XMLFormatter):
     """ Formats xmldiff output for HTML AKN documents.

@@ -16,23 +16,10 @@ from indigo.xmlutils import parse_html_str
 log = logging.getLogger(__name__)
 
 
-class IgnoringDiffer(Differ):
-    """ Ignores most data- attributes.
-    """
-    allowed = ['data-refersto']
-
-    def node_attribs(self, node):
-        attribs = dict(node.attrib)
-        for k in list(attribs.keys()):
-            if k.startswith('data-') and k not in self.allowed:
-                del attribs[k]
-        return attribs
-
-
 class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
     """ Ignores most data- attributes.
     """
-    allowed = IgnoringDiffer.allowed
+    allowed = ['data-refersto']
 
     def get_placeholder(self, element, ttype, close_ph):
         # remove attributes we don't want to diff

@@ -231,7 +231,7 @@ class AKNHTMLDiffer:
                 a, b = match.span()
                 # non-breaking spaces
                 return '\xA0' * (b - a)
-            del_.text = ws_re.sub(repl, del_.text)
+            del_.text = ws_re.sub(repl, del_.text or '')
 
             if del_.tail or ins is None or (ins.tag != 'ins' and not (ins.get('class') or '').startswith('ins ')):
                 ins = del_.makeelement('ins')

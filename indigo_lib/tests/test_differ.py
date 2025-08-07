@@ -44,28 +44,58 @@ class AKNHTMLDifferTestCase(TestCase):
             diff,
         )
 
-    def test_text_formatting_add_remove(self):
+    def test_formatting_add_remove(self):
         diff = self.differ.diff_html_str(
             '<p>some text <b>with bold</b> text and a tail.</p>',
             '<p>some text with bold text <i>and a tail.</i></p>'
         )
 
         self.assertEqual(
-            '''
-            <p>some text <ins>with bold text </ins><i diff:rename="b"><span class="diff-pair"><del>with bold</del><ins>and a tail.</ins></span></i><span class="diff-pair"><del>&#xA0;text and a tail.</del><ins>&#xA0;</ins></span></p>
-            '''
-            '<p>some <span class="diff-pair"><del>old</del><ins>new</ins></span> text <b>no change</b> text <i>no change</i></p>',
+            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins>with bold</ins></span> text <span class="diff-pair"><del>and a tail.</del><ins><i>and a tail.</i></ins></span></p>',
             diff,
         )
 
-    def test_text_formatting_changes(self):
+    def test_formatting_changes(self):
         diff = self.differ.diff_html_str(
             '<p>some text <b>with bold</b> text and a tail.</p>',
             '<p>some text <i>with bold</i> text and a tail.</p>'
         )
 
         self.assertEqual(
-            '<p>some <span class="diff-pair"><del>old</del><ins>new</ins></span> text <b>no change</b> text <i>no change</i></p>',
+            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins><i>with bold</i></ins></span> text and a tail.</p>',
+            diff,
+        )
+
+    def test_formatting_added(self):
+        diff = self.differ.diff_html_str(
+            '<p>Some text bold text and a tail.</p>',
+            '<p>Some text <b>bold text</b> and a tail.</p>'
+        )
+
+        self.assertEqual(
+            '<p>Some text <span class="diff-pair"><del>bold text</del><ins><b>bold text</b></ins></span> and a tail.</p>',
+            diff,
+        )
+
+    def test_formatting_and_text_changes(self):
+        diff = self.differ.diff_html_str(
+            '<p>some text <b>with bold</b> text and a tail.</p>',
+            '<p>some text <i>with x bold</i> text and a tail.</p>'
+        )
+
+        self.assertEqual(
+            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins><i>with x bold</i></ins></span> text and a tail.</p>',
+            diff,
+        )
+
+    def test_formatting_removed(self):
+        diff = self.differ.diff_html_str(
+            '<p>Some text <b>bold text</b> and a tail.</p>',
+            '<p>Some text bold text and a tail.</p>'
+        )
+
+        self.assertEqual(
+            '<p>Some text <span class="diff-pair"><del><b>bold text</b></del><ins>bold text</ins></span> and a tail.</p>',
             diff,
         )
 
@@ -80,25 +110,14 @@ class AKNHTMLDifferTestCase(TestCase):
             diff,
         )
 
-    def test_inline_tag_removed(self):
+    def test_inline_tag_and_text_removed(self):
         diff = self.differ.diff_html_str(
             '<p>Some text <b>bold text</b> and a tail.</p>',
-            '<p>Some text bold text and a tail.</p>'
+            '<p>Some text and a tail.</p>'
         )
 
         self.assertEqual(
-            '<p>Some text <ins>bold text and a tail.</ins><b class="del ">bold text</b> and a tail.</p>',
-            diff,
-        )
-
-    def test_inline_tag_added(self):
-        diff = self.differ.diff_html_str(
-            '<p>Some text bold text and a tail.</p>',
-            '<p>Some text <b>bold text</b> and a tail.</p>'
-        )
-
-        self.assertEqual(
-            '<p>Some text <span class="diff-pair"><del>bold text and a tail.</del><b class="ins ">bold text</b></span><ins> and a tail.</ins></p>',
+            '<p>Some text <span class="diff-pair"><del><b>bold text</b><ins>bold text</ins></span> and a tail.',
             diff,
         )
 

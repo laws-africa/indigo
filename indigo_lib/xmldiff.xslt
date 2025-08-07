@@ -32,54 +32,11 @@
   <!-- we don't care about attribute changes -->
   <xsl:template match="@diff:add-attr | @diff:remove-attr | @diff:update-attr" />
 
-  <!-- directly nested, this pair means that a formatting element was changed -->
-  <xsl:template match="*[@diff:delete-formatting and *[@diff:insert-formatting]]" priority="1">
-    <del>
-      <xsl:copy>
-        <!-- Copy all attributes except diff:insert-formatting -->
-        <xsl:apply-templates select="@*[local-name() != 'delete-formatting']"/>
-        <xsl:apply-templates select="*[@diff:insert-formatting]/node()" />
-      </xsl:copy>
-    </del>
-    <ins>
-      <xsl:apply-templates select="*[@diff:insert-formatting]" mode="pair" />
-    </ins>
-  </xsl:template>
-
-  <!-- formatting tag added -->
-  <xsl:template match="*[@diff:insert-formatting]">
-    <del>
-      <xsl:apply-templates select="node()" />
-    </del>
-    <ins>
-      <xsl:copy>
-        <!-- Copy all attributes except diff:insert-formatting -->
-        <xsl:apply-templates select="@*[local-name() != 'insert-formatting']"/>
-        <xsl:apply-templates select="node()" />
-      </xsl:copy>
-    </ins>
-  </xsl:template>
-
-  <!-- formatting tag removed, but text remains -->
-  <xsl:template match="*[@diff:delete-formatting]">
-    <del>
-      <xsl:copy>
-        <!-- Copy all attributes except diff:insert-formatting -->
-        <xsl:apply-templates select="@*[local-name() != 'delete-formatting']"/>
-        <xsl:apply-templates select="node()" />
-      </xsl:copy>
-    </del>
-    <ins>
-      <xsl:apply-templates select="node()" />
-    </ins>
-  </xsl:template>
-
-  <xsl:template match="*[@diff:insert-formatting]" mode="pair">
-    <xsl:copy>
-      <!-- Copy all attributes except diff:insert-formatting -->
-      <xsl:apply-templates select="@*[local-name() != 'insert-formatting']" />
-      <xsl:apply-templates select="node()" />
-    </xsl:copy>
+  <!-- formatting changes don't usually happen because we don't have formatting tags defined -->
+  <xsl:template match="@diff:insert-formatting">
+    <xsl:attribute name="class">
+      <xsl:value-of select="'ins'"/>
+    </xsl:attribute>
   </xsl:template>
 
   <!-- we can't change an existing class attribute, so copy it to classx and then python will move classx to class -->

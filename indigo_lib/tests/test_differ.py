@@ -51,7 +51,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins>with bold</ins></span> text <span class="diff-pair"><del>and a tail.</del><ins><i>and a tail.</i></ins></span></p>',
+            '<p>some text <b class="del ">with bold</b><span class="diff-pair"><del>&#xA0;text and a tail.</del><ins>with bold text </ins></span><i class="ins ">and a tail.</i></p>',
             diff,
         )
 
@@ -62,7 +62,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins><i>with bold</i></ins></span> text and a tail.</p>',
+            '<p>some text <b class="del ">with bold</b><i class="ins ">with bold</i> text and a tail.</p>',
             diff,
         )
 
@@ -73,7 +73,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>Some text <span class="diff-pair"><del>bold text</del><ins><b>bold text</b></ins></span> and a tail.</p>',
+            '<p>Some text <span class="diff-pair"><del>bold text</del><b class="ins ">bold text</b></span> and a tail.</p>',
             diff,
         )
 
@@ -84,7 +84,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>some text <span class="diff-pair"><del><b>with bold</b></del><ins><i>with x bold</i></ins></span> text and a tail.</p>',
+            '<p>some text <b class="del ">with bold</b><i class="ins ">with x bold</i> text and a tail.</p>',
             diff,
         )
 
@@ -95,7 +95,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>Some text <span class="diff-pair"><del><b>bold text</b></del><ins>bold text</ins></span> and a tail.</p>',
+            '<p>Some text <b class="del ">bold text</b><ins>bold text</ins> and a tail.</p>',
             diff,
         )
 
@@ -117,7 +117,7 @@ class AKNHTMLDifferTestCase(TestCase):
         )
 
         self.assertEqual(
-            '<p>Some text <span class="diff-pair"><del><b>bold text</b><ins>bold text</ins></span> and a tail.',
+            '<p>Some text<span class="diff-pair"><del>&#xA0;</del><ins>&#xA0;</ins></span><b class="del ">bold text</b> and a tail.</p>',
             diff,
         )
 
@@ -188,7 +188,7 @@ class AKNHTMLDifferTestCase(TestCase):
         """)
 
         self.assertMultiLineEqual("""
-            <span class="akn-content"><span class="akn-p" id="p_1">Prefix <span class="akn-remark">A <ins>changed </ins>remark</span>.</span></span>
+            <span class="akn-content"><span class="akn-p" id="p_1">Prefix <span class="del akn-remark">A remark</span><span class="ins akn-remark">A changed remark</span>.</span></span>
         """.strip(), diff.strip())
 
     def test_inline_text_changed_nested(self):
@@ -207,7 +207,7 @@ class AKNHTMLDifferTestCase(TestCase):
         """)
 
         self.assertMultiLineEqual("""
-            <span class="akn-content"><span class="akn-p" id="p_1">Prefix <span class="akn-remark">A remark <a href="#foo" class="del ">a link</a></span><a href="#foo" class="ins ">text changed</a>.</span></span>
+            <span class="akn-content"><span class="akn-p" id="p_1">Prefix <span class="del akn-remark">A remark <a href="#foo">a link</a></span><span class="ins akn-remark">A remark <a href="#foo">text changed</a></span>.</span></span>
         """.strip(), diff.strip())
 
     def test_remarks(self):
@@ -298,6 +298,70 @@ class AKNHTMLDifferTestCase(TestCase):
         self.assertMultiLineEqual(
             """
             <span class="akn-content"><span class="akn-p" data-eid="chp_3__sec_4__p_1" id="chp_3__sec_4__p_1">In this Act, unless the context otherwise indicates&#x2014;</span><span class="akn-p" data-refersto="#term-Court" data-eid="chp_3__sec_4__p_2" id="chp_3__sec_4__p_2">"<span class="akn-def" data-refersto="#term-Court">Court</span>" means a provincial or local division of the Supreme Court of South Africa or any judge thereof;</span><span class="ins akn-p" data-eid="chp_3__sec_4__p_3" id="chp_3__sec_4__p_3"><span class="akn-remark" data-status="editorial">[definition of "court" amended by <a data-href="/akn/za/act/1996/49" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1996/49">Act 49 of 1996</a>]</span></span><span class="akn-p" data-refersto="#term-deletion" data-eid="chp_3__sec_4__p_4" id="chp_3__sec_4__p_4">"<span class="akn-def" data-refersto="#term-deletion">deletion</span>" means a deletion, cancellation or obliteration in whatever manner effected, excluding a deletion, cancellation or obliteration that contemplates the revocation of the entire will;</span><span class="akn-p" data-eid="chp_3__sec_4__p_5" id="chp_3__sec_4__p_5"><span class="akn-remark" data-status="editorial">[definition of "deletion" inserted by section 2(b) of <a data-href="/akn/za/act/1992/43" class="akn-ref" href="http://localhost:8000/resolver/resolve/akn/za/act/1992/43">Act 43 of 1992</a>]</span></span></span>
+            """.strip(),
+            diff.strip()
+        )
+
+    def test_dangling_line(self):
+        diff = self.differ.diff_html_str("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<section class="akn-section" data-eId="chp_2__sec_4" id="chp_2__sec_4">
+    <h3>4 Section 2</h3>
+    <span class="akn-intro">
+        <span class="akn-p" data-eId="chp_2__sec_4__intro__p_1" id="chp_2__sec_4__intro__p_1">introductory text</span>
+    </span>
+    <section class="akn-subsection" data-eId="chp_2__sec_4__subsec_1" id="chp_2__sec_4__subsec_1">
+        <span class="akn-num">(1)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eId="chp_2__sec_4__subsec_1__p_1" id="chp_2__sec_4__subsec_1__p_1">subsection 1</span>
+        </span>
+    </section>
+</section>
+        """, """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<section class="akn-section" data-eId="chp_2__sec_4" id="chp_2__sec_4">
+    <h3>4 Section 2</h3>
+    <span class="akn-intro">
+        <span class="akn-p" data-eId="chp_2__sec_4__intro__p_1" id="chp_2__sec_4__intro__p_1">introductory text changed</span>
+    </span>
+    <section class="akn-subsection" data-eId="chp_2__sec_4__subsec_1a" id="chp_2__sec_4__subsec_1a">
+        <span class="akn-num">(1a)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eId="chp_2__sec_4__subsec_1a__p_1" id="chp_2__sec_4__subsec_1a__p_1">subsection 1</span>
+        </span>
+    </section>
+    <section class="akn-subsection" data-eId="chp_2__sec_4__subsec_2" id="chp_2__sec_4__subsec_2">
+        <span class="akn-num">(2)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eId="chp_2__sec_4__subsec_2__p_1" id="chp_2__sec_4__subsec_2__p_1">subsection added</span>
+        </span>
+    </section>
+</section>
+        """)
+
+        self.assertMultiLineEqual("""
+<section class="akn-section" data-eid="chp_2__sec_4" id="chp_2__sec_4">
+    <h3>4 Section 2</h3>
+    <span class="akn-intro">
+        <span class="akn-p" data-eid="chp_2__sec_4__intro__p_1" id="chp_2__sec_4__intro__p_1">introductory text<ins> changed</ins></span>
+    </span>
+    <section class="ins akn-subsection" data-eid="chp_2__sec_4__subsec_1a" id="chp_2__sec_4__subsec_1a">
+        <span class="akn-num">(1a)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eid="chp_2__sec_4__subsec_1a__p_1" id="chp_2__sec_4__subsec_1a__p_1">subsection 1</span>
+        </span>
+    </section><ins>
+    </ins><section class="ins akn-subsection" data-eid="chp_2__sec_4__subsec_2" id="chp_2__sec_4__subsec_2">
+        <span class="akn-num">(2)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eid="chp_2__sec_4__subsec_2__p_1" id="chp_2__sec_4__subsec_2__p_1">subsection added</span>
+        </span>
+    </section><ins>
+</ins><section class="del akn-subsection" data-eid="chp_2__sec_4__subsec_1" id="chp_2__sec_4__subsec_1">
+        <span class="akn-num">(1)</span>
+        <span class="akn-content">
+            <span class="akn-p" data-eid="chp_2__sec_4__subsec_1__p_1" id="chp_2__sec_4__subsec_1__p_1">subsection 1</span>
+        </span>
+    </section>
+</section>
             """.strip(),
             diff.strip()
         )

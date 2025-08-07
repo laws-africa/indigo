@@ -19,7 +19,7 @@ class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
     """ Ignores most data- attributes.
     """
     # NB: these must not have id or data-eid attributes
-    formatting_classes = ['akn-remark']
+    formatting_classes = []
 
     def is_formatting(self, element):
         return element.get('class') in self.formatting_classes or super().is_formatting(element)
@@ -55,7 +55,7 @@ class AKNHTMLDiffer:
     """
     akn_text_tags = 'p listIntroduction listWrapUp heading subheading crossHeading'.split()
     html_text_tags = 'p h1 h2 h3 h4 h5'.split()
-    formatting_tags = 'em b i u s sup sub'.split()
+    formatting_tags = []
     keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter
     differ_class = Differ

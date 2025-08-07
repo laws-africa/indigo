@@ -32,9 +32,28 @@
   <!-- we don't care about attribute changes -->
   <xsl:template match="@diff:add-attr | @diff:remove-attr | @diff:update-attr" />
 
+  <!-- directly nested, this pair means that the formatting changed and will contain ins/dels inside it -->
+  <xsl:template match="*[@diff:delete-formatting and *[@diff:insert-formatting]]">
+    <!-- Find the inner element with insert-formatting -->
+    <xsl:apply-templates select="*[@diff:insert-formatting]" />
+  </xsl:template>
+  <xsl:template match="*[@diff:insert-formatting]">
+    <xsl:copy>
+      <!-- Copy all attributes except diff:insert-formatting -->
+      <xsl:apply-templates select="@*[namespace-uri() != 'http://namespaces.shoobx.com/diff' or local-name() != 'insert-formatting']" />
+      <xsl:apply-templates select="node()" />
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="@diff:insert-formatting">
     <xsl:attribute name="class">
       <xsl:value-of select="'ins'"/>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@diff:delete-formatting">
+    <xsl:attribute name="class">
+      <xsl:value-of select="'del'"/>
     </xsl:attribute>
   </xsl:template>
 

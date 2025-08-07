@@ -1,5 +1,4 @@
 import asyncio
-import copy
 import os
 import re
 import tempfile
@@ -19,19 +18,11 @@ log = logging.getLogger(__name__)
 class IgnoringPlaceholderMaker(formatting.PlaceholderMaker):
     """ Ignores most data- attributes.
     """
-    allowed = ['data-refersto']
-
-    def get_placeholder(self, element, ttype, close_ph):
-        # remove attributes we don't want to diff
-        if any(x.startswith('data-') for x in element.attrib):
-            element = copy.copy(element)
-            for k in list(element.attrib):
-                if k.startswith('data-') and k not in self.allowed:
-                    del element.attrib[k]
-        return super().get_placeholder(element, ttype, close_ph)
+    # NB: these must not have id or data-eid attributes
+    formatting_classes = ['akn-remark']
 
     def is_formatting(self, element):
-        return element.get('class') in ['akn-remark']
+        return element.get('class') in self.formatting_classes or super().is_formatting(element)
 
 
 class HTMLFormatter(formatting.XMLFormatter):
@@ -51,8 +42,7 @@ class HTMLFormatter(formatting.XMLFormatter):
             transform = lxml.etree.XSLT(xslt)
         result = transform(result)
 
-        # XSLT doesn't let us add an element to an attribute, so here
-        # we move "classx" over onto "class"
+        # XSLT doesn't let us add an element to an attribute, so here we move "classx" over onto "class"
         for node in result.xpath('//*[@classx]'):
             node.set('class', node.attrib.pop('classx'))
 
@@ -65,10 +55,12 @@ class AKNHTMLDiffer:
     """
     akn_text_tags = 'p listIntroduction listWrapUp heading subheading crossHeading'.split()
     html_text_tags = 'h1 h2 h3 h4 h5'.split()
+    formatting_tags = 'em b i u s sup sub'.split()
     keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter
     differ_class = Differ
     preprocess_strip_tags = ['term']
+    preprocess_remove_eIds = ['ref', 'def', 'authorialNote']
     xmldiff_options = {
         'F': 0.75,
         # using data-refersto helps to xmldiff to handle definitions that move around
@@ -87,9 +79,16 @@ class AKNHTMLDiffer:
     def preprocess_xml_tree(self, root):
         """ Run pre-processing on XML before doing HTML diffs. This helps to make the diffs less confusing.
         """
+        # unwrap these elements
         xpath = '|'.join(f'//a:{x}' for x in self.preprocess_strip_tags)
         for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
             unwrap_element(elem)
+
+        # remove eId attributes from certain inlines that aren't useful and just make the diff harder to read
+        xpath = '|'.join(f'//a:{x}[@eId]' for x in self.preprocess_remove_eIds)
+        for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
+            elem.attrib.pop('eId')
+
         return root
 
     def count_differences(self, diff_tree):
@@ -190,7 +189,8 @@ class AKNHTMLDiffer:
     def get_formatter(self):
         # in html, AKN elements are recognised using classes
         text_tags = [f'*[@class="akn-{t}"]' for t in self.akn_text_tags] + self.html_text_tags
-        return self.formatter_class(normalize=formatting.WS_NONE, pretty_print=False, text_tags=text_tags)
+        return self.formatter_class(normalize=formatting.WS_NONE, pretty_print=False, text_tags=text_tags,
+                                    formatting_tags=self.formatting_tags)
 
     def preprocess(self, tree):
         self.stash_ids(tree)

@@ -54,7 +54,7 @@ class AKNHTMLDiffer:
     """ Helper class to diff AKN documents using xmldiff.
     """
     akn_text_tags = 'p listIntroduction listWrapUp heading subheading crossHeading'.split()
-    html_text_tags = 'h1 h2 h3 h4 h5'.split()
+    html_text_tags = 'p h1 h2 h3 h4 h5'.split()
     formatting_tags = 'em b i u s sup sub'.split()
     keep_ids_tags = AkomaNtoso30.hier_elements + ['table']
     formatter_class = HTMLFormatter

@@ -997,7 +997,8 @@ class BatchAddWorkView(PlaceViewBase, FormView):
         # only show open tasks for each work
         rows = context.get('works') or []
         for row in rows:
-            row.open_tasks = Task.objects.filter(work=row.work, state__in=Task.OPEN_STATES) if hasattr(row, 'work') else None
+            if hasattr(row, 'work') and row.work.pk:
+                row.open_tasks = Task.objects.filter(work=row.work, state__in=Task.OPEN_STATES)
 
         return context
 

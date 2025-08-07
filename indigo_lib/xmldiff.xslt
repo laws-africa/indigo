@@ -32,6 +32,7 @@
   <!-- we don't care about attribute changes -->
   <xsl:template match="@diff:add-attr | @diff:remove-attr | @diff:update-attr" />
 
+  <!-- formatting changes don't usually happen because we don't have formatting tags defined -->
   <xsl:template match="@diff:insert-formatting">
     <xsl:attribute name="class">
       <xsl:value-of select="'ins'"/>

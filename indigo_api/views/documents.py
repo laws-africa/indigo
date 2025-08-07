@@ -477,10 +477,11 @@ class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView,
         provision_eid = serializer.validated_data.get('provision_eid')
         if provision_eid:
             portion = remote_doc.get_portion(provision_eid)
-            # the same structure as the 'xml' we're getting from the browser: akn/portion/portionBody/element
-            remote_xml = etree.tostring(portion.root, encoding='unicode')
-            remote_doc.work.work_uri.doctype = 'portion'
-            remote_doc.content = differ.preprocess_xml_str(remote_xml)
+            if portion:
+                # the same structure as the 'xml' we're getting from the browser: akn/portion/portionBody/element
+                remote_xml = etree.tostring(portion.root, encoding='unicode')
+                remote_doc.work.work_uri.doctype = 'portion'
+                remote_doc.content = differ.preprocess_xml_str(remote_xml)
 
         else:
             # full document mode

@@ -506,6 +506,7 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
     http_method_names = ['post', 'get']
     filter_form_class = WorkFilterForm
     allow_all_place = True
+    exporter_class = XlsxExporter
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -515,7 +516,7 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
         self.form.is_valid()
 
         if self.form.data.get('format') == 'xlsx':
-            exporter = XlsxExporter(self.country, self.locality)
+            exporter = self.exporter_class(self.country, self.locality)
             filename = _("legislation %(place)s.xlsx") % {"place": self.kwargs['place']}
             return exporter.generate_xlsx(self.get_queryset(), filename, False)
 

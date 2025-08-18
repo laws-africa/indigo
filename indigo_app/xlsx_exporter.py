@@ -9,6 +9,11 @@ from indigo_api.models import Amendment
 
 
 class XlsxExporter:
+    works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
+                           'Number', 'Publication Date', 'Publication Number',
+                           'Assent Date', 'Commenced', 'Main Commencement Date',
+                           'Repealed Date', 'Parent Work', 'Stub']
+
     def __init__(self, country, locality):
         country = country
         locality = locality
@@ -53,7 +58,7 @@ class XlsxExporter:
             if amendments_active:
                 try:
                     amendment = amendments_active[n]
-                    sheet.write(row, columns.index('amends'), uri_title(amendment.amended_work))
+                    sheet.write(row, columns.index('amends'), self.uri_title(amendment.amended_work))
                     sheet.write(row, columns.index('amends_on_date'), amendment.date, date_format)
                 except IndexError:
                     pass
@@ -63,7 +68,7 @@ class XlsxExporter:
             if amendments_passive:
                 try:
                     amendment = amendments_passive[n]
-                    sheet.write(row, columns.index('amended_by'), uri_title(amendment.amending_work))
+                    sheet.write(row, columns.index('amended_by'), self.uri_title(amendment.amending_work))
                     sheet.write(row, columns.index('amended_on_date'), amendment.date, date_format)
                 except IndexError:
                     pass
@@ -73,7 +78,7 @@ class XlsxExporter:
             if commencements_active:
                 try:
                     commencement = commencements_active[n]
-                    sheet.write(row, columns.index('commences'), uri_title(commencement.commenced_work))
+                    sheet.write(row, columns.index('commences'), self.uri_title(commencement.commenced_work))
                     sheet.write(row, columns.index('commences_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
@@ -86,7 +91,7 @@ class XlsxExporter:
                     # don't rewrite main commencement date if it doesn't have a commencing work
                     if commencement == info.get('work').main_commencement and not commencement.commencing_work:
                         return
-                    sheet.write(row, columns.index('commenced_by'), uri_title(commencement.commencing_work))
+                    sheet.write(row, columns.index('commenced_by'), self.uri_title(commencement.commencing_work))
                     sheet.write(row, columns.index('commenced_on_date'), commencement.date or datetime.date(9999, 1, 1), date_format)
                 except IndexError:
                     pass
@@ -116,17 +121,17 @@ class XlsxExporter:
             elif field == 'taxonomy_topic':
                 to_write = '; '.join(t.slug for t in work.taxonomy_topics.all())
             elif field == 'primary_work':
-                to_write = uri_title(work.parent_work)
+                to_write = self.uri_title(work.parent_work)
             elif field == 'repealed_by':
-                to_write = uri_title(work.repealed_by)
+                to_write = self.uri_title(work.repealed_by)
             elif field == 'repealed_on_date':
                 to_write = work.repealed_date
             elif field == 'subleg':
-                to_write = '; '.join(uri_title(child) for child in work.child_works.all())
+                to_write = '; '.join(self.uri_title(child) for child in work.child_works.all())
             elif field == 'Ignore (x) or in (✔)':
                 to_write = '✔'
             elif field == 'frbr_uri_title':
-                to_write = uri_title(work)
+                to_write = self.uri_title(work)
 
             elif field in self.extra_properties:
                 to_write = work.properties.get(field)
@@ -141,7 +146,7 @@ class XlsxExporter:
             if repealed_works:
                 try:
                     repealed_work = repealed_works[n]
-                    sheet.write(row, columns.index('repeals'), uri_title(repealed_work))
+                    sheet.write(row, columns.index('repeals'), self.uri_title(repealed_work))
                     sheet.write(row, columns.index('repeals_on_date'), repealed_work.repealed_date, date_format)
                 except IndexError:
                     pass
@@ -205,8 +210,8 @@ class XlsxExporter:
         if full_index:
             self.write_full_index(workbook, queryset)
         else:
-            write_works(workbook, queryset)
-            write_relationships(workbook, queryset)
+            self.write_works(workbook, queryset)
+            self.write_relationships(workbook, queryset)
 
         workbook.close()
         output.seek(0)
@@ -217,19 +222,17 @@ class XlsxExporter:
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
 
+    def write_works(self, workbook, queryset):
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        works_sheet = workbook.add_worksheet('Works')
+        # Write the works sheet column titles
+        for position, title in enumerate(self.works_sheet_columns, 1):
+            works_sheet.write(0, position, title)
 
-def write_works(workbook, queryset):
-    date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-    works_sheet = workbook.add_worksheet('Works')
-    works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
-                           'Number', 'Publication Date', 'Publication Number',
-                           'Assent Date', 'Commenced', 'Main Commencement Date',
-                           'Repealed Date', 'Parent Work', 'Stub']
-    # Write the works sheet column titles
-    for position, title in enumerate(works_sheet_columns, 1):
-        works_sheet.write(0, position, title)
+        for row, work in enumerate(queryset, 1):
+            self.write_work_row(row, work, works_sheet, date_format)
 
-    for row, work in enumerate(queryset, 1):
+    def write_work_row(self, row, work, works_sheet, date_format):
         works_sheet.write(row, 0, row)
         works_sheet.write(row, 1, work.frbr_uri)
         works_sheet.write(row, 2, work.place.place_code)
@@ -248,59 +251,57 @@ def write_works(workbook, queryset):
         works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
         works_sheet.write(row, 14, work.stub)
 
+    def write_relationships(self, workbook, queryset):
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        relationships_sheet = workbook.add_worksheet('Relationships')
+        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
 
-def write_relationships(workbook, queryset):
-    date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-    relationships_sheet = workbook.add_worksheet('Relationships')
-    relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
+        # write the relationships sheet column titles
+        for position, title in enumerate(relationships_sheet_columns, 1):
+            relationships_sheet.write(0, position, title)
 
-    # write the relationships sheet column titles
-    for position, title in enumerate(relationships_sheet_columns, 1):
-        relationships_sheet.write(0, position, title)
+        row = 1
+        for work in queryset:
+            family = []
 
-    row = 1
-    for work in queryset:
-        family = []
+            # parent work
+            if work.parent_work:
+                family.append({
+                    'rel': 'subsidiary of',
+                    'work': work.parent_work.frbr_uri,
+                    'date': None
+                })
 
-        # parent work
-        if work.parent_work:
-            family.append({
-                'rel': 'subsidiary of',
-                'work': work.parent_work.frbr_uri,
-                'date': None
-            })
+            # amended works
+            amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
+            family = family + [{
+                'rel': 'amends',
+                'work': a.amended_work.frbr_uri,
+                'date': a.date
+            } for a in amended]
 
-        # amended works
-        amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
-        family = family + [{
-            'rel': 'amends',
-            'work': a.amended_work.frbr_uri,
-            'date': a.date
-        } for a in amended]
+            # repealed works
+            repealed_works = work.repealed_works.all()
+            family = family + [{
+                'rel': 'repeals',
+                'work': r.frbr_uri,
+                'date': r.repealed_date
+            } for r in repealed_works]
 
-        # repealed works
-        repealed_works = work.repealed_works.all()
-        family = family + [{
-            'rel': 'repeals',
-            'work': r.frbr_uri,
-            'date': r.repealed_date
-        } for r in repealed_works]
+            # commenced works
+            family = family + [{
+                'rel': 'commences',
+                'work': c.commenced_work.frbr_uri,
+                'date': c.date
+            } for c in work.commencements_made.all()]
 
-        # commenced works
-        family = family + [{
-            'rel': 'commences',
-            'work': c.commenced_work.frbr_uri,
-            'date': c.date
-        } for c in work.commencements_made.all()]
+            for relationship in family:
+                relationships_sheet.write(row, 0, row)
+                relationships_sheet.write(row, 1, work.frbr_uri)
+                relationships_sheet.write(row, 2, relationship['rel'])
+                relationships_sheet.write(row, 3, relationship['work'])
+                relationships_sheet.write(row, 4, relationship['date'], date_format)
+                row += 1
 
-        for relationship in family:
-            relationships_sheet.write(row, 0, row)
-            relationships_sheet.write(row, 1, work.frbr_uri)
-            relationships_sheet.write(row, 2, relationship['rel'])
-            relationships_sheet.write(row, 3, relationship['work'])
-            relationships_sheet.write(row, 4, relationship['date'], date_format)
-            row += 1
-
-
-def uri_title(work=None):
-    return f'{work.frbr_uri} - {work.title}' if work else ""
+    def uri_title(self, work=None):
+        return f'{work.frbr_uri} - {work.title}' if work else ""

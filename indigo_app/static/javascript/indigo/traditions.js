@@ -76,6 +76,7 @@
       fragments: {
         alinea: 'hier_element_block',
         article: 'hier_element_block',
+        blockContainer: 'blocks',
         book: 'hier_element_block',
         chapter: 'hier_element_block',
         clause: 'hier_element_block',
@@ -107,7 +108,7 @@
         debateSection: 'speech_container',
         speech: 'speech_group',
       },
-      quickEditable: '.akn-alinea, .akn-article, .akn-attachment, .akn-attachments, .akn-book, .akn-chapter,' +
+      quickEditable: '.akn-alinea, .akn-article, .akn-attachment, .akn-attachments, .akn-blockContainer, .akn-book, .akn-chapter,' +
           ' .akn-clause, .akn-division, .akn-indent, .akn-item, .akn-level, .akn-list, .akn-paragraph, .akn-part,' +
           ' .akn-point, .akn-proviso, .akn-rule, .akn-section, .akn-subchapter, .akn-subclause, .akn-subdivision,' +
           ' .akn-sublist, .akn-subparagraph, .akn-subpart, .akn-subrule, .akn-subsection, .akn-subtitle, .akn-title,' +

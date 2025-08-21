@@ -205,6 +205,7 @@ class DefinitionsIntoBlockContainers(DataMigration):
 
     def migrate_xml(self, xml):
         changed = False
+
         # only consider definition elements considered legitimate by the given terms finder
         # don't process <def>s or <term>s
         # don't double-wrap existing blockContainers
@@ -216,6 +217,18 @@ class DefinitionsIntoBlockContainers(DataMigration):
         for definition in defn_xpath(xml):
             self.migrate_element(definition)
             changed = True
+
+        # check existing blockContainers for missing 'definitions' class
+        missing_class_xpath = etree.XPath(
+            '//a:blockContainer[@refersTo and starts-with(@refersTo, "#term-") and not('
+            '@class="definition") and not(contains(@class, " definition")) and not(contains(@class, "definition "))]',
+            namespaces={'a': self.ns})
+        for definition in missing_class_xpath(xml):
+            existing_class = definition.attrib.get('class', '')
+            new_class = f'{existing_class} definition' if existing_class else 'definition'
+            definition.set('class', new_class)
+            changed = True
+
         if changed:
             self.id_generator.rewrite_all_eids(xml)
 
@@ -225,5 +238,6 @@ class DefinitionsIntoBlockContainers(DataMigration):
         refers_to = elem.attrib.pop('refersTo')
         assert refers_to.startswith('#term-')
         block_container = self.maker('blockContainer', refersTo=refers_to)
+        block_container.set('class', 'definition')
         elem.addprevious(block_container)
         block_container.append(elem)

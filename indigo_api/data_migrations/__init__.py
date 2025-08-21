@@ -199,9 +199,7 @@ class DefinitionsIntoBlockContainers(DataMigration):
         self.terms_finder = plugins.for_document('terms', document)
         xml = etree.fromstring(document.document_xml)
         changed, xml = self.migrate_xml(xml)
-        if changed:
-            document.content = etree.tostring(xml, encoding='unicode')
-            return True
+        return changed, etree.tostring(xml, encoding='unicode')
 
     def migrate_xml(self, xml):
         changed = False

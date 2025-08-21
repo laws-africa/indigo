@@ -1,50 +1,46 @@
+import copy
 import datetime
 import json
 import logging
-import copy
 
 from actstream import action
-from django.core.exceptions import PermissionDenied
-from django.db import transaction
-from django.shortcuts import redirect
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.decorators.cache import cache_control
+from asgiref.sync import sync_to_async
 from django.contrib.contenttypes.models import ContentType
-from django.templatetags.static import static
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, JsonResponse
+from django.shortcuts import redirect
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.views import View
 from django.views.generic import DetailView
 from django_comments.models import Comment
-from asgiref.sync import sync_to_async
-
-from rest_framework.exceptions import ValidationError, MethodNotAllowed
-from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
+from lxml import etree
 from rest_framework import mixins, viewsets, renderers, status
+from rest_framework.decorators import action as detail_route_action
+from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.decorators import action as detail_route_action
+from rest_framework.views import APIView
 from reversion import revisions as reversion
-from django_filters.rest_framework import DjangoFilterBackend
+
 from cobalt import StructuredDocument
-
-from lxml import etree
-
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
-from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
-from ..models import Document, Annotation, DocumentActivity, Task
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
-from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
+from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 from indigo_api.exporters import HTMLExporter
+from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
+from .misc import DEFAULT_PERMS
 from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions, RelatedDocumentPermissions, \
     RevisionPermissions
+from ..models import Document, Annotation, DocumentActivity, Task
+from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, \
+    VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..utils import filename_candidates, find_best_static
-from .misc import DEFAULT_PERMS
-
 
 log = logging.getLogger(__name__)
 
@@ -450,6 +446,14 @@ class SentenceCaseHeadingsView(ManipulateXmlView):
         sentence_caser = plugins.for_document('sentence-caser', self.document)
         if sentence_caser:
             sentence_caser.sentence_case_headings_in_document(self.document)
+
+
+class DefinitionsIntoBlockContainersView(ManipulateXmlView):
+    """ Wrap definitions that aren't already in a blockContainer in one.
+    """
+    def manipulate_xml(self):
+        definitions_updater = DefinitionsIntoBlockContainers()
+        definitions_updater.migrate_document(self.document)
 
 
 class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, View):

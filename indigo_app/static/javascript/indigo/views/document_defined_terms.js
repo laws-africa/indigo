@@ -12,6 +12,7 @@
     termsTemplate: '#terms-template',
     events: {
       'click .link-terms': 'linkTerms',
+      'click .definitions-into-blocks': 'definitionsIntoBlockContainers',
       'click .remove-terms': 'removeTerms',
     },
 
@@ -50,6 +51,34 @@
 
       $.ajax({
         url: this.model.document.url() + '/analysis/link-terms',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+        .then(function(response) {
+          self.model.set('content', response.xml);
+        })
+        .always(function() {
+          $btn
+            .prop('disabled', false)
+            .find('i').removeClass('fa-spin');
+        });
+    },
+
+    definitionsIntoBlockContainers: function(e) {
+      let self = this,
+          $btn = this.$el.find('.definitions-into-blocks');
+
+      if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
+
+      const data = this.model.toSimplifiedJSON();
+
+      $btn
+        .prop('disabled', true)
+        .find('i').addClass('fa-spin');
+
+      $.ajax({
+        url: this.model.document.url() + '/analysis/definitions-into-blocks',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",

@@ -453,9 +453,7 @@ class DefinitionsIntoBlockContainersView(ManipulateXmlView):
     """
     def manipulate_xml(self):
         definitions_updater = DefinitionsIntoBlockContainers()
-        changed, xml = definitions_updater.migrate_document(self.document)
-        if changed:
-            self.document.content = xml
+        definitions_updater.migrate_document(self.document)
 
 
 class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView, View):

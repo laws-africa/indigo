@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 from django.utils.encoding import force_str
@@ -6,8 +7,11 @@ from lxml import etree
 
 from bluebell.xml import IdGenerator
 from cobalt.akn import get_maker
+from cobalt.schemas import validate
 from docpipe.xmlutils import unwrap_element
 from indigo.xmlutils import rewrite_ids
+
+log = logging.getLogger(__name__)
 
 
 class DataMigration:
@@ -198,6 +202,9 @@ class DefinitionsIntoBlockContainers(DataMigration):
         changed, xml = self.migrate_xml(xml)
         if changed:
             document.content = etree.tostring(xml, encoding='unicode')
+            validates, errors = validate(document.doc)
+            if not validates:
+                log.warning(errors)
             return True
 
     def migrate_xml(self, xml):

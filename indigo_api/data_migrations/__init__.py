@@ -234,7 +234,7 @@ class DefinitionsIntoBlockContainers(DataMigration):
 
     def add_missing_class(self, elem):
         elem_class = elem.attrib.get('class')
-        elem_classes = elem_class.split(' ') if elem_class else []
+        elem_classes = (elem_class or '').split()
         if 'definition' not in elem_classes:
             elem_classes.append('definition')
             elem_class = ' '.join(elem_classes)

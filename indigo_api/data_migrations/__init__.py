@@ -1,10 +1,17 @@
-import re
 import json
+import logging
+import re
+
 from django.utils.encoding import force_str
 from lxml import etree
 
-from indigo.xmlutils import rewrite_ids
+from bluebell.xml import IdGenerator
+from cobalt.akn import get_maker
+from cobalt.schemas import validate
 from docpipe.xmlutils import unwrap_element
+from indigo.xmlutils import rewrite_ids
+
+log = logging.getLogger(__name__)
 
 
 class DataMigration:
@@ -114,3 +121,136 @@ class CorrectAttachmentEids(DataMigration):
             self.eid_mappings[elem.attrib['eId']] = elem.attrib['eId'] = new_id
 
         return changed
+
+
+class DefinitionsIntoBlockContainers(DataMigration):
+    """ Wrap definitions in <p>s and <blockList>s in <blockContainer>s; move the refersTo attribute up too.
+    Before:
+      <act>
+        …
+        <p refersTo="#term-board" eId="chp_1__sec_1__p_2">
+          “<def refersTo="#term-board" eId="chp_1__sec_1__p_2__def_1">board</def>”
+          means the board of the
+          <term refersTo="#term-Regulator" eId="chp_1__sec_1__p_2__term_1">Regulator</term>
+          contemplated in section <ref href="#chp_2__sec_9" eId="chp_1__sec_1__p_2__ref_1">9</ref>;
+        </p>
+        <p refersTo="#term-board_appeals_committee" eId="chp_1__sec_1__p_3">
+          “<def refersTo="#term-board_appeals_committee" eId="chp_1__sec_1__p_3__def_1">board appeals committee</def>” means …;
+        </p>
+        <blockList refersTo="#term-new_works" eId="chp_1__sec_1__list_1">
+          <listIntroduction eId="chp_1__sec_1__list_1__intro_1">“<def refersTo="#term-new_works" eId="chp_1__sec_1__list_1__intro_1__def_1">new works</def>” means—</listIntroduction>
+          <item eId="chp_1__sec_1__list_1__item_a">
+            <num>(a)</num>
+            <p eId="chp_1__sec_1__list_1__item_a__p_1">a new <term refersTo="#term-railway_operation" eId="chp_1__sec_1__list_1__item_a__p_1__term_1">railway operation</term>, including new train, <term refersTo="#term-network" eId="chp_1__sec_1__list_1__item_a__p_1__term_2">network</term> or <term refersTo="#term-station" eId="chp_1__sec_1__list_1__item_a__p_1__term_3">station</term> operations;</p>
+          </item>
+          <item eId="chp_1__sec_1__list_1__item_b">
+            <num>(b)</num>
+            <p eId="chp_1__sec_1__list_1__item_b__p_1">the introduction of new technology including <term refersTo="#term-rolling_stock" eId="chp_1__sec_1__list_1__item_b__p_1__term_1">rolling stock</term>, train authorisation systems, traction power supplies or components thereof; or</p>
+          </item>
+          <item eId="chp_1__sec_1__list_1__item_c">
+            <num>(c)</num>
+            <p eId="chp_1__sec_1__list_1__item_c__p_1">an extension to an existing operation that has the potential to substantively increase the risk profile of the <term refersTo="#term-operator" eId="chp_1__sec_1__list_1__item_c__p_1__term_1">operator</term>;</p>
+          </item>
+        </blockList>
+        …
+      </act>
+    After:
+      <act>
+        …
+        <blockContainer refersTo="#term-board" eId="chp_1__sec_1__blockContainer_2">
+          <p eId="chp_1__sec_1__blockContainer_2__p_1">
+            “<def refersTo="#term-board" eId="chp_1__sec_1__blockContainer_2__p_1__def_1">board</def>”
+            means the board of the
+            <term refersTo="#term-Regulator" eId="chp_1__sec_1__blockContainer_2__p_1__term_1">Regulator</term>
+            contemplated in section <ref href="#chp_2__sec_9" eId="chp_1__sec_1__blockContainer_2__p_1__ref_1">9</ref>;
+          </p>
+        </blockContainer>
+        <blockContainer refersTo="#term-board_appeals_committee" eId="chp_1__sec_1__blockContainer_3">
+          <p eId="chp_1__sec_1__blockContainer_3__p_1">
+            “<def refersTo="#term-board_appeals_committee" eId="chp_1__sec_1__blockContainer_3__p_1__def_1">board appeals committee</def>” means …;
+          </p>
+        </blockContainer>
+        <blockContainer refersTo="#term-new_works" eId="chp_1__sec_1__blockContainer_4">
+          <blockList eId="chp_1__sec_1__blockContainer_4__list_1">
+            <listIntroduction eId="chp_1__sec_1__blockContainer_4__list_1__intro_1">“<def refersTo="#term-new_works" eId="chp_1__sec_1__blockContainer_4__list_1__intro_1__def_1">new works</def>” means—</listIntroduction>
+            <item eId="chp_1__sec_1__blockContainer_4__list_1__item_a">
+              <num>(a)</num>
+              <p eId="chp_1__sec_1__blockContainer_4__list_1__item_a__p_1">a new <term refersTo="#term-railway_operation" eId="chp_1__sec_1__blockContainer_4__list_1__item_a__p_1__term_1">railway operation</term>, including new train, <term refersTo="#term-network" eId="chp_1__sec_1__blockContainer_4__list_1__item_a__p_1__term_2">network</term> or <term refersTo="#term-station" eId="chp_1__sec_1__blockContainer_4__list_1__item_a__p_1__term_3">station</term> operations;</p>
+            </item>
+            <item eId="chp_1__sec_1__blockContainer_4__list_1__item_b">
+              <num>(b)</num>
+              <p eId="chp_1__sec_1__blockContainer_4__list_1__item_b__p_1">the introduction of new technology including <term refersTo="#term-rolling_stock" eId="chp_1__sec_1__blockContainer_4__list_1__item_b__p_1__term_1">rolling stock</term>, train authorisation systems, traction power supplies or components thereof; or</p>
+            </item>
+            <item eId="chp_1__sec_1__blockContainer_4__list_1__item_c">
+              <num>(c)</num>
+              <p eId="chp_1__sec_1__blockContainer_4__list_1__item_c__p_1">an extension to an existing operation that has the potential to substantively increase the risk profile of the <term refersTo="#term-operator" eId="chp_1__sec_1__blockContainer_4__list_1__item_c__p_1__term_1">operator</term>;</p>
+            </item>
+          </blockList>
+        </blockContainer>
+        …
+      </act>
+    """
+    ns = None
+    maker = None
+    id_generator = None
+
+    def migrate_document(self, document):
+        self.ns = document.doc.namespace
+        self.maker = get_maker()
+        self.id_generator = IdGenerator()
+        xml = etree.fromstring(document.document_xml)
+        changed, xml = self.migrate_xml(xml)
+        if changed:
+            document.content = etree.tostring(xml, encoding='unicode')
+            validates, errors = validate(document.doc)
+            if not validates:
+                log.warning(errors)
+            return True
+
+    def migrate_xml(self, xml):
+        changed = False
+
+        # check existing blockContainers for missing 'definition' class
+        existing_defn_xpath = etree.XPath(
+            '//a:blockContainer[@refersTo and starts-with(@refersTo, "#term-")]',
+            namespaces={'a': self.ns})
+        for definition in existing_defn_xpath(xml):
+            self.add_missing_class(definition)
+
+        # start with a <def> tag and look upwards until we find an ancestor with a matching refersTo term
+        # (if a matching ancestor isn't found, nothing happens -- we just move on to the next <def>)
+        defn_xpath = etree.XPath(
+            '//a:def[@refersTo and starts-with(@refersTo, "#term-")]',
+            namespaces={'a': self.ns})
+        for definition in defn_xpath(xml):
+            # e.g. #term-Department
+            defined_term = definition.attrib['refersTo']
+            for parent in definition.iterancestors():
+                # don't double-wrap <blockContainer>s
+                if parent.tag == f'{{{self.ns}}}blockContainer' and parent.attrib.get('refersTo', '') == defined_term:
+                    break
+                if parent.attrib.get('refersTo', '') == defined_term:
+                    self.migrate_element(parent)
+                    changed = True
+                    break
+
+        if changed:
+            self.id_generator.rewrite_all_eids(xml)
+
+        return changed, xml
+
+    def add_missing_class(self, elem):
+        elem_class = elem.attrib.get('class')
+        elem_classes = (elem_class or '').split()
+        if 'definition' not in elem_classes:
+            elem_classes.append('definition')
+            elem_class = ' '.join(elem_classes)
+            elem.set('class', elem_class)
+
+    def migrate_element(self, elem):
+        refers_to = elem.attrib.pop('refersTo')
+        assert refers_to.startswith('#term-')
+        block_container = self.maker('blockContainer', refersTo=refers_to)
+        block_container.set('class', 'definition')
+        elem.addprevious(block_container)
+        block_container.append(elem)

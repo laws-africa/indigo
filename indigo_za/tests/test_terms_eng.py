@@ -45,20 +45,20 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>In this 'By-law', unless the context indicates otherwise-</p>
-      <p refersTo="#term-Act"> "<def refersTo="#term-Act">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-      <blockList eId="sec_1__hcontainer_1__list_3" refersTo="#term-authorised_officer">
-        <listIntroduction>"<def refersTo="#term-authorised_officer">authorised officer</def>" includes-</listIntroduction>
-        <item eId="sec_1__hcontainer_1__list_3__item_a">
+      <p eId="sec_1__hcontainer_1__p_1">In this 'By-law', unless the context indicates otherwise-</p>
+      <blockContainer refersTo="#term-Act" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1"> "<def refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+      </blockContainer><blockContainer refersTo="#term-authorised_officer" class="definition" eId="sec_1__hcontainer_1__blockContainer_2"><blockList eId="sec_1__hcontainer_1__blockContainer_2__list_1">
+        <listIntroduction eId="sec_1__hcontainer_1__blockContainer_2__list_1__intro_1">"<def refersTo="#term-authorised_officer" eId="sec_1__hcontainer_1__blockContainer_2__list_1__intro_1__def_1">authorised officer</def>" includes-</listIntroduction>
+        <item eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a">
           <num>(a)</num>
-          <p>a "person" in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_a__term_1">Act</term> to be an authorised officer; and</p>
+          <p eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a__p_1">a "person" in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a__p_1__term_1">Act</term> to be an authorised officer; and</p>
         </item>
-        <item eId="sec_1__hcontainer_1__list_3__item_b">
+        <item eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b">
           <num>(b)</num>
-          <p>a "person" appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_2">Act</term> No. 5 of 2009);</p>
+          <p eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1">a "person" appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1__term_2">Act</term> No. 5 of 2009);</p>
         </item>
       </blockList>
-    </content>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>
@@ -170,8 +170,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Actë">"<def refersTo="#term-Actë">Actë</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-    </content>
+      <blockContainer refersTo="#term-Actë" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1">"<def refersTo="#term-Actë" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Actë</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>
@@ -199,8 +199,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Act">“<def refersTo="#term-Act">Act</def>” means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-    </content>
+      <blockContainer refersTo="#term-Act" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1">“<def refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Act</def>” means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>
@@ -228,8 +228,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Act"> ‘<def refersTo="#term-Act">Act</def>’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-    </content>
+      <blockContainer refersTo="#term-Act" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1"> ‘<def refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Act</def>’ means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>
@@ -257,8 +257,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Act">«<def refersTo="#term-Act">Act</def>» means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-    </content>
+      <blockContainer refersTo="#term-Act" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1">«<def refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Act</def>» means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>
@@ -286,8 +286,8 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="art_1__hcontainer_1">
     <content>
-      <p refersTo="#term-Women_s_Police_Network_Sub_sub_Committee">"<def refersTo="#term-Women_s_Police_Network_Sub_sub_Committee">Women’s Police Network Sub-sub Committee</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-    </content>
+      <blockContainer refersTo="#term-Women_s_Police_Network_Sub_sub_Committee" class="definition" eId="art_1__hcontainer_1__blockContainer_1"><p eId="art_1__hcontainer_1__blockContainer_1__p_1">"<def refersTo="#term-Women_s_Police_Network_Sub_sub_Committee" eId="art_1__hcontainer_1__blockContainer_1__p_1__def_1">Women’s Police Network Sub-sub Committee</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="art_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+    </blockContainer></content>
   </hcontainer>
 </article>
     </body>
@@ -321,13 +321,13 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Definitions</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p refersTo="#term-fire">"<def refersTo="#term-fire">fire</def>" means a combustion;</p>
-      <p refersTo="#term-truck">"<def refersTo="#term-truck">truck</def>" means a vehicle;</p>
-    </content>
+      <blockContainer refersTo="#term-fire" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1">"<def refersTo="#term-fire" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">fire</def>" means a combustion;</p>
+      </blockContainer><blockContainer refersTo="#term-truck" class="definition" eId="sec_1__hcontainer_1__blockContainer_2"><p eId="sec_1__hcontainer_1__blockContainer_2__p_1">"<def refersTo="#term-truck" eId="sec_1__hcontainer_1__blockContainer_2__p_1__def_1">truck</def>" means a vehicle;</p>
+    </blockContainer></content>
   </hcontainer>
   <hcontainer eId="sec_1__hcontainer_2">
     <content>
-      <p>Do not park near a <term refersTo="#term-fire" eId="sec_1__hcontainer_2__term_1">fire</term> <term refersTo="#term-truck" eId="sec_1__hcontainer_2__term_2">truck</term>.</p>
+      <p eId="sec_1__hcontainer_2__p_1">Do not park near a <term refersTo="#term-fire" eId="sec_1__hcontainer_2__p_1__term_1">fire</term> <term refersTo="#term-truck" eId="sec_1__hcontainer_2__p_1__term_2">truck</term>.</p>
     </content>
   </hcontainer>
 </section>
@@ -362,11 +362,11 @@ class TermsFinderENGTestCase(APITestCase):
   <subsection eId="sec_1__subsec_1">
     <num>(1)</num>
     <content>
-      <p refersTo="#term-keep">"<def refersTo="#term-keep">keep</def>" means something</p>
-      <p refersTo="#term-game">"<def refersTo="#term-game">game</def>" means something</p>
-      <p><term refersTo="#term-keep" eId="sec_1__subsec_1__term_1">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__term_2">game</term> or any other wild animal.</p>
-      <p>may <term refersTo="#term-keep" eId="sec_1__subsec_1__term_3">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__term_4">game</term> or any other wild animal.</p>
-      <p>may not <term refersTo="#term-keep" eId="sec_1__subsec_1__term_5">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__term_6">game</term></p>
+      <blockContainer refersTo="#term-keep" class="definition" eId="sec_1__subsec_1__blockContainer_1"><p eId="sec_1__subsec_1__blockContainer_1__p_1">"<def refersTo="#term-keep" eId="sec_1__subsec_1__blockContainer_1__p_1__def_1">keep</def>" means something</p>
+      </blockContainer><blockContainer refersTo="#term-game" class="definition" eId="sec_1__subsec_1__blockContainer_2"><p eId="sec_1__subsec_1__blockContainer_2__p_1">"<def refersTo="#term-game" eId="sec_1__subsec_1__blockContainer_2__p_1__def_1">game</def>" means something</p>
+      </blockContainer><p eId="sec_1__subsec_1__p_1"><term refersTo="#term-keep" eId="sec_1__subsec_1__p_1__term_1">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__p_1__term_2">game</term> or any other wild animal.</p>
+      <p eId="sec_1__subsec_1__p_2">may <term refersTo="#term-keep" eId="sec_1__subsec_1__p_2__term_1">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__p_2__term_2">game</term> or any other wild animal.</p>
+      <p eId="sec_1__subsec_1__p_3">may not <term refersTo="#term-keep" eId="sec_1__subsec_1__p_3__term_1">keep</term> <term refersTo="#term-game" eId="sec_1__subsec_1__p_3__term_2">game</term></p>
     </content>
   </subsection>
 </section>
@@ -407,20 +407,20 @@ class TermsFinderENGTestCase(APITestCase):
   <heading>Short title and interpretation</heading>
   <hcontainer eId="sec_1__hcontainer_1">
     <content>
-      <p>In this By-law, unless the context indicates otherwise-</p>
-      <p refersTo="#term-Act">"<def refersTo="#term-Act">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
-      <blockList eId="sec_1__hcontainer_1__list_3" refersTo="#term-authorised_officer">
-        <listIntroduction>"<def refersTo="#term-authorised_officer">authorised officer</def>" includes-</listIntroduction>
-        <item eId="sec_1__hcontainer_1__list_3__item_a">
+      <p eId="sec_1__hcontainer_1__p_1">In this By-law, unless the context indicates otherwise-</p>
+      <blockContainer refersTo="#term-Act" class="definition" eId="sec_1__hcontainer_1__blockContainer_1"><p eId="sec_1__hcontainer_1__blockContainer_1__p_1">"<def refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_1__p_1__def_1">Act</def>" means the National Road Traffic Act, 1996 (<ref href="/akn/za/act/1996/93" eId="sec_1__hcontainer_1__blockContainer_1__p_1__ref_1">Act No. 93 of 1996</ref>);</p>
+      </blockContainer><blockContainer refersTo="#term-authorised_officer" class="definition" eId="sec_1__hcontainer_1__blockContainer_2"><blockList eId="sec_1__hcontainer_1__blockContainer_2__list_1">
+        <listIntroduction eId="sec_1__hcontainer_1__blockContainer_2__list_1__intro_1">"<def refersTo="#term-authorised_officer" eId="sec_1__hcontainer_1__blockContainer_2__list_1__intro_1__def_1">authorised officer</def>" includes-</listIntroduction>
+        <item eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a">
           <num>(a)</num>
-          <p>a person in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_a__term_1">Act</term> to be an authorised officer; and</p>
+          <p eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a__p_1">a person in the service of the City whose duty is to inspect licences, examine vehicles, examine driving licences, or who is a traffic officer or a road traffic law enforcement officer, and also any other person declared by the Minister of Transport by regulation made in terms of the National Road Traffic <term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_a__p_1__term_1">Act</term> to be an authorised officer; and</p>
         </item>
-        <item eId="sec_1__hcontainer_1__list_3__item_b">
+        <item eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b">
           <num>(b)</num>
-          <p>a person appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__list_3__item_b__term_2">Act</term> No. 5 of 2009);</p>
+          <p eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1">a person appointed as an inspector by the City as contemplated in section 86 of the National Land Transport <term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1__term_1">Act</term>, 2009 (<term refersTo="#term-Act" eId="sec_1__hcontainer_1__blockContainer_2__list_1__item_b__p_1__term_2">Act</term> No. 5 of 2009);</p>
         </item>
       </blockList>
-    </content>
+    </blockContainer></content>
   </hcontainer>
 </section>
     </body>

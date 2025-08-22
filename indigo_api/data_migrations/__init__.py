@@ -206,6 +206,13 @@ class DefinitionsIntoBlockContainers(DataMigration):
     def migrate_xml(self, xml):
         changed = False
 
+        # check existing blockContainers for missing 'definition' class
+        existing_defn_xpath = etree.XPath(
+            '//a:blockContainer[@refersTo and starts-with(@refersTo, "#term-")]',
+            namespaces={'a': self.ns})
+        for definition in existing_defn_xpath(xml):
+            self.add_missing_class(definition)
+
         # only consider definition elements considered legitimate by the given terms finder
         # don't process <def>s or <term>s
         # don't double-wrap existing blockContainers
@@ -218,21 +225,18 @@ class DefinitionsIntoBlockContainers(DataMigration):
             self.migrate_element(definition)
             changed = True
 
-        # check existing blockContainers for missing 'definitions' class
-        missing_class_xpath = etree.XPath(
-            '//a:blockContainer[@refersTo and starts-with(@refersTo, "#term-") and not('
-            '@class="definition") and not(contains(@class, " definition")) and not(contains(@class, "definition "))]',
-            namespaces={'a': self.ns})
-        for definition in missing_class_xpath(xml):
-            existing_class = definition.attrib.get('class', '')
-            new_class = f'{existing_class} definition' if existing_class else 'definition'
-            definition.set('class', new_class)
-            changed = True
-
         if changed:
             self.id_generator.rewrite_all_eids(xml)
 
         return changed, xml
+
+    def add_missing_class(self, elem):
+        elem_class = elem.attrib.get('class')
+        elem_classes = elem_class.split(' ') if elem_class else []
+        if 'definition' not in elem_classes:
+            elem_classes.append('definition')
+            elem_class = ' '.join(elem_classes)
+            elem.set('class', elem_class)
 
     def migrate_element(self, elem):
         refers_to = elem.attrib.pop('refersTo')

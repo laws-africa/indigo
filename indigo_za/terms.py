@@ -2,6 +2,7 @@ import re
 
 from indigo.analysis.terms.base import BaseTermsFinder
 from indigo.plugins import plugins
+from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 
 
 @plugins.register('terms')
@@ -28,6 +29,12 @@ class TermsFinderENG(BaseTermsFinder):
         in_quotes = [fr'^\s*{x}(.+?){y}' for x, y in self.quote_pairs]
         self.term_re = re.compile('|'.join(in_quotes + self.others))
         super().setup(doc)
+
+    def find_terms_in_document(self, document):
+        super().find_terms_in_document(document)
+        # migrate to new-style definitions as the final step
+        migration = DefinitionsIntoBlockContainers()
+        migration.migrate_document(document)
 
 
 @plugins.register('terms')

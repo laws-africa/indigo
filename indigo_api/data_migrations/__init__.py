@@ -7,7 +7,6 @@ from lxml import etree
 from bluebell.xml import IdGenerator
 from cobalt.akn import get_maker
 from docpipe.xmlutils import unwrap_element
-from indigo.plugins import plugins
 from indigo.xmlutils import rewrite_ids
 
 
@@ -190,13 +189,11 @@ class DefinitionsIntoBlockContainers(DataMigration):
     ns = None
     maker = None
     id_generator = None
-    terms_finder = None
 
     def migrate_document(self, document):
         self.ns = document.doc.namespace
         self.maker = get_maker()
         self.id_generator = IdGenerator()
-        self.terms_finder = plugins.for_document('terms', document)
         xml = etree.fromstring(document.document_xml)
         changed, xml = self.migrate_xml(xml)
         if changed:
@@ -213,17 +210,22 @@ class DefinitionsIntoBlockContainers(DataMigration):
         for definition in existing_defn_xpath(xml):
             self.add_missing_class(definition)
 
-        # only consider definition elements considered legitimate by the given terms finder
-        # don't process <def>s or <term>s
-        # don't double-wrap existing blockContainers
+        # start with a <def> tag and look upwards until we find an ancestor with a matching refersTo term
+        # (if a matching ancestor isn't found, nothing happens -- we just move on to the next <def>)
         defn_xpath = etree.XPath(
-            '|'.join(f'//a:{x}[@refersTo and starts-with(@refersTo, "#term-") and not('
-                     f'self::a:blockContainer or self::a:def or self::a:term)]'
-                     for x in self.terms_finder.ancestors),
+            '//a:def[@refersTo and starts-with(@refersTo, "#term-")]',
             namespaces={'a': self.ns})
         for definition in defn_xpath(xml):
-            self.migrate_element(definition)
-            changed = True
+            # e.g. #term-Department
+            defined_term = definition.attrib['refersTo']
+            for parent in definition.iterancestors():
+                # don't double-wrap <blockContainer>s
+                if parent.tag == f'{{{self.ns}}}blockContainer' and parent.attrib.get('refersTo', '') == defined_term:
+                    break
+                if parent.attrib.get('refersTo', '') == defined_term:
+                    self.migrate_element(parent)
+                    changed = True
+                    break
 
         if changed:
             self.id_generator.rewrite_all_eids(xml)

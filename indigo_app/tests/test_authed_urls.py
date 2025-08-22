@@ -46,7 +46,6 @@ api/documents/(?P<document_id>[0-9]+)/analysis/mark\-up\-italics\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/sentence\-case\-headings\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-references\Z
 api/documents/(?P<document_id>[0-9]+)/analysis/link\-terms\Z
-api/documents/(?P<document_id>[0-9]+)/analysis/definitions\-into\-blocks\Z
 api/documents/(?P<document_id>[0-9]+)/static/(?P<filename>.+)\Z
 api/documents/(?P<document_id>[0-9]+)/render/coverpage\Z
 api/documents/(?P<document_id>[0-9]+)/parse\Z

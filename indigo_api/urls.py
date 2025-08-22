@@ -30,7 +30,6 @@ urlpatterns = [
     path('documents/<int:document_id>/analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
     path('documents/<int:document_id>/analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
     path('documents/<int:document_id>/analysis/sentence-case-headings', documents.SentenceCaseHeadingsView.as_view(), name='sentence-case-headings'),
-    path('documents/<int:document_id>/analysis/definitions-into-blocks', documents.DefinitionsIntoBlockContainersView.as_view(), name='definitions-into-blocks'),
 
     path('documents/<int:document_id>/revisions/<int:pk>/diff', cache_control(public=True, max_age=24 * 3600)(documents.RevisionDiffView.as_view()), name='document-revisions-diff'),
 

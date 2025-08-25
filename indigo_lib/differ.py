@@ -89,6 +89,10 @@ class AKNHTMLDiffer:
         for elem in root.xpath(xpath, namespaces={'a': root.nsmap[None]}):
             elem.attrib.pop('eId')
 
+        # remove certain attributes that can differ between docs and confuse the differ
+        for elem in root.xpath('./a:*[@contains]', namespaces={'a': root.nsmap[None]}):
+            elem.attrib.pop('contains')
+
         return root
 
     def count_differences(self, diff_tree):

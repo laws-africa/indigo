@@ -113,6 +113,14 @@ export default {
         return headingText;
       };
 
+      const getDefinitionTitle = (node) => {
+        const term = node.getAttribute('refersTo');
+        const result = this.model.xpath(`.//a:def[@refersTo="${term}"]`, node);
+        if (result.snapshotLength > 0) {
+          return result.snapshotItem(0).textContent;
+        }
+      };
+
       function generateToc (node) {
         let num = null;
         for (const n of node.children) {
@@ -133,7 +141,11 @@ export default {
           issues_description: '',
           issues_severity: ''
         };
-        item.title = tradition.toc_element_title(item);
+        if (node.localName === 'blockContainer') {
+          item.title = getDefinitionTitle(node);
+        } else {
+          item.title = tradition.toc_element_title(item);
+        }
         return item;
       }
 

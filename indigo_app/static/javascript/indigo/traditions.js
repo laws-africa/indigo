@@ -38,6 +38,9 @@
     // Should this XML node be included in the table of contents?
     // By default, checks if the name of the node is in the +elements+ object.
     is_toc_element: function(node) {
+      if (node.localName === 'blockContainer') {
+        return node.classList.contains('definition');
+      }
       return !!this.settings.toc.elements[node.localName];
     },
 
@@ -127,6 +130,7 @@
         article: 1,
         attachment: 1,
         attachments: 1,
+        blockContainer: 1,
         book: 1,
         chapter: 1,
         clause: 1,

@@ -239,7 +239,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def is_toc_element(self, element):
         if element.tag in self._definition_types_ns:
             # only blockContainers (or other elements) that are in fact definitions should be included
-            return bool(self.get_def_element(element))
+            return self.get_def_element(element) is not None
         return element.tag in self._toc_elements_ns
 
     def table_of_contents(self, act, language):
@@ -389,19 +389,23 @@ class TOCBuilderBase(LocaleBasedMatcher):
         return title
 
     def get_def_element(self, element):
-        """ Uses the refersTo of an element containing a definition to find the matching <def> inside that element.
-            Returns the result of the xpath, which may be an empty list.
+        """ Uses the refersTo of an element containing a definition to find the first matching <def> inside that element.
+            Returns the first <def> with the same refersTo attribute if there is one.
+            Returns None if there isn't a matching <def> or if the containing element doesn't have that attribute.
         """
         term = element.get('refersTo')
-        return element.xpath(f'.//a:def[@refersTo="{term}"]', namespaces={'a': self.act.namespace})
+        if term:
+            def_elements = element.xpath(f'.//a:def[@refersTo="{term}"]', namespaces={'a': self.act.namespace})
+            if len(def_elements):
+                return def_elements[0]
 
     def definition_title(self, item):
         """ Generates a title for an element containing a definition.
             Use the text content of the descendant <def> that matches the refersTo of the containing element.
         """
         def_elem = self.get_def_element(item.element)
-        if def_elem:
-            return ''.join(def_elem[0].xpath('.//text()')).strip()
+        if def_elem is not None:
+            return ''.join(self.heading_text_path(def_elem))
 
     def commenceable_items(self, toc):
         """ Return a list of those items in +toc+ that are considered commenceable.

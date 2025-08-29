@@ -1,11 +1,13 @@
-import re
 import logging
+import re
 from collections import Counter
+
 from itertools import chain
 from lxml import etree
 
-from indigo.plugins import LocaleBasedMatcher
 from cobalt.schemas import AkomaNtoso30
+from indigo.plugins import LocaleBasedMatcher
+from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +43,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
         root = etree.fromstring(document.content.encode('utf-8'))
         self.find_terms(root)
         document.content = etree.tostring(root, encoding='unicode')
+        # migrate definitions into blockContainers as the final step
+        migration = DefinitionsIntoBlockContainers()
+        migration.migrate_document(document)
 
     def find_terms(self, doc):
         self.setup(doc)

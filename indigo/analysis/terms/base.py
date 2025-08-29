@@ -149,13 +149,16 @@ class BaseTermsFinder(LocaleBasedMatcher):
                 parent.set('refersTo', '#' + term_id)
                 break
 
+    def may_contain_definitions(self, element):
+        # sections with headings like Definitions
+        heading = self.heading_xpath(element)
+        return heading and self.heading_re.match(heading[0].text or '')
+
     def definition_sections(self, doc):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
         for section in self.defn_hier_xpath(doc):
-            # sections with headings like Definitions
-            heading = self.heading_xpath(section)
-            if not heading or not self.heading_re.match(heading[0].text or ''):
+            if not self.may_contain_definitions(section):
                 continue
 
             yield section

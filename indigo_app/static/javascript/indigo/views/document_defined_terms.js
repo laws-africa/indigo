@@ -92,12 +92,6 @@
       xml.querySelectorAll('[refersTo]').forEach(function(el) {
         if ((el.getAttribute('refersTo') || '').startsWith('#term-')) {
           el.removeAttribute('refersTo');
-          // if it's a blockContainer, move all children up and remove it too
-          if (el.tagName === 'blockContainer') {
-            var parent = el.parentNode;
-            while (el.firstChild) parent.insertBefore(el.firstChild, el);
-            parent.removeChild(el);
-          }
         }
       });
 

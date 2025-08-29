@@ -30,6 +30,18 @@ class TermsFinderENG(BaseTermsFinder):
         self.term_re = re.compile('|'.join(in_quotes + self.others))
         super().setup(doc)
 
+    def contains_definition_block_container(self, element):
+        # returns True for the first blockContainer that has 'definition' as one of its classes
+        for block_container in element.xpath('.//a:blockContainer[@class]', namespaces=self.nsmap):
+            if 'definition' in block_container.get('class', '').split():
+                return True
+
+    def may_contain_definitions(self, element):
+        base_may_contain = super().may_contain_definitions(element)
+        if not base_may_contain:
+            return self.contains_definition_block_container(element)
+        return base_may_contain
+
     def find_terms_in_document(self, document):
         super().find_terms_in_document(document)
         # migrate to new-style definitions as the final step

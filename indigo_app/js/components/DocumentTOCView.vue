@@ -118,6 +118,8 @@ export default {
         const result = this.model.xpath(`.//a:def[@refersTo="${term}"]`, node);
         if (result.snapshotLength > 0) {
           return result.snapshotItem(0).textContent;
+        } else {
+          return '(term missing)';
         }
       };
 

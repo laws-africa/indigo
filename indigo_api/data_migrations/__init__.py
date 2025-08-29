@@ -250,7 +250,12 @@ class DefinitionsIntoBlockContainers(DataMigration):
     def migrate_element(self, elem):
         refers_to = elem.attrib.pop('refersTo')
         assert refers_to.startswith('#term-')
-        block_container = self.maker('blockContainer', refersTo=refers_to)
-        block_container.set('class', 'definition')
-        elem.addprevious(block_container)
-        block_container.append(elem)
+        parent = elem.getparent()
+        if parent.tag == f'{{{self.ns}}}blockContainer' and 'definition' in parent.get('class', '').split():
+            # just move the refersTo up, we're already in a <blockContainer class="definition">
+            parent.set('refersTo', refers_to)
+        else:
+            block_container = self.maker('blockContainer', refersTo=refers_to)
+            block_container.set('class', 'definition')
+            elem.addprevious(block_container)
+            block_container.append(elem)

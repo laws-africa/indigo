@@ -634,7 +634,7 @@ class CommencementForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         # all_provisions may have been nuked during clean
-        if cleaned_data.get('all_provisions') and cleaned_data['provisions']:
+        if cleaned_data.get('all_provisions') and cleaned_data.get('provisions'):
             raise ValidationError(_("Cannot specify all provisions, and a list of provisions."))
 
         # don't try to save a duplicate commencement, we'll get an IntegrityError

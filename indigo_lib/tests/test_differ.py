@@ -149,7 +149,9 @@ class AKNHTMLDifferTestCase(TestCase):
 
     def test_preprocess_xml(self):
         xml = self.differ.preprocess_xml_str("""
-<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="chp_3__sec_4">
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+<act name="act" contains="singleVersion">
+<section eId="chp_3__sec_4">
   <num>4</num>
   <heading>Heading</heading>
   <content>
@@ -157,10 +159,14 @@ class AKNHTMLDifferTestCase(TestCase):
     <p refersTo="#term-Court" eId="chp_3__sec_4__p_2">"<def refersTo="#term-Court" eId="chp_3__sec_4__p_2__def_1">Court</def>" means a provincial or local division of the Supreme Court of South Africa or any judge thereof;</p>
     <p eId="chp_3__sec_4__p_3"><remark status="editorial">[definition of "court" amended by <ref href="/akn/za/act/1996/49" eId="chp_3__sec_4__p_3__ref_1">Act 49 of 1996</ref>]</remark></p>
   </content>
-</section>""")
+</section>
+</act>
+</akomaNtoso>""")
 
         self.assertEqual("""
-<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="chp_3__sec_4">
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+<act name="act">
+<section eId="chp_3__sec_4">
   <num>4</num>
   <heading>Heading</heading>
   <content>
@@ -168,7 +174,9 @@ class AKNHTMLDifferTestCase(TestCase):
     <p refersTo="#term-Court" eId="chp_3__sec_4__p_2">"<def refersTo="#term-Court">Court</def>" means a provincial or local division of the Supreme Court of South Africa or any judge thereof;</p>
     <p eId="chp_3__sec_4__p_3"><remark status="editorial">[definition of "court" amended by <ref href="/akn/za/act/1996/49">Act 49 of 1996</ref>]</remark></p>
   </content>
-</section>""".strip(),
+</section>
+</act>
+</akomaNtoso>""".strip(),
             xml.decode('utf-8').strip()
         )
 

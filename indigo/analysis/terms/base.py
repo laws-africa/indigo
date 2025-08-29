@@ -1,11 +1,13 @@
-import re
 import logging
+import re
 from collections import Counter
+
 from itertools import chain
 from lxml import etree
 
-from indigo.plugins import LocaleBasedMatcher
 from cobalt.schemas import AkomaNtoso30
+from indigo.plugins import LocaleBasedMatcher
+from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +43,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
         root = etree.fromstring(document.content.encode('utf-8'))
         self.find_terms(root)
         document.content = etree.tostring(root, encoding='unicode')
+        # migrate definitions into blockContainers as the final step
+        migration = DefinitionsIntoBlockContainers()
+        migration.migrate_document(document)
 
     def find_terms(self, doc):
         self.setup(doc)
@@ -149,13 +154,22 @@ class BaseTermsFinder(LocaleBasedMatcher):
                 parent.set('refersTo', '#' + term_id)
                 break
 
+    def definition_heading_match(self, element):
+        # sections with headings like Definitions
+        heading = self.heading_xpath(element)
+        return heading and self.heading_re.match(heading[0].text or '')
+
+    def contains_definition_block_container(self, element):
+        # returns True for the first blockContainer that has 'definition' as one of its classes
+        for block_container in element.xpath('.//a:blockContainer[@class]', namespaces=self.nsmap):
+            if 'definition' in block_container.get('class', '').split():
+                return True
+
     def definition_sections(self, doc):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
         for section in self.defn_hier_xpath(doc):
-            # sections with headings like Definitions
-            heading = self.heading_xpath(section)
-            if not heading or not self.heading_re.match(heading[0].text or ''):
+            if not self.definition_heading_match(section) or self.contains_definition_block_container(section):
                 continue
 
             yield section

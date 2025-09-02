@@ -386,5 +386,23 @@
       "publication_date": "2023-11-01",
       "work_in_progress": false
     }
+  },
+  {
+    "pk": 21,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Definitions in ToC but not commenceable",
+      "country": 1,
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "created_by_user": 1,
+      "updated_by_user": 1,
+      "frbr_uri": "/akn/za/act/2025/4",
+      "doctype": "act",
+      "date": "2025",
+      "number": "4",
+      "publication_date": "2025-08-28",
+      "work_in_progress": false
+    }
   }
 ]

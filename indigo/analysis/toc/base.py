@@ -130,6 +130,12 @@ def descend_toc_post_order(items):
         yield item
 
 
+def remove_toc_elements(toc, elements:list):
+    for item in descend_toc_post_order(toc):
+        item.children = [c for c in item.children if c.type not in elements]
+    return toc
+
+
 @plugins.register('toc')
 class TOCBuilderBase(LocaleBasedMatcher):
     """ This builds a Table of Contents for an Act.
@@ -312,6 +318,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_, num=num, component_id=component_id,
                               basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)
+
+        # overwrite the type for all definition types to match
+        if toc_item.type in self.definition_types:
+            toc_item.type = 'definition'
 
         return toc_item
 

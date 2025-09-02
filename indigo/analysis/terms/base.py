@@ -169,7 +169,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
         for section in self.defn_hier_xpath(doc):
-            if not self.definition_heading_match(section) or self.contains_definition_block_container(section):
+            if not (self.definition_heading_match(section) or self.contains_definition_block_container(section)):
                 continue
 
             yield section

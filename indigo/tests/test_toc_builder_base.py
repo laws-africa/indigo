@@ -394,6 +394,9 @@ class TOCBuilderBaseTestCase(TestCase):
 
     def test_toc_definitions(self):
         doc = Document.objects.get(pk=22)
+        # make sure 'item' isn't in toc_elements
+        if 'item' in self.builder.toc_elements:
+            self.builder.toc_elements.pop(self.builder.toc_elements.index('item'))
         toc = self.builder.table_of_contents_for_document(doc)
         self.assertEqual([{
             'type': 'preamble',

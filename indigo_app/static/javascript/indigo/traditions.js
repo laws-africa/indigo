@@ -42,6 +42,8 @@
         if (node.classList.contains('definition')) {
           const refersTo = node.getAttribute('refersTo') || '';
           return refersTo.startsWith('#term-')
+        } else {
+          return false;
         }
       }
       return !!this.settings.toc.elements[node.localName];

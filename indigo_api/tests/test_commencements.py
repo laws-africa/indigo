@@ -34,7 +34,7 @@ class CommencementsTestCase(TestCase):
     def test_definition_block_containers_not_commenceable(self):
         """ See the full ToC, including definitions, at TOCBuilderBaseTestCase.test_toc_definitions.
         """
-        work = Work.objects.get(pk=1)
+        work = Work.objects.get(pk=21)
         provisions = work.all_commenceable_provisions()
         self.assertEqual(provisions, [
             'chp_1', 'chp_1__sec_1', 'chp_1__sec_1A', 'chp_1__sec_2', 'chp_1__sec_2__subsec_1',

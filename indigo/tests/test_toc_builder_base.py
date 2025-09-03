@@ -9,7 +9,7 @@ from indigo_api.tests.fixtures import document_fixture, component_fixture
 
 
 class TOCBuilderBaseTestCase(TestCase):
-    fixtures = ['languages_data', 'countries']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work', 'drafts']
 
     def setUp(self):
         self.work = Work(frbr_uri='/za/act/1998/1')
@@ -391,6 +391,158 @@ class TOCBuilderBaseTestCase(TestCase):
             'heading': None,
         })
         self.assertEqual(toc.id, toc.qualified_id)
+
+    def test_toc_definitions(self):
+        doc = Document.objects.get(pk=23)
+        # make sure 'item' isn't in toc_elements
+        if 'item' in self.builder.toc_elements:
+            self.builder.toc_elements.pop(self.builder.toc_elements.index('item'))
+        toc = self.builder.table_of_contents_for_document(doc)
+        self.assertEqual([{
+            'type': 'preamble',
+            'component': 'main',
+            'title': 'Preamble',
+            'children': [{
+                'type': 'definition',
+                'component': 'main',
+                'title': 'aerial cable-operated transportation system',
+                'children': [],
+                'basic_unit': False,
+                'num': None,
+                'id': 'preamble__blockContainer_1',
+                'heading': None,
+            }],
+            'basic_unit': False,
+            'num': None,
+            'id': None,
+            'heading': None,
+        }, {
+            'type': 'chapter',
+            'component': 'main',
+            'title': 'Chapter 1 – Interpretation, application and objects',
+            'children': [{
+                'type': 'section',
+                'component': 'main',
+                'title': '1. Definitions',
+                'children': [{
+                    'type': 'definition',
+                    'component': 'main',
+                    'title': 'aerial cable-operated transportation system',
+                    'children': [],
+                    'basic_unit': False,
+                    'num': None,
+                    'id': 'chp_1__sec_1__blockContainer_1',
+                    'heading': None,
+                }, {
+                    'type': 'definition',
+                    'component': 'main',
+                    'title': 'board',
+                    'children': [],
+                    'basic_unit': False,
+                    'num': None,
+                    'id': 'chp_1__sec_1__blockContainer_2',
+                    'heading': None,
+                }, {
+                    'type': 'definition',
+                    'component': 'main',
+                    'title': 'Department',
+                    'children': [],
+                    'basic_unit': False,
+                    'num': None,
+                    'id': 'chp_1__sec_1__blockContainer_3',
+                    'heading': None,
+                }, {
+                    'type': 'definition',
+                    'component': 'main',
+                    'title': 'Minister',
+                    'children': [{
+                        'type': 'definition',
+                        'component': 'main',
+                        'title': 'Ministers',
+                        'children': [],
+                        'basic_unit': False,
+                        'num': None,
+                        'id': 'chp_1__sec_1__blockContainer_4__blockContainer_1',
+                        'heading': None,
+                    }],
+                    'basic_unit': False,
+                    'num': None,
+                    'id': 'chp_1__sec_1__blockContainer_4',
+                    'heading': None,
+                }, {
+                    'type': 'definition',
+                    'component': 'main',
+                    'title': 'network',
+                    'children': [],
+                    'basic_unit': False,
+                    'num': None,
+                    'id': 'chp_1__sec_1__blockContainer_5',
+                    'heading': None,
+                }],
+                'basic_unit': True,
+                'num': '1.',
+                'id': 'chp_1__sec_1',
+                'heading': 'Definitions',
+            }, {
+                'type': 'section',
+                'component': 'main',
+                'title': '1A. New',
+                'children': [],
+                'basic_unit': True,
+                'num': '1A.',
+                'id': 'chp_1__sec_1A',
+                'heading': 'New',
+            }, {
+                'type': 'section',
+                'component': 'main',
+                'title': '2. Application of Act',
+                'children': [{
+                    'type': 'subsection',
+                    'component': 'main',
+                    'title': 'Subsection (1)',
+                    'children': [{
+                        'type': 'paragraph',
+                        'component': 'main',
+                        'title': 'Paragraph (a)',
+                        'children': [{
+                            'type': 'definition',
+                            'component': 'main',
+                            'title': 'operations',
+                            'children': [],
+                            'basic_unit': False,
+                            'num': None,
+                            'id': 'chp_1__sec_2__subsec_1__para_a__blockContainer_1',
+                            'heading': None,
+                        }],
+                        'basic_unit': False,
+                        'num': '(a)',
+                        'id': 'chp_1__sec_2__subsec_1__para_a',
+                        'heading': None,
+                    }, {
+                        'type': 'paragraph',
+                        'component': 'main',
+                        'title': 'Paragraph (b)',
+                        'children': [],
+                        'basic_unit': False,
+                        'num': '(b)',
+                        'id': 'chp_1__sec_2__subsec_1__para_b',
+                        'heading': None,
+                    }],
+                    'basic_unit': False,
+                    'num': '(1)',
+                    'id': 'chp_1__sec_2__subsec_1',
+                    'heading': None,
+                }],
+                'basic_unit': True,
+                'num': '2.',
+                'id': 'chp_1__sec_2',
+                'heading': 'Application of Act',
+            }],
+            'basic_unit': False,
+            'num': '1',
+            'id': 'chp_1',
+            'heading': 'Interpretation, application and objects',
+        }], [e.as_dict() for e in toc])
 
 
 class TOCBuilderAPITestCase(APITestCase):

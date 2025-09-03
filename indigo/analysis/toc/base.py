@@ -130,6 +130,12 @@ def descend_toc_post_order(items):
         yield item
 
 
+def remove_toc_elements(toc, elements:list):
+    for item in descend_toc_post_order(toc):
+        item.children = [c for c in item.children if c.type not in elements]
+    return toc
+
+
 @plugins.register('toc')
 class TOCBuilderBase(LocaleBasedMatcher):
     """ This builds a Table of Contents for an Act.
@@ -155,7 +161,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
     toc_elements = [
         # top-level
-        'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component',
+        'coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component', 'blockContainer',
     ] + AkomaNtoso30.hier_elements
     """ Elements we include in the table of contents, without their XML namespace.
         Base includes the following from the from the AKN schema:
@@ -194,6 +200,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
     non_commenceable_toplevel_elements = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
 
+    definition_types = ['blockContainer']
+    """ List of elements that may contain a definition (and should only be included if they do).
+    """
+
     def table_of_contents_for_document(self, document):
         """ Build the table of contents for a document.
         """
@@ -216,6 +226,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         self.language = language
         self._toc_elements_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_elements)
         self._toc_deadends_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_deadends)
+        self._definition_types_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.definition_types)
         self.heading_text_path = etree.XPath(".//text()[not(ancestor::a:authorialNote)]", namespaces={'a': self.act.namespace})
 
     def determine_component(self, element):
@@ -232,6 +243,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
         return None, None
 
     def is_toc_element(self, element):
+        if element.tag in self._definition_types_ns:
+            # only blockContainers (or other elements) that are in fact definitions should be included
+            return self.get_def_element(element) is not None
         return element.tag in self._toc_elements_ns
 
     def table_of_contents(self, act, language):
@@ -305,6 +319,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
                               basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)
 
+        # overwrite the type for all definition types to match
+        if toc_item.type in self.definition_types:
+            toc_item.type = 'definition'
+
         return toc_item
 
     def friendly_title(self, item):
@@ -326,6 +344,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         if item.type in self.titles_with_optional_type:
             return self.title_with_optional_type(item)
+
+        if item.type in self.definition_types:
+            return self.definition_title(item)
 
         return self.title_with_type(item)
 
@@ -376,6 +397,25 @@ class TOCBuilderBase(LocaleBasedMatcher):
             title = ''
 
         return title
+
+    def get_def_element(self, element):
+        """ Uses the refersTo of an element containing a definition to find the first matching <def> inside that element.
+            Returns the first <def> with the same refersTo attribute if there is one.
+            Returns None if there isn't a matching <def> or if the containing element doesn't have that attribute.
+        """
+        term = element.get('refersTo')
+        if term:
+            def_elements = element.xpath(f'.//a:def[@refersTo="{term}"]', namespaces={'a': self.act.namespace})
+            if len(def_elements):
+                return def_elements[0]
+
+    def definition_title(self, item):
+        """ Generates a title for an element containing a definition.
+            Use the text content of the descendant <def> that matches the refersTo of the containing element.
+        """
+        def_elem = self.get_def_element(item.element)
+        if def_elem is not None:
+            return ''.join(self.heading_text_path(def_elem))
 
     def commenceable_items(self, toc):
         """ Return a list of those items in +toc+ that are considered commenceable.

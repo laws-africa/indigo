@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import datetime
 
 from django.test import TestCase
@@ -30,6 +29,24 @@ class CommencementsTestCase(TestCase):
         self.assertEqual(provisions_at_publication, ['sec_1', 'sec_2', 'sec_3', 'sec_4'])
         self.assertEqual(provisions_at_future_date, ['sec_1', 'sec_2', 'sec_3', 'sec_4'])
         self.assertEqual(provisions_at_later_expression_date, ['sec_1', 'sec_2', 'sec_3', 'sec_4', 'sec_5', 'sec_6', 'sec_7'])
+
+    def test_definition_block_containers_not_commenceable(self):
+        """ See the full ToC, including definitions, at TOCBuilderBaseTestCase.test_toc_definitions.
+        """
+
+        def extend_provision_ids(ids, provision):
+            ids.append(provision.id)
+            for c in provision.children:
+                extend_provision_ids(ids, c)
+
+        work = Work.objects.get(pk=21)
+        provisions = work.all_commenceable_provisions()
+        provision_ids = []
+        for p in provisions:
+            extend_provision_ids(provision_ids, p)
+        self.assertEqual(provision_ids, [
+            'chp_1', 'chp_1__sec_1', 'chp_1__sec_1A', 'chp_1__sec_2', 'chp_1__sec_2__subsec_1',
+            'chp_1__sec_2__subsec_1__para_a', 'chp_1__sec_2__subsec_1__para_b'])
 
     def test_uncommenced_provisions(self):
         """ Provisions that don't yet exist at a given date shouldn't be included,

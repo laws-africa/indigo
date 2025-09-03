@@ -308,7 +308,7 @@ class WorkMixin(object):
         This is a potentially expensive operation across multiple documents, and so intermediate and final
         results are cached.
         """
-        from indigo.analysis.toc.base import descend_toc_pre_order
+        from indigo.analysis.toc.base import descend_toc_pre_order, remove_toc_elements
 
         if getattr(self, '_provision_cache', None) is None:
             # cache the provisions for the various documents because they are expensive to compute
@@ -340,6 +340,8 @@ class WorkMixin(object):
                 toc = doc.table_of_contents()
                 for p in descend_toc_pre_order(toc):
                     p.element = None
+                # explicitly exclude definitions from commenceable provisions
+                toc = remove_toc_elements(toc, elements=['definition'])
                 tocs[doc.id] = toc
 
         # within the existing ascending expression date order, sort expressions so that we consider

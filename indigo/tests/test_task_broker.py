@@ -9,7 +9,8 @@ class BaseTaskBrokerTestCase(TestCase):
 
     def setUp(self):
         self.country = Country.objects.first()
-        self.works = Work.objects.all()
+        # exclude any other new works created in fixtures/works.json for other tests
+        self.works = Work.objects.exclude(pk=21)
         self.broker = TaskBroker(self.works)
         self.user = User.objects.first()
 

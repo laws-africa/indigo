@@ -393,7 +393,7 @@ class TOCBuilderBaseTestCase(TestCase):
         self.assertEqual(toc.id, toc.qualified_id)
 
     def test_toc_definitions(self):
-        doc = Document.objects.get(pk=22)
+        doc = Document.objects.get(pk=23)
         # make sure 'item' isn't in toc_elements
         if 'item' in self.builder.toc_elements:
             self.builder.toc_elements.pop(self.builder.toc_elements.index('item'))

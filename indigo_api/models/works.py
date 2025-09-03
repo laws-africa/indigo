@@ -755,6 +755,12 @@ class Work(WorkMixin, models.Model):
         import_timeline_dates.extend(c.date for c in self.arbitrary_expression_dates.all())
         return max(import_timeline_dates) if import_timeline_dates else None
 
+    def propagate_copy_from_principal_topics(self):
+        """Ensure that any copy-from-principal topics on this work are copied to related works."""
+        if self.principal:
+            for topic in self.taxonomy_topics.filter(copy_from_principal=True):
+                topic.propagate_copy_from_principal([self], add=True)
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -785,6 +791,8 @@ def post_save_work(sender, instance, **kwargs):
             # forces call to doc.copy_attributes()
             doc.updated_by_user = instance.updated_by_user
             doc.save()
+
+        instance.propagate_copy_from_principal_topics()
 
     # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
@@ -924,14 +932,19 @@ class Commencement(models.Model):
 
 
 @receiver(signals.post_save, sender=Commencement)
-def post_save_commencement(sender, instance, **kwargs):
+def post_save_commencement(sender, instance, created, **kwargs):
     # Send action to activity stream, as 'created' if a new commencement
-    if kwargs['created'] and instance.created_by_user:
-        action.send(instance.created_by_user, verb='created', action_object=instance,
-                    place_code=instance.commenced_work.place.place_code)
+    if created:
+        if instance.created_by_user:
+            action.send(instance.created_by_user, verb='created', action_object=instance,
+                        place_code=instance.commenced_work.place.place_code)
+
     elif instance.updated_by_user:
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
+
+    # propagate copy-on-principal flags from the commenced work, if any
+    instance.commenced_work.propagate_copy_from_principal_topics()
 
 
 class AmendmentManager(models.Manager):
@@ -996,22 +1009,27 @@ class Amendment(models.Model):
 
 
 @receiver(signals.post_save, sender=Amendment)
-def post_save_amendment(sender, instance, **kwargs):
+def post_save_amendment(sender, instance, created, **kwargs):
     """ When an amendment is created, save any documents already at that date
     to ensure the details of the amendment are stashed correctly in each document.
     """
-    if kwargs['created']:
+    if created:
         for doc in instance.amended_work.document_set.filter(expression_date=instance.date):
             # forces call to doc.copy_attributes()
             doc.updated_by_user = instance.created_by_user
             doc.save()
 
         # Send action to activity stream, as 'created' if a new amendment
-        action.send(instance.created_by_user, verb='created', action_object=instance,
-                    place_code=instance.amended_work.place.place_code)
-    else:
+        if instance.created_by_user:
+            action.send(instance.created_by_user, verb='created', action_object=instance,
+                        place_code=instance.amended_work.place.place_code)
+
+    elif instance.updated_by_user:
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.amended_work.place.place_code)
+
+    # propagate copy-on-principal flags from the commenced work, if any
+    instance.amended_work.propagate_copy_from_principal_topics()
 
 
 class ArbitraryExpressionDate(models.Model):

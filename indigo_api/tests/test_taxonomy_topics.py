@@ -1,7 +1,7 @@
 import datetime
 from django.test import TestCase
 
-from indigo_api.models import Work, TaxonomyTopic, Country
+from indigo_api.models import Work, TaxonomyTopic, Country, Commencement, Amendment
 
 
 class TaxonomyTopicSignalTestCase(TestCase):
@@ -57,3 +57,68 @@ class TaxonomyTopicSignalTestCase(TestCase):
         self.topic_with_copy_flag.works.add(self.repealed_work)
         self.assertIn(self.topic_with_copy_flag, self.repealed_work.taxonomy_topics.all())
         self.assertIn(self.topic_with_copy_flag, self.repealing_work.taxonomy_topics.all())
+
+    def test_work_repealed(self):
+        work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/1",
+            title='Work with commencement',
+            principal=True,
+        )
+        self.topic_with_copy_flag.works.add(work)
+
+        work.repealed_by = self.repealing_work
+        work.repealed_date = datetime.date(2025, 4, 9)
+        work.save()
+
+        self.assertIn(self.topic_with_copy_flag, self.repealing_work.taxonomy_topics.all())
+
+    def test_commencement_added(self):
+        work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/1",
+            title='Work with commencement',
+            principal=True,
+        )
+        self.topic_with_copy_flag.works.add(work)
+
+        commencing_work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/2",
+            title='Commencing work',
+            principal=False,
+        )
+
+        Commencement.objects.create(
+            commenced_work=work,
+            commencing_work=commencing_work,
+            date=datetime.date(2020, 4, 9),
+        )
+
+        self.assertIn(self.topic_with_copy_flag, commencing_work.taxonomy_topics.all())
+
+    def test_amendment_added(self):
+        work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/1",
+            title='Work with amendment',
+            principal=True,
+        )
+        self.topic_with_copy_flag.works.add(work)
+
+        amending_work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/2",
+            title='Amending work',
+            principal=False,
+        )
+
+        Amendment.objects.create(
+            amended_work=work,
+            amending_work=amending_work,
+            date=datetime.date(2020, 4, 9),
+        )
+
+        self.assertIn(self.topic_with_copy_flag, amending_work.taxonomy_topics.all())
+
+

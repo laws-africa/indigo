@@ -58,6 +58,21 @@ class TaxonomyTopicSignalTestCase(TestCase):
         self.assertIn(self.topic_with_copy_flag, self.repealed_work.taxonomy_topics.all())
         self.assertIn(self.topic_with_copy_flag, self.repealing_work.taxonomy_topics.all())
 
+    def test_work_repealed(self):
+        work = Work.objects.create(
+            country=Country.objects.get(country__pk='ZA'),
+            frbr_uri="/akn/za/act/2020/1",
+            title='Work with commencement',
+            principal=True,
+        )
+        self.topic_with_copy_flag.works.add(work)
+
+        work.repealed_by = self.repealing_work
+        work.repealed_date = datetime.date(2025, 4, 9)
+        work.save()
+
+        self.assertIn(self.topic_with_copy_flag, self.repealing_work.taxonomy_topics.all())
+
     def test_commencement_added(self):
         work = Work.objects.create(
             country=Country.objects.get(country__pk='ZA'),

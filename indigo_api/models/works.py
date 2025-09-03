@@ -792,6 +792,8 @@ def post_save_work(sender, instance, **kwargs):
             doc.updated_by_user = instance.updated_by_user
             doc.save()
 
+        instance.propagate_copy_from_principal_topics()
+
     # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
         if instance.created_by_user:

@@ -122,6 +122,8 @@ class PDFRenderer(BaseRenderer):
     format = 'pdf'
     serializer_class = NoopSerializer
     renderer_context = None
+    # params from request.GET that form part of the cache key
+    cache_key_params = ['resolver']
 
     # these are used by the document download menu
     icon = 'far fa-file-pdf'
@@ -188,6 +190,12 @@ class PDFRenderer(BaseRenderer):
             parts = [f"{p.id}-{p.updated_at.isoformat()}" for p in data]
 
         parts = [self.format] + parts
+        # add any relevant GET params
+        request = self.renderer_context['request']
+        parts = parts + [
+            f"{p}={request.GET.get(p, '')}"
+            for p in self.cache_key_params
+        ]
         return ':'.join(str(p) for p in parts)
 
     def get_filename(self, data, view):

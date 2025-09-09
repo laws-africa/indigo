@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 14:44\n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
+"PO-Revision-Date: 2025-04-22 08:16\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -177,21 +177,19 @@ msgstr "Nambari"
 
 #: forms/works.py:477
 msgid "Validity start date"
-msgstr ""
+msgstr "Tarehe ya kuanza kwa uhalali"
 
 #: forms/works.py:478
 msgid "Validity end date"
-msgstr ""
+msgstr "Tarehe ya mwisho ya uhalali"
 
 #: forms/works.py:479
-#, fuzzy
-#| msgid "Publication name"
 msgid "Revision name"
-msgstr "Jina la uchapishaji"
+msgstr "Jina la marekebisho"
 
 #: forms/works.py:487
 msgid "Name"
-msgstr ""
+msgstr "Jina"
 
 #: forms/works.py:587
 msgid "Consolidation dates must be unique."
@@ -221,7 +219,7 @@ msgstr "Inaonekana kwamba mwanzo umehaririwa mahali pengine. Ghairi uhariri wako
 msgid "Commencing work and date must be unique together."
 msgstr "Tarehe ya kuanza kazi na tarehe lazima iwe ya kipekee pamoja."
 
-#: forms/works.py:727
+#: forms/works.py:775
 msgid "Commenced work, commencing work, and date must be unique together."
 msgstr "Kazi iliyoanza, kazi ya kuanza, na tarehe lazima ziwe za kipekee pamoja."
 
@@ -1211,7 +1209,7 @@ msgstr "Ongeza marekebisho"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:51
 msgid "e.g. Revised Laws 2004"
-msgstr ""
+msgstr "kwa mfano Sheria zilizorekebishwa za 2004"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:78
 #: templates/indigo_api/_work_form_content.html:616
@@ -1282,13 +1280,13 @@ msgstr "Nambari au jina fupi ambalo linatambulisha sheria hii kwa njia ya kipeke
 
 #: templates/indigo_api/_work_form_content.html:216
 msgid "Chapter numbers"
-msgstr ""
+msgstr "Nambari za sura"
 
 #: templates/indigo_api/_work_form_content.html:226
 msgid "Responsible organisation (actor)"
 msgstr "Shirika linalowajibika (mwigizaji)"
 
-#: templates/indigo_api/_work_form_content.html:227
+#: templates/indigo_api/_work_form_content.html:238
 msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
 msgstr "Shirika lililounda kazi hii. Kwa kawaida haitumiki kwa sheria za kitaifa. Nambari, herufi na '-' pekee."
 
@@ -3619,56 +3617,10 @@ msgid "Error during import: %(error)s"
 msgstr "Hitilafu wakati wa uingizaji: %(error)s"
 
 #: views/works.py:1199
-#, fuzzy
-#| msgid "Markup the long title"
 msgid "Match on title"
-msgstr "Weka alama kwa kichwa kirefu"
+msgstr "Mechi juu ya kichwa"
 
 #: views/works.py:1200
 msgid "Match on year and number"
-msgstr ""
+msgstr "Mechi kwa mwaka na nambari"
 
-#~ msgid "Commenced work and date must be unique together."
-#~ msgstr "Kazi na tarehe iliyoanza lazima iwe ya kipekee pamoja."
-
-#~ msgid "Finishing"
-#~ msgstr "Kumaliza"
-
-#~ msgid "Akoma Ntoso"
-#~ msgstr "Akoma Ntoso"
-
-#~ msgid "Markup"
-#~ msgstr "Alama"
-
-#~ msgid "Bold"
-#~ msgstr "Ujasiri"
-
-#~ msgid "Italics"
-#~ msgstr "Italiki"
-
-#~ msgid "Underline"
-#~ msgstr "Piga mstari"
-
-#~ msgid "Superscript"
-#~ msgstr "Superscript"
-
-#~ msgid "Subscript"
-#~ msgstr "Usajili"
-
-#~ msgid "Editor help..."
-#~ msgstr "Usaidizi wa mhariri..."
-
-#~ msgid "Available tasks"
-#~ msgstr "Kazi zinazopatikana"
-
-#~ msgid "All available tasks"
-#~ msgstr "Kazi zote zinazopatikana"
-
-#~ msgid "Complete"
-#~ msgstr "Kamilisha"
-
-#~ msgid "Works complete"
-#~ msgstr "Kazi imekamilika"
-
-#~ msgid "Metrics"
-#~ msgstr "Vipimo"

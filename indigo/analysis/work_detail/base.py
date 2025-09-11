@@ -61,21 +61,24 @@ class BaseWorkDetail(LocaleBasedMatcher):
         """ Returns the latest or only related ChapterNumber object.
             If there are multiple, the latest is the (only) one with the latest validity_start_date.
         """
-        if work.chapter_numbers.count() == 1:
-            # there's only one -- easy peasy
-            return work.chapter_numbers.first()
-        # only consider those with a start date
-        chapter_numbers = work.chapter_numbers.filter(validity_start_date__isnull=False)
-        if chapter_numbers.count() == 1:
-            # there's only one with a start date -- easy peasy
-            return chapter_numbers.first()
-        # max() will complain if there are none left
-        if chapter_numbers.exists():
-            latest_start_date = max(x.validity_start_date for x in chapter_numbers)
-            latest = chapter_numbers.filter(validity_start_date=latest_start_date)
-            if latest.count() == 1:
-                # there's only one at the latest start date -- we have a winner!
-                return latest.first()
+        # most works don't even have a chapter number
+        if work.chapter_numbers.exists():
+            chapter_numbers = list(work.chapter_numbers.all())
+            if len(chapter_numbers) == 1:
+                # there's only one -- easy peasy
+                return chapter_numbers[0]
+            # only consider those with a start date
+            chapter_numbers = [cn for cn in chapter_numbers if cn.validity_start_date]
+            if len(chapter_numbers) == 1:
+                # there's only one with a start date -- easy peasy
+                return chapter_numbers[0]
+            # max() will complain if there aren't any
+            if len(chapter_numbers):
+                latest_start_date = max(cn.validity_start_date for cn in chapter_numbers)
+                chapter_numbers = [cn for cn in chapter_numbers if cn.validity_start_date == latest_start_date]
+                if len(chapter_numbers) == 1:
+                    # there's only one at the latest start date -- we have a winner!
+                    return chapter_numbers[0]
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

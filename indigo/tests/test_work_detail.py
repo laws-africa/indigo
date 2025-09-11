@@ -97,9 +97,9 @@ class BaseWorkDetailTestCase(TestCase):
         self.assertEqual('Chapter 123', self.plugin.work_numbered_title(work))
         ChapterNumber.objects.create(number='456', work=work, validity_start_date='2025-06-04')
         self.assertEqual('Chapter 456', self.plugin.work_numbered_title(work))
-        # but adding a third one without a date gives us nothing to work with
+        # a third one without a date gets ignored
         ChapterNumber.objects.create(number='789', work=work)
-        self.assertEqual('Act 32 of 1999', self.plugin.work_numbered_title(work))
+        self.assertEqual('Chapter 456', self.plugin.work_numbered_title(work))
 
     def test_numbered_title_chapter_mix_start_and_end_dates_1(self):
         work = Work.objects.create(
@@ -109,6 +109,7 @@ class BaseWorkDetailTestCase(TestCase):
         )
         ChapterNumber.objects.create(number='123', work=work, validity_start_date='2025-06-03')
         self.assertEqual('Chapter 123', self.plugin.work_numbered_title(work))
+        # a new one without a start date gets ignored
         ChapterNumber.objects.create(number='456', work=work, validity_end_date='2025-06-02')
         self.assertEqual('Chapter 123', self.plugin.work_numbered_title(work))
         # another one at an older start date
@@ -126,8 +127,9 @@ class BaseWorkDetailTestCase(TestCase):
         )
         ChapterNumber.objects.create(number='123', work=work, validity_start_date='2025-06-03')
         self.assertEqual('Chapter 123', self.plugin.work_numbered_title(work))
+        # a new one without a start date gets ignored
         ChapterNumber.objects.create(number='456', work=work, validity_end_date='2025-06-02')
         self.assertEqual('Chapter 123', self.plugin.work_numbered_title(work))
-        # another one at a more recent end date
-        ChapterNumber.objects.create(number='789', work=work, validity_end_date='2025-06-03')
-        self.assertEqual('Act 32 of 1999', self.plugin.work_numbered_title(work))
+        # another one at a more recent start date
+        ChapterNumber.objects.create(number='789', work=work, validity_start_date='2025-06-04')
+        self.assertEqual('Chapter 789', self.plugin.work_numbered_title(work))

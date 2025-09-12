@@ -227,6 +227,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
         def in_own_defn(node, match):
             # don't link to a term inside its own definition
             term_id = '#' + term_lookup[match.group(1)]
+            # first check that we're not in the actual <def> node
+            if node.get('refersTo') == term_id:
+                return True
+            # then check that we're not in the element that contains the definition
             for ancestor in node.iterancestors(self.ancestors):
                 if ancestor.get('refersTo'):
                     return ancestor.get('refersTo') == term_id

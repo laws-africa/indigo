@@ -147,7 +147,6 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     """ Exports (renders) AKN documents as PDFs using FOP.
     """
     locale = (None, None, None)
-    resolver_url = settings.RESOLVER_URL
 
     # list of countries that shouldn't be included in the coverpage
     dont_include_countries = []
@@ -414,7 +413,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 # e.g. example.com which should be removed
                 if parsed_url.path and parsed_url.path.startswith('/'):
                     # /akn/… -- resolve it
-                    parsed_resolver_url = urlparse(self.resolver_url)
+                    parsed_resolver_url = urlparse(self.resolver)
                     new_path = parsed_resolver_url.path.rstrip('/') + parsed_url.path
                     ref.attrib['href'] = self.escape_url(urlunparse(
                         (parsed_resolver_url.scheme, parsed_resolver_url.netloc, new_path, parsed_url.params,

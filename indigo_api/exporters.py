@@ -235,7 +235,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         """ Get the appropriate string based on the locality and country, in the right language.
         """
         locality = document.work.locality.name if document.work.locality else None
-        country = document.work.country.name if document.country not in self.dont_include_countries else None
+        country = document.work.country.name if document.work.country.code not in self.dont_include_countries else None
         if locality and country:
             return f'{_(locality)}, {_(country)}'
         elif locality:

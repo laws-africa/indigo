@@ -68,32 +68,46 @@
       if (!Indigo.view.sourceEditorView.confirmAndDiscardChanges()) return;
       let xml = this.model.xmlDocument.cloneNode(true);
 
-      // unwrap all <def>s
-      xml.querySelectorAll('def').forEach(function(def) {
-        var parent = def.parentNode;
-        while (def.firstChild) parent.insertBefore(def.firstChild, def);
-        parent.removeChild(def);
-      });
+      // in provision mode, only remove <terms>, since we could be editing a <def> with its own refersTo, and there's no <meta> block
+      if (Indigo.Preloads.provisionEid) {
+        console.log('Only removing <term>s in provision editing mode');
+        xml.querySelectorAll('term').forEach(function(term) {
+          var parent = term.parentNode;
+          while (term.firstChild) parent.insertBefore(term.firstChild, term);
+          parent.removeChild(term);
+        });
+      } else {
+        // unwrap all <def>s
+        console.log('Removing <def>s in document editing mode');
+        xml.querySelectorAll('def').forEach(function(def) {
+          var parent = def.parentNode;
+          while (def.firstChild) parent.insertBefore(def.firstChild, def);
+          parent.removeChild(def);
+        });
 
-      // unwrap all <term>s
-      xml.querySelectorAll('term').forEach(function(term) {
-        var parent = term.parentNode;
-        while (term.firstChild) parent.insertBefore(term.firstChild, term);
-        parent.removeChild(term);
-      });
+        // unwrap all <term>s
+        console.log('Removing <term>s in document editing mode');
+        xml.querySelectorAll('term').forEach(function(term) {
+          var parent = term.parentNode;
+          while (term.firstChild) parent.insertBefore(term.firstChild, term);
+          parent.removeChild(term);
+        });
 
-      // remove all <TLCTerm>s
-      xml.querySelectorAll('TLCTerm').forEach(function(tlcTerm) {
-        var parent = tlcTerm.parentNode;
-        parent.removeChild(tlcTerm);
-      });
+        // remove all <TLCTerm>s
+        console.log('Removing <TLCTerm>s in document editing mode');
+        xml.querySelectorAll('TLCTerm').forEach(function(tlcTerm) {
+          var parent = tlcTerm.parentNode;
+          parent.removeChild(tlcTerm);
+        });
 
-      // remove all refersTo attributes that start with '#term-'
-      xml.querySelectorAll('[refersTo]').forEach(function(el) {
-        if ((el.getAttribute('refersTo') || '').startsWith('#term-')) {
-          el.removeAttribute('refersTo');
-        }
-      });
+        // remove all refersTo attributes that start with '#term-'
+        console.log('Removing refersTo="#term-xx_yy"s in document editing mode');
+        xml.querySelectorAll('[refersTo]').forEach(function(el) {
+          if ((el.getAttribute('refersTo') || '').startsWith('#term-')) {
+            el.removeAttribute('refersTo');
+          }
+        });
+      }
 
       // set the content once for one mutation record
       this.model.xmlDocument.documentElement.replaceWith(xml.documentElement);

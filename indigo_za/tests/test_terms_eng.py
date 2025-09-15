@@ -426,3 +426,50 @@ class TermsFinderENGTestCase(APITestCase):
     </body>
   
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))
+
+    def test_no_term_in_def(self):
+        doc = Document(work=self.work, content=document_fixture(xml="""
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <content>
+    <blockContainer refersTo="#term-air_pollutant" class="definition" eId="sec_1__blockContainer_1">
+      <p eId="sec_1__blockContainer_1__p_1">"<def refersTo="#term-air_pollutant" eId="sec_1__blockContainer_1__p_1__def_1">air pollutant</def>" includes any dust, smoke, fumes or gas that causes or may cause air pollution;</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-air_pollution" class="definition" eId="sec_1__blockContainer_2">
+      <p eId="sec_1__blockContainer_2__p_1">"<def refersTo="#term-air_pollution" eId="sec_1__blockContainer_2__p_1__def_1">air pollution</def>"</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-dust" class="definition" eId="sec_1__blockContainer_3">
+      <p eId="sec_1__blockContainer_3__p_1">"<def refersTo="#term-dust" eId="sec_1__blockContainer_3__p_1__def_1">dust</def>"</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-smoke" class="definition" eId="sec_1__blockContainer_4">
+      <p eId="sec_1__blockContainer_4__p_1">"<def refersTo="#term-smoke" eId="sec_1__blockContainer_4__p_1__def_1">smoke</def>"</p>
+    </blockContainer>
+  </content>
+</section>"""))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+      
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <content>
+    <blockContainer refersTo="#term-air_pollutant" class="definition" eId="sec_1__blockContainer_1">
+      <p eId="sec_1__blockContainer_1__p_1">"<def refersTo="#term-air_pollutant" eId="sec_1__blockContainer_1__p_1__def_1">air pollutant</def>" includes any <term refersTo="#term-dust" eId="sec_1__blockContainer_1__p_1__term_1">dust</term>, <term refersTo="#term-smoke" eId="sec_1__blockContainer_1__p_1__term_2">smoke</term>, fumes or gas that causes or may cause <term refersTo="#term-air_pollution" eId="sec_1__blockContainer_1__p_1__term_3">air pollution</term>;</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-air_pollution" class="definition" eId="sec_1__blockContainer_2">
+      <p eId="sec_1__blockContainer_2__p_1">"<def refersTo="#term-air_pollution" eId="sec_1__blockContainer_2__p_1__def_1">air pollution</def>"</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-dust" class="definition" eId="sec_1__blockContainer_3">
+      <p eId="sec_1__blockContainer_3__p_1">"<def refersTo="#term-dust" eId="sec_1__blockContainer_3__p_1__def_1">dust</def>"</p>
+    </blockContainer>
+    <blockContainer refersTo="#term-smoke" class="definition" eId="sec_1__blockContainer_4">
+      <p eId="sec_1__blockContainer_4__p_1">"<def refersTo="#term-smoke" eId="sec_1__blockContainer_4__p_1__def_1">smoke</def>"</p>
+    </blockContainer>
+  </content>
+</section>
+    </body>
+  
+''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))

@@ -480,6 +480,7 @@ class Work(WorkMixin, models.Model):
     RETIRED = 'retired'
     EXPIRED = 'expired'
     REPLACED = 'replaced'
+    DISAPPLIED = 'disapplied'
     REPEALED_VERB_CHOICES = (
         (REPEALED, _('repealed')),
         (REVOKED, _('revoked')),
@@ -488,6 +489,7 @@ class Work(WorkMixin, models.Model):
         (RETIRED, _('retired')),
         (EXPIRED, _('expired')),
         (REPLACED, _('replaced')),
+        (DISAPPLIED, _('disapplied')),
     )
 
     class Meta:

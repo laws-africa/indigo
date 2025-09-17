@@ -90,12 +90,16 @@ class BaseTermsFinder(LocaleBasedMatcher):
         terms = {}
         for defn in doc.xpath('//a:def', namespaces=self.nsmap):
             # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
+            # <def refersTo="#term-contributed_tax_capital" eId="sec_1__blockContainer_1__list_1__intro_1__def_1"><term refersTo="#term-contributed_tax_capital" eId="sec_1__blockContainer_1__list_1__intro_1__def_1__term_1">contributed <i>tax</i> capital </term></def>
+            # <def refersTo="#term-contributed_tax_capital" eId="sec_1__blockContainer_1__list_1__intro_1__def_1">contributed <i>tax</i> capital </def>
 
             id = defn.get('refersTo')
-            if id and defn.text:
+            term = ''.join(defn.xpath('.//text()'))
+            term = term.strip() if term else None
+            if id and term:
                 # strip starting hash
                 id = id[1:]
-                terms[id] = defn.text
+                terms[id] = term
 
         return terms
 

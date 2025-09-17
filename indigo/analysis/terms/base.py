@@ -172,10 +172,17 @@ class BaseTermsFinder(LocaleBasedMatcher):
     def definition_sections(self, doc):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
-        for section in self.defn_hier_xpath(doc):
-            if not (self.definition_heading_match(section) or self.contains_definition_block_container(section)):
-                continue
+        yielded_eids = []
+        for section in reversed(self.defn_hier_xpath(doc)):
+            # always yield a heading match
+            if not self.definition_heading_match(section):
+                # then only yield the lowest-down element that makes sense, e.g. a subsection rather than a section or part
+                if yielded_eids and section.xpath('|'.join(f'.//a:*[@eId="{x}"]' for x in yielded_eids), namespaces=self.nsmap):
+                    continue
+                if not self.contains_definition_block_container(section):
+                    continue
 
+            yielded_eids.append(section.get('eId'))
             yield section
 
     def add_terms_to_references(self, doc, terms):

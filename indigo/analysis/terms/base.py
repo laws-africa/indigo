@@ -80,9 +80,6 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.defn_hier_xpath = etree.XPath(
             '|'.join(f'//a:{x}' for x in self.defn_hier),
             namespaces=self.nsmap)
-        self.defn_hier_xpath_scoped = etree.XPath(
-            '|'.join(f'.//a:{x}' for x in self.defn_hier),
-            namespaces=self.nsmap)
         self.heading_xpath = etree.XPath('a:heading', namespaces=self.nsmap)
         self.defn_containers_xpath = etree.XPath('.//a:p|.//a:listIntroduction', namespaces=self.nsmap)
         self.text_xpath = etree.XPath('//a:body//text()', namespaces=self.nsmap)
@@ -168,10 +165,6 @@ class BaseTermsFinder(LocaleBasedMatcher):
 
     def contains_definition_block_container(self, element):
         # returns True for the first blockContainer that has 'definition' as one of its classes
-        # but returns False if a subelement is better suited, e.g. section 23N(1) rather than section 23
-        for option in self.defn_hier_xpath_scoped(element):
-            if self.contains_definition_block_container(option):
-                return False
         for block_container in element.xpath('.//a:blockContainer[@class]', namespaces=self.nsmap):
             if 'definition' in block_container.get('class', '').split():
                 return True
@@ -179,10 +172,17 @@ class BaseTermsFinder(LocaleBasedMatcher):
     def definition_sections(self, doc):
         """ Yield sections (or other basic units) that potentially contain definitions of terms.
         """
-        for section in self.defn_hier_xpath(doc):
-            if not (self.definition_heading_match(section) or self.contains_definition_block_container(section)):
-                continue
+        yielded_eids = []
+        for section in reversed(self.defn_hier_xpath(doc)):
+            # always yield a heading match
+            if not self.definition_heading_match(section):
+                # then only yield the lowest-down element that makes sense, e.g. a subsection rather than a section or part
+                if yielded_eids and section.xpath('|'.join(f'.//a:*[@eId="{x}"]' for x in yielded_eids), namespaces=self.nsmap):
+                    continue
+                if not self.contains_definition_block_container(section):
+                    continue
 
+            yielded_eids.append(section.get('eId'))
             yield section
 
     def add_terms_to_references(self, doc, terms):

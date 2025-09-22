@@ -1,6 +1,5 @@
 import datetime
 import json
-from itertools import chain
 
 from actstream import action
 from allauth.account.utils import user_display
@@ -21,11 +20,12 @@ from django.views.generic.edit import BaseFormView
 from django_comments.models import Comment
 from django_fsm import has_transition_perm
 from django_htmx.http import push_url
+from itertools import chain
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.models.saved_searches import SavedSearch
 from indigo_api.serializers import WorkSerializer
-from indigo_api.views.attachments import view_attachment
+from indigo_api.views.attachments import download_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskStateChangeForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 from indigo_app.views.places import WorkChooserView
@@ -36,7 +36,7 @@ def task_file_response(task_file):
     """
     if task_file.url:
         return redirect(task_file.url)
-    return view_attachment(task_file)
+    return download_attachment(task_file)
 
 
 class TaskViewBase(PlaceViewBase):

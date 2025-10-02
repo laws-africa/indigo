@@ -40,7 +40,7 @@ from ..models import Document, Annotation, DocumentActivity, Task
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, \
     VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
-from ..utils import filename_candidates, find_best_static
+from ..utils import filename_candidates, find_best_static, adiff_html_str
 
 log = logging.getLogger(__name__)
 
@@ -288,7 +288,7 @@ class RevisionDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView,
 
     async def get(self, request, *args, **kwargs):
         old_html, new_html = await self.prepare(request)
-        diff = await AKNHTMLDiffer().adiff_html_str(old_html, new_html)
+        diff = await adiff_html_str(old_html, new_html)
         # show whole document if it hasn't changed
         diff = diff or ("<div>" + new_html + "</div>")
         return JsonResponse({
@@ -514,7 +514,7 @@ class DocumentDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView,
 
     async def post(self, request, document_id):
         remote_html, local_html = await self.prepare(request)
-        diff = await AKNHTMLDiffer().adiff_html_str(remote_html, local_html)
+        diff = await adiff_html_str(remote_html, local_html)
         # diff is None if there is no difference, in which case just return the remote HTML
         diff = diff or ("<div>" + (remote_html or '') + "</div>")
 

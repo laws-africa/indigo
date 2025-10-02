@@ -148,8 +148,8 @@ async def adiff_html_str(old_html, new_html):
 
     This uses caching based on the md5sum of the two strings.
     """
-    md5_old = hashlib.md5(old_html.encode('utf-8')).hexdigest()
-    md5_new = hashlib.md5(new_html.encode('utf-8')).hexdigest()
+    md5_old = hashlib.md5((old_html or "").encode('utf-8')).hexdigest()
+    md5_new = hashlib.md5((new_html or "").encode('utf-8')).hexdigest()
     cache_key = f"adiff_html_str-{md5_old}-{md5_new}"
     cached_result = cache.get(cache_key)
     if cached_result is not None:

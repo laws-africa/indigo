@@ -1,13 +1,17 @@
+import hashlib
 import logging
 
 from django.template.loader import get_template, TemplateDoesNotExist
 from functools import lru_cache
 from django.contrib.postgres.search import Value, Func, SearchRank
 from django.contrib.staticfiles.finders import find as find_static
+from django.core.cache import cache
 from django.db.models import TextField
 
 from languages_plus.models import Language
 from rest_framework.pagination import PageNumberPagination as BasePageNumberPagination
+
+from indigo.analysis.differ import AKNHTMLDiffer
 
 
 log = logging.getLogger(__name__)
@@ -136,3 +140,22 @@ def find_best_template(candidates):
                 return option
         except TemplateDoesNotExist:
             pass
+
+
+async def adiff_html_str(old_html, new_html):
+    """ Asynchronously compute the diff between two HTML strings, returning
+    a string with the HTML diff.
+
+    This uses caching based on the md5sum of the two strings.
+    """
+    md5_old = hashlib.md5(old_html.encode('utf-8')).hexdigest()
+    md5_new = hashlib.md5(new_html.encode('utf-8')).hexdigest()
+    cache_key = f"adiff_html_str-{md5_old}-{md5_new}"
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+
+    result = await AKNHTMLDiffer().adiff_html_str(old_html, new_html)
+    cache.set(cache_key, result, timeout=7 * 86400)  # cache for 7 days
+
+    return result

@@ -548,7 +548,9 @@
       // is there an active item?
       if (this.gutter.querySelector('la-gutter-item[active]')) {
         this.gutter.activateNextItem().then((activeItem) => {
-          this.handleScrollForActiveItem(activeItem);
+          if (activeItem) {
+            this.handleScrollForActiveItem(activeItem);
+          }
         });
       } else {
         // nothing is active, find the best item to activate
@@ -564,7 +566,9 @@
       // is there an active item?
       if (this.gutter.querySelector('la-gutter-item[active]')) {
         this.gutter.activatePrevItem().then((activeItem) => {
-          this.handleScrollForActiveItem(activeItem);
+          if (activeItem) {
+            this.handleScrollForActiveItem(activeItem);
+          }
         });
       } else {
         // nothing is active, find the best item to activate

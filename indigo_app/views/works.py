@@ -70,8 +70,8 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         if 'place' not in self.kwargs:
             # check that self.kwargs['frbr_uri'] is in fact an FRBR URI first
             try:
-                frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri']).uri()
-                self.kwargs['place'] = frbr_uri.split('/')[2]
+                frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+                self.kwargs['place'] = frbr_uri.place
             except ValueError as e:
                 raise Http404(e)
 

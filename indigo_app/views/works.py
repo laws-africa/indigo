@@ -68,10 +68,14 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
 
     def determine_place(self):
         if 'place' not in self.kwargs:
-            # assume FRBR URI starts with `/akn`
-            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/')[2]
+            # check that self.kwargs['frbr_uri'] is in fact an FRBR URI first
+            try:
+                frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri']).uri()
+                self.kwargs['place'] = frbr_uri.split('/')[2]
+            except ValueError as e:
+                raise Http404(e)
 
-        return super(WorkViewBase, self).determine_place()
+        super().determine_place()
 
     def get_context_data(self, **kwargs):
         context = super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)

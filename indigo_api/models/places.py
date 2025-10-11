@@ -244,12 +244,6 @@ def post_save_locality(sender, instance, **kwargs):
         PlaceSettings.objects.create(country=instance.country, locality=instance)
 
 
-@receiver([signals.post_save, signals.post_delete], sender=Country)
-@receiver([signals.post_save, signals.post_delete], sender=Locality)
-def invalidate_country_cache(sender, instance, **kwargs):
-    Country.invalidate_country_cache()
-
-
 class PlaceSettings(models.Model):
     """ General settings for a country (and/or locality).
     """
@@ -297,6 +291,13 @@ class PlaceSettings(models.Model):
             props = places.get(self.country.place_code, {})
 
         return props
+
+
+@receiver([signals.post_save, signals.post_delete], sender=Country)
+@receiver([signals.post_save, signals.post_delete], sender=Locality)
+@receiver([signals.post_save, signals.post_delete], sender=PlaceSettings)
+def invalidate_country_cache(sender, instance, **kwargs):
+    Country.invalidate_country_cache()
 
 
 class AccentedTerms(models.Model):

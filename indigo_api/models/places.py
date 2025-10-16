@@ -122,7 +122,9 @@ class Country(models.Model):
     def for_code(cls, code):
         version = cache.get(cls.CACHE_VERSION_KEY, 0)
         countries = cls._load_all_countries(version)
-        return countries.get(code.upper())
+        if code.upper() in countries:
+            return countries[code.upper()]
+        raise Country.DoesNotExist
 
     @classmethod
     def get_country_locality(cls, code):

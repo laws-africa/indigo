@@ -79,7 +79,6 @@ class Country(models.Model):
         verbose_name = _("country")
         verbose_name_plural = _("countries")
 
-
     @property
     def code(self) -> str:
         """ISO 3166-1 alpha-2 country code."""
@@ -123,7 +122,7 @@ class Country(models.Model):
     def for_code(cls, code):
         version = cache.get(cls.CACHE_VERSION_KEY, 0)
         countries = cls._load_all_countries(version)
-        return countries.get(code)
+        return countries.get(code.upper())
 
     @classmethod
     def get_country_locality(cls, code):
@@ -152,7 +151,7 @@ class Country(models.Model):
         The version parameter is just used to differentiate the LRU cache entries.
         """
         qs = Country.objects.all().prefetch_related('localities')
-        return {c.code.lower(): c for c in qs}
+        return {c.code.upper(): c for c in qs}
 
     @classmethod
     def invalidate_country_cache(cls):

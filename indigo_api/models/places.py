@@ -1,8 +1,11 @@
+from functools import lru_cache
+
+from django.core.cache import cache
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.db import models, transaction
 from django.db.models import signals
 from django.dispatch import receiver
 
@@ -64,6 +67,13 @@ class Country(models.Model):
 
     objects = CountryManager()
 
+    # Country.for_code and Country.get_country_locality are the main way to look up places. They are called many
+    # times in the same request, but rarely change. So we cache them in-memory. Because we have multiple processes
+    # we use the shared filesystem cache to store a version number that is incremented whenever a Country or Locality
+    # is saved. This means that all processes will reload their in-memory cache the next time a country is requested.
+    # This is the cache key
+    CACHE_VERSION_KEY = "indigo-countries:v"
+
     class Meta:
         ordering = ['country__name']
         verbose_name = _("country")
@@ -110,7 +120,11 @@ class Country(models.Model):
 
     @classmethod
     def for_code(cls, code):
-        return cls.objects.get(country__pk=code.upper())
+        version = cache.get(cls.CACHE_VERSION_KEY, 0)
+        countries = cls._load_all_countries(version)
+        if code.upper() in countries:
+            return countries[code.upper()]
+        raise Country.DoesNotExist
 
     @classmethod
     def get_country_locality(cls, code):
@@ -131,6 +145,26 @@ class Country(models.Model):
             locality = None
 
         return country, locality
+
+    @staticmethod
+    @lru_cache(maxsize=1)
+    def _load_all_countries(version: int):
+        """ Loads all Country objects once per version. Returns a dict {code: Country instance}.
+        The version parameter is just used to differentiate the LRU cache entries.
+        """
+        qs = Country.objects.all().prefetch_related('localities')
+        return {c.code.upper(): c for c in qs}
+
+    @classmethod
+    def invalidate_country_cache(cls):
+        """Increment the shared version in the global cache."""
+        def _incr():
+            try:
+                cache.incr(cls.CACHE_VERSION_KEY)
+            except ValueError:
+                cache.add(cls.CACHE_VERSION_KEY, 1)
+        # avoid race conditions and do it at the end of the transaction
+        transaction.on_commit(_incr)
 
 
 class AllPlace:
@@ -258,6 +292,13 @@ class PlaceSettings(models.Model):
             props = places.get(self.country.place_code, {})
 
         return props
+
+
+@receiver([signals.post_save, signals.post_delete], sender=Country)
+@receiver([signals.post_save, signals.post_delete], sender=Locality)
+@receiver([signals.post_save, signals.post_delete], sender=PlaceSettings)
+def invalidate_country_cache(sender, instance, **kwargs):
+    Country.invalidate_country_cache()
 
 
 class AccentedTerms(models.Model):

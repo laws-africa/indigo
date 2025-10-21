@@ -505,7 +505,7 @@ class Work(WorkMixin, models.Model):
                                 help_text=_("Used globally to identify this work"))
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
-    title = models.CharField(_("title"), max_length=1024, null=True, default=_("(untitled)"))
+    title = models.CharField(_("title"), max_length=1024, null=False, blank=False)
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.PROTECT, related_name='works',
                                 verbose_name=_("country"))
     locality = models.ForeignKey('indigo_api.Locality', null=True, blank=True, on_delete=models.PROTECT,

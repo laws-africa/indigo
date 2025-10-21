@@ -214,22 +214,22 @@ class WorksTest(testcases.TestCase):
         amendment_1 = Amendment(amended_work_id=1, amending_work=act_2_of_1998, date='2019-01-01', created_by_user_id=1)
         amendment_1.save()
 
-        gn_1_of_1900 = Work(frbr_uri='/akn/za/act/gn/1900/1', country_id=1, created_by_user_id=1)
+        gn_1_of_1900 = Work(frbr_uri='/akn/za/act/gn/1900/1', title='(untitled)', country_id=1, created_by_user_id=1)
         gn_1_of_1900.save()
         amendment_2 = Amendment(amended_work_id=1, amending_work=gn_1_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment_2.save()
 
-        act_30_of_1900 = Work(frbr_uri='/akn/za/act/1900/30', country_id=1, created_by_user_id=1)
+        act_30_of_1900 = Work(frbr_uri='/akn/za/act/1900/30', title='(untitled)', country_id=1, created_by_user_id=1)
         act_30_of_1900.save()
         amendment_3 = Amendment(amended_work_id=1, amending_work=act_30_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment_3.save()
 
-        act_12_of_1900 = Work(frbr_uri='/akn/za/act/1900/12', country_id=1, created_by_user_id=1)
+        act_12_of_1900 = Work(frbr_uri='/akn/za/act/1900/12', title='(untitled)', country_id=1, created_by_user_id=1)
         act_12_of_1900.save()
         amendment_4 = Amendment(amended_work_id=1, amending_work=act_12_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment_4.save()
 
-        act_2_of_1900 = Work(frbr_uri='/akn/za/act/1900/2', country_id=1, created_by_user_id=1)
+        act_2_of_1900 = Work(frbr_uri='/akn/za/act/1900/2', title='(untitled)', country_id=1, created_by_user_id=1)
         act_2_of_1900.save()
         amendment_5 = Amendment(amended_work_id=1, amending_work=act_2_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment_5.save()
@@ -238,14 +238,13 @@ class WorksTest(testcases.TestCase):
         amendment_6 = Amendment(amended_work_id=1, amending_work=act_1_of_1900, date='2019-01-01', created_by_user_id=1)
         amendment_6.save()
 
-        act_1_of_1998 = Work(frbr_uri='/akn/za/act/1998/1', country_id=1, created_by_user_id=1)
+        act_1_of_1998 = Work(frbr_uri='/akn/za/act/1998/1', title='(untitled)', country_id=1, created_by_user_id=1)
         act_1_of_1998.save()
         amendment_7 = Amendment(amended_work_id=1, amending_work=act_1_of_1998, date='2019-01-01', created_by_user_id=1)
         amendment_7.save()
 
         view = WorkViewBase()
         timeline = view.get_work_timeline(work)
-        # self.assertEqual(3, len(timeline))
         self.assertEqual(6, len(timeline))
         self.assertEqual(7, len(timeline[0].events))
 

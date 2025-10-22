@@ -49,8 +49,8 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 doc.work.expressions().all()
             ))
         context['comparison_expressions'] = doc.work.expressions().filter(language=doc.language).order_by('-expression_date')
-        previous_documents = context['comparison_expressions'].exclude(expression_date__gte=doc.expression_date)
-        context['default_comparison_id'] = previous_documents.first().pk if previous_documents else None
+        # don't compare by default when editing the whole document
+        context['default_comparison_id'] = None
         context['place'] = doc.work.place
         context['country'] = doc.work.country
         context['locality'] = doc.work.locality
@@ -150,6 +150,9 @@ class DocumentProvisionDetailView(DocumentDetailView):
         context = super().get_context_data(**kwargs)
         context['provision_eid'] = self.eid
         context['provision_counters'], context['eid_counter'], context['attachment_counters'] = self.get_counters()
+        # in provision editing mode, compare to the previous point in time by default if there is one
+        previous_documents = context['comparison_expressions'].exclude(expression_date__gte=self.object.expression_date)
+        context['default_comparison_id'] = previous_documents.first().pk if previous_documents else None
         return context
 
     def get_document_content_json(self, document):

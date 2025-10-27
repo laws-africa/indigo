@@ -3,11 +3,12 @@ import logging
 from itertools import groupby
 
 from actstream import action
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 from django.db.models import JSONField
 from django.db import models
-from django.db.models import signals, Prefetch, Count
+from django.db.models import signals, Prefetch, Count, Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.dispatch import receiver
@@ -219,19 +220,34 @@ class Task(models.Model):
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country, current_user):
-        permitted_users = User.objects \
+        users = User.objects \
             .filter(editor__permitted_countries=country) \
-            .order_by('first_name', 'last_name') \
-            .all()
-        potential_assignees = [u for u in permitted_users if u.has_perm('indigo_api.submit_task')]
-        potential_reviewers = [u for u in permitted_users if u.has_perm('indigo_api.close_task') or u.has_perm('indigo_api.close_any_task')]
+            .order_by('first_name', 'last_name')
+
+        submit_perm = Permission.objects.filter(codename='submit_task', content_type__app_label='indigo_api').first()
+        close_perm = Permission.objects.filter(codename='close_task', content_type__app_label='indigo_api').first()
+        close_any_perm = Permission.objects.filter(codename='close_any_task', content_type__app_label='indigo_api').first()
+
+        potential_assignees = list(users.filter(
+            Q(user_permissions=submit_perm) | Q(groups__permissions=submit_perm)
+        ).distinct())
+
+        close_task_users = set(users.filter(
+            Q(user_permissions=close_perm) | Q(groups__permissions=close_perm)
+        ).distinct())
+
+        close_any_task_users = set(users.filter(
+            Q(user_permissions=close_any_perm) | Q(groups__permissions=close_any_perm)
+        ).distinct())
+
+        potential_reviewers = list(close_task_users | close_any_task_users)
 
         for task in tasks:
             if task.state == 'open':
                 task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
                 task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and
-                                            (u.has_perm('indigo_api.close_any_task') or task.submitted_by_user_id != u.id)]
+                                            (u in close_any_task_users or task.submitted_by_user_id != u.id)]
             else:
                 task.potential_assignees = []
 

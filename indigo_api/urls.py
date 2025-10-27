@@ -14,7 +14,6 @@ router.register(r'documents/(?P<document_id>[0-9]+)/attachments', attachments.At
 router.register(r'documents/(?P<document_id>[0-9]+)/revisions', documents.RevisionViewSet, basename='document-revisions')
 router.register(r'documents/(?P<document_id>[0-9]+)/annotations', documents.AnnotationViewSet, basename='document-annotations')
 router.register(r'works', works.WorkViewSet, basename='work')
-router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentViewSet, basename='work-amendments')
 
 urlpatterns = [
     re_path(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),

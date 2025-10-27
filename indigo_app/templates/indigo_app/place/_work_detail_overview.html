@@ -57,7 +57,7 @@
           {% for topic in work.taxonomy_topics_list %}
             <div>
               {% for item in topic.ancestors %}
-                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.slug }}">{{ item }}</a> &rsaquo;
+                <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ item.pk }}">{{ item }}</a> &rsaquo;
               {% endfor %}
               <a href="{% url 'place_works' place=place.place_code %}?taxonomy_topic={{ topic.topic.pk }}">{{ topic.topic }}</a>
             </div>

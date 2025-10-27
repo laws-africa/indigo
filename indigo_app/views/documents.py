@@ -14,8 +14,9 @@ import cobalt
 from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
 from indigo.xmlutils import rewrite_all_attachment_work_components
-from indigo_api.models import Document, Country, Subtype, Work
-from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
+from indigo_api.models import Document, Country, Subtype, Amendment
+from indigo_api.serializers import DocumentSerializer, WorkSerializer
+from indigo_app.serializers import WorkAmendmentDetailSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
@@ -61,15 +62,17 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['document_content_json'] = self.get_document_content_json(doc)
 
         # add 'numbered_title_localised' to each amendment
-        amendments = WorkAmendmentSerializer(context={'request': self.request}, many=True)\
-            .to_representation(doc.work.amendments)
         plugin = plugins.for_document('work-detail', doc)
-        if plugin:
-            for a in amendments:
-                amending_work = Work.objects.get(frbr_uri=a['amending_work']['frbr_uri'])
-                a['amending_work']['numbered_title_localised'] = plugin.work_numbered_title(amending_work) or amending_work.title
-        context['amendments_json'] = json.dumps(amendments)
-
+        context["amendments_json"] = json.dumps(
+            WorkAmendmentDetailSerializer(
+                context={'request': self.request, 'work_detail_plugin': plugin},
+                many=True,
+            ).to_representation(
+                Amendment.objects.filter(amended_work=doc.work)
+                .select_related('amending_work')
+                .prefetch_related('amending_work__chapter_numbers')
+            )
+        )
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['user_can_edit'] = (

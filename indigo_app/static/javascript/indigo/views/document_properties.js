@@ -22,10 +22,6 @@
     },
 
     initialize: function() {
-      this.amendments = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
-        work: this.model,
-      });
-
       this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
       this.stickit();
       this.render();

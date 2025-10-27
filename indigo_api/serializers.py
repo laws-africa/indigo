@@ -655,8 +655,6 @@ class WorkSerializer(serializers.ModelSerializer):
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
     taxonomy_topics = serializers.SerializerMethodField()
-    amendments_url = serializers.SerializerMethodField()
-    """ URL of document amendments. """
 
     class Meta:
         model = Work
@@ -668,7 +666,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'commenced', 'commencing_work', 'commencement_date', 'commencement_note',
             'assent_date', 'stub', 'principal',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
-            'parent_work', 'amendments_url',
+            'parent_work',
 
             # repeal
             'repealed_date', 'repealed_by',
@@ -681,11 +679,6 @@ class WorkSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_amendments_url(self, work):
-        if not work.pk:
-            return None
-        return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
-
     def get_taxonomy_topics(self, instance):
         return [t.slug for t in instance.public_taxonomy_topics()]
 
@@ -694,23 +687,13 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
     amending_work = SerializedRelatedField(queryset=Work.objects, required=True, allow_null=False, serializer=WorkSerializer)
-    url = serializers.SerializerMethodField()
 
     class Meta:
         model = Amendment
         fields = (
-            # url is part of the rest framework
-            'id', 'url',
+            'id',
             'amending_work', 'date',
             'updated_by_user', 'created_by_user',
             'created_at', 'updated_at',
         )
         read_only_fields = fields
-
-    def get_url(self, instance):
-        if not instance.pk:
-            return None
-        return reverse('work-amendments-detail', request=self.context['request'], kwargs={
-            'work_id': instance.amended_work.pk,
-            'pk': instance.pk,
-        })

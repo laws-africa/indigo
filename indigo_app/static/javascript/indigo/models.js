@@ -377,28 +377,6 @@
     },
 
     /**
-     * Return a collection representing the amendments for this work,
-     * most recent first.
-     */
-    amendments: function() {
-      if (!this._amendments) {
-        this._amendments = new Indigo.WorkAmendmentCollection([], {
-          work: this,
-          parse: true,
-          comparator: function(a, b) {
-            // most recent first
-            return -(a.get('date') || '').localeCompare(b.get('date'));
-          },
-        });
-        this.on('change:id', function(model) {
-          model._amendments.fetch({reset: true});
-        });
-      }
-
-      return this._amendments;
-    },
-
-    /**
      * Get a sorted array of dates of available expressions (documents) of this work.
      */
     expressionDates: function() {
@@ -416,23 +394,6 @@
       var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
       json.amending_work = this.get('amending_work').toJSON();
       return json;
-    },
-  });
-
-  Indigo.WorkAmendmentCollection = Backbone.Collection.extend({
-    model: Indigo.WorkAmendment,
-
-    initialize: function(models, options) {
-      this.work = options.work;
-    },
-
-    url: function() {
-      return this.work.url() + '/amendments';
-    },
-
-    parse: function(response) {
-      // TODO: handle actual pagination
-      return response.results ? response.results : response;
     },
   });
 

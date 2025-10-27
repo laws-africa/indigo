@@ -765,6 +765,21 @@ class Work(WorkMixin, models.Model):
             for topic in self.taxonomy_topics.filter(copy_from_principal=True):
                 topic.propagate_copy_from_principal([self], add=True)
 
+    @cached_property
+    def taxonomy_topics_list(self):
+        taxonomy_topics = list(self.taxonomy_topics.all())
+        paths = [
+            topic.path[0:pos]
+            for topic in taxonomy_topics
+            for pos in range(0, len(topic.path), topic.steplen)[1:]
+            if not topic.is_root()
+        ]
+        topics = list(TaxonomyTopic.objects.filter(path__in=paths).order_by('depth'))
+        return [{
+            "topic": topic,
+            "ancestors": [t for t in topics if topic.path.startswith(t.path)]
+        } for topic in taxonomy_topics]
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

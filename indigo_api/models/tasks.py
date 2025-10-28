@@ -45,8 +45,9 @@ class TaskManager(models.Manager):
                             'submitted_by_user', 'reviewed_by_user', 'country',
                             'country__country', 'locality', 'locality__country', 'locality__country__country') \
             .prefetch_related(Prefetch('work', queryset=Work.objects.filter())) \
-            .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml())) \
-            .prefetch_related('labels')
+            .prefetch_related(
+                Prefetch('document', queryset=Document.objects.no_xml().select_related('language', 'language__language'))
+            ).prefetch_related('labels')
 
 
 class Task(models.Model):

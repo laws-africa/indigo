@@ -21,7 +21,7 @@ from docpipe.xmlutils import unwrap_element
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
 from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace, \
-    SavedSearch
+    SavedSearch, PlaceSettings
 from indigo_api.timeline import describe_publication_event
 from indigo_app.forms import WorkFilterForm, PlaceSettingsForm, PlaceUsersForm, ExplorerForm, WorkBulkActionsForm, \
     WorkChooserForm, WorkBulkUpdateForm, WorkBulkApproveForm, WorkBulkUnapproveForm, WorkBulkLinkRefsForm
@@ -125,9 +125,17 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
             ))\
             .all()
 
+        # inject place settings in bulk
+        place_settings = {
+            p.place: p
+            for p in PlaceSettings.objects.filter(locality=None).all()
+        }
+
         for c in context['countries']:
             # ensure zeroes
             c.n_works = c.n_works or 0
+            # directly set cached attribute value
+            c.__dict__['settings'] = place_settings.get(c)
 
         return context
 
@@ -494,6 +502,15 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView):
                 output_field=IntegerField()
             ))\
             .all()
+
+        # inject place settings in bulk
+        place_settings = {
+            p.place: p
+            for p in PlaceSettings.objects.filter(country=self.country).all()
+        }
+        for place in context['localities']:
+            # directly set cached attribute value
+            place.__dict__['settings'] = place_settings.get(place)
 
         return context
 

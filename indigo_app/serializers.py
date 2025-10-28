@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from indigo_api.models import Amendment, Work
+from indigo_api.serializers import PublicationDocumentSerializer
 from .models import Country
 
 
@@ -50,10 +51,11 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 class AmendingWorkSerializer(serializers.ModelSerializer):
     numbered_title_localised = serializers.SerializerMethodField()
+    publication_document = PublicationDocumentSerializer(read_only=True)
 
     class Meta:
         model = Work
-        fields = ('frbr_uri', 'title', 'doctype', 'subtype', 'numbered_title_localised')
+        fields = ('frbr_uri', 'title', 'doctype', 'subtype', 'numbered_title_localised', 'publication_document')
 
     def get_numbered_title_localised(self, obj):
         # this is injected so that the numbered title of the amending work is localised to the current document

@@ -649,10 +649,9 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         return url
 
 
-class WorkAmendmentDropdownView(WorkDependentView, UpdateView):
+class WorkAmendmentDropdownView(WorkDependentView, DetailView):
     model = Amendment
     pk_url_kwarg = 'amendment_id'
-    fields = ['date']
     template_name = 'indigo_api/timeline/_amendment_dropdown.html'
 
     def get_queryset(self):

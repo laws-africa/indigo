@@ -17,7 +17,6 @@
     },
 
     initialize: function() {
-      this.model = new Indigo.Work(Indigo.Preloads.work);
     },
 
     allProvisionsChanged: function(e) {

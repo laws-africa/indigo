@@ -165,10 +165,10 @@ class WorkDependentView(WorkViewBase):
 
 
 class EditWorkView(WorkViewBase, UpdateView):
-    js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
+    add_work_json_context = False
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -332,6 +332,7 @@ class WorkOverviewView(WorkViewBase, DetailView):
     js_view = ''
     template_name_suffix = '_overview'
     tab = 'overview'
+    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -477,6 +478,7 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     form_class = CommencementForm
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
+    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -543,6 +545,7 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
     form_class = CommencementForm
     context_object_name = 'commencement'
     permission_required = ('indigo_api.add_commencement',)
+    add_work_json_context = False
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -601,7 +604,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         return timeline
 
 
-class WorkAmendmentDetailView(WorkDependentView, UpdateView):
+class WorkAmendmentUpdateView(WorkDependentView, UpdateView):
     """ View to update or delete amendment.
     """
     http_method_names = ['post']
@@ -620,7 +623,7 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
     def post(self, request, *args, **kwargs):
         if 'delete' in request.POST:
             return self.delete(request, *args, **kwargs)
-        return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         # do normal things to amend work
@@ -653,6 +656,7 @@ class WorkAmendmentDropdownView(WorkDependentView, DetailView):
     model = Amendment
     pk_url_kwarg = 'amendment_id'
     template_name = 'indigo_api/timeline/_amendment_dropdown.html'
+    context_object_name = 'amendment'
 
     def get_queryset(self):
         return self.work.amendments

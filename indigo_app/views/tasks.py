@@ -101,10 +101,6 @@ class TaskListView(TaskViewBase, ListView):
         context["task_facets"] = self.form.task_facets(self.get_base_queryset(), [])
         context["saved_searches"] = SavedSearch.objects.filter(scope="tasks").all()
 
-        # warn when submitting task on behalf of another user
-        Task.decorate_submission_message(context['tasks'], self)
-        Task.decorate_permissions(context['tasks'], self.request.user)
-
         return context
 
 

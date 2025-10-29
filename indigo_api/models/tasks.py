@@ -42,11 +42,12 @@ class TaskManager(models.Manager):
 
         return super(TaskManager, self).get_queryset() \
             .select_related('created_by_user', 'updated_by_user', 'assigned_to',
-                            'submitted_by_user', 'reviewed_by_user', 'country',
-                            'country__country', 'locality', 'locality__country', 'locality__country__country') \
+                            'submitted_by_user', 'reviewed_by_user', 'country__country',
+                            'locality__country__country') \
             .prefetch_related(Prefetch('work', queryset=Work.objects.filter())) \
-            .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml())) \
-            .prefetch_related('labels')
+            .prefetch_related(
+                Prefetch('document', queryset=Document.objects.no_xml().select_related('language__language'))
+            ).prefetch_related('labels')
 
 
 class Task(models.Model):
@@ -286,17 +287,6 @@ class Task(models.Model):
             task.reopen_task_permission = has_transition_perm(task.reopen, user)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, user)
             task.close_task_permission = has_transition_perm(task.close, user)
-
-        return tasks
-
-    @classmethod
-    def decorate_submission_message(cls, tasks, view):
-        for task in tasks:
-            submission_message = _('Are you sure you want to submit this task for review?')
-            if task.assigned_to and not task.assigned_to == view.request.user:
-                submission_message = _('Are you sure you want to submit this task for review on behalf of %s?') % \
-                    user_display(task.assigned_to)
-            task.submission_message = submission_message
 
         return tasks
 

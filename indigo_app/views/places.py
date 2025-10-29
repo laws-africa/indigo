@@ -881,7 +881,7 @@ class WorkTasksView(PlaceViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        tasks = self.object.tasks.filter(state__in=Task.OPEN_STATES)
+        tasks = Task.objects.filter(work=self.object, state__in=Task.OPEN_STATES)
         context['task_groups'] = Task.task_columns(['blocked', 'open', 'assigned', 'pending_review'], tasks)
 
         return context

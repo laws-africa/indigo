@@ -900,16 +900,12 @@ class WorkTasksView(WorkViewBase, DetailView):
     tab = 'tasks'
 
     def get_context_data(self, **kwargs):
-        context = super(WorkTasksView, self).get_context_data(**kwargs)
-        context['tasks'] = context['work'].tasks.all()
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = Task.objects.filter(work=context['work']).all()
         context['task_groups'] = Task.task_columns(
             ['open', 'assigned', 'pending_review', 'done', 'cancelled'],
             context['tasks']
         )
-
-        # warn when submitting task on behalf of another user
-        Task.decorate_submission_message(context['tasks'], self)
-        Task.decorate_permissions(context['tasks'], self.request.user)
 
         return context
 

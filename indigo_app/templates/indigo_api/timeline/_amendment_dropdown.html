@@ -1,0 +1,4 @@
+{% load i18n %}
+{% if amendment.can_delete %}
+  <button class="dropdown-item" type="submit" name="delete" data-confirm="{% trans 'Really delete this amendment?' %}">{% trans 'Delete' %}</button>
+{% endif %}

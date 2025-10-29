@@ -584,7 +584,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     tab = 'amendments'
 
     def get_context_data(self, **kwargs):
-        context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline(self.work)
         context['consolidation_date'] = self.work.as_at_date() or datetime.date.today()
         context['existing_consolidation_at_default_date'] = ArbitraryExpressionDate.objects.filter(work=self.work, date=context['consolidation_date']).exists()
@@ -647,6 +647,15 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         if self.object.id:
             url += "#amendment-%s" % self.object.id
         return url
+
+
+class WorkAmendmentDropdownView(WorkDependentView, DetailView):
+    model = Amendment
+    pk_url_kwarg = 'amendment_id'
+    template_name = 'indigo_api/timeline/_amendment_dropdown.html'
+
+    def get_queryset(self):
+        return self.work.amendments
 
 
 class AddWorkAmendmentView(WorkDependentView, CreateView):

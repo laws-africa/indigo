@@ -80,8 +80,5 @@
 
   <script type="text/javascript">
   window.Indigo.countries = {{ indigo_countries_json|safe }};
-  {% if work_json %}
-    window.Indigo.Preloads.work = {{ work_json|safe }};
-  {% endif %}
   </script>
 {% endblock %}

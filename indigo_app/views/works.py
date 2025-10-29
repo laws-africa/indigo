@@ -27,8 +27,7 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
-    Commencement, Country, Locality, TaxonomyTopic
-from indigo_api.serializers import WorkSerializer
+    Commencement, Country, Locality
 from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -65,7 +64,6 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     slug_url_kwarg = 'frbr_uri'
     slug_field = 'frbr_uri'
     permission_required = ('indigo_api.view_work',)
-    add_work_json_context = True
 
     def determine_place(self):
         if 'place' not in self.kwargs:
@@ -77,13 +75,6 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
                 raise Http404(e)
 
         super().determine_place()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(work=self.work, **kwargs)
-        if self.add_work_json_context:
-            # TODO: WorkSerializer should only have important information that views use; taxonomy topics should be removed
-            context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
-        return context
 
     def get_work_timeline(self, work):
         timeline = get_timeline(work)
@@ -168,7 +159,6 @@ class EditWorkView(WorkViewBase, UpdateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
-    add_work_json_context = False
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -332,7 +322,6 @@ class WorkOverviewView(WorkViewBase, DetailView):
     js_view = ''
     template_name_suffix = '_overview'
     tab = 'overview'
-    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -478,7 +467,6 @@ class WorkCommencementEditView(WorkDependentView, UpdateView):
     form_class = CommencementForm
     context_object_name = 'commencement'
     permission_required = ('indigo_api.change_commencement',)
-    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -545,7 +533,6 @@ class WorkCommencementAddView(WorkDependentView, CreateView):
     form_class = CommencementForm
     context_object_name = 'commencement'
     permission_required = ('indigo_api.add_commencement',)
-    add_work_json_context = False
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -585,7 +572,6 @@ class WorkUncommencedView(WorkDependentView, View):
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
     tab = 'amendments'
-    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1112,7 +1098,6 @@ class ImportDocumentView(WorkViewBase, FormView):
 
 class WorkPopupView(WorkViewBase, DetailView):
     template_name = 'indigo_api/work_popup.html'
-    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -4,6 +4,7 @@ import LinterPopup from './LinterPopup.vue';
 import TaxonomyTOC from './TaxonomyTOC.vue';
 import WorkChooser from './work_chooser';
 import ListCard from './list_card';
+import { AddAmendmentButton } from './amendments';
 import { VSplitter, HSplitter } from './splitters';
 import { FacetGroup, RemoveFacetButton } from './facets';
 
@@ -14,6 +15,7 @@ export const vueComponents = {
 };
 
 export const components = {
+  AddAmendmentButton,
   DiffNavigator,
   WorkChooser,
   ListCard,

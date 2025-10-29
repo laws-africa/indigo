@@ -585,6 +585,7 @@ class WorkUncommencedView(WorkDependentView, View):
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
     tab = 'amendments'
+    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

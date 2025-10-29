@@ -6,7 +6,12 @@
       <div class="card-body">
         {% block new-amendment-card %}
           <div class="btn-group">
-            <button class="btn btn-primary add-amendment"><i class="fas fa-plus"></i> {% trans 'Add amendment' %}</button>
+            <button
+              class="btn btn-primary"
+              data-component="AddAmendmentButton"
+              data-country="{{ work.country.code }}"
+              data-locality="{{ work.locality.code }}"
+            ><i class="fas fa-plus"></i> {% trans 'Add amendment' %}</button>
             <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
               {% csrf_token %}
               <input type="hidden" name="amending_work" value="">

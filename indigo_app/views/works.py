@@ -76,6 +76,9 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
 
         super().determine_place()
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(work=self.work, **kwargs)
+
     def get_work_timeline(self, work):
         timeline = get_timeline(work)
         work_expressions = work.expressions().all()

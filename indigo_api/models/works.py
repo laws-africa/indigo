@@ -236,7 +236,7 @@ class WorkMixin(object):
             Document.objects
             .undeleted()
             .no_xml()
-            .select_related("language", "language__language")
+            .select_related("language__language")
             .filter(work=self)
             .order_by('expression_date')
         )

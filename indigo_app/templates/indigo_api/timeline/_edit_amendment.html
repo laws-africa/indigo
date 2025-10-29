@@ -6,14 +6,18 @@
 
     {% if perms.indigo_api.change_amendment %}
       <div class="dropdown float-end">
-        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <button
+          class="btn btn-outline-secondary btn-sm dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          hx-trigger="click once"
+          hx-get="{% url 'work_amendment_dropdown' frbr_uri=work.frbr_uri amendment_id=amendment.id %}"
+          hx-target="next .dropdown-menu"
+          hx-swap="beforeend">
           {% trans 'Options' %} <span class="caret"></span>
         </button>
         <div class="dropdown-menu">
           <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-bs-toggle="collapse">{% trans 'Change date' %}</a>
-          {% if amendment.can_delete %}
-            <button class="dropdown-item" type="submit" name="delete" data-confirm="{% trans 'Really delete this amendment?' %}">{% trans 'Delete' %}</button>
-          {% endif %}
         </div>
       </div>
     {% endif %}

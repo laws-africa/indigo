@@ -554,3 +554,11 @@ class WorksWebTest(WebTest):
         form['work-frbr_subtype'] = 'si'
         response = form.submit()
         self.assertRedirects(response, '/works/akn/za/act/si/ignored-actor/2024/1/', fetch_redirect_response=False)
+
+    def test_work_main_commencement(self):
+        work = Work.objects.get(pk=1)
+        self.assertIsNotNone(work.main_commencement)
+
+        work.main_commencement.delete()
+        work.refresh_from_db()
+        self.assertIsNone(work.main_commencement)

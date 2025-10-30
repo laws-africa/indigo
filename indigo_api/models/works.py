@@ -41,8 +41,8 @@ class WorkManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields
         return super().get_queryset() \
-            .select_related('updated_by_user', 'created_by_user', 'country',
-                            'country__country', 'locality', 'publication_document')
+            .select_related('updated_by_user', 'created_by_user', 'country__country', 'locality',
+                            'publication_document', 'main_commencement')
 
     def approved(self):
         return self.exclude(work_in_progress=True)
@@ -285,10 +285,6 @@ class WorkMixin(object):
         if first_expression:
             return first_expression.all_provisions()
         return None
-
-    @cached_property
-    def main_commencement(self):
-        return self.commencements.filter(main=True).first() if self.pk else None
 
     def first_commencement_date(self):
         first = self.commencements.first() if self.pk else None
@@ -565,6 +561,9 @@ class Work(WorkMixin, models.Model):
     work_in_progress = models.BooleanField(_("work in progress"), default=True,
                                            help_text=_("Work in progress, to be approved"))
 
+    # used to cache the main commencement for this work; maintained by a signal on post-save of Commencement
+    main_commencement = models.ForeignKey('Commencement', on_delete=models.SET_NULL, null=True, blank=True)
+
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
     approved_at = models.DateTimeField(_("approved at"), null=True, blank=True)
@@ -765,6 +764,12 @@ class Work(WorkMixin, models.Model):
             for topic in self.taxonomy_topics.filter(copy_from_principal=True):
                 topic.propagate_copy_from_principal([self], add=True)
 
+    def update_main_commencement(self):
+        commencement = self.commencements.filter(main=True).first()
+        if self.main_commencement != commencement:
+            self.main_commencement = commencement
+            self.save(update_fields=['main_commencement'])
+
     @cached_property
     def taxonomy_topics_list(self):
         taxonomy_topics = list(self.taxonomy_topics.all())
@@ -962,8 +967,17 @@ def post_save_commencement(sender, instance, created, **kwargs):
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.commenced_work.place.place_code)
 
+    # update the main commencement on the commenced work, if needed
+    instance.commenced_work.update_main_commencement()
+
     # propagate copy-on-principal flags from the commenced work, if any
     instance.commenced_work.propagate_copy_from_principal_topics()
+
+
+@receiver(signals.post_delete, sender=Commencement)
+def post_delete_commencement(sender, instance, **kwargs):
+    # update the main commencement on the commenced work, if needed
+    instance.commenced_work.update_main_commencement()
 
 
 class AmendmentManager(models.Manager):

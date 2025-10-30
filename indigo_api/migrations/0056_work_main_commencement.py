@@ -7,8 +7,9 @@ from django.db import migrations, models
 def backfill_main_commencement(apps, schema_editor):
     Work = apps.get_model('indigo_api', 'Work')
     Commencement = apps.get_model('indigo_api', 'Commencement')
-    for work in Work.objects.all():
-        main_commencement = Commencement.objects.filter(commenced_work=work, main=True).order_by('date').first()
+    db_alias = schema_editor.connection.alias
+    for work in Work.objects.using(db_alias).all():
+        main_commencement = Commencement.objects.using(db_alias).filter(commenced_work=work, main=True).order_by('date').first()
         if main_commencement:
             work.main_commencement_id = main_commencement.id
             work.save(update_fields=['main_commencement'])

@@ -132,7 +132,6 @@
     initialize: function() {
       this.form = document.getElementById('import-document');
       this.cropBoxView = new Indigo.CropBoxView();
-      this.work = new Indigo.Work(Indigo.Preloads.work);
     },
 
     dragover: function(e) {
@@ -174,7 +173,6 @@
 
       this.file = file;
       this.$('.file-detail').text(this.file.name);
-      this.$('button.import').prop('disabled', !this.work);
 
       if (this.file.type == "application/pdf") {
         var reader = new FileReader();

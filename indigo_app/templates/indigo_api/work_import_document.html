@@ -121,7 +121,7 @@
           </section>
 
           <section class="card numbered mb-3 mt-3" data-num="4">
-            <button type="button" class="btn btn-success import" disabled="disabled">{% trans 'Go for it!' %}</button>
+            <button type="button" class="btn btn-success import">{% trans 'Go for it!' %}</button>
           </section>
         </div>
       </div>
@@ -142,9 +142,6 @@
     </div>
   </form>
 </main>
-
-{% include "indigo_api/_work_chooser_modal.html" %}
-
 {% endblock %}
 
 
@@ -153,12 +150,4 @@
   <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
   <script src="{% static 'javascript/svg.min.js' %}"></script>
   {{ block.super }}
-
-  <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  window.Indigo.countries = {{ indigo_countries_json|safe }};
-  {% if work %}
-  window.Indigo.Preloads.work = {{ work_json|safe }};
-  {% endif %}
-  </script>
 {% endblock %}

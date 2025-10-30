@@ -111,19 +111,6 @@ function bootstrapIndigo(exports) {
     permissions: [],
   });
 
-  // setup the document library
-  Indigo.library = new Indigo.Library();
-  if (Indigo.Preloads.library) {
-    Indigo.library.reset({results: Indigo.Preloads.library}, {parse: true});
-  }
-
-  // setup the collection of works
-  Indigo.works = new Indigo.WorksCollection();
-  Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
-  if (Indigo.Preloads.works) {
-    Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
-  }
-
   window.dispatchEvent(new Event('indigo.beforecreateviews'));
 
   // what views must we load?

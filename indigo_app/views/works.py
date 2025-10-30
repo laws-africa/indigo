@@ -27,8 +27,7 @@ from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
 from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
-    Commencement, Country, Locality, TaxonomyTopic
-from indigo_api.serializers import WorkSerializer
+    Commencement, Country, Locality
 from indigo_api.timeline import get_timeline, TimelineEntry
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -65,7 +64,6 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
     slug_url_kwarg = 'frbr_uri'
     slug_field = 'frbr_uri'
     permission_required = ('indigo_api.view_work',)
-    add_work_json_context = True
 
     def determine_place(self):
         if 'place' not in self.kwargs:
@@ -79,11 +77,7 @@ class WorkViewBase(PlaceViewBase, SingleObjectMixin):
         super().determine_place()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(work=self.work, **kwargs)
-        if self.add_work_json_context:
-            # TODO: WorkSerializer should only have important information that views use; taxonomy topics should be removed
-            context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
-        return context
+        return super().get_context_data(work=self.work, **kwargs)
 
     def get_work_timeline(self, work):
         timeline = get_timeline(work)
@@ -165,7 +159,6 @@ class WorkDependentView(WorkViewBase):
 
 
 class EditWorkView(WorkViewBase, UpdateView):
-    js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
@@ -601,7 +594,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         return timeline
 
 
-class WorkAmendmentDetailView(WorkDependentView, UpdateView):
+class WorkAmendmentUpdateView(WorkDependentView, UpdateView):
     """ View to update or delete amendment.
     """
     http_method_names = ['post']
@@ -620,7 +613,7 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
     def post(self, request, *args, **kwargs):
         if 'delete' in request.POST:
             return self.delete(request, *args, **kwargs)
-        return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         # do normal things to amend work
@@ -653,6 +646,7 @@ class WorkAmendmentDropdownView(WorkDependentView, DetailView):
     model = Amendment
     pk_url_kwarg = 'amendment_id'
     template_name = 'indigo_api/timeline/_amendment_dropdown.html'
+    context_object_name = 'amendment'
 
     def get_queryset(self):
         return self.work.amendments
@@ -1107,7 +1101,6 @@ class ImportDocumentView(WorkViewBase, FormView):
 
 class WorkPopupView(WorkViewBase, DetailView):
     template_name = 'indigo_api/work_popup.html'
-    add_work_json_context = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

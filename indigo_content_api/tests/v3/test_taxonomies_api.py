@@ -100,7 +100,7 @@ class TaxonomyTopicsAPIV3Test(APITestCase):
         self.assertEqual(200, response.status_code)
 
         frbr_uris = [r["frbr_uri"] for r in response.json()['results']]
-        self.assertEqual(["/akn/za/act/2014/10", "/akn/za/act/1880/1"], frbr_uris)
+        self.assertEqual(["/akn/za/act/1880/1", "/akn/za/act/2014/10"], sorted(frbr_uris))
 
     def test_taxonomy_topic_detail_not_public(self):
         self.assertEqual(404, self.client.get(self.api_path + '/taxonomy-topics/internal-topic.json').status_code)

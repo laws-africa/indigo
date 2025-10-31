@@ -5,7 +5,9 @@ from collections import Counter
 from itertools import chain, groupby
 from datetime import timedelta
 
+from actstream.models import Action
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -29,6 +31,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
     Commencement, Country, Locality
 from indigo_api.timeline import get_timeline, TimelineEntry
+from indigo_api.utils import actions_for_objects
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -851,14 +854,15 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     tab = 'versions'
 
     def get_context_data(self, **kwargs):
-        context = super(WorkVersionsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
-        actions = self.work.action_object_actions.all()
-        amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
-        commencement_actions = [c for a in self.work.commencements.all() for c in a.action_object_actions.all()]
+        # TODO: select_related on amendment.amending_work -- but this is difficult with generic foreign keys
+        actions = actions_for_objects(
+            [a for a in self.work.amendments.all()] + [c for c in self.work.commencements.all()] + [self.work]
+        )
         versions = self.work.versions().defer('serialized_data').all()
         task_actions = self.get_task_actions()
-        entries = sorted(chain(actions, amendment_actions, commencement_actions, versions, task_actions),
+        entries = sorted(chain(actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
                          reverse=True)
         entries = self.coalesce_entries(entries)
@@ -893,9 +897,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         return entries
 
     def get_task_actions(self):
-        tasks = self.work.tasks.all()
-        actions_per_task = [t.action_object_actions.filter(verb='approved') for t in tasks]
-        return [action for actions in actions_per_task for action in actions]
+        return actions_for_objects(self.work.tasks.all()).filter(verb='approved')
 
 
 class WorkTasksView(WorkViewBase, DetailView):

@@ -2,6 +2,7 @@ import datetime
 import json
 
 from actstream import action
+from actstream.models import Action
 from allauth.account.utils import user_display
 from django import forms
 from django.contrib import messages
@@ -120,7 +121,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
     def add_timeline(self, context):
         task = self.object
         # merge actions and comments
-        actions = task.action_object_actions.all()
+        actions = Action.objects.action_object(task).all()
         comments = list(Comment.objects.for_model(Task).filter(object_pk=task.id).select_related('user'))
         # get the annotation if there is one, and any replies as comments
         try:

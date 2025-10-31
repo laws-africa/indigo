@@ -51,3 +51,9 @@ def lookup(dictionary, key):
             <li>{{ dictionary|lookup:k }}</li>
     """
     return dictionary.get(key, '')
+
+
+@register.filter
+def model_name(instance):
+    """ Returns the model name of a given model instance. """
+    return instance._meta.model_name

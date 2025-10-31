@@ -240,7 +240,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return self.document.versions().defer('serialized_data')
 
 
-class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentResourceView):
+class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentForRenderingResourceView):
     """Helper mixin to replicate some DRF functionality for use with async views."""
     def check_permissions(self, request):
         for perm in self.permission_classes:

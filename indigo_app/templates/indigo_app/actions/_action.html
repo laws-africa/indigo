@@ -1,5 +1,5 @@
 {% load humanize indigo_app i18n %}
-{% with action.action_object.action_object_actions.content_type.model as model %}
+{% with action.action_object|model_name as model %}
 
 {% if ignore_actor %}
   {% trans action.verb as verb %}

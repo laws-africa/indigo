@@ -128,7 +128,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         # inject place settings in bulk
         place_settings = {
             p.place: p
-            for p in PlaceSettings.objects.filter(locality=None).all()
+            for p in PlaceSettings.objects.filter(locality=None).select_related('country', 'locality').all()
         }
 
         for c in context['countries']:
@@ -506,7 +506,7 @@ class PlaceLocalitiesView(PlaceViewBase, TemplateView):
         # inject place settings in bulk
         place_settings = {
             p.place: p
-            for p in PlaceSettings.objects.filter(country=self.country).all()
+            for p in PlaceSettings.objects.filter(country=self.country).select_related('country', 'locality').all()
         }
         for place in context['localities']:
             # directly set cached attribute value

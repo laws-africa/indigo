@@ -1,12 +1,15 @@
 import hashlib
 import logging
+from collections import defaultdict
 
+from actstream.models import Action
+from django.contrib.contenttypes.models import ContentType
 from django.template.loader import get_template, TemplateDoesNotExist
 from functools import lru_cache
 from django.contrib.postgres.search import Value, Func, SearchRank
 from django.contrib.staticfiles.finders import find as find_static
 from django.core.cache import cache
-from django.db.models import TextField
+from django.db.models import TextField, Q
 
 from languages_plus.models import Language
 from rest_framework.pagination import PageNumberPagination as BasePageNumberPagination
@@ -159,3 +162,23 @@ async def adiff_html_str(old_html, new_html):
     cache.set(cache_key, result, timeout=7 * 86400)  # cache for 7 days
 
     return result
+
+
+def actions_for_objects(objs):
+    """Get a queryset of Action objects where the given objects are the action_object."""
+    groups = defaultdict(set)
+    for o in objs:
+        groups[o.__class__].add(o.pk)
+
+    # get content types in one go (cached anyway)
+    ctypes = ContentType.objects.get_for_models(*groups.keys(), for_concrete_models=False)
+
+    q = Q()
+    for model, ids in groups.items():
+        ct_id = ctypes[model].id
+        q |= Q(
+            action_object_content_type_id=ct_id,
+            action_object_object_id__in=ids
+        )
+
+    return Action.objects.filter(q).fetch_generic_relations()

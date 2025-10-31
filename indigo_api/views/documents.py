@@ -133,20 +133,26 @@ class DocumentResourceView:
     Enforces permissions for the linked document.
     """
     permission_classes = DEFAULT_PERMS + (RelatedDocumentPermissions,)
+    document_queryset = Document.objects.undeleted().no_xml()
 
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
         super().initial(request, **kwargs)
 
     def lookup_document(self):
-        qs = Document.objects.undeleted().no_xml()
         doc_id = self.kwargs['document_id']
-        return get_object_or_404(qs, id=doc_id)
+        return get_object_or_404(self.document_queryset, id=doc_id)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['document'] = self.document
         return context
+
+
+class DocumentForRenderingResourceView(DocumentResourceView):
+    """ Helper mixin for views that need the full document XML for rendering.
+    """
+    document_queryset = Document.objects.undeleted().for_rendering()
 
 
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
@@ -234,7 +240,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return self.document.versions().defer('serialized_data')
 
 
-class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentResourceView):
+class AsyncDocumentResourceViewMixin(AsyncDispatchMixin, DocumentForRenderingResourceView):
     """Helper mixin to replicate some DRF functionality for use with async views."""
     def check_permissions(self, request):
         for perm in self.permission_classes:
@@ -371,23 +377,18 @@ class ParseView(DocumentResourceView, APIView):
         return Response({'output': xml})
 
 
-class RenderView(DocumentResourceView, APIView):
+class RenderCoverpageView(DocumentForRenderingResourceView, APIView):
     """ Support for rendering a document on the server.
     """
-    coverpage_only = True
-
     def post(self, request, document_id):
         serializer = RenderSerializer(instance=self.document, data=request.data)
         serializer.is_valid(raise_exception=True)
         document = DocumentSerializer().update_document(self.document, validated_data=serializer.validated_data['document'])
+        renderer = HTMLExporter()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
+        html = renderer.render_coverpage(document)
+        return Response({'output': html})
 
-        if self.coverpage_only:
-            renderer = HTMLExporter()
-            renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
-            html = renderer.render_coverpage(document)
-            return Response({'output': html})
-        else:
-            return Response({'output': document.to_html()})
 
 
 class ManipulateXmlView(DocumentResourceView, APIView):

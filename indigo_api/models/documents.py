@@ -48,6 +48,21 @@ class DocumentQuerySet(models.QuerySet):
     def no_xml(self):
         return self.defer('document_xml')
 
+    def for_rendering(self):
+        """ Prepare a queryset for rendering documents, by prefetching related data.
+        """
+        return (
+            self.select_related('language', 'work__country__country', 'work__locality')
+            .prefetch_related(
+                'work__commencements__commencing_work__country',
+                'work__commencements__commencing_work__locality',
+                'work__commencements__commencing_work__chapter_numbers',
+                'work__main_commencement',
+                'work__amendments',
+                'work__arbitrary_expression_dates',
+            )
+        )
+
     def latest_expression(self):
         """ Select only the most recent expression for documents with the same frbr_uri.
         """
@@ -407,7 +422,9 @@ class Document(DocumentMixin, models.Model):
     def amendments_in_order(self):
         if self.expression_date:
             from indigo_api.models import Amendment
-            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date).prefetch_related('amending_work', 'amending_work__chapter_numbers'))
+            return Amendment.order_further(self.work.amendments.filter(date__lte=self.expression_date).prefetch_related(
+                'amending_work__country__country', 'amending_work__locality', 'amending_work__chapter_numbers'
+            ))
         else:
             return []
 

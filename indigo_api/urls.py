@@ -23,7 +23,7 @@ urlpatterns = [
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
     path('documents/<int:document_id>/diff', documents.DocumentDiffView.as_view(), name='document-diff'),
     path('documents/<int:document_id>/parse', documents.ParseView.as_view(), name='document-parse'),
-    path('documents/<int:document_id>/render/coverpage', documents.RenderView.as_view(coverpage_only=True), name='document-render-coverpage'),
+    path('documents/<int:document_id>/render/coverpage', documents.RenderCoverpageView.as_view(), name='document-render-coverpage'),
     path('documents/<int:document_id>/static/<path:filename>', documents.StaticFinderView.as_view(), name='document-static-finder'),
     path('documents/<int:document_id>/analysis/link-terms', documents.LinkTermsView.as_view(), name='link-terms'),
     path('documents/<int:document_id>/analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),

@@ -377,7 +377,7 @@ class ParseView(DocumentResourceView, APIView):
         return Response({'output': xml})
 
 
-class RenderView(DocumentForRenderingResourceView, APIView):
+class RenderCoverpageView(DocumentForRenderingResourceView, APIView):
     """ Support for rendering a document on the server.
     """
     def post(self, request, document_id):

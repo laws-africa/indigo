@@ -225,9 +225,15 @@ class Task(models.Model):
             .filter(editor__permitted_countries=country) \
             .order_by('first_name', 'last_name')
 
-        submit_perm = Permission.objects.filter(codename='submit_task', content_type__app_label='indigo_api').first()
-        close_perm = Permission.objects.filter(codename='close_task', content_type__app_label='indigo_api').first()
-        close_any_perm = Permission.objects.filter(codename='close_any_task', content_type__app_label='indigo_api').first()
+        perms = {
+            p.codename: p
+            for p in Permission.objects.filter(
+                content_type__app_label='indigo_api', codename__in=['submit_task', 'close_task', 'close_any_task',]
+            )
+        }
+        submit_perm = perms['submit_task']
+        close_perm = perms['close_task']
+        close_any_perm = perms['close_any_task']
 
         potential_assignees = list(users.filter(
             Q(user_permissions=submit_perm) | Q(groups__permissions=submit_perm)
@@ -272,11 +278,21 @@ class Task(models.Model):
             .annotate(tasks=Count(1))
         counts = {c['assigned_to']: c['tasks'] for c in counts}
 
+        perm = Permission.objects.filter(
+            codename='exceed_task_limits', content_type__app_label='indigo_api'
+        ).first()
+
+        # bulk check perms
+        exceed_limits_users = set(User.objects.filter(pk__in=[u.pk for u in users]).filter(
+            Q(user_permissions=perm) | Q(groups__permissions=perm)
+        ).distinct())
+
         for user in users:
             user.assigned_tasks_count = counts.get(user.id, 0)
             user.too_many_tasks = (
                     user.assigned_tasks_count > settings.INDIGO['MAX_ASSIGNED_TASKS']
-                    and not user.has_perm('indigo_api.exceed_task_limits'))
+                    and user not in exceed_limits_users
+            )
 
     @classmethod
     def decorate_permissions(cls, tasks, user):

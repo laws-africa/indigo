@@ -1,7 +1,7 @@
 import dataclasses
 
 from django.contrib.auth.models import Permission, Group
-from django.db.models.signals import m2m_changed, post_save
+from django.db.models.signals import m2m_changed, post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.core.signals import request_started
@@ -269,6 +269,14 @@ def editor_countries_changed(sender, instance, action, reverse, model, pk_set, *
 def country_saved(sender, instance, created, raw, **kwargs):
     if created:
         CountryBadge.create_for_country(instance)
+
+
+@receiver(post_delete, sender=Country)
+def country_deleted(sender, instance, **kwargs):
+    from indigo_social.models import BadgeAward
+
+    slug = CountryBadge.badge_slug(instance)
+    BadgeAward.objects.filter(slug=slug).delete()
 
 
 def create_country_badges():

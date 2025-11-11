@@ -272,11 +272,21 @@ class Task(models.Model):
             .annotate(tasks=Count(1))
         counts = {c['assigned_to']: c['tasks'] for c in counts}
 
+        perm = Permission.objects.filter(
+            codename='exceed_task_limits', content_type__app_label='indigo_api'
+        ).first()
+
+        # bulk check perms
+        exceed_limits_users = set(User.objects.filter(pk__in=[u.pk for u in users]).filter(
+            Q(user_permissions=perm) | Q(groups__permissions=perm)
+        ).distinct())
+
         for user in users:
             user.assigned_tasks_count = counts.get(user.id, 0)
             user.too_many_tasks = (
                     user.assigned_tasks_count > settings.INDIGO['MAX_ASSIGNED_TASKS']
-                    and not user.has_perm('indigo_api.exceed_task_limits'))
+                    and user not in exceed_limits_users
+            )
 
     @classmethod
     def decorate_permissions(cls, tasks, user):

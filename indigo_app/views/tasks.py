@@ -1,5 +1,4 @@
 import datetime
-import json
 
 from actstream import action
 from actstream.models import Action
@@ -25,7 +24,6 @@ from itertools import chain
 
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.models.saved_searches import SavedSearch
-from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import download_attachment
 from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm, TaskEditLabelsForm, BulkTaskStateChangeForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -144,11 +142,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
         context['blocked_by'] = self.object.blocked_by.all()
 
     def add_work(self, context):
-        task = self.object
-        if task.work:
-            context['work'] = task.work
-            context['work_json'] = json.dumps(
-                WorkSerializer(instance=task.work, context={'request': self.request}).data)
+        context['work'] = self.object.work
 
     def add_labels_form(self, context):
         context['labels_form'] = TaskEditLabelsForm(instance=self.object)

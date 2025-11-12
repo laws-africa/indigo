@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from indigo_api.models import Amendment, Work
+from indigo_api.models import Amendment, Work, Document
 from indigo_api.serializers import PublicationDocumentSerializer
 from .models import Country
 
@@ -70,3 +70,28 @@ class WorkAmendmentDetailSerializer(serializers.ModelSerializer):
         model = Amendment
         fields = ('amending_work', 'date')
         read_only_fields = fields
+
+
+class WorkDetailSerializer(serializers.ModelSerializer):
+    publication_document = PublicationDocumentSerializer(read_only=True)
+
+    class Meta:
+        model = Work
+        fields = (
+            'id', 'frbr_uri', 'title',
+            # frbr_uri components
+            'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number',
+            # extra
+            'publication_document',
+        )
+
+
+class DocumentDetailSerializer(serializers.ModelSerializer):
+    language = serializers.CharField(source='language.code')
+
+    class Meta:
+        model = Document
+        fields = (
+            'id', 'title', 'language', 'expression_date', 'expression_frbr_uri',
+            'draft', 'created_at', 'updated_at',
+        )

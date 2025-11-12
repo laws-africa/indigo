@@ -14,9 +14,8 @@ import cobalt
 from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
 from indigo.xmlutils import rewrite_all_attachment_work_components
-from indigo_api.models import Document, Country, Subtype, Amendment
-from indigo_api.serializers import DocumentSerializer, WorkSerializer
-from indigo_app.serializers import WorkAmendmentDetailSerializer
+from indigo_api.models import Document, Country, Subtype, Amendment, Task
+from indigo_app.serializers import WorkAmendmentDetailSerializer, WorkDetailSerializer, DocumentDetailSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
@@ -41,15 +40,15 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         doc = self.object
 
         context['work'] = doc.work
-        context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
-        context['document_json'] = json.dumps(DocumentSerializer(instance=doc, context={'request': self.request}).data)
+        context['work_json'] = json.dumps(WorkDetailSerializer(instance=doc.work, context={'request': self.request}).data)
+        context['document_json'] = json.dumps(DocumentDetailSerializer(instance=doc, context={'request': self.request}).data)
         # expressions
         context['expressions_json'] = json.dumps(
-            DocumentSerializer(context={'request': self.request}, many=True)
+            DocumentDetailSerializer(context={'request': self.request}, many=True)
             .to_representation(
                 doc.work.expressions().all()
             ))
-        context['comparison_expressions'] = doc.work.expressions().filter(language=doc.language).order_by('-expression_date')
+        context['comparison_expressions'] = list(doc.work.expressions().filter(language=doc.language).order_by('-expression_date'))
         # don't compare by default when editing the whole document
         context['default_comparison_id'] = None
         context['place'] = doc.work.place
@@ -69,7 +68,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 many=True,
             ).to_representation(
                 Amendment.objects.filter(amended_work=doc.work)
-                .select_related('amending_work')
+                .select_related('amending_work', 'amending_work__publication_document')
                 .prefetch_related('amending_work__chapter_numbers')
             )
         )
@@ -93,12 +92,12 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 f'bluebell-akn=={bluebell.__version__}',
             ])
 
-        context['related_tasks'] = self.get_related_tasks()
+        context['related_tasks'] = list(self.get_related_tasks())
 
         return context
 
     def get_related_tasks(self):
-        return self.object.work.tasks.filter(
+        return Task.objects.filter(work=self.object.work).filter(
             Q(timeline_date=self.object.expression_date) | Q(document=self.object)
         ).order_by('pk')
 

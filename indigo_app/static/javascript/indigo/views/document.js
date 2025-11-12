@@ -35,12 +35,9 @@
       $('.document-title').text(title);
 
       // breadcrumb
-      var country = Indigo.countries[this.model.get('country')],
-          locality = this.model.get('locality'),
-          dates = _.unique(this.expressions.pluck('expression_date')),
+      var dates = _.unique(this.expressions.pluck('expression_date')),
           docs = this.expressions,
           current_id = this.model.get('id');
-      locality = locality ? country.localities.find(loc => loc.code === locality) : null;
       dates.sort();
       dates.reverse();
 
@@ -57,9 +54,6 @@
 
       this.$('.breadcrumb').html(this.breadcrumbTemplate({
         document: this.model.toJSON(),
-        country: country,
-        locality: locality ? locality.name : null,
-        work: this.model.work.toJSON(),
         expressions: expressions,
       }));
     },

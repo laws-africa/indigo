@@ -149,16 +149,16 @@
   <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
   <script src="{% static 'javascript/monaco/monaco.js' %}"></script>
   <script id="breadcrumb-template" type="text/x-handlebars-template">
-    {% verbatim %}
-    <li class="breadcrumb-item"><a href="/places/{{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
-    {{#if locality}}
-    <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
-    {{/if}}
+    <li class="breadcrumb-item"><a href="/places/{{ country.code }}" class="work-country">{{ country.name }} · {{ country.code }}</a></li>
+    {% if locality %}
+    <li class="breadcrumb-item"><a href="/places/{{ country.code }}-{{ locality.code }}" class="work-locality">{{ locality.name }} · {{ locality.code }}</a></li>
+    {% endif %}
     <li class="breadcrumb-item">
-      <a href="/places/{{ document.country }}{{#if locality }}-{{ document.locality }}{{/if}}/works">{% endverbatim %}{% trans 'Works' %}{% verbatim %}</a>
+      <a href="/places/{{ place.place_code }}/works">{% trans 'Works' %}</a>
     </li>
-    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri" data-popup-url="/works{{ work.frbr_uri }}/popup">{{ work.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
+      {% verbatim %}
       <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
       <div class="dropdown-menu">
         {{#each expressions}}
@@ -170,11 +170,11 @@
         </a>
         {{/each}}
         {{/each}}
+        {% endverbatim %}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% endverbatim %}{% trans 'Manage amendments' %}...{% verbatim %}</a>
+        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">{% trans 'Manage amendments' %}...</a>
       </div>
     </li>
-    {% endverbatim %}
     {% if provision_eid or perms.indigo_api.publish_document %}
       <li class="breadcrumb-item"><i class="fas fa-list published"></i> <a href="{% url 'choose_document_provision' document.pk %}">{% trans "Provision editor" %}</a></li>
     {% endif %}

@@ -70,3 +70,17 @@ class WorkAmendmentDetailSerializer(serializers.ModelSerializer):
         model = Amendment
         fields = ('amending_work', 'date')
         read_only_fields = fields
+
+
+class WorkDetailSerializer(serializers.ModelSerializer):
+    publication_document = PublicationDocumentSerializer(read_only=True)
+
+    class Meta:
+        model = Work
+        fields = (
+            'id', 'frbr_uri', 'title',
+            # frbr_uri components
+            'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number',
+            # extra
+            'publication_document',
+        )

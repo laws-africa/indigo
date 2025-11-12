@@ -15,8 +15,8 @@ from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
 from indigo.xmlutils import rewrite_all_attachment_work_components
 from indigo_api.models import Document, Country, Subtype, Amendment
-from indigo_api.serializers import DocumentSerializer, WorkSerializer
-from indigo_app.serializers import WorkAmendmentDetailSerializer
+from indigo_api.serializers import DocumentSerializer
+from indigo_app.serializers import WorkAmendmentDetailSerializer, WorkDetailSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
@@ -41,7 +41,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         doc = self.object
 
         context['work'] = doc.work
-        context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
+        context['work_json'] = json.dumps(WorkDetailSerializer(instance=doc.work, context={'request': self.request}).data)
         context['document_json'] = json.dumps(DocumentSerializer(instance=doc, context={'request': self.request}).data)
         # expressions
         context['expressions_json'] = json.dumps(

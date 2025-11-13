@@ -52,7 +52,7 @@ class DocumentQuerySet(models.QuerySet):
         """ Prepare a queryset for rendering documents, by prefetching related data.
         """
         return (
-            self.select_related('language', 'work__country__country', 'work__locality')
+            self.select_related('language__language', 'work__country__country', 'work__locality')
             .prefetch_related(
                 'work__commencements__commencing_work__country',
                 'work__commencements__commencing_work__locality',

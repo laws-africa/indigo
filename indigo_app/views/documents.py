@@ -153,8 +153,8 @@ class DocumentProvisionDetailView(DocumentDetailView):
         context['provision_eid'] = self.eid
         context['provision_counters'], context['eid_counter'], context['attachment_counters'] = self.get_counters()
         # in provision editing mode, compare to the previous point in time by default if there is one
-        previous_documents = context['comparison_expressions'].exclude(expression_date__gte=self.object.expression_date)
-        context['default_comparison_id'] = previous_documents.first().pk if previous_documents else None
+        previous_documents = [d for d in context['comparison_expressions'] if d.expression_date < self.object.expression_date]
+        context['default_comparison_id'] = previous_documents[0].pk if previous_documents else None
         return context
 
     def get_document_content_json(self, document):

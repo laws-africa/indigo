@@ -52,7 +52,7 @@ class DocumentQuerySet(models.QuerySet):
         """ Prepare a queryset for rendering documents, by prefetching related data.
         """
         return (
-            self.select_related('language', 'work__country__country', 'work__locality')
+            self.select_related('language__language', 'work__country__country', 'work__locality')
             .prefetch_related(
                 'work__commencements__commencing_work__country',
                 'work__commencements__commencing_work__locality',
@@ -411,11 +411,14 @@ class Document(DocumentMixin, models.Model):
 
     def amendments(self, approved_only=False):
         if self.expression_date:
+            amendments = self.work.amendments
             if approved_only:
-                amendments = self.work.amendments.approved().prefetch_related('amending_work', 'amending_work__chapter_numbers')
-            else:
-                amendments = self.work.amendments.all().prefetch_related('amending_work', 'amending_work__chapter_numbers')
-            return [a for a in amendments if a.date <= self.expression_date]
+                amendments = amendments.approved()
+            amendments = (
+                amendments.filter(date__lte=self.expression_date)
+                .prefetch_related('amending_work', 'amending_work__chapter_numbers')
+            )
+            return list(amendments)
         else:
             return []
 

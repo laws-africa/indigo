@@ -466,6 +466,39 @@ class ProvisionRefsMatcherTestCase(TestCase):
             etree.tostring(actual, encoding='unicode')
         )
 
+    def test_local_sections_explicit_this_target(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section 26, blah.</p>
+                <p>As given in section 26(a), blah.</p>
+              </content>
+            </section>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As given in section <ref href="/akn/za/act/2011/99/~sec_26">26</ref>, blah.</p>
+                <p>As given in section <ref href="/akn/za/act/2011/99/~sec_26__subsec_a">26(a)</ref>, blah.</p>
+              </content>
+            </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        # explicitly override what "this" means
+        self.finder.this_target = ("/akn/za/act/2011/99", self.target_doc.root)
+        self.finder.target_root_cache = {}
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
     def test_local_sections_synonyms(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""
             <section eId="sec_7">

@@ -422,10 +422,19 @@ class ProvisionRefsMatcher(CitationMatcher):
     document_queryset = None
     max_ref_to_target = 75
 
-    def setup(self, *args, **kwargs):
+    # this hard-codes the concept of "this" when resolving a local reference, if otherwise we would try to resolve
+    # it against the local document. This can be used when we are looking up references in a snippet of text or html
+    # that must be considered within the context of a separate work. This tuple must be the work FRBR URI and a
+    # root node in the target document's XML.
+    this_target: Optional[Tuple[str, Optional[Element]]] = None
+
+    def __init__(self, *args, **kwargs):
         from indigo_api.models import Document
-        super().setup(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.document_queryset = Document.objects.undeleted().published()
+
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
         self.matches = []
 
     def run_text_extraction(self, text):
@@ -602,6 +611,9 @@ class ProvisionRefsMatcher(CitationMatcher):
         - considering Act 5 of 2009 and section 26(a) thereof, ...
         """
         if not parse_result.target or parse_result.target == "this":
+            # if there's a hard-coded concept of "this", then return it
+            if self.this_target:
+                return self.this_target
             # refs are to the local node, and we may look above that if necessary
             return None, node
 
@@ -683,10 +695,13 @@ class ProvisionRefsMatcher(CitationMatcher):
 
     def get_target_from_text(self, match: re.Match, target: Union[str, None]) -> (Union[str, None], Union[Element, None]):
         """Determine and resolve a remote target and return the target_frbr_uri and the appropriate root XML element of
-        the document to use to resolve the references. References to the local document are not supported because
-        the local document is assumed to be plain text.
+        the document to use to resolve the references. If there is no hard-coded concept of "this", then references to
+        the local document are not supported because the local document is assumed to be plain text.
         """
         if not target or target == "this":
+            # if there's a hard-coded concept of "this", then return it
+            if self.this_target:
+                return self.this_target
             return None, None
 
         # only consider citations on this page

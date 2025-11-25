@@ -183,8 +183,11 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             with open(xml_file, "wb") as f:
                 f.write(xml.encode('utf-8'))
 
-            xsl_fo = self.find_xsl_fo(document)
-            self.update_base_xsl_fo_dir(xsl_fo)
+            xsl_fo = os.path.join(tmpdir, "fo.xsl")
+            with open(xsl_fo, "w") as f:
+                src_xsl_fo = self.find_xsl_fo(document)
+                f.write(self.update_base_xsl_fo_dir(src_xsl_fo))
+
             outf_name = os.path.join(tmpdir, "out.pdf")
             run_fop(outf_name, tmpdir, xml_file, xsl_fo)
             return open(outf_name, 'rb').read()
@@ -637,14 +640,17 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         return best
 
     def update_base_xsl_fo_dir(self, xsl_fo):
-        """ In the XSL FO, replace __INDIGO_API_XSL_DIR__ with the full path to indigo_api/static/xsl/fo.
-            This will ensure that the base stylesheets are always available for import.
+        """ In the XSL FO file provided by xsl_fo, replace __INDIGO_API_XSL_DIR__ with the full path to
+        indigo_api/static/xsl/fo. This will ensure that the base stylesheets are always available for import.
+
+        Returns the updated file contents.
         """
-        with open(xsl_fo, 'r+') as f:
-            out = re.sub('__INDIGO_API_XSL_DIR__', self.base_xsl_fo_dir, f.read())
-            f.truncate(0)
-            f.seek(0)
-            f.write(out)
+        # get the directory where xsl_fo lives
+        dirname = os.path.dirname(xsl_fo)
+        with open(xsl_fo, 'r') as f:
+            content = re.sub('__INDIGO_API_XSL_DIR__', self.base_xsl_fo_dir, f.read())
+            content = re.sub('__HERE__', dirname, content)
+            return content
 
     def wrap_inline_glyph(self, glyph, node, in_tail, m, ns):
         span = etree.Element(f'{{{ns}}}span')

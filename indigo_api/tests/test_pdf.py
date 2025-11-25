@@ -39,7 +39,9 @@ class PDFExporterTestCase(TestCase):
                 f.write(xml_in.encode('utf-8'))
             outf = tempfile.NamedTemporaryFile('rb', dir=tmpdir, suffix='.xml')
             xsl_fo = self.xsl_fo_path
-            self.exporter.update_base_xsl_fo_dir(xsl_fo)
+            text = self.exporter.update_base_xsl_fo_dir(xsl_fo)
+            with open(xsl_fo, 'w') as f:
+                f.write(text)
             run_fop(outf.name, tmpdir, xml_file, xsl_fo, output_fo=True)
             pretty_xml_out = etree.tostring(etree.fromstring(outf.read()), pretty_print=True, encoding='unicode')
             # check actual PDF won't throw an error either

@@ -9,22 +9,23 @@ log = logging.getLogger(__name__)
 
 FOP_CMD = settings.FOP_CMD
 FOP_CONFIG = settings.FOP_CONFIG or os.path.join(os.path.dirname(__file__), 'fop.xconf')
-FOP_FONT_PATH = settings.FOP_FONT_PATH
+FOP_FONT_PATH = settings.FOP_FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
 
 
-def prepare_fop_config():
+def get_fop_config(dirname):
     """ Get the full path to the default fop config file, indigo_api/fop.xconf.
         Edit the file by replacing __FONT_PATH__ with the full path to the fonts folder.
         The fonts folder can be given in settings, or the default indigo_api/fonts will be used.
-
-    This is run once at startup to prepare the fop config file.
+        Places the edited file in the given directory and returns the full filename.
     """
-    font_path = FOP_FONT_PATH or os.path.join(os.path.dirname(__file__), 'fonts')
-    with open(FOP_CONFIG, 'r+') as f:
-        out = re.sub('__FONT_PATH__', font_path, f.read())
-        f.truncate(0)
-        f.seek(0)
-        f.write(out)
+    with open(FOP_CONFIG, 'r') as f:
+        text = re.sub('__FONT_PATH__', FOP_FONT_PATH, f.read())
+
+    fname = os.path.join(dirname, 'fop.xconf')
+    with open(fname, 'w') as f:
+        f.write(text)
+
+    return fname
 
 
 def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False):
@@ -38,7 +39,7 @@ def run_fop(outf_name, cwd, xml=None, xsl_fo=None, xml_fo=None, output_fo=False)
     :param output_fo: should the output be the FO XML?
     """
     args = [FOP_CMD]
-    fop_config_file = FOP_CONFIG
+    fop_config_file = get_fop_config(cwd)
 
     if output_fo:
         # output XML FO, rather than pdf

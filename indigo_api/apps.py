@@ -15,7 +15,6 @@ class IndigoApiConfig(AppConfig):
         from django.contrib.auth.models import User
         from indigo_api.models import Amendment, Document, Task, Work, PlaceSettings, ArbitraryExpressionDate, Commencement
         import indigo_api.importers.base # noqa
-        from indigo_api.pdf import prepare_fop_config
 
         registry.register(Amendment)
         registry.register(Document)
@@ -29,8 +28,6 @@ class IndigoApiConfig(AppConfig):
         # set the global source for all Cobalt documents
         id_ = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)
         AkomaNtosoDocument.source = [settings.INDIGO_ORGANISATION, id_, settings.INDIGO_URL]
-
-        prepare_fop_config()
 
         if not settings.DEBUG:
             from indigo_api.tasks import setup_pruning

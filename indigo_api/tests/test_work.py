@@ -175,7 +175,9 @@ class WorkTestCase(TestCase):
 
     def test_no_initial_date(self):
         self.work.publication_date = None
+        self.work.save()
         self.work.commencements.all().delete()
+        self.work.refresh_from_db()
         self.assertEqual([],
             self.work.possible_expression_dates()
         )

@@ -516,7 +516,7 @@ class RepealMadeForm(BasePartialWorkForm):
         return Work.objects.filter(pk=self['repealed_work'].value()).first()
 
     def is_repealed_work_saved(self):
-        return self.repealed_work_obj.repealed_by == self.work
+        return self.repealed_work_obj and self.repealed_work_obj.repealed_by == self.work
 
     def save(self, *args, **kwargs):
         work = self.cleaned_data['repealed_work']

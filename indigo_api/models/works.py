@@ -977,7 +977,9 @@ def post_save_commencement(sender, instance, created, **kwargs):
 @receiver(signals.post_delete, sender=Commencement)
 def post_delete_commencement(sender, instance, **kwargs):
     # update the main commencement on the commenced work, if needed
-    instance.commenced_work.update_main_commencement()
+    # note that instance has now been deleted, so we can't reliably query related objects on it
+    if commenced_work := Work.objects.filter(pk=instance.commenced_work_id).first():
+        commenced_work.update_main_commencement()
 
 
 class AmendmentManager(models.Manager):

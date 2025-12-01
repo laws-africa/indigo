@@ -2,16 +2,28 @@
 Changelog
 =========
 
-19.0.0 (???)
-------------
+19.0.0 (2025-12-01)
+-------------------
 
 * BREAKING: Upgrade to Django 5.0 and Python >= 3.10
 * CHANGE: Taxonomies are removed. You must upgrade to 18.1.0 first and run `python manage.py migrate_taxonomies` before upgrading to this version.
 * Remove: unused charts.js library and charts code
 * Add support for running diffs asynchronously as separate processes
+* Significantly reduce N+1 queries
+* Introduce provision-editing mode for documents, allowing users to edit individual provisions in isolation
+* Improvements to defined term wrapper XML to include them in the TOC and make them editable
+* Add support for verbs other than "repealed"
 
 18.1.0 (2024-03-25)
 -------------------
+
+Important
+.........
+
+You **must** upgrade to this version before upgrading to future versions.
+
+Changes
+.......
 
 * FEATURE / DEPRECATED: Taxonomies are replaced by Taxonomy Topics, a full taxonomy tree which is much more flexible than the old taxonomy system. You must migrate your taxonomies with the `python manage.py migrate_taxonomies` management command.
 * FEATURE: Source documents are an improved way of importing information into Indigo.

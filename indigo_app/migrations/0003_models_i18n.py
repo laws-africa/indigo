@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('indigo_api', '0036_models_i18n'),
         ('indigo_app', '0002_editor_language'),
     ]
 

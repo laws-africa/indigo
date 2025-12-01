@@ -5,6 +5,8 @@ Changelog
 19.2.0 (???)
 ------------
 
+* Remove the need for ATOMIC_REQUESTS to allow better use of transaction-level database connection pooling.
+
 19.1.0 (2025-12-01)
 -------------------
 

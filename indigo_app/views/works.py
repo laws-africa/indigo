@@ -5,9 +5,7 @@ from collections import Counter
 from itertools import chain, groupby
 from datetime import timedelta
 
-from actstream.models import Action
 from django import forms
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -28,6 +26,7 @@ import datetime
 from cobalt import FrbrUri
 from indigo.analysis.toc.base import descend_toc_pre_order, descend_toc_post_order
 from indigo.plugins import plugins
+from indigo.view_mixins import AtomicPostMixin
 from indigo_api.models import Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate, \
     Commencement, Country, Locality
 from indigo_api.timeline import get_timeline, TimelineEntry
@@ -161,7 +160,7 @@ class WorkDependentView(WorkViewBase):
         return self._work
 
 
-class EditWorkView(WorkViewBase, UpdateView):
+class EditWorkView(AtomicPostMixin, WorkViewBase, UpdateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
@@ -235,7 +234,7 @@ class EditWorkOffCanvasView(EditWorkView):
         return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class UnapproveWorkView(WorkViewBase, View):
+class UnapproveWorkView(AtomicPostMixin, WorkViewBase, View):
     def post(self, request, *args, **kwargs):
         work = self.get_object()
         work.unapprove(self.request.user)
@@ -249,7 +248,7 @@ class WorkListItemPartialView(WorkViewBase, TemplateView):
     template_name = "indigo_app/place/_work.html"
 
 
-class AddWorkView(PlaceViewBase, CreateView):
+class AddWorkView(AtomicPostMixin, PlaceViewBase, CreateView):
     model = Work
     form_class = WorkForm
     prefix = 'work'
@@ -306,7 +305,7 @@ class AddWorkOffCanvasView(AddWorkView):
         return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri}) + "?hx-trigger=hx_refresh_work_list"
 
 
-class DeleteWorkView(WorkViewBase, DeleteView):
+class DeleteWorkView(AtomicPostMixin, WorkViewBase, DeleteView):
     permission_required = ('indigo_api.delete_work',)
 
     def form_valid(self, form):
@@ -466,7 +465,7 @@ class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView)
         return rich_provisions
 
 
-class WorkCommencementEditView(WorkDependentView, UpdateView):
+class WorkCommencementEditView(AtomicPostMixin, WorkDependentView, UpdateView):
     http_method_names = ['get', 'post']
     model = Commencement
     pk_url_kwarg = 'pk'
@@ -533,7 +532,7 @@ class WorkCommencementProvisionsEditView(WorkCommencementProvisionsDetailView, F
         return self.get(request, *args, **kwargs)
 
 
-class WorkCommencementAddView(WorkDependentView, CreateView):
+class WorkCommencementAddView(AtomicPostMixin, WorkDependentView, CreateView):
     model = Commencement
     pk_url_kwarg = 'pk'
     form_class = CommencementForm
@@ -597,7 +596,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
         return timeline
 
 
-class WorkAmendmentUpdateView(WorkDependentView, UpdateView):
+class WorkAmendmentUpdateView(AtomicPostMixin, WorkDependentView, UpdateView):
     """ View to update or delete amendment.
     """
     http_method_names = ['post']
@@ -655,7 +654,7 @@ class WorkAmendmentDropdownView(WorkDependentView, DetailView):
         return self.work.amendments
 
 
-class AddWorkAmendmentView(WorkDependentView, CreateView):
+class AddWorkAmendmentView(AtomicPostMixin, WorkDependentView, CreateView):
     """ View to add a new amendment.
     """
     model = Amendment
@@ -685,7 +684,7 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
         return url
 
 
-class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
+class AddArbitraryExpressionDateView(AtomicPostMixin, WorkDependentView, CreateView):
     """ View to add a new arbitrary expression date.
     """
     model = ArbitraryExpressionDate
@@ -711,7 +710,7 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
         return url
 
 
-class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
+class EditArbitraryExpressionDateView(AtomicPostMixin, WorkDependentView, UpdateView):
     """ View to update or delete an arbitrary expression date.
     """
     http_method_names = ['post']
@@ -767,7 +766,7 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
         return url
 
 
-class AddWorkPointInTimeView(WorkDependentView, CreateView):
+class AddWorkPointInTimeView(AtomicPostMixin, WorkDependentView, CreateView):
     """ View to get or create a new point-in-time for a work, at a particular date
     and in a particular language.
     """
@@ -947,7 +946,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
         raise Http404()
 
 
-class BatchAddWorkView(PlaceViewBase, FormView):
+class BatchAddWorkView(AtomicPostMixin, PlaceViewBase, FormView):
     template_name = 'indigo_api/work_batch_create.html'
     # permissions
     permission_required = ('indigo_api.bulk_add_work',)
@@ -1040,7 +1039,7 @@ class BatchUpdateWorkView(BatchAddWorkView):
     bulk_creator_verb = 'Updated'
 
 
-class ImportDocumentView(WorkViewBase, FormView):
+class ImportDocumentView(AtomicPostMixin, WorkViewBase, FormView):
     """ View to import a document as an expression for a work.
 
     This behaves a bit differently to normal form submission. The client
@@ -1128,7 +1127,7 @@ class WorkPopupView(WorkViewBase, DetailView):
         return context
 
 
-class PartialWorkFormView(PlaceViewBase, TemplateView):
+class PartialWorkFormView(AtomicPostMixin, PlaceViewBase, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 

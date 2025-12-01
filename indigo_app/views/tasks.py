@@ -22,6 +22,7 @@ from django_fsm import has_transition_perm
 from django_htmx.http import push_url
 from itertools import chain
 
+from indigo.view_mixins import AtomicPostMixin
 from indigo_api.models import Annotation, Task, TaskLabel, User, Work, TaxonomyTopic, TaskFile
 from indigo_api.models.saved_searches import SavedSearch
 from indigo_api.views.attachments import download_attachment
@@ -216,7 +217,7 @@ class TaskFileView(SingleTaskViewBase, DetailView):
         raise Http404()
 
 
-class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
+class TaskEditLabelsView(AtomicPostMixin, SingleTaskViewBase, UpdateView):
     form_class = TaskEditLabelsForm
     template_name = 'indigo_api/_task_labels.html'
     permission_required = ('indigo_api.change_task',)
@@ -226,7 +227,7 @@ class TaskEditLabelsView(SingleTaskViewBase, UpdateView):
         return self.form_invalid(form)
 
 
-class TaskCreateView(TaskViewBase, CreateView):
+class TaskCreateView(AtomicPostMixin, TaskViewBase, CreateView):
     # permissions
     permission_required = ('indigo_api.add_task',)
     context_object_name = 'task'
@@ -264,7 +265,7 @@ class TaskCreateView(TaskViewBase, CreateView):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
 
-class TaskEditView(SingleTaskViewBase, UpdateView):
+class TaskEditView(AtomicPostMixin, SingleTaskViewBase, UpdateView):
     # permissions
     permission_required = ('indigo_api.change_task',)
     context_object_name = 'task'
@@ -372,7 +373,7 @@ class TaskFormOutputFileView(PartialTaskFormView):
         return context
 
 
-class TaskChangeStateView(SingleTaskViewBase, View, SingleObjectMixin):
+class TaskChangeStateView(AtomicPostMixin, SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
@@ -441,7 +442,7 @@ class TaskAssignToView(SingleTaskViewBase, DetailView):
         return context
 
 
-class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
+class TaskAssignView(AtomicPostMixin, SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
@@ -476,7 +477,7 @@ class TaskAssignView(SingleTaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
+class TaskChangeBlockingTasksView(AtomicPostMixin, SingleTaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
@@ -519,7 +520,7 @@ class TaskChangeBlockingTasksView(SingleTaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class TaskBulkUpdateView(TaskViewBase, BaseFormView):
+class TaskBulkUpdateView(AtomicPostMixin, TaskViewBase, BaseFormView):
     """ Bulk update a set of tasks.
     """
     http_method_names = ['post']
@@ -559,7 +560,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return redirect(self.request.headers["Referer"])
 
 
-class TaskBulkChangeStateView(TaskViewBase, BaseFormView):
+class TaskBulkChangeStateView(AtomicPostMixin, TaskViewBase, BaseFormView):
     http_method_names = ['post']
     form_class = BulkTaskStateChangeForm
     permission_required = ('indigo_api.change_task',)

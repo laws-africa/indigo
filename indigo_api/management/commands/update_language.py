@@ -35,6 +35,6 @@ class Command(BaseCommand):
                 raise Exception("Forcing rollback")
 
     def update_languages(self):
-        for doc in Document.objects.filter(language__language__iso_639_2B__in=self.codes).iterator(10):
+        for doc in Document.objects.using('direct').filter(language__language__iso_639_2B__in=self.codes).iterator(10):
             log.info(f"Updating {doc} -- {doc.expression_frbr_uri}")
             doc.save()

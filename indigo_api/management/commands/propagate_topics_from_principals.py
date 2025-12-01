@@ -29,5 +29,5 @@ class Command(BaseCommand):
                 raise Exception("Forcing rollback")
 
     def propagate(self):
-        for topic in TaxonomyTopic.objects.filter(copy_from_principal=True).iterator(10):
+        for topic in TaxonomyTopic.objects.using('direct').filter(copy_from_principal=True).iterator(10):
             topic.propagate_copy_from_principal(works=None, add=True)

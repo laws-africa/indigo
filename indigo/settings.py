@@ -181,13 +181,18 @@ INDIGO = {
 
 import dj_database_url
 db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
-direct_db_config = dj_database_url.config(env="DIRECT_DATABASE_URL") if os.environ.get("DIRECT_DATABASE_URL") else db_config
 DATABASES = {
     'default': db_config,
-    # this is a direct connection to the database, bypassing any proxies, which supports server-side cursors and MUST
-    # be used when .iterator() is used
-    'direct': db_config,
+    # This is a direct connection to the database, bypassing any proxies, which supports server-side cursors and MUST
+    # be used when .iterator() is used. The default assumes no proxies are in use and so the two are the same.
+    'direct': db_config
 }
+if os.environ.get("DIRECT_DATABASE_URL"):
+    # setup a separate direct connection to the database, bypassing any proxies
+    direct_db_config = dj_database_url.config(env="DIRECT_DATABASE_URL")
+    DATABASES['direct'] = direct_db_config
+    # assume that the default database doesn't support server-side cursors
+    DATABASES['default']["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 CONN_MAX_AGE = int(os.environ.get('CONN_MAX_AGE', 0))
 

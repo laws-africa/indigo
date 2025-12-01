@@ -27,5 +27,5 @@ class Migration(migrations.Migration):
             name='main_commencement',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='indigo_api.commencement'),
         ),
-        migrations.RunPython(backfill_main_commencement, migrations.RunPython.noop),
+        migrations.RunPython(backfill_main_commencement, migrations.RunPython.noop, elidable=True),
     ]

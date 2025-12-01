@@ -20,6 +20,7 @@ from lxml import etree
 from docpipe.xmlutils import unwrap_element
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
+from indigo.view_mixins import AtomicPostMixin
 from indigo_api.models import Country, Task, Work, Subtype, Locality, TaskLabel, Document, TaxonomyTopic, AllPlace, \
     SavedSearch, PlaceSettings
 from indigo_api.timeline import describe_publication_event
@@ -418,7 +419,7 @@ class PlaceExplorerView(PlaceViewBase, ListView):
             match['html'] = match['doc'].element_to_html(elem)
 
 
-class PlaceSettingsView(PlaceViewBase, UpdateView):
+class PlaceSettingsView(AtomicPostMixin, PlaceViewBase, UpdateView):
     template_name = 'place/settings.html'
     form_class = PlaceSettingsForm
     tab = 'place_settings'
@@ -447,7 +448,7 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceUsersView(PlaceViewBase, FormView):
+class PlaceUsersView(AtomicPostMixin, PlaceViewBase, FormView):
     template_name = 'place/users.html'
     tab = 'place_users'
     form_class = PlaceUsersForm
@@ -612,7 +613,7 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
         return True
 
 
-class WorkActionsView(PlaceWorksViewBase, FormView):
+class WorkActionsView(AtomicPostMixin, PlaceWorksViewBase, FormView):
     form_class = WorkBulkActionsForm
     template_name = "indigo_app/place/_works_actions.html"
     allow_all_place = True
@@ -651,7 +652,7 @@ class WorkActionsView(PlaceWorksViewBase, FormView):
         return works, disallowed
 
 
-class WorkBulkActionBase(PlaceViewBase, FormView):
+class WorkBulkActionBase(AtomicPostMixin, PlaceViewBase, FormView):
     """Base view for bulk actions on works. Ensures permissions for the "all" country, and passes
     place information to the form. Assumes the form class extends WorkBulkActionFormBase.
     """

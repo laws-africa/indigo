@@ -12,6 +12,7 @@ from django.templatetags.static import static
 from django.utils.translation import gettext as _
 from allauth.account.utils import user_display
 
+from indigo.view_mixins import AtomicPostMixin
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
@@ -47,7 +48,7 @@ class UserProfileView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
-class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
+class UserProfileEditView(AtomicPostMixin, AbstractAuthedIndigoView, UpdateView):
     authentication_required = True
     model = UserProfile
     template_name = 'indigo_app/user_account/edit.html'
@@ -106,7 +107,7 @@ class UserActivityView(AbstractAuthedIndigoView, MultipleObjectMixin, DetailView
         return context
 
 
-class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
+class AwardBadgeView(AtomicPostMixin, AbstractAuthedIndigoView, DetailView, FormView):
     """ View to grant a user a new badge
     """
     http_method_names = ['post']

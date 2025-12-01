@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 from allauth.utils import get_request_param
 
+from indigo.view_mixins import AtomicPostMixin
 from indigo_app.forms import UserEditorForm
 from indigo_app.models import Editor
 from .base import AbstractAuthedIndigoView
@@ -20,7 +21,7 @@ def set_language_cookie(response, lang_code):
     )
 
 
-class EditAccountView(AbstractAuthedIndigoView, UpdateView):
+class EditAccountView(AtomicPostMixin, AbstractAuthedIndigoView, UpdateView):
     authentication_required = True
     model = Editor
     template_name = 'indigo_app/user_account/edit.html'
@@ -66,7 +67,7 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
         return redirect('edit_account_api')
 
 
-class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
+class AcceptTermsView(AtomicPostMixin, AbstractAuthedIndigoView, UpdateView):
     authentication_required = True
     context_object_name = 'editor'
     template_name = 'indigo_app/user_account/accept_terms.html'

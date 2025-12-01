@@ -7,6 +7,7 @@ from actstream import action
 from asgiref.sync import sync_to_async
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
 from django.templatetags.static import static
@@ -30,6 +31,7 @@ from cobalt import StructuredDocument
 from indigo.analysis.differ import AKNHTMLDiffer
 from indigo.analysis.refs.base import markup_document_refs
 from indigo.plugins import plugins
+from indigo.view_mixins import AtomicWriteViewSetMixin
 from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 from indigo_api.exporters import HTMLExporter
 from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
@@ -77,7 +79,8 @@ class DocumentViewMixin:
 
 
 # Read/write REST API
-class DocumentViewSet(DocumentViewMixin,
+class DocumentViewSet(AtomicWriteViewSetMixin,
+                      DocumentViewMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
@@ -155,7 +158,7 @@ class DocumentForRenderingResourceView(DocumentResourceView):
     document_queryset = Document.objects.undeleted().for_rendering()
 
 
-class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
+class AnnotationViewSet(AtomicWriteViewSetMixin, DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects\
         .select_related('created_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
                         'task__assigned_to', 'task__country', 'task__locality', 'task__work')
@@ -302,7 +305,8 @@ class RevisionDiffView(AsyncDocumentResourceViewMixin, AbstractAuthedIndigoView,
         })
 
 
-class DocumentActivityViewSet(DocumentResourceView,
+class DocumentActivityViewSet(AtomicWriteViewSetMixin,
+                              DocumentResourceView,
                               mixins.ListModelMixin,
                               mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
@@ -388,7 +392,6 @@ class RenderCoverpageView(DocumentForRenderingResourceView, APIView):
         renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
         html = renderer.render_coverpage(document)
         return Response({'output': html})
-
 
 
 class ManipulateXmlView(DocumentResourceView, APIView):

@@ -7,6 +7,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import copy
 import os
 import logging
 from urllib.parse import urlparse
@@ -182,7 +183,8 @@ import dj_database_url
 db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
 db_config['ATOMIC_REQUESTS'] = True
 
-direct_db_config = dj_database_url.config(env="DIRECT_DATABASE_URL") if os.environ.get("DIRECT_DATABASE_URL") else db_config
+direct_db_config = dj_database_url.config(env="DIRECT_DATABASE_URL") if os.environ.get("DIRECT_DATABASE_URL") else copy.deepcopy(db_config)
+direct_db_config['ATOMIC_REQUESTS'] = False
 
 DATABASES = {
     'default': db_config,

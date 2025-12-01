@@ -181,10 +181,7 @@ INDIGO = {
 
 import dj_database_url
 db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
-db_config['ATOMIC_REQUESTS'] = True
-
 direct_db_config = dj_database_url.config(env="DIRECT_DATABASE_URL") if os.environ.get("DIRECT_DATABASE_URL") else db_config
-
 DATABASES = {
     'default': db_config,
     # this is a direct connection to the database, bypassing any proxies, which supports server-side cursors and MUST

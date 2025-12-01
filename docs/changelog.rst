@@ -2,11 +2,32 @@
 Changelog
 =========
 
-19.1.0 (???)
+19.2.0 (???)
 ------------
+
+19.1.0 (2025-12-01)
+-------------------
+
+Important
+.........
+
+You **must** upgrade to this version before upgrading to future versions.
+
+Changes
+.......
+
+* Squash indigo_api migrations
 
 19.0.0 (2025-12-01)
 -------------------
+
+Important
+.........
+
+You **must** upgrade to this version before upgrading to future versions.
+
+Changes
+.......
 
 * BREAKING: Upgrade to Django 5.0 and Python >= 3.10
 * CHANGE: Taxonomies are removed. You must upgrade to 18.1.0 first and run `python manage.py migrate_taxonomies` before upgrading to this version.

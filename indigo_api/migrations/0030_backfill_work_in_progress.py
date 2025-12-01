@@ -6,9 +6,8 @@ def backfill_work_in_progress(apps, schema_editor):
     """ Mark existing works as work_in_progress = False; only new ones should be True by default.
     """
     Work = apps.get_model('indigo_api', 'Work')
-    db_alias = schema_editor.connection.alias
 
-    for work in Work.objects.using(db_alias).iterator(100):
+    for work in Work.objects.using('direct').iterator(100):
         work.work_in_progress = False
         work.save()
 

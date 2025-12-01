@@ -7,9 +7,8 @@ def backfill_work_repealed_verb(apps, schema_editor):
     """ Update existing repealed works to have 'repealed' as their repealed_verb.
     """
     Work = apps.get_model('indigo_api', 'Work')
-    db_alias = schema_editor.connection.alias
 
-    for work in Work.objects.using(db_alias).filter(repealed_date__isnull=False).only('repealed_verb').iterator(300):
+    for work in Work.objects.using('direct').filter(repealed_date__isnull=False).only('repealed_verb').iterator(300):
         work.repealed_verb = 'repealed'
         work.save(update_fields=['repealed_verb'])
 

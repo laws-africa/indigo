@@ -13,9 +13,8 @@ def backfill_principal_works(apps, schema_editor):
     - works that do not repeal, amend or commence another work
     """
     Work = apps.get_model('indigo_api', 'Work')
-    db_alias = schema_editor.connection.alias
 
-    for work in Work.objects.using(db_alias).iterator(100):
+    for work in Work.objects.using('direct').iterator(100):
         if work.document_set.exists() or (not work.commencements_made.exists() and
                 not work.repealed_works.exists() and not work.amendments_made.exists()):
             log.info(f'\nMarking {work.frbr_uri} as a principal work...')

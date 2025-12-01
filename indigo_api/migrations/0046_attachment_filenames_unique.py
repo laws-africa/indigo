@@ -29,8 +29,7 @@ def ensure_filename_unique(attachment):
 
 def attachment_filenames_unique(apps, schema_editor):
     Attachment = apps.get_model("indigo_api", "Attachment")
-    db_alias = schema_editor.connection.alias
-    for attachment in Attachment.objects.using(db_alias).only('filename').iterator(1000):
+    for attachment in Attachment.objects.using('direct').only('filename').iterator(1000):
         changed, old_filename = ensure_filename_unique(attachment)
         if changed:
             log.info(f'Old filename: {old_filename}')

@@ -9,9 +9,8 @@ def forwards(apps, schema_editor):
     """ Migrate attachment eIds.
     """
     Work = apps.get_model('indigo_api', 'Work')
-    db_alias = schema_editor.connection.alias
 
-    for work in Work.objects.using(db_alias).iterator(100):
+    for work in Work.objects.using('direct').iterator(100):
         print(f"Migrating {work.frbr_uri}")
         work_uri = FrbrUri.parse(work.frbr_uri)
 

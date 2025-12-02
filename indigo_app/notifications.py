@@ -215,6 +215,7 @@ def notify_annotation_reply_posted(annotation_id):
     except Annotation.DoesNotExist:
         log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
+
 @background(queue='indigo')
 def notify_user_badge_earned(badge_id):
     try:

@@ -4,6 +4,7 @@ from datetime import timedelta
 import logging
 
 import sentry_sdk
+from django.db import transaction
 from sentry_sdk.tracing import TRANSACTION_SOURCE_TASK
 from background_task import background
 from background_task.signals import task_error
@@ -67,6 +68,7 @@ def on_task_error(*args, **kwargs):
 
 
 @background(queue="indigo", remove_existing_tasks=True)
+@transaction.atomic
 def prune_deleted_documents():
     """ Task to prune old deleted documents.
     """
@@ -78,6 +80,7 @@ def prune_deleted_documents():
 
 
 @background(queue="indigo", remove_existing_tasks=True)
+@transaction.atomic
 def prune_document_versions():
     """ Prune out old document versions.
     """
@@ -89,6 +92,7 @@ def prune_document_versions():
 
 
 @background(queue="indigo", remove_existing_tasks=True)
+@transaction.atomic
 def prune_document_activity():
     """ Prune out old DocumentActivity entries.
     """

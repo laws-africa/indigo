@@ -429,6 +429,45 @@ class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
+class AknResolverView(AbstractAuthedIndigoView, View):
+    """Helper view that jumps to the document or work for the provided FRBR URI. Useful for pasting URIs
+    into the address bar."""
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        frbr_uri = f"/{kwargs['frbr_uri']}"
+        try:
+            parsed_uri = FrbrUri.parse(frbr_uri)
+        except ValueError:
+            raise Http404()
+
+        document = None
+        if parsed_uri.expression_date:
+            expression_date = self.parse_expression_date(parsed_uri.expression_date)
+            if expression_date:
+                document = Document.objects.filter(
+                    frbr_uri=parsed_uri.work_uri(work_component=False),
+                    expression_date=expression_date,
+                    language__language__iso_639_2T=parsed_uri.language,
+                ).first()
+        if document:
+            return redirect('document', doc_id=document.id)
+
+        work = Work.objects.filter(frbr_uri=parsed_uri.work_uri(work_component=False)).first()
+        if work:
+            return redirect('work', frbr_uri=work.frbr_uri)
+
+        raise Http404()
+
+    def parse_expression_date(self, expression_date):
+        if expression_date[0] in '@:':
+            expression_date = expression_date[1:]
+        try:
+            return datetime.date.fromisoformat(expression_date)
+        except ValueError:
+            return None
+
+
 class WorkCommencementProvisionsDetailView(AbstractAuthedIndigoView, DetailView):
     model = Commencement
     template_name = 'indigo_api/commencements/_commencement_provisions_detail.html'

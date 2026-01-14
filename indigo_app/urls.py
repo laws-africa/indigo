@@ -22,6 +22,7 @@ urlpatterns = [
 
     path('terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
     path('help', RedirectView.as_view(url='https://indigo.readthedocs.io/en/latest/', permanent=False), name='help'),
+    re_path('^(?P<frbr_uri>akn/.+)$', works.AknResolverView.as_view(), name='akn_resolver'),
 
     path('places', places.PlaceListView.as_view(), name='places'),
     path('places/<str:place>', places.PlaceDetailView.as_view(), name='place'),

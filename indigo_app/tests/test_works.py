@@ -37,6 +37,14 @@ class WorksTest(testcases.TestCase):
         response = self.client.get('/works/akn/za-cpt/act/2005/1/related/')
         self.assertEqual(response.status_code, 200)
 
+    def test_akn_resolver_document(self):
+        document = Document.objects.order_by('id').first()
+        expression_frbr_uri = document.expression_frbr_uri
+        response = self.client.get(expression_frbr_uri)
+        self.assertRedirects(response, f"/documents/{document.id}/", fetch_redirect_response=False)
+        response = self.client.get(document.frbr_uri)
+        self.assertRedirects(response, f"/works{document.frbr_uri}/", fetch_redirect_response=False)
+
     def test_amendments_page(self):
         response = self.client.get('/works/akn/za/act/2014/10/amendments/')
         self.assertEqual(response.status_code, 200)

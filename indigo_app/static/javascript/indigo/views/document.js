@@ -171,6 +171,7 @@
       this.sentenceCaseView = new Indigo.DocumentSentenceCaseView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
+      this.tocView.selection.on('change', this.onTocSelectionChanged, this);
 
       this.sourceEditorView = new Indigo.SourceEditorView({
         model: this.document,
@@ -352,6 +353,23 @@
     onPaneToggled: function (e) {
       if (e.originalEvent.detail.pane === 'document-secondary-pane') {
         this.secondaryPaneToggle.classList.toggle('active', e.originalEvent.detail.visible);
+      }
+    },
+
+    onTocSelectionChanged: function (selection) {
+      // update provision editor link
+      const a = this.el.querySelector('.document-toolbar-wrapper .open-provision-editor');
+      if (a) {
+        a.disabled = true;
+        a.classList.toggle('disabled', true);
+
+        if (selection.get('element') && selection.get('element').getAttribute('eId')) {
+          const eId = selection.get('element').getAttribute('eId');
+          const href = `/documents/${this.document.get('id')}/provision/${eId}`;
+          a.setAttribute('href', href);
+          a.disabled = false;
+          a.classList.remove('disabled');
+        }
       }
     }
   });

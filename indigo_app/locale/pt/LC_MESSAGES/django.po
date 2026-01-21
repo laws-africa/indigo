@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 14:04+0200\n"
-"PO-Revision-Date: 2025-04-10 14:44\n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
+"PO-Revision-Date: 2025-04-22 08:15\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -177,21 +177,19 @@ msgstr "Número"
 
 #: forms/works.py:477
 msgid "Validity start date"
-msgstr ""
+msgstr "Data de início de validade"
 
 #: forms/works.py:478
 msgid "Validity end date"
-msgstr ""
+msgstr "Data final de validade"
 
 #: forms/works.py:479
-#, fuzzy
-#| msgid "Publication name"
 msgid "Revision name"
-msgstr "Nome da Publicação"
+msgstr "Nome da revisão"
 
 #: forms/works.py:487
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: forms/works.py:587
 msgid "Consolidation dates must be unique."
@@ -221,7 +219,7 @@ msgstr "Parece que as formaturas foram editadas em outro lugar. Cancele suas edi
 msgid "Commencing work and date must be unique together."
 msgstr "O início do trabalho e a data devem ser únicos juntos."
 
-#: forms/works.py:727
+#: forms/works.py:775
 msgid "Commenced work, commencing work, and date must be unique together."
 msgstr "Trabalho iniciado, trabalho de início e data devem ser únicos juntos."
 
@@ -1211,7 +1209,7 @@ msgstr "Adicionar alteração"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:51
 msgid "e.g. Revised Laws 2004"
-msgstr ""
+msgstr "por exemplo, Leis Revisadas de 2004"
 
 #: templates/indigo_api/_work_form_chapter_numbers_form.html:78
 #: templates/indigo_api/_work_form_content.html:616
@@ -1282,13 +1280,13 @@ msgstr "Número ou nome abreviado que identifica exclusivamente esta legislaçã
 
 #: templates/indigo_api/_work_form_content.html:216
 msgid "Chapter numbers"
-msgstr ""
+msgstr "Números dos capítulos"
 
 #: templates/indigo_api/_work_form_content.html:226
 msgid "Responsible organisation (actor)"
 msgstr "Organização responsável (ator)"
 
-#: templates/indigo_api/_work_form_content.html:227
+#: templates/indigo_api/_work_form_content.html:238
 msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
 msgstr "Organização que criou este trabalho. Normalmente não é usado para legislação nacional. Números, letras e '-' apenas."
 
@@ -3619,56 +3617,10 @@ msgid "Error during import: %(error)s"
 msgstr "Erro durante a importação: %(error)s"
 
 #: views/works.py:1199
-#, fuzzy
-#| msgid "Markup the long title"
 msgid "Match on title"
-msgstr "Marque o título longo"
+msgstr "Partida pelo título"
 
 #: views/works.py:1200
 msgid "Match on year and number"
-msgstr ""
+msgstr "Correspondência por ano e número"
 
-#~ msgid "Commenced work and date must be unique together."
-#~ msgstr "O trabalho iniciado e a data devem ser únicos juntos."
-
-#~ msgid "Finishing"
-#~ msgstr "Acabamento"
-
-#~ msgid "Akoma Ntoso"
-#~ msgstr "Akoma Ntoso"
-
-#~ msgid "Markup"
-#~ msgstr "Marcação"
-
-#~ msgid "Bold"
-#~ msgstr "Audacioso"
-
-#~ msgid "Italics"
-#~ msgstr "Itálico"
-
-#~ msgid "Underline"
-#~ msgstr "Sublinhado"
-
-#~ msgid "Superscript"
-#~ msgstr "Sobrescrito"
-
-#~ msgid "Subscript"
-#~ msgstr "Subscrito"
-
-#~ msgid "Editor help..."
-#~ msgstr "Ajuda do editor..."
-
-#~ msgid "Available tasks"
-#~ msgstr "Tarefas disponíveis"
-
-#~ msgid "All available tasks"
-#~ msgstr "Todas as tarefas disponíveis"
-
-#~ msgid "Complete"
-#~ msgstr "Completo"
-
-#~ msgid "Works complete"
-#~ msgstr "Trabalhos completos"
-
-#~ msgid "Metrics"
-#~ msgstr "Métricas"

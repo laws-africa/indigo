@@ -607,7 +607,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <num>7.</num>
               <heading>Section 7</heading>
               <content>
-                <p>As per rule 4 and rules 4.</p>
+                <p>As per Rule 4 and rules 4.</p>
               </content>
             </section>
             <rule eId="rule_2">
@@ -637,7 +637,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
               <num>7.</num>
               <heading>Section 7</heading>
               <content>
-                <p>As per rule <ref href="#rule_4">4</ref> and rules <ref href="#rule_4">4</ref>.</p>
+                <p>As per Rule <ref href="#rule_4">4</ref> and rules <ref href="#rule_4">4</ref>.</p>
               </content>
             </section>
             <rule eId="rule_2">

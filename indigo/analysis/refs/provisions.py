@@ -234,6 +234,8 @@ class ProvisionRefsResolver:
         "points": "point",
         "regulation": "section",
         "regulations": "section",
+        "rule": "rule",
+        "rules": "rule",
         "section": "section",
         "sections": "section",
         "schedule": "attachment",
@@ -250,6 +252,8 @@ class ProvisionRefsResolver:
         "sub-regulations":  ["subsection", "paragraph", "subparagraph"],
         "sub regulation":   ["subsection", "paragraph", "subparagraph"],
         "sub regulations":  ["subsection", "paragraph", "subparagraph"],
+        "subrule": "subrule",
+        "subrules": "subrule",
         "subsection": "subsection",
         "subsections": "subsection",
         "sub-section": "subsection",
@@ -267,6 +271,10 @@ class ProvisionRefsResolver:
         "hoofstukke": "chapter",
         "paragraaf": "paragraph",
         "paragrawe": "paragraph",
+        "reël": "rule",
+        "reëls": "rule",
+        "reel": "rule",
+        "reels": "rule",
         "punt": "point",
         "punte": "point",
         "afdeling": "section",
@@ -274,7 +282,11 @@ class ProvisionRefsResolver:
         "subparagraaf": "subparagraph",
         "subparagrawe": "subparagraph",
         "subafdeling": "subsection",
-        "subafdelings": "subsection"
+        "subafdelings": "subsection",
+        "subreël": "subrule",
+        "subreëls": "subrule",
+        "subreel": "subrule",
+        "subreels": "subrule",
     }
 
     # hier elements to look for when we don't have further guidance

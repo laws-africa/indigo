@@ -119,6 +119,8 @@ grammar ProvisionRefs
                  `parts` / `part` /
                  `points` / `point` /
                  `regulations` / `regulation` /
+                 `rules` / `rule` /
+                 `subrules` / `subrule` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
                  `sub-paragraphs` / `sub-paragraph` /
@@ -137,6 +139,8 @@ grammar ProvisionRefs
                  `hoofstukke` / `hoofstuk` /
                  `paragrawe` / `paragraaf` /
                  `punte` / `punt` /
+                 `reëls` / `reels` / `reël` / `reel` /
+                 `subreëls` / `subreels` / `subreël` / `subreel` /
                  `subafdelings` / `subafdeling` /
                  `subparagrawe` / `subparagraaf`
 
@@ -146,7 +150,7 @@ grammar ProvisionRefs
                   `paragraphes` / `paragraphe` /
                   `parties` / `partie` /
                   `points` / `point` /
-                  `règlements` / `règlement` /
+                  `règles` / `règle` /
                   `reglements` / `reglement` /
                   `sections` / `section` /
                   `sous-paragraphes` / `sous-paragraphe` /

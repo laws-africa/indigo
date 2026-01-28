@@ -338,6 +338,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>under sections 26,30 or 31 of this Act, blah.</p>
                 <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
                 <p>As given in section V and VII.</p>
+                <p>As per rule 4.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -384,6 +385,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+            </rule>
         """))
 
         expected = AkomaNtosoDocument(document_fixture(xml="""
@@ -411,6 +416,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in section <ref href="#sec_V">V</ref> and <ref href="#sec_VII">VII</ref>.</p>
+                <p>As per rule <ref href="#rule_4">4</ref>.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -457,6 +463,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+            </rule>
         """))
 
         actual = etree.fromstring(doc.to_xml())
@@ -753,6 +763,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Soos gegee in afdeling 26B, blah.</p>
                 <p>Soos gegee in afdeling 26 en afdeling 31, blah.</p>
                 <p>Soos <i>gegee</i> in (ons is nou in 'n stert) afdeling 26, blah.</p>
+                <p>Soos reël 4.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -785,6 +796,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+            </rule>
         """))
 
         expected = AkomaNtosoDocument(document_fixture(xml="""
@@ -800,6 +815,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Soos gegee in afdeling <ref href="#sec_26B">26B</ref>, blah.</p>
                 <p>Soos gegee in afdeling <ref href="#sec_26">26</ref> en afdeling <ref href="#sec_31">31</ref>, blah.</p>
                 <p>Soos <i>gegee</i> in (ons is nou in 'n stert) afdeling <ref href="#sec_26">26</ref>, blah.</p>
+                <p>Soos reël <ref href="#rule_4">4</ref>.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -832,6 +848,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+            </rule>
         """))
 
         actual = etree.fromstring(doc.to_xml())

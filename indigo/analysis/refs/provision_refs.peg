@@ -120,6 +120,7 @@ grammar ProvisionRefs
                  `points` / `point` /
                  `regulations` / `regulation` /
                  `rules` / `rule` /
+                 `subrules` / `subrule` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
                  `sub-paragraphs` / `sub-paragraph` /
@@ -139,6 +140,7 @@ grammar ProvisionRefs
                  `paragrawe` / `paragraaf` /
                  `punte` / `punt` /
                  `reëls` / `reels` / `reël` / `reel` /
+                 `subreëls` / `subreels` / `subreël` / `subreel` /
                  `subafdelings` / `subafdeling` /
                  `subparagrawe` / `subparagraaf`
 

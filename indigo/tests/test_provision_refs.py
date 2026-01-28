@@ -338,7 +338,6 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>under sections 26,30 or 31 of this Act, blah.</p>
                 <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
                 <p>As given in section V and VII.</p>
-                <p>As per rule 4.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -385,10 +384,6 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
-            <rule eId="rule_4">
-              <num>4.</num>
-              <heading>Some Rule</heading>
-            </rule>
         """))
 
         expected = AkomaNtosoDocument(document_fixture(xml="""
@@ -416,7 +411,6 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in section <ref href="#sec_V">V</ref> and <ref href="#sec_VII">VII</ref>.</p>
-                <p>As per rule <ref href="#rule_4">4</ref>.</p>
               </content>
             </section>
             <section eId="sec_26">
@@ -463,10 +457,6 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
-            <rule eId="rule_4">
-              <num>4.</num>
-              <heading>Some Rule</heading>
-            </rule>
         """))
 
         actual = etree.fromstring(doc.to_xml())
@@ -602,6 +592,74 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>Hi!</p>
               </content>
             </section>
+        """))
+
+        actual = etree.fromstring(doc.to_xml())
+        self.finder.markup_xml_matches(self.frbr_uri, actual)
+        self.assertEqual(
+            expected.to_xml(encoding='unicode'),
+            etree.tostring(actual, encoding='unicode')
+        )
+
+    def test_local_rules(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As per rule 4 and rules 4.</p>
+              </content>
+            </section>
+            <rule eId="rule_2">
+              <num>2.</num>
+              <heading>Some Rule</heading>
+              <subrule eId="rule_2__subrule_1">
+                <num>(1)</num>
+                <content>
+                  <p>As per subrule (1) and subrules (2).</p>
+                </content>
+              </subrule>
+              <subrule eId="rule_2__subrule_2">
+                <num>(2)</num>
+              </subrule>
+            </rule>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+              <subrule eId="rule_4__subrule_2">
+                <num>(2)</num>
+              </subrule>
+            </rule>
+        """))
+
+        expected = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_7">
+              <num>7.</num>
+              <heading>Section 7</heading>
+              <content>
+                <p>As per rule <ref href="#rule_4">4</ref> and rules <ref href="#rule_4">4</ref>.</p>
+              </content>
+            </section>
+            <rule eId="rule_2">
+              <num>2.</num>
+              <heading>Some Rule</heading>
+              <subrule eId="rule_2__subrule_1">
+                <num>(1)</num>
+                <content>
+                  <p>As per subrule <ref href="#rule_2__subrule_1">(1)</ref> and subrules <ref href="#rule_2__subrule_2">(2)</ref>.</p>
+                </content>
+              </subrule>
+              <subrule eId="rule_2__subrule_2">
+                <num>(2)</num>
+              </subrule>
+            </rule>
+            <rule eId="rule_4">
+              <num>4.</num>
+              <heading>Some Rule</heading>
+              <subrule eId="rule_4__subrule_2">
+                <num>(2)</num>
+              </subrule>
+            </rule>
         """))
 
         actual = etree.fromstring(doc.to_xml())

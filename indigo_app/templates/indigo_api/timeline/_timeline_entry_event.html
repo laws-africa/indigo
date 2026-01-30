@@ -12,3 +12,10 @@
 {% if event.note %}
   <p class="ms-2 mt-1">{{ event.note }}</p>
 {% endif %}
+
+{% if event.type == "amendment" %}
+  <details class="mb-2">
+    <summary>Amendment instructions</summary>
+    {% include 'indigo_api/amendment/_instruction_list.html' with amendment=event.related %}
+  </details>
+{% endif %}

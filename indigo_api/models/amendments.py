@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+from django_fsm import FSMField
 from natsort import natsorted
 
 
@@ -90,3 +91,23 @@ def post_save_amendment(sender, instance, created, **kwargs):
 
     # propagate copy-on-principal flags from the commenced work, if any
     instance.amended_work.propagate_copy_from_principal_topics()
+
+
+class AmendmentInstruction(models.Model):
+    """ Instructions to apply an amendment to a particular provision (and language) of a work."""
+    amendment = models.ForeignKey(Amendment, on_delete=models.CASCADE, null=False, related_name="instructions",
+                                  verbose_name=_("amendment"))
+    # TODO: add language
+    # TODO: state
+    amending_provision = models.CharField(_("amending provision"), max_length=2048, null=True, blank=True)
+    title = models.CharField(_("title"), max_length=4096, null=True, blank=True)
+    page_number = models.IntegerField(_("page number"), null=True, blank=True)
+    provision_name = models.CharField(_("provision name"), max_length=4096, null=True, blank=True)
+    amendment_instruction = models.TextField(_("amendment instruction"), null=True, blank=True)
+
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+', verbose_name=_("created by"))
+
+    class Meta:
+        ordering = ['page_number', 'provision_name']

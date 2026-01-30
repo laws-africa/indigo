@@ -22,6 +22,7 @@ from lxml import etree
 
 from bluebell.xml import XmlGenerator
 
+from indigo_api.models.amendments import AmendmentInstruction
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
@@ -435,6 +436,14 @@ class Document(DocumentMixin, models.Model):
         return [
             AmendmentEvent(a.date, a.amending_work.title, a.amending_work.frbr_uri)
             for a in self.amendments()]
+
+    def amendment_instructions(self):
+        """A queryset of amendment instructions applicable to this document's expression date and language."""
+        return AmendmentInstruction.objects.filter(
+            amendment__amended_work=self.work,
+            amendment__date=self.expression_date,
+            # TOOD: language
+        )
 
     @property
     def repeal(self):

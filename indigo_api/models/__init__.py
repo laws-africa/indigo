@@ -1,3 +1,4 @@
+from .amendments import *
 from .citations import *
 from .places import *
 from .works import *

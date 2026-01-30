@@ -2,7 +2,7 @@ from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.decorators.cache import cache_page
 
-from .views import users, works, documents, tasks, places
+from .views import users, works, documents, tasks, places, amendments
 
 
 POPUP_CACHE_SECS = 60 * 30
@@ -115,12 +115,12 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)/commencing-work-edit$', works.WorkCommencementCommencingWorkEditView.as_view(), name='work_commencement_commencing_work_edit'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/(?P<pk>\d+)/provisions-edit$', works.WorkCommencementProvisionsEditView.as_view(), name='work_commencement_provisions_edit'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/commencements/uncommenced$', works.WorkUncommencedView.as_view(), name='work_uncommenced'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/$', works.WorkAmendmentsView.as_view(), name='work_amendments'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/new$', works.AddWorkAmendmentView.as_view(), name='new_work_amendment'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/$', amendments.WorkAmendmentsView.as_view(), name='work_amendments'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/new$', amendments.AddWorkAmendmentView.as_view(), name='new_work_amendment'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/arbitrary_expression_dates/new$', works.AddArbitraryExpressionDateView.as_view(), name='new_arbitrary_expression_date'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/arbitrary_expression_dates/(?P<arbitrary_expression_date_id>\d+)/edit$', works.EditArbitraryExpressionDateView.as_view(), name='edit_arbitrary_expression_date'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)$', works.WorkAmendmentUpdateView.as_view(), name='work_amendment_detail'),
-    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/dropdown$', works.WorkAmendmentDropdownView.as_view(), name='work_amendment_dropdown'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)$', amendments.WorkAmendmentUpdateView.as_view(), name='work_amendment_detail'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/dropdown$', amendments.WorkAmendmentDropdownView.as_view(), name='work_amendment_dropdown'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/points-in-time/new$', works.AddWorkPointInTimeView.as_view(), name='new_work_point_in_time'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/popup$', cache_page(POPUP_CACHE_SECS)(works.WorkPopupView.as_view()), name='work_popup'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),

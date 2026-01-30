@@ -121,6 +121,8 @@ grammar ProvisionRefs
                  `regulations` / `regulation` /
                  `rules` / `rule` /
                  `subrules` / `subrule` /
+                 `sub-rules` / `sub-rule` /
+                 `sub rules` / `sub rule` /
                  `sections` / `section` /
                  `subparagraphs` / `subparagraph` /
                  `sub-paragraphs` / `sub-paragraph` /

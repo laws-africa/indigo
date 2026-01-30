@@ -4,12 +4,32 @@
 {% block view-id %}work-amendment-instructions-view{% endblock %}
 {% block title %}{% trans 'Amendment instructions' %} – {{ block.super }}{% endblock %}
 
-{% block work-content %}
-  <h4>{% trans 'Amendment instructions' %}</h4>
+{% block main-content %}
+  <div class="container pt-3">
+    <h4>
+      {{ amendment.date|date:"Y-m-d" }}
+      —
+      {% trans "Amended by" %}
+      <a href="{% url 'work' amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">
+        {{ amendment.amending_work.title }}
+      </a>
+    </h4>
+    <div class="text-muted mb-4">{{ amendment.amending_work.frbr_uri }}</div>
 
-  TODO: amendment information, breadcrumbs back to the amendment, show pdf
-
-  <div class="mt-3">
-    {% include 'indigo_api/amendment/_instruction_list.html' with allow_new=True %}
+    <h5>{% trans 'Amendment instructions' %}</h5>
+  </div>
+  <div class="container-fluid pb-5 mt-3">
+    <div class="row">
+      <div class="col-6">
+        {% include 'indigo_api/amendment/_instruction_list.html' with allow_new=True %}
+      </div>
+      <div class="col-6 sticky-top" style="height: 100vh">
+        {% with amendment.amending_work.publication_document as pub_doc %}
+          {% if pub_doc %}
+            <iframe class="flex-grow-1" height="100%" width="100%" src="{{ pub_doc.get_embed_url }}"></iframe>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
   </div>
 {% endblock %}

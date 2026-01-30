@@ -9,6 +9,7 @@ from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -887,6 +888,12 @@ class PublicationDocument(models.Model):
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
         return super(PublicationDocument, self).save(*args, **kwargs)
+
+    def get_embed_url(self):
+        return reverse("work_publication_document", args=[
+            self.work.frbr_uri,
+            self.filename,
+        ])
 
 
 class CommencementManager(models.Manager):

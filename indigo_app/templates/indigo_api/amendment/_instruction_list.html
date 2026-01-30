@@ -1,0 +1,25 @@
+{% load i18n %}
+
+{% if request.htmx %}
+  <a class="btn btn-outline-primary my-2" href="{% url 'work_amendment_instructions' work.frbr_uri amendment.pk %}">{% trans "Edit instructions" %}</a>
+{% endif %}
+
+<ul class="list-unstyled">
+  {% for instruction in amendment.instructions.all %}
+    {% include 'indigo_api/amendment/_instruction_detail.html' %}
+  {% empty %}
+    {% if not allow_new %}
+      <li class="mb-3 text-muted">{% trans "No instructions yet." %}</li>
+    {% endif %}
+  {% endfor %}
+  {% if allow_new %}
+    <li>
+      <button
+        class="btn btn-primary"
+        hx-get="{% url 'work_amendment_instruction_new' frbr_uri=work.frbr_uri amendment_id=amendment.id %}"
+        hx-target="closest li"
+        hx-swap="beforebegin"
+      >{% trans "Add instruction" %}</button>
+    </li>
+  {% endif %}
+</ul>

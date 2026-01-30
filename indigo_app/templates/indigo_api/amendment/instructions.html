@@ -1,0 +1,15 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load i18n %}
+
+{% block view-id %}work-amendment-instructions-view{% endblock %}
+{% block title %}{% trans 'Amendment instructions' %} – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  <h4>{% trans 'Amendment instructions' %}</h4>
+
+  TODO: amendment information, breadcrumbs back to the amendment, show pdf
+
+  <div class="mt-3">
+    {% include 'indigo_api/amendment/_instruction_list.html' with allow_new=True %}
+  </div>
+{% endblock %}

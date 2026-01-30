@@ -1,12 +1,13 @@
 import logging
 
-from django.views.generic import DetailView, UpdateView, CreateView
+from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 import datetime
 
 from indigo.view_mixins import AtomicPostMixin
-from indigo_api.models import Amendment, ArbitraryExpressionDate
+from indigo_api.models import Amendment, AmendmentInstruction, ArbitraryExpressionDate
+from indigo_app.forms.amendments import AmendmentInstructionForm
 
 from .works import WorkViewBase, WorkDependentView
 
@@ -83,16 +84,6 @@ class WorkAmendmentUpdateView(AtomicPostMixin, WorkDependentView, UpdateView):
         return url
 
 
-class WorkAmendmentDropdownView(WorkDependentView, DetailView):
-    model = Amendment
-    pk_url_kwarg = 'amendment_id'
-    template_name = 'indigo_api/timeline/_amendment_dropdown.html'
-    context_object_name = 'amendment'
-
-    def get_object(self, queryset=None):
-        return self.work.amendments
-
-
 class AddWorkAmendmentView(AtomicPostMixin, WorkDependentView, CreateView):
     """ View to add a new amendment.
     """
@@ -121,3 +112,131 @@ class AddWorkAmendmentView(AtomicPostMixin, WorkDependentView, CreateView):
         if self.object and self.object.id:
             url = url + "#amendment-%s" % self.object.id
         return url
+
+
+class AmendmentDetailViewBase(WorkDependentView):
+    amendment_url_kwarg = 'amendment_id'
+    amendment = None
+
+    def get_amendment(self):
+        if not self.amendment:
+            self.amendment = get_object_or_404(self.work.amendments, pk=self.kwargs[self.amendment_url_kwarg])
+        return self.amendment
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault('amendment', self.get_amendment())
+        return super().get_context_data(**kwargs)
+
+
+class WorkAmendmentDropdownView(AmendmentDetailViewBase, DetailView):
+    model = Amendment
+    pk_url_kwarg = 'amendment_id'
+    template_name = 'indigo_api/timeline/_amendment_dropdown.html'
+    context_object_name = 'amendment'
+
+    def get_object(self, queryset=None):
+        return self.get_amendment()
+
+
+class AmendmentInstructionsView(AmendmentDetailViewBase, DetailView):
+    """View and list instructions for an amendment. Supports both HTMX (for embedding instructions) and full page view."""
+    model = Amendment
+    pk_url_kwarg = 'amendment_id'
+    template_name = 'indigo_api/amendment/instructions.html'
+    context_object_name = 'amendment'
+    tab = 'amendments'
+
+    def get_object(self, queryset=None):
+        return self.get_amendment()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["readonly"] = self.request.htmx
+        return context
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['indigo_api/amendment/_instruction_list.html']
+        return [self.template_name]
+
+
+class AmendmentInstructionDetailView(AmendmentDetailViewBase, DetailView):
+    """ HTMX view for displaying an amendment instruction."""
+    model = AmendmentInstruction
+    pk_url_kwarg = 'pk'
+    template_name = 'indigo_api/amendment/_instruction_detail.html'
+    context_object_name = 'instruction'
+
+    def get_queryset(self):
+        return self.get_amendment().instructions.all()
+
+
+class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, CreateView):
+    model = AmendmentInstruction
+    form_class = AmendmentInstructionForm
+    template_name = 'indigo_api/amendment/_instruction_form.html'
+    context_object_name = 'instruction'
+    permission_required = ('indigo_api.add_amendmentinstruction',)
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault('form_action', reverse('work_amendment_instruction_new', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+        }))
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.instance.amendment = self.get_amendment()
+        form.instance.created_by_user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('work_amendment_instruction_detail', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+            'pk': self.object.pk,
+        })
+
+
+class AmendmentInstructionEditView(AtomicPostMixin, AmendmentDetailViewBase, UpdateView):
+    """ HTMX view for editing an amendment instruction."""
+    model = AmendmentInstruction
+    pk_url_kwarg = 'pk'
+    form_class = AmendmentInstructionForm
+    template_name = 'indigo_api/amendment/_instruction_form.html'
+    context_object_name = 'instruction'
+    permission_required = ('indigo_api.change_amendmentinstruction',)
+
+    def get_queryset(self):
+        return self.get_amendment().instructions.all()
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault('form_action', reverse('work_amendment_instruction_edit', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+            'pk': self.kwargs['pk'],
+        }))
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+        return reverse('work_amendment_instruction_detail', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+            'pk': self.object.pk,
+        })
+
+
+class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentDetailViewBase, DeleteView):
+    pk_url_kwarg = 'pk'
+    http_method_names = ['post']
+    model = AmendmentInstruction
+    permission_required = ('indigo_api.delete_amendmentinstruction',)
+
+    def get_queryset(self):
+        return self.get_amendment().instructions.all()
+
+    def get_success_url(self):
+        return reverse('work_amendment_instructions', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+        })

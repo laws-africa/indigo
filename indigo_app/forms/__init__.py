@@ -4,3 +4,4 @@ from .places import *
 from .tasks import *
 from .users import *
 from .works import *
+from .amendments import *

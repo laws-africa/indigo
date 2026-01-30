@@ -1,0 +1,64 @@
+{% load i18n %}
+
+<li {% if instruction.pk %}id="amendment-instruction-{{ instruction.pk }}"{% endif %} class="mb-3">
+  <form
+    method="post"
+    hx-post="{{ form_action }}"
+    hx-target="closest li"
+    hx-swap="outerHTML"
+  >
+    {% csrf_token %}
+
+    <div class="card">
+      <div class="card-body">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for err in form.non_field_errors %}
+              <div>{{ err }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="mb-2">
+          {{ form.amending_provision.label_tag }}
+          {{ form.amending_provision }}
+          {{ form.amending_provision.errors }}
+        </div>
+        <div class="mb-2">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+          {{ form.title.errors }}
+        </div>
+        <div class="mb-2">
+          {{ form.page_number.label_tag }}
+          {{ form.page_number }}
+          {{ form.page_number.errors }}
+        </div>
+        <div class="mb-2">
+          {{ form.provision_name.label_tag }}
+          {{ form.provision_name }}
+          {{ form.provision_name.errors }}
+        </div>
+        <div class="mb-2">
+          {{ form.amendment_instruction.label_tag }}
+          {{ form.amendment_instruction }}
+          {{ form.amendment_instruction.errors }}
+        </div>
+      </div>
+      <div class="card-footer text-end">
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          {% if instruction.pk %}
+            hx-get="{% url 'work_amendment_instruction_detail' work.frbr_uri amendment.pk instruction.pk %}"
+            hx-target="closest li"
+            hx-swap="outerHTML"
+          {% else %}
+            onclick="this.closest('li').remove()"
+          {% endif %}
+        >{% trans "Cancel" %}</button>
+        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+      </div>
+    </div>
+  </form>
+</li>

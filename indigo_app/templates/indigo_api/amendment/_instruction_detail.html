@@ -1,0 +1,44 @@
+{% load i18n %}
+
+<li id="amendment-instruction-{{ instruction.pk }}" class="mb-3">
+  <div class="card">
+    <h5 class="card-header">{{ instruction.title }}</h5>
+    <div class="card-body">
+      <dl class="mb-0 row">
+        <dt class="col-3">{% trans "Amending provision" %}</dt>
+        <dd class="col-9">{{ instruction.amending_provision }}</dd>
+        <dt class="col-3">{% trans "Page number" %}</dt>
+        <dd class="col-9">{{ instruction.page_number }}</dd>
+        <dt class="col-3">{% trans "Provision name" %}</dt>
+        <dd class="col-9">{{ instruction.provision_name }}</dd>
+        <dt class="col-12">{% trans "Amendment instruction" %}</dt>
+        <dd class="col-12">{{ instruction.amendment_instruction }}</dd>
+      </dl>
+    </div>
+    {% if not readonly %}
+      <div class="card-footer d-flex justify-content-end">
+        {% if perms.indigo_api.delete_amendmentinstruction %}
+          <form
+            action="{% url 'work_amendment_instruction_delete' frbr_uri=work.frbr_uri amendment_id=amendment.id pk=instruction.pk %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <button
+              class="btn btn-danger"
+              data-confirm="{% trans 'Are you sure?' %}"
+              type="submit"
+            >{% trans "Delete" %}</button>
+          </form>
+        {% endif %}
+        {% if perms.indigo_api.change_amendmentinstruction %}
+          <button
+            class="btn btn-outline-primary ms-2"
+            hx-get="{% url 'work_amendment_instruction_edit' work.frbr_uri amendment.id instruction.pk %}"
+            hx-target="closest li"
+            hx-swap="outerHTML"
+          >{% trans "Edit" %}</button>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</li>

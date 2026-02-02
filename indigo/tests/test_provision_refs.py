@@ -617,6 +617,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <num>(1)</num>
                 <content>
                   <p>As per subrule (1) and subrules (2).</p>
+                  <p>As per sub-rule (1) and sub rule (1).</p>
                 </content>
               </subrule>
               <subrule eId="rule_2__subrule_2">
@@ -647,6 +648,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <num>(1)</num>
                 <content>
                   <p>As per subrule <ref href="#rule_2__subrule_1">(1)</ref> and subrules <ref href="#rule_2__subrule_2">(2)</ref>.</p>
+                  <p>As per sub-rule <ref href="#rule_2__subrule_1">(1)</ref> and sub rule <ref href="#rule_2__subrule_1">(1)</ref>.</p>
                 </content>
               </subrule>
               <subrule eId="rule_2__subrule_2">

@@ -475,7 +475,7 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'simple': {
-            'format': '%(asctime)s %(levelname)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '%(asctime)s %(levelname)s %(name)s %(process)d %(thread)d %(message)s'
         }
     },
     'handlers': {

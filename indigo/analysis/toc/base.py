@@ -314,7 +314,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         except AttributeError:
             num = None
 
-        num = num.text if num else None
+        num = num.text if num is not None else None
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_, num=num, component_id=component_id,
                               basic_unit=type_ in self.toc_basic_units)
         toc_item.title = self.friendly_title(toc_item)

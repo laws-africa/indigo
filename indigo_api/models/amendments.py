@@ -3,8 +3,9 @@ from django.db.models import signals
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField
+from django_fsm import FSMField, transition
 from natsort import natsorted
 
 
@@ -95,15 +96,22 @@ def post_save_amendment(sender, instance, created, **kwargs):
 
 class AmendmentInstruction(models.Model):
     """ Instructions to apply an amendment to a particular provision (and language) of a work."""
+    NEW = 'new'
+    APPLIED = 'applied'
+
     amendment = models.ForeignKey(Amendment, on_delete=models.CASCADE, null=False, related_name="instructions",
                                   verbose_name=_("amendment"))
     # TODO: add language
-    # TODO: state
+    state = FSMField(_("state"), default=NEW)
     amending_provision = models.CharField(_("amending provision"), max_length=2048, null=True, blank=True)
     title = models.CharField(_("title"), max_length=4096, null=True, blank=True)
     page_number = models.IntegerField(_("page number"), null=True, blank=True)
     provision_name = models.CharField(_("provision name"), max_length=4096, null=True, blank=True)
     amendment_instruction = models.TextField(_("amendment instruction"), null=True, blank=True)
+
+    applied_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
+                                        verbose_name=_("applied by"))
+    applied_at = models.DateTimeField(_("applied at"), null=True, blank=True)
 
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
@@ -111,3 +119,17 @@ class AmendmentInstruction(models.Model):
 
     class Meta:
         ordering = ['page_number', 'provision_name']
+
+    @property
+    def is_applied(self):
+        return self.state == self.APPLIED
+
+    @transition(field=state, source=[NEW], target=APPLIED)
+    def apply(self, user):
+        self.applied_by_user = user
+        self.applied_at = timezone.now()
+
+    @transition(field=state, source=[APPLIED], target=NEW)
+    def unapply(self):
+        self.applied_by_user = None
+        self.applied_at = None

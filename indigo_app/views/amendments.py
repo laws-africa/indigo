@@ -1,11 +1,13 @@
 import logging
 
-from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic import DetailView, UpdateView, CreateView, DeleteView, View
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
 import datetime
 
 from indigo.view_mixins import AtomicPostMixin
+from django_fsm import has_transition_perm
 from indigo_api.models import Amendment, AmendmentInstruction, ArbitraryExpressionDate
 from indigo_app.forms.amendments import AmendmentInstructionForm
 
@@ -233,3 +235,28 @@ class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentInstructionDetail
             'frbr_uri': self.kwargs['frbr_uri'],
             'amendment_id': self.kwargs['amendment_id'],
         })
+
+
+class AmendmentInstructionStateChangeView(AtomicPostMixin, AmendmentInstructionDetailViewBase, View):
+    http_method_names = ['post']
+    permission_required = ('indigo_api.change_amendmentinstruction',)
+    change = None
+
+    def post(self, request, *args, **kwargs):
+        instruction = self.get_object()
+        user = request.user
+
+        if self.change == 'applied':
+            if not has_transition_perm(instruction.apply, user):
+                raise PermissionDenied
+            instruction.apply(user)
+        elif self.change == 'unapplied':
+            if not has_transition_perm(instruction.unapply, user):
+                raise PermissionDenied
+            instruction.unapply()
+        else:
+            raise PermissionDenied
+
+        instruction.save()
+        return redirect('work_amendment_instruction_detail', frbr_uri=self.kwargs['frbr_uri'],
+                        amendment_id=self.kwargs['amendment_id'], pk=instruction.pk)

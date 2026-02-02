@@ -1,44 +1,91 @@
-{% load i18n %}
+{% load i18n account %}
 
-<li id="amendment-instruction-{{ instruction.pk }}" class="mb-3">
+<li id="amendment-instruction-{{ instruction.pk }}" class="mb-3 amendment-instruction">
   <div class="card">
-    <h5 class="card-header">{{ instruction.title }}</h5>
+    <h5 class="card-header d-flex">
+      {{ instruction.title }}
+      <span class="ms-auto">
+        {% if instruction.is_applied %}
+          <i class="text-success fas fa-check-circle" title="{% trans "Applied" %}"></i>
+        {% endif %}
+      </span>
+    </h5>
     <div class="card-body">
       <dl class="mb-0 row">
-        <dt class="col-3">{% trans "Amending provision" %}</dt>
-        <dd class="col-9">{{ instruction.amending_provision }}</dd>
-        <dt class="col-3">{% trans "Page number" %}</dt>
-        <dd class="col-9">{{ instruction.page_number }}</dd>
-        <dt class="col-3">{% trans "Provision name" %}</dt>
+        {% if instruction.is_applied %}
+          <dt class="col-3">{% trans "Applied by" %}</dt>
+          <dd class="col-9">
+            {% user_display instruction.applied_by_user %}
+            <span class="time-ago" data-timestamp="{{ instruction.applied_at|date:'c' }}"></span>
+          </dd>
+        {% endif %}
+        <dt class="col-3">{% trans "Amended by" %}</dt>
+        <dd class="col-9">
+          {% with instruction.amendment.amending_work.publication_document as pub_doc %}
+            {% if instruction.page_number and pub_doc %}
+              <a href="{{ pub_doc.get_embed_url }}#page={{ instruction.page_number }}" target="pdf-iframe"
+              >{% trans "Page" %} {{ instruction.page_number }}</a>
+            {% else %}
+              {% trans "Page" %} {{ instruction.page_number|default_if_none:"?" }}
+            {% endif %}
+          {% endwith %}
+          {{ instruction.amending_provision }}
+        </dd>
+        <dt class="col-3">{% trans "Amended provision" %}</dt>
         <dd class="col-9">{{ instruction.provision_name }}</dd>
         <dt class="col-12">{% trans "Amendment instruction" %}</dt>
         <dd class="col-12">{{ instruction.amendment_instruction }}</dd>
       </dl>
     </div>
-    {% if not readonly %}
-      <div class="card-footer d-flex justify-content-end">
-        {% if perms.indigo_api.delete_amendmentinstruction %}
-          <form
-            action="{% url 'work_amendment_instruction_delete' frbr_uri=work.frbr_uri amendment_id=amendment.id pk=instruction.pk %}"
-            method="post"
-          >
-            {% csrf_token %}
+    {% if can_apply or not readonly %}
+      <div class="card-footer d-flex justify-content-end" hx-target="closest li" hx-swap="outerHTML">
+        {% if can_apply %}
+          {% block apply-button %}
+            {% if not instruction.is_applied %}
+              <form
+                hx-post="{% url 'work_amendment_instruction_applied' work.frbr_uri instruction.amendment_id instruction.pk %}"
+              >
+                {% csrf_token %}
+                <button
+                  class="btn btn-success"
+                  type="submit"
+                >{% trans "Done" %}</button>
+              </form>
+            {% else %}
+              <form
+                hx-post="{% url 'work_amendment_instruction_unapplied' work.frbr_uri instruction.amendment_id instruction.pk %}"
+              >
+                {% csrf_token %}
+                <button
+                  class="btn btn-warning"
+                  type="submit"
+                >{% trans "Mark as not done" %}</button>
+              </form>
+            {% endif %}
+          {% endblock %}
+        {% endif %}
+        {% if not readonly %}
+          {% if perms.indigo_api.delete_amendmentinstruction %}
+            <form
+              action="{% url 'work_amendment_instruction_delete' work.frbr_uri instruction.amendment_id instruction.pk %}"
+              method="post"
+            >
+              {% csrf_token %}
+              <button
+                class="btn btn-danger ms-2"
+                data-confirm="{% trans 'Are you sure?' %}"
+                type="submit"
+              >{% trans "Delete" %}</button>
+            </form>
+          {% endif %}
+          {% if perms.indigo_api.change_amendmentinstruction %}
             <button
-              class="btn btn-danger"
-              data-confirm="{% trans 'Are you sure?' %}"
-              type="submit"
-            >{% trans "Delete" %}</button>
-          </form>
+              class="btn btn-outline-primary ms-2"
+              hx-get="{% url 'work_amendment_instruction_edit' work.frbr_uri instruction.amendment_id instruction.pk %}"
+            >{% trans "Edit" %}</button>
+          {% endif %}
+          </div>
         {% endif %}
-        {% if perms.indigo_api.change_amendmentinstruction %}
-          <button
-            class="btn btn-outline-primary ms-2"
-            hx-get="{% url 'work_amendment_instruction_edit' work.frbr_uri amendment.id instruction.pk %}"
-            hx-target="closest li"
-            hx-swap="outerHTML"
-          >{% trans "Edit" %}</button>
-        {% endif %}
-      </div>
     {% endif %}
   </div>
 </li>

@@ -1,15 +1,17 @@
 {% load i18n account %}
 
 <li id="amendment-instruction-{{ instruction.pk }}" class="mb-3 amendment-instruction">
-  <div class="card">
-    <h5 class="card-header d-flex">
-      {{ instruction.title }}
-      <span class="ms-auto">
+  <details class="card" {% if not instruction.is_applied %}open{% endif %}>
+    <summary class="card-header">
+      <span class="h5 mb-0">
+        {{ instruction.title }}
+        <span class="ms-2">
         {% if instruction.is_applied %}
           <i class="text-success fas fa-check-circle" title="{% trans "Applied" %}"></i>
         {% endif %}
       </span>
-    </h5>
+      </span>
+    </summary>
     <div class="card-body">
       <dl class="mb-0 row">
         {% if instruction.is_applied %}
@@ -34,10 +36,10 @@
         <dt class="col-3">{% trans "Amended provision" %}</dt>
         <dd class="col-9">{{ instruction.provision_name }}</dd>
         <dt class="col-12">{% trans "Amendment instruction" %}</dt>
-        <dd class="col-12">{{ instruction.amendment_instruction }}</dd>
+        <dd class="col-12">{{ instruction.amendment_instruction|linebreaksbr }}</dd>
       </dl>
     </div>
-    {% if can_apply or not readonly %}
+    {% if can_apply or can_edit %}
       <div class="card-footer d-flex justify-content-end" hx-target="closest li" hx-swap="outerHTML">
         {% if can_apply %}
           {% block apply-button %}
@@ -64,7 +66,7 @@
             {% endif %}
           {% endblock %}
         {% endif %}
-        {% if not readonly %}
+        {% if can_edit %}
           {% if perms.indigo_api.delete_amendmentinstruction %}
             <form
               action="{% url 'work_amendment_instruction_delete' work.frbr_uri instruction.amendment_id instruction.pk %}"
@@ -87,5 +89,5 @@
           </div>
         {% endif %}
     {% endif %}
-  </div>
+  </details>
 </li>

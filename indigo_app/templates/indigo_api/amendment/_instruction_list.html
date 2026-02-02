@@ -8,11 +8,11 @@
   {% for instruction in amendment.instructions.all %}
     {% include 'indigo_api/amendment/_instruction_detail.html' %}
   {% empty %}
-    {% if not allow_new %}
+    {% if not can_add %}
       <li class="mb-3 text-muted">{% trans "No instructions yet." %}</li>
     {% endif %}
   {% endfor %}
-  {% if allow_new %}
+  {% if can_add %}
     <li>
       <button
         class="btn btn-primary"

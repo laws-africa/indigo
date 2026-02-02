@@ -176,6 +176,12 @@ class AmendmentInstructionDetailView(AmendmentInstructionDetailViewBase, DetailV
     """ HTMX view for displaying an amendment instruction."""
     template_name = 'indigo_api/amendment/_instruction_detail.html'
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            can_apply=self.request.GET.get("apply") is not None,
+            can_edit=self.request.GET.get("edit") is not None,
+            **kwargs)
+
 
 class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, CreateView):
     model = AmendmentInstruction
@@ -201,7 +207,7 @@ class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, C
             'frbr_uri': self.kwargs['frbr_uri'],
             'amendment_id': self.kwargs['amendment_id'],
             'pk': self.object.pk,
-        })
+        }) + "?edit"
 
 
 class AmendmentInstructionEditView(AtomicPostMixin, AmendmentInstructionDetailViewBase, UpdateView):
@@ -223,7 +229,7 @@ class AmendmentInstructionEditView(AtomicPostMixin, AmendmentInstructionDetailVi
             'frbr_uri': self.kwargs['frbr_uri'],
             'amendment_id': self.kwargs['amendment_id'],
             'pk': self.object.pk,
-        })
+        }) + "?edit"
 
 
 class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentInstructionDetailViewBase, DeleteView):
@@ -258,5 +264,10 @@ class AmendmentInstructionStateChangeView(AtomicPostMixin, AmendmentInstructionD
             raise PermissionDenied
 
         instruction.save()
-        return redirect('work_amendment_instruction_detail', frbr_uri=self.kwargs['frbr_uri'],
-                        amendment_id=self.kwargs['amendment_id'], pk=instruction.pk)
+        # the ?apply indicates that the template can show the apply/unapply button
+        url = reverse('work_amendment_instruction_detail', kwargs={
+            "frbr_uri": self.kwargs['frbr_uri'],
+            "amendment_id": self.kwargs['amendment_id'],
+            "pk": instruction.pk
+        }) + "?apply"
+        return redirect(url)

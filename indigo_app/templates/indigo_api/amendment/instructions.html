@@ -25,7 +25,7 @@
   <div class="container-fluid pb-5 mt-3">
     <div class="row">
       <div class="col-6">
-        {% include 'indigo_api/amendment/_instruction_list.html' with allow_new=True %}
+        {% include 'indigo_api/amendment/_instruction_list.html' with can_add=True can_edit=True %}
       </div>
       <div class="col-6 sticky-top" style="height: 100vh">
         {% with amendment.amending_work.publication_document as pub_doc %}

@@ -160,15 +160,19 @@ class AmendmentInstructionsView(AmendmentDetailViewBase, DetailView):
         return [self.template_name]
 
 
-class AmendmentInstructionDetailView(AmendmentDetailViewBase, DetailView):
-    """ HTMX view for displaying an amendment instruction."""
+class AmendmentInstructionDetailViewBase(AmendmentDetailViewBase):
+    """ Base view for amendment instruction detail views. """
     model = AmendmentInstruction
     pk_url_kwarg = 'pk'
-    template_name = 'indigo_api/amendment/_instruction_detail.html'
     context_object_name = 'instruction'
 
     def get_queryset(self):
         return self.get_amendment().instructions.all()
+
+
+class AmendmentInstructionDetailView(AmendmentInstructionDetailViewBase, DetailView):
+    """ HTMX view for displaying an amendment instruction."""
+    template_name = 'indigo_api/amendment/_instruction_detail.html'
 
 
 class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, CreateView):
@@ -198,17 +202,11 @@ class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, C
         })
 
 
-class AmendmentInstructionEditView(AtomicPostMixin, AmendmentDetailViewBase, UpdateView):
+class AmendmentInstructionEditView(AtomicPostMixin, AmendmentInstructionDetailViewBase, UpdateView):
     """ HTMX view for editing an amendment instruction."""
-    model = AmendmentInstruction
-    pk_url_kwarg = 'pk'
     form_class = AmendmentInstructionForm
     template_name = 'indigo_api/amendment/_instruction_form.html'
-    context_object_name = 'instruction'
     permission_required = ('indigo_api.change_amendmentinstruction',)
-
-    def get_queryset(self):
-        return self.get_amendment().instructions.all()
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault('form_action', reverse('work_amendment_instruction_edit', kwargs={
@@ -226,14 +224,9 @@ class AmendmentInstructionEditView(AtomicPostMixin, AmendmentDetailViewBase, Upd
         })
 
 
-class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentDetailViewBase, DeleteView):
-    pk_url_kwarg = 'pk'
+class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentInstructionDetailViewBase, DeleteView):
     http_method_names = ['post']
-    model = AmendmentInstruction
     permission_required = ('indigo_api.delete_amendmentinstruction',)
-
-    def get_queryset(self):
-        return self.get_amendment().instructions.all()
 
     def get_success_url(self):
         return reverse('work_amendment_instructions', kwargs={

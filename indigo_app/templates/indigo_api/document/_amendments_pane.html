@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="d-flex flex-column me-2 h-100">
+  <ul class="overflow-y-scroll list-unstyled mt-2 amendment-instruction-list">
+    {% for instruction in document.amendment_instructions %}
+      {% include 'indigo_api/amendment/_instruction_detail.html' with can_apply=True readonly=True %}
+    {% empty %}
+      <li>
+        <div class="alert alert-info mt-2">
+          {% blocktrans trimmed with expression_date=document.expression_date|date:'Y-m-d' %}
+            No amendments to apply at {{ expression_date }}.
+          {% endblocktrans %}
+        </div>
+      </li>
+    {% endfor %}
+    </li>
+  </ul>
+</div>

@@ -867,6 +867,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 
 class WorkPublicationDocumentView(WorkViewBase, View):
     def get(self, request, filename, *args, **kwargs):
+        page = request.GET.get('page')
+        if page:
+            return redirect(f"{request.build_absolute_uri(request.path)}#page={page}")
         try:
             if self.work.publication_document.filename == filename:
                 return publication_document_response(self.work.publication_document)

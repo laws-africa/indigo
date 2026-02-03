@@ -25,7 +25,7 @@
         <dd class="col-9">
           {% with instruction.amendment.amending_work.publication_document as pub_doc %}
             {% if instruction.page_number and pub_doc %}
-              <a href="{{ pub_doc.get_embed_url }}#page={{ instruction.page_number }}" target="pdf-iframe"
+              <a href="{{ pub_doc.get_embed_url }}?page={{ instruction.page_number }}" target="pdf-iframe"
               >{% trans "Page" %} {{ instruction.page_number }}</a>
             {% else %}
               {% trans "Page" %} {{ instruction.page_number|default_if_none:"?" }}

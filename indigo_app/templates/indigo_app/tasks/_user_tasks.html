@@ -13,7 +13,7 @@
         </h6>
         {% if open_assigned_tasks %}
           {% for task in open_assigned_tasks %}
-            {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True %}
+            {% include 'indigo_api/task/_card_single.html' with task_border=True icon=True %}
           {% endfor %}
         {% else %}
         <p class="mx-3">
@@ -38,7 +38,7 @@
         </h6>
         {% if tasks_pending_approval %}
         {% for task in tasks_pending_approval %}
-          {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True assigned=True %}
+          {% include 'indigo_api/task/_card_single.html' with task_border=True icon=True assigned=True %}
         {% endfor %}
         {% else %}
           {% if request.user == user %}
@@ -67,7 +67,7 @@
         </h6>
           {% if tasks_recently_approved %}
             {% for task in tasks_recently_approved %}
-              {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True approved=True %}
+              {% include 'indigo_api/task/_card_single.html' with task_border=True icon=True approved=True %}
             {% endfor %}
           {% else %}
             {% if request.user == user %}

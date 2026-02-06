@@ -30,7 +30,7 @@
                 <li>
                   <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                   <span class="text-muted">{{ work.frbr_uri }}</span>
-                  {% include 'indigo_api/_work_info_badges.html' %}
+                  {% include 'indigo_api/work/_info_badges.html' %}
                 </li>
               {% endfor %}
             </ul>
@@ -46,7 +46,7 @@
                 <li>
                   <a target="_blank" href="{% url 'work' work.frbr_uri %}">{{ work.title }}</a>
                   <span class="text-muted">{{ work.frbr_uri }}</span>
-                  {% include 'indigo_api/_work_info_badges.html' %}
+                  {% include 'indigo_api/work/_info_badges.html' %}
                 </li>
               {% endfor %}
             </ul>

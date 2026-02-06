@@ -1,4 +1,4 @@
-{% extends "indigo_api/work_layout.html" %}
+{% extends "indigo_api/work/layout.html" %}
 {% load indigo indigo_app humanize i18n %}
 
 {% block work-content %}
@@ -49,7 +49,7 @@
 
   <h3>
     {{ work.title }}
-    {% include 'indigo_api/_work_info_badges.html' %}
+    {% include 'indigo_api/work/_info_badges.html' %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
@@ -137,14 +137,14 @@
   {% block comments %}
     <div class="h4 mb-3 mt-5">{% trans "Comments" %}</div>
     <div id="work-comment-list">
-      {% include 'indigo_api/_work_comments.html' with post_to_id="work-comment-list" %}
+      {% include 'indigo_api/work/_comments.html' with post_to_id="work-comment-list" %}
     </div>
   {% endblock %}
 
   {% block active_tasks %}
   <div class="h4 mb-3 mt-5">{% trans "Open tasks" %}</div>
   <div class="card">
-    {% include 'indigo_api/_task_list_table.html' with tasks=active_tasks place=None hide_works=True %}
+    {% include 'indigo_api/task/_list_table.html' with tasks=active_tasks place=None hide_works=True %}
   </div>
   {% endblock %}
 

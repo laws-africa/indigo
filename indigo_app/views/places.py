@@ -869,31 +869,31 @@ class WorkDocumentsView(PlaceViewBase, DetailView):
 
 
 class WorkCommencementsView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_commencement_tables.html'
+    template_name = 'indigo_api/work/_commencement_tables.html'
     queryset = Work.objects.prefetch_related(
         'commencements', 'commencements__commenced_work', 'commencements__commencing_work'
     )
 
 
 class WorkAmendmentsView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_amendment_tables.html'
+    template_name = 'indigo_api/work/_amendment_tables.html'
     queryset = Work.objects.prefetch_related(
         'amendments', 'amendments__amended_work', 'amendments__amending_work'
     )
 
 
 class WorkRepealsView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_repeal_tables.html'
+    template_name = 'indigo_api/work/_repeal_tables.html'
     model = Work
 
 
 class WorkSubsidiaryView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_subsidiary_tables.html'
+    template_name = 'indigo_api/work/_subsidiary_tables.html'
     model = Work
 
 
 class WorkTasksView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_task_cards.html'
+    template_name = 'indigo_api/task/_cards.html'
     model = Work
 
     def get_context_data(self, **kwargs):
@@ -906,7 +906,7 @@ class WorkTasksView(PlaceViewBase, DetailView):
 
 
 class WorkCommentsView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_work_comments.html'
+    template_name = 'indigo_api/work/_comments.html'
     model = Work
 
     def get_context_data(self, **kwargs):

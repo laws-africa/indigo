@@ -56,6 +56,7 @@ class TaskListView(TaskViewBase, ListView):
     model = Task
     paginate_by = 50
     js_view = 'TaskListView TaskBulkUpdateView'
+    template_name_suffix = '/list'
 
     def get(self, request, *args, **kwargs):
         self.form = TaskFilterForm(self.country, self.locality, request.GET)
@@ -73,7 +74,7 @@ class TaskListView(TaskViewBase, ListView):
 
     def get_template_names(self):
         if self.request.htmx:
-            return ['indigo_api/_task_list.html']
+            return ['indigo_api/task/_list.html']
         return super().get_template_names()
 
     def get_base_queryset(self):
@@ -107,6 +108,7 @@ class TaskListView(TaskViewBase, ListView):
 class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
     mode = None
+    template_name_suffix = '/detail'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,7 +152,7 @@ class TaskDetailView(SingleTaskViewBase, DetailView):
 
     def get_template_names(self):
         if self.object.work:
-            return ['indigo_api/work_task_detail.html']
+            return ['indigo_api/work/task_detail.html']
         return super().get_template_names()
 
 
@@ -175,7 +177,7 @@ class DocumentTaskDetailView(TaskDetailView):
 
 class TaskDetailDetailView(TaskDetailView):
     def get_template_names(self):
-        return ['indigo_api/_task_detail.html']
+        return ['indigo_api/task/_detail.html']
 
 
 class TaskTimelineView(TaskDetailView):
@@ -194,13 +196,13 @@ class TaskTimelineView(TaskDetailView):
         pass
 
     def get_template_names(self):
-        return ['indigo_api/_task_timeline.html']
+        return ['indigo_api/task/_timeline.html']
 
 
 class TaskAnnotationAnchorView(AbstractAuthedIndigoView, DetailView):
     model = Task
     permission_required = ('indigo_api.view_task',)
-    template_name = 'indigo_api/_task_annotation_anchor.html'
+    template_name = 'indigo_api/task/_annotation_anchor.html'
 
 
 class TaskFileView(SingleTaskViewBase, DetailView):
@@ -219,7 +221,7 @@ class TaskFileView(SingleTaskViewBase, DetailView):
 
 class TaskEditLabelsView(AtomicPostMixin, SingleTaskViewBase, UpdateView):
     form_class = TaskEditLabelsForm
-    template_name = 'indigo_api/_task_labels.html'
+    template_name = 'indigo_api/task/_labels.html'
     permission_required = ('indigo_api.change_task',)
 
     def form_valid(self, form):
@@ -233,6 +235,7 @@ class TaskCreateView(AtomicPostMixin, TaskViewBase, CreateView):
     context_object_name = 'task'
     form_class = TaskForm
     model = Task
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -270,6 +273,7 @@ class TaskEditView(AtomicPostMixin, SingleTaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
     context_object_name = 'task'
     form_class = TaskForm
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -309,7 +313,7 @@ class TaskWorkChooserView(WorkChooserView):
 
 
 class TaskFormWorkView(PlaceViewBase, TemplateView):
-    template_name = 'indigo_api/_task_form_work.html'
+    template_name = 'indigo_api/task/_form_work.html'
 
     class Form(forms.ModelForm):
         class Meta:
@@ -348,15 +352,15 @@ class PartialTaskFormView(PlaceViewBase, TemplateView):
 
 
 class TaskFormTitleView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_form_title.html'
+    template_name = 'indigo_api/task/_form_title.html'
 
 
 class TaskFormTimelineDateView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_form_timeline_date.html'
+    template_name = 'indigo_api/task/_form_timeline_date.html'
 
 
 class TaskFormInputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_form_input_file.html'
+    template_name = 'indigo_api/task/_form_input_file.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -365,7 +369,7 @@ class TaskFormInputFileView(PartialTaskFormView):
 
 
 class TaskFormOutputFileView(PartialTaskFormView):
-    template_name = 'indigo_api/_task_form_output_file.html'
+    template_name = 'indigo_api/task/_form_output_file.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -430,7 +434,7 @@ class TaskChangeStateView(AtomicPostMixin, SingleTaskViewBase, View, SingleObjec
 
 
 class TaskAssignToView(SingleTaskViewBase, DetailView):
-    template_name = "indigo_api/_task_assign_to_menu.html"
+    template_name = "indigo_api/task/_assign_to_menu.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -657,7 +661,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
 
     def get_template_names(self):
         if self.request.htmx:
-            return ['indigo_api/_task_list.html']
+            return ['indigo_api/task/_list.html']
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
@@ -698,7 +702,7 @@ class AllTasksView(AbstractAuthedIndigoView, ListView):
 
 class TaskAssigneesView(TaskViewBase, TemplateView):
     http_method_names = ['post']
-    template_name = 'indigo_api/_task_assign_to_menu.html'
+    template_name = 'indigo_api/task/_assign_to_menu.html'
 
     def post(self, request, *args, **kwargs):
         pks = request.POST.getlist('tasks', [])

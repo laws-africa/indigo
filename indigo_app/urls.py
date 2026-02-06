@@ -125,6 +125,7 @@ urlpatterns = [
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/(?P<pk>\d+)$', amendments.AmendmentInstructionDetailView.as_view(), name='work_amendment_instruction_detail'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/(?P<pk>\d+)/edit$', amendments.AmendmentInstructionEditView.as_view(), name='work_amendment_instruction_edit'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/(?P<pk>\d+)/delete$', amendments.AmendmentInstructionDeleteView.as_view(), name='work_amendment_instruction_delete'),
+    re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/clear$', amendments.AmendmentInstructionClearView.as_view(), name='work_amendment_instruction_clear'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/(?P<pk>\d+)/applied$', amendments.AmendmentInstructionStateChangeView.as_view(change='applied'), name='work_amendment_instruction_applied'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/(?P<pk>\d+)/unapplied$', amendments.AmendmentInstructionStateChangeView.as_view(change='unapplied'), name='work_amendment_instruction_unapplied'),
     re_path(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)/instructions/new$', amendments.AmendmentInstructionCreateView.as_view(), name='work_amendment_instruction_new'),

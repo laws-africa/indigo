@@ -243,6 +243,19 @@ class AmendmentInstructionDeleteView(AtomicPostMixin, AmendmentInstructionDetail
         })
 
 
+class AmendmentInstructionClearView(AtomicPostMixin, AmendmentDetailViewBase, View):
+    http_method_names = ['post']
+    permission_required = ('indigo_api.delete_amendmentinstruction',)
+
+    def post(self, request, *args, **kwargs):
+        amendment = self.get_amendment()
+        amendment.instructions.all().delete()
+        return redirect(reverse('work_amendment_instructions', kwargs={
+            'frbr_uri': self.kwargs['frbr_uri'],
+            'amendment_id': self.kwargs['amendment_id'],
+        }))
+
+
 class AmendmentInstructionStateChangeView(AtomicPostMixin, AmendmentInstructionDetailViewBase, View):
     http_method_names = ['post']
     permission_required = ('indigo_api.change_amendmentinstruction',)

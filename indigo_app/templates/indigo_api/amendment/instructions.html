@@ -8,7 +8,9 @@
   <div class="container pt-3">
     {% block amendment-header %}
       <h4>
-        {{ amendment.date|date:"Y-m-d" }}
+        <a href="{% url 'work_amendments' amendment.amended_work.frbr_uri %}#timeline-{{ amendment.date|date:"Y-m-d" }}">
+          {{ amendment.date|date:"Y-m-d" }}
+        </a>
         —
         {% trans "Amended by" %}
         <a href="{% url 'work' amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">

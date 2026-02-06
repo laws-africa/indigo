@@ -17,6 +17,8 @@ import 'tippy.js/dist/tippy.css';
 import { createLegacyViews, legacySetup } from './legacy';
 
 window.tippy = tippy;
+if (!window.Indigo) window.Indigo = {};
+const Indigo = window.Indigo;
 
 class IndigoApp {
   setup () {
@@ -24,12 +26,16 @@ class IndigoApp {
     this.componentLibrary = {};
     this.Vue = getVue();
     this.setupI18n();
+    this.setupCSRF();
 
     window.dispatchEvent(new Event('indigo.beforebootstrap'));
 
     legacySetup();
+
+    this.setupMonaco();
     this.setupHtmx();
     this.setupPopups();
+    this.setupTooltips();
 
     for (const [name, component] of Object.entries(components)) {
       this.componentLibrary[name] = component;
@@ -40,15 +46,47 @@ class IndigoApp {
 
     this.createComponents(document.body);
     this.createVueComponents(document.body);
-    this.disableWith();
-    window.dispatchEvent(new Event('indigo.components-created'));
 
+    window.dispatchEvent(new Event('indigo.components-created'));
+    window.dispatchEvent(new Event('indigo.beforecreateviews'));
     createLegacyViews();
+
+    this.disableWith();
+    this.preventUnload();
+
+    // osx vs windows
+    const isOSX = navigator.userAgent.indexOf('OS X') > -1;
+    document.body.classList.toggle('win', !isOSX);
+    document.body.classList.toggle('osx', isOSX);
+
     window.dispatchEvent(new Event('indigo.afterbootstrap'));
   }
 
+  setupCSRF () {
+    Indigo.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // legacy jquery/bootstrap ajax
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        const requiresToken = !(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type));
+        if (requiresToken && !this.crossDomain) {
+          xhr.setRequestHeader('X-CSRFToken', Indigo.csrfToken);
+        }
+      }
+    });
+  }
+
+  setupMonaco () {
+    // tell monaco where to load its files from
+    window.require = {
+      paths: {
+        vs: '/static/lib/monaco-editor'
+      }
+    };
+  }
+
   setupI18n () {
-    const opts = window.Indigo.i18n;
+    const opts = Indigo.i18n;
     opts.backend = {};
     opts.backend.loadPath = function (languages, namespaces) {
       return opts.loadPaths[namespaces[0] + '-' + languages[0]];
@@ -64,13 +102,13 @@ class IndigoApp {
     // and it re-executes all javascript on the page
     htmx.config.refreshOnHistoryMiss = true;
     document.body.addEventListener('htmx:configRequest', (e) => {
-      e.detail.headers['X-CSRFToken'] = window.Indigo.csrfToken;
+      e.detail.headers['X-CSRFToken'] = Indigo.csrfToken;
     });
     document.body.addEventListener('htmx:beforeRequest', (e) => {
-      window.Indigo.progressView.push();
+      Indigo.progressView.push();
     });
     document.body.addEventListener('htmx:afterRequest', (e) => {
-      window.Indigo.progressView.pop();
+      Indigo.progressView.pop();
     });
     // htmx:load is fired both when the page loads (weird) and when new content is loaded. We only care about the latter
     // case. See https://github.com/bigskysoftware/htmx/issues/1500
@@ -200,6 +238,25 @@ class IndigoApp {
             console.log(e);
           }
         }
+      }
+    });
+  }
+
+  setupTooltips () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [title]:not(.notooltip)'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      // eslint-disable-next-line no-undef
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  }
+
+  preventUnload () {
+    // prevent navigating away from dirty views
+    window.addEventListener('beforeunload', (e) => {
+      if (Indigo.view && Indigo.view.isDirty && Indigo.view.isDirty()) {
+        e.preventDefault();
+        // eslint-disable-next-line no-undef
+        return $t('You will lose your changes!');
       }
     });
   }

@@ -173,6 +173,8 @@
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
       this.tocView.selection.on('change', this.onTocSelectionChanged, this);
 
+      const queryParams = new URLSearchParams(window.location.search);
+
       this.sourceEditorView = new Indigo.SourceEditorView({
         model: this.document,
         tocView: this.tocView,
@@ -180,7 +182,7 @@
       this.sourceEditorView.editorReady.then(function() {
         // select the appropriate element in the toc
         // TODO: there's a race condition here: the TOC might not be built yet
-        if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
+        if (queryParams.get("toc") && self.tocView.selectItemById(queryParams.get("toc"))) {
           return;
         }
         self.tocView.selectItem(0, true);
@@ -188,7 +190,7 @@
 
       this.annotationsView = new Indigo.DocumentAnnotationsView({
         model: this.document,
-        prefocus: parseInt(Indigo.queryParams.anntn),
+        prefocus: parseInt(queryParams.get("anntn")),
       });
       this.annotationsView.listenTo(this.sourceEditorView, 'rendered', this.annotationsView.renderAnnotations);
 

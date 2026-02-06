@@ -38,7 +38,7 @@ msgid "Parent context"
 msgstr "Muktadha wa mzazi"
 
 #: forms/places.py:53 forms/tasks.py:23 forms/tasks.py:34
-#: templates/indigo_api/_task_labels.html:10
+#: templates/indigo_api/task/_labels.html:10
 #: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:338
 msgid "None"
 msgstr "Hakuna"
@@ -65,11 +65,11 @@ msgstr "Utafutaji wa kimataifa"
 msgid "Type"
 msgstr "Aina"
 
-#: forms/tasks.py:98 templates/indigo_api/_task_detail.html:77
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:77
 msgid "Input file"
 msgstr "Ingiza faili"
 
-#: forms/tasks.py:98 templates/indigo_api/_task_detail.html:90
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:90
 msgid "Output file"
 msgstr "Faili ya pato"
 
@@ -81,7 +81,7 @@ msgstr "Ingiza URL"
 msgid "Output URL"
 msgstr "URL ya pato"
 
-#: forms/tasks.py:140 templates/indigo_api/_task_detail.html:176
+#: forms/tasks.py:140 templates/indigo_api/task/_detail.html:176
 msgid "Labels"
 msgstr "Lebo"
 
@@ -89,15 +89,15 @@ msgstr "Lebo"
 msgid "State"
 msgstr "Jimbo"
 
-#: forms/tasks.py:142 templates/indigo_api/_task_card_single.html:59
-#: templates/indigo_api/_task_detail.html:139
-#: templates/indigo_api/_task_list_table.html:19
+#: forms/tasks.py:142 templates/indigo_api/task/_card_single.html:59
+#: templates/indigo_api/task/_detail.html:139
+#: templates/indigo_api/task/_list_table.html:19
 #: templates/templated_email/_task_detail_block.html:12
 #: templates/templated_email/_task_detail_block.html:17
 msgid "Assigned to"
 msgstr "Imekabidhiwa"
 
-#: forms/tasks.py:143 templates/indigo_api/_task_card_single.html:119
+#: forms/tasks.py:143 templates/indigo_api/task/_card_single.html:119
 msgid "Submitted by"
 msgstr "Iliyowasilishwa na"
 
@@ -125,7 +125,7 @@ msgstr "Ilisasishwa saa (mpya zaidi kwanza)"
 msgid "Updated at (oldest first)"
 msgstr "Ilisasishwa saa (kongwe kwanza)"
 
-#: forms/tasks.py:326 templates/indigo_api/_task_detail.html:145
+#: forms/tasks.py:326 templates/indigo_api/task/_detail.html:145
 msgid "Unassigned"
 msgstr "Haijakabidhiwa"
 
@@ -753,163 +753,163 @@ msgstr "Hujaingia, au hitilafu fulani imetokea."
 msgid "Saved searches"
 msgstr "Utafutaji uliohifadhiwa"
 
-#: templates/indigo_api/_task_assign_to_menu.html:4
-#: templates/indigo_api/_task_card_single.html:83
-#: templates/indigo_api/_task_detail.html:156
+#: templates/indigo_api/task/_assign_to_menu.html:4
+#: templates/indigo_api/task/_card_single.html:83
+#: templates/indigo_api/task/_detail.html:156
 msgid "Unassign"
 msgstr "Batilisha kukabidhiwa"
 
-#: templates/indigo_api/_task_assign_to_menu.html:14
+#: templates/indigo_api/task/_assign_to_menu.html:14
 msgid "too many tasks"
 msgstr "kazi nyingi sana"
 
-#: templates/indigo_api/_task_assign_to_menu.html:18
+#: templates/indigo_api/task/_assign_to_menu.html:18
 msgid "No users available"
 msgstr "Hakuna watumiaji wanaopatikana"
 
-#: templates/indigo_api/_task_blocked_by_menu.html:29
-#: templates/indigo_api/_task_detail.html:213
+#: templates/indigo_api/task/_blocked_by_menu.html:29
+#: templates/indigo_api/task/_detail.html:213
 msgid "Choose tasks"
 msgstr "Chagua kazi"
 
-#: templates/indigo_api/_task_bulk_update_form.html:11
-#: templates/indigo_api/_task_card_single.html:101
-#: templates/indigo_api/_task_detail.html:166
+#: templates/indigo_api/task/_bulk_update_form.html:11
+#: templates/indigo_api/task/_card_single.html:101
+#: templates/indigo_api/task/_detail.html:166
 msgid "Assign to"
 msgstr "Mkabidhi"
 
-#: templates/indigo_api/_task_bulk_update_form.html:19
-#: templates/indigo_api/_task_bulk_update_form.html:25
+#: templates/indigo_api/task/_bulk_update_form.html:19
+#: templates/indigo_api/task/_bulk_update_form.html:25
 msgid "Updating"
 msgstr "Inasasisha"
 
-#: templates/indigo_api/_task_bulk_update_form.html:20
+#: templates/indigo_api/task/_bulk_update_form.html:20
 msgid "Unblock"
 msgstr "Ondoa kizuizi"
 
-#: templates/indigo_api/_task_bulk_update_form.html:26
+#: templates/indigo_api/task/_bulk_update_form.html:26
 msgid "Block"
 msgstr "Zuia"
 
-#: templates/indigo_api/_task_buttons.html:10
+#: templates/indigo_api/task/_buttons.html:10
 msgid "Are you sure you want to request changes to this task?"
 msgstr "Je, una uhakika unataka kuomba mabadiliko kwenye kazi hii?"
 
-#: templates/indigo_api/_task_buttons.html:11
+#: templates/indigo_api/task/_buttons.html:11
 msgid "Request changes"
 msgstr "Omba mabadiliko"
 
-#: templates/indigo_api/_task_buttons.html:14
+#: templates/indigo_api/task/_buttons.html:14
 msgid "Review changes"
 msgstr "Kagua mabadiliko"
 
-#: templates/indigo_api/_task_buttons.html:20
+#: templates/indigo_api/task/_buttons.html:20
 msgid "Are you sure you want to approve this task?"
 msgstr "Je, una uhakika unataka kuidhinisha jukumu hili?"
 
-#: templates/indigo_api/_task_buttons.html:21
+#: templates/indigo_api/task/_buttons.html:21
 #: templates/indigo_api/work_overview.html:22
 #: templates/indigo_app/place/_bulk_approve_form.html:214
 #: templates/indigo_app/place/_work_detail.html:131
 msgid "Approve"
 msgstr "Idhinisha"
 
-#: templates/indigo_api/_task_buttons.html:29
+#: templates/indigo_api/task/_buttons.html:29
 msgid "Are you sure you want to reopen this task?"
 msgstr "Je, una uhakika unataka kufungua tena jukumu hili?"
 
-#: templates/indigo_api/_task_buttons.html:30
+#: templates/indigo_api/task/_buttons.html:30
 msgid "Reopen"
 msgstr "Fungua upya"
 
-#: templates/indigo_api/_task_buttons.html:38
+#: templates/indigo_api/task/_buttons.html:38
 msgid "Are you sure you want to finish this task?"
 msgstr "Je, una uhakika unataka kumaliza kazi hii?"
 
-#: templates/indigo_api/_task_buttons.html:40
+#: templates/indigo_api/task/_buttons.html:40
 msgid "Finish"
 msgstr "Maliza"
 
-#: templates/indigo_api/_task_buttons.html:46
+#: templates/indigo_api/task/_buttons.html:46
 msgid "Are you sure you want to submit this task for review?"
 msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi?"
 
-#: templates/indigo_api/_task_buttons.html:47
+#: templates/indigo_api/task/_buttons.html:47
 msgid "Submit for review"
 msgstr "Wasilisha kwa ukaguzi"
 
-#: templates/indigo_api/_task_card_single.html:17
-#: templates/indigo_api/_task_detail.html:35
-#: templates/indigo_api/_task_list_table.html:60
+#: templates/indigo_api/task/_card_single.html:17
+#: templates/indigo_api/task/_detail.html:35
+#: templates/indigo_api/task/_list_table.html:60
 #: templates/indigo_api/document/_task_overview.html:19
 #: templates/templated_email/_task_detail_block.html:6
 msgid "Changes requested"
 msgstr "Mabadiliko yameombwa"
 
-#: templates/indigo_api/_task_card_single.html:79
+#: templates/indigo_api/task/_card_single.html:79
 msgid "Reassign"
 msgstr "Weka upya"
 
-#: templates/indigo_api/_task_card_single.html:82
-#: templates/indigo_api/_task_detail.html:154
+#: templates/indigo_api/task/_card_single.html:82
+#: templates/indigo_api/task/_detail.html:154
 msgid "Are you sure you want to unassign this task?"
 msgstr "Je, una uhakika unataka kutendua kazi hii?"
 
-#: templates/indigo_api/_task_card_single.html:112
+#: templates/indigo_api/task/_card_single.html:112
 msgid "Approved by"
 msgstr "Imeidhinishwa na"
 
-#: templates/indigo_api/_task_detail.html:8
+#: templates/indigo_api/task/_detail.html:8
 msgid "This task is blocked."
 msgstr "Jukumu hili limezuiwa."
 
-#: templates/indigo_api/_task_detail.html:10
+#: templates/indigo_api/task/_detail.html:10
 msgid "These tasks must be completed first:"
 msgstr "Kazi hizi lazima zikamilishwe kwanza:"
 
-#: templates/indigo_api/_task_detail.html:25
+#: templates/indigo_api/task/_detail.html:25
 #: templates/indigo_api/document/_task_overview.html:13
 msgid "assigned"
 msgstr "kupewa"
 
-#: templates/indigo_api/_task_detail.html:60
+#: templates/indigo_api/task/_detail.html:60
 msgid "Edit task"
 msgstr "Badilisha kazi"
 
-#: templates/indigo_api/_task_detail.html:114
+#: templates/indigo_api/task/_detail.html:114
 #, python-format
 msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
 msgstr "Hapa kuna <a href=\"%(item_url)s\">%(title)s</a> kama inavyoonekana sasa"
 
-#: templates/indigo_api/_task_detail.html:119
+#: templates/indigo_api/task/_detail.html:119
 #, python-format
 msgid "(<b>%(a)s</b> may have been moved or removed)"
 msgstr "(<b>%(a)s</b> inaweza kuwa imehamishwa au kuondolewa)"
 
-#: templates/indigo_api/_task_detail.html:128
+#: templates/indigo_api/task/_detail.html:128
 #, python-format
 msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
 msgstr "Maudhui katika <b>%(a)s</b> hayapatikani na huenda yamehamishwa au kuondolewa."
 
-#: templates/indigo_api/_task_detail.html:186
+#: templates/indigo_api/task/_detail.html:186
 msgid "Choose labels"
 msgstr "Chagua lebo"
 
-#: templates/indigo_api/_task_detail.html:203
+#: templates/indigo_api/task/_detail.html:203
 msgid "Blocked by"
 msgstr "Imezuiwa na"
 
-#: templates/indigo_api/_task_detail.html:239
+#: templates/indigo_api/task/_detail.html:239
 msgid "Blocking"
 msgstr "Kuzuia"
 
-#: templates/indigo_api/_task_detail.html:243
+#: templates/indigo_api/task/_detail.html:243
 msgid "This task is blocking these tasks:"
 msgstr "Jukumu hili linazuia kazi hizi:"
 
-#: templates/indigo_api/_task_form_input_file.html:21
-#: templates/indigo_api/_task_form_output_file.html:21
-#: templates/indigo_api/_task_form_work.html:30
+#: templates/indigo_api/task/_form_input_file.html:21
+#: templates/indigo_api/task/_form_output_file.html:21
+#: templates/indigo_api/task/_form_work.html:30
 #: templates/indigo_api/_work_form_commencements_form.html:35
 #: templates/indigo_api/_work_parent_form.html:32
 #: templates/indigo_api/_work_repeal_form.html:32
@@ -917,81 +917,81 @@ msgstr "Jukumu hili linazuia kazi hizi:"
 msgid "Clear"
 msgstr "Wazi"
 
-#: templates/indigo_api/_task_form_input_file.html:49
+#: templates/indigo_api/task/_form_input_file.html:49
 msgid "Paste in a URL (preferred), or upload a file."
 msgstr "Bandika kwenye URL (inayopendekezwa), au pakia faili."
 
-#: templates/indigo_api/_task_form_output_file.html:49
+#: templates/indigo_api/task/_form_output_file.html:49
 msgid "Upload the converted file."
 msgstr "Pakia faili iliyobadilishwa."
 
-#: templates/indigo_api/_task_form_title.html:7
+#: templates/indigo_api/task/_form_title.html:7
 msgid "A short description of this task"
 msgstr "Maelezo mafupi ya kazi hii"
 
-#: templates/indigo_api/_task_form_work.html:24
+#: templates/indigo_api/task/_form_work.html:24
 msgid "Change work"
 msgstr "Badilisha kazi"
 
-#: templates/indigo_api/_task_form_work.html:24
+#: templates/indigo_api/task/_form_work.html:24
 msgid "Choose work"
 msgstr "Chagua kazi"
 
-#: templates/indigo_api/_task_form_work.html:53
+#: templates/indigo_api/task/_form_work.html:53
 msgid "Choose a document, or enter a date (optional)."
 msgstr "Chagua hati, au weka tarehe (hiari)."
 
-#: templates/indigo_api/_task_list_table.html:6
+#: templates/indigo_api/task/_list_table.html:6
 #, python-format
 msgid "%(count)s task (of %(total_tasks)s total)"
 msgid_plural "%(count)s tasks (of %(total_tasks)s total)"
 msgstr[0] "%(count)s kazi (ya %(total_tasks)s jumla)"
 msgstr[1] "%(count)s kazi (za %(total_tasks)s jumla)"
 
-#: templates/indigo_api/_task_list_table.html:17
+#: templates/indigo_api/task/_list_table.html:17
 #: templates/indigo_api/document/_annotations.html:38
 msgid "Task"
 msgstr "Kazi"
 
-#: templates/indigo_api/_task_list_table.html:22
+#: templates/indigo_api/task/_list_table.html:22
 msgid "Place"
 msgstr "Mahali"
 
-#: templates/indigo_api/_task_list_table.html:25
+#: templates/indigo_api/task/_list_table.html:25
 msgid "Document"
 msgstr "Hati"
 
-#: templates/indigo_api/_task_list_table.html:27
+#: templates/indigo_api/task/_list_table.html:27
 msgid "Work or Document"
 msgstr "Kazi au Hati"
 
-#: templates/indigo_api/_task_list_table.html:29
+#: templates/indigo_api/task/_list_table.html:29
 #: templates/indigo_api/work_batch_update.html:142
 #: templates/indigo_app/place/_work.html:42 templates/place/detail.html:164
 msgid "Updated"
 msgstr "Imesasishwa"
 
-#: templates/indigo_api/_task_list_table.html:120
+#: templates/indigo_api/task/_list_table.html:120
 msgid "No tasks found"
 msgstr "Hakuna kazi zilizopatikana"
 
-#: templates/indigo_api/_task_timeline.html:8
+#: templates/indigo_api/task/_timeline.html:8
 #: templates/indigo_api/_work_comments.html:8
 msgid "commented"
 msgstr "ametoa maoni"
 
-#: templates/indigo_api/_task_timeline.html:34
+#: templates/indigo_api/task/_timeline.html:34
 #: templates/indigo_api/_work_comments.html:33
 msgid "Add a comment"
 msgstr "Ongeza maoni"
 
-#: templates/indigo_api/_task_timeline.html:43
+#: templates/indigo_api/task/_timeline.html:43
 #: templates/indigo_api/document/_annotations.html:45
 #: templates/indigo_api/document/_annotations.html:46
 msgid "Comment"
 msgstr "Maoni"
 
-#: templates/indigo_api/_task_timeline.html:47
+#: templates/indigo_api/task/_timeline.html:47
 #, python-format
 msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
 msgstr "Tafadhali <a href=\"%(login_url)s\">ingia</a> ili kuacha maoni."

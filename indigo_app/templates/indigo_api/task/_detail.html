@@ -103,7 +103,7 @@
         {% endif %}
         <div id="task-timeline-{{ task.pk }}">
           {% url 'task_detail_detail' place=task.place.place_code pk=task.pk as next_url %}
-          {% include 'indigo_api/_task_timeline.html' with next_url=next_url %}
+          {% include 'indigo_api/task/_timeline.html' with next_url=next_url %}
         </div>
         {% if task.annotation %}
           <div class="activity-item spinner-when-empty"
@@ -172,7 +172,7 @@
               </select>
             {% endif %}
             <div id="task-labels-list">
-              {% include 'indigo_api/_task_labels.html' %}
+              {% include 'indigo_api/task/_labels.html' %}
             </div>
           </div>
         </div>

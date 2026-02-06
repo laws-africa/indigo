@@ -8,7 +8,7 @@
   <div class="row">
     <div class="col-md-9 offset-3 mb-3">
       <div class="d-flex align-items-start">
-        {% include 'indigo_api/_task_filter_form.html' %}
+        {% include 'indigo_api/task/_filter_form.html' %}
         {% if saved_searches %}
           <div class="ms-auto">
             {% include 'indigo_api/_saved_searches.html' %}
@@ -19,7 +19,7 @@
   </div>
 
   <div id="task-list">
-    {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
+    {% include 'indigo_api/task/_list.html' with tasks=tasks selectable=False place=True %}
   </div>
 </div>
 {% endblock %}

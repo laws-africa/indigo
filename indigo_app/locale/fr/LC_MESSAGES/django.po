@@ -38,7 +38,7 @@ msgid "Parent context"
 msgstr "Contexte parent"
 
 #: forms/places.py:53 forms/tasks.py:23 forms/tasks.py:34
-#: templates/indigo_api/_task_labels.html:10
+#: templates/indigo_api/task/_labels.html:10
 #: templates/indigo_api/_work_publication_document.html:39 views/tasks.py:338
 msgid "None"
 msgstr "Aucun"
@@ -65,11 +65,11 @@ msgstr "Recherche globale"
 msgid "Type"
 msgstr "Type"
 
-#: forms/tasks.py:98 templates/indigo_api/_task_detail.html:77
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:77
 msgid "Input file"
 msgstr "Fichier d'entrée"
 
-#: forms/tasks.py:98 templates/indigo_api/_task_detail.html:90
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:90
 msgid "Output file"
 msgstr "Fichier de sortie"
 
@@ -81,7 +81,7 @@ msgstr "URL d'entrée"
 msgid "Output URL"
 msgstr "URL de sortie"
 
-#: forms/tasks.py:140 templates/indigo_api/_task_detail.html:176
+#: forms/tasks.py:140 templates/indigo_api/task/_detail.html:176
 msgid "Labels"
 msgstr "Étiquettes"
 
@@ -89,15 +89,15 @@ msgstr "Étiquettes"
 msgid "State"
 msgstr "État"
 
-#: forms/tasks.py:142 templates/indigo_api/_task_card_single.html:59
-#: templates/indigo_api/_task_detail.html:139
-#: templates/indigo_api/_task_list_table.html:19
+#: forms/tasks.py:142 templates/indigo_api/task/_card_single.html:59
+#: templates/indigo_api/task/_detail.html:139
+#: templates/indigo_api/task/_list_table.html:19
 #: templates/templated_email/_task_detail_block.html:12
 #: templates/templated_email/_task_detail_block.html:17
 msgid "Assigned to"
 msgstr "Assigné à"
 
-#: forms/tasks.py:143 templates/indigo_api/_task_card_single.html:119
+#: forms/tasks.py:143 templates/indigo_api/task/_card_single.html:119
 msgid "Submitted by"
 msgstr "Proposé par"
 
@@ -125,7 +125,7 @@ msgstr "Mis à jour le (le plus récent en premier)"
 msgid "Updated at (oldest first)"
 msgstr "Mis à jour à (le plus ancien en premier)"
 
-#: forms/tasks.py:326 templates/indigo_api/_task_detail.html:145
+#: forms/tasks.py:326 templates/indigo_api/task/_detail.html:145
 msgid "Unassigned"
 msgstr "Non attribué"
 
@@ -753,163 +753,163 @@ msgstr "Vous n'êtes pas connecté ou quelque chose s'est mal passé."
 msgid "Saved searches"
 msgstr "Recherches enregistrées"
 
-#: templates/indigo_api/_task_assign_to_menu.html:4
-#: templates/indigo_api/_task_card_single.html:83
-#: templates/indigo_api/_task_detail.html:156
+#: templates/indigo_api/task/_assign_to_menu.html:4
+#: templates/indigo_api/task/_card_single.html:83
+#: templates/indigo_api/task/_detail.html:156
 msgid "Unassign"
 msgstr "désattribuer"
 
-#: templates/indigo_api/_task_assign_to_menu.html:14
+#: templates/indigo_api/task/_assign_to_menu.html:14
 msgid "too many tasks"
 msgstr "trop de tâches"
 
-#: templates/indigo_api/_task_assign_to_menu.html:18
+#: templates/indigo_api/task/_assign_to_menu.html:18
 msgid "No users available"
 msgstr "Aucun utilisateur disponible"
 
-#: templates/indigo_api/_task_blocked_by_menu.html:29
-#: templates/indigo_api/_task_detail.html:213
+#: templates/indigo_api/task/_blocked_by_menu.html:29
+#: templates/indigo_api/task/_detail.html:213
 msgid "Choose tasks"
 msgstr "Choisissez des tâches"
 
-#: templates/indigo_api/_task_bulk_update_form.html:11
-#: templates/indigo_api/_task_card_single.html:101
-#: templates/indigo_api/_task_detail.html:166
+#: templates/indigo_api/task/_bulk_update_form.html:11
+#: templates/indigo_api/task/_card_single.html:101
+#: templates/indigo_api/task/_detail.html:166
 msgid "Assign to"
 msgstr "Affecter à"
 
-#: templates/indigo_api/_task_bulk_update_form.html:19
-#: templates/indigo_api/_task_bulk_update_form.html:25
+#: templates/indigo_api/task/_bulk_update_form.html:19
+#: templates/indigo_api/task/_bulk_update_form.html:25
 msgid "Updating"
 msgstr "Mise à jour"
 
-#: templates/indigo_api/_task_bulk_update_form.html:20
+#: templates/indigo_api/task/_bulk_update_form.html:20
 msgid "Unblock"
 msgstr "Débloquer"
 
-#: templates/indigo_api/_task_bulk_update_form.html:26
+#: templates/indigo_api/task/_bulk_update_form.html:26
 msgid "Block"
 msgstr "Bloc"
 
-#: templates/indigo_api/_task_buttons.html:10
+#: templates/indigo_api/task/_buttons.html:10
 msgid "Are you sure you want to request changes to this task?"
 msgstr "Voulez-vous vraiment demander des modifications à cette tâche ?"
 
-#: templates/indigo_api/_task_buttons.html:11
+#: templates/indigo_api/task/_buttons.html:11
 msgid "Request changes"
 msgstr "Demander des modifications"
 
-#: templates/indigo_api/_task_buttons.html:14
+#: templates/indigo_api/task/_buttons.html:14
 msgid "Review changes"
 msgstr "Examiner les modifications"
 
-#: templates/indigo_api/_task_buttons.html:20
+#: templates/indigo_api/task/_buttons.html:20
 msgid "Are you sure you want to approve this task?"
 msgstr "Voulez-vous vraiment approuver cette tâche ?"
 
-#: templates/indigo_api/_task_buttons.html:21
+#: templates/indigo_api/task/_buttons.html:21
 #: templates/indigo_api/work_overview.html:22
 #: templates/indigo_app/place/_bulk_approve_form.html:214
 #: templates/indigo_app/place/_work_detail.html:131
 msgid "Approve"
 msgstr "Approuver"
 
-#: templates/indigo_api/_task_buttons.html:29
+#: templates/indigo_api/task/_buttons.html:29
 msgid "Are you sure you want to reopen this task?"
 msgstr "Voulez-vous vraiment rouvrir cette tâche ?"
 
-#: templates/indigo_api/_task_buttons.html:30
+#: templates/indigo_api/task/_buttons.html:30
 msgid "Reopen"
 msgstr "Rouvrir"
 
-#: templates/indigo_api/_task_buttons.html:38
+#: templates/indigo_api/task/_buttons.html:38
 msgid "Are you sure you want to finish this task?"
 msgstr "Êtes-vous sûr de vouloir terminer cette tâche ?"
 
-#: templates/indigo_api/_task_buttons.html:40
+#: templates/indigo_api/task/_buttons.html:40
 msgid "Finish"
 msgstr "Finition"
 
-#: templates/indigo_api/_task_buttons.html:46
+#: templates/indigo_api/task/_buttons.html:46
 msgid "Are you sure you want to submit this task for review?"
 msgstr "Êtes-vous sûr de vouloir soumettre cette tâche pour examen ?"
 
-#: templates/indigo_api/_task_buttons.html:47
+#: templates/indigo_api/task/_buttons.html:47
 msgid "Submit for review"
 msgstr "Soumettre pour correction"
 
-#: templates/indigo_api/_task_card_single.html:17
-#: templates/indigo_api/_task_detail.html:35
-#: templates/indigo_api/_task_list_table.html:60
+#: templates/indigo_api/task/_card_single.html:17
+#: templates/indigo_api/task/_detail.html:35
+#: templates/indigo_api/task/_list_table.html:60
 #: templates/indigo_api/document/_task_overview.html:19
 #: templates/templated_email/_task_detail_block.html:6
 msgid "Changes requested"
 msgstr "Modifications demandées"
 
-#: templates/indigo_api/_task_card_single.html:79
+#: templates/indigo_api/task/_card_single.html:79
 msgid "Reassign"
 msgstr "Réaffecter"
 
-#: templates/indigo_api/_task_card_single.html:82
-#: templates/indigo_api/_task_detail.html:154
+#: templates/indigo_api/task/_card_single.html:82
+#: templates/indigo_api/task/_detail.html:154
 msgid "Are you sure you want to unassign this task?"
 msgstr "Voulez-vous vraiment annuler l'attribution de cette tâche ?"
 
-#: templates/indigo_api/_task_card_single.html:112
+#: templates/indigo_api/task/_card_single.html:112
 msgid "Approved by"
 msgstr "Approuvé par"
 
-#: templates/indigo_api/_task_detail.html:8
+#: templates/indigo_api/task/_detail.html:8
 msgid "This task is blocked."
 msgstr "Cette tâche est bloquée."
 
-#: templates/indigo_api/_task_detail.html:10
+#: templates/indigo_api/task/_detail.html:10
 msgid "These tasks must be completed first:"
 msgstr "Ces tâches doivent être accomplies en premier :"
 
-#: templates/indigo_api/_task_detail.html:25
+#: templates/indigo_api/task/_detail.html:25
 #: templates/indigo_api/document/_task_overview.html:13
 msgid "assigned"
 msgstr "attribué"
 
-#: templates/indigo_api/_task_detail.html:60
+#: templates/indigo_api/task/_detail.html:60
 msgid "Edit task"
 msgstr "Modifier la tâche"
 
-#: templates/indigo_api/_task_detail.html:114
+#: templates/indigo_api/task/_detail.html:114
 #, python-format
 msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
 msgstr "Voici <a href=\"%(item_url)s\">%(title)s</a> tel qu'il apparaît actuellement"
 
-#: templates/indigo_api/_task_detail.html:119
+#: templates/indigo_api/task/_detail.html:119
 #, python-format
 msgid "(<b>%(a)s</b> may have been moved or removed)"
 msgstr "(<b>%(a)s</b> peut avoir été déplacé ou supprimé)"
 
-#: templates/indigo_api/_task_detail.html:128
+#: templates/indigo_api/task/_detail.html:128
 #, python-format
 msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
 msgstr "Le contenu en <b>%(a)s</b> n'est pas disponible et a peut-être été déplacé ou supprimé."
 
-#: templates/indigo_api/_task_detail.html:186
+#: templates/indigo_api/task/_detail.html:186
 msgid "Choose labels"
 msgstr "Choisissez des étiquettes"
 
-#: templates/indigo_api/_task_detail.html:203
+#: templates/indigo_api/task/_detail.html:203
 msgid "Blocked by"
 msgstr "Bloqué par"
 
-#: templates/indigo_api/_task_detail.html:239
+#: templates/indigo_api/task/_detail.html:239
 msgid "Blocking"
 msgstr "Blocage"
 
-#: templates/indigo_api/_task_detail.html:243
+#: templates/indigo_api/task/_detail.html:243
 msgid "This task is blocking these tasks:"
 msgstr "Cette tâche bloque ces tâches :"
 
-#: templates/indigo_api/_task_form_input_file.html:21
-#: templates/indigo_api/_task_form_output_file.html:21
-#: templates/indigo_api/_task_form_work.html:30
+#: templates/indigo_api/task/_form_input_file.html:21
+#: templates/indigo_api/task/_form_output_file.html:21
+#: templates/indigo_api/task/_form_work.html:30
 #: templates/indigo_api/_work_form_commencements_form.html:35
 #: templates/indigo_api/_work_parent_form.html:32
 #: templates/indigo_api/_work_repeal_form.html:32
@@ -917,81 +917,81 @@ msgstr "Cette tâche bloque ces tâches :"
 msgid "Clear"
 msgstr "Nettoyer"
 
-#: templates/indigo_api/_task_form_input_file.html:49
+#: templates/indigo_api/task/_form_input_file.html:49
 msgid "Paste in a URL (preferred), or upload a file."
 msgstr "Collez une URL (de préférence) ou téléchargez un fichier."
 
-#: templates/indigo_api/_task_form_output_file.html:49
+#: templates/indigo_api/task/_form_output_file.html:49
 msgid "Upload the converted file."
 msgstr "Téléchargez le fichier converti."
 
-#: templates/indigo_api/_task_form_title.html:7
+#: templates/indigo_api/task/_form_title.html:7
 msgid "A short description of this task"
 msgstr "Une brève description de cette tâche"
 
-#: templates/indigo_api/_task_form_work.html:24
+#: templates/indigo_api/task/_form_work.html:24
 msgid "Change work"
 msgstr "Changer de travail"
 
-#: templates/indigo_api/_task_form_work.html:24
+#: templates/indigo_api/task/_form_work.html:24
 msgid "Choose work"
 msgstr "Choisissez le travail"
 
-#: templates/indigo_api/_task_form_work.html:53
+#: templates/indigo_api/task/_form_work.html:53
 msgid "Choose a document, or enter a date (optional)."
 msgstr "Choisissez un document ou saisissez une date (facultatif)."
 
-#: templates/indigo_api/_task_list_table.html:6
+#: templates/indigo_api/task/_list_table.html:6
 #, python-format
 msgid "%(count)s task (of %(total_tasks)s total)"
 msgid_plural "%(count)s tasks (of %(total_tasks)s total)"
 msgstr[0] "%(count)s tâche (sur %(total_tasks)s total)"
 msgstr[1] "%(count)s tâches (sur %(total_tasks)s total)"
 
-#: templates/indigo_api/_task_list_table.html:17
+#: templates/indigo_api/task/_list_table.html:17
 #: templates/indigo_api/document/_annotations.html:38
 msgid "Task"
 msgstr "Tâche"
 
-#: templates/indigo_api/_task_list_table.html:22
+#: templates/indigo_api/task/_list_table.html:22
 msgid "Place"
 msgstr "Lieu"
 
-#: templates/indigo_api/_task_list_table.html:25
+#: templates/indigo_api/task/_list_table.html:25
 msgid "Document"
 msgstr "Document"
 
-#: templates/indigo_api/_task_list_table.html:27
+#: templates/indigo_api/task/_list_table.html:27
 msgid "Work or Document"
 msgstr "Travail ou document"
 
-#: templates/indigo_api/_task_list_table.html:29
+#: templates/indigo_api/task/_list_table.html:29
 #: templates/indigo_api/work_batch_update.html:142
 #: templates/indigo_app/place/_work.html:42 templates/place/detail.html:164
 msgid "Updated"
 msgstr "Mis à jour"
 
-#: templates/indigo_api/_task_list_table.html:120
+#: templates/indigo_api/task/_list_table.html:120
 msgid "No tasks found"
 msgstr "Aucune tâche trouvée"
 
-#: templates/indigo_api/_task_timeline.html:8
+#: templates/indigo_api/task/_timeline.html:8
 #: templates/indigo_api/_work_comments.html:8
 msgid "commented"
 msgstr "commenté"
 
-#: templates/indigo_api/_task_timeline.html:34
+#: templates/indigo_api/task/_timeline.html:34
 #: templates/indigo_api/_work_comments.html:33
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: templates/indigo_api/_task_timeline.html:43
+#: templates/indigo_api/task/_timeline.html:43
 #: templates/indigo_api/document/_annotations.html:45
 #: templates/indigo_api/document/_annotations.html:46
 msgid "Comment"
 msgstr "Commentaire"
 
-#: templates/indigo_api/_task_timeline.html:47
+#: templates/indigo_api/task/_timeline.html:47
 #, python-format
 msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
 msgstr "Veuillez <a href=\"%(login_url)s\">vous connecter</a> pour laisser un commentaire."

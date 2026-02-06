@@ -34,7 +34,7 @@
                     cols="80" placeholder="{% trans "Add a comment" %}" required></textarea>
         </div>
         <div class="card-footer d-flex">
-          {% include 'indigo_api/_task_buttons.html' %}
+          {% include 'indigo_api/task/_buttons.html' %}
           <button
               class="btn btn-primary ms-auto" type="submit"
               hx-target="#task-timeline-{{ task.pk }}"

@@ -893,7 +893,7 @@ class WorkSubsidiaryView(PlaceViewBase, DetailView):
 
 
 class WorkTasksView(PlaceViewBase, DetailView):
-    template_name = 'indigo_api/_task_cards.html'
+    template_name = 'indigo_api/task/_cards.html'
     model = Work
 
     def get_context_data(self, **kwargs):

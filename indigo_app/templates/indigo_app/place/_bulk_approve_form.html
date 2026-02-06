@@ -22,6 +22,8 @@
         {% csrf_token %}
         {% for work in form.broker.works %}
           <input type="hidden" name="works" value="{{ work.pk }}">
+        {% empty %}
+          <div class="spinner-when-empty"></div>
         {% endfor %}
         {% if form.broker.works %}
           <div class="alert alert-warning">

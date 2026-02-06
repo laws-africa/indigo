@@ -1,4 +1,4 @@
-{% load i18n account %}
+{% load i18n indigo_app %}
 
 <li id="amendment-instruction-{{ instruction.pk }}" class="mb-3 amendment-instruction">
   <details class="card" {% if not instruction.is_applied %}open{% endif %}>
@@ -17,10 +17,15 @@
         {% if instruction.is_applied %}
           <dt class="col-3">{% trans "Applied by" %}</dt>
           <dd class="col-9">
-            {% user_display instruction.applied_by_user %}
+            {% user_profile instruction.applied_by_user %}
             <span class="time-ago" data-timestamp="{{ instruction.applied_at|date:'c' }}"></span>
           </dd>
         {% endif %}
+        <dt class="col-3">{% trans "Created by" %}</dt>
+        <dd class="col-9">
+          {% user_profile instruction.created_by_user %}
+          <span class="time-ago" data-timestamp="{{ instruction.created_at|date:'c' }}"></span>
+        </dd>
         <dt class="col-3">{% trans "Amended by" %}</dt>
         <dd class="col-9">
           {% with instruction.amendment.amending_work.publication_document as pub_doc %}

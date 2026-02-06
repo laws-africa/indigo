@@ -22,30 +22,30 @@
       <h5>{% trans 'Amendment instructions' %}</h5>
     {% endblock %}
   </div>
-  <div class="container-fluid pb-5 mt-3">
-    <div class="row">
-      <div class="col-6">
-        {% include 'indigo_api/amendment/_instruction_list.html' with can_add=True can_edit=True %}
-        <form
-          method="post"
-          action="{% url 'work_amendment_instruction_clear' work.frbr_uri amendment.pk %}"
-          class="mt-3"
-        >
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="btn btn-danger"
-            data-confirm="{% trans 'Are you sure you want to delete all instructions?' %}"
-          >{% trans "Delete all instructions" %}</button>
-        </form>
-      </div>
-      <div class="col-6 sticky-top" style="height: 100vh">
-        {% with amendment.amending_work.publication_document as pub_doc %}
-          {% if pub_doc %}
+  {% with amendment.amending_work.publication_document as pub_doc %}
+    <div class="{% if pub_doc %}container-fluid{% else %}container{% endif %} pb-5 mt-3">
+      <div class="row">
+        <div class="col">
+          {% include 'indigo_api/amendment/_instruction_list.html' with can_add=True can_edit=True %}
+          <form
+            method="post"
+            action="{% url 'work_amendment_instruction_clear' work.frbr_uri amendment.pk %}"
+            class="mt-3"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="btn btn-danger"
+              data-confirm="{% trans 'Are you sure you want to delete all instructions?' %}"
+            >{% trans "Delete all instructions" %}</button>
+          </form>
+        </div>
+        {% if pub_doc %}
+          <div class="col sticky-top" style="height: 100vh">
             <iframe class="flex-grow-1" height="100%" width="100%" src="{{ pub_doc.get_embed_url }}" name="pdf-iframe"></iframe>
-          {% endif %}
-        {% endwith %}
+          </div>
+        {% endif %}
       </div>
     </div>
-  </div>
+  {% endwith %}
 {% endblock %}

@@ -97,6 +97,7 @@ class Task(models.Model):
         ('convert-document', _('Convert document')),
         ('import-content', _('Import content')),
         ('apply-amendment', _('Apply amendment')),
+        ('amendment-instructions', _('Extract amendment instructions')),
         ('link-gazette', _('Link gazette')),
     ]
 

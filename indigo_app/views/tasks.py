@@ -233,6 +233,7 @@ class TaskCreateView(AtomicPostMixin, TaskViewBase, CreateView):
     context_object_name = 'task'
     form_class = TaskForm
     model = Task
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -270,6 +271,7 @@ class TaskEditView(AtomicPostMixin, SingleTaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
     context_object_name = 'task'
     form_class = TaskForm
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

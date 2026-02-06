@@ -11,15 +11,19 @@ from django.db import models
 from django.db.models import signals, Prefetch, Count, Q
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.dispatch import receiver
 from django.utils import timezone
 from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
+from django_comments.models import Comment
+from django_comments.signals import comment_was_posted
 
 from indigo.custom_tasks import tasks as custom_tasks
 from indigo.plugins import plugins
 from indigo_api.models import Document, Amendment
-from indigo_api.signals import task_closed
+from indigo_api.signals import task_closed, task_assigned
 
 log = logging.getLogger(__name__)
 
@@ -225,6 +229,8 @@ class Task(models.Model):
         else:
             action.send(assigned_by, verb='unassigned', action_object=self,
                         place_code=self.place.place_code)
+        # send task_assigned signal
+        task_assigned.send(sender=self.__class__, task=self)
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country, current_user):
@@ -555,6 +561,22 @@ class Task(models.Model):
         if self.extra_data is None:
             self.extra_data = {}
         return self.extra_data
+
+    def add_comment(self, user, comment_text):
+        """Add a comment to this task, by the given user, with the given text."""
+        comment = Comment(
+            user=user,
+            object_pk=self.pk,
+            user_name=user.get_full_name() or user.username,
+            user_email=user.email,
+            comment=comment_text,
+            content_type=ContentType.objects.get_for_model(Task),
+            site_id=Site.objects.get_current().id,
+        )
+        comment.submit_date = timezone.now()
+        comment.save()
+        comment_was_posted.send(sender=Comment, comment=comment, request=None)
+        return comment
 
     @property
     def friendly_state(self):

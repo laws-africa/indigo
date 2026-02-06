@@ -164,6 +164,7 @@ class EditWorkView(AtomicPostMixin, WorkViewBase, UpdateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -253,6 +254,7 @@ class AddWorkView(AtomicPostMixin, PlaceViewBase, CreateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
+    template_name_suffix = '/form'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

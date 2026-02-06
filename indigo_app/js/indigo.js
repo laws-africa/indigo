@@ -14,6 +14,7 @@ import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
+import { createLegacyViews, legacySetup } from './legacy';
 
 window.tippy = tippy;
 
@@ -23,6 +24,10 @@ class IndigoApp {
     this.componentLibrary = {};
     this.Vue = getVue();
     this.setupI18n();
+
+    window.dispatchEvent(new Event('indigo.beforebootstrap'));
+
+    legacySetup();
     this.setupHtmx();
     this.setupPopups();
 
@@ -37,6 +42,9 @@ class IndigoApp {
     this.createVueComponents(document.body);
     this.disableWith();
     window.dispatchEvent(new Event('indigo.components-created'));
+
+    createLegacyViews();
+    window.dispatchEvent(new Event('indigo.afterbootstrap'));
   }
 
   setupI18n () {

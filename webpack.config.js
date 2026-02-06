@@ -69,7 +69,9 @@ const appConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new ESLintPlugin(),
+    new ESLintPlugin({
+      exclude: ['**/legacy.js']
+    }),
   ]
 };
 

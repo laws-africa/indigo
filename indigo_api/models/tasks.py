@@ -13,13 +13,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils import timezone
-from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
 from indigo.custom_tasks import tasks as custom_tasks
 from indigo.plugins import plugins
-from indigo_api.models import Document
+from indigo_api.models import Document, Amendment
 from indigo_api.signals import task_closed
 
 log = logging.getLogger(__name__)
@@ -501,6 +500,13 @@ class Task(models.Model):
     def resolve_anchor(self):
         if self.annotation:
             return self.annotation.resolve_anchor()
+
+    def work_amendments(self):
+        """Get a list of Amendment objects for this work, at this date."""
+        amendments = []
+        if self.work and self.timeline_date:
+            amendments = Amendment.objects.filter(amended_work=self.work, date=self.timeline_date)
+        return amendments
 
     @property
     def customised(self):

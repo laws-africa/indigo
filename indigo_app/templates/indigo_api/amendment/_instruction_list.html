@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% if request.htmx %}
+{% if edit_button %}
   <a class="btn btn-outline-primary my-2" href="{% url 'work_amendment_instructions' work.frbr_uri amendment.pk %}">{% trans "Edit instructions" %}</a>
 {% endif %}
 

@@ -153,7 +153,7 @@ class AmendmentInstructionsView(AmendmentDetailViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["readonly"] = self.request.htmx
+        context["edit_button"] = bool(self.request.htmx)
         return context
 
     def get_template_names(self):

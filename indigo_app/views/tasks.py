@@ -56,6 +56,7 @@ class TaskListView(TaskViewBase, ListView):
     model = Task
     paginate_by = 50
     js_view = 'TaskListView TaskBulkUpdateView'
+    template_name_suffix = '/list'
 
     def get(self, request, *args, **kwargs):
         self.form = TaskFilterForm(self.country, self.locality, request.GET)
@@ -107,6 +108,7 @@ class TaskListView(TaskViewBase, ListView):
 class TaskDetailView(SingleTaskViewBase, DetailView):
     context_object_name = 'task'
     mode = None
+    template_name_suffix = '/detail'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

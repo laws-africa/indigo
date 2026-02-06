@@ -306,7 +306,7 @@ msgid "Not Principal"
 msgstr "Pas le principal"
 
 #: forms/works.py:900 templates/indigo_api/document/_secondary_pane.html:11
-#: templates/indigo_api/task_list.html:4
+#: templates/indigo_api/task/list.html:4
 #: templates/indigo_api/work_batch_create.html:160
 #: templates/indigo_api/work_batch_create.html:293
 #: templates/indigo_api/work_layout.html:46
@@ -1039,8 +1039,8 @@ msgstr "Créer une nouvelle œuvre"
 #: templates/indigo_api/document/_insert_image_modal.html:16
 #: templates/indigo_api/document/_text_editor.html:63
 #: templates/indigo_api/document/_toolbar.html:100
-#: templates/indigo_api/task_form.html:131
-#: templates/indigo_api/task_form.html:133
+#: templates/indigo_api/task/form.html:131
+#: templates/indigo_api/task/form.html:133
 #: templates/indigo_api/timeline/_edit_amendment.html:26
 #: templates/indigo_api/timeline/_edit_consolidation.html:26
 #: templates/indigo_api/work_form.html:12
@@ -1393,7 +1393,7 @@ msgstr "Économie"
 
 #: templates/indigo_api/_work_form_offcanvas_body.html:11
 #: templates/indigo_api/commencement_form.html:138
-#: templates/indigo_api/task_form.html:135
+#: templates/indigo_api/task/form.html:135
 #: templates/indigo_api/timeline/_edit_amendment.html:25
 #: templates/indigo_api/timeline/_edit_consolidation.html:25
 #: templates/indigo_api/work_form.html:21
@@ -1591,7 +1591,7 @@ msgid "Resolve"
 msgstr "Résoudre"
 
 #: templates/indigo_api/document/_annotations.html:16
-#: templates/indigo_api/task_form.html:135
+#: templates/indigo_api/task/form.html:135
 #: templates/indigo_api/work_overview.html:43
 #: templates/indigo_api/work_tasks.html:9
 msgid "Create task"
@@ -2276,43 +2276,43 @@ msgstr "ce document"
 msgid "Provision editor"
 msgstr "Éditeur de dispositions"
 
-#: templates/indigo_api/task_form.html:4 templates/indigo_api/task_list.html:25
+#: templates/indigo_api/task/form.html:4 templates/indigo_api/task/list.html:25
 msgid "New task"
 msgstr "Nouvelle tâche"
 
-#: templates/indigo_api/task_form.html:9
+#: templates/indigo_api/task/form.html:9
 msgid "You don't have permission to create a task."
 msgstr "Vous n'êtes pas autorisé à créer une tâche."
 
-#: templates/indigo_api/task_form.html:19
+#: templates/indigo_api/task/form.html:19
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: templates/indigo_api/task_form.html:54
+#: templates/indigo_api/task/form.html:54
 msgid "Choose a type, or enter a title."
 msgstr "Choisissez un type ou saisissez un titre."
 
-#: templates/indigo_api/task_form.html:115
+#: templates/indigo_api/task/form.html:115
 msgid "Are you sure you want to cancel this task?"
 msgstr "Voulez-vous vraiment annuler cette tâche ?"
 
-#: templates/indigo_api/task_form.html:116
+#: templates/indigo_api/task/form.html:116
 msgid "Cancel task"
 msgstr "Annuler la tâche"
 
-#: templates/indigo_api/task_form.html:121
+#: templates/indigo_api/task/form.html:121
 msgid "Are you sure you want to block this task?"
 msgstr "Voulez-vous vraiment bloquer cette tâche ?"
 
-#: templates/indigo_api/task_form.html:122
+#: templates/indigo_api/task/form.html:122
 msgid "Block task"
 msgstr "Bloquer la tâche"
 
-#: templates/indigo_api/task_form.html:125
+#: templates/indigo_api/task/form.html:125
 msgid "Are you sure you want to unblock this task?"
 msgstr "Voulez-vous vraiment débloquer cette tâche ?"
 
-#: templates/indigo_api/task_form.html:126
+#: templates/indigo_api/task/form.html:126
 msgid "Unblock task"
 msgstr "Débloquer la tâche"
 

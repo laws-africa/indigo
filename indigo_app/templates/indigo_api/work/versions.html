@@ -1,4 +1,4 @@
-{% extends "indigo_api/work_layout.html" %}
+{% extends "indigo_api/work/layout.html" %}
 {% load i18n %}
 
 {% block title %}{% trans 'Changes' %} – {{ block.super }}{% endblock %}
@@ -11,7 +11,7 @@
       {% for entry in page.object_list %}
         <li class="activity-item">
           {% if entry.revision %}
-            {% include 'indigo_api/_work_diff_card.html' with version=entry current=forloop.first %}
+            {% include 'indigo_api/work/_diff_card.html' with version=entry current=forloop.first %}
           {% else %}
             {% include 'indigo_app/actions/_action.html' with action=entry ignore_work=True ignore_place=True %}
           {% endif %}

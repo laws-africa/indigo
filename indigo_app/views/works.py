@@ -219,7 +219,7 @@ class EditWorkView(AtomicPostMixin, WorkViewBase, UpdateView):
 
 
 class EditWorkOffCanvasView(EditWorkView):
-    template_name = "indigo_api/_work_form_offcanvas_body.html"
+    template_name = "indigo_api/work/_form_offcanvas_body.html"
 
     def render_to_response(self, context, **response_kwargs):
         resp = super().render_to_response(context, **response_kwargs)
@@ -299,7 +299,7 @@ class AddWorkView(AtomicPostMixin, PlaceViewBase, CreateView):
 
 
 class AddWorkOffCanvasView(AddWorkView):
-    template_name = "indigo_api/_work_form_offcanvas_body.html"
+    template_name = "indigo_api/work/_form_offcanvas_body.html"
 
     def get_success_url(self):
         return reverse('work_edit_offcanvas', kwargs={'frbr_uri': self.object.frbr_uri}) + "?hx-trigger=hx_refresh_work_list"
@@ -325,7 +325,7 @@ class DeleteWorkView(AtomicPostMixin, WorkViewBase, DeleteView):
 
 class WorkOverviewView(WorkViewBase, DetailView):
     js_view = ''
-    template_name_suffix = '_overview'
+    template_name_suffix = '/overview'
     tab = 'overview'
 
     def get_context_data(self, **kwargs):
@@ -362,11 +362,11 @@ class WorkOverviewView(WorkViewBase, DetailView):
 
 class WorkCommentsView(WorkViewBase, DetailView):
     """HTMX view to render updated work comments"""
-    template_name = 'indigo_api/_work_comments.html'
+    template_name = 'indigo_api/work/_comments.html'
 
 
 class WorkCommencementsView(WorkViewBase, DetailView):
-    template_name_suffix = '_commencements'
+    template_name_suffix = '/commencements'
     tab = 'commencements'
 
     def get_context_data(self, **kwargs):
@@ -614,7 +614,7 @@ class WorkUncommencedView(WorkDependentView, View):
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):
-    template_name_suffix = '_amendments'
+    template_name_suffix = '/amendments'
     tab = 'amendments'
 
     def get_context_data(self, **kwargs):
@@ -828,7 +828,7 @@ class AddWorkPointInTimeView(AtomicPostMixin, WorkDependentView, CreateView):
 
 class WorkRelatedView(WorkViewBase, DetailView):
     js_view = ''
-    template_name_suffix = '_related'
+    template_name_suffix = '/related'
     tab = 'related'
 
     def get_context_data(self, **kwargs):
@@ -885,7 +885,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
 
 class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     js_view = ''
-    template_name_suffix = '_versions'
+    template_name_suffix = '/versions'
     object_list = None
     page_size = 20
     threshold = timedelta(seconds=3)
@@ -939,7 +939,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
 
 class WorkTasksView(WorkViewBase, DetailView):
-    template_name_suffix = '_tasks'
+    template_name_suffix = '/tasks'
     tab = 'tasks'
 
     def get_context_data(self, **kwargs):
@@ -986,7 +986,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
 
 
 class BatchAddWorkView(AtomicPostMixin, PlaceViewBase, FormView):
-    template_name = 'indigo_api/work_batch_create.html'
+    template_name = 'indigo_api/work/batch_create.html'
     # permissions
     permission_required = ('indigo_api.bulk_add_work',)
     form_class = BatchCreateWorkForm
@@ -1072,7 +1072,7 @@ class BatchAddWorkView(AtomicPostMixin, PlaceViewBase, FormView):
 
 
 class BatchUpdateWorkView(BatchAddWorkView):
-    template_name = 'indigo_api/work_batch_update.html'
+    template_name = 'indigo_api/work/batch_update.html'
     form_class = BatchUpdateWorkForm
     bulk_creator_kw = 'bulk-updater'
     bulk_creator_verb = 'Updated'
@@ -1088,7 +1088,7 @@ class ImportDocumentView(AtomicPostMixin, WorkViewBase, FormView):
     This gives a better experience than submitting the form natively, because
     it allows us to handle errors without refreshing the whole page.
     """
-    template_name = 'indigo_api/work_import_document.html'
+    template_name = 'indigo_api/work/import_document.html'
     permission_required = ('indigo_api.add_document',)
     js_view = 'ImportView'
     form_class = ImportDocumentForm
@@ -1140,7 +1140,7 @@ class ImportDocumentView(AtomicPostMixin, WorkViewBase, FormView):
 
 
 class WorkPopupView(WorkViewBase, DetailView):
-    template_name = 'indigo_api/work_popup.html'
+    template_name = 'indigo_api/work/popup.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1193,7 +1193,7 @@ class WorkFormRepealView(PartialWorkFormView):
     """Just the repeal part of the work form to re-render the form when the user changes the repeal status
     through HTMX.
     """
-    template_name = 'indigo_api/_work_repeal_form.html'
+    template_name = 'indigo_api/work/_repeal_form.html'
 
     class Form(forms.ModelForm):
         prefix = 'work'
@@ -1216,7 +1216,7 @@ class WorkFormRepealView(PartialWorkFormView):
 class WorkFormParentView(PartialWorkFormView):
     """Just the parent part of the work form to re-render the form when the user changes the parent work through HTMX.
     """
-    template_name = 'indigo_api/_work_parent_form.html'
+    template_name = 'indigo_api/work/_parent_form.html'
 
     class Form(forms.ModelForm):
         prefix = 'work'
@@ -1227,7 +1227,7 @@ class WorkFormParentView(PartialWorkFormView):
 
 
 class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
-    template_name = 'indigo_api/_work_possible_duplicates.html'
+    template_name = 'indigo_api/work/_possible_duplicates.html'
 
     class Form(WorkForm):
         prefix = 'work'
@@ -1280,7 +1280,7 @@ class FindPossibleDuplicatesView(PlaceViewBase, TemplateView):
 
 
 class FindPublicationDocumentView(PlaceViewBase, TemplateView):
-    template_name = 'indigo_api/_work_possible_publication_documents.html'
+    template_name = 'indigo_api/work/_possible_publication_documents.html'
 
     class Form(forms.Form):
         publication_date = forms.DateField()
@@ -1334,7 +1334,7 @@ class FindPublicationDocumentView(PlaceViewBase, TemplateView):
 
 class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
     http_method_names = ['post', 'delete', 'get']
-    template_name = 'indigo_api/_work_publication_document.html'
+    template_name = 'indigo_api/work/_publication_document.html'
 
     class Form(forms.ModelForm):
         publication_document_file = forms.FileField(required=False)
@@ -1390,7 +1390,7 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
 
 class WorkFormLocalityView(PlaceViewBase, TemplateView):
     http_method_names = ['post']
-    template_name = 'indigo_api/_work_form_locality.html'
+    template_name = 'indigo_api/work/_form_locality.html'
 
     class Form(forms.Form):
         country = forms.ModelChoiceField(queryset=Country.objects)
@@ -1412,7 +1412,7 @@ class WorkFormLocalityView(PlaceViewBase, TemplateView):
 
 
 class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_repeals_made_form.html'
+    template_name = 'indigo_api/work/_form_repeals_made_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -1463,7 +1463,7 @@ class WorkFormRepealsMadeView(WorkViewBase, TemplateView):
 
 
 class WorkFormChapterNumbersView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_chapter_numbers_form.html'
+    template_name = 'indigo_api/work/_form_chapter_numbers_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -1495,7 +1495,7 @@ class WorkFormChapterNumbersView(WorkViewBase, TemplateView):
 
 
 class WorkFormAmendmentsView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_amendments_form.html'
+    template_name = 'indigo_api/work/_form_amendments_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -1574,7 +1574,7 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
 
 
 class WorkFormCommencementsView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_commencements_form.html'
+    template_name = 'indigo_api/work/_form_commencements_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -1621,7 +1621,7 @@ class WorkFormCommencementsView(WorkViewBase, TemplateView):
 
 
 class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
-    template_name = 'indigo_api/_work_form_commencements_made_form.html'
+    template_name = 'indigo_api/work/_form_commencements_made_form.html'
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
@@ -1691,7 +1691,7 @@ class WorkFormCommencementsMadeView(WorkViewBase, TemplateView):
 
 
 class WorkFormConsolidationView(WorkViewBase, TemplateView):
-    template_name = "indigo_api/_work_form_consolidations_form.html"
+    template_name = "indigo_api/work/_form_consolidations_form.html"
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)

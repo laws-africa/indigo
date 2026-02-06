@@ -93,15 +93,15 @@ class Task(models.Model):
         'unblock': 'unblocked',
     }
 
-    MAIN_CODES = [
-        ('convert-document', _('Convert document')),
-        ('import-content', _('Import content')),
-        ('apply-amendment', _('Apply amendment')),
-        ('amendment-instructions', _('Extract amendment instructions')),
-        ('link-gazette', _('Link gazette')),
-    ]
+    MAIN_CODES = {
+        'convert-document': _('Convert document'),
+        'import-content': _('Import content'),
+        'apply-amendment': _('Apply amendment'),
+        'amendment-instructions': _('Extract amendment instructions'),
+        'link-gazette': _('Link gazette'),
+    }
 
-    CODES = MAIN_CODES + [
+    CODES = list(MAIN_CODES.items()) + [
         ('check-update-primary', _('Check / update primary work')),
         ('check-update-repeal', _('Check / update repeal')),
         ('commences-on-date-missing', _("'Commences on' date missing")),
@@ -124,7 +124,7 @@ class Task(models.Model):
         'convert-document': _('Convert the input file into a .docx file and remove automatic numbering.'),
         'import-content': _('Import the content for this work at the appropriate date — usually the publication or consolidation date.'),
         'link-gazette': _('Find and link the Gazette (original publication document) for this work.'),
-        'amendment-instruction': _('Extract the instructions for applying this amendment.'),
+        'amendment-instructions': _('Extract the instructions for applying this amendment.'),
     }
 
     class Meta:

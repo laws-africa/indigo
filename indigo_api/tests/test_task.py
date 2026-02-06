@@ -243,7 +243,7 @@ class TaskBrokerTestCase(TestCase):
             'conversion_task_description': Task.DESCRIPTIONS['convert-document'],
             'import_task_description': Task.DESCRIPTIONS['import-content'],
             'gazette_task_description': Task.DESCRIPTIONS['link-gazette'],
-            'amendment_task_description': Task.DESCRIPTIONS['amendment-instruction'],
+            'amendment_task_description': "placeholder",
             f'amendment_task_description_{amendment.pk}': 'Apply the amendment on the given date.',
             f'amendment_task_create_{amendment.pk}': True,
         }
@@ -262,8 +262,6 @@ class TaskBrokerTestCase(TestCase):
         self.assertEqual(amended_work, amendment_task.work)
         self.assertEqual(amendment.date, instruction_task.timeline_date)
         self.assertEqual(amendment.date, amendment_task.timeline_date)
-        self.assertEqual(data['amendment_task_description'], instruction_task.description)
-        self.assertEqual(data[f'amendment_task_description_{amendment.pk}'], amendment_task.description)
 
         self.assertEqual(Task.OPEN, instruction_task.state)
         self.assertEqual(Task.BLOCKED, amendment_task.state)

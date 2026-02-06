@@ -1173,7 +1173,7 @@ Possible reasons:
             return self.preview_task(row, task_type)
 
         # these will be done by the task broker: convert-document, import-content, link-gazette, apply-amendment
-        elif task_type in dict(Task.MAIN_CODES):
+        elif task_type in Task.MAIN_CODES:
             return
 
         task = Task()

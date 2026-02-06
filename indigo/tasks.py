@@ -84,7 +84,7 @@ class TaskBroker:
                 # create new amendment tasks so that we don't overwrite descriptions on existing tasks
                 amendment_task = Task.objects.create(
                     country=work.country, locality=work.locality, work=work,
-                    code='apply-amendment', title=dict(Task.MAIN_CODES)['apply-amendment'],
+                    code='apply-amendment', title=Task.MAIN_CODES['apply-amendment'],
                     timeline_date=amendment.date,
                     description=data[f'amendment_task_description_{amendment.pk}'],
                     created_by_user=user)
@@ -132,7 +132,7 @@ class TaskBroker:
                         code=task_type, timeline_date=timeline_date, created_by_user=user)
 
         # set these here in case an existing task is being updated
-        task.title = dict(Task.MAIN_CODES)[task_type]
+        task.title = Task.MAIN_CODES[task_type]
         task.description = description
         task.updated_by_user = user
         task.save()

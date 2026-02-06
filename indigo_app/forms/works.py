@@ -1590,9 +1590,9 @@ class WorkBulkApproveForm(WorkBulkActionFormBase):
     TASK_CHOICES = [('', 'Create tasks'), ('block', _('Create and block tasks')), ('cancel', _('Create and cancel tasks'))]
 
     works = forms.ModelMultipleChoiceField(queryset=Work.objects, required=False)
-    conversion_task_description = forms.CharField(required=False)
-    import_task_description = forms.CharField(required=False)
-    gazette_task_description = forms.CharField(required=False)
+    conversion_task_description = forms.CharField(required=False, initial=Task.DESCRIPTIONS["convert-document"])
+    import_task_description = forms.CharField(required=False, initial=Task.DESCRIPTIONS["import-content"])
+    gazette_task_description = forms.CharField(required=False, initial=Task.DESCRIPTIONS["link-gazette"])
     # amendment task descriptions are added per amendment on init
     update_conversion_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)
     update_import_tasks = forms.ChoiceField(choices=TASK_CHOICES, widget=RadioSelect, required=False)

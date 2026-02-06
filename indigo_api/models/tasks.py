@@ -120,6 +120,13 @@ class Task(models.Model):
         ('review-work-expression', _('Sign-off')),
     ]
 
+    DESCRIPTIONS = {
+        'convert-document': _('Convert the input file into a .docx file and remove automatic numbering.'),
+        'import-content': _('Import the content for this work at the appropriate date — usually the publication or consolidation date.'),
+        'link-gazette': _('Find and link the Gazette (original publication document) for this work.'),
+        'amendment-instruction': _('Extract the instructions for applying this amendment.'),
+    }
+
     class Meta:
         permissions = (
             ('submit_task', _('Can submit an open task for review')),

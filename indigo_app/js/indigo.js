@@ -21,7 +21,14 @@ window.tippy = tippy;
 if (!window.Indigo) window.Indigo = {};
 const Indigo = window.Indigo;
 
+// for registering remarks-related components
 if (!Indigo.remarks) Indigo.remarks = {};
+
+// for registering linting-related components
+Indigo.Linting = {
+  // map from names to linter functions
+  linters: {}
+};
 
 class IndigoApp {
   setup () {

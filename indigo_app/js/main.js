@@ -1,6 +1,6 @@
 import app from './indigo';
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.indigoApp = app;
+  window.Indigo.app = app;
   app.setup();
 });

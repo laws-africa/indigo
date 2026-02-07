@@ -5,6 +5,20 @@ export default function setupXml () {
     return new XMLSerializer().serializeToString(node);
   };
 
+  /**
+   * Parses text into an XML document.
+   * @param text
+   * @returns {Document}
+   * @throws {Error} if the text is not valid XML
+   */
+  Indigo.parseXml = function (text) {
+    const doc = new DOMParser().parseFromString(text, 'text/xml');
+    if (doc.querySelector('parsererror')) {
+      throw Error('Invalid XML: ' + new XMLSerializer().serializeToString(doc));
+    }
+    return doc;
+  };
+
   const xsltSource =
     '<?xml version="1.0"?>' +
     '<!--' +
@@ -88,7 +102,7 @@ export default function setupXml () {
     if (typeof (xml) === 'string') {
       // squash whitespace
       xml = xml.replace(/([\n\r]| +)/g, ' ');
-      xml = new DOMParser().parseFromString(xml, 'text/xml');
+      xml = Indigo.parseXml(xml);
     }
     return serializer.serializeToString(transform.transformToDocument(xml));
   };

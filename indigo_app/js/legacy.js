@@ -1,5 +1,14 @@
-export function setupLegacyAjax () {
+export function setupLegacyJquery () {
   const Indigo = window.Indigo;
+
+  /**
+   * This converts a jquery deferred into javascript promise/async function
+   */
+  Indigo.deferredToAsync = async function (deferred) {
+    await new Promise((resolve, reject) => {
+      deferred.then(resolve).fail(reject);
+    });
+  };
 
   // global error handler
   $(document)

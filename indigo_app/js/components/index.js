@@ -10,6 +10,7 @@ import { FacetGroup, RemoveFacetButton } from './facets';
 import ProgressBar from './progress';
 import OfflineAlert from './offline_alert';
 import ErrorBox from './error_box';
+import CopyToClipboard from './copy_to_clipboard';
 
 export const vueComponents = {
   DocumentTOCView,
@@ -28,5 +29,6 @@ export const components = {
   VSplitter,
   ProgressBar,
   OfflineAlert,
-  ErrorBox
+  ErrorBox,
+  CopyToClipboard
 };

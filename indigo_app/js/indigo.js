@@ -14,7 +14,7 @@ import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
-import { setupLegacyAjax } from './legacy';
+import { setupLegacyJquery } from './legacy';
 import setupXml from './xml';
 
 window.tippy = tippy;
@@ -28,18 +28,19 @@ class IndigoApp {
     this.Vue = getVue();
     this.setupI18n();
     this.setupCSRF();
+    setupXml();
 
     window.dispatchEvent(new Event('indigo.beforebootstrap'));
 
-    setupLegacyAjax();
+    setupLegacyJquery();
     this.setupUser();
     this.setupMonaco();
     this.setupHtmx();
     this.setupPopups();
     this.setupTooltips();
     this.setupComponents();
-
-    setupXml();
+    this.setupConfirm();
+    this.setupToasts();
 
     window.dispatchEvent(new Event('indigo.beforecreateviews'));
     this.createLegacyViews();
@@ -255,6 +256,31 @@ class IndigoApp {
         }
       }
     });
+  }
+
+  setupConfirm () {
+    document.body.addEventListener('click', (event) => {
+      const target = event.target.closest('a[data-confirm], button[data-confirm], input[data-confirm]');
+      if (!target) {
+        return;
+      }
+
+      const message = target.getAttribute('data-confirm');
+      if (message && !confirm(message)) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      }
+    });
+  }
+
+  setupToasts () {
+    // hide auto-dismiss toasts after 3 seconds
+    setTimeout(() => {
+      for (const el of document.querySelectorAll('.alert-dismissible.auto-dismiss')) {
+        window.bootstrap.Alert.getOrCreateInstance(el).close();
+      }
+    }, 3 * 1000);
   }
 
   createLegacyViews () {

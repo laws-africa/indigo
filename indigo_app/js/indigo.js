@@ -25,7 +25,6 @@ import { fromRange as textPositionFromRange } from 'dom-anchor-text-position';
 window.bootstrap = bootstrap;
 window.indigoAkn = indigoAkn;
 window.textPositionFromRange = textPositionFromRange;
-
 window.tippy = tippy;
 
 // Indigo is a global namespace for all things related to this app. It is a hold-over from the original Indigo

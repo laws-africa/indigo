@@ -14,7 +14,7 @@ import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
-import { createLegacyViews, legacySetup } from './legacy';
+import { legacySetup } from './legacy';
 import setupXml from './xml';
 
 window.tippy = tippy;
@@ -32,6 +32,7 @@ class IndigoApp {
     window.dispatchEvent(new Event('indigo.beforebootstrap'));
 
     legacySetup();
+    this.setupUser();
     this.setupMonaco();
     this.setupHtmx();
     this.setupPopups();
@@ -41,7 +42,7 @@ class IndigoApp {
     setupXml();
 
     window.dispatchEvent(new Event('indigo.beforecreateviews'));
-    createLegacyViews();
+    this.createLegacyViews();
     window.dispatchEvent(new Event('indigo.viewscreated'));
 
     this.disableWith();
@@ -66,6 +67,13 @@ class IndigoApp {
           xhr.setRequestHeader('X-CSRFToken', Indigo.csrfToken);
         }
       }
+    });
+  }
+
+  setupUser () {
+    // setup legacy Backbone user model
+    Indigo.user = new Indigo.User(Indigo.Preloads.user || {
+      permissions: []
     });
   }
 
@@ -247,6 +255,34 @@ class IndigoApp {
         }
       }
     });
+  }
+
+  createLegacyViews () {
+    // Create legacy Backbone views based on the data-backbone-view attribute on the body.
+    const viewsAttr = document.body.getAttribute('data-backbone-view') || '';
+    const viewNames = viewsAttr.split(' ').filter((name) => name);
+    const createdViews = [];
+
+    for (const name of viewNames) {
+      if (Indigo[name]) {
+        const view = new Indigo[name]();
+        Indigo.view = Indigo.view || view;
+        window.dispatchEvent(new CustomEvent('indigo.createview', {
+          detail: {
+            name,
+            view
+          }
+        }));
+        createdViews.push(view);
+      }
+    }
+
+    Indigo.views = createdViews;
+    for (const view of Indigo.views) {
+      if (view && typeof view.render === 'function') {
+        view.render();
+      }
+    }
   }
 
   setupTooltips () {

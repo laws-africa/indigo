@@ -47,29 +47,4 @@ export function legacySetup () {
     .ajaxStop(function (event) {
       Indigo.progressView.pop();
     });
-
-  Indigo.user = new Indigo.User(Indigo.Preloads.user || {
-    permissions: []
-  });
-}
-
-export function createLegacyViews () {
-  const Indigo = window.Indigo;
-
-  // what views must we load?
-  const views = ($('body').data('backbone-view') || '').split(' ');
-  Indigo.views = _.reject(_.map(views, function (name) {
-    if (name && Indigo[name]) {
-      const view = new Indigo[name]();
-      Indigo.view = Indigo.view || view;
-      window.dispatchEvent(new CustomEvent('indigo.createview', {
-        detail: {
-          name: name,
-          view: view
-        }
-      }));
-      return view;
-    }
-  }), function (v) { return !v; });
-  _.invoke(Indigo.views, 'render');
 }

@@ -75,27 +75,6 @@ const appConfig = {
   ]
 };
 
-const bluebellMonacoConfig = {
-  entry: './indigo_app/js/bluebell-monaco.src.js',
-  mode: 'production',
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ['css-loader']
-      }
-    ],
-  },
-  optimization: {
-    usedExports: 'global',
-  },
-  output: {
-    filename: 'bluebell-monaco.js',
-    path: path.resolve(__dirname, 'indigo_app/static/javascript/indigo'),
-    chunkFormat: false
-  }
-};
-
 const monacoConfig = {
   entry: './indigo_app/js/monaco.src.js',
   mode: 'production',
@@ -126,4 +105,4 @@ const monacoConfig = {
 };
 
 
-module.exports = [legacyConfig, appConfig, bluebellMonacoConfig, monacoConfig];
+module.exports = [legacyConfig, appConfig, monacoConfig];

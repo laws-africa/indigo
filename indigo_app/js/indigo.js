@@ -6,6 +6,7 @@ import '@lawsafrica/law-widgets/dist/components/la-table-of-contents-controller'
 import '@lawsafrica/law-widgets/dist/components/la-decorate-external-refs';
 import '@lawsafrica/law-widgets/dist/components/la-decorate-internal-refs';
 import '@lawsafrica/law-widgets/dist/components/la-decorate-terms';
+import * as bluebellMonaco from '@lawsafrica/bluebell-monaco';
 import './compat-imports';
 import { relativeTimestamps } from './timestamps';
 import htmx from 'htmx.org';
@@ -18,16 +19,27 @@ import { setupLegacyJquery } from './legacy';
 import setupXml from './xml';
 
 window.tippy = tippy;
+
+// Indigo is a global namespace for all things related to this app. It is a hold-over from the original Indigo
+// vanilla javascript. It is still used by many vanilla JS components. It's mostly used to store singletons
+// and registries that need to be accessed by multiple components.
 if (!window.Indigo) window.Indigo = {};
 const Indigo = window.Indigo;
 
 // for registering remarks-related components
-if (!Indigo.remarks) Indigo.remarks = {};
+Indigo.remarks = {};
 
 // for registering linting-related components
 Indigo.Linting = {
   // map from names to linter functions
   linters: {}
+};
+
+// bluebell grammar
+Indigo.grammars = {
+  registry: {
+    bluebell: bluebellMonaco.BluebellGrammarModel
+  }
 };
 
 class IndigoApp {

@@ -9,6 +9,7 @@ import { VSplitter, HSplitter } from './splitters';
 import { FacetGroup, RemoveFacetButton } from './facets';
 import ProgressBar from './progress';
 import OfflineAlert from './offline_alert';
+import ErrorBox from './error_box';
 
 export const vueComponents = {
   DocumentTOCView,
@@ -26,5 +27,6 @@ export const components = {
   HSplitter,
   VSplitter,
   ProgressBar,
-  OfflineAlert
+  OfflineAlert,
+  ErrorBox
 };

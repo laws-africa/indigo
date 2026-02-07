@@ -51,16 +51,6 @@ export function legacySetup () {
   Indigo.progressView = new Indigo.ProgressView();
   Indigo.offlineNoticeView = new Indigo.OfflineNoticeView();
   Indigo.errorView = new Indigo.ErrorBoxView();
-
-  // helpers
-  Indigo.ga = function () {
-    // google analytics are only in production
-    if (window.ga) {
-      ga.apply(null, arguments);
-    }
-  };
-
-  // always load the user view
   Indigo.user = new Indigo.User(Indigo.Preloads.user || {
     permissions: []
   });

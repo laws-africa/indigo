@@ -287,7 +287,6 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
 
     object_list = None
     page_size = 30
-    js_view = ''
     threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
@@ -487,7 +486,6 @@ class PlaceWorksIndexView(PlaceWorksViewBase, TemplateView):
 class PlaceLocalitiesView(PlaceViewBase, TemplateView):
     template_name = 'place/localities.html'
     tab = 'localities'
-    js_view = 'PlaceListView'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

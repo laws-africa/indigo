@@ -326,7 +326,6 @@ class DeleteWorkView(AtomicPostMixin, WorkViewBase, DeleteView):
 
 
 class WorkOverviewView(WorkViewBase, DetailView):
-    js_view = ''
     template_name_suffix = '/overview'
     tab = 'overview'
 
@@ -829,7 +828,6 @@ class AddWorkPointInTimeView(AtomicPostMixin, WorkDependentView, CreateView):
 
 
 class WorkRelatedView(WorkViewBase, DetailView):
-    js_view = ''
     template_name_suffix = '/related'
     tab = 'related'
 
@@ -886,7 +884,6 @@ class WorkRelatedView(WorkViewBase, DetailView):
 
 
 class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
-    js_view = ''
     template_name_suffix = '/versions'
     object_list = None
     page_size = 20

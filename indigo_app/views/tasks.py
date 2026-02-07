@@ -55,7 +55,7 @@ class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     model = Task
     paginate_by = 50
-    js_view = 'TaskListView TaskBulkUpdateView'
+    js_view = 'TaskBulkUpdateView'
     template_name_suffix = '/list'
 
     def get(self, request, *args, **kwargs):

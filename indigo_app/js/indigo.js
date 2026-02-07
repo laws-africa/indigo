@@ -21,6 +21,8 @@ window.tippy = tippy;
 if (!window.Indigo) window.Indigo = {};
 const Indigo = window.Indigo;
 
+if (!Indigo.remarks) Indigo.remarks = {};
+
 class IndigoApp {
   setup () {
     this.components = [];

@@ -42,6 +42,7 @@ class IndigoApp {
 
     window.dispatchEvent(new Event('indigo.beforecreateviews'));
     createLegacyViews();
+    window.dispatchEvent(new Event('indigo.viewscreated'));
 
     this.disableWith();
     this.preventUnload();

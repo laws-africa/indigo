@@ -48,7 +48,6 @@ export function legacySetup () {
       Indigo.progressView.pop();
     });
 
-  Indigo.progressView = new Indigo.ProgressView();
   Indigo.offlineNoticeView = new Indigo.OfflineNoticeView();
   Indigo.errorView = new Indigo.ErrorBoxView();
   Indigo.user = new Indigo.User(Indigo.Preloads.user || {
@@ -75,6 +74,4 @@ export function createLegacyViews () {
     }
   }), function (v) { return !v; });
   _.invoke(Indigo.views, 'render');
-
-  window.dispatchEvent(new Event('indigo.viewscreated'));
 }

@@ -292,7 +292,7 @@
       }
 
       // ensure the renderer is ready
-      await Indigo.deferredToAsync(this.htmlRenderer.ready);
+      await this.htmlRenderer.ready;
 
       const html = this.htmlRenderer.renderXmlElement(this.document, toRender);
       this.prepareHtmlForRender(html);

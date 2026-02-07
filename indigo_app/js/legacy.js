@@ -1,4 +1,4 @@
-export function legacySetup () {
+export function setupLegacyAjax () {
   const Indigo = window.Indigo;
 
   // global error handler

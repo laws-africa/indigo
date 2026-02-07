@@ -14,7 +14,7 @@ import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
-import { legacySetup } from './legacy';
+import { setupLegacyAjax } from './legacy';
 import setupXml from './xml';
 
 window.tippy = tippy;
@@ -31,7 +31,7 @@ class IndigoApp {
 
     window.dispatchEvent(new Event('indigo.beforebootstrap'));
 
-    legacySetup();
+    setupLegacyAjax();
     this.setupUser();
     this.setupMonaco();
     this.setupHtmx();

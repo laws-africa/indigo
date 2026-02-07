@@ -53,9 +53,6 @@ export function legacySetup () {
   Indigo.errorView = new Indigo.ErrorBoxView();
 
   // helpers
-  Indigo.toXml = function (node) {
-    return new XMLSerializer().serializeToString(node);
-  };
   Indigo.ga = function () {
     // google analytics are only in production
     if (window.ga) {

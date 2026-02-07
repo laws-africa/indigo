@@ -1,5 +1,11 @@
-(function(exports) {
-  var xsltSource =
+export default function setupXml () {
+  const Indigo = window.Indigo;
+
+  Indigo.toXml = function (node) {
+    return new XMLSerializer().serializeToString(node);
+  };
+
+  const xsltSource =
     '<?xml version="1.0"?>' +
     '<!--' +
     '  Pretty-print Akoma Ntoso XML. Indents only nodes that cannot contain significant whitespace.' +
@@ -74,16 +80,16 @@
     '  </xsl:template>' +
     '</xsl:stylesheet>';
 
-  var serializer = new XMLSerializer();
-  var transform = new XSLTProcessor();
-  transform.importStylesheet($.parseXML(xsltSource));
+  const serializer = new XMLSerializer();
+  const transform = new XSLTProcessor();
+  transform.importStylesheet(new DOMParser().parseFromString(xsltSource, 'text/xml'));
 
-  exports.prettyPrintXml = function(xml) {
-    if (typeof(xml) == "string") {
+  Indigo.prettyPrintXml = function (xml) {
+    if (typeof (xml) === 'string') {
       // squash whitespace
-      xml = $.parseXML(xml.replace(/([\n\r]| +)/g, ' '));
+      xml = xml.replace(/([\n\r]| +)/g, ' ');
+      xml = new DOMParser().parseFromString(xml, 'text/xml');
     }
-    xml = transform.transformToDocument(xml);
-    return serializer.serializeToString(xml);
+    return serializer.serializeToString(transform.transformToDocument(xml));
   };
-})(window);
+}

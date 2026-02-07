@@ -15,6 +15,7 @@ import HttpApi from 'i18next-http-backend';
 import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import { createLegacyViews, legacySetup } from './legacy';
+import setupXml from './xml';
 
 window.tippy = tippy;
 if (!window.Indigo) window.Indigo = {};
@@ -31,23 +32,14 @@ class IndigoApp {
     window.dispatchEvent(new Event('indigo.beforebootstrap'));
 
     legacySetup();
-
     this.setupMonaco();
     this.setupHtmx();
     this.setupPopups();
     this.setupTooltips();
+    this.setupComponents();
 
-    for (const [name, component] of Object.entries(components)) {
-      this.componentLibrary[name] = component;
-    }
+    setupXml();
 
-    registerComponents(vueComponents);
-    window.dispatchEvent(new Event('indigo.vue-components-registered'));
-
-    this.createComponents(document.body);
-    this.createVueComponents(document.body);
-
-    window.dispatchEvent(new Event('indigo.components-created'));
     window.dispatchEvent(new Event('indigo.beforecreateviews'));
     createLegacyViews();
 
@@ -127,6 +119,20 @@ class IndigoApp {
     document.body.addEventListener('hx-messages', (e) => {
       e.detail.value.forEach(this.createToast);
     });
+  }
+
+  setupComponents () {
+    for (const [name, component] of Object.entries(components)) {
+      this.componentLibrary[name] = component;
+    }
+
+    registerComponents(vueComponents);
+    window.dispatchEvent(new Event('indigo.vue-components-registered'));
+
+    this.createComponents(document.body);
+    this.createVueComponents(document.body);
+
+    window.dispatchEvent(new Event('indigo.components-created'));
   }
 
   createToast (message) {

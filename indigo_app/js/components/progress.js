@@ -3,8 +3,7 @@ export default class ProgressBar {
     this.element = element;
     this.stack = 0;
     this.pegged = false;
-    // eslint-disable-next-line no-undef
-    Indigo.progressView = this;
+    window.Indigo.progressView = this;
   }
 
   peg () {

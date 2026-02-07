@@ -8,6 +8,7 @@ import { AddAmendmentButton } from './amendments';
 import { VSplitter, HSplitter } from './splitters';
 import { FacetGroup, RemoveFacetButton } from './facets';
 import ProgressBar from './progress';
+import OfflineAlert from './offline_alert';
 
 export const vueComponents = {
   DocumentTOCView,
@@ -24,5 +25,6 @@ export const components = {
   RemoveFacetButton,
   HSplitter,
   VSplitter,
-  ProgressBar
+  ProgressBar,
+  OfflineAlert
 };

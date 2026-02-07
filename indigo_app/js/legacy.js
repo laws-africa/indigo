@@ -48,7 +48,6 @@ export function legacySetup () {
       Indigo.progressView.pop();
     });
 
-  Indigo.offlineNoticeView = new Indigo.OfflineNoticeView();
   Indigo.errorView = new Indigo.ErrorBoxView();
   Indigo.user = new Indigo.User(Indigo.Preloads.user || {
     permissions: []

@@ -3,32 +3,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-const legacyConfig = {
-  entry: './indigo_app/js/external-imports.src.js',
-  mode: 'development',
-  resolve: {
-    modules: [
-      './node_modules',
-    ],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
-  },
-  optimization: {
-    usedExports: 'global'
-  },
-  output: {
-    filename: 'external-imports.js',
-    path: path.resolve(__dirname, 'indigo_app/static/lib'),
-    chunkFormat: false
-  }
-};
-
 const appConfig = {
   entry: './indigo_app/js/main.js',
   mode: 'production',
@@ -105,4 +79,4 @@ const monacoConfig = {
 };
 
 
-module.exports = [legacyConfig, appConfig, monacoConfig];
+module.exports = [appConfig, monacoConfig];

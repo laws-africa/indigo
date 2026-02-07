@@ -203,7 +203,7 @@
 
       const akn = this.el.querySelector('.document-primary-pane-content-pane la-akoma-ntoso');
       this.popupManager = new window.indigoAkn.PopupEnrichmentManager(akn);
-      this.popupManager.addProvider(new window.enrichments.PopupIssuesProvider(this.document.issues, this.popupManager));
+      this.popupManager.addProvider(new window.Indigo.Enrichments.PopupIssuesProvider(this.document.issues, this.popupManager));
 
       // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);

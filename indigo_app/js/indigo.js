@@ -1,4 +1,6 @@
 import { components, vueComponents } from './components';
+import * as indigoAkn from '@lawsafrica/indigo-akn';
+import * as bluebellMonaco from '@lawsafrica/bluebell-monaco';
 import '@lawsafrica/law-widgets/dist/components/la-akoma-ntoso';
 import '@lawsafrica/law-widgets/dist/components/la-gutter';
 import '@lawsafrica/law-widgets/dist/components/la-gutter-item';
@@ -6,9 +8,8 @@ import '@lawsafrica/law-widgets/dist/components/la-table-of-contents-controller'
 import '@lawsafrica/law-widgets/dist/components/la-decorate-external-refs';
 import '@lawsafrica/law-widgets/dist/components/la-decorate-internal-refs';
 import '@lawsafrica/law-widgets/dist/components/la-decorate-terms';
-import * as bluebellMonaco from '@lawsafrica/bluebell-monaco';
-import './compat-imports';
 import { relativeTimestamps } from './timestamps';
+import * as enrichments from './enrichments/popups';
 import htmx from 'htmx.org';
 import { createComponent, getVue, registerComponents } from './vue';
 import i18next from 'i18next';
@@ -17,6 +18,13 @@ import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import { setupLegacyJquery } from './legacy';
 import setupXml from './xml';
+import * as bootstrap from 'bootstrap';
+import { fromRange as textPositionFromRange } from 'dom-anchor-text-position';
+
+// make these libraries available globally for legacy code that expects them to be on the window
+window.bootstrap = bootstrap;
+window.indigoAkn = indigoAkn;
+window.textPositionFromRange = textPositionFromRange;
 
 window.tippy = tippy;
 
@@ -41,6 +49,9 @@ Indigo.grammars = {
     bluebell: bluebellMonaco.BluebellGrammarModel
   }
 };
+
+// make enrichments available to vanilla JS
+Indigo.Enrichments = enrichments;
 
 class IndigoApp {
   setup () {

@@ -276,7 +276,6 @@ class AmendmentInstructionStateChangeView(AtomicPostMixin, AmendmentInstructionD
         else:
             raise PermissionDenied
 
-        instruction.save()
         # the ?apply indicates that the template can show the apply/unapply button
         url = reverse('work_amendment_instruction_detail', kwargs={
             "frbr_uri": self.kwargs['frbr_uri'],

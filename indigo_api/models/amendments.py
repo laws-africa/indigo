@@ -107,6 +107,8 @@ class AmendmentInstruction(models.Model):
     title = models.CharField(_("title"), max_length=4096, null=True, blank=True)
     page_number = models.IntegerField(_("page number"), null=True, blank=True)
     provision_name = models.CharField(_("provision name"), max_length=4096, null=True, blank=True)
+    # the eid of the provision to be amended
+    provision_id = models.CharField(_("provision id"), max_length=4096, null=True, blank=True)
     amendment_instruction = models.TextField(_("amendment instruction"), null=True, blank=True)
 
     applied_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
@@ -137,8 +139,10 @@ class AmendmentInstruction(models.Model):
     def apply(self, user):
         self.applied_by_user = user
         self.applied_at = timezone.now()
+        self.save()
 
     @transition(field=state, source=[APPLIED], target=NEW)
     def unapply(self):
         self.applied_by_user = None
         self.applied_at = None
+        self.save()

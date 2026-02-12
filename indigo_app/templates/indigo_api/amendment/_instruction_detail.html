@@ -52,9 +52,40 @@
             {% endif %}
           {% endif %}
         </dd>
-        <dt class="col-12">{% trans "Amendment instruction" %}</dt>
-        <dd class="col-12">{{ instruction.amendment_instruction|linebreaksbr }}</dd>
       </dl>
+      <ul class="nav nav-tabs my-2">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#instruction-{{ instruction.pk }}-instructions"
+            type="button">{% trans "Amendment instruction" %}</button>
+        </li>
+        {% if instruction.is_applied and instruction.amended_document and instruction.amended_provision_id %}
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-bs-toggle="tab"
+              data-bs-target="#instruction-{{ instruction.pk }}-provision"
+              hx-get="{% url 'document_provision_embed' instruction.amended_document.pk instruction.amended_provision_id %}"
+              hx-target="#instruction-{{ instruction.pk }}-akn"
+              hx-trigger="click once"
+              type="button">{% trans "Amended provision" %}</button>
+          </li>
+        {% endif %}
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane show active" id="instruction-{{ instruction.pk }}-instructions" tabindex="0">
+          {{ instruction.amendment_instruction|linebreaksbr }}
+        </div>
+        {% if instruction.is_applied %}
+          <div class="tab-pane" id="instruction-{{ instruction.pk }}-provision" tabindex="0">
+              <div class="sheet-outer">
+                <div class="sheet-inner is-fragment spinner-when-empty" id="instruction-{{ instruction.pk }}-akn"></div>
+              </div>
+          </div>
+        {% endif %}
+      </div>
     </div>
     {% if can_apply or can_edit %}
       <div class="card-footer d-flex justify-content-end" hx-target="closest li" hx-swap="outerHTML">

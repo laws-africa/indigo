@@ -141,12 +141,14 @@ class AmendmentInstruction(models.Model):
     def apply(self, user):
         self.applied_by_user = user
         self.applied_at = timezone.now()
+        self.state = self.APPLIED
         self.save()
 
     @transition(field=state, source=[APPLIED], target=NEW)
     def unapply(self):
         self.applied_by_user = None
         self.applied_at = None
+        self.state = self.NEW
         self.save()
 
     def determine_provision_id(self):
@@ -163,6 +165,9 @@ class AmendmentInstruction(models.Model):
     def best_document(self):
         """Get (one of) the best documents for this instruction, which is at this date and with this language."""
         from .documents import Document
+
+        if self.amended_document:
+            return self.amended_document
 
         return Document.objects.undeleted().filter(
             work=self.amendment.amended_work, expression_date=self.amendment.date,

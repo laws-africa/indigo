@@ -21,18 +21,17 @@ from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
 
 
-class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
+class DocumentDetailViewBase(AbstractAuthedIndigoView, DetailView):
     model = Document
+    queryset = Document.objects.no_xml().undeleted()
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
-    template_name = 'indigo_api/document/show.html'
     permission_required = ('indigo_api.view_document',)
 
-    def get_object(self, queryset=None):
-        doc = super().get_object(queryset)
-        if doc.deleted:
-            raise Http404()
-        return doc
+
+class DocumentDetailView(DocumentDetailViewBase):
+    queryset = Document.objects.undeleted()
+    template_name = 'indigo_api/document/show.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,10 +104,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         return json.dumps(document.document_xml)
 
 
-class ChooseDocumentProvisionView(AbstractAuthedIndigoView, DetailView):
-    model = Document
-    context_object_name = 'document'
-    pk_url_kwarg = 'doc_id'
+class ChooseDocumentProvisionView(DocumentDetailViewBase):
     template_name = 'indigo_api/document/_provisions.html'
     permission_required = ('indigo_api.publish_document',)
 
@@ -187,16 +183,24 @@ class DocumentProvisionDetailView(DocumentDetailView):
         return json.dumps(generator.ids.counters), json.dumps(generator.ids.eid_counter), json.dumps(attachment_counters)
 
 
-class DocumentPopupView(AbstractAuthedIndigoView, DetailView):
-    model = Document
-    context_object_name = 'document'
-    pk_url_kwarg = 'doc_id'
+class DocumentPopupView(DocumentDetailViewBase):
     template_name = 'indigo_api/document_popup.html'
-    queryset = Document.objects.no_xml().undeleted()
-    permission_required = ('indigo_api.view_document',)
+
+
+class DocumentProvisionEmbedView(DocumentDetailViewBase):
+    template_name = 'indigo_api/document/_portion.html'
+    portion_element = None
 
     def get_object(self, queryset=None):
-        doc = super(DocumentPopupView, self).get_object(queryset)
-        if doc.deleted:
+        document = super().get_object(queryset)
+
+        self.portion_element = document.doc.get_portion_element(self.kwargs['eid'])
+        if self.portion_element is None:
             raise Http404()
-        return doc
+
+        return document
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["portion_html"] = self.object.element_to_html(self.portion_element)
+        return context

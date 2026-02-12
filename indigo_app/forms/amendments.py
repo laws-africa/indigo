@@ -7,6 +7,7 @@ class AmendmentInstructionForm(forms.ModelForm):
     class Meta:
         model = AmendmentInstruction
         fields = [
+            'language',
             'amending_provision',
             'title',
             'page_number',

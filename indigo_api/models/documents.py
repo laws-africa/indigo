@@ -442,7 +442,7 @@ class Document(DocumentMixin, models.Model):
         return AmendmentInstruction.objects.filter(
             amendment__amended_work=self.work,
             amendment__date=self.expression_date,
-            # TOOD: language
+            language=self.language,
         )
 
     @property

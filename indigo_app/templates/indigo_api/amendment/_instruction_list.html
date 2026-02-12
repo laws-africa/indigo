@@ -1,22 +1,16 @@
 {% load i18n %}
 
-{% if edit_button %}
-  <a class="btn btn-outline-primary my-2" href="{% url 'work_amendment_instructions' work.frbr_uri amendment.pk %}">{% trans "Edit instructions" %}</a>
-{% endif %}
-
 <ul class="list-unstyled">
   {% for instruction in amendment.instructions.all %}
-    {% include 'indigo_api/amendment/_instruction_detail.html' %}
-  {% empty %}
-    {% if not can_add %}
-      <li class="mb-3 text-muted">{% trans "No instructions yet." %}</li>
+    {% if instruction.language == language %}
+      {% include 'indigo_api/amendment/_instruction_detail.html' %}
     {% endif %}
   {% endfor %}
   {% if can_add %}
     <li>
       <button
         class="btn btn-primary"
-        hx-get="{% url 'work_amendment_instruction_new' frbr_uri=work.frbr_uri amendment_id=amendment.id %}"
+        hx-get="{% url 'work_amendment_instruction_new' frbr_uri=work.frbr_uri amendment_id=amendment.id %}?lang={{ language.pk }}"
         hx-target="closest li"
         hx-swap="beforebegin"
       >{% trans "Add instruction" %}</button>

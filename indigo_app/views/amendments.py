@@ -8,7 +8,7 @@ import datetime
 
 from indigo.view_mixins import AtomicPostMixin
 from django_fsm import has_transition_perm
-from indigo_api.models import Amendment, AmendmentInstruction, ArbitraryExpressionDate
+from indigo_api.models import Amendment, AmendmentInstruction, ArbitraryExpressionDate, Document, Language
 from indigo_app.forms.amendments import AmendmentInstructionForm
 
 from .works import WorkViewBase, WorkDependentView
@@ -153,12 +153,19 @@ class AmendmentInstructionsView(AmendmentDetailViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context["edit_button"] = bool(self.request.htmx)
+
+        language = self.object.amended_work.country.primary_language
+        if self.request.GET.get('lang'):
+            language = Language.objects.filter(pk=self.request.GET.get('lang')).first() or language
+        context['language'] = language
+
         return context
 
     def get_template_names(self):
         if self.request.htmx:
-            return ['indigo_api/amendment/_instruction_list.html']
+            return ['indigo_api/amendment/_instruction_lang_tabs.html']
         return [self.template_name]
 
 
@@ -189,6 +196,14 @@ class AmendmentInstructionCreateView(AtomicPostMixin, AmendmentDetailViewBase, C
     template_name = 'indigo_api/amendment/_instruction_form.html'
     context_object_name = 'instruction'
     permission_required = ('indigo_api.add_amendmentinstruction',)
+
+    def get_initial(self):
+        initial = super().get_initial()
+        language = self.get_amendment().amended_work.country.primary_language
+        if self.request.GET.get('lang'):
+            language = Language.objects.filter(pk=self.request.GET.get('lang')).first() or language
+        initial['language'] = language
+        return initial
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault('form_action', reverse('work_amendment_instruction_new', kwargs={

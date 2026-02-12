@@ -21,8 +21,10 @@
       hx-get="{% url 'work_amendment_instructions' frbr_uri=event.related.amended_work.frbr_uri amendment_id=event.related.id %}"
       hx-trigger="click once"
       class="spinner-when-empty"
-      hx-target="next"
+      hx-target="#amendment-instructions-{{ event.related.pk }}"
     >{% trans "Amendment instructions" %}</summary>
-    <div class="spinner-when-empty"></div>
+    <div class="card">
+      <div class="card-body spinner-when-empty" id="amendment-instructions-{{ event.related.pk }}"></div>
+    </div>
   </details>
 {% endif %}

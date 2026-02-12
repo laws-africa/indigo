@@ -28,19 +28,7 @@
     <div class="{% if pub_doc %}container-fluid{% else %}container{% endif %} pb-5 mt-3">
       <div class="row">
         <div class="col">
-          {% include 'indigo_api/amendment/_instruction_list.html' with can_add=True can_edit=True %}
-          <form
-            method="post"
-            action="{% url 'work_amendment_instruction_clear' work.frbr_uri amendment.pk %}"
-            class="mt-3"
-          >
-            {% csrf_token %}
-            <button
-              type="submit"
-              class="btn btn-danger"
-              data-confirm="{% trans 'Are you sure you want to delete all instructions?' %}"
-            >{% trans "Delete all instructions" %}</button>
-          </form>
+          {% include 'indigo_api/amendment/_instruction_lang_tabs.html' with can_add=True can_edit=True %}
         </div>
         {% if pub_doc %}
           <div class="col sticky-top" style="height: 100vh">
@@ -48,6 +36,18 @@
           </div>
         {% endif %}
       </div>
+      <form
+        method="post"
+        action="{% url 'work_amendment_instruction_clear' work.frbr_uri amendment.pk %}"
+        class="mt-3"
+      >
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn btn-danger"
+          data-confirm="{% trans 'Are you sure you want to delete all instructions?' %}"
+        >{% trans "Delete all instructions" %}</button>
+      </form>
     </div>
   {% endwith %}
 {% endblock %}

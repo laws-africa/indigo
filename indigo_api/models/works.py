@@ -19,6 +19,7 @@ from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
 
 from indigo.plugins import plugins
+from indigo_api.models import Amendment
 from indigo_api.signals import work_approved, work_unapproved
 from indigo_api.timeline import TimelineCommencementEvent, describe_single_commencement, get_serialized_timeline, describe_repeal
 
@@ -783,6 +784,15 @@ class Work(WorkMixin, models.Model):
             "topic": topic,
             "ancestors": [t for t in topics if topic.path.startswith(t.path)]
         } for topic in taxonomy_topics]
+
+    def expression_languages(self):
+        """Return a list of Language objects used by this work's documents."""
+        from .documents import Document
+        from .places import Language
+
+        return list(Language.objects.filter(
+            pk__in=Document.objects.undeleted().filter(work=self).values_list('language', flat=True)
+        ))
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

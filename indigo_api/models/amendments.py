@@ -101,7 +101,7 @@ class AmendmentInstruction(models.Model):
 
     amendment = models.ForeignKey(Amendment, on_delete=models.CASCADE, null=False, related_name="instructions",
                                   verbose_name=_("amendment"))
-    # TODO: add language
+    language = models.ForeignKey("indigo_api.Language", on_delete=models.CASCADE, null=False, related_name="+")
     state = FSMField(_("state"), default=NEW)
     amending_provision = models.CharField(_("amending provision"), max_length=2048, null=True, blank=True)
     title = models.CharField(_("title"), max_length=4096, null=True, blank=True)

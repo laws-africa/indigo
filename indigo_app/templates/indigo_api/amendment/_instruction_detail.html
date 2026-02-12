@@ -51,12 +51,13 @@
             {% if not instruction.is_applied %}
               <form
                 hx-post="{% url 'work_amendment_instruction_applied' work.frbr_uri instruction.amendment_id instruction.pk %}"
+                data-component="AmendmentInstructionApplyForm"
               >
                 {% csrf_token %}
                 <button
                   class="btn btn-success"
-                  type="submit"
-                >{% trans "Done" %}</button>
+                  type="button"
+                >{% trans "Save and done" %}</button>
               </form>
             {% else %}
               <form

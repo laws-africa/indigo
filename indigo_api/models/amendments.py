@@ -114,6 +114,7 @@ class AmendmentInstruction(models.Model):
     applied_at = models.DateTimeField(_("applied at"), null=True, blank=True)
     # actual eid of the amended provision
     amended_provision_id = models.CharField(_("amended provision id"), max_length=4096, null=True, blank=True)
+    amended_document = models.ForeignKey("indigo_api.Document", on_delete=models.SET_NULL, null=True, blank=True)
     # the text and xml of the provision after the amendment has been applied, for reference
     amended_text = models.TextField(_("amended text"), null=True, blank=True)
     amended_xml = models.TextField(_("amended xml"), null=True, blank=True)

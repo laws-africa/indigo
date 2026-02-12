@@ -588,6 +588,27 @@ class Document(DocumentMixin, models.Model):
         portion.main_content.append(provision_xml)
         return portion
 
+    def get_portion_eid_by_reference(self, portion_name):
+        """Get the eid for a natural-language provision name, such as "section 32(a)". This uses the same logic as the
+        internal provision reference resolver.
+
+        Returns a provision eid or None."""
+        from indigo.analysis.refs.provisions import ProvisionRefsMatcher
+
+        plugin = plugins.for_document('internal-refs', self)
+        if plugin and isinstance(plugin, ProvisionRefsMatcher):
+            # resolve references local to this document
+            plugin.setup(self.expression_uri)
+            plugin.this_target = (self.expression_uri, self.doc.root)
+            plugin.run_text_extraction(portion_name)
+            for citation in reversed(plugin.citations):
+                try:
+                    uri = FrbrUri.parse(citation.href)
+                    if uri.portion:
+                        return uri.portion
+                except ValueError:
+                    pass
+
     def update_provision_xml(self, provision_eid, provision_xml):
         xml = etree.fromstring(provision_xml)
         # portionBody will always have exactly one child

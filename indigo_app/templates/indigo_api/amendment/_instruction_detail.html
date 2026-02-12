@@ -39,7 +39,12 @@
           {{ instruction.amending_provision }}
         </dd>
         <dt class="col-3">{% trans "Amended provision" %}</dt>
-        <dd class="col-9">{{ instruction.provision_name }}</dd>
+        <dd class="col-9">
+          {{ instruction.provision_name }}
+          {% if instruction.provision_id %}
+            ({{ instruction.provision_id }})
+          {% endif %}
+        </dd>
         <dt class="col-12">{% trans "Amendment instruction" %}</dt>
         <dd class="col-12">{{ instruction.amendment_instruction|linebreaksbr }}</dd>
       </dl>

@@ -146,3 +146,13 @@ class AmendmentInstruction(models.Model):
         self.applied_by_user = None
         self.applied_at = None
         self.save()
+
+    def determine_provision_id(self):
+        """Try to set the provision_id based on provision_name by using the references mechanism to look it up in a
+        document suitable for this provision (if any). This is best effort."""
+        if self.provision_name:
+            for document in self.amendment.amended_work.document_set.filter(expression_date=self.amendment.date):
+                eid = document.get_portion_eid_by_reference(self.provision_name)
+                if eid:
+                    self.provision_id = eid
+                    return

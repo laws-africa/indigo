@@ -13,3 +13,7 @@ class AmendmentInstructionForm(forms.ModelForm):
             'provision_name',
             'amendment_instruction',
         ]
+
+    def save(self, commit=True):
+        self.instance.determine_provision_id()
+        return super().save(commit)

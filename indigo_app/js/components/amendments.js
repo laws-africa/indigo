@@ -23,6 +23,20 @@ export class AddAmendmentButton {
   }
 }
 
+/** When the user clicks the amended provision eid, open it in the TOC. */
+export class AmendmentInstructionProvision {
+  constructor (a) {
+    const provisionId = a.getAttribute('data-provision-id');
+
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (provisionId && window.Indigo.view.tocView) {
+        window.Indigo.view.tocView.selectItemById(provisionId);
+      }
+    });
+  }
+}
+
 export class AmendmentInstructionApplyForm {
   constructor (form) {
     this.form = form;

@@ -112,6 +112,14 @@ class AmendmentInstruction(models.Model):
     applied_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+',
                                         verbose_name=_("applied by"))
     applied_at = models.DateTimeField(_("applied at"), null=True, blank=True)
+    # actual eid of the amended provision
+    amended_provision_id = models.CharField(_("amended provision id"), max_length=4096, null=True, blank=True)
+    # the text and xml of the provision after the amendment has been applied, for reference
+    amended_text = models.TextField(_("amended text"), null=True, blank=True)
+    amended_xml = models.TextField(_("amended xml"), null=True, blank=True)
+    # the xml and text of the amended provision once it was saved
+    final_amended_text = models.TextField(_("final amended text"), null=True, blank=True)
+    final_amended_xml = models.TextField(_("final amended text"), null=True, blank=True)
 
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)

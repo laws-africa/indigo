@@ -1,4 +1,4 @@
-{% extends "indigo_api/work_layout.html" %}
+{% extends "indigo_api/work/layout.html" %}
 {% load i18n %}
 
 {% block view-id %}work-related-view{% endblock %}
@@ -10,28 +10,28 @@
   <div class="card mb-3" id="subsidiary">
     <h5 class="card-header">{% trans "Subsidiary" %}</h5>
     <div class="card-body">
-      {% include 'indigo_api/_work_subsidiary_tables.html' %}
+      {% include 'indigo_api/work/_subsidiary_tables.html' %}
     </div>
   </div>
 
   <div class="card mb-3" id="commencement">
     <h5 class="card-header">{% trans "Commencement" %}</h5>
     <div class="card-body">
-      {% include 'indigo_api/_work_commencement_tables.html' %}
+      {% include 'indigo_api/work/_commencement_tables.html' %}
     </div>
   </div>
 
   <div class="card mb-3" id="amended">
     <h5 class="card-header">{% trans "Amendment" %}</h5>
     <div class="card-body">
-      {% include 'indigo_api/_work_amendment_tables.html' %}
+      {% include 'indigo_api/work/_amendment_tables.html' %}
     </div>
   </div>
 
   <div class="card mb-3" id="repeal">
     <h5 class="card-header">{% trans "Repeal" %}</h5>
     <div class="card-body">
-      {% include 'indigo_api/_work_repeal_tables.html' %}
+      {% include 'indigo_api/work/_repeal_tables.html' %}
     </div>
   </div>
 {% endblock %}

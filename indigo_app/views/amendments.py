@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):
-    template_name_suffix = '_amendments'
+    template_name_suffix = '/amendments'
     tab = 'amendments'
 
     def get_context_data(self, **kwargs):

@@ -13,7 +13,7 @@
         <div class="d-flex align-items-start">
           <div>
             {% url 'tasks' place.place_code as form_url %}
-            {% include 'indigo_api/_task_filter_form.html' %}
+            {% include 'indigo_api/task/_filter_form.html' %}
           </div>
 
           <div class="btn-toolbar ms-auto">
@@ -26,12 +26,12 @@
           </div>
         </div>
       </div>
-      {% include 'indigo_api/_task_bulk_update_form.html' %}
+      {% include 'indigo_api/task/_bulk_update_form.html' %}
     </div>
   </div>
 
   <div id="task-list">
-    {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=True place=False %}
+    {% include 'indigo_api/task/_list.html' with tasks=tasks selectable=True place=False %}
   </div>
 </div>
 {% endblock %}

@@ -25,7 +25,7 @@
             <span class="document-title">{{ document.title }}</span>
             <span class="badge text-bg-info if-published">{% trans 'published' %}</span>
             <span class="badge text-bg-warning if-draft">{% trans 'draft' %}</span>
-            {% include 'indigo_api/_work_info_badges.html' with work=document.work%}
+            {% include 'indigo_api/work/_info_badges.html' with work=document.work%}
           </h5>
         </div>
 
@@ -115,7 +115,7 @@
   {% include "indigo_api/document/_attachments.html" %}
   {% include "indigo_api/document/_cheatsheet.html" %}
   {% include "indigo_api/document/_issues.html" %}
-  {% include "indigo_api/_work_chooser_modal.html" %}
+  {% include "indigo_api/work/_chooser_modal.html" %}
 {% endblock %}
 
 {% block site-footer %}{% endblock %}

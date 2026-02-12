@@ -1,12 +1,12 @@
 {% load humanize indigo_app i18n %}
 <div class="row">
   <div class="col-md-3" id="task-facets">
-    {% include "indigo_api/_task_facets.html" %}
+    {% include "indigo_api/task/_facets.html" %}
   </div>
   <div class="col-md-9">
     {% include 'indigo_api/_active_facets.html' with facets=task_facets form="task-filter-form" %}
     {% include 'indigo_api/_active_facets.html' with facets=work_facets form="task-filter-form" %}
 
-    {% include "indigo_api/_task_list_table.html" %}
+    {% include "indigo_api/task/_list_table.html" %}
   </div>
 </div>

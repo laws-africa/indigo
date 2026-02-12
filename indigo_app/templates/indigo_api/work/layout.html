@@ -23,7 +23,7 @@
         {% if work.pk %}
           <h5 class="main-header-title">
             <span class="work-title">{{ work.title }}</span>
-            {% include 'indigo_api/_work_info_badges.html' %}
+            {% include 'indigo_api/work/_info_badges.html' %}
           </h5>
           {% if work.numbered_title %}<h6>{{ work.numbered_title }}</h6>{% endif %}
         {% endif %}
@@ -70,7 +70,7 @@
   {% endblock %}
 </div>
 
-{% include "indigo_api/_work_chooser_modal.html" %}
+{% include "indigo_api/work/_chooser_modal.html" %}
 
 {% endblock %}
 

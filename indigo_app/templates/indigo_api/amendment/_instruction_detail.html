@@ -41,11 +41,15 @@
         <dt class="col-3">{% trans "Amended provision" %}</dt>
         <dd class="col-9">
           {{ instruction.provision_name }}
-          {% if can_apply %}
-            (<a href="#" data-component="AmendmentInstructionProvision" data-provision-id="{{ instruction.provision_id }}"
+          {% if instruction.provision_id %}
+            {% if can_apply %}
+              (<a href="#" data-component="AmendmentInstructionProvision" data-provision-id="{{ instruction.provision_id }}"
             >{{ instruction.provision_id }}</a>)
-          {% else %}
-            ({{ instruction.provision_id }})
+            {% elif instruction.best_document %}
+              (<a href="{% url 'document_provision' instruction.best_document.id instruction.provision_id %}">{{ instruction.provision_id }}</a>)
+            {% else %}
+              ({{ instruction.provision_id }})
+            {% endif %}
           {% endif %}
         </dd>
         <dt class="col-12">{% trans "Amendment instruction" %}</dt>

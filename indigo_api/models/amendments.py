@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from actstream import action
 from django.db.models import signals
 from django.db import models
@@ -156,3 +158,12 @@ class AmendmentInstruction(models.Model):
                 if eid:
                     self.provision_id = eid
                     return
+
+    @cached_property
+    def best_document(self):
+        """Get (one of) the best documents for this instruction, which is at this date and with this language."""
+        from .documents import Document
+
+        return Document.objects.undeleted().filter(
+            work=self.amendment.amended_work, expression_date=self.amendment.date,
+            language=self.language).first()

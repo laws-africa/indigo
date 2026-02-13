@@ -2,10 +2,13 @@
 Changelog
 =========
 
-19.2.0 (???)
+20.0.0 (???)
 ------------
 
 * Remove the need for ATOMIC_REQUESTS to allow better use of transaction-level database connection pooling.
+* Move the main javascript app entry-point from indigo_app/static/javascript/indigo into indog_app/js/main.js which is
+  compiled by webpack. New javascript functionality will go into the webpack-compiled javascript, while legacy code
+  will remain in the old indigo_app/static/javascript/indigo directory until it can be migrated.
 
 19.1.0 (2025-12-01)
 -------------------

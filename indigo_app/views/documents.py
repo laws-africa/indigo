@@ -1,4 +1,6 @@
 import json
+
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
@@ -15,10 +17,12 @@ from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
 from indigo.xmlutils import rewrite_all_attachment_work_components
 from indigo_api.models import Document, Country, Subtype, Amendment, Task
+from indigo_api.utils import adiff_html_str
 from indigo_app.serializers import WorkAmendmentDetailSerializer, WorkDetailSerializer, DocumentDetailSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.forms import DocumentForm
-from .base import AbstractAuthedIndigoView
+from indigo_lib.differ import AKNHTMLDiffer
+from .base import AbstractAuthedIndigoView, AsyncDispatchMixin
 
 
 class DocumentDetailViewBase(AbstractAuthedIndigoView, DetailView):
@@ -187,9 +191,20 @@ class DocumentPopupView(DocumentDetailViewBase):
     template_name = 'indigo_api/document_popup.html'
 
 
-class DocumentProvisionEmbedView(DocumentDetailViewBase):
+class DocumentProvisionEmbedView(AsyncDispatchMixin, DocumentDetailViewBase):
     template_name = 'indigo_api/document/_portion.html'
+    queryset = Document.objects.undeleted().for_rendering()
     portion_element = None
+
+    async def get(self, request, *args, **kwargs):
+        context = await self.get_sync()
+        await self.add_async_context(context)
+        return self.render_to_response(context)
+
+    @sync_to_async
+    def get_sync(self):
+        self.object = self.get_object()
+        return self.get_context_data(object=self.object)
 
     def get_object(self, queryset=None):
         document = super().get_object(queryset)
@@ -202,5 +217,35 @@ class DocumentProvisionEmbedView(DocumentDetailViewBase):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["portion_html"] = self.object.element_to_html(self.portion_element)
+
+        if 'diff' in self.request.GET:
+            differ = AKNHTMLDiffer()
+
+            new_xml = differ.preprocess_xml_str(etree.tostring(self.portion_element, encoding='unicode'))
+            new_element = etree.fromstring(new_xml)
+            context["new_html"] = self.object.element_to_html(new_element)
+
+            old_document = self.queryset.filter(
+                language=self.object.language, expression_date__lt=self.object.expression_date
+            ).order_by('-expression_date').first()
+
+            old_html = ""
+            if old_document:
+                old_element = old_document.doc.get_portion_element(self.kwargs['eid'])
+                if old_element is not None:
+                    old_xml = etree.tostring(old_element, encoding='unicode')
+                    old_xml = differ.preprocess_xml_str(old_xml)
+                    old_html = old_document.element_to_html(etree.fromstring(old_xml))
+            context["old_html"] = old_html
+
+        else:
+            context["portion_html"] = self.object.element_to_html(self.portion_element)
+
         return context
+
+    async def add_async_context(self, context):
+        """ Get the async context data for the diff view. """
+        if 'old_html' in context and 'new_html' in context:
+            diff = await adiff_html_str(context['old_html'], context['new_html'])
+            context['portion_html'] = diff
+            context['diff'] = True

@@ -50,6 +50,11 @@ class Amendment(models.Model):
     def can_delete(self):
         return not self.expressions().exists()
 
+    def instruction_languages(self):
+        """Languages for which there should be instructions for this amendment."""
+        languages = self.amended_work.expression_languages()
+        return languages or [self.amended_work.country.primary_language]
+
     @staticmethod
     def order_further(amendments):
         """ Not always needed and can be expensive.
@@ -155,7 +160,7 @@ class AmendmentInstruction(models.Model):
         """Try to set the provision_id based on provision_name by using the references mechanism to look it up in a
         document suitable for this provision (if any). This is best effort."""
         if self.provision_name:
-            for document in self.amendment.amended_work.document_set.filter(expression_date=self.amendment.date):
+            for document in self.amendment.amended_work.document_set.filter(expression_date__lte=self.amendment.date).order_by('-expression_date'):
                 eid = document.get_portion_eid_by_reference(self.provision_name)
                 if eid:
                     self.provision_id = eid

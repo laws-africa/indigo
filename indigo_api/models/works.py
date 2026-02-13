@@ -7,6 +7,7 @@ from django.db.models import JSONField, signals, Q
 from django.db.models.signals import m2m_changed
 from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.urls import reverse
@@ -17,6 +18,7 @@ import reversion.revisions
 from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
 from treebeard.mp_tree import MP_Node
+import requests
 
 from indigo.plugins import plugins
 from indigo_api.models import Amendment
@@ -904,6 +906,17 @@ class PublicationDocument(models.Model):
             self.work.frbr_uri,
             self.filename,
         ])
+
+    def get_file(self):
+        if self.file:
+            return self.file
+
+        elif self.trusted_url:
+            # if we have a trusted URL but no file, we can try to fetch the file from the URL and return it
+            # this allows us to support publication documents that are hosted externally, e.g. on a government website
+            response = requests.get(self.trusted_url)
+            response.raise_for_status()
+            return ContentFile(response.content)
 
 
 class CommencementManager(models.Manager):

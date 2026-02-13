@@ -44,7 +44,8 @@ const appConfig = {
   plugins: [
     new VueLoaderPlugin(),
     new ESLintPlugin({
-      exclude: ['**/legacy.js']
+      files: 'indigo_app/js/**/*.{js,vue}',
+      exclude: ['**/legacy.js', 'node_modules/**', '**/*.ts']
     }),
   ]
 };

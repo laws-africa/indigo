@@ -50,6 +50,11 @@ class Amendment(models.Model):
     def can_delete(self):
         return not self.expressions().exists()
 
+    def instruction_languages(self):
+        """Languages for which there should be instructions for this amendment."""
+        languages = self.amended_work.expression_languages()
+        return languages or [self.amended_work.country.primary_language]
+
     @staticmethod
     def order_further(amendments):
         """ Not always needed and can be expensive.

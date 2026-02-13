@@ -4,7 +4,7 @@
   <a class="btn btn-primary mb-2" href="{% url 'work_amendment_instructions' work.frbr_uri amendment.pk %}">{% trans "Edit instructions" %}</a>
 {% endif %}
 
-{% with languages=amendment.amended_work.expression_languages %}
+{% with languages=amendment.instruction_languages %}
   <ul class="nav nav-tabs pb-3 {% if languages|length == 1 %}d-none{% endif %}">
     {% for language in languages %}
       <li class="nav-item" role="presentation">

@@ -67,7 +67,7 @@
               class="nav-link"
               data-bs-toggle="tab"
               data-bs-target="#instruction-{{ instruction.pk }}-provision"
-              hx-get="{% url 'document_provision_embed' instruction.amended_document.pk instruction.amended_provision_id %}"
+              hx-get="{% url 'document_provision_embed' instruction.amended_document.pk instruction.amended_provision_id %}?diff"
               hx-target="#instruction-{{ instruction.pk }}-akn"
               hx-trigger="click once"
               type="button">{% trans "Amended provision" %}</button>

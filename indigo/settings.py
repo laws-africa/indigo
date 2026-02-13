@@ -586,3 +586,8 @@ FOP_FONT_PATH = os.environ.get("FOP_FONT_PATH")
 TEST_RUNNER = os.environ.get('TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 # only used by xmlrunner https://github.com/xmlrunner/unittest-xml-reporting#django-support
 TEST_OUTPUT_DIR = './test-reports'
+
+SILENCED_SYSTEM_CHECKS = [
+    # we have URLs that don't end in slashes, and we don't want warnings about it
+    "urls.W002",
+]

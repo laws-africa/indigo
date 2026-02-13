@@ -42,7 +42,7 @@ urlpatterns = [
                 path('/new-batch', works.BatchAddWorkView.as_view(), name='new_batch_work'),
                 path('/new-offcanvas', works.AddWorkOffCanvasView.as_view(), name='new_work_offcanvas'),
                 path('/update-batch', works.BatchUpdateWorkView.as_view(), name='update_batch_work'),
-                path('//chooser', places.WorkChooserView.as_view(), name='place_work_chooser'),
+                path('/chooser', places.WorkChooserView.as_view(), name='place_work_chooser'),
                 path('/chooser/list', cache_page(30)(places.WorkChooserListView.as_view()), name='place_work_chooser_list'),
                 path('/detail/<int:pk>', include([
                     path('', places.WorkDetailView.as_view(), name='place_works_work_detail'),

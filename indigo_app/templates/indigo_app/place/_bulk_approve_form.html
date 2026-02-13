@@ -20,10 +20,11 @@
           id="bulk-approve-form"
       >
         {% csrf_token %}
+        {% if not form.broker.works and not form.broker.ignored_works %}
+          <div class="spinner-when-empty"></div>
+        {% endif %}
         {% for work in form.broker.works %}
           <input type="hidden" name="works" value="{{ work.pk }}">
-        {% empty %}
-          <div class="spinner-when-empty"></div>
         {% endfor %}
         {% if form.broker.works %}
           <div class="alert alert-warning">

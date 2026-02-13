@@ -11,16 +11,19 @@ from django.db import models
 from django.db.models import signals, Prefetch, Count, Q
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.dispatch import receiver
 from django.utils import timezone
-from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
+from django_comments.models import Comment
+from django_comments.signals import comment_was_posted
 
 from indigo.custom_tasks import tasks as custom_tasks
 from indigo.plugins import plugins
-from indigo_api.models import Document
-from indigo_api.signals import task_closed
+from indigo_api.models import Document, Amendment
+from indigo_api.signals import task_closed, task_assigned
 
 log = logging.getLogger(__name__)
 
@@ -93,14 +96,15 @@ class Task(models.Model):
         'unblock': 'unblocked',
     }
 
-    MAIN_CODES = [
-        ('convert-document', _('Convert document')),
-        ('import-content', _('Import content')),
-        ('apply-amendment', _('Apply amendment')),
-        ('link-gazette', _('Link gazette')),
-    ]
+    MAIN_CODES = {
+        'convert-document': _('Convert document'),
+        'import-content': _('Import content'),
+        'apply-amendment': _('Apply amendment'),
+        'amendment-instructions': _('Extract amendment instructions'),
+        'link-gazette': _('Link gazette'),
+    }
 
-    CODES = MAIN_CODES + [
+    CODES = list(MAIN_CODES.items()) + [
         ('check-update-primary', _('Check / update primary work')),
         ('check-update-repeal', _('Check / update repeal')),
         ('commences-on-date-missing', _("'Commences on' date missing")),
@@ -118,6 +122,13 @@ class Task(models.Model):
         ('link-taxonomy', _('Link taxonomy')),
         ('review-work-expression', _('Sign-off')),
     ]
+
+    DESCRIPTIONS = {
+        'convert-document': _('Convert the input file into a .docx file and remove automatic numbering.'),
+        'import-content': _('Import the content for this work at the appropriate date — usually the publication or consolidation date.'),
+        'link-gazette': _('Find and link the Gazette (original publication document) for this work.'),
+        'amendment-instructions': _('Extract the instructions for applying this amendment.'),
+    }
 
     class Meta:
         permissions = (
@@ -218,6 +229,8 @@ class Task(models.Model):
         else:
             action.send(assigned_by, verb='unassigned', action_object=self,
                         place_code=self.place.place_code)
+        # send task_assigned signal
+        task_assigned.send(sender=self.__class__, task=self)
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country, current_user):
@@ -494,6 +507,13 @@ class Task(models.Model):
         if self.annotation:
             return self.annotation.resolve_anchor()
 
+    def work_amendments(self):
+        """Get a list of Amendment objects for this work, at this date."""
+        amendments = []
+        if self.work and self.timeline_date:
+            amendments = Amendment.objects.filter(amended_work=self.work, date=self.timeline_date)
+        return amendments
+
     @property
     def customised(self):
         """ If this task is customised, return a new object describing the customisation.
@@ -541,6 +561,22 @@ class Task(models.Model):
         if self.extra_data is None:
             self.extra_data = {}
         return self.extra_data
+
+    def add_comment(self, user, comment_text):
+        """Add a comment to this task, by the given user, with the given text."""
+        comment = Comment(
+            user=user,
+            object_pk=self.pk,
+            user_name=user.get_full_name() or user.username,
+            user_email=user.email,
+            comment=comment_text,
+            content_type=ContentType.objects.get_for_model(Task),
+            site_id=Site.objects.get_current().id,
+        )
+        comment.submit_date = timezone.now()
+        comment.save()
+        comment_was_posted.send(sender=Comment, comment=comment, request=None)
+        return comment
 
     @property
     def friendly_state(self):

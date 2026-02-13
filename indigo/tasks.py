@@ -22,6 +22,7 @@ class TaskBroker:
         self.import_tasks = None
         self.gazette_tasks = None
         self.amendment_tasks = None
+        self.amendment_instruction_tasks = None
 
     def get_works_and_ignored_works(self, works):
         """ Return (works, ignored_works) from the form data, partitioning on those that can be approved in bulk
@@ -67,18 +68,40 @@ class TaskBroker:
 
         # amendment tasks
         self.amendment_tasks = []
+        self.amendment_instruction_tasks = []
         for amendment in self.amendments:
             if data.get(f'amendment_task_create_{amendment.pk}'):
-                # create new amendment tasks so that we don't overwrite descriptions on existing tasks
                 work = amendment.amended_work
-                self.amendment_tasks.append(
-                    Task.objects.create(country=work.country, locality=work.locality, work=work,
-                                        code='apply-amendment', title=dict(Task.MAIN_CODES)['apply-amendment'],
-                                        timeline_date=amendment.date,
-                                        description=data[f'amendment_task_description_{amendment.pk}'],
-                                        created_by_user=user))
+
+                # ensure there is an amendment instruction task, which the apply amendment task will be blocked by.
+                instruction_task = self.get_or_create_task(
+                    work=work, task_type='amendment-instructions', timeline_date=amendment.date, user=user,
+                    # TODO
+                    description=Task.DESCRIPTIONS['amendment-instructions'],
+                )
+                self.amendment_instruction_tasks.append(instruction_task)
+
+                # create new amendment tasks so that we don't overwrite descriptions on existing tasks
+                amendment_task = Task.objects.create(
+                    country=work.country, locality=work.locality, work=work,
+                    code='apply-amendment', title=Task.MAIN_CODES['apply-amendment'],
+                    timeline_date=amendment.date,
+                    description=data[f'amendment_task_description_{amendment.pk}'],
+                    created_by_user=user)
+                self.amendment_tasks.append(amendment_task)
+
+                # always block the new amendment task by the instruction task
+                amendment_task.blocked_by.add(self.amendment_instruction_tasks[-1])
+
+                if not data.get('update_amendment_tasks'):
+                    # if update_amendment_tasks has a value, then it will be processed below, otherwise we default
+                    # to blocking the amendment task
+                    amendment_task.block(user)
+
         if data.get('update_amendment_tasks'):
-            self.block_or_cancel_tasks(self.amendment_tasks, data['update_amendment_tasks'], user)
+            # block or cancel all amendment tasks and their instruction tasks, since they should be treated as a unit
+            self.block_or_cancel_tasks(self.amendment_tasks + self.amendment_instruction_tasks,
+                                       data['update_amendment_tasks'], user)
 
     def make_input_task_file(self, task, use_publication_document=False):
         """ Create and link an input TaskFile from the publication document, if there is one """
@@ -109,7 +132,7 @@ class TaskBroker:
                         code=task_type, timeline_date=timeline_date, created_by_user=user)
 
         # set these here in case an existing task is being updated
-        task.title = dict(Task.MAIN_CODES)[task_type]
+        task.title = Task.MAIN_CODES[task_type]
         task.description = description
         task.updated_by_user = user
         task.save()

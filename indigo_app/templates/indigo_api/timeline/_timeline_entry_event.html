@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <h6 {% if event.by_frbr_uri %}class="mb-0"{% endif %}>
   {{ event.description }}
   {% if event.by_frbr_uri and event.by_title %}
@@ -11,4 +13,18 @@
 {% endif %}
 {% if event.note %}
   <p class="ms-2 mt-1">{{ event.note }}</p>
+{% endif %}
+
+{% if event.type == "amendment" %}
+  <details class="mb-2">
+    <summary
+      hx-get="{% url 'work_amendment_instructions' frbr_uri=event.related.amended_work.frbr_uri amendment_id=event.related.id %}"
+      hx-trigger="click once"
+      class="spinner-when-empty"
+      hx-target="#amendment-instructions-{{ event.related.pk }}"
+    >{% trans "Amendment instructions" %}</summary>
+    <div class="card">
+      <div class="card-body spinner-when-empty" id="amendment-instructions-{{ event.related.pk }}"></div>
+    </div>
+  </details>
 {% endif %}

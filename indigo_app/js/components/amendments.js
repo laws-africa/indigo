@@ -22,3 +22,38 @@ export class AddAmendmentButton {
     });
   }
 }
+
+/** When the user clicks the amended provision eid, open it in the TOC. */
+export class AmendmentInstructionProvision {
+  constructor (a) {
+    const provisionId = a.getAttribute('data-provision-id');
+
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (provisionId && window.Indigo.view.tocView) {
+        window.Indigo.view.tocView.selectItemById(provisionId);
+      }
+    });
+  }
+}
+
+export class AmendmentInstructionApplyForm {
+  constructor (form) {
+    this.form = form;
+    this.button = this.form.querySelector('.btn-success');
+    if (this.button) {
+      this.button.addEventListener('click', (e) => this.click(e));
+    }
+  }
+
+  async click () {
+    this.button.setAttribute('disabled', true);
+    try {
+      await window.Indigo.view.save();
+      this.form.requestSubmit();
+    } catch {
+      // only re-enable the button if there was an error. on success, the whole element is re-loaded
+      this.button.removeAttribute('disabled');
+    }
+  }
+}

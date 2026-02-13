@@ -973,11 +973,12 @@ class BaseBulkCreatorTest(testcases.TestCase):
 
         tasks = main.work.tasks.all()
         task_titles = [t.title for t in tasks]
-        self.assertEqual(6, len(tasks))
+        self.assertEqual(8, len(tasks))
         self.assertIn('Link gazette', task_titles)
         self.assertIn('Convert document', task_titles)
         self.assertIn('Import content', task_titles)
         self.assertIn('Link amendment (passive)', task_titles)
+        self.assertIn('Extract amendment instructions', task_titles)
         self.assertEqual(2, task_titles.count('Apply amendment'))
 
         tasks = amend_3.work.tasks.all()

@@ -1,0 +1,84 @@
+{% load i18n %}
+
+<li {% if instruction.pk %}id="amendment-instruction-{{ instruction.pk }}"{% endif %} class="mb-3">
+  <form
+    method="post"
+    hx-post="{{ form_action }}"
+    hx-target="closest li"
+    hx-swap="outerHTML"
+  >
+    {{ form.language.as_hidden }}
+    {% csrf_token %}
+
+    <div class="card">
+      <div class="card-body">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for err in form.non_field_errors %}
+              <div>{{ err }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label">{{ form.title.label }}</label>
+          <input type="text" class="form-control"
+                 name="{{ form.title.html_name }}" value="{{ form.title.value|default_if_none:'' }}">
+          {% for error in form.title.errors %}
+            <div class="text-danger">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3 row">
+          <div class="col">
+            <label class="form-label">{{ form.page_number.label }}</label>
+            <input type="number" class="form-control"
+                   name="{{ form.page_number.html_name }}" value="{{ form.page_number.value|default_if_none:'' }}">
+            {% for error in form.page_number.errors %}
+              <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col">
+            <label class="form-label">{{ form.amending_provision.label }}</label>
+            <input type="text" class="form-control"
+                   name="{{ form.amending_provision.html_name }}" value="{{ form.amending_provision.value|default_if_none:'' }}">
+            {% for error in form.amending_provision.errors %}
+              <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">{{ form.provision_name.label }}</label>
+          <input type="text" class="form-control"
+                 name="{{ form.provision_name.html_name }}" value="{{ form.provision_name.value|default_if_none:'' }}">
+          {% for error in form.provision_name.errors %}
+            <div class="text-danger">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">{{ form.amendment_instruction.label }}</label>
+          <textarea class="form-control" rows="8"
+                    name="{{ form.amendment_instruction.html_name }}"
+                    required
+          >{{ form.amendment_instruction.value|default_if_none:'' }}</textarea>
+          {% for error in form.amendment_instruction.errors %}
+            <div class="text-danger">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="card-footer text-end">
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          {% if instruction.pk %}
+          hx-get="{% url 'work_amendment_instruction_detail' work.frbr_uri amendment.pk instruction.pk %}?edit"
+          hx-target="closest li"
+          hx-swap="outerHTML"
+          {% else %}
+          onclick="this.closest('li').remove()"
+          {% endif %}
+        >{% trans "Cancel" %}</button>
+        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+      </div>
+    </div>
+  </form>
+</li>

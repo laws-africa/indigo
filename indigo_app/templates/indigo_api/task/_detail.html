@@ -111,6 +111,23 @@
                hx-trigger="load"
           ></div>
         {% endif %}
+        {% if task.code == "amendment-instructions" %}
+          {% for amendment in task.work_amendments %}
+            <div>
+              <h5>
+                {% trans "Amended by" %}
+                <a href="{% url 'work' amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">
+                  {{ amendment.amending_work.title }}
+                </a>
+              </h5>
+              <div class="text-muted mb-4">{{ amendment.amending_work.frbr_uri }}</div>
+              <div
+                hx-get="{% url 'work_amendment_instructions' task.work.frbr_uri amendment.pk %}"
+                hx-trigger="load"
+              ></div>
+            </div>
+          {% endfor %}
+        {% endif %}
       </div>
 
       <div class="col-3">

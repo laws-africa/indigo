@@ -21,6 +21,11 @@ document_published = Signal()
 """
 
 
+task_assigned = Signal()
+""" A user has been assigned to a task
+"""
+
+
 task_closed = Signal()
 """ A user has closed a task
 """

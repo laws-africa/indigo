@@ -184,3 +184,14 @@ class DocumentTestCase(TestCase):
         self.assertEqual('/akn/za/act/gn/2023/1', description.by_frbr_uri)
         self.assertEqual('Commencing work', description.by_title)
         self.assertEqual(Work.objects.get(pk=15), description.by_work)
+
+    def test_get_portion_eid_by_reference(self):
+        doc = Document(
+            frbr_uri="/akn/za/act/1980/01",
+            work=self.work,
+            expression_date=date(2001, 1, 1),
+            language=self.eng
+        )
+        doc.content = DOCUMENT_FIXTURE % """<section eId="sec_1"><num>1</num><content><p>test</p></content></section>"""
+        self.assertEqual("sec_1", doc.get_portion_eid_by_reference("section 1"))
+        self.assertIsNone(doc.get_portion_eid_by_reference("section 22"))

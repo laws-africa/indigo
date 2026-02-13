@@ -1,0 +1,27 @@
+{% load i18n %}
+
+{% if edit_button %}
+  <a class="btn btn-primary mb-2" href="{% url 'work_amendment_instructions' work.frbr_uri amendment.pk %}">{% trans "Edit instructions" %}</a>
+{% endif %}
+
+{% with languages=amendment.amended_work.expression_languages %}
+  <ul class="nav nav-tabs pb-3 {% if languages|length == 1 %}d-none{% endif %}">
+    {% for language in languages %}
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link {% if forloop.first %}active{% endif %}"
+          data-bs-toggle="tab"
+          data-bs-target="#instructions-{{ amendment.pk }}-{{ language.pk }}"
+          type="button"
+        >{{ language }}</button>
+      </li>
+    {% endfor %}
+  </ul>
+  <div class="tab-content">
+    {% for language in languages %}
+      <div class="tab-pane {% if forloop.first %}show active{% endif %}" id="instructions-{{ amendment.pk}}-{{ language.pk }}">
+        {% include 'indigo_api/amendment/_instruction_list.html' with language=language %}
+      </div>
+    {% endfor %}
+  </div>
+{% endwith %}

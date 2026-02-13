@@ -42,7 +42,7 @@
   {% endif %}
 
   {% for entry in work_timeline %}
-    <li class="timeline-item card">
+    <li class="timeline-item card" id="timeline-{{ entry.date|date:'Y-m-d' }}">
       <h6 class="timeline-date">{{ entry.date|date:"Y-m-d" }}</h6>
       <div class="card-body">
         {% if not entry.events %}

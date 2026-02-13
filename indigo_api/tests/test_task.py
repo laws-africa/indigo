@@ -1,9 +1,12 @@
+from collections import defaultdict
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django_fsm import has_transition_perm
 
 from indigo.tasks import TaskBroker
-from indigo_api.models import Task, Work, Country
+from indigo_api.models import Amendment, Task, Work, Country
 
 
 class TaskTestCase(TestCase):
@@ -208,3 +211,60 @@ class TaskBrokerTestCase(TestCase):
         self.assertFalse(has_transition_perm(blocked_task.cancel, self.user))
         self.broker.block_or_cancel_tasks([blocked_task], 'cancel', self.user)
         self.assertEqual(Task.CANCELLED, blocked_task.state)
+
+    def test_create_amendment_tasks(self):
+        country = Country.objects.get(country__pk='ZA')
+        amended_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/1',
+            title='Amended Act, 2024',
+            country=country,
+            principal=True,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        amending_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/2',
+            title='Amending Act, 2024',
+            country=country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        amendment = Amendment.objects.create(
+            amended_work=amended_work,
+            amending_work=amending_work,
+            date=date(2024, 6, 1),
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+
+        broker = TaskBroker(Work.objects.filter(pk__in=[amended_work.pk, amending_work.pk]))
+        data = {
+            'conversion_task_description': Task.DESCRIPTIONS['convert-document'],
+            'import_task_description': Task.DESCRIPTIONS['import-content'],
+            'gazette_task_description': Task.DESCRIPTIONS['link-gazette'],
+            'amendment_task_description': "placeholder",
+            f'amendment_task_description_{amendment.pk}': 'Apply the amendment on the given date.',
+            f'amendment_task_create_{amendment.pk}': True,
+        }
+
+        broker.create_tasks(self.user, data)
+
+        self.assertEqual(1, len(broker.amendment_instruction_tasks))
+        self.assertEqual(1, len(broker.amendment_tasks))
+
+        instruction_task = broker.amendment_instruction_tasks[0]
+        amendment_task = broker.amendment_tasks[0]
+
+        self.assertEqual('amendment-instructions', instruction_task.code)
+        self.assertEqual('apply-amendment', amendment_task.code)
+        self.assertEqual(amended_work, instruction_task.work)
+        self.assertEqual(amended_work, amendment_task.work)
+        self.assertEqual(amendment.date, instruction_task.timeline_date)
+        self.assertEqual(amendment.date, amendment_task.timeline_date)
+
+        self.assertEqual(Task.OPEN, instruction_task.state)
+        self.assertEqual(Task.BLOCKED, amendment_task.state)
+        self.assertEqual([], list(instruction_task.blocked_by.all()))
+        self.assertEqual([instruction_task], list(amendment_task.blocked_by.all()))
+        self.assertEqual([amendment_task], list(instruction_task.blocking.all()))

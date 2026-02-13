@@ -22,6 +22,7 @@ from lxml import etree
 
 from bluebell.xml import XmlGenerator
 
+from indigo_api.models.amendments import AmendmentInstruction
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
@@ -436,6 +437,14 @@ class Document(DocumentMixin, models.Model):
             AmendmentEvent(a.date, a.amending_work.title, a.amending_work.frbr_uri)
             for a in self.amendments()]
 
+    def amendment_instructions(self):
+        """A queryset of amendment instructions applicable to this document's expression date and language."""
+        return AmendmentInstruction.objects.filter(
+            amendment__amended_work=self.work,
+            amendment__date=self.expression_date,
+            language=self.language,
+        )
+
     @property
     def repeal(self):
         return self.work.repeal
@@ -578,6 +587,27 @@ class Document(DocumentMixin, models.Model):
         portion.frbr_uri = self.frbr_uri
         portion.main_content.append(provision_xml)
         return portion
+
+    def get_portion_eid_by_reference(self, portion_name):
+        """Get the eid for a natural-language provision name, such as "section 32(a)". This uses the same logic as the
+        internal provision reference resolver.
+
+        Returns a provision eid or None."""
+        from indigo.analysis.refs.provisions import ProvisionRefsMatcher
+
+        plugin = plugins.for_document('internal-refs', self)
+        if plugin and isinstance(plugin, ProvisionRefsMatcher):
+            # resolve references local to this document
+            plugin.setup(self.expression_uri)
+            plugin.this_target = (self.expression_uri, self.doc.root)
+            plugin.run_text_extraction(portion_name)
+            for citation in reversed(plugin.citations):
+                try:
+                    uri = FrbrUri.parse(citation.href)
+                    if uri.portion:
+                        return uri.portion
+                except ValueError:
+                    pass
 
     def update_provision_xml(self, provision_eid, provision_xml):
         xml = etree.fromstring(provision_xml)

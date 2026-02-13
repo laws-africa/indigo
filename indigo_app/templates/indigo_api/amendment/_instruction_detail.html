@@ -1,0 +1,142 @@
+{% load i18n indigo_app %}
+
+<li id="amendment-instruction-{{ instruction.pk }}" class="mb-3 amendment-instruction">
+  <details class="card" {% if not instruction.is_applied %}open{% endif %}>
+    <summary class="card-header">
+      <span class="h5 mb-0">
+        {{ instruction.title }}
+        <span class="ms-2">
+        {% if instruction.is_applied %}
+          <i class="text-success fas fa-check-circle" title="{% trans "Applied" %}"></i>
+        {% endif %}
+      </span>
+      </span>
+    </summary>
+    <div class="card-body">
+      <dl class="mb-0 row">
+        {% if instruction.is_applied %}
+          <dt class="col-3">{% trans "Applied by" %}</dt>
+          <dd class="col-9">
+            {% user_profile instruction.applied_by_user %}
+            <span class="time-ago" data-timestamp="{{ instruction.applied_at|date:'c' }}"></span>
+          </dd>
+        {% endif %}
+        <dt class="col-3">{% trans "Created by" %}</dt>
+        <dd class="col-9">
+          {% user_profile instruction.created_by_user %}
+          <span class="time-ago" data-timestamp="{{ instruction.created_at|date:'c' }}"></span>
+        </dd>
+        <dt class="col-3">{% trans "Amended by" %}</dt>
+        <dd class="col-9">
+          {% with instruction.amendment.amending_work.publication_document as pub_doc %}
+            {% if instruction.page_number and pub_doc %}
+              <a href="{{ pub_doc.get_embed_url }}?page={{ instruction.page_number }}" target="pdf-iframe"
+              >{% trans "Page" %} {{ instruction.page_number }}</a>
+            {% else %}
+              {% trans "Page" %} {{ instruction.page_number|default_if_none:"?" }}
+            {% endif %}
+          {% endwith %}
+          {{ instruction.amending_provision }}
+        </dd>
+        <dt class="col-3">{% trans "Amended provision" %}</dt>
+        <dd class="col-9">
+          {{ instruction.provision_name }}
+          {% if instruction.provision_id %}
+            {% if can_apply %}
+              (<a href="#" data-component="AmendmentInstructionProvision" data-provision-id="{{ instruction.provision_id }}"
+            >{{ instruction.provision_id }}</a>)
+            {% elif instruction.best_document %}
+              (<a href="{% url 'document_provision' instruction.best_document.id instruction.provision_id %}">{{ instruction.provision_id }}</a>)
+            {% else %}
+              ({{ instruction.provision_id }})
+            {% endif %}
+          {% endif %}
+        </dd>
+      </dl>
+      <ul class="nav nav-tabs my-2">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#instruction-{{ instruction.pk }}-instructions"
+            type="button">{% trans "Amendment instruction" %}</button>
+        </li>
+        {% if instruction.is_applied and instruction.amended_document and instruction.amended_provision_id %}
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-bs-toggle="tab"
+              data-bs-target="#instruction-{{ instruction.pk }}-provision"
+              hx-get="{% url 'document_provision_embed' instruction.amended_document.pk instruction.amended_provision_id %}"
+              hx-target="#instruction-{{ instruction.pk }}-akn"
+              hx-trigger="click once"
+              type="button">{% trans "Amended provision" %}</button>
+          </li>
+        {% endif %}
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane show active" id="instruction-{{ instruction.pk }}-instructions" tabindex="0">
+          {{ instruction.amendment_instruction|linebreaksbr }}
+        </div>
+        {% if instruction.is_applied %}
+          <div class="tab-pane" id="instruction-{{ instruction.pk }}-provision" tabindex="0">
+              <div class="sheet-outer">
+                <div class="sheet-inner is-fragment spinner-when-empty" id="instruction-{{ instruction.pk }}-akn"></div>
+              </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if can_apply or can_edit %}
+      <div class="card-footer d-flex justify-content-end" hx-target="closest li" hx-swap="outerHTML">
+        {% if can_apply %}
+          {% block apply-button %}
+            {% if not instruction.is_applied %}
+              <form
+                hx-post="{% url 'work_amendment_instruction_applied' work.frbr_uri instruction.amendment_id instruction.pk %}"
+                data-component="AmendmentInstructionApplyForm"
+              >
+                {% csrf_token %}
+                <button
+                  class="btn btn-success"
+                  type="button"
+                >{% trans "Save and done" %}</button>
+              </form>
+            {% else %}
+              <form
+                hx-post="{% url 'work_amendment_instruction_unapplied' work.frbr_uri instruction.amendment_id instruction.pk %}"
+              >
+                {% csrf_token %}
+                <button
+                  class="btn btn-warning"
+                  type="submit"
+                >{% trans "Mark as not done" %}</button>
+              </form>
+            {% endif %}
+          {% endblock %}
+        {% endif %}
+        {% if can_edit %}
+          {% if perms.indigo_api.delete_amendmentinstruction %}
+            <form
+              action="{% url 'work_amendment_instruction_delete' work.frbr_uri instruction.amendment_id instruction.pk %}"
+              method="post"
+            >
+              {% csrf_token %}
+              <button
+                class="btn btn-danger ms-2"
+                data-confirm="{% trans 'Are you sure?' %}"
+                type="submit"
+              >{% trans "Delete" %}</button>
+            </form>
+          {% endif %}
+          {% if perms.indigo_api.change_amendmentinstruction %}
+            <button
+              class="btn btn-outline-primary ms-2"
+              hx-get="{% url 'work_amendment_instruction_edit' work.frbr_uri instruction.amendment_id instruction.pk %}"
+            >{% trans "Edit" %}</button>
+          {% endif %}
+          </div>
+        {% endif %}
+    {% endif %}
+  </details>
+</li>

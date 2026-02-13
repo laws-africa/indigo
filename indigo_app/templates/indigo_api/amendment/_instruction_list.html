@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<ul class="list-unstyled">
+  {% for instruction in amendment.instructions.all %}
+    {% if instruction.language == language %}
+      {% include 'indigo_api/amendment/_instruction_detail.html' %}
+    {% endif %}
+  {% endfor %}
+  {% if can_add %}
+    <li>
+      <button
+        class="btn btn-primary"
+        hx-get="{% url 'work_amendment_instruction_new' frbr_uri=work.frbr_uri amendment_id=amendment.id %}?lang={{ language.pk }}"
+        hx-target="closest li"
+        hx-swap="beforebegin"
+      >{% trans "Add instruction" %}</button>
+    </li>
+  {% endif %}
+</ul>

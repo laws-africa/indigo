@@ -20,7 +20,7 @@ class TaskForm(forms.ModelForm):
     title = forms.CharField(required=False)
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, required=False)
     timeline_date = forms.DateField(required=False)
-    code = forms.ChoiceField(label=_('Type'), choices=[('', _('None'))] + Task.MAIN_CODES, required=False)
+    code = forms.ChoiceField(label=_('Type'), choices=[('', _('None'))] + list(Task.MAIN_CODES.items()), required=False)
     blocked_by = forms.ModelMultipleChoiceField(label=_('Blocked by'), queryset=Task.objects, required=False)
 
     def __init__(self, country, locality, data=None, files=None, *args, **kwargs):
@@ -57,7 +57,7 @@ class TaskForm(forms.ModelForm):
         # whether title is blank or not, override it with the code if there is one
         code = self.cleaned_data.get('code')
         if code:
-            title = dict(Task.MAIN_CODES)[code]
+            title = Task.MAIN_CODES[code]
 
         # title can't be blank if there's no code though (borrowed this from validate on the base Field class)
         if not title:

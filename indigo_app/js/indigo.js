@@ -1,5 +1,4 @@
 import { components, vueComponents } from './components';
-import * as indigoAkn from '@lawsafrica/indigo-akn';
 import * as bluebellMonaco from '@lawsafrica/bluebell-monaco';
 import '@lawsafrica/law-widgets/dist/components/la-akoma-ntoso';
 import '@lawsafrica/law-widgets/dist/components/la-gutter';
@@ -18,13 +17,7 @@ import tippy, { delegate } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import { setupLegacyJquery } from './legacy';
 import setupXml from './xml';
-import * as bootstrap from 'bootstrap';
-import { fromRange as textPositionFromRange } from 'dom-anchor-text-position';
 
-// make these libraries available globally for legacy code that expects them to be on the window
-window.bootstrap = bootstrap;
-window.indigoAkn = indigoAkn;
-window.textPositionFromRange = textPositionFromRange;
 window.tippy = tippy;
 
 // Indigo is a global namespace for all things related to this app. It is a hold-over from the original Indigo

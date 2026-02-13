@@ -1,6 +1,6 @@
 import app from './indigo';
 
-window.addEventListener('indigo.beforecreateviews', () => {
-  window.indigoApp = app;
+document.addEventListener('DOMContentLoaded', () => {
+  window.Indigo.app = app;
   app.setup();
 });

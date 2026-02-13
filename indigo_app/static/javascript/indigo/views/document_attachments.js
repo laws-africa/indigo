@@ -85,7 +85,7 @@
       if (this.filter) models = models.filter(this.filter);
 
       _.each(models, function(m) {
-        m.prettySize = Indigo.formatting.prettyFileSize(m.size);
+        m.prettySize = self.prettyFileSize(m.size);
         m.isImage = m.mime_type.startsWith('image/');
         m.icon = self.ICONS[m.mime_type] || 'fa-file-o';
         m.selected = self.selectedItem && self.selectedItem.get('id') == m.id;
@@ -189,6 +189,18 @@
       this.$('.add-attachment').removeClass('incoming');
 
       _.forEach(e.originalEvent.dataTransfer.files, _.bind(this.attachFile, this));
+    },
+
+    prettyFileSize: function(bytes) {
+      let i = -1;
+      const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+
+      do {
+        bytes = bytes / 1024;
+        i++;
+      } while (bytes > 1024);
+
+      return Math.max(bytes, 0.1).toFixed(0) + byteUnits[i];
     },
   });
 

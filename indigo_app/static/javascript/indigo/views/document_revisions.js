@@ -28,7 +28,7 @@
 
       $('.show-revisions').on('click', _.bind(this.show, this));
 
-      this.diffNavigator = new indigoApp.componentLibrary.DiffNavigator(document.querySelector('.diff-navigator'));
+      this.diffNavigator = new window.Indigo.app.componentLibrary.DiffNavigator(document.querySelector('.diff-navigator'));
     },
 
     show: function(e) {

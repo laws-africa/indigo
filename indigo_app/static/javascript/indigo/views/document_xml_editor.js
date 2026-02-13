@@ -402,7 +402,7 @@ class XMLEditor {
   render() {
     // pretty-print the xml
     if (this.visible) {
-      const xml = this.xmlElement ? prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
+      const xml = this.xmlElement ? Indigo.prettyPrintXml(Indigo.toXml(this.xmlElement)) : '';
       if (this.editor.getValue() !== xml) {
         const posn = this.editor.getPosition();
 

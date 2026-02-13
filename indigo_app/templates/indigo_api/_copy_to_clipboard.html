@@ -1,7 +1,8 @@
 {% load i18n %}
 
 <button type="button"
-        class="btn btn-outline-secondary copy-to-clipboard"
+        class="btn btn-outline-secondary"
+        data-component="CopyToClipboard"
         title="{% trans "Copy to clipboard" %}"
         data-value='{{ value }}'
         data-confirmation="{% trans "Copied!" %}"

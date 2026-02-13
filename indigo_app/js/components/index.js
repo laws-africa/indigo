@@ -7,6 +7,11 @@ import ListCard from './list_card';
 import { AddAmendmentButton } from './amendments';
 import { VSplitter, HSplitter } from './splitters';
 import { FacetGroup, RemoveFacetButton } from './facets';
+import ProgressBar from './progress';
+import OfflineAlert from './offline_alert';
+import ErrorBox from './error_box';
+import CopyToClipboard from './copy_to_clipboard';
+import TaskBulkUpdate from './task_bulk_update';
 
 export const vueComponents = {
   DocumentTOCView,
@@ -22,5 +27,10 @@ export const components = {
   FacetGroup,
   RemoveFacetButton,
   HSplitter,
-  VSplitter
+  VSplitter,
+  ProgressBar,
+  OfflineAlert,
+  ErrorBox,
+  CopyToClipboard,
+  TaskBulkUpdate
 };

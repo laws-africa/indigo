@@ -12,7 +12,7 @@
       this.issues = options.document.issues;
       this.listenTo(this.issues, "reset change add remove", this.issuesChanged);
 
-      this.registeredComp = indigoApp.Vue.options.components.DocumentTOCView;
+      this.registeredComp = window.Indigo.app.Vue.options.components.DocumentTOCView;
       this.targetMountElement = document.querySelector(".document-toc-view");
       this.selection = new Backbone.Model({
         index: -1
@@ -20,7 +20,7 @@
 
       this.compInstance = null;
       if (this.registeredComp && this.targetMountElement) {
-        var CompClass = indigoApp.Vue.extend(this.registeredComp);
+        var CompClass = window.Indigo.app.Vue.extend(this.registeredComp);
         var compInstance = new CompClass({
           propsData: {
             selection: this.selection,

@@ -88,7 +88,6 @@ class UserActivityView(AbstractAuthedIndigoView, MultipleObjectMixin, DetailView
     template_name = 'indigo_social/user_activity.html'
     object_list = None
     page_size = 30
-    js_view = ''
     threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):

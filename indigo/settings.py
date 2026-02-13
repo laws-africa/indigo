@@ -322,6 +322,7 @@ PIPELINE = {
     'JAVASCRIPT': {
         'js': {
             'source_filenames': (
+                'lib/external-imports.js',
                 # This is the main entry point. It is loaded first because it sets up some dependencies such as
                 # bootstrap. It also configures the main app when DOMContentLoaded is fired.
                 # Most of the indigo javascript is run on DOMContentLoaded or triggered by the setup in main.js, so it

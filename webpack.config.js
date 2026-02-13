@@ -3,32 +3,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-const legacyConfig = {
-  entry: './indigo_app/js/external-imports.src.js',
-  mode: 'development',
-  resolve: {
-    modules: [
-      './node_modules',
-    ],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
-  },
-  optimization: {
-    usedExports: 'global'
-  },
-  output: {
-    filename: 'external-imports.js',
-    path: path.resolve(__dirname, 'indigo_app/static/lib'),
-    chunkFormat: false
-  }
-};
-
 const appConfig = {
   entry: './indigo_app/js/main.js',
   mode: 'production',
@@ -69,29 +43,11 @@ const appConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new ESLintPlugin(),
+    new ESLintPlugin({
+      files: 'indigo_app/js/**/*.{js,vue}',
+      exclude: ['**/legacy.js', 'node_modules/**', '**/*.ts']
+    }),
   ]
-};
-
-const bluebellMonacoConfig = {
-  entry: './indigo_app/js/bluebell-monaco.src.js',
-  mode: 'production',
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ['css-loader']
-      }
-    ],
-  },
-  optimization: {
-    usedExports: 'global',
-  },
-  output: {
-    filename: 'bluebell-monaco.js',
-    path: path.resolve(__dirname, 'indigo_app/static/javascript/indigo'),
-    chunkFormat: false
-  }
 };
 
 const monacoConfig = {
@@ -124,4 +80,4 @@ const monacoConfig = {
 };
 
 
-module.exports = [legacyConfig, appConfig, bluebellMonacoConfig, monacoConfig];
+module.exports = [appConfig, monacoConfig];

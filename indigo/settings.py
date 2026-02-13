@@ -322,7 +322,11 @@ PIPELINE = {
     'JAVASCRIPT': {
         'js': {
             'source_filenames': (
-                'lib/external-imports.js',
+                # This is the main entry point. It is loaded first because it sets up some dependencies such as
+                # bootstrap. It also configures the main app when DOMContentLoaded is fired.
+                # Most of the indigo javascript is run on DOMContentLoaded or triggered by the setup in main.js, so it
+                # doesn't matter if it's loaded before or after the other files.
+                'javascript/indigo-app.js',
                 'bower_components/jquery/dist/jquery.min.js',
                 'bower_components/jquery-cookie/jquery.cookie.js',
                 'bower_components/underscore/underscore-min.js',
@@ -333,16 +337,12 @@ PIPELINE = {
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',
                 'javascript/select2-4.0.0.min.js',
-                'javascript/caret.js',
-                'javascript/prettyprint.js',
-                'javascript/table-editor.js',
                 'javascript/indigo/models.js',
                 'javascript/indigo/traditions.js',
                 'javascript/indigo/*.js',
                 'javascript/indigo/views/*.js',
                 'javascript/indigo/views/**/*.js',
                 'javascript/indigo/**/*.js',
-                'javascript/indigo.js',
             ),
             'output_filename': 'app.js',
         },

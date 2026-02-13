@@ -74,7 +74,7 @@ export default {
       // toc is an ordered list of all items in the toc
       const roots = [];
       const toc = [];
-      const tradition = Indigo.traditions.get(this.model.document.get('country'));
+      const tradition = window.Indigo.traditions.get(this.model.document.get('country'));
 
       const iterateChildren = (node, parentItem) => {
         const kids = node.children;
@@ -170,7 +170,7 @@ export default {
       // fold document issues into the TOC
       const withIssues = [];
 
-      _.each(this.toc, (entry) => {
+      this.toc.forEach((entry) => {
         entry.issues = [];
       });
 
@@ -188,9 +188,9 @@ export default {
       });
 
       // now attach decent issue descriptions
-      _.each(withIssues, (entry) => {
-        let severity = _.map(entry.issues, (issue) => { return issue.get('severity'); });
-        severity = _.contains(severity, 'error') ? 'error' : (_.contains(severity, 'warning') ? 'warning' : 'information');
+      withIssues.forEach((entry) => {
+        let severity = entry.issues.map((issue) => { return issue.get('severity'); });
+        severity = severity.includes('error') ? 'error' : (severity.includes('warning') ? 'warning' : 'information');
 
         entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length === 1 ? '' : 's');
         entry.issues_description = entry.issues.map((issue) => { return issue.get('message'); }).join('<br>');
@@ -200,7 +200,7 @@ export default {
 
     entryForElement (element) {
       // find the TOC entry for an XML element
-      const tradition = Indigo.traditions.get(this.model.document.get('country'));
+      const tradition = window.Indigo.traditions.get(this.model.document.get('country'));
       const toc = this.toc;
 
       // first, find the closest element's ancestor that is a toc element
@@ -246,7 +246,7 @@ export default {
 
     onTitleClick (e) {
       e.detail.preventDefault();
-      if (!Indigo.view.sourceEditorView || Indigo.view.sourceEditorView.confirmAndDiscardChanges()) {
+      if (!window.Indigo.view.sourceEditorView || window.Indigo.view.sourceEditorView.confirmAndDiscardChanges()) {
         this.selectItem(e.target.item.index);
       }
     }

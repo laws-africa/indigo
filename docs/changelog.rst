@@ -9,6 +9,7 @@ Changelog
 * Move the main javascript app entry-point from indigo_app/static/javascript/indigo into indog_app/js/main.js which is
   compiled by webpack. New javascript functionality will go into the webpack-compiled javascript, while legacy code
   will remain in the old indigo_app/static/javascript/indigo directory until it can be migrated.
+* Support extraction of amendment instructions and step-by-step application of amendments to a document.
 
 19.1.0 (2025-12-01)
 -------------------

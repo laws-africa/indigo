@@ -29,9 +29,9 @@
         <dt class="col-3">{% trans "Amended by" %}</dt>
         <dd class="col-9">
           {% with instruction.amendment.amending_work.publication_document as pub_doc %}
-            {% if instruction.page_number and pub_doc %}
-              <a href="{{ pub_doc.get_embed_url }}?page={{ instruction.page_number }}" target="pdf-iframe"
-              >{% trans "Page" %} {{ instruction.page_number }}</a>
+            {% if pub_doc %}
+              <a href="{{ pub_doc.get_embed_url }}{% if instruction.page_number %}?page={{ instruction.page_number }}{% endif %}" target="pdf-iframe"
+              >{% trans "Page" %} {{ instruction.page_number|default_if_none:"?" }}</a>
             {% else %}
               {% trans "Page" %} {{ instruction.page_number|default_if_none:"?" }}
             {% endif %}

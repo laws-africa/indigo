@@ -76,7 +76,9 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane show active" id="instruction-{{ instruction.pk }}-instructions" tabindex="0">
-          {{ instruction.amendment_instruction|linebreaksbr }}
+          <div class="amendment-instruction-text">
+            {{ instruction.amendment_instruction|linebreaksbr }}
+          </div>
         </div>
         {% if instruction.is_applied %}
           <div class="tab-pane" id="instruction-{{ instruction.pk }}-provision" tabindex="0">

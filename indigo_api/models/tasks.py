@@ -504,9 +504,6 @@ class Task(models.Model):
                     blocked_task.unblock(user)
                     action_verb = self.VERBS['unblock']
 
-                if task.code in ['convert-document'] and blocked_task.code in ['import-content'] \
-                        and has_transition_perm(blocked_task.unblock, user):
-
                 action.send(user, verb=action_verb, action_object=task,
                             target=blocked_task, place_code=task.place.place_code)
 

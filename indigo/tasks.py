@@ -76,7 +76,6 @@ class TaskBroker:
                 # ensure there is an amendment instruction task, which the apply amendment task will be blocked by.
                 instruction_task = self.get_or_create_task(
                     work=work, task_type='amendment-instructions', timeline_date=amendment.date, user=user,
-                    # TODO
                     description=Task.DESCRIPTIONS['amendment-instructions'],
                 )
                 self.amendment_instruction_tasks.append(instruction_task)

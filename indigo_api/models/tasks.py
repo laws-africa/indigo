@@ -130,6 +130,11 @@ class Task(models.Model):
         'amendment-instructions': _('Extract the instructions for applying this amendment.'),
     }
 
+    UNBLOCKS = {
+        'convert-document': ['import-content'],
+        'amendment-instructions': ['apply-amendment'],
+    }
+
     class Meta:
         permissions = (
             ('submit_task', _('Can submit an open task for review')),
@@ -495,10 +500,12 @@ class Task(models.Model):
                 action_verb = 'partially unblocked'
 
                 # unblock related import tasks (if they can be)
-                if task.code in ['convert-document'] and blocked_task.code in ['import-content'] \
-                        and has_transition_perm(blocked_task.unblock, user):
+                if blocked_task.code in self.UNBLOCKS.get(task.code, []) and has_transition_perm(blocked_task.unblock, user):
                     blocked_task.unblock(user)
                     action_verb = self.VERBS['unblock']
+
+                if task.code in ['convert-document'] and blocked_task.code in ['import-content'] \
+                        and has_transition_perm(blocked_task.unblock, user):
 
                 action.send(user, verb=action_verb, action_object=task,
                             target=blocked_task, place_code=task.place.place_code)

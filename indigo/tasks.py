@@ -98,9 +98,8 @@ class TaskBroker:
                     amendment_task.block(user)
 
         if data.get('update_amendment_tasks'):
-            # block or cancel all amendment tasks and their instruction tasks, since they should be treated as a unit
-            self.block_or_cancel_tasks(self.amendment_tasks + self.amendment_instruction_tasks,
-                                       data['update_amendment_tasks'], user)
+            # block or cancel only amendment tasks, since instruction tasks don't need to block on anything
+            self.block_or_cancel_tasks(self.amendment_tasks, data['update_amendment_tasks'], user)
 
     def make_input_task_file(self, task, use_publication_document=False):
         """ Create and link an input TaskFile from the publication document, if there is one """

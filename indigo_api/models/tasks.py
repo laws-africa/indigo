@@ -133,6 +133,7 @@ class Task(models.Model):
     UNBLOCKS = {
         'convert-document': ['import-content'],
         'amendment-instructions': ['apply-amendment'],
+        'apply-amendment': ['apply-amendment'],
     }
 
     class Meta:

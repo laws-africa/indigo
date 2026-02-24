@@ -1,7 +1,9 @@
+from datetime import date
+
 from django.test import TestCase
 
 from indigo.tasks import TaskBroker
-from indigo_api.models import Work, Country, User
+from indigo_api.models import Amendment, Task, Work, Country, User
 
 
 class BaseTaskBrokerTestCase(TestCase):
@@ -57,3 +59,113 @@ class BaseTaskBrokerTestCase(TestCase):
         self.assertEqual(8, len(self.broker.amendment_tasks))
         for task in self.broker.amendment_tasks:
             self.assertEqual('cancelled', task.state)
+
+    def test_create_tasks_blocks_new_amendment_task_by_prior_apply_amendment_task(self):
+        amended_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/101',
+            title='Amended Act 101',
+            country=self.country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        amending_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/102',
+            title='Amending Act 102',
+            country=self.country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        amendment = Amendment.objects.create(
+            amended_work=amended_work,
+            amending_work=amending_work,
+            date=date(2024, 6, 1),
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+
+        prior_amendment_task = Task.objects.create(
+            country=amended_work.country,
+            locality=amended_work.locality,
+            work=amended_work,
+            code='apply-amendment',
+            title=Task.MAIN_CODES['apply-amendment'],
+            timeline_date=date(2024, 5, 1),
+            description='Apply earlier amendment.',
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+
+        broker = TaskBroker(Work.objects.filter(pk__in=[amended_work.pk, amending_work.pk]))
+        data = {
+            'conversion_task_description': Task.DESCRIPTIONS['convert-document'],
+            'import_task_description': Task.DESCRIPTIONS['import-content'],
+            'gazette_task_description': Task.DESCRIPTIONS['link-gazette'],
+            f'amendment_task_description_{amendment.pk}': 'Apply the amendment on the given date.',
+            f'amendment_task_create_{amendment.pk}': True,
+        }
+        broker.create_tasks(self.user, data)
+
+        amendment_task = broker.amendment_tasks[0]
+        self.assertIn(prior_amendment_task, amendment_task.blocked_by.all())
+        self.assertEqual(1, amendment_task.blocked_by.filter(code='apply-amendment').count())
+        self.assertEqual(1, amendment_task.blocked_by.filter(code='amendment-instructions').count())
+
+    def test_create_tasks_processes_amendments_in_ascending_date_order(self):
+        amended_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/201',
+            title='Amended Act 201',
+            country=self.country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        early_amending_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/202',
+            title='Early Amending Act 202',
+            country=self.country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        late_amending_work = Work.objects.create(
+            frbr_uri='/akn/za/act/2024/203',
+            title='Late Amending Act 203',
+            country=self.country,
+            principal=False,
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        late_amendment = Amendment.objects.create(
+            amended_work=amended_work,
+            amending_work=late_amending_work,
+            date=date(2024, 8, 1),
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+        early_amendment = Amendment.objects.create(
+            amended_work=amended_work,
+            amending_work=early_amending_work,
+            date=date(2024, 6, 1),
+            created_by_user=self.user,
+            updated_by_user=self.user,
+        )
+
+        broker = TaskBroker(Work.objects.filter(pk__in=[amended_work.pk, early_amending_work.pk, late_amending_work.pk]))
+        data = {
+            'conversion_task_description': Task.DESCRIPTIONS['convert-document'],
+            'import_task_description': Task.DESCRIPTIONS['import-content'],
+            'gazette_task_description': Task.DESCRIPTIONS['link-gazette'],
+            f'amendment_task_description_{early_amendment.pk}': 'Apply early amendment.',
+            f'amendment_task_create_{early_amendment.pk}': True,
+            f'amendment_task_description_{late_amendment.pk}': 'Apply late amendment.',
+            f'amendment_task_create_{late_amendment.pk}': True,
+        }
+        broker.create_tasks(self.user, data)
+
+        early_task = next(t for t in broker.amendment_tasks if t.timeline_date == date(2024, 6, 1))
+        late_task = next(t for t in broker.amendment_tasks if t.timeline_date == date(2024, 8, 1))
+
+        self.assertEqual(0, early_task.blocked_by.filter(code='apply-amendment').count())
+        self.assertEqual(1, late_task.blocked_by.filter(code='apply-amendment', timeline_date=date(2024, 6, 1)).count())

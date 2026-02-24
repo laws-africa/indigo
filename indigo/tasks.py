@@ -14,7 +14,7 @@ class TaskBroker:
         self.gazette_task_works = [w for w in self.works if not w.has_publication_document()]
         all_amendments = [w.amendments.all() for w in works if w.amendments.exists()] + \
                          [w.amendments_made.all() for w in works if w.amendments_made.exists()]
-        self.amendments = set(chain(*all_amendments))
+        self.amendments = sorted(set(chain(*all_amendments)), key=lambda amendment: (amendment.date, amendment.pk))
         self.amendments_per_work = {w: w.amendments.filter(pk__in=[a.pk for a in self.amendments])
                                     for w in set(a.amended_work for a in self.amendments)}
         # the tasks
@@ -91,6 +91,17 @@ class TaskBroker:
 
                 # always block the new amendment task by the instruction task
                 amendment_task.blocked_by.add(self.amendment_instruction_tasks[-1])
+
+                # block the new amendment task by the most recent open apply-amendment task
+                # that already exists before this amendment's timeline date.
+                prior_amendment_task = Task.objects.filter(
+                    work=work,
+                    code='apply-amendment',
+                    timeline_date__lt=amendment.date,
+                    state__in=Task.OPEN_STATES,
+                ).order_by('-timeline_date', '-pk').first()
+                if prior_amendment_task:
+                    amendment_task.blocked_by.add(prior_amendment_task)
 
                 if not data.get('update_amendment_tasks'):
                     # if update_amendment_tasks has a value, then it will be processed below, otherwise we default

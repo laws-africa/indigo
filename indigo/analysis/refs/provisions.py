@@ -389,7 +389,9 @@ class ProvisionRefsResolver:
             if elem == root:
                 continue
             num_elem = elem.find('a:num', {'a': ns})
-            if num_elem is not None and self.clean_num(num_elem.text) == clean_num:
+            # TODO: use itertext() on num_elem to allow for nested tags, but for now we assume num elements don't have nested tags
+            # TODO: it's very rare, but we have one in the ZA Income Tax Act /akn/za/act/1962/58
+            if num_elem is not None and self.clean_num(num_elem.text or '') == clean_num:
                 return elem
 
     def clean_num(self, num):

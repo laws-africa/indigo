@@ -35,3 +35,14 @@
 - Before editing, decide whether the rule is truly general or only jurisdiction- or document-specific. Prefer the narrowest stylesheet that matches the requirement.
 - `HTMLRenderer` in `indigo_api/renderers.py` is only the entry point. The useful implementation detail for agents is that it delegates to `HTMLExporter`, and that exporter chooses the XSLT file by the filename fallback rules above.
 - Downstream private repos such as `indigo-lawsafrica` can provide the more specific `html_*.xsl` files through their own static directories. Those repo-specific override patterns should be documented in the downstream repo, not here.
+
+## AKN PDF Rendering
+- If the goal is to change how Akoma Ntoso XML is formatted into PDF for all projects, start with the base FO stylesheet `indigo_api/static/xsl/fo/fo_akn.xsl` and the shared imported partials in `indigo_api/static/xsl/fo/`.
+- In practice, `fo_akn.xsl` is only the root entry point for the shared PDF transform. Most shared PDF layout rules live in the imported partials such as `_blocks.xsl`, `_hier.xsl`, `_tables.xsl`, `_inlines.xsl`, `_footnotes.xsl`, and related files under `indigo_api/static/xsl/fo/`.
+- If the goal is to change PDF formatting only for a specific country, locality, language, document type, or subtype, look for a more specific `xsl/fo/fo_*.xsl` override before changing the shared FO stylesheets.
+- The FO stylesheet is selected by `PDFExporter.find_xsl_fo()` in `indigo_api/exporters.py`, which uses the same `filename_candidates()` lookup in `indigo_api/utils.py`. The override discovery rules are therefore parallel to HTML rendering.
+- The practical order is from most specific to most general: `fo_{doctype}-{subtype}-{language}-{place}.xsl`, then less specific variants, then `fo_{doctype}.xsl`, then `fo_{place}.xsl`, then `fo_{country}.xsl`, and finally `fo_akn.xsl`.
+- Examples: a PDF layout change for all Acts in South Africa might belong in `fo_act-za.xsl`; a change for all South African PDFs might belong in `fo_za.xsl`; a shared PDF change belongs in `fo_akn.xsl` or one of its imported partials.
+- Before editing, decide whether the PDF rule is truly general or only jurisdiction- or document-specific. Prefer the narrowest FO stylesheet that matches the requirement.
+- `PDFRenderer` in `indigo_api/renderers.py` is only the request entry point. The useful implementation detail for agents is that `PDFExporter` prepares XML, resolves the FO stylesheet, rewrites import placeholders via `update_base_xsl_fo_dir()`, and then passes the XML plus XSL-FO to Apache FOP.
+- Downstream private repos such as `indigo-lawsafrica` can provide more specific `fo_*.xsl` files through their own static directories. Those repo-specific override patterns should be documented in the downstream repo, not here.

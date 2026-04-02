@@ -153,6 +153,46 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
     base_xsl_fo_dir = os.path.join(os.path.dirname(__file__), 'static', 'xsl', 'fo')
     inline_glyphs = ['☐']
 
+    def write_fo_sources(self, document, tmpdir):
+        """Write the XML and resolved FO XSL for a document into tmpdir.
+
+        Returns a tuple of (xml_file, xsl_fo).
+        """
+        # copy over assets required by our templates, like logos and coats of arms
+        # stash_assets updates the paths to static images in document.doc.main
+        self.stash_assets(document, tmpdir)
+
+        # copy images on each document
+        self.stash_images(document, tmpdir)
+
+        # use the resolver for the appropriate external links (done for coverpage separately)
+        self.adjust_refs(document.doc)
+        # make eIds in the XML unique; else FOP complains
+        self.make_eids_unique(document.doc)
+        # fix tables to have the right number of columns and rows; else FOP complains
+        self.resize_tables(document.doc)
+        # any final adjustments to the XML
+        xml = self.final_tweaks(document.doc)
+        # write the XML to file
+        xml_file = os.path.join(tmpdir, 'raw.xml')
+        with open(xml_file, "wb") as f:
+            f.write(xml.encode('utf-8'))
+
+        xsl_fo = os.path.join(tmpdir, "fo.xsl")
+        with open(xsl_fo, "w") as f:
+            src_xsl_fo = self.find_xsl_fo(document)
+            f.write(self.update_base_xsl_fo_dir(src_xsl_fo))
+
+        return xml_file, xsl_fo
+
+    def render_fo(self, document):
+        """Render a document to XSL-FO XML."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_file, xsl_fo = self.write_fo_sources(document, tmpdir)
+            outf_name = os.path.join(tmpdir, "out.xml")
+            run_fop(outf_name, tmpdir, xml_file, xsl_fo, output_fo=True)
+            return open(outf_name, 'rb').read()
+
     def render(self, document, element=None):
         # we don't support rendering partial PDFs
         if element:
@@ -163,31 +203,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         self.insert_frontmatter(document)
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            # copy over assets required by our templates, like logos and coats of arms
-            # stash_assets updates the paths to static images in document.doc.main
-            self.stash_assets(document, tmpdir)
-
-            # copy images on each document
-            self.stash_images(document, tmpdir)
-
-            # use the resolver for the appropriate external links (done for coverpage separately)
-            self.adjust_refs(document.doc)
-            # make eIds in the XML unique; else FOP complains
-            self.make_eids_unique(document.doc)
-            # fix tables to have the right number of columns and rows; else FOP complains
-            self.resize_tables(document.doc)
-            # any final adjustments to the XML
-            xml = self.final_tweaks(document.doc)
-            # write the XML to file
-            xml_file = os.path.join(tmpdir, 'raw.xml')
-            with open(xml_file, "wb") as f:
-                f.write(xml.encode('utf-8'))
-
-            xsl_fo = os.path.join(tmpdir, "fo.xsl")
-            with open(xsl_fo, "w") as f:
-                src_xsl_fo = self.find_xsl_fo(document)
-                f.write(self.update_base_xsl_fo_dir(src_xsl_fo))
-
+            xml_file, xsl_fo = self.write_fo_sources(document, tmpdir)
             outf_name = os.path.join(tmpdir, "out.pdf")
             run_fop(outf_name, tmpdir, xml_file, xsl_fo)
             return open(outf_name, 'rb').read()

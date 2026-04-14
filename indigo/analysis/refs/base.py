@@ -3,7 +3,7 @@ import re
 
 from django.conf import settings
 
-from docpipe.citations import ActMatcher
+from docpipe.citations import ActNoOfYearMatcher, ActYearNumberMatcher
 from docpipe.matchers import CitationMatcher, ExtractedMatch
 from indigo.analysis.markup import TextPatternMarker
 from indigo.analysis.matchers import DocumentPatternMatcherMixin
@@ -66,7 +66,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         return link_uri
 
 
-class ActNumberCitationMatcher(DocumentPatternMatcherMixin, ActMatcher):
+class ActNumberCitationMatcher(DocumentPatternMatcherMixin, ActNoOfYearMatcher):
     """Base plugin class for Act number citation matchers."""
     pass
 
@@ -241,3 +241,30 @@ class RefsFinderCapENG(DocumentPatternMatcherMixin, CitationMatcher):
 
     def make_href(self, match):
         return self.cap_numbers.get(match.groups['num'])
+
+
+@plugins.register('refs-act-numbers-2')
+class ActYearNumberCitationMatcherENG(DocumentPatternMatcherMixin, ActYearNumberMatcher):
+    locale = (None, 'eng', None)
+
+
+@plugins.register('refs-act-numbers-no-year')
+class ActNumberCitationMatcherGH(ActYearNumberCitationMatcherENG):
+    """Act number citation matching for Ghana, which uses a style that relies on their Act numbers being unique.
+    The year must be looked up in the database.
+
+    Example: Foo Act (Act 123)
+    """
+    locale = ('gh', 'eng', None)
+
+    pattern_re = re.compile(r"\(\s*(?P<ref>Act\s*(?P<num>\d+)\s*)\)", re.I)
+
+    def make_href(self, match: ExtractedMatch):
+        num = match.groups["num"]
+        return Work.objects.filter(
+            country__country__pk=self.frbr_uri.country.upper(),
+            locality=None,
+            doctype="act",
+            subtype=None,
+            number=num,
+        ).order_by("-date").values_list("frbr_uri", flat=True).first()

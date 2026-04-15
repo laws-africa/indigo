@@ -4,9 +4,10 @@ from django.conf import settings
 from django.test import TestCase
 
 from cobalt import FrbrUri
+from docpipe.matchers import ExtractedCitation
 
 from indigo.analysis.refs.base import SubtypeNumberCitationMatcherENG, RefsFinderCapENG, ActNumberCitationMatcherFRA, \
-    ActNumberCitationMatcherAFR
+    ActNumberCitationMatcherAFR, ActNumberCitationMatcherGH
 
 from indigo_api.models import Document, Language, Work, Country, User
 from indigo_api.tests.fixtures import document_fixture
@@ -210,4 +211,65 @@ class ActNumberCitationMatcherFRATestCase(TestCase):
   </statement>
 </akomaNtoso>""",
             etree.tostring(xml, encoding="unicode", pretty_print=True).strip(),
+        )
+
+
+class ActNumberCitationMatcherGHTestCase(TestCase):
+    fixtures = ['languages_data', 'countries']
+    maxDiff = None
+
+    def setUp(self):
+        self.marker = ActNumberCitationMatcherGH()
+        self.frbr_uri = FrbrUri.parse("/akn/za/act/2021/509")
+        self.work = Work.objects.create(
+            frbr_uri="/akn/za/act/1990/123",
+            title="Act 123 of 1990",
+            country=Country.objects.get(country__pk='ZA'),
+        )
+
+    def test_xml_matches(self):
+        xml = etree.fromstring(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <statement name="statement">
+    <preamble>
+      <p eId="preamble__p_3">National Environment Management: Air Quality Act, (Act 123);</p>
+      <p eId="preamble__p_4">National Environment Management: Air Quality Act, 1990 (Act 123);</p>
+    </preamble>
+  </statement>
+</akomaNtoso>"""
+        )
+        self.marker.markup_xml_matches(self.frbr_uri, xml)
+
+        self.assertMultiLineEqual("""<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <statement name="statement">
+    <preamble>
+      <p eId="preamble__p_3">National Environment Management: Air Quality Act, (<ref href="/akn/za/act/1990/123">Act 123</ref>);</p>
+      <p eId="preamble__p_4">National Environment Management: Air Quality Act, 1990 (<ref href="/akn/za/act/1990/123">Act 123</ref>);</p>
+    </preamble>
+  </statement>
+</akomaNtoso>""",
+            etree.tostring(xml, encoding="unicode", pretty_print=True).strip())
+
+        self.assertEqual(
+            [
+                ExtractedCitation(
+                    "Act 123",
+                    51,
+                    58,
+                    "/akn/za/act/1990/123",
+                    None,
+                    None,
+                    None,
+                ),
+                ExtractedCitation(
+                    "Act 123",
+                    56,
+                    63,
+                    "/akn/za/act/1990/123",
+                    None,
+                    None,
+                    None,
+                ),
+            ],
+            self.marker.citations,
         )

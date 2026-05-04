@@ -29,9 +29,6 @@ class UserSignupForm(SignupForm):
     last_name = forms.CharField(required=True, max_length=30, label=_('Last name'))
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label=_('Country'), empty_label=None)
     captcha = ReCaptchaField()
-    accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
-        'required': _('Please accept the Terms of Use.'),
-    })
     signup_enabled = settings.ACCOUNT_SIGNUP_ENABLED
 
     def clean(self):
@@ -41,7 +38,6 @@ class UserSignupForm(SignupForm):
 
     def save(self, request):
         user = super().save(request)
-        user.editor.accepted_terms = True
         user.editor.country = self.cleaned_data['country']
         user.editor.save()
         return user

@@ -29,7 +29,6 @@ class LibraryTest(testcases.TestCase):
             'email': 'new-user@example.com',
             'password1': 'password',
             'password2': 'password',
-            'accepted_terms': 'on',
             'first_name': 'First',
             'last_name': 'Last',
             'country': '1',

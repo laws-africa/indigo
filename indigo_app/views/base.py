@@ -62,7 +62,6 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     raise_exception = True
     authentication_required = True
     permission_required = ()
-    must_accept_terms = True
 
     def dispatch(self, request, *args, **kwargs):
         if is_maintenance_mode(request):
@@ -74,10 +73,6 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
                     # don't redirect HTMX requests
                     raise PermissionDenied()
                 return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
-
-        if request.user.is_authenticated and self.must_accept_terms and not request.user.editor.accepted_terms:
-            # user must accept terms
-            return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
 
         return super().dispatch(request, *args, **kwargs)
 

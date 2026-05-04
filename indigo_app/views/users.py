@@ -2,12 +2,12 @@ from django.conf import settings
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
 from django.shortcuts import redirect
-from allauth.utils import get_request_param
 
 from indigo.view_mixins import AtomicPostMixin
 from indigo_app.forms import UserEditorForm
 from indigo_app.models import Editor
 from .base import AbstractAuthedIndigoView
+
 
 def set_language_cookie(response, lang_code):
     response.set_cookie(
@@ -65,20 +65,3 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
         # force a new one to be created
         request.user.editor.api_token()
         return redirect('edit_account_api')
-
-
-class AcceptTermsView(AtomicPostMixin, AbstractAuthedIndigoView, UpdateView):
-    authentication_required = True
-    context_object_name = 'editor'
-    template_name = 'indigo_app/user_account/accept_terms.html'
-    fields = ('accepted_terms',)
-    must_accept_terms = False
-    check_country_perms = False
-
-    # TODO: check if terms accepted and redirect if so
-
-    def get_object(self, queryset=None):
-        return self.request.user.editor
-
-    def get_success_url(self):
-        return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)

@@ -4,8 +4,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 
-from ..models import Work, Amendment
-from ..serializers import WorkSerializer, WorkAmendmentSerializer
+from ..models import Work, Amendment, ProvisionTaxonomyTopic
+from ..serializers import WorkSerializer, WorkAmendmentSerializer, ProvisionTaxonomyTopicSerializer
 
 
 class WorkResourceView(object):
@@ -57,3 +57,15 @@ class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(amended_work=self.work).all()
+
+
+class WorkProvisionTaxonomyTopicViewSet(WorkResourceView, viewsets.ModelViewSet):
+    queryset = ProvisionTaxonomyTopic.objects.select_related('taxonomy_topic')
+    serializer_class = ProvisionTaxonomyTopicSerializer
+    permission_classes = (DjangoModelPermissions,)
+
+    def filter_queryset(self, queryset):
+        return super().filter_queryset(queryset).filter(work=self.work)
+
+    def perform_create(self, serializer):
+        serializer.save(work=self.work)

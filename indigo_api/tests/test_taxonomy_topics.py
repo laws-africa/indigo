@@ -1,7 +1,8 @@
 import datetime
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
-from indigo_api.models import Work, TaxonomyTopic, Country, Commencement, Amendment
+from indigo_api.models import Work, TaxonomyTopic, Country, Commencement, Amendment, ProvisionTaxonomyTopic
 
 
 class TaxonomyTopicSignalTestCase(TestCase):
@@ -121,4 +122,48 @@ class TaxonomyTopicSignalTestCase(TestCase):
 
         self.assertIn(self.topic_with_copy_flag, amending_work.taxonomy_topics.all())
 
+
+class ProvisionTaxonomyTopicTestCase(TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomy_topics', 'work']
+
+    def setUp(self):
+        self.work = Work.objects.get(pk=1)
+        self.other_work = Work.objects.get(pk=2)
+        self.topic = TaxonomyTopic.objects.get(pk=2)
+
+    def test_unique_together(self):
+        ProvisionTaxonomyTopic.objects.create(
+            work=self.work,
+            taxonomy_topic=self.topic,
+            provision_eid='sec_1',
+        )
+
+        duplicate = ProvisionTaxonomyTopic(
+            work=self.work,
+            taxonomy_topic=self.topic,
+            provision_eid='sec_1',
+        )
+
+        with self.assertRaises(ValidationError):
+            duplicate.validate_unique()
+
+        # the same provision/topic combination can be used on a different work
+        sibling = ProvisionTaxonomyTopic(
+            work=self.other_work,
+            taxonomy_topic=self.topic,
+            provision_eid='sec_1',
+        )
+        sibling.validate_unique()
+
+    def test_str(self):
+        provision_topic = ProvisionTaxonomyTopic.objects.create(
+            work=self.work,
+            taxonomy_topic=self.topic,
+            provision_eid='sec_1',
+        )
+
+        self.assertEqual(
+            str(provision_topic),
+            f'{self.work} / sec_1 — {self.topic}',
+        )
 

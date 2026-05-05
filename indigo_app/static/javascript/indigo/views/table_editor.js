@@ -382,6 +382,7 @@
       cells.forEach(function(cell) {
         if (cell.tagName === 'TH' && makeHeading) return;
         if (cell.tagName === 'TD' && !makeHeading) return;
+        if (!cell.parentElement) return;
 
         cell.parentElement.replaceChild(
           self.renameNode(cell, makeHeading ? 'th' : 'td'),

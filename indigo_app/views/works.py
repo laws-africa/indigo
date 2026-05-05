@@ -1418,6 +1418,9 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         initial = []
         if formset.is_valid():
             for form in formset:
+                # skip empty extra forms and deleted unsaved forms
+                if not form.cleaned_data:
+                    continue
                 delete = form.cleaned_data.get('DELETE')
                 if delete:
                     if not form.cleaned_data.get('id'):
@@ -1430,8 +1433,8 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
                     "DELETE": form.cleaned_data["DELETE"],
                 })
             if amendment_work_id:
-                amending_works = {form.cleaned_data["amending_work"] for form in formset}
-                amended_works = {form.cleaned_data["amended_work"] for form in formset}
+                amending_works = {form.cleaned_data.get("amending_work") for form in formset if form.cleaned_data}
+                amended_works = {form.cleaned_data.get("amended_work") for form in formset if form.cleaned_data}
                 work = Work.objects.filter(pk=amendment_work_id).first()
                 if work:
                     if prefix == "amended_by":

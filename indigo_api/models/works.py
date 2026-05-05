@@ -605,6 +605,11 @@ class Work(WorkMixin, models.Model):
         except ValueError:
             raise ValidationError(_("Invalid FRBR URI"))
 
+        # country is required to build the frbr_uri prefix; surface a ValidationError
+        # rather than letting RelatedObjectDoesNotExist bubble up
+        if self.country_id is None:
+            raise ValidationError({'country': _("This field is required.")})
+
         # Assume frbr_uri starts with /akn; `rest` is everything after the country/locality, e.g.
         # in `/akn/za-wc/act/2000/12`, `rest` is `act/2000/12`.
         rest = frbr_uri.split('/', 3)[3]

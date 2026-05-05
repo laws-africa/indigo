@@ -77,6 +77,20 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(work.amendments.all()), 1)
 
+    def test_form_amendments_view_with_empty_extra_form(self):
+        # an extra unfilled form should not blow up the view (regression for KeyError: 'amended_work')
+        response = self.client.post('/works/akn/za/act/2010/1/form/amendments', {
+            'amendments_made-TOTAL_FORMS': '1',
+            'amendments_made-INITIAL_FORMS': '0',
+            'amendments_made-MIN_NUM_FORMS': '0',
+            'amendments_made-MAX_NUM_FORMS': '1000',
+            'amendments_made-0-amending_work': '',
+            'amendments_made-0-amended_work': '',
+            'amendments_made-0-date': '',
+            'amendments_made-0-id': '',
+        })
+        self.assertEqual(response.status_code, 200)
+
     def test_import_view(self):
         response = self.client.get('/works/akn/za/act/2014/10/import/')
         self.assertEqual(response.status_code, 200)

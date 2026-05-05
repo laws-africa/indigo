@@ -42,6 +42,13 @@ class WorkTestCase(TestCase):
         work = Work(frbr_uri='', country=country)
         self.assertRaises(ValidationError, work.full_clean)
 
+    def test_clean_without_country(self):
+        # clean() must raise ValidationError, not RelatedObjectDoesNotExist
+        work = Work(frbr_uri='/akn/za/act/2024/1')
+        with self.assertRaises(ValidationError) as cm:
+            work.clean()
+        self.assertIn('country', cm.exception.message_dict)
+
     def test_possible_expression_dates_basic(self):
         self.work.publication_date = datetime.date(2018, 2, 23)
         amendment = Amendment(amended_work=self.work, amending_work_id=2, date='2019-09-13', created_by_user_id=1)

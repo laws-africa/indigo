@@ -94,8 +94,10 @@
     <xsl:if test="self::a:article">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Artikel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ara'"><xsl:text>المادة </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ell'"><xsl:text>Άρθρο </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Article </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ind'"><xsl:text>Pasal </xsl:text></xsl:when>
         <xsl:when test="$lang = 'kor'">
           <xsl:choose>
             <xsl:when test="a:num">
@@ -106,7 +108,9 @@
             </xsl:otherwise>
           </xsl:choose>
         </xsl:when>
+        <xsl:when test="$lang = 'mkd'"><xsl:text>Член </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Artigo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'rus'"><xsl:text>Статья </xsl:text></xsl:when>
         <xsl:when test="$lang = 'spa'"><xsl:text>Artículo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sqi'"><xsl:text>Neni </xsl:text></xsl:when>
         <xsl:when test="$lang = 'swa'">
@@ -115,6 +119,8 @@
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$lang = 'tuk'"><xsl:text>Статья </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tur'"><xsl:text>Madde </xsl:text></xsl:when>
         <xsl:when test="$lang = 'zho'"><xsl:text>第</xsl:text></xsl:when>
         <xsl:otherwise><xsl:text>Article </xsl:text></xsl:otherwise>
       </xsl:choose>
@@ -128,9 +134,11 @@
     <xsl:if test="self::a:chapter">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ara'"><xsl:text>الفصل </xsl:text></xsl:when>
         <xsl:when test="$lang = 'cat'"><xsl:text>Capítol </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ell'"><xsl:text>Κeφaλaιo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Chapitre </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ind'"><xsl:text>Bab </xsl:text></xsl:when>
         <xsl:when test="$lang = 'kor'">
           <xsl:choose>
             <xsl:when test="a:num">
@@ -145,6 +153,7 @@
         <xsl:when test="$lang = 'nor'"><xsl:text>Kapittel </xsl:text></xsl:when>
         <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
         <xsl:when test="$lang = 'por'"><xsl:text>Capítulo </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'rus'"><xsl:text>Глава </xsl:text></xsl:when>
         <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'spa'"><xsl:text>Capitulo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
@@ -154,6 +163,8 @@
             <xsl:text>ya </xsl:text>
           </xsl:if>
         </xsl:when>
+        <xsl:when test="$lang = 'tuk'"><xsl:text>глава </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'tur'"><xsl:text>Bölüm </xsl:text></xsl:when>
         <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
         <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
@@ -184,9 +195,11 @@
     <xsl:if test="self::a:part">
       <xsl:choose>
         <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ara'"><xsl:text>الباب </xsl:text></xsl:when>
         <xsl:when test="$lang = 'deu'"><xsl:text>Abschnitt </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ell'"><xsl:text>Μeρoς </xsl:text></xsl:when>
         <xsl:when test="$lang = 'fra'"><xsl:text>Partie </xsl:text></xsl:when>
+        <xsl:when test="$lang = 'ind'"><xsl:text>Bagian </xsl:text></xsl:when>
         <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
         <xsl:when test="$lang = 'nor'"/>
         <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>

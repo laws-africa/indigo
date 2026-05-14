@@ -60,22 +60,6 @@
     </div>
 
     <div class="mb-3">
-      <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
-      <select class="form-control" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" required>
-        {% for val, label in form.fields.country.choices %}
-        <option value="{{ val }}" {% if val == form.country.value %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-      {% if form.country.errors %}
-        <div class="text-danger">
-          {% for error in form.country.errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-
-    <div class="mb-3">
       <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
       <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" required>
       {% if form.password1.errors %}

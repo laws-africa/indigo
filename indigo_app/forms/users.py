@@ -27,7 +27,6 @@ class UserEditorForm(forms.ModelForm):
 class UserSignupForm(SignupForm):
     first_name = forms.CharField(required=True, max_length=30, label=_('First name'))
     last_name = forms.CharField(required=True, max_length=30, label=_('Last name'))
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label=_('Country'), empty_label=None)
     captcha = ReCaptchaField()
     signup_enabled = settings.ACCOUNT_SIGNUP_ENABLED
 
@@ -35,9 +34,3 @@ class UserSignupForm(SignupForm):
         if not self.signup_enabled:
             raise forms.ValidationError(_("Creating new accounts is currently not allowed."))
         return super().clean()
-
-    def save(self, request):
-        user = super().save(request)
-        user.editor.country = self.cleaned_data['country']
-        user.editor.save()
-        return user

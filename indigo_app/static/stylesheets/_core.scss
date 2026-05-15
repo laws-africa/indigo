@@ -169,6 +169,10 @@ body.is-staff {
 }
 
 .allauth-box {
+  width: 100%;
+  max-width: 330px;
+  margin: 0 auto;
+
   .logo {
     width: 75px;
   }

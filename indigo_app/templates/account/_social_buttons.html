@@ -1,0 +1,23 @@
+{% load i18n socialaccount static %}
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers %}
+  {% for provider in socialaccount_providers %}
+    <form method="POST" class="my-4" action="{% provider_login_url provider.id process='login' %}">
+      {% csrf_token %}
+      <button class="btn btn-block btn-outline-primary mb-3 d-flex align-items-center justify-content-center w-100 socialaccount_provider {{provider.id}}" type="submit">
+        {% if provider.name == "Google" %}
+          <img src="{% static 'images/google-logo.png' %}" style="height: 20px; margin-right: 5px">
+        {% else %}
+          <i class="fab fa-fw fa-{{ provider.id }}"></i>
+        {% endif %}
+
+        {% blocktrans with provider=provider.name %}Log in with {{provider}}{% endblocktrans %}
+      </button>
+    </form>
+  {% endfor %}
+  <div class="d-flex align-items-center my-4">
+    <div class="flex-grow-1 border-bottom"></div>
+    <span class="mx-3 text-secondary text-uppercase small">{% trans 'OR' %}</span>
+    <div class="flex-grow-1 border-bottom"></div>
+  </div>
+{% endif %}

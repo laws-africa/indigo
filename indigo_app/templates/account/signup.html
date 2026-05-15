@@ -6,7 +6,9 @@
 {% block content %}
 <h1>{% trans "Sign Up" %}</h1>
 
-<p>{% blocktrans trimmed %}Do you already have an account? Then please <a href="{{ login_url }}">log in</a>.{% endblocktrans %}</p>
+<p>{% blocktrans trimmed %}If you have an account, please <a href="{{ login_url }}">log in</a>.{% endblocktrans %}</p>
+
+{% include 'account/_social_buttons.html' %}
 
 {% if form.signup_enabled %}
   <form method="POST" action="{% url 'account_signup' %}">
@@ -94,7 +96,7 @@
       {% endif %}
     </div>
 
-    <button class="btn btn-success btn-block mb-3" type="submit">{% trans "Sign up" %}</button>
+    <button class="btn btn-success btn-block w-100 mb-3" type="submit">{% trans "Sign up" %}</button>
 
     <div class="text-center">
       <a href="{{ login_url }}">{% trans "Log in" %}</a>

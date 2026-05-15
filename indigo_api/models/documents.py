@@ -813,7 +813,7 @@ class AnnotationManager(models.Manager):
 
 class Annotation(models.Model):
     document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE, verbose_name=_("document"))
-    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+', verbose_name=_("created by"))
+    created_by_user = models.ForeignKey(User, on_delete=models.PROTECT, null=False, related_name='+', verbose_name=_("created by"))
     in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True, verbose_name=_("in reply to"))
     text = models.TextField(_("text"), null=False, blank=False)
     anchor_id = models.CharField(_("anchor id"), max_length=512, null=False, blank=False)
@@ -878,7 +878,7 @@ class DocumentActivity(models.Model):
     """
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities',
                                  db_index=True, verbose_name=_("document"))
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities',
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=False, related_name='document_activities',
                              verbose_name=_("user"))
     nonce = models.CharField(_("nonce"), max_length=10, blank=False, null=False)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)

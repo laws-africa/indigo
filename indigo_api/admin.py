@@ -13,7 +13,7 @@ from treebeard.forms import MoveNodeForm, movenodeform_factory
 from background_task.admin import TaskAdmin
 
 from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyTopic, CitationAlias, SavedSearch,\
-    AccentedTerms, CommonAnnotation
+    AccentedTerms, CommonAnnotation, ProvisionTaxonomyTopic
 
 
 admin.site.register(Subtype)
@@ -57,6 +57,13 @@ class TaxonomyTopicAdmin(TreeAdmin):
         resp.context_data["tree_json"] = json.dumps(tree)
 
         return resp
+
+
+@admin.register(ProvisionTaxonomyTopic)
+class ProvisionTaxonomyTopicAdmin(admin.ModelAdmin):
+    list_display = ('work', 'provision_eid', 'taxonomy_topic')
+    list_filter = ('taxonomy_topic',)
+    raw_id_fields = ('work',)
 
 
 @admin.register(Work)

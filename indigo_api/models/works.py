@@ -1015,6 +1015,24 @@ def post_delete_commencement(sender, instance, **kwargs):
         commenced_work.update_main_commencement()
 
 
+class ProvisionTaxonomyTopic(models.Model):
+    """Tags a specific provision (by eid) in a work with a taxonomy topic."""
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, related_name='provision_taxonomy_topics',
+                             verbose_name=_("work"))
+    taxonomy_topic = models.ForeignKey(TaxonomyTopic, on_delete=models.CASCADE,
+                                       related_name='provision_taxonomy_topics',
+                                       verbose_name=_("taxonomy topic"))
+    provision_eid = models.CharField(_("provision eid"), max_length=2048)
+
+    class Meta:
+        unique_together = ('work', 'taxonomy_topic', 'provision_eid')
+        verbose_name = _("provision taxonomy topic")
+        verbose_name_plural = _("provision taxonomy topics")
+
+    def __str__(self):
+        return f"{self.work} / {self.provision_eid} — {self.taxonomy_topic}"
+
+
 class ArbitraryExpressionDate(models.Model):
     """ An arbitrary expression date not tied to an amendment, e.g. a consolidation date.
     """

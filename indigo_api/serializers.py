@@ -17,7 +17,7 @@ from typing import List
 from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, Commencement
+    PublicationDocument, Task, Commencement, TaxonomyTopic, ProvisionTaxonomyTopic
 from indigo_api.signals import document_published
 
 log = logging.getLogger(__name__)
@@ -641,6 +641,14 @@ class CommencementSerializer(serializers.ModelSerializer):
 
     def get_provisions(self, instance) -> List[str]:
         return instance.provisions
+
+
+class ProvisionTaxonomyTopicSerializer(serializers.ModelSerializer):
+    taxonomy_topic = serializers.SlugRelatedField(slug_field='slug', queryset=TaxonomyTopic.objects.all())
+
+    class Meta:
+        model = ProvisionTaxonomyTopic
+        fields = ('id', 'provision_eid', 'taxonomy_topic')
 
 
 class WorkSerializer(serializers.ModelSerializer):

@@ -20,6 +20,7 @@ from indigo_app.views.works import publication_document_response
 from .serializers import MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomyTopicSerializer, \
     PublishedDocUrlMixin, PublishedDocumentCommencementsSerializer, \
     TimelineSerializer, TOCSerializer, PlaceSerializer
+from ..authn import BearerAuthentication
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
@@ -34,7 +35,7 @@ class PublishedDocumentPermission(BasePermission):
 class ContentAPIBase(object):
     """ Base class for Content API views, with common settings.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    authentication_classes = (SessionAuthentication, BearerAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
 
 

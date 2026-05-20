@@ -30,10 +30,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install binary dependencies
+    - name: Cache APT packages
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: poppler-utils libreoffice
+        version: test-apt-dependencies-v1
+        execute_install_scripts: true
+
+    - name: Install LibreOffice
       run: |
         sudo apt-get update
-        sudo apt-get install -y poppler-utils
+        sudo apt-get install -y libreoffice
+
+    - name: Install binary dependencies
+      run: |
         wget -q -O fop.tgz 'https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.5-bin.tar.gz' && tar zxf fop.tgz && rm -f fop.tgz && sudo mv fop-2.5 /usr/share
 
     - name: Set up Python ${{ matrix.python-version }}

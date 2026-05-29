@@ -37,16 +37,8 @@ class UserProfile(models.Model):
         permissions = (('audit_user_activity', 'Can audit user activity'),)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("user"))
-    bio = models.TextField(_("bio"), blank=True, null=True, default='', help_text=_("A short bio"))
-    qualifications = models.TextField(_("qualifications"), blank=True, null=True, default='', help_text=_("Qualifications"))
-    skills = models.TextField(_("skills"), blank=True, null=True, default='', help_text=_("Skills"))
-    organisations = models.TextField(_("organisations"), blank=True, null=True, default='', help_text=_("Organisations"))
-    specialisations = models.TextField(_("specialisations"), blank=True, null=True, default='', help_text=_("Specialisations"))
-    areas_of_law = models.CharField(_("areas of law"), max_length=256, blank=True, null=True, default='', help_text=_("Areas of law"))
     profile_photo = models.ImageField(_("profile photo"), upload_to=user_profile_photo_path, blank=True, null=True)
     profile_photo_nonce = models.CharField(_("profile photo nonce"), max_length=256, blank=True, null=True)
-    twitter_username = models.CharField(_("twitter username"), max_length=256, blank=True, null=True, default='')
-    linkedin_profile = models.URLField(_("linkedin profile"), blank=True, null=True, default='')
 
     def generate_nonce(self):
         self.profile_photo_nonce = ''.join(random.sample(string.ascii_lowercase, 8))

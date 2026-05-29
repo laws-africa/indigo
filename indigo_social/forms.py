@@ -29,24 +29,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = (
-            # personal info (also includes first_name and last_name)
-            'bio',
-            # work
-            'organisations',
-            'skills',
-            'qualifications',
-            'specialisations',
-            'areas_of_law',
-            # social
-            'twitter_username',
-            'linkedin_profile',
-        )
-
-    def clean_twitter_username(self):
-        if self.cleaned_data['twitter_username']:
-            twitter_username = self.cleaned_data['twitter_username'].strip('@')
-            return twitter_username
+        fields = ()
 
     def clean_username(self):
         username = self.cleaned_data['username']

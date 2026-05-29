@@ -24,59 +24,15 @@
 
           <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail mb-2" width="200" height="200">
 
-          {% if user.userprofile.bio %}
-            {{ user.userprofile.bio | linebreaks }}
-          {% endif %}
-
           <ul class="fa-ul">
             {% if user.editor.country %}
             <li>
               <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span> {{ user.editor.country.name }}
             </li>
             {% endif %}
-            {% if user.userprofile.twitter_username %}
-            <li>
-              <span class="fa-li"><i class="fab fa-twitter"></i></span> 
-              <a href="https://twitter.com/@{{ user.userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ user.userprofile.twitter_username }}</a>
-            </li>
-            {% endif %}
-
-            {% if user.userprofile.linkedin_profile %}
-            <li>
-              <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
-              <a href="{{ user.userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ user.userprofile.linkedin_profile }}</a>
-            </li>
-            {% endif %}
           </ul>
         </div>
       </div>
-
-      <section class="my-3">
-        {% if user.userprofile.organisations %}
-        <h5 class="mb-0">{% trans "Organisations" %}</h5>
-        {{ user.userprofile.organisations | linebreaks }}
-        {% endif %}
-
-        {% if user.userprofile.skills %}
-        <h5 class="mb-0">{% trans "Skills" %}</h5>
-        {{ user.userprofile.skills | linebreaks }}
-        {% endif %}
-
-        {% if user.userprofile.qualifications %}
-        <h5 class="mb-0">{% trans "Qualifications" %}</h5>
-        {{ user.userprofile.qualifications | linebreaks }}
-        {% endif %}
-
-        {% if user.userprofile.specialisations %}
-        <h5 class="mb-0">{% trans "Specialisations" %}</h5>
-        {{ user.userprofile.specialisations | linebreaks }}
-        {% endif %}
-
-        {% if user.userprofile.areas_of_law %}
-        <h5 class="mb-0">{% trans "Areas of law" %}</h5>
-        {{ user.userprofile.areas_of_law|default:'' }}
-        {% endif %}
-      </section>
 
       {% if request.user == user %}
         <a class="btn btn-outline-primary btn-block" href="{% url 'edit_account' %}">{% trans "Edit profile" %}</a>

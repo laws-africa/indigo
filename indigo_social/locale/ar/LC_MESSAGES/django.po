@@ -1,0 +1,291 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-28 13:29+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 208\n"
+
+#: forms.py:19
+msgid "Your username cannot include spaces, punctuation or capital letters."
+msgstr "لا يمكن أن يتضمن اسم المستخدم الخاص بك مسافات أو علامات ترقيم أو أحرف كبيرة."
+
+#: forms.py:23
+msgid "First name"
+msgstr "الاسم الأول"
+
+#: forms.py:24
+msgid "Last name"
+msgstr "اسم العائلة"
+
+#: forms.py:25
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: forms.py:26
+msgid "Country"
+msgstr "دولة"
+
+#: forms.py:27
+msgid "Profile photo"
+msgstr "صور الملف الشخصي"
+
+#: forms.py:28
+msgid "Language"
+msgstr "لغة"
+
+#: forms.py:54
+msgid "This username is already taken."
+msgstr "اسم المستخدم هذا مستخدم بالفعل."
+
+#: models.py:39
+msgid "user"
+msgstr "مستخدم"
+
+#: models.py:40
+msgid "bio"
+msgstr "بيولوجيا"
+
+#: models.py:40
+msgid "A short bio"
+msgstr "نبذة مختصرة"
+
+#: models.py:41
+msgid "qualifications"
+msgstr "المؤهلات"
+
+#: models.py:41 templates/indigo_social/user_layout.html:66
+msgid "Qualifications"
+msgstr "المؤهلات"
+
+#: models.py:42
+msgid "skills"
+msgstr "مهارات"
+
+#: models.py:42 templates/indigo_social/user_layout.html:61
+msgid "Skills"
+msgstr "مهارات"
+
+#: models.py:43
+msgid "organisations"
+msgstr "المنظمات"
+
+#: models.py:43 templates/indigo_social/user_layout.html:56
+msgid "Organisations"
+msgstr "المنظمات"
+
+#: models.py:44
+msgid "specialisations"
+msgstr "التخصصات"
+
+#: models.py:44 templates/indigo_social/user_layout.html:71
+msgid "Specialisations"
+msgstr "التخصصات"
+
+#: models.py:45
+msgid "areas of law"
+msgstr "مجالات القانون"
+
+#: models.py:45 templates/indigo_social/user_layout.html:76
+msgid "Areas of law"
+msgstr "مجالات القانون"
+
+#: models.py:46
+msgid "profile photo"
+msgstr "صورة الملف الشخصي"
+
+#: models.py:47
+msgid "profile photo nonce"
+msgstr "صورة الملف الشخصي غير مكتملة"
+
+#: models.py:48
+msgid "twitter username"
+msgstr "اسم المستخدم على تويتر"
+
+#: models.py:49
+msgid "linkedin profile"
+msgstr "ملف تعريف لينكد إن"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr "تعديل الملف الشخصي"
+
+#: templates/indigo_app/user_account/edit.html:32
+msgid "Email"
+msgstr "بريد إلكتروني"
+
+#: templates/indigo_app/user_account/edit.html:35
+msgid "manage your email addresses"
+msgstr "إدارة عناوين بريدك الإلكتروني"
+
+#: templates/indigo_app/user_account/edit.html:42
+msgid "Tell us a bit about yourself"
+msgstr "أخبرنا قليلاً عن نفسك"
+
+#: templates/indigo_app/user_account/edit.html:64
+msgid "Are you sure you want to remove your profile photo?"
+msgstr "هل أنت متأكد من رغبتك في حذف صورة ملفك الشخصي؟"
+
+#: templates/indigo_app/user_account/edit.html:70
+msgid "Upload a photo"
+msgstr "قم بتحميل صورة"
+
+#: templates/indigo_app/user_account/edit.html:72
+msgid "A square photo at least 200 pixels wide is best."
+msgstr "يُفضل استخدام صورة مربعة الشكل بعرض 200 بكسل على الأقل."
+
+#: templates/indigo_app/user_account/edit.html:88
+msgid "Professional skills"
+msgstr "المهارات المهنية"
+
+#: templates/indigo_app/user_account/edit.html:95
+msgid "What organisations do you work for or with?"
+msgstr "ما هي المنظمات التي تعمل لصالحها أو معها؟"
+
+#: templates/indigo_app/user_account/edit.html:157
+msgid "Social media profiles"
+msgstr "حسابات التواصل الاجتماعي"
+
+#: templates/indigo_app/user_account/edit.html:195
+msgid "Save"
+msgstr "يحفظ"
+
+#: templates/indigo_app/user_account/edit.html:196
+msgid "View my profile"
+msgstr "اطلع على ملفي الشخصي"
+
+#: templates/indigo_social/badge_detail.html:7
+#: templates/indigo_social/badges.html:4 templates/indigo_social/badges.html:7
+#: templates/indigo_social/badges.html:16
+msgid "Badges"
+msgstr "الشارات"
+
+#: templates/indigo_social/badge_detail.html:25
+msgid "Awarded to"
+msgstr "مُنحت لـ"
+
+#: templates/indigo_social/badge_detail.html:31
+#, python-format
+msgid "%(ts)s ago"
+msgstr "%(ts)s منذ"
+
+#: templates/indigo_social/badge_detail.html:36
+msgid "No-one has been awarded this badge."
+msgstr "لم يحصل أحد على هذه الشارة."
+
+#: templates/indigo_social/badge_detail.html:42
+msgid "Permissions granted by this badge"
+msgstr "الأذونات الممنوحة بموجب هذه الشارة"
+
+#: templates/indigo_social/badge_detail.html:57
+#, python-format
+msgid "Users awarded this badge are added to the <a href=\"%(url)s\">%(name)s group</a>."
+msgstr "تتم إضافة المستخدمين الحاصلين على هذه الشارة إلى المجموعة <a href=\"%(url)s\">%(name)s</a>."
+
+#: templates/indigo_social/badges.html:18
+msgid "Badges indicate expertise and are earned by completing tasks."
+msgstr "تشير الشارات إلى الخبرة ويتم الحصول عليها من خلال إكمال المهام."
+
+#: templates/indigo_social/contributors.html:4
+#: templates/indigo_social/contributors.html:6
+#: templates/indigo_social/contributors.html:12
+#: templates/indigo_social/user_layout.html:7
+msgid "Contributors"
+msgstr "المساهمون"
+
+#: templates/indigo_social/user_activity.html:6
+#: templates/indigo_social/user_layout.html:92
+msgid "Activity"
+msgstr "نشاط"
+
+#: templates/indigo_social/user_layout.html:82
+msgid "Edit profile"
+msgstr "تعديل الملف الشخصي"
+
+#: templates/indigo_social/user_layout.html:89
+msgid "Overview"
+msgstr "ملخص"
+
+#: templates/indigo_social/user_layout.html:95
+msgid "Tasks"
+msgstr "المهام"
+
+#: templates/indigo_social/user_profile.html:8
+msgid "Achievements"
+msgstr "الإنجازات"
+
+#: templates/indigo_social/user_profile.html:16
+msgid "No badges earned yet"
+msgstr "لم يتم الحصول على أي شارات حتى الآن"
+
+#: templates/indigo_social/user_profile.html:26
+msgid "Award a new badge to this user:"
+msgstr "امنح هذا المستخدم شارة جديدة:"
+
+#: templates/indigo_social/user_profile.html:33
+#: templates/indigo_social/user_profile.html:48
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#: templates/indigo_social/user_profile.html:33
+msgid "Award badge"
+msgstr "شارة الجائزة"
+
+#: templates/indigo_social/user_profile.html:48
+msgid "Remove badge"
+msgstr "إزالة الشارة"
+
+#: templates/indigo_social/user_profile.html:55
+msgid "Recent activity"
+msgstr "النشاط الأخير"
+
+#: templates/indigo_social/user_profile.html:60
+msgid "More activity"
+msgstr "المزيد من النشاط"
+
+#: templates/main.html:14
+msgid "Profile"
+msgstr "حساب تعريفي"
+
+#: templates/main.html:15
+msgid "Account"
+msgstr "حساب"
+
+#: templates/main.html:19
+msgid "Site settings"
+msgstr "إعدادات الموقع"
+
+#: templates/main.html:23
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+#: templates/main.html:27
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+#: views.py:135
+#, python-format
+msgid "%(badge)s badge awarded to %(user)s"
+msgstr "تم منح الشارة %(badge)s إلى %(user)s"
+
+#: views.py:137
+#, python-format
+msgid "%(badge)s badge couldn't be awarded to %(user)s"
+msgstr "لم يتم منح الشارة %(badge)s إلى %(user)s"
+
+#: views.py:154
+#, python-format
+msgid "%(badge)s badge removed from %(user)s"
+msgstr ""
+

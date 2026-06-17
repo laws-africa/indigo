@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2025-04-10 14:44\n"
+"PO-Revision-Date: 2026-06-17 10:19\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -139,10 +139,8 @@ msgid "state"
 msgstr "estado"
 
 #: models/amendments.py:113
-#, fuzzy
-#| msgid "commenced provisions"
 msgid "amending provision"
-msgstr "disposições iniciadas"
+msgstr "disposição de alteração"
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
@@ -150,62 +148,44 @@ msgid "title"
 msgstr "título"
 
 #: models/amendments.py:115
-#, fuzzy
-#| msgid "number"
 msgid "page number"
-msgstr "Número"
+msgstr "número da página"
 
 #: models/amendments.py:116
-#, fuzzy
-#| msgid "publication name"
 msgid "provision name"
-msgstr "Nome da Publicação"
+msgstr "nome da prestação"
 
 #: models/amendments.py:118
-#, fuzzy
-#| msgid "Provisions"
 msgid "provision id"
-msgstr "Provisões"
+msgstr "ID da prestação"
 
 #: models/amendments.py:119
-#, fuzzy
-#| msgid "amendments"
 msgid "amendment instruction"
-msgstr "alterações"
+msgstr "instrução de alteração"
 
 #: models/amendments.py:122
-#, fuzzy
-#| msgid "approved by"
 msgid "applied by"
-msgstr "aprovado por"
+msgstr "aplicado por"
 
 #: models/amendments.py:123
-#, fuzzy
-#| msgid "approved at"
 msgid "applied at"
-msgstr "aprovado em"
+msgstr "aplicado em"
 
 #: models/amendments.py:125
-#, fuzzy
-#| msgid "commenced provisions"
 msgid "amended provision id"
-msgstr "disposições iniciadas"
+msgstr "ID da disposição alterada"
 
 #: models/amendments.py:128
-#, fuzzy
-#| msgid "amended work"
 msgid "amended text"
-msgstr "trabalho alterado"
+msgstr "texto alterado"
 
 #: models/amendments.py:129
-#, fuzzy
-#| msgid "amended work"
 msgid "amended xml"
-msgstr "trabalho alterado"
+msgstr "XML alterado"
 
 #: models/amendments.py:131 models/amendments.py:132
 msgid "final amended text"
-msgstr ""
+msgstr "texto final alterado"
 
 #: models/citations.py:14 models/works.py:606
 msgid "Invalid FRBR URI"
@@ -632,7 +612,7 @@ msgstr "Aplicar emenda"
 
 #: models/tasks.py:103
 msgid "Extract amendment instructions"
-msgstr ""
+msgstr "Extrair instruções de alteração"
 
 #: models/tasks.py:104
 msgid "Link gazette"
@@ -704,19 +684,19 @@ msgstr "Cancelar assinar"
 
 #: models/tasks.py:127
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "Converta o ficheiro de entrada para o formato . docx e remova a numeração automática."
 
 #: models/tasks.py:128
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Importe o conteúdo desta obra na data adequada — geralmente a data de publicação ou de consolidação."
 
 #: models/tasks.py:129
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Localize e forneça o link para a Gazeta (documento de publicação original) referente a esta obra."
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "Extraia as instruções para aplicar esta alteração."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
@@ -933,14 +913,12 @@ msgid "expired"
 msgstr "expirado"
 
 #: models/works.py:489
-#, fuzzy
-#| msgid "place"
 msgid "replaced"
-msgstr "lugar"
+msgstr "substituído"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "desconsiderado"
 
 #: models/works.py:495
 msgid "Can review work details"
@@ -1141,7 +1119,7 @@ msgstr "Nenhuma localidade para este país: %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "Este campo é de preenchimento obrigatório."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
@@ -1277,59 +1255,47 @@ msgstr "apelidos de trabalho"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "O número do capítulo"
 
 #: models/works.py:1113
-#, fuzzy
-#| msgid "Specify if it should be anything other than 'repealed' (the default)"
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr "Especifique se deve ser algo diferente de 'revogado' (o padrão)"
+msgstr "Especifique se deve ser algo diferente de 'capítulo' (o predefinido)."
 
 #: models/works.py:1115
-#, fuzzy
-#| msgid "as-at date"
 msgid "validity start date"
-msgstr "data atual"
+msgstr "data de início de validade"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "Data a partir da qual este número de capítulo se aplica à obra"
 
 #: models/works.py:1116
-#, fuzzy
-#| msgid "repealed date"
 msgid "validity end date"
-msgstr "data revogada"
+msgstr "data de fim da validade"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "Data até à qual este número de capítulo se aplicava à obra."
 
 #: models/works.py:1117
-#, fuzzy
-#| msgid "expression date"
 msgid "revision name"
-msgstr "data de expressão"
+msgstr "nome da revisão"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "Nome da publicação em que este número de capítulo foi atribuído à obra."
 
 #: models/works.py:1121
-#, fuzzy
-#| msgid "chapters are used"
 msgid "chapter number"
-msgstr "capítulos são usados"
+msgstr "número do capítulo"
 
 #: models/works.py:1122
-#, fuzzy
-#| msgid "chapters are used"
 msgid "chapter numbers"
-msgstr "capítulos são usados"
+msgstr "números de capítulo"
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Capítulo"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
@@ -1556,12 +1522,3 @@ msgstr "Não é possível criar uma tarefa para uma anotação de resposta."
 msgid "Error during import"
 msgstr "Erro durante a importação"
 
-#~ msgid "Are you sure you want to submit this task for review?"
-#~ msgstr "Tem certeza que quer submeter esta tarefa para revisão?"
-
-#, python-format
-#~ msgid "Are you sure you want to submit this task for review on behalf of %s?"
-#~ msgstr "Tem certeza que quer submeter esta tarefa para revisão em nome de %s?"
-
-#~ msgid "(untitled)"
-#~ msgstr "(sem título)"

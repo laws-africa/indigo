@@ -1,49 +1,48 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 204\n"
+
 #: admin.py:123
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "تم تحديث وقت التشغيل إلى الوقت الحالي للمهام المحددة."
 
 #: admin.py:126
 msgid "Set run time to now"
-msgstr ""
+msgstr "اضبط وقت التشغيل على الآن"
 
 #: exporters.py:302 exporters.py:304 models/works.py:439
 msgid "Not commenced"
-msgstr ""
+msgstr "لم يبدأ بعد"
 
 #: exporters.py:315
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> في %(date)s بواسطة <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:319
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
 
 #: exporters.py:328
 #, python-format
 msgid "This %(friendly_type)s has <b>not yet come into force</b>."
-msgstr ""
+msgstr "لم يدخل هذا %(friendly_type)s حيز التنفيذ بعد <b></b>."
 
 #: exporters.py:333
 #, python-format
@@ -53,1472 +52,1473 @@ msgstr ""
 #: exporters.py:337
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "سيدخل هذا %(friendly_type)s حيز التنفيذ في %(date)s."
 
 #: exporters.py:342
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "هذه ليست أحدث نسخة متاحة من هذا %(friendly_type)s. <ref href=\"%(url)s\">. يمكنك الاطلاع عليها عبر الإنترنت</ref>."
 
 #: exporters.py:347
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "هناك <b>تعديلات معلقة</b> لم يتم تطبيقها بعد:<br/>%(numbered_titles)s."
 
 #: models/amendments.py:24
 msgid "amended work"
-msgstr ""
+msgstr "العمل المعدل"
 
 #: models/amendments.py:25
 msgid "Work being amended"
-msgstr ""
+msgstr "العمل قيد التعديل"
 
 #: models/amendments.py:26
 msgid "amending work"
-msgstr ""
+msgstr "تعديل العمل"
 
 #: models/amendments.py:27
 msgid "Work making the amendment"
-msgstr ""
+msgstr "العمل على إجراء التعديل"
 
 #: models/amendments.py:28 models/works.py:515 models/works.py:944
 #: models/works.py:1021
 msgid "date"
-msgstr ""
+msgstr "تاريخ"
 
 #: models/amendments.py:29
 msgid "Date on which the amendment comes into operation"
-msgstr ""
+msgstr "تاريخ بدء سريان التعديل"
 
 #: models/amendments.py:30
 msgid "verb"
-msgstr ""
+msgstr "فعل"
 
 #: models/amendments.py:30
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "استبدل بـ \"مُعدَّل\" مثلاً حسب الحاجة"
 
 #: models/amendments.py:32 models/amendments.py:134 models/documents.py:368
 #: models/documents.py:749 models/documents.py:821 models/documents.py:884
 #: models/tasks.py:184 models/tasks.py:670 models/works.py:569
 #: models/works.py:894 models/works.py:960 models/works.py:1026
 msgid "created at"
-msgstr ""
+msgstr "تم إنشاؤه في"
 
 #: models/amendments.py:33 models/amendments.py:135 models/documents.py:370
 #: models/documents.py:750 models/documents.py:822 models/documents.py:885
 #: models/tasks.py:185 models/tasks.py:671 models/works.py:570
 #: models/works.py:895 models/works.py:961 models/works.py:1027
 msgid "updated at"
-msgstr ""
+msgstr "تم التحديث في"
 
 #: models/amendments.py:36 models/amendments.py:136 models/documents.py:373
 #: models/documents.py:816 models/works.py:574 models/works.py:964
 #: models/works.py:1030
 msgid "created by"
-msgstr ""
+msgstr "تم إنشاؤه بواسطة"
 
 #: models/amendments.py:38 models/documents.py:374 models/works.py:576
 #: models/works.py:966 models/works.py:1032
 msgid "updated by"
-msgstr ""
+msgstr "تم التحديث بواسطة"
 
 #: models/amendments.py:42 models/amendments.py:110
 msgid "amendment"
-msgstr ""
+msgstr "تعديل"
 
 #: models/amendments.py:43
 msgid "amendments"
-msgstr ""
+msgstr "التعديلات"
 
 #: models/amendments.py:74
 msgid "Document date changed with amendment date."
-msgstr ""
+msgstr "تم تغيير تاريخ الوثيقة مع تاريخ التعديل."
 
 #: models/amendments.py:112 models/tasks.py:164
 msgid "state"
-msgstr ""
+msgstr "ولاية"
 
 #: models/amendments.py:113
 msgid "amending provision"
-msgstr ""
+msgstr "تعديل الحكم"
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
 msgid "title"
-msgstr ""
+msgstr "عنوان"
 
 #: models/amendments.py:115
 msgid "page number"
-msgstr ""
+msgstr "رقم الصفحة"
 
 #: models/amendments.py:116
 msgid "provision name"
-msgstr ""
+msgstr "اسم البند"
 
 #: models/amendments.py:118
 msgid "provision id"
-msgstr ""
+msgstr "معرف الموفر"
 
 #: models/amendments.py:119
 msgid "amendment instruction"
-msgstr ""
+msgstr "تعليمات التعديل"
 
 #: models/amendments.py:122
 msgid "applied by"
-msgstr ""
+msgstr "تم تطبيقه بواسطة"
 
 #: models/amendments.py:123
 msgid "applied at"
-msgstr ""
+msgstr "تم التقديم في"
 
 #: models/amendments.py:125
 msgid "amended provision id"
-msgstr ""
+msgstr "رقم البند المعدل"
 
 #: models/amendments.py:128
 msgid "amended text"
-msgstr ""
+msgstr "النص المعدل"
 
 #: models/amendments.py:129
 msgid "amended xml"
-msgstr ""
+msgstr "ملف XML معدل"
 
 #: models/amendments.py:131 models/amendments.py:132
 msgid "final amended text"
-msgstr ""
+msgstr "النص النهائي المعدل"
 
 #: models/citations.py:14 models/works.py:606
 msgid "Invalid FRBR URI"
-msgstr ""
+msgstr "عنوان FRBR غير صالح"
 
 #: models/citations.py:19
 msgid "place"
-msgstr ""
+msgstr "مكان"
 
 #: models/citations.py:19
 msgid "Two letter country code, with optional locality code"
-msgstr ""
+msgstr "رمز الدولة المكون من حرفين، مع رمز المنطقة الاختياري"
 
 #: models/citations.py:20 models/works.py:502
 msgid "FRBR URI"
-msgstr ""
+msgstr "FRBR URI"
 
 #: models/citations.py:21
 msgid "aliases"
-msgstr ""
+msgstr "الأسماء المستعارة"
 
 #: models/citations.py:21
 msgid "Aliases, one per line"
-msgstr ""
+msgstr "الأسماء المستعارة، اسم مستعار واحد في كل سطر"
 
 #: models/citations.py:26
 msgid "Citation alias"
-msgstr ""
+msgstr "اسم مستعار للاستشهاد"
 
 #: models/citations.py:27
 msgid "Citation aliases"
-msgstr ""
+msgstr "أسماء بديلة للاستشهاد"
 
 #: models/documents.py:305
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "هذه هي نسخة هذه الوثيقة من %(start)s وتشمل أي تعديلات تم نشرها حتى %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند من %(start)s."
 
 #: models/documents.py:310
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند الموجودة في %(start)s وتشمل أي تعديلات تم نشرها حتى %(end)s."
 
 #: models/documents.py:312
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند الموجودة في %(start)s."
 
 #: models/documents.py:315
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند كما كانت من %(start)s إلى %(end)s."
 
 #: models/documents.py:318
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند كما كانت عليه في %(start)s إلى %(end)s."
 
 #: models/documents.py:321
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "هذه هي نسخة هذا المستند كما كانت في %(start)s."
 
 #: models/documents.py:331 models/documents.py:744 models/documents.py:815
 #: models/documents.py:880 models/tasks.py:161
 msgid "document"
-msgstr ""
+msgstr "وثيقة"
 
 #: models/documents.py:332
 msgid "documents"
-msgstr ""
+msgstr "وثائق"
 
 #: models/documents.py:337 models/tasks.py:160 models/works.py:499
 #: models/works.py:887 models/works.py:1023 models/works.py:1099
 #: models/works.py:1114
 msgid "work"
-msgstr ""
+msgstr "عمل"
 
 #: models/documents.py:345
 msgid "frbr uri"
-msgstr ""
+msgstr "frbr uri"
 
 #: models/documents.py:346 models/works.py:503
 msgid "Used globally to identify this work"
-msgstr ""
+msgstr "يُستخدم عالميًا لتحديد هذا العمل"
 
 #: models/documents.py:353 models/places.py:25 models/places.py:32
 #: models/places.py:308 models/places.py:322
 msgid "language"
-msgstr ""
+msgstr "لغة"
 
 #: models/documents.py:354
 msgid "Language this document is in."
-msgstr ""
+msgstr "لغة هذه الوثيقة."
 
 #: models/documents.py:355
 msgid "draft"
-msgstr ""
+msgstr "مسودة"
 
 #: models/documents.py:355
 msgid "Drafts aren't available through the public API"
-msgstr ""
+msgstr "لا تتوفر المسودات عبر واجهة برمجة التطبيقات العامة (API)."
 
 #: models/documents.py:358
 msgid "document XML"
-msgstr ""
+msgstr "مستند XML"
 
 #: models/documents.py:363
 msgid "expression date"
-msgstr ""
+msgstr "تاريخ التعبير"
 
 #: models/documents.py:364
 msgid "Date of publication or latest amendment"
-msgstr ""
+msgstr "تاريخ النشر أو آخر تعديل"
 
 #: models/documents.py:366
 msgid "deleted"
-msgstr ""
+msgstr "تم الحذف"
 
 #: models/documents.py:366
 msgid "Has this document been deleted?"
-msgstr ""
+msgstr "هل تم حذف هذا المستند؟"
 
 #: models/documents.py:369
 msgid "Timestamp of when the expression was first created."
-msgstr ""
+msgstr "الطابع الزمني لوقت إنشاء التعبير لأول مرة."
 
 #: models/documents.py:371
 msgid "Timestamp of when the expression was last updated."
-msgstr ""
+msgstr "الطابع الزمني لآخر تحديث للتعبير."
 
 #: models/documents.py:745 models/tasks.py:665 models/works.py:889
 msgid "file"
-msgstr ""
+msgstr "ملف"
 
 #: models/documents.py:746 models/tasks.py:667
 msgid "size"
-msgstr ""
+msgstr "مقاس"
 
 #: models/documents.py:747 models/tasks.py:668
 msgid "filename"
-msgstr ""
+msgstr "اسم الملف"
 
 #: models/documents.py:747
 msgid "Unique attachment filename"
-msgstr ""
+msgstr "اسم ملف المرفق الفريد"
 
 #: models/documents.py:748
 msgid "mime type"
-msgstr ""
+msgstr "نوع MIME"
 
 #: models/documents.py:754
 msgid "attachment"
-msgstr ""
+msgstr "مرفق"
 
 #: models/documents.py:755
 msgid "attachments"
-msgstr ""
+msgstr "المرفقات"
 
 #: models/documents.py:795 models/places.py:205 models/saved_searches.py:11
 #: models/works.py:54 models/works.py:1065 models/works.py:1113
 msgid "name"
-msgstr ""
+msgstr "اسم"
 
 #: models/documents.py:795
 msgid "Name of this colophon"
-msgstr ""
+msgstr "اسم بيانات النشر هذه"
 
 #: models/documents.py:797
 msgid "Which country does this colophon apply to?"
-msgstr ""
+msgstr "ما هي الدولة التي ينطبق عليها هذا البيان؟"
 
 #: models/documents.py:798 models/places.py:58 models/places.py:79
 #: models/places.py:204 models/places.py:252 models/tasks.py:158
 #: models/works.py:508
 msgid "country"
-msgstr ""
+msgstr "دولة"
 
 #: models/documents.py:799
 msgid "body"
-msgstr ""
+msgstr "جسم"
 
 #: models/documents.py:802
 msgid "colophon"
-msgstr ""
+msgstr "بيانات النشر"
 
 #: models/documents.py:803
 msgid "colophons"
-msgstr ""
+msgstr "بيانات النشر"
 
 #: models/documents.py:817
 msgid "in reply to"
-msgstr ""
+msgstr "رداً على"
 
 #: models/documents.py:818
 msgid "text"
-msgstr ""
+msgstr "نص"
 
 #: models/documents.py:819
 msgid "anchor id"
-msgstr ""
+msgstr "معرف المرساة"
 
 #: models/documents.py:820
 msgid "closed"
-msgstr ""
+msgstr "مغلق"
 
 #: models/documents.py:823 models/tasks.py:150
 msgid "task"
-msgstr ""
+msgstr "مهمة"
 
 #: models/documents.py:824
 msgid "selectors"
-msgstr ""
+msgstr "محددات"
 
 #: models/documents.py:829
 msgid "annotation"
-msgstr ""
+msgstr "شرح"
 
 #: models/documents.py:830
 msgid "annotations"
-msgstr ""
+msgstr "التعليقات التوضيحية"
 
 #: models/documents.py:882
 msgid "user"
-msgstr ""
+msgstr "مستخدم"
 
 #: models/documents.py:883
 msgid "nonce"
-msgstr ""
+msgstr "نونسي"
 
 #: models/documents.py:895
 msgid "document activity"
-msgstr ""
+msgstr "نشاط المستندات"
 
 #: models/documents.py:896
 msgid "document activities"
-msgstr ""
+msgstr "أنشطة توثيق الأنشطة"
 
 #: models/places.py:33
 msgid "languages"
-msgstr ""
+msgstr "اللغات"
 
 #: models/places.py:60
 msgid "Primary language for this country"
-msgstr ""
+msgstr "اللغة الأساسية لهذا البلد"
 
 #: models/places.py:61
 msgid "primary language"
-msgstr ""
+msgstr "اللغة الأساسية"
 
 #: models/places.py:63
 msgid "italics terms"
-msgstr ""
+msgstr "المصطلحات المكتوبة بخط مائل"
 
 #: models/places.py:80
 msgid "countries"
-msgstr ""
+msgstr "بلدان"
 
 #: models/places.py:173
 msgid "All places"
-msgstr ""
+msgstr "جميع الأماكن"
 
 #: models/places.py:205
 msgid "Local name of this locality"
-msgstr ""
+msgstr "الاسم المحلي لهذه المنطقة"
 
 #: models/places.py:206 models/tasks.py:167
 msgid "code"
-msgstr ""
+msgstr "شفرة"
 
 #: models/places.py:212 models/places.py:254 models/tasks.py:159
 #: models/works.py:510
 msgid "locality"
-msgstr ""
+msgstr "المنطقة"
 
 #: models/places.py:213
 msgid "localities"
-msgstr ""
+msgstr "المنطقة"
 
 #: models/places.py:256
 msgid "spreadsheet URL"
-msgstr ""
+msgstr "رابط جدول البيانات"
 
 #: models/places.py:257
 msgid "as-at date"
-msgstr ""
+msgstr "حتى تاريخ"
 
 #: models/places.py:258
 msgid "styleguide URL"
-msgstr ""
+msgstr "رابط دليل الأسلوب"
 
 #: models/places.py:259
 msgid "consolidation note"
-msgstr ""
+msgstr "مذكرة توحيد"
 
 #: models/places.py:261
 msgid "'No publication document' text"
-msgstr ""
+msgstr "نص \"لا يوجد مستند للنشر\""
 
 #: models/places.py:262
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "ملاحظة: وثيقة النشر الأصلية غير متوفرة، ولم يكن من الممكن التحقق من هذا المحتوى."
 
 #: models/places.py:263
 msgid "publication date is optional"
-msgstr ""
+msgstr "تاريخ النشر اختياري"
 
 #: models/places.py:264
 msgid "Are publication dates optional in this place?"
-msgstr ""
+msgstr "هل تواريخ النشر اختيارية في هذا المكان؟"
 
 #: models/places.py:265
 msgid "a consolidation is being imported"
-msgstr ""
+msgstr "يتم استيراد عملية دمج"
 
 #: models/places.py:266
 msgid "Is a consolidation being worked on in this place?"
-msgstr ""
+msgstr "هل يجري العمل على عملية دمج في هذا المكان؟"
 
 #: models/places.py:267
 msgid "chapters are used"
-msgstr ""
+msgstr "يتم استخدام الفصول"
 
 #: models/places.py:268
 msgid "Are Chapters used for Acts in this place?"
-msgstr ""
+msgstr "هل تُستخدم الفصول في كتابة أعمال الرسل في هذا المكان؟"
 
 #: models/places.py:271
 msgid "place settings"
-msgstr ""
+msgstr "أماكن الجلوس"
 
 #: models/places.py:272
 msgid "places' settings"
-msgstr ""
+msgstr "إعدادات الأماكن"
 
 #: models/places.py:309
 msgid "terms"
-msgstr ""
+msgstr "شروط"
 
 #: models/places.py:312 models/places.py:313
 msgid "accented terms"
-msgstr ""
+msgstr "المصطلحات المُشَكَّهة"
 
 #: models/places.py:320
 msgid "annotation title"
-msgstr ""
+msgstr "عنوان التعليق"
 
 #: models/places.py:320
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "ليتم عرضها في القائمة المنسدلة للمستند"
 
 #: models/places.py:321
 msgid "annotation content"
-msgstr ""
+msgstr "محتوى التعليقات التوضيحية"
 
 #: models/places.py:321
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "ستُحاط دائمًا بأقواس مربعة [] — لا تُدرجها مرة أخرى"
 
 #: models/saved_searches.py:7
 msgid "Tasks"
-msgstr ""
+msgstr "المهام"
 
 #: models/saved_searches.py:8
 msgid "Works"
-msgstr ""
+msgstr "أعمال"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "نِطَاق"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "سلسلة الاستعلام"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "البحث المحفوظ"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "عمليات البحث المحفوظة"
 
 #: models/tasks.py:72 models/tasks.py:81
 msgid "Open"
-msgstr ""
+msgstr "يفتح"
 
 #: models/tasks.py:73 models/tasks.py:83
 msgid "Pending review"
-msgstr ""
+msgstr "قيد المراجعة"
 
 #: models/tasks.py:74 models/tasks.py:80
 msgid "Blocked"
-msgstr ""
+msgstr "محظور"
 
 #: models/tasks.py:75 models/tasks.py:85
 msgid "Cancelled"
-msgstr ""
+msgstr "تم الإلغاء"
 
 #: models/tasks.py:76 models/tasks.py:84
 msgid "Done"
-msgstr ""
+msgstr "منتهي"
 
 #: models/tasks.py:82
 msgid "Assigned"
-msgstr ""
+msgstr "مُكَلَّف"
 
 #: models/tasks.py:100
 msgid "Convert document"
-msgstr ""
+msgstr "تحويل المستند"
 
 #: models/tasks.py:101
 msgid "Import content"
-msgstr ""
+msgstr "استيراد المحتوى"
 
 #: models/tasks.py:102
 msgid "Apply amendment"
-msgstr ""
+msgstr "تطبيق التعديل"
 
 #: models/tasks.py:103
 msgid "Extract amendment instructions"
-msgstr ""
+msgstr "تعليمات التعديل المستخرجة"
 
 #: models/tasks.py:104
 msgid "Link gazette"
-msgstr ""
+msgstr "لينكجيت"
 
 #: models/tasks.py:108
 msgid "Check / update primary work"
-msgstr ""
+msgstr "مراجعة / تحديث العمل الأساسي"
 
 #: models/tasks.py:109
 msgid "Check / update repeal"
-msgstr ""
+msgstr "التحقق من / تحديث الإلغاء"
 
 #: models/tasks.py:110
 msgid "'Commences on' date missing"
-msgstr ""
+msgstr "تاريخ \"يبدأ في\" مفقود"
 
 #: models/tasks.py:111
 msgid "Comment"
-msgstr ""
+msgstr "تعليق"
 
 #: models/tasks.py:112
 msgid "Link amendment (active)"
-msgstr ""
+msgstr "تعديل الرابط (نشط)"
 
 #: models/tasks.py:113
 msgid "Link amendment (passive)"
-msgstr ""
+msgstr "تعديل الرابط (بصيغة المبني للمجهول)"
 
 #: models/tasks.py:114
 msgid "Link amendment (pending commencement)"
-msgstr ""
+msgstr "تعديل الرابط (في انتظار بدء العمل)"
 
 #: models/tasks.py:115
 msgid "Link commencement (active)"
-msgstr ""
+msgstr "بدء الربط (نشط)"
 
 #: models/tasks.py:116
 msgid "Link commencement (passive)"
-msgstr ""
+msgstr "بدء الربط (بصيغة المبني للمجهول)"
 
 #: models/tasks.py:117
 msgid "Link primary work"
-msgstr ""
+msgstr "العمل الأساسي المرتبط"
 
 #: models/tasks.py:118
 msgid "Link repeal"
-msgstr ""
+msgstr "إلغاء الرابط"
 
 #: models/tasks.py:119
 msgid "Link repeal (not found)"
-msgstr ""
+msgstr "إلغاء الرابط (غير موجود)"
 
 #: models/tasks.py:120
 msgid "Link repeal (pending commencement)"
-msgstr ""
+msgstr "إلغاء الرابط (في انتظار بدء سريانه)"
 
 #: models/tasks.py:121
 msgid "Link subleg"
-msgstr ""
+msgstr "رابط فرعي"
 
 #: models/tasks.py:122
 msgid "Link taxonomy"
-msgstr ""
+msgstr "تصنيف الروابط"
 
 #: models/tasks.py:123
 msgid "Sign-off"
-msgstr ""
+msgstr "تسجيل خروج"
 
 #: models/tasks.py:127
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "قم بتحويل ملف الإدخال إلى ملف بصيغة .docx وقم بإزالة الترقيم التلقائي."
 
 #: models/tasks.py:128
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "قم باستيراد محتوى هذا العمل في التاريخ المناسب - عادةً تاريخ النشر أو تاريخ التوحيد."
 
 #: models/tasks.py:129
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "ابحث عن رابط الجريدة الرسمية (وثيقة النشر الأصلية) لهذا العمل وقم بربطه."
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "استخرج التعليمات الخاصة بتطبيق هذا التعديل."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
-msgstr ""
+msgstr "يمكنك تقديم مهمة مفتوحة للمراجعة"
 
 #: models/tasks.py:142
 msgid "Can cancel a task that is open or has been submitted for review"
-msgstr ""
+msgstr "يمكنك إلغاء مهمة مفتوحة أو تم تقديمها للمراجعة"
 
 #: models/tasks.py:143
 msgid "Can reopen a task that is closed or cancelled"
-msgstr ""
+msgstr "يمكن إعادة فتح مهمة مغلقة أو ملغاة"
 
 #: models/tasks.py:144
 msgid "Can unsubmit a task that has been submitted for review"
-msgstr ""
+msgstr "يمكنك إلغاء إرسال مهمة تم إرسالها للمراجعة"
 
 #: models/tasks.py:145
 msgid "Can close a task that has been submitted for review"
-msgstr ""
+msgstr "يمكن إغلاق مهمة تم تقديمها للمراجعة"
 
 #: models/tasks.py:146
 msgid "Can close any task that has been submitted for review, regardless of who submitted it"
-msgstr ""
+msgstr "يمكن إغلاق أي مهمة تم تقديمها للمراجعة، بغض النظر عمن قام بتقديمها."
 
 #: models/tasks.py:147
 msgid "Can block a task from being done, and unblock it"
-msgstr ""
+msgstr "يمكن منع إنجاز مهمة ما، ثم إلغاء هذا المنع"
 
 #: models/tasks.py:148
 msgid "Can be assigned tasks in excess of limits"
-msgstr ""
+msgstr "يمكن تكليفه بمهام تتجاوز الحدود المحددة"
 
 #: models/tasks.py:151
 msgid "tasks"
-msgstr ""
+msgstr "المهام"
 
 #: models/tasks.py:156 models/tasks.py:647 models/works.py:58
 #: models/works.py:1022
 msgid "description"
-msgstr ""
+msgstr "وصف"
 
 #: models/tasks.py:162
 msgid "timeline date"
-msgstr ""
+msgstr "تاريخ الجدول الزمني"
 
 #: models/tasks.py:162
 msgid "A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."
-msgstr ""
+msgstr "تاريخ على الجدول الزمني للمهام المتعلقة بالعمل، على سبيل المثال التاريخ الذي يجب فيه تطبيق التعديل."
 
 #: models/tasks.py:170
 msgid "input file"
-msgstr ""
+msgstr "ملف الإدخال"
 
 #: models/tasks.py:171
 msgid "output file"
-msgstr ""
+msgstr "ملف الإخراج"
 
 #: models/tasks.py:173
 msgid "assigned to"
-msgstr ""
+msgstr "مُخصص لـ"
 
 #: models/tasks.py:174
 msgid "submitted by user"
-msgstr ""
+msgstr "مقدم من المستخدم"
 
 #: models/tasks.py:175
 msgid "reviewed by user"
-msgstr ""
+msgstr "تمت المراجعة من قبل المستخدم"
 
 #: models/tasks.py:176
 msgid "finished by user"
-msgstr ""
+msgstr "تم الانتهاء منه بواسطة المستخدمين"
 
 #: models/tasks.py:177
 msgid "closed at"
-msgstr ""
+msgstr "مغلق في"
 
 #: models/tasks.py:177
 msgid "When the task was marked as done or cancelled."
-msgstr ""
+msgstr "عندما تم وضع علامة \"تم\" على المهمة أو تم إلغاؤها."
 
 #: models/tasks.py:179
 msgid "changes requested"
-msgstr ""
+msgstr "التغييرات المطلوبة"
 
 #: models/tasks.py:179
 msgid "Have changes been requested on this task?"
-msgstr ""
+msgstr "هل طُلب إجراء تغييرات على هذه المهمة؟"
 
 #: models/tasks.py:181
 msgid "created by user"
-msgstr ""
+msgstr "تم إنشاؤه بواسطة المستخدم"
 
 #: models/tasks.py:182
 msgid "updated by user"
-msgstr ""
+msgstr "تم التحديث بواسطة المستخدم"
 
 #: models/tasks.py:187
 msgid "labels"
-msgstr ""
+msgstr "الملصقات"
 
 #: models/tasks.py:189
 msgid "extra data"
-msgstr ""
+msgstr "بيانات إضافية"
 
 #: models/tasks.py:191
 msgid "blocked by"
-msgstr ""
+msgstr "تم حظره بواسطة"
 
 #: models/tasks.py:191
 msgid "Tasks blocking this task from being done."
-msgstr ""
+msgstr "المهام التي تعيق إنجاز هذه المهمة."
 
 #: models/tasks.py:646 models/works.py:56
 msgid "slug"
-msgstr ""
+msgstr "سبيكة"
 
 #: models/tasks.py:651
 msgid "task label"
-msgstr ""
+msgstr "تسمية المهمة"
 
 #: models/tasks.py:652
 msgid "task labels"
-msgstr ""
+msgstr "تسميات المهام"
 
 #: models/tasks.py:666
 msgid "URL"
-msgstr ""
+msgstr "عنوان URL"
 
 #: models/tasks.py:669
 msgid "mimetype"
-msgstr ""
+msgstr "نوع المحاكاة"
 
 #: models/tasks.py:674
 msgid "task file"
-msgstr ""
+msgstr "ملف المهمة"
 
 #: models/tasks.py:675
 msgid "task files"
-msgstr ""
+msgstr "ملفات المهام"
 
 #: models/works.py:36
 #, python-format
 msgid "Work for FRBR URI '%(uri)s' doesn't exist"
-msgstr ""
+msgstr "العمل الخاص بـ FRBR URI '%(uri)s' غير موجود"
 
 #: models/works.py:55
 msgid "Name of the taxonomy topic"
-msgstr ""
+msgstr "اسم موضوع التصنيف"
 
 #: models/works.py:57
 msgid "Unique short name (code) for the topic."
-msgstr ""
+msgstr "اسم مختصر فريد (رمز) للموضوع."
 
 #: models/works.py:59
 msgid "Description of the topic"
-msgstr ""
+msgstr "وصف الموضوع"
 
 #: models/works.py:60
 msgid "public"
-msgstr ""
+msgstr "عام"
 
 #: models/works.py:61
 msgid "project"
-msgstr ""
+msgstr "مشروع"
 
 #: models/works.py:63
 msgid "copy from principal work"
-msgstr ""
+msgstr "نسخة من العمل الأصلي"
 
 #: models/works.py:64
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "انسخ هذا الموضوع من الأعمال الرئيسية إلى الأعمال التي تعدل أو تبدأ أو تلغي العمل الرئيسي."
 
 #: models/works.py:69
 msgid "taxonomy topic"
-msgstr ""
+msgstr "موضوع التصنيف"
 
 #: models/works.py:70 models/works.py:553
 msgid "taxonomy topics"
-msgstr ""
+msgstr "مواضيع التصنيف"
 
 #: models/works.py:438
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "تاريخ البدء غير معروف"
 
 #: models/works.py:444
 msgid "There are multiple commencements"
-msgstr ""
+msgstr "هناك بدايات متعددة"
 
 #: models/works.py:483
 msgid "repealed"
-msgstr ""
+msgstr "تم إلغاؤه"
 
 #: models/works.py:484
 msgid "revoked"
-msgstr ""
+msgstr "تم إلغاؤه"
 
 #: models/works.py:485
 msgid "withdrawn"
-msgstr ""
+msgstr "تم سحبها"
 
 #: models/works.py:486
 msgid "lapsed"
-msgstr ""
+msgstr "منتهية الصلاحية"
 
 #: models/works.py:487
 msgid "retired"
-msgstr ""
+msgstr "متقاعد"
 
 #: models/works.py:488
 msgid "expired"
-msgstr ""
+msgstr "منتهي الصلاحية"
 
 #: models/works.py:489
 msgid "replaced"
-msgstr ""
+msgstr "استبدال"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "تم إلغاء التطبيق"
 
 #: models/works.py:495
 msgid "Can review work details"
-msgstr ""
+msgstr "يمكن مراجعة تفاصيل العمل"
 
 #: models/works.py:496
 msgid "Can import works in bulk"
-msgstr ""
+msgstr "يمكن استيراد الأعمال بكميات كبيرة"
 
 #: models/works.py:497
 msgid "Can export works in bulk"
-msgstr ""
+msgstr "يمكن تصدير الأعمال بكميات كبيرة"
 
 #: models/works.py:500
 msgid "works"
-msgstr ""
+msgstr "أعمال"
 
 #: models/works.py:512
 msgid "doctype"
-msgstr ""
+msgstr "نوع المستند"
 
 #: models/works.py:512
 msgid "FRBR doctype"
-msgstr ""
+msgstr "نوع المستند FRBR"
 
 #: models/works.py:513 models/works.py:1073
 msgid "subtype"
-msgstr ""
+msgstr "النمط الفرعي"
 
 #: models/works.py:513
 msgid "FRBR subtype"
-msgstr ""
+msgstr "النمط الفرعي FRBR"
 
 #: models/works.py:514
 msgid "actor"
-msgstr ""
+msgstr "ممثل"
 
 #: models/works.py:514
 msgid "FRBR actor"
-msgstr ""
+msgstr "ممثل FRBR"
 
 #: models/works.py:515
 msgid "FRBR date"
-msgstr ""
+msgstr "تاريخ FRBR"
 
 #: models/works.py:516 models/works.py:1112
 msgid "number"
-msgstr ""
+msgstr "رقم"
 
 #: models/works.py:516
 msgid "FRBR number"
-msgstr ""
+msgstr "رقم FRBR"
 
 #: models/works.py:519
 msgid "publication name"
-msgstr ""
+msgstr "اسم المنشور"
 
 #: models/works.py:520
 msgid "Original publication's name, e.g. Government Gazette"
-msgstr ""
+msgstr "اسم المنشور الأصلي، على سبيل المثال: الجريدة الرسمية"
 
 #: models/works.py:521
 msgid "publication number"
-msgstr ""
+msgstr "رقم النشر"
 
 #: models/works.py:522
 msgid "Publication's sequence number, eg. gazette number"
-msgstr ""
+msgstr "رقم تسلسل المنشور، على سبيل المثال رقم الجريدة الرسمية"
 
 #: models/works.py:523
 msgid "publication date"
-msgstr ""
+msgstr "تاريخ النشر"
 
 #: models/works.py:523
 msgid "Date of publication"
-msgstr ""
+msgstr "تاريخ النشر"
 
 #: models/works.py:525
 msgid "assent date"
-msgstr ""
+msgstr "تاريخ الموافقة"
 
 #: models/works.py:525
 msgid "Date signed by the president"
-msgstr ""
+msgstr "تاريخ توقيع الرئيس"
 
 #: models/works.py:527
 msgid "commenced"
-msgstr ""
+msgstr "بدأ"
 
 #: models/works.py:528
 msgid "Has this work commenced? (Date may be unknown)"
-msgstr ""
+msgstr "هل بدأ هذا العمل؟ (قد يكون التاريخ غير معروف)"
 
 #: models/works.py:532
 msgid "Work that repealed this work"
-msgstr ""
+msgstr "العمل الذي ألغى هذا العمل"
 
 #: models/works.py:533
 msgid "repealed by"
-msgstr ""
+msgstr "تم إلغاؤه بواسطة"
 
 #: models/works.py:534
 msgid "repealed date"
-msgstr ""
+msgstr "تاريخ الإلغاء"
 
 #: models/works.py:534
 msgid "Date of repeal of this work"
-msgstr ""
+msgstr "تاريخ إلغاء هذا العمل"
 
 #: models/works.py:535
 msgid "repealed verb"
-msgstr ""
+msgstr "فعل ملغى"
 
 #: models/works.py:536
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "حدد ما إذا كان ينبغي أن يكون أي شيء آخر غير \"ملغى\" (الوضع الافتراضي)."
 
 #: models/works.py:537
 msgid "repealed note"
-msgstr ""
+msgstr "ملاحظة ملغاة"
 
 #: models/works.py:538
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "ملاحظة اختيارية تتضمن تفاصيل إضافية حول الإلغاء"
 
 #: models/works.py:542
 msgid "Parent (primary) work for subsidiary legislation"
-msgstr ""
+msgstr "العمل الأساسي (الرئيسي) للتشريعات الفرعية"
 
 #: models/works.py:543
 msgid "parent (primary) work"
-msgstr ""
+msgstr "العمل الرئيسي (الأساسي)"
 
 #: models/works.py:545
 msgid "principal"
-msgstr ""
+msgstr "رئيسي"
 
 #: models/works.py:546
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
-msgstr ""
+msgstr "الأعمال الرئيسية ليست مجرد عمليات إلغاء أو تعديل أو بدء، ويجب أن تحتوي على محتوى نصي كامل."
 
 #: models/works.py:548
 msgid "stub"
-msgstr ""
+msgstr "جذع"
 
 #: models/works.py:548
 msgid "Stub works do not have content or points in time"
-msgstr ""
+msgstr "لا تحتوي الأعمال غير المكتملة على محتوى أو نقاط زمنية."
 
 #: models/works.py:551
 msgid "properties"
-msgstr ""
+msgstr "ملكيات"
 
 #: models/works.py:555
 msgid "as-at date override"
-msgstr ""
+msgstr "تجاوز تاريخ \"كما هو\""
 
 #: models/works.py:556
 msgid "Date up to which this work was last checked for updates"
-msgstr ""
+msgstr "تاريخ آخر تحديثات تم إجراؤها على هذا العمل"
 
 #: models/works.py:557
 msgid "consolidation note override"
-msgstr ""
+msgstr "تجاوز مذكرة التوحيد"
 
 #: models/works.py:558
 msgid "Consolidation note about this particular work, to override any consolidation note for the place"
-msgstr ""
+msgstr "ملاحظة توحيد بشأن هذا العمل تحديدًا، لتجاوز أي ملاحظة توحيد خاصة بهذا المكان"
 
 #: models/works.py:560
 msgid "disclaimer"
-msgstr ""
+msgstr "تنصل"
 
 #: models/works.py:561
 msgid "Disclaimer text about this work"
-msgstr ""
+msgstr "نص إخلاء المسؤولية المتعلق بهذا العمل"
 
 #: models/works.py:563
 msgid "work in progress"
-msgstr ""
+msgstr "العمل جارٍ"
 
 #: models/works.py:564
 msgid "Work in progress, to be approved"
-msgstr ""
+msgstr "العمل جارٍ، وسيتم اعتماده"
 
 #: models/works.py:571
 msgid "approved at"
-msgstr ""
+msgstr "تمت الموافقة في"
 
 #: models/works.py:578
 msgid "approved by"
-msgstr ""
+msgstr "تمت الموافقة من قبل"
 
 #: models/works.py:596
 #, python-format
 msgid "No such locality for this country: %(code)s"
-msgstr ""
+msgstr "لا يوجد موقع بهذا الاسم لهذا البلد: %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "هذه الخانة مطلوبه."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
-msgstr ""
+msgstr "لم يتم نشر هذه الوثيقة لأن العمل الذي ورد فيها لم تتم الموافقة عليه."
 
 #: models/works.py:890
 msgid "trusted URL"
-msgstr ""
+msgstr "عنوان URL موثوق"
 
 #: models/works.py:891
 msgid "file size"
-msgstr ""
+msgstr "حجم الملف"
 
 #: models/works.py:892
 msgid "file name"
-msgstr ""
+msgstr "اسم الملف"
 
 #: models/works.py:893
 msgid "file MIME type"
-msgstr ""
+msgstr "نوع MIME للملف"
 
 #: models/works.py:898
 msgid "publication document"
-msgstr ""
+msgstr "وثيقة النشر"
 
 #: models/works.py:899
 msgid "publication documents"
-msgstr ""
+msgstr "وثائق النشر"
 
 #: models/works.py:939
 msgid "commenced work"
-msgstr ""
+msgstr "بدأ العمل"
 
 #: models/works.py:940
 msgid "Principal work being commenced"
-msgstr ""
+msgstr "بدء الأعمال الرئيسية"
 
 #: models/works.py:941
 msgid "commencing work"
-msgstr ""
+msgstr "بدء العمل"
 
 #: models/works.py:942
 msgid "Work that provides the commencement date for the principal work"
-msgstr ""
+msgstr "العمل الذي يحدد تاريخ بدء العمل الرئيسي"
 
 #: models/works.py:945
 msgid "Date of the commencement, or null if it is unknown"
-msgstr ""
+msgstr "تاريخ بدء سريان القانون، أو لاغٍ إذا كان غير معروف."
 
 #: models/works.py:946
 msgid "main"
-msgstr ""
+msgstr "رئيسي"
 
 #: models/works.py:947
 msgid "This commencement date is the date on which most of the provisions of the commenced work come into force"
-msgstr ""
+msgstr "يُعد تاريخ بدء النفاذ هذا هو التاريخ الذي تدخل فيه معظم أحكام العمل الذي تم البدء فيه حيز التنفيذ"
 
 #: models/works.py:949
 msgid "all provisions"
-msgstr ""
+msgstr "جميع الأحكام"
 
 #: models/works.py:950
 msgid "All provisions of this work commenced on this date"
-msgstr ""
+msgstr "بدأت جميع أحكام هذا العمل في هذا التاريخ"
 
 #: models/works.py:951
 msgid "note"
-msgstr ""
+msgstr "ملحوظة"
 
 #: models/works.py:952
 msgid "Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation"
-msgstr ""
+msgstr "عادةً ما تشير إلى بند من بنود العمل الذي بدأ أو إلى بدء العمل، إذا كان هناك بدء ولكن التاريخ قابل للتأويل"
 
 #: models/works.py:956
 msgid "commenced provisions"
-msgstr ""
+msgstr "بدأت الأحكام"
 
 #: models/works.py:957
 msgid "A list of the element ids of the provisions that come into force with this commencement"
-msgstr ""
+msgstr "قائمة بمعرفات العناصر الخاصة بالأحكام التي تدخل حيز التنفيذ مع بدء سريان هذا القانون"
 
 #: models/works.py:971
 msgid "commencement"
-msgstr ""
+msgstr "بدء"
 
 #: models/works.py:972
 msgid "commencements"
-msgstr ""
+msgstr "بدايات"
 
 #: models/works.py:1021
 msgid "Arbitrary date, e.g. consolidation date"
-msgstr ""
+msgstr "تاريخ اعتباطي، على سبيل المثال تاريخ التوحيد"
 
 #: models/works.py:1037
 msgid "arbitrary expression date"
-msgstr ""
+msgstr "تاريخ التعبير التعسفي"
 
 #: models/works.py:1038
 msgid "arbitrary expression dates"
-msgstr ""
+msgstr "تواريخ التعبير العشوائي"
 
 #: models/works.py:1065
 msgid "Name of the subtype"
-msgstr ""
+msgstr "اسم النوع الفرعي"
 
 #: models/works.py:1066
 msgid "abbreviation"
-msgstr ""
+msgstr "اختصار"
 
 #: models/works.py:1067
 msgid "Short abbreviation to use in the FRBR URI. No punctuation."
-msgstr ""
+msgstr "اختصار قصير يُستخدم في معرّف الموارد الموحد (URI) الخاص بـ FRBR. بدون علامات ترقيم."
 
 #: models/works.py:1074
 msgid "subtypes"
-msgstr ""
+msgstr "الأنواع الفرعية"
 
 #: models/works.py:1098
 msgid "alias"
-msgstr ""
+msgstr "الاسم المستعار"
 
 #: models/works.py:1098
 msgid "Alias e.g. Penal Code, etc"
-msgstr ""
+msgstr "الاسم المستعار، على سبيل المثال قانون العقوبات، إلخ"
 
 #: models/works.py:1104
 msgid "work alias"
-msgstr ""
+msgstr "اسم مستعار للعمل"
 
 #: models/works.py:1105
 msgid "work aliases"
-msgstr ""
+msgstr "أسماء مستعارة للعمل"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "رقم الفصل"
 
 #: models/works.py:1113
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr ""
+msgstr "حدد ما إذا كان ينبغي أن يكون أي شيء آخر غير \"الفصل\" (الخيار الافتراضي)."
 
 #: models/works.py:1115
 msgid "validity start date"
-msgstr ""
+msgstr "تاريخ بدء الصلاحية"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "التاريخ الذي بدأ تطبيق رقم هذا الفصل على العمل"
 
 #: models/works.py:1116
 msgid "validity end date"
-msgstr ""
+msgstr "تاريخ انتهاء الصلاحية"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "التاريخ الذي كان ينطبق فيه رقم هذا الفصل على العمل"
 
 #: models/works.py:1117
 msgid "revision name"
-msgstr ""
+msgstr "اسم المراجعة"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "اسم المنشور الذي تم فيه تخصيص رقم هذا الفصل لهذا العمل"
 
 #: models/works.py:1121
 msgid "chapter number"
-msgstr ""
+msgstr "رقم الفصل"
 
 #: models/works.py:1122
 msgid "chapter numbers"
-msgstr ""
+msgstr "أرقام الفصول"
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "الفصل"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
-msgstr ""
+msgstr "يبحث"
 
 #: templates/admin/tree_change_list.html:8
 msgid "Collapse all"
-msgstr ""
+msgstr "طي الكل"
 
 #: templates/admin/tree_change_list.html:9
 msgid "Expand all"
-msgstr ""
+msgstr "عرض الكل"
 
 #: templates/indigo_api/akn/_amendments.html:11
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[تمت المراجعة بواسطة <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> في <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[تم التعديل بواسطة <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> في <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[تمت المراجعة بواسطة <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> في <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[تم التعديل بواسطة <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> في <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_commencements_table.html:6
 msgid "Provisions"
-msgstr ""
+msgstr "الأحكام"
 
 #: templates/indigo_api/akn/_commencements_table.html:7
 msgid "Status"
-msgstr ""
+msgstr "حالة"
 
 #: templates/indigo_api/akn/_commencements_table.html:20
 msgid "Unknown provisions"
-msgstr ""
+msgstr "أحكام غير معروفة"
 
 #: templates/indigo_api/akn/_commencements_table.html:25
 #, python-format
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "بدأ في %(date)s"
 
 #: templates/indigo_api/akn/_commencements_table.html:27
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "بدأ في <i>(تاريخ غير معروف)</i>"
 
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "بواسطة <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:36
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "بواسطة <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:42
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:45
 msgid "Note:"
-msgstr ""
+msgstr "ملحوظة:"
 
 #: templates/indigo_api/akn/_commencements_table.html:57
 msgid "not yet commenced"
-msgstr ""
+msgstr "لم يبدأ بعد"
 
 #: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "تمت الموافقة بتاريخ %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "التشريعات كما في %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "ربما طرأت تحديثات منذ إنشاء هذا الملف."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "تم إنشاء ملف PDF في %(current_date)s الساعة %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "آخر تحديث للمجموعة: %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "حول هذه المجموعة"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "تمت إعادة إنتاج التشريعات الواردة في هذه المجموعة كما نُشرت أصلاً في الجريدة الرسمية، مع تحسين التنسيق وتصحيح الأخطاء المطبعية الطفيفة. وقد أُدرجت جميع التعديلات مباشرةً في النص مع إضافة تعليقات توضيحية. كما تتوفر نسخة ممسوحة ضوئياً من الجريدة الرسمية الأصلية لكل تشريع (بما في ذلك التعديلات) للاطلاع عليها."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "لا توجد حقوق نشر على المحتوى التشريعي لهذه الوثيقة."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "هذه النسخة بصيغة PDF مرخصة بموجب رخصة المشاع الإبداعي نَسب المُصنَّف 4.0 (CC BY 4.0). شاركها على نطاق واسع وبمجان."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
 msgid "Contents"
-msgstr ""
+msgstr "محتويات"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "من إعداد <a href=\"%(lawsafrica)s\">Laws.Africa</a> والمساهمين. مرخص بموجب <a href=\"%(ccby)s\">CC-BY</a>. شارك على نطاق واسع وبمجان."
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "جدول المحتويات"
 
 #: timeline.py:69
 #, python-format
 msgid "Note: %(note)s"
-msgstr ""
+msgstr "ملاحظة: %(note)s"
 
 #: timeline.py:85
 #, python-format
 msgid "Commenced on %(date)s by"
-msgstr ""
+msgstr "بدأ في %(date)s بواسطة"
 
 #: timeline.py:89
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "بدأ في %(date)s"
 
 #: timeline.py:93
 msgid "Commenced by"
-msgstr ""
+msgstr "بدأ بواسطة"
 
 #: timeline.py:97
 msgid "Commenced"
-msgstr ""
+msgstr "بدأ"
 
 #: timeline.py:113
 #, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr ""
+msgstr "%(verbed)s في %(date)s بواسطة"
 
 #: timeline.py:118
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s بواسطة"
 
 #: timeline.py:123
 #, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr ""
+msgstr "%(verbed)s on %(date)s"
 
 #: timeline.py:150
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr ""
+msgstr "نُشر في %(name)s %(number)s بتاريخ %(date)s"
 
 #: timeline.py:156
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "نُشر في %(name)s بتاريخ %(date)s"
 
 #: timeline.py:161
 #, python-format
 msgid "Published on %(date)s"
-msgstr ""
+msgstr "نُشر بتاريخ %(date)s"
 
 #: timeline.py:167
 #, python-format
 msgid "Published in %(name)s %(number)s"
-msgstr ""
+msgstr "نُشر في %(name)s %(number)s"
 
 #: timeline.py:174
 #, python-format
 msgid "Published in %(name)s"
-msgstr ""
+msgstr "نُشر في %(name)s"
 
 #: timeline.py:179
 msgid "Published"
-msgstr ""
+msgstr "نُشر"
 
 #: timeline.py:243
 msgid "Assented to"
-msgstr ""
+msgstr "تمت الموافقة"
 
 #: timeline.py:250
 msgid "Revised by"
-msgstr ""
+msgstr "تمت المراجعة بواسطة"
 
 #: timeline.py:250
 msgid "Amended by"
-msgstr ""
+msgstr "تم التعديل بواسطة"
 
 #: timeline.py:262
 #, python-format
 msgid "Commencement note: %(note)s"
-msgstr ""
+msgstr "ملاحظة بدء الحفل: %(note)s"
 
 #: timeline.py:274
 msgid "Consolidation"
-msgstr ""
+msgstr "توحيد"
 
 #: views/documents.py:102
 msgid "DELETE not allowed for published documents, mark as a draft first."
-msgstr ""
+msgstr "لا يُسمح بالحذف في المستندات المنشورة، يجب وضع علامة عليها كمسودة أولاً."
 
 #: views/documents.py:206
 msgid "Cannot create a task for a reply annotation."
-msgstr ""
+msgstr "لا يمكن إنشاء مهمة لتعليق الرد."
 
 #: views/documents.py:369
 msgid "Error during import"
-msgstr ""
+msgstr "حدث خطأ أثناء الاستيراد"
+

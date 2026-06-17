@@ -1,1523 +1,1524 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: es\n"
+"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 204\n"
+
 #: admin.py:123
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "Se ha actualizado el tiempo de ejecución para las tareas seleccionadas."
 
 #: admin.py:126
 msgid "Set run time to now"
-msgstr ""
+msgstr "Establecer el tiempo de ejecución a ahora"
 
 #: exporters.py:302 exporters.py:304 models/works.py:439
 msgid "Not commenced"
-msgstr ""
+msgstr "No ha comenzado"
 
 #: exporters.py:315
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> el %(date)s por <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:319
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> en %(date)s."
 
 #: exporters.py:328
 #, python-format
 msgid "This %(friendly_type)s has <b>not yet come into force</b>."
-msgstr ""
+msgstr "Esto %(friendly_type)s aún no <b>ha entrado en vigor</b>."
 
 #: exporters.py:333
 #, python-format
 msgid "This %(friendly_type)s has not yet come into force in full. See the commencements table for more information."
-msgstr ""
+msgstr "Esta %(friendly_type)s aún no ha entrado en vigor por completo. Consulte la tabla de entradas en vigor para obtener más información."
 
 #: exporters.py:337
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "Este %(friendly_type)s entrará en vigor el %(date)s."
 
 #: exporters.py:342
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "Esta no es la última versión disponible de este %(friendly_type)s. <ref href=\"%(url)s\">Ver en línea</ref>."
 
 #: exporters.py:347
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "Hay <b>enmiendas pendientes</b> que aún no se han aplicado:<br/>%(numbered_titles)s."
 
 #: models/amendments.py:24
 msgid "amended work"
-msgstr ""
+msgstr "trabajo modificado"
 
 #: models/amendments.py:25
 msgid "Work being amended"
-msgstr ""
+msgstr "Trabajo en proceso de modificación"
 
 #: models/amendments.py:26
 msgid "amending work"
-msgstr ""
+msgstr "trabajo de modificación"
 
 #: models/amendments.py:27
 msgid "Work making the amendment"
-msgstr ""
+msgstr "Trabajo para realizar la enmienda"
 
 #: models/amendments.py:28 models/works.py:515 models/works.py:944
 #: models/works.py:1021
 msgid "date"
-msgstr ""
+msgstr "fecha"
 
 #: models/amendments.py:29
 msgid "Date on which the amendment comes into operation"
-msgstr ""
+msgstr "Fecha en que la enmienda entra en vigor"
 
 #: models/amendments.py:30
 msgid "verb"
-msgstr ""
+msgstr "verbo"
 
 #: models/amendments.py:30
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Reemplazar con, por ejemplo, 'revisado' según sea necesario."
 
 #: models/amendments.py:32 models/amendments.py:134 models/documents.py:368
 #: models/documents.py:749 models/documents.py:821 models/documents.py:884
 #: models/tasks.py:184 models/tasks.py:670 models/works.py:569
 #: models/works.py:894 models/works.py:960 models/works.py:1026
 msgid "created at"
-msgstr ""
+msgstr "creado en"
 
 #: models/amendments.py:33 models/amendments.py:135 models/documents.py:370
 #: models/documents.py:750 models/documents.py:822 models/documents.py:885
 #: models/tasks.py:185 models/tasks.py:671 models/works.py:570
 #: models/works.py:895 models/works.py:961 models/works.py:1027
 msgid "updated at"
-msgstr ""
+msgstr "actualizado en"
 
 #: models/amendments.py:36 models/amendments.py:136 models/documents.py:373
 #: models/documents.py:816 models/works.py:574 models/works.py:964
 #: models/works.py:1030
 msgid "created by"
-msgstr ""
+msgstr "creado por"
 
 #: models/amendments.py:38 models/documents.py:374 models/works.py:576
 #: models/works.py:966 models/works.py:1032
 msgid "updated by"
-msgstr ""
+msgstr "actualizado por"
 
 #: models/amendments.py:42 models/amendments.py:110
 msgid "amendment"
-msgstr ""
+msgstr "enmienda"
 
 #: models/amendments.py:43
 msgid "amendments"
-msgstr ""
+msgstr "enmiendas"
 
 #: models/amendments.py:74
 msgid "Document date changed with amendment date."
-msgstr ""
+msgstr "La fecha del documento se modificó con la fecha de la enmienda."
 
 #: models/amendments.py:112 models/tasks.py:164
 msgid "state"
-msgstr ""
+msgstr "estado"
 
 #: models/amendments.py:113
 msgid "amending provision"
-msgstr ""
+msgstr "disposición modificatoria"
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
 msgid "title"
-msgstr ""
+msgstr "título"
 
 #: models/amendments.py:115
 msgid "page number"
-msgstr ""
+msgstr "número de página"
 
 #: models/amendments.py:116
 msgid "provision name"
-msgstr ""
+msgstr "nombre de la provisión"
 
 #: models/amendments.py:118
 msgid "provision id"
-msgstr ""
+msgstr "ID de provisión"
 
 #: models/amendments.py:119
 msgid "amendment instruction"
-msgstr ""
+msgstr "Instrucciones de enmienda"
 
 #: models/amendments.py:122
 msgid "applied by"
-msgstr ""
+msgstr "aplicado por"
 
 #: models/amendments.py:123
 msgid "applied at"
-msgstr ""
+msgstr "aplicado en"
 
 #: models/amendments.py:125
 msgid "amended provision id"
-msgstr ""
+msgstr "Disposición modificada id"
 
 #: models/amendments.py:128
 msgid "amended text"
-msgstr ""
+msgstr "texto modificado"
 
 #: models/amendments.py:129
 msgid "amended xml"
-msgstr ""
+msgstr "XML modificado"
 
 #: models/amendments.py:131 models/amendments.py:132
 msgid "final amended text"
-msgstr ""
+msgstr "texto final modificado"
 
 #: models/citations.py:14 models/works.py:606
 msgid "Invalid FRBR URI"
-msgstr ""
+msgstr "URI FRBR no válida"
 
 #: models/citations.py:19
 msgid "place"
-msgstr ""
+msgstr "lugar"
 
 #: models/citations.py:19
 msgid "Two letter country code, with optional locality code"
-msgstr ""
+msgstr "Código de país de dos letras, con código de localidad opcional."
 
 #: models/citations.py:20 models/works.py:502
 msgid "FRBR URI"
-msgstr ""
+msgstr "FRBR URI"
 
 #: models/citations.py:21
 msgid "aliases"
-msgstr ""
+msgstr "alias"
 
 #: models/citations.py:21
 msgid "Aliases, one per line"
-msgstr ""
+msgstr "Alias, uno por línea"
 
 #: models/citations.py:26
 msgid "Citation alias"
-msgstr ""
+msgstr "alias de cita"
 
 #: models/citations.py:27
 msgid "Citation aliases"
-msgstr ""
+msgstr "Alias de citación"
 
 #: models/documents.py:305
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Esta es la versión de este documento de %(start)s e incluye cualquier modificación publicada hasta %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Esta es la versión de este documento de %(start)s."
 
 #: models/documents.py:310
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Esta es la versión de este documento en %(start)s e incluye cualquier modificación publicada hasta %(end)s."
 
 #: models/documents.py:312
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Esta es la versión de este documento en %(start)s."
 
 #: models/documents.py:315
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "Esta es la versión de este documento tal como estaba desde %(start)s hasta %(end)s."
 
 #: models/documents.py:318
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Esta es la versión de este documento tal como estaba entre %(start)s y %(end)s."
 
 #: models/documents.py:321
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Esta es la versión de este documento tal como estaba en %(start)s."
 
 #: models/documents.py:331 models/documents.py:744 models/documents.py:815
 #: models/documents.py:880 models/tasks.py:161
 msgid "document"
-msgstr ""
+msgstr "documento"
 
 #: models/documents.py:332
 msgid "documents"
-msgstr ""
+msgstr "documentos"
 
 #: models/documents.py:337 models/tasks.py:160 models/works.py:499
 #: models/works.py:887 models/works.py:1023 models/works.py:1099
 #: models/works.py:1114
 msgid "work"
-msgstr ""
+msgstr "trabajar"
 
 #: models/documents.py:345
 msgid "frbr uri"
-msgstr ""
+msgstr "frbr uri"
 
 #: models/documents.py:346 models/works.py:503
 msgid "Used globally to identify this work"
-msgstr ""
+msgstr "Utilizado globalmente para identificar este trabajo."
 
 #: models/documents.py:353 models/places.py:25 models/places.py:32
 #: models/places.py:308 models/places.py:322
 msgid "language"
-msgstr ""
+msgstr "idioma"
 
 #: models/documents.py:354
 msgid "Language this document is in."
-msgstr ""
+msgstr "Idioma en el que está este documento."
 
 #: models/documents.py:355
 msgid "draft"
-msgstr ""
+msgstr "borrador"
 
 #: models/documents.py:355
 msgid "Drafts aren't available through the public API"
-msgstr ""
+msgstr "Los borradores no están disponibles a través de la API pública."
 
 #: models/documents.py:358
 msgid "document XML"
-msgstr ""
+msgstr "documento XML"
 
 #: models/documents.py:363
 msgid "expression date"
-msgstr ""
+msgstr "fecha de expresión"
 
 #: models/documents.py:364
 msgid "Date of publication or latest amendment"
-msgstr ""
+msgstr "Fecha de publicación o última modificación"
 
 #: models/documents.py:366
 msgid "deleted"
-msgstr ""
+msgstr "eliminado"
 
 #: models/documents.py:366
 msgid "Has this document been deleted?"
-msgstr ""
+msgstr "¿Se ha eliminado este documento?"
 
 #: models/documents.py:369
 msgid "Timestamp of when the expression was first created."
-msgstr ""
+msgstr "Marca de tiempo que indica cuándo se creó la expresión por primera vez."
 
 #: models/documents.py:371
 msgid "Timestamp of when the expression was last updated."
-msgstr ""
+msgstr "Marca de tiempo de la última actualización de la expresión."
 
 #: models/documents.py:745 models/tasks.py:665 models/works.py:889
 msgid "file"
-msgstr ""
+msgstr "archivo"
 
 #: models/documents.py:746 models/tasks.py:667
 msgid "size"
-msgstr ""
+msgstr "tamaño"
 
 #: models/documents.py:747 models/tasks.py:668
 msgid "filename"
-msgstr ""
+msgstr "Nombre del archivo"
 
 #: models/documents.py:747
 msgid "Unique attachment filename"
-msgstr ""
+msgstr "nombre de archivo adjunto único"
 
 #: models/documents.py:748
 msgid "mime type"
-msgstr ""
+msgstr "tipo MIME"
 
 #: models/documents.py:754
 msgid "attachment"
-msgstr ""
+msgstr "adjunto"
 
 #: models/documents.py:755
 msgid "attachments"
-msgstr ""
+msgstr "archivos adjuntos"
 
 #: models/documents.py:795 models/places.py:205 models/saved_searches.py:11
 #: models/works.py:54 models/works.py:1065 models/works.py:1113
 msgid "name"
-msgstr ""
+msgstr "nombre"
 
 #: models/documents.py:795
 msgid "Name of this colophon"
-msgstr ""
+msgstr "Nombre de este colofón"
 
 #: models/documents.py:797
 msgid "Which country does this colophon apply to?"
-msgstr ""
+msgstr "¿A qué país se aplica este colofón?"
 
 #: models/documents.py:798 models/places.py:58 models/places.py:79
 #: models/places.py:204 models/places.py:252 models/tasks.py:158
 #: models/works.py:508
 msgid "country"
-msgstr ""
+msgstr "país"
 
 #: models/documents.py:799
 msgid "body"
-msgstr ""
+msgstr "cuerpo"
 
 #: models/documents.py:802
 msgid "colophon"
-msgstr ""
+msgstr "colofón"
 
 #: models/documents.py:803
 msgid "colophons"
-msgstr ""
+msgstr "colofones"
 
 #: models/documents.py:817
 msgid "in reply to"
-msgstr ""
+msgstr "en respuesta a"
 
 #: models/documents.py:818
 msgid "text"
-msgstr ""
+msgstr "texto"
 
 #: models/documents.py:819
 msgid "anchor id"
-msgstr ""
+msgstr "ID de ancla"
 
 #: models/documents.py:820
 msgid "closed"
-msgstr ""
+msgstr "cerrado"
 
 #: models/documents.py:823 models/tasks.py:150
 msgid "task"
-msgstr ""
+msgstr "tarea"
 
 #: models/documents.py:824
 msgid "selectors"
-msgstr ""
+msgstr "selectores"
 
 #: models/documents.py:829
 msgid "annotation"
-msgstr ""
+msgstr "anotación"
 
 #: models/documents.py:830
 msgid "annotations"
-msgstr ""
+msgstr "anotaciones"
 
 #: models/documents.py:882
 msgid "user"
-msgstr ""
+msgstr "usuario"
 
 #: models/documents.py:883
 msgid "nonce"
-msgstr ""
+msgstr "mientras tanto"
 
 #: models/documents.py:895
 msgid "document activity"
-msgstr ""
+msgstr "actividad del documento"
 
 #: models/documents.py:896
 msgid "document activities"
-msgstr ""
+msgstr "actividades de documentación"
 
 #: models/places.py:33
 msgid "languages"
-msgstr ""
+msgstr "idiomas"
 
 #: models/places.py:60
 msgid "Primary language for this country"
-msgstr ""
+msgstr "Idioma principal de este país"
 
 #: models/places.py:61
 msgid "primary language"
-msgstr ""
+msgstr "idioma principal"
 
 #: models/places.py:63
 msgid "italics terms"
-msgstr ""
+msgstr "términos en cursiva"
 
 #: models/places.py:80
 msgid "countries"
-msgstr ""
+msgstr "países"
 
 #: models/places.py:173
 msgid "All places"
-msgstr ""
+msgstr "Todos los lugares"
 
 #: models/places.py:205
 msgid "Local name of this locality"
-msgstr ""
+msgstr "Nombre local de esta localidad"
 
 #: models/places.py:206 models/tasks.py:167
 msgid "code"
-msgstr ""
+msgstr "código"
 
 #: models/places.py:212 models/places.py:254 models/tasks.py:159
 #: models/works.py:510
 msgid "locality"
-msgstr ""
+msgstr "localidad"
 
 #: models/places.py:213
 msgid "localities"
-msgstr ""
+msgstr "localidades"
 
 #: models/places.py:256
 msgid "spreadsheet URL"
-msgstr ""
+msgstr "URL de la hoja de cálculo"
 
 #: models/places.py:257
 msgid "as-at date"
-msgstr ""
+msgstr "a fecha"
 
 #: models/places.py:258
 msgid "styleguide URL"
-msgstr ""
+msgstr "URL de la guía de estilo"
 
 #: models/places.py:259
 msgid "consolidation note"
-msgstr ""
+msgstr "nota de consolidación"
 
 #: models/places.py:261
 msgid "'No publication document' text"
-msgstr ""
+msgstr "Texto 'Sin documento de publicación'"
 
 #: models/places.py:262
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "Nota: El documento de publicación original no está disponible y este contenido no ha podido ser verificado."
 
 #: models/places.py:263
 msgid "publication date is optional"
-msgstr ""
+msgstr "La fecha de publicación es opcional."
 
 #: models/places.py:264
 msgid "Are publication dates optional in this place?"
-msgstr ""
+msgstr "¿Las fechas de publicación son opcionales en este sitio?"
 
 #: models/places.py:265
 msgid "a consolidation is being imported"
-msgstr ""
+msgstr "Se está importando una consolidación."
 
 #: models/places.py:266
 msgid "Is a consolidation being worked on in this place?"
-msgstr ""
+msgstr "¿Se está llevando a cabo algún proceso de consolidación en este lugar?"
 
 #: models/places.py:267
 msgid "chapters are used"
-msgstr ""
+msgstr "Los capítulos se utilizan"
 
 #: models/places.py:268
 msgid "Are Chapters used for Acts in this place?"
-msgstr ""
+msgstr "¿En este lugar se utilizan capítulos para los actos?"
 
 #: models/places.py:271
 msgid "place settings"
-msgstr ""
+msgstr "la disposición de los platos"
 
 #: models/places.py:272
 msgid "places' settings"
-msgstr ""
+msgstr "configuración de lugares"
 
 #: models/places.py:309
 msgid "terms"
-msgstr ""
+msgstr "términos"
 
 #: models/places.py:312 models/places.py:313
 msgid "accented terms"
-msgstr ""
+msgstr "términos acentuados"
 
 #: models/places.py:320
 msgid "annotation title"
-msgstr ""
+msgstr "título de la anotación"
 
 #: models/places.py:320
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "para ser mostrado en el menú desplegable del documento"
 
 #: models/places.py:321
 msgid "annotation content"
-msgstr ""
+msgstr "contenido de anotación"
 
 #: models/places.py:321
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "siempre irá entre corchetes [] — no los incluyas de nuevo"
 
 #: models/saved_searches.py:7
 msgid "Tasks"
-msgstr ""
+msgstr "Tareas"
 
 #: models/saved_searches.py:8
 msgid "Works"
-msgstr ""
+msgstr "Obras"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "alcance"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "cadena de consulta"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "búsqueda guardada"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "búsquedas guardadas"
 
 #: models/tasks.py:72 models/tasks.py:81
 msgid "Open"
-msgstr ""
+msgstr "Abierto"
 
 #: models/tasks.py:73 models/tasks.py:83
 msgid "Pending review"
-msgstr ""
+msgstr "Pendiente de revisión"
 
 #: models/tasks.py:74 models/tasks.py:80
 msgid "Blocked"
-msgstr ""
+msgstr "Obstruido"
 
 #: models/tasks.py:75 models/tasks.py:85
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: models/tasks.py:76 models/tasks.py:84
 msgid "Done"
-msgstr ""
+msgstr "Hecho"
 
 #: models/tasks.py:82
 msgid "Assigned"
-msgstr ""
+msgstr "Asignado"
 
 #: models/tasks.py:100
 msgid "Convert document"
-msgstr ""
+msgstr "Convertir documento"
 
 #: models/tasks.py:101
 msgid "Import content"
-msgstr ""
+msgstr "Importar contenido"
 
 #: models/tasks.py:102
 msgid "Apply amendment"
-msgstr ""
+msgstr "Aplicar enmienda"
 
 #: models/tasks.py:103
 msgid "Extract amendment instructions"
-msgstr ""
+msgstr "Instrucciones para la modificación del extracto"
 
 #: models/tasks.py:104
 msgid "Link gazette"
-msgstr ""
+msgstr "Gaceta de enlaces"
 
 #: models/tasks.py:108
 msgid "Check / update primary work"
-msgstr ""
+msgstr "Revisar/actualizar el trabajo principal"
 
 #: models/tasks.py:109
 msgid "Check / update repeal"
-msgstr ""
+msgstr "Comprobar / actualizar la derogación"
 
 #: models/tasks.py:110
 msgid "'Commences on' date missing"
-msgstr ""
+msgstr "Falta la fecha de inicio."
 
 #: models/tasks.py:111
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 #: models/tasks.py:112
 msgid "Link amendment (active)"
-msgstr ""
+msgstr "Modificación de enlace (activa)"
 
 #: models/tasks.py:113
 msgid "Link amendment (passive)"
-msgstr ""
+msgstr "Modificación de enlace (pasiva)"
 
 #: models/tasks.py:114
 msgid "Link amendment (pending commencement)"
-msgstr ""
+msgstr "Modificación del enlace (pendiente de entrada en vigor)"
 
 #: models/tasks.py:115
 msgid "Link commencement (active)"
-msgstr ""
+msgstr "Inicio del enlace (activo)"
 
 #: models/tasks.py:116
 msgid "Link commencement (passive)"
-msgstr ""
+msgstr "Inicio del enlace (pasivo)"
 
 #: models/tasks.py:117
 msgid "Link primary work"
-msgstr ""
+msgstr "Enlace al trabajo primario"
 
 #: models/tasks.py:118
 msgid "Link repeal"
-msgstr ""
+msgstr "derogación del enlace"
 
 #: models/tasks.py:119
 msgid "Link repeal (not found)"
-msgstr ""
+msgstr "Enlace derogado (no encontrado)"
 
 #: models/tasks.py:120
 msgid "Link repeal (pending commencement)"
-msgstr ""
+msgstr "Derogación del enlace (pendiente de entrada en vigor)"
 
 #: models/tasks.py:121
 msgid "Link subleg"
-msgstr ""
+msgstr "Enlace subleg"
 
 #: models/tasks.py:122
 msgid "Link taxonomy"
-msgstr ""
+msgstr "Taxonomía de enlaces"
 
 #: models/tasks.py:123
 msgid "Sign-off"
-msgstr ""
+msgstr "Cerrar sesión"
 
 #: models/tasks.py:127
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "Convierta el archivo de entrada en un archivo .docx y elimine la numeración automática."
 
 #: models/tasks.py:128
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Importe el contenido de esta obra en la fecha correspondiente, que suele ser la fecha de publicación o de consolidación."
 
 #: models/tasks.py:129
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Busque y enlace a la Gaceta (documento de publicación original) de este trabajo."
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "Extraiga las instrucciones para aplicar esta modificación."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
-msgstr ""
+msgstr "Se puede enviar una tarea abierta para su revisión."
 
 #: models/tasks.py:142
 msgid "Can cancel a task that is open or has been submitted for review"
-msgstr ""
+msgstr "Se puede cancelar una tarea que esté abierta o que se haya enviado para su revisión."
 
 #: models/tasks.py:143
 msgid "Can reopen a task that is closed or cancelled"
-msgstr ""
+msgstr "Se puede reabrir una tarea que está cerrada o cancelada."
 
 #: models/tasks.py:144
 msgid "Can unsubmit a task that has been submitted for review"
-msgstr ""
+msgstr "Se puede anular el envío de una tarea que se ha enviado para su revisión."
 
 #: models/tasks.py:145
 msgid "Can close a task that has been submitted for review"
-msgstr ""
+msgstr "Se puede cerrar una tarea que se ha enviado para revisión."
 
 #: models/tasks.py:146
 msgid "Can close any task that has been submitted for review, regardless of who submitted it"
-msgstr ""
+msgstr "Puede cerrar cualquier tarea que haya sido enviada para revisión, independientemente de quién la haya enviado."
 
 #: models/tasks.py:147
 msgid "Can block a task from being done, and unblock it"
-msgstr ""
+msgstr "Puede bloquear una tarea para que no se realice y desbloquearla."
 
 #: models/tasks.py:148
 msgid "Can be assigned tasks in excess of limits"
-msgstr ""
+msgstr "Se le pueden asignar tareas que superen los límites."
 
 #: models/tasks.py:151
 msgid "tasks"
-msgstr ""
+msgstr "tareas"
 
 #: models/tasks.py:156 models/tasks.py:647 models/works.py:58
 #: models/works.py:1022
 msgid "description"
-msgstr ""
+msgstr "descripción"
 
 #: models/tasks.py:162
 msgid "timeline date"
-msgstr ""
+msgstr "Fecha de la línea de tiempo"
 
 #: models/tasks.py:162
 msgid "A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."
-msgstr ""
+msgstr "Una fecha en el cronograma de tareas relacionadas con el trabajo, por ejemplo, la fecha en la que se debe aplicar una modificación."
 
 #: models/tasks.py:170
 msgid "input file"
-msgstr ""
+msgstr "archivo de entrada"
 
 #: models/tasks.py:171
 msgid "output file"
-msgstr ""
+msgstr "archivo de salida"
 
 #: models/tasks.py:173
 msgid "assigned to"
-msgstr ""
+msgstr "asignado a"
 
 #: models/tasks.py:174
 msgid "submitted by user"
-msgstr ""
+msgstr "enviado por el usuario"
 
 #: models/tasks.py:175
 msgid "reviewed by user"
-msgstr ""
+msgstr "revisado por el usuario"
 
 #: models/tasks.py:176
 msgid "finished by user"
-msgstr ""
+msgstr "finalizado por el usuario"
 
 #: models/tasks.py:177
 msgid "closed at"
-msgstr ""
+msgstr "cerrado a las"
 
 #: models/tasks.py:177
 msgid "When the task was marked as done or cancelled."
-msgstr ""
+msgstr "Cuando la tarea se marcó como terminada o cancelada."
 
 #: models/tasks.py:179
 msgid "changes requested"
-msgstr ""
+msgstr "Cambios solicitados"
 
 #: models/tasks.py:179
 msgid "Have changes been requested on this task?"
-msgstr ""
+msgstr "¿Se han solicitado cambios en esta tarea?"
 
 #: models/tasks.py:181
 msgid "created by user"
-msgstr ""
+msgstr "creado por el usuario"
 
 #: models/tasks.py:182
 msgid "updated by user"
-msgstr ""
+msgstr "actualizado por el usuario"
 
 #: models/tasks.py:187
 msgid "labels"
-msgstr ""
+msgstr "etiquetas"
 
 #: models/tasks.py:189
 msgid "extra data"
-msgstr ""
+msgstr "datos adicionales"
 
 #: models/tasks.py:191
 msgid "blocked by"
-msgstr ""
+msgstr "bloqueado por"
 
 #: models/tasks.py:191
 msgid "Tasks blocking this task from being done."
-msgstr ""
+msgstr "Tareas que impiden que se realice esta tarea."
 
 #: models/tasks.py:646 models/works.py:56
 msgid "slug"
-msgstr ""
+msgstr "babosa"
 
 #: models/tasks.py:651
 msgid "task label"
-msgstr ""
+msgstr "etiqueta de tarea"
 
 #: models/tasks.py:652
 msgid "task labels"
-msgstr ""
+msgstr "etiquetas de tareas"
 
 #: models/tasks.py:666
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: models/tasks.py:669
 msgid "mimetype"
-msgstr ""
+msgstr "tipo mime"
 
 #: models/tasks.py:674
 msgid "task file"
-msgstr ""
+msgstr "archivo de tarea"
 
 #: models/tasks.py:675
 msgid "task files"
-msgstr ""
+msgstr "archivos de tareas"
 
 #: models/works.py:36
 #, python-format
 msgid "Work for FRBR URI '%(uri)s' doesn't exist"
-msgstr ""
+msgstr "No existe trabajo para FRBR URI '%(uri)s'"
 
 #: models/works.py:55
 msgid "Name of the taxonomy topic"
-msgstr ""
+msgstr "Nombre del tema de taxonomía"
 
 #: models/works.py:57
 msgid "Unique short name (code) for the topic."
-msgstr ""
+msgstr "Nombre corto único (código) para el tema."
 
 #: models/works.py:59
 msgid "Description of the topic"
-msgstr ""
+msgstr "Descripción del tema"
 
 #: models/works.py:60
 msgid "public"
-msgstr ""
+msgstr "público"
 
 #: models/works.py:61
 msgid "project"
-msgstr ""
+msgstr "proyecto"
 
 #: models/works.py:63
 msgid "copy from principal work"
-msgstr ""
+msgstr "Copia de la obra principal"
 
 #: models/works.py:64
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "Copie este tema de las obras principales a las obras que modifican, inician o derogan la obra principal."
 
 #: models/works.py:69
 msgid "taxonomy topic"
-msgstr ""
+msgstr "tema de taxonomía"
 
 #: models/works.py:70 models/works.py:553
 msgid "taxonomy topics"
-msgstr ""
+msgstr "temas de taxonomía"
 
 #: models/works.py:438
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Fecha de inicio desconocida"
 
 #: models/works.py:444
 msgid "There are multiple commencements"
-msgstr ""
+msgstr "Hay múltiples comienzos."
 
 #: models/works.py:483
 msgid "repealed"
-msgstr ""
+msgstr "derogado"
 
 #: models/works.py:484
 msgid "revoked"
-msgstr ""
+msgstr "revocado"
 
 #: models/works.py:485
 msgid "withdrawn"
-msgstr ""
+msgstr "retirado"
 
 #: models/works.py:486
 msgid "lapsed"
-msgstr ""
+msgstr "transcurrido"
 
 #: models/works.py:487
 msgid "retired"
-msgstr ""
+msgstr "jubilado"
 
 #: models/works.py:488
 msgid "expired"
-msgstr ""
+msgstr "venció"
 
 #: models/works.py:489
 msgid "replaced"
-msgstr ""
+msgstr "reemplazado"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "desaplicado"
 
 #: models/works.py:495
 msgid "Can review work details"
-msgstr ""
+msgstr "Puede revisar los detalles del trabajo."
 
 #: models/works.py:496
 msgid "Can import works in bulk"
-msgstr ""
+msgstr "Puede importar obras en lote"
 
 #: models/works.py:497
 msgid "Can export works in bulk"
-msgstr ""
+msgstr "Puede exportar obras al por mayor."
 
 #: models/works.py:500
 msgid "works"
-msgstr ""
+msgstr "obras"
 
 #: models/works.py:512
 msgid "doctype"
-msgstr ""
+msgstr "tipo de documento"
 
 #: models/works.py:512
 msgid "FRBR doctype"
-msgstr ""
+msgstr "Tipo de documento FRBR"
 
 #: models/works.py:513 models/works.py:1073
 msgid "subtype"
-msgstr ""
+msgstr "subtipo"
 
 #: models/works.py:513
 msgid "FRBR subtype"
-msgstr ""
+msgstr "Subtipo FRBR"
 
 #: models/works.py:514
 msgid "actor"
-msgstr ""
+msgstr "actor"
 
 #: models/works.py:514
 msgid "FRBR actor"
-msgstr ""
+msgstr "Actor de FRBR"
 
 #: models/works.py:515
 msgid "FRBR date"
-msgstr ""
+msgstr "Fecha FRBR"
 
 #: models/works.py:516 models/works.py:1112
 msgid "number"
-msgstr ""
+msgstr "número"
 
 #: models/works.py:516
 msgid "FRBR number"
-msgstr ""
+msgstr "Número FRBR"
 
 #: models/works.py:519
 msgid "publication name"
-msgstr ""
+msgstr "nombre de la publicación"
 
 #: models/works.py:520
 msgid "Original publication's name, e.g. Government Gazette"
-msgstr ""
+msgstr "Nombre de la publicación original, por ejemplo, Gaceta del Gobierno"
 
 #: models/works.py:521
 msgid "publication number"
-msgstr ""
+msgstr "número de publicación"
 
 #: models/works.py:522
 msgid "Publication's sequence number, eg. gazette number"
-msgstr ""
+msgstr "Número de secuencia de la publicación, por ejemplo, número de gaceta."
 
 #: models/works.py:523
 msgid "publication date"
-msgstr ""
+msgstr "fecha de publicación"
 
 #: models/works.py:523
 msgid "Date of publication"
-msgstr ""
+msgstr "Fecha de publicación"
 
 #: models/works.py:525
 msgid "assent date"
-msgstr ""
+msgstr "fecha de consentimiento"
 
 #: models/works.py:525
 msgid "Date signed by the president"
-msgstr ""
+msgstr "Fecha de firma del presidente"
 
 #: models/works.py:527
 msgid "commenced"
-msgstr ""
+msgstr "comenzó"
 
 #: models/works.py:528
 msgid "Has this work commenced? (Date may be unknown)"
-msgstr ""
+msgstr "¿Ha comenzado este trabajo? (La fecha puede ser desconocida)"
 
 #: models/works.py:532
 msgid "Work that repealed this work"
-msgstr ""
+msgstr "Obra que derogó esta obra"
 
 #: models/works.py:533
 msgid "repealed by"
-msgstr ""
+msgstr "derogado por"
 
 #: models/works.py:534
 msgid "repealed date"
-msgstr ""
+msgstr "fecha de derogación"
 
 #: models/works.py:534
 msgid "Date of repeal of this work"
-msgstr ""
+msgstr "Fecha de derogación de esta obra"
 
 #: models/works.py:535
 msgid "repealed verb"
-msgstr ""
+msgstr "verbo derogado"
 
 #: models/works.py:536
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Especifique si debe ser algo distinto de 'derogado' (el valor predeterminado)."
 
 #: models/works.py:537
 msgid "repealed note"
-msgstr ""
+msgstr "nota derogada"
 
 #: models/works.py:538
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Nota opcional que proporciona detalles adicionales sobre la derogación."
 
 #: models/works.py:542
 msgid "Parent (primary) work for subsidiary legislation"
-msgstr ""
+msgstr "Obra principal (primaria) para la legislación subsidiaria"
 
 #: models/works.py:543
 msgid "parent (primary) work"
-msgstr ""
+msgstr "trabajo principal (padre)"
 
 #: models/works.py:545
 msgid "principal"
-msgstr ""
+msgstr "principal"
 
 #: models/works.py:546
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
-msgstr ""
+msgstr "Las obras principales no son simplemente derogaciones, enmiendas o nuevas disposiciones, y deben tener el texto completo."
 
 #: models/works.py:548
 msgid "stub"
-msgstr ""
+msgstr "talón"
 
 #: models/works.py:548
 msgid "Stub works do not have content or points in time"
-msgstr ""
+msgstr "Los trabajos esbozados no tienen contenido ni puntos de tiempo."
 
 #: models/works.py:551
 msgid "properties"
-msgstr ""
+msgstr "propiedades"
 
 #: models/works.py:555
 msgid "as-at date override"
-msgstr ""
+msgstr "Anulación de fecha a partir de"
 
 #: models/works.py:556
 msgid "Date up to which this work was last checked for updates"
-msgstr ""
+msgstr "Fecha hasta la que se revisó por última vez este trabajo para ver si había actualizaciones."
 
 #: models/works.py:557
 msgid "consolidation note override"
-msgstr ""
+msgstr "Anulación de la nota de consolidación"
 
 #: models/works.py:558
 msgid "Consolidation note about this particular work, to override any consolidation note for the place"
-msgstr ""
+msgstr "Nota de consolidación sobre este trabajo en particular, para anular cualquier nota de consolidación para el lugar."
 
 #: models/works.py:560
 msgid "disclaimer"
-msgstr ""
+msgstr "descargo de responsabilidad"
 
 #: models/works.py:561
 msgid "Disclaimer text about this work"
-msgstr ""
+msgstr "Texto de descargo de responsabilidad sobre este trabajo"
 
 #: models/works.py:563
 msgid "work in progress"
-msgstr ""
+msgstr "trabajo en curso"
 
 #: models/works.py:564
 msgid "Work in progress, to be approved"
-msgstr ""
+msgstr "Trabajo en curso, pendiente de aprobación."
 
 #: models/works.py:571
 msgid "approved at"
-msgstr ""
+msgstr "aprobado en"
 
 #: models/works.py:578
 msgid "approved by"
-msgstr ""
+msgstr "aprobado por"
 
 #: models/works.py:596
 #, python-format
 msgid "No such locality for this country: %(code)s"
-msgstr ""
+msgstr "No existe tal localidad para este país: %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "Este campo es obligatorio."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
-msgstr ""
+msgstr "Este documento no fue publicado porque su contenido no fue aprobado."
 
 #: models/works.py:890
 msgid "trusted URL"
-msgstr ""
+msgstr "URL de confianza"
 
 #: models/works.py:891
 msgid "file size"
-msgstr ""
+msgstr "tamaño del archivo"
 
 #: models/works.py:892
 msgid "file name"
-msgstr ""
+msgstr "Nombre del archivo"
 
 #: models/works.py:893
 msgid "file MIME type"
-msgstr ""
+msgstr "Tipo MIME del archivo"
 
 #: models/works.py:898
 msgid "publication document"
-msgstr ""
+msgstr "documento de publicación"
 
 #: models/works.py:899
 msgid "publication documents"
-msgstr ""
+msgstr "documentos de publicación"
 
 #: models/works.py:939
 msgid "commenced work"
-msgstr ""
+msgstr "comenzó el trabajo"
 
 #: models/works.py:940
 msgid "Principal work being commenced"
-msgstr ""
+msgstr "Se están iniciando los trabajos principales."
 
 #: models/works.py:941
 msgid "commencing work"
-msgstr ""
+msgstr "comenzar el trabajo"
 
 #: models/works.py:942
 msgid "Work that provides the commencement date for the principal work"
-msgstr ""
+msgstr "Trabajo que proporciona la fecha de inicio del trabajo principal"
 
 #: models/works.py:945
 msgid "Date of the commencement, or null if it is unknown"
-msgstr ""
+msgstr "Fecha de inicio, o nula si se desconoce."
 
 #: models/works.py:946
 msgid "main"
-msgstr ""
+msgstr "principal"
 
 #: models/works.py:947
 msgid "This commencement date is the date on which most of the provisions of the commenced work come into force"
-msgstr ""
+msgstr "Esta fecha de inicio es la fecha en la que entran en vigor la mayoría de las disposiciones de la obra iniciada."
 
 #: models/works.py:949
 msgid "all provisions"
-msgstr ""
+msgstr "todas las disposiciones"
 
 #: models/works.py:950
 msgid "All provisions of this work commenced on this date"
-msgstr ""
+msgstr "Todas las disposiciones de este trabajo comenzaron en esta fecha."
 
 #: models/works.py:951
 msgid "note"
-msgstr ""
+msgstr "nota"
 
 #: models/works.py:952
 msgid "Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation"
-msgstr ""
+msgstr "Por lo general, se refiere a una disposición de la obra iniciada o a una obra que está por comenzar, si hay un inicio pero la fecha está sujeta a interpretación."
 
 #: models/works.py:956
 msgid "commenced provisions"
-msgstr ""
+msgstr "disposiciones iniciadas"
 
 #: models/works.py:957
 msgid "A list of the element ids of the provisions that come into force with this commencement"
-msgstr ""
+msgstr "Una lista de los identificadores de los elementos de las disposiciones que entran en vigor con esta entrada en vigor."
 
 #: models/works.py:971
 msgid "commencement"
-msgstr ""
+msgstr "comienzo"
 
 #: models/works.py:972
 msgid "commencements"
-msgstr ""
+msgstr "comienzos"
 
 #: models/works.py:1021
 msgid "Arbitrary date, e.g. consolidation date"
-msgstr ""
+msgstr "Fecha arbitraria, por ejemplo, fecha de consolidación."
 
 #: models/works.py:1037
 msgid "arbitrary expression date"
-msgstr ""
+msgstr "fecha de expresión arbitraria"
 
 #: models/works.py:1038
 msgid "arbitrary expression dates"
-msgstr ""
+msgstr "fechas de expresiones arbitrarias"
 
 #: models/works.py:1065
 msgid "Name of the subtype"
-msgstr ""
+msgstr "Nombre del subtipo"
 
 #: models/works.py:1066
 msgid "abbreviation"
-msgstr ""
+msgstr "abreviatura"
 
 #: models/works.py:1067
 msgid "Short abbreviation to use in the FRBR URI. No punctuation."
-msgstr ""
+msgstr "Abreviatura corta para usar en la URI FRBR. Sin puntuación."
 
 #: models/works.py:1074
 msgid "subtypes"
-msgstr ""
+msgstr "subtipos"
 
 #: models/works.py:1098
 msgid "alias"
-msgstr ""
+msgstr "alias"
 
 #: models/works.py:1098
 msgid "Alias e.g. Penal Code, etc"
-msgstr ""
+msgstr "Alias, por ejemplo, Código Penal, etc."
 
 #: models/works.py:1104
 msgid "work alias"
-msgstr ""
+msgstr "alias de trabajo"
 
 #: models/works.py:1105
 msgid "work aliases"
-msgstr ""
+msgstr "alias de trabajo"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "El número de capítulo"
 
 #: models/works.py:1113
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr ""
+msgstr "Especifique si debe ser algo distinto de 'capítulo' (el valor predeterminado)."
 
 #: models/works.py:1115
 msgid "validity start date"
-msgstr ""
+msgstr "fecha de inicio de validez"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "Fecha a partir de la cual este número de capítulo se aplica a la obra."
 
 #: models/works.py:1116
 msgid "validity end date"
-msgstr ""
+msgstr "fecha de finalización de validez"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "Fecha hasta la cual este número de capítulo se aplicó a la obra"
 
 #: models/works.py:1117
 msgid "revision name"
-msgstr ""
+msgstr "nombre de la revisión"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "Nombre de la publicación en la que se asignó este número de capítulo a la obra."
 
 #: models/works.py:1121
 msgid "chapter number"
-msgstr ""
+msgstr "número de capítulo"
 
 #: models/works.py:1122
 msgid "chapter numbers"
-msgstr ""
+msgstr "números de capítulo"
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Capítulo"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: templates/admin/tree_change_list.html:8
 msgid "Collapse all"
-msgstr ""
+msgstr "Colapsar todo"
 
 #: templates/admin/tree_change_list.html:9
 msgid "Expand all"
-msgstr ""
+msgstr "Expandir todo"
 
 #: templates/indigo_api/akn/_amendments.html:11
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> el <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Modificado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> el <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Revisado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> el <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Modificado por <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> el <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_commencements_table.html:6
 msgid "Provisions"
-msgstr ""
+msgstr "Provisiones"
 
 #: templates/indigo_api/akn/_commencements_table.html:7
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: templates/indigo_api/akn/_commencements_table.html:20
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Disposiciones desconocidas"
 
 #: templates/indigo_api/akn/_commencements_table.html:25
 #, python-format
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "comenzó el %(date)s"
 
 #: templates/indigo_api/akn/_commencements_table.html:27
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "Comenzó el <i>(fecha desconocida)</i>"
 
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "por <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:36
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "por <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:42
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:45
 msgid "Note:"
-msgstr ""
+msgstr "Nota:"
 
 #: templates/indigo_api/akn/_commencements_table.html:57
 msgid "not yet commenced"
-msgstr ""
+msgstr "aún no ha comenzado"
 
 #: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Aprobado el %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Legislación vigente a partir de %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "Es posible que se hayan producido actualizaciones desde que se creó este archivo."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "PDF creado el %(current_date)s a las %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Última comprobación de la colección para actualizaciones: %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "Acerca de esta colección"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "La legislación incluida en esta colección se reproduce tal como se publicó originalmente en la Gaceta Oficial, con un formato mejorado y la corrección de errores tipográficos menores. Todas las enmiendas se han aplicado directamente al texto y se han anotado. Se puede consultar una copia escaneada de la gaceta original de cada ley (incluidas las enmiendas)."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "El contenido legislativo de este documento no está sujeto a derechos de autor."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Esta copia en PDF está bajo la licencia Creative Commons Atribución 4.0 (CC BY 4.0). Compártala libremente y sin restricciones."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
 msgid "Contents"
-msgstr ""
+msgstr "Contenido"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "Por <a href=\"%(lawsafrica)s\">Laws.Africa</a> y colaboradores. Licenciado bajo <a href=\"%(ccby)s\">CC-BY</a>. Compártelo amplia y libremente."
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Tabla de contenido"
 
 #: timeline.py:69
 #, python-format
 msgid "Note: %(note)s"
-msgstr ""
+msgstr "Nota: %(note)s"
 
 #: timeline.py:85
 #, python-format
 msgid "Commenced on %(date)s by"
-msgstr ""
+msgstr "Iniciado el %(date)s por"
 
 #: timeline.py:89
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Comenzó el %(date)s"
 
 #: timeline.py:93
 msgid "Commenced by"
-msgstr ""
+msgstr "Iniciado por"
 
 #: timeline.py:97
 msgid "Commenced"
-msgstr ""
+msgstr "Comenzó"
 
 #: timeline.py:113
 #, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr ""
+msgstr "%(verbed)s en %(date)s por"
 
 #: timeline.py:118
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s por"
 
 #: timeline.py:123
 #, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr ""
+msgstr "%(verbed)s en %(date)s"
 
 #: timeline.py:150
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr ""
+msgstr "Publicado en %(name)s %(number)s el %(date)s"
 
 #: timeline.py:156
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Publicado en %(name)s el %(date)s"
 
 #: timeline.py:161
 #, python-format
 msgid "Published on %(date)s"
-msgstr ""
+msgstr "Publicado el %(date)s"
 
 #: timeline.py:167
 #, python-format
 msgid "Published in %(name)s %(number)s"
-msgstr ""
+msgstr "Publicado en %(name)s %(number)s"
 
 #: timeline.py:174
 #, python-format
 msgid "Published in %(name)s"
-msgstr ""
+msgstr "Publicado en %(name)s"
 
 #: timeline.py:179
 msgid "Published"
-msgstr ""
+msgstr "Publicado"
 
 #: timeline.py:243
 msgid "Assented to"
-msgstr ""
+msgstr "Aprobado"
 
 #: timeline.py:250
 msgid "Revised by"
-msgstr ""
+msgstr "Revisado por"
 
 #: timeline.py:250
 msgid "Amended by"
-msgstr ""
+msgstr "Modificado por"
 
 #: timeline.py:262
 #, python-format
 msgid "Commencement note: %(note)s"
-msgstr ""
+msgstr "Nota de inicio: %(note)s"
 
 #: timeline.py:274
 msgid "Consolidation"
-msgstr ""
+msgstr "Consolidación"
 
 #: views/documents.py:102
 msgid "DELETE not allowed for published documents, mark as a draft first."
-msgstr ""
+msgstr "La opción ELIMINAR no está permitida para documentos publicados; márquelos primero como borrador."
 
 #: views/documents.py:206
 msgid "Cannot create a task for a reply annotation."
-msgstr ""
+msgstr "No se puede crear una tarea para una anotación de respuesta."
 
 #: views/documents.py:369
 msgid "Error during import"
-msgstr ""
+msgstr "Error durante la importación"
+

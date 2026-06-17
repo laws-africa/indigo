@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2025-04-10 13:49\n"
+"PO-Revision-Date: 2026-06-17 10:19\n"
 "Last-Translator: \n"
 "Language-Team: Tsonga\n"
 "Language: ts_ZA\n"
@@ -1295,7 +1295,7 @@ msgstr ""
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Kavanyisa ka"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
@@ -1521,3 +1521,4 @@ msgstr ""
 #: views/documents.py:369
 msgid "Error during import"
 msgstr ""
+

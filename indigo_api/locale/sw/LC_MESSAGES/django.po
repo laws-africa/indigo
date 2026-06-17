@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2025-04-10 14:44\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
 "Last-Translator: \n"
 "Language-Team: Swahili\n"
 "Language: sw_KE\n"
@@ -139,10 +139,8 @@ msgid "state"
 msgstr "jimbo"
 
 #: models/amendments.py:113
-#, fuzzy
-#| msgid "commenced provisions"
 msgid "amending provision"
-msgstr "vifungu vilianza"
+msgstr "marekebisho ya kifungu"
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
@@ -150,62 +148,44 @@ msgid "title"
 msgstr "mada"
 
 #: models/amendments.py:115
-#, fuzzy
-#| msgid "number"
 msgid "page number"
-msgstr "namba"
+msgstr "nambari ya ukurasa"
 
 #: models/amendments.py:116
-#, fuzzy
-#| msgid "publication name"
 msgid "provision name"
-msgstr "jina la uchapishaji"
+msgstr "jina la kifungu"
 
 #: models/amendments.py:118
-#, fuzzy
-#| msgid "Provisions"
 msgid "provision id"
-msgstr "Masharti"
+msgstr "kitambulisho cha utoaji"
 
 #: models/amendments.py:119
-#, fuzzy
-#| msgid "amendments"
 msgid "amendment instruction"
-msgstr "marekebisho"
+msgstr "maagizo ya marekebisho"
 
 #: models/amendments.py:122
-#, fuzzy
-#| msgid "approved by"
 msgid "applied by"
-msgstr "imeidhinishwa na"
+msgstr "imetumika na"
 
 #: models/amendments.py:123
-#, fuzzy
-#| msgid "approved at"
 msgid "applied at"
-msgstr "kupitishwa saa"
+msgstr "imetumika katika"
 
 #: models/amendments.py:125
-#, fuzzy
-#| msgid "commenced provisions"
 msgid "amended provision id"
-msgstr "vifungu vilianza"
+msgstr "kitambulisho cha kifungu kilichorekebishwa"
 
 #: models/amendments.py:128
-#, fuzzy
-#| msgid "amended work"
 msgid "amended text"
-msgstr "kazi iliyorekebishwa"
+msgstr "maandishi yaliyorekebishwa"
 
 #: models/amendments.py:129
-#, fuzzy
-#| msgid "amended work"
 msgid "amended xml"
-msgstr "kazi iliyorekebishwa"
+msgstr "xml iliyorekebishwa"
 
 #: models/amendments.py:131 models/amendments.py:132
 msgid "final amended text"
-msgstr ""
+msgstr "maandishi ya mwisho yaliyorekebishwa"
 
 #: models/citations.py:14 models/works.py:606
 msgid "Invalid FRBR URI"
@@ -632,7 +612,7 @@ msgstr "Tekeleza marekebisho"
 
 #: models/tasks.py:103
 msgid "Extract amendment instructions"
-msgstr ""
+msgstr "Maelekezo ya marekebisho ya dondoo"
 
 #: models/tasks.py:104
 msgid "Link gazette"
@@ -704,19 +684,19 @@ msgstr "Ondoka"
 
 #: models/tasks.py:127
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "Badilisha faili ya ingizo kuwa faili ya .docx na uondoe nambari otomatiki."
 
 #: models/tasks.py:128
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Ingiza maudhui ya kazi hii katika tarehe inayofaa — kwa kawaida tarehe ya kuchapishwa au kuunganishwa."
 
 #: models/tasks.py:129
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Tafuta na uunganishe Gazeti la Serikali (hati asilia ya uchapishaji) kwa kazi hii."
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "Toa maelekezo ya kutumia marekebisho haya."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
@@ -933,14 +913,12 @@ msgid "expired"
 msgstr "muda wake umeisha"
 
 #: models/works.py:489
-#, fuzzy
-#| msgid "place"
 msgid "replaced"
-msgstr "mahali"
+msgstr "imebadilishwa"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "imeshindwa kutumika"
 
 #: models/works.py:495
 msgid "Can review work details"
@@ -1141,7 +1119,7 @@ msgstr "Hakuna eneo kama hilo kwa nchi hii: %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "Sehemu hii inahitajika."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
@@ -1277,59 +1255,47 @@ msgstr "majina ya utani wa kazi"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "Nambari ya Sura"
 
 #: models/works.py:1113
-#, fuzzy
-#| msgid "Specify if it should be anything other than 'repealed' (the default)"
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr "Bainisha ikiwa inapaswa kuwa kitu kingine chochote isipokuwa 'kufutwa' (chaguo-msingi)"
+msgstr "Bainisha kama inapaswa kuwa kitu kingine chochote isipokuwa 'sura' (chaguo-msingi)"
 
 #: models/works.py:1115
-#, fuzzy
-#| msgid "as-at date"
 msgid "validity start date"
-msgstr "kwa tarehe"
+msgstr "tarehe ya kuanza kwa uhalali"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "Tarehe ambayo nambari hii ya Sura ilitumika kwa kazi hiyo"
 
 #: models/works.py:1116
-#, fuzzy
-#| msgid "repealed date"
 msgid "validity end date"
-msgstr "tarehe iliyofutwa"
+msgstr "tarehe ya mwisho ya uhalali"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "Tarehe ambayo nambari hii ya Sura ilitumika kwa kazi hiyo"
 
 #: models/works.py:1117
-#, fuzzy
-#| msgid "expression date"
 msgid "revision name"
-msgstr "tarehe ya kujieleza"
+msgstr "jina la marekebisho"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "Jina la chapisho ambalo nambari hii ya Sura ilipewa kazi hiyo"
 
 #: models/works.py:1121
-#, fuzzy
-#| msgid "chapters are used"
 msgid "chapter number"
-msgstr "sura zinatumika"
+msgstr "nambari ya sura"
 
 #: models/works.py:1122
-#, fuzzy
-#| msgid "chapters are used"
 msgid "chapter numbers"
-msgstr "sura zinatumika"
+msgstr "nambari za sura"
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Sura"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
@@ -1556,12 +1522,3 @@ msgstr "Haiwezi kuunda kazi ya kidokezo cha kujibu."
 msgid "Error during import"
 msgstr "Hitilafu wakati wa kuingiza"
 
-#~ msgid "Are you sure you want to submit this task for review?"
-#~ msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi?"
-
-#, python-format
-#~ msgid "Are you sure you want to submit this task for review on behalf of %s?"
-#~ msgstr "Je, una uhakika unataka kuwasilisha kazi hii kwa ukaguzi kwa niaba ya %s?"
-
-#~ msgid "(untitled)"
-#~ msgstr "(isiyo na jina)"

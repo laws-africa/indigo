@@ -1,43 +1,43 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /master/indigo_api/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 204\n"
+
 #: admin.py:123
 msgid "Updated run time to now for selected tasks."
-msgstr ""
+msgstr "Ενημερώθηκε ο χρόνος εκτέλεσης σε τώρα για τις επιλεγμένες εργασίες."
 
 #: admin.py:126
 msgid "Set run time to now"
-msgstr ""
+msgstr "Ορισμός χρόνου εκτέλεσης σε τώρα"
 
 #: exporters.py:302 exporters.py:304 models/works.py:439
 msgid "Not commenced"
-msgstr ""
+msgstr "Δεν έχει ξεκινήσει"
 
 #: exporters.py:315
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href=\"%(url)s\">%(title)s</ref>."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> στις %(date)s από <ref href=\"%(url)s\">%(title)s</ref>."
 
 #: exporters.py:319
 #, python-format
 msgid "%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s."
-msgstr ""
+msgstr "%(friendly_type)s <b>%(repealed_verb)s</b> σε %(date)s."
 
 #: exporters.py:328
 #, python-format
@@ -47,1477 +47,1478 @@ msgstr ""
 #: exporters.py:333
 #, python-format
 msgid "This %(friendly_type)s has not yet come into force in full. See the commencements table for more information."
-msgstr ""
+msgstr "Αυτό το %(friendly_type)s δεν έχει ακόμη τεθεί σε πλήρη ισχύ. Δείτε τον πίνακα έναρξης ισχύος για περισσότερες πληροφορίες."
 
 #: exporters.py:337
 #, python-format
 msgid "This %(friendly_type)s will come into force on %(date)s."
-msgstr ""
+msgstr "Αυτή η %(friendly_type)s θα τεθεί σε ισχύ στις %(date)s."
 
 #: exporters.py:342
 #, python-format
 msgid "This is not the latest available version of this %(friendly_type)s. <ref href=\"%(url)s\">View it online</ref>."
-msgstr ""
+msgstr "Αυτή δεν είναι η τελευταία διαθέσιμη έκδοση αυτού του %(friendly_type)s. <ref href=\"%(url)s\">Δείτε το online</ref>."
 
 #: exporters.py:347
 #, python-format
 msgid "There are <b>outstanding amendments</b> that have not yet been applied:<br/>%(numbered_titles)s."
-msgstr ""
+msgstr "Υπάρχουν <b>εκκρεμείς τροποποιήσεις</b> που δεν έχουν ακόμη εφαρμοστεί:<br/>%(numbered_titles)s."
 
 #: models/amendments.py:24
 msgid "amended work"
-msgstr ""
+msgstr "τροποποιημένο έργο"
 
 #: models/amendments.py:25
 msgid "Work being amended"
-msgstr ""
+msgstr "Εργασία υπό τροποποίηση"
 
 #: models/amendments.py:26
 msgid "amending work"
-msgstr ""
+msgstr "τροποποιητική εργασία"
 
 #: models/amendments.py:27
 msgid "Work making the amendment"
-msgstr ""
+msgstr "Εργασία για την τροποποίηση"
 
 #: models/amendments.py:28 models/works.py:515 models/works.py:944
 #: models/works.py:1021
 msgid "date"
-msgstr ""
+msgstr "ημερομηνία"
 
 #: models/amendments.py:29
 msgid "Date on which the amendment comes into operation"
-msgstr ""
+msgstr "Ημερομηνία έναρξης ισχύος της τροποποίησης"
 
 #: models/amendments.py:30
 msgid "verb"
-msgstr ""
+msgstr "ρήμα"
 
 #: models/amendments.py:30
 msgid "Replace with e.g. 'revised' as needed"
-msgstr ""
+msgstr "Αντικαταστήστε με π.χ. «αναθεωρημένο» όπως απαιτείται"
 
 #: models/amendments.py:32 models/amendments.py:134 models/documents.py:368
 #: models/documents.py:749 models/documents.py:821 models/documents.py:884
 #: models/tasks.py:184 models/tasks.py:670 models/works.py:569
 #: models/works.py:894 models/works.py:960 models/works.py:1026
 msgid "created at"
-msgstr ""
+msgstr "δημιουργήθηκε στις"
 
 #: models/amendments.py:33 models/amendments.py:135 models/documents.py:370
 #: models/documents.py:750 models/documents.py:822 models/documents.py:885
 #: models/tasks.py:185 models/tasks.py:671 models/works.py:570
 #: models/works.py:895 models/works.py:961 models/works.py:1027
 msgid "updated at"
-msgstr ""
+msgstr "ενημερώθηκε στις"
 
 #: models/amendments.py:36 models/amendments.py:136 models/documents.py:373
 #: models/documents.py:816 models/works.py:574 models/works.py:964
 #: models/works.py:1030
 msgid "created by"
-msgstr ""
+msgstr "δημιουργήθηκε από"
 
 #: models/amendments.py:38 models/documents.py:374 models/works.py:576
 #: models/works.py:966 models/works.py:1032
 msgid "updated by"
-msgstr ""
+msgstr "ενημερώθηκε από"
 
 #: models/amendments.py:42 models/amendments.py:110
 msgid "amendment"
-msgstr ""
+msgstr "τροπολογία"
 
 #: models/amendments.py:43
 msgid "amendments"
-msgstr ""
+msgstr "τροποποιήσεις"
 
 #: models/amendments.py:74
 msgid "Document date changed with amendment date."
-msgstr ""
+msgstr "Η ημερομηνία του εγγράφου άλλαξε με την ημερομηνία τροποποίησης."
 
 #: models/amendments.py:112 models/tasks.py:164
 msgid "state"
-msgstr ""
+msgstr "κατάσταση"
 
 #: models/amendments.py:113
 msgid "amending provision"
-msgstr ""
+msgstr "τροποποιητική διάταξη"
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
 msgid "title"
-msgstr ""
+msgstr "τίτλος"
 
 #: models/amendments.py:115
 msgid "page number"
-msgstr ""
+msgstr "αριθμός σελίδας"
 
 #: models/amendments.py:116
 msgid "provision name"
-msgstr ""
+msgstr "όνομα διάταξης"
 
 #: models/amendments.py:118
 msgid "provision id"
-msgstr ""
+msgstr "αναγνωριστικό παροχής"
 
 #: models/amendments.py:119
 msgid "amendment instruction"
-msgstr ""
+msgstr "οδηγία τροποποίησης"
 
 #: models/amendments.py:122
 msgid "applied by"
-msgstr ""
+msgstr "εφαρμόζεται από"
 
 #: models/amendments.py:123
 msgid "applied at"
-msgstr ""
+msgstr "εφαρμόστηκε στο"
 
 #: models/amendments.py:125
 msgid "amended provision id"
-msgstr ""
+msgstr "τροποποιημένη διάταξη"
 
 #: models/amendments.py:128
 msgid "amended text"
-msgstr ""
+msgstr "τροποποιημένο κείμενο"
 
 #: models/amendments.py:129
 msgid "amended xml"
-msgstr ""
+msgstr "τροποποιημένο xml"
 
 #: models/amendments.py:131 models/amendments.py:132
 msgid "final amended text"
-msgstr ""
+msgstr "τελικό τροποποιημένο κείμενο"
 
 #: models/citations.py:14 models/works.py:606
 msgid "Invalid FRBR URI"
-msgstr ""
+msgstr "Μη έγκυρο URI FRBR"
 
 #: models/citations.py:19
 msgid "place"
-msgstr ""
+msgstr "θέση"
 
 #: models/citations.py:19
 msgid "Two letter country code, with optional locality code"
-msgstr ""
+msgstr "Κωδικός χώρας δύο γραμμάτων, με προαιρετικό τοπικό κωδικό"
 
 #: models/citations.py:20 models/works.py:502
 msgid "FRBR URI"
-msgstr ""
+msgstr "URI FRBR"
 
 #: models/citations.py:21
 msgid "aliases"
-msgstr ""
+msgstr "ψευδώνυμα"
 
 #: models/citations.py:21
 msgid "Aliases, one per line"
-msgstr ""
+msgstr "Ψευδώνυμα, ένα ανά γραμμή"
 
 #: models/citations.py:26
 msgid "Citation alias"
-msgstr ""
+msgstr "Ψευδώνυμο παραπομπής"
 
 #: models/citations.py:27
 msgid "Citation aliases"
-msgstr ""
+msgstr "Ψευδώνυμα παραπομπών"
 
 #: models/documents.py:305
 #, python-format
 msgid "This is the version of this document from %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου από την %(start)s και περιλαμβάνει τυχόν τροποποιήσεις που δημοσιεύθηκαν έως την %(end)s."
 
 #: models/documents.py:307
 #, python-format
 msgid "This is the version of this document from %(start)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου από %(start)s."
 
 #: models/documents.py:310
 #, python-format
 msgid "This is the version of this document at %(start)s and includes any amendments published up to %(end)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου στη διεύθυνση %(start)s και περιλαμβάνει τυχόν τροποποιήσεις που δημοσιεύθηκαν έως την %(end)s."
 
 #: models/documents.py:312
 #, python-format
 msgid "This is the version of this document at %(start)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου στη διεύθυνση %(start)s."
 
 #: models/documents.py:315
 #, python-format
 msgid "This is the version of this document as it was from %(start)s to %(end)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου όπως ήταν από %(start)s έως %(end)s."
 
 #: models/documents.py:318
 #, python-format
 msgid "This is the version of this document as it was at %(start)s to %(end)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου όπως ήταν από %(start)s έως %(end)s."
 
 #: models/documents.py:321
 #, python-format
 msgid "This is the version of this document as it was at %(start)s."
-msgstr ""
+msgstr "Αυτή είναι η έκδοση αυτού του εγγράφου όπως ήταν στη διεύθυνση %(start)s."
 
 #: models/documents.py:331 models/documents.py:744 models/documents.py:815
 #: models/documents.py:880 models/tasks.py:161
 msgid "document"
-msgstr ""
+msgstr "έγγραφο"
 
 #: models/documents.py:332
 msgid "documents"
-msgstr ""
+msgstr "έγγραφα"
 
 #: models/documents.py:337 models/tasks.py:160 models/works.py:499
 #: models/works.py:887 models/works.py:1023 models/works.py:1099
 #: models/works.py:1114
 msgid "work"
-msgstr ""
+msgstr "εργασία"
 
 #: models/documents.py:345
 msgid "frbr uri"
-msgstr ""
+msgstr "frbr uri"
 
 #: models/documents.py:346 models/works.py:503
 msgid "Used globally to identify this work"
-msgstr ""
+msgstr "Χρησιμοποιείται παγκοσμίως για την αναγνώριση αυτού του έργου"
 
 #: models/documents.py:353 models/places.py:25 models/places.py:32
 #: models/places.py:308 models/places.py:322
 msgid "language"
-msgstr ""
+msgstr "γλώσσα"
 
 #: models/documents.py:354
 msgid "Language this document is in."
-msgstr ""
+msgstr "Γλώσσα στην οποία είναι συνταγμένο αυτό το έγγραφο."
 
 #: models/documents.py:355
 msgid "draft"
-msgstr ""
+msgstr "προσχέδιο"
 
 #: models/documents.py:355
 msgid "Drafts aren't available through the public API"
-msgstr ""
+msgstr "Τα προσχέδια δεν είναι διαθέσιμα μέσω του δημόσιου API"
 
 #: models/documents.py:358
 msgid "document XML"
-msgstr ""
+msgstr "έγγραφο XML"
 
 #: models/documents.py:363
 msgid "expression date"
-msgstr ""
+msgstr "ημερομηνία έκφρασης"
 
 #: models/documents.py:364
 msgid "Date of publication or latest amendment"
-msgstr ""
+msgstr "Ημερομηνία δημοσίευσης ή τελευταίας τροποποίησης"
 
 #: models/documents.py:366
 msgid "deleted"
-msgstr ""
+msgstr "διαγράφηκε"
 
 #: models/documents.py:366
 msgid "Has this document been deleted?"
-msgstr ""
+msgstr "Έχει διαγραφεί αυτό το έγγραφο;"
 
 #: models/documents.py:369
 msgid "Timestamp of when the expression was first created."
-msgstr ""
+msgstr "Χρονική σήμανση του χρόνου δημιουργίας της έκφρασης για πρώτη φορά."
 
 #: models/documents.py:371
 msgid "Timestamp of when the expression was last updated."
-msgstr ""
+msgstr "Χρονική σήμανση της τελευταίας ενημέρωσης της έκφρασης."
 
 #: models/documents.py:745 models/tasks.py:665 models/works.py:889
 msgid "file"
-msgstr ""
+msgstr "αρχείο"
 
 #: models/documents.py:746 models/tasks.py:667
 msgid "size"
-msgstr ""
+msgstr "μέγεθος"
 
 #: models/documents.py:747 models/tasks.py:668
 msgid "filename"
-msgstr ""
+msgstr "όνομα αρχείου"
 
 #: models/documents.py:747
 msgid "Unique attachment filename"
-msgstr ""
+msgstr "Μοναδικό όνομα αρχείου συνημμένου"
 
 #: models/documents.py:748
 msgid "mime type"
-msgstr ""
+msgstr "τύπος μίμης"
 
 #: models/documents.py:754
 msgid "attachment"
-msgstr ""
+msgstr "προσάρτημα"
 
 #: models/documents.py:755
 msgid "attachments"
-msgstr ""
+msgstr "συνημμένα"
 
 #: models/documents.py:795 models/places.py:205 models/saved_searches.py:11
 #: models/works.py:54 models/works.py:1065 models/works.py:1113
 msgid "name"
-msgstr ""
+msgstr "όνομα"
 
 #: models/documents.py:795
 msgid "Name of this colophon"
-msgstr ""
+msgstr "Όνομα αυτού του κολοφώνα"
 
 #: models/documents.py:797
 msgid "Which country does this colophon apply to?"
-msgstr ""
+msgstr "Σε ποια χώρα ισχύει αυτό το κολοφώνιο;"
 
 #: models/documents.py:798 models/places.py:58 models/places.py:79
 #: models/places.py:204 models/places.py:252 models/tasks.py:158
 #: models/works.py:508
 msgid "country"
-msgstr ""
+msgstr "χώρα"
 
 #: models/documents.py:799
 msgid "body"
-msgstr ""
+msgstr "σώμα"
 
 #: models/documents.py:802
 msgid "colophon"
-msgstr ""
+msgstr "σήμα εκδότη βιβλίου"
 
 #: models/documents.py:803
 msgid "colophons"
-msgstr ""
+msgstr "κολοφώνες"
 
 #: models/documents.py:817
 msgid "in reply to"
-msgstr ""
+msgstr "σε απάντηση σε"
 
 #: models/documents.py:818
 msgid "text"
-msgstr ""
+msgstr "κείμενο"
 
 #: models/documents.py:819
 msgid "anchor id"
-msgstr ""
+msgstr "αναγνωριστικό αγκύρωσης"
 
 #: models/documents.py:820
 msgid "closed"
-msgstr ""
+msgstr "κλειστό"
 
 #: models/documents.py:823 models/tasks.py:150
 msgid "task"
-msgstr ""
+msgstr "έργο"
 
 #: models/documents.py:824
 msgid "selectors"
-msgstr ""
+msgstr "επιλογείς"
 
 #: models/documents.py:829
 msgid "annotation"
-msgstr ""
+msgstr "σχόλιο"
 
 #: models/documents.py:830
 msgid "annotations"
-msgstr ""
+msgstr "σχολιασμοί"
 
 #: models/documents.py:882
 msgid "user"
-msgstr ""
+msgstr "μεταχειριζόμενος"
 
 #: models/documents.py:883
 msgid "nonce"
-msgstr ""
+msgstr "απροσδόκητος"
 
 #: models/documents.py:895
 msgid "document activity"
-msgstr ""
+msgstr "δραστηριότητα εγγράφου"
 
 #: models/documents.py:896
 msgid "document activities"
-msgstr ""
+msgstr "δραστηριότητες τεκμηρίωσης"
 
 #: models/places.py:33
 msgid "languages"
-msgstr ""
+msgstr "γλώσσες"
 
 #: models/places.py:60
 msgid "Primary language for this country"
-msgstr ""
+msgstr "Κύρια γλώσσα για αυτήν τη χώρα"
 
 #: models/places.py:61
 msgid "primary language"
-msgstr ""
+msgstr "κύρια γλώσσα"
 
 #: models/places.py:63
 msgid "italics terms"
-msgstr ""
+msgstr "πλάγια γραφή"
 
 #: models/places.py:80
 msgid "countries"
-msgstr ""
+msgstr "χώρες"
 
 #: models/places.py:173
 msgid "All places"
-msgstr ""
+msgstr "Όλα τα μέρη"
 
 #: models/places.py:205
 msgid "Local name of this locality"
-msgstr ""
+msgstr "Τοπική ονομασία αυτής της τοποθεσίας"
 
 #: models/places.py:206 models/tasks.py:167
 msgid "code"
-msgstr ""
+msgstr "κώδικας"
 
 #: models/places.py:212 models/places.py:254 models/tasks.py:159
 #: models/works.py:510
 msgid "locality"
-msgstr ""
+msgstr "τοποθεσία"
 
 #: models/places.py:213
 msgid "localities"
-msgstr ""
+msgstr "τοποθεσίες"
 
 #: models/places.py:256
 msgid "spreadsheet URL"
-msgstr ""
+msgstr "URL υπολογιστικού φύλλου"
 
 #: models/places.py:257
 msgid "as-at date"
-msgstr ""
+msgstr "ως έχει"
 
 #: models/places.py:258
 msgid "styleguide URL"
-msgstr ""
+msgstr "URL οδηγού στυλ"
 
 #: models/places.py:259
 msgid "consolidation note"
-msgstr ""
+msgstr "σημείωμα ενοποίησης"
 
 #: models/places.py:261
 msgid "'No publication document' text"
-msgstr ""
+msgstr "Κείμενο «Δεν υπάρχει έγγραφο δημοσίευσης»"
 
 #: models/places.py:262
 msgid "Note: The original publication document is not available and this content could not be verified."
-msgstr ""
+msgstr "Σημείωση: Το πρωτότυπο έγγραφο δημοσίευσης δεν είναι διαθέσιμο και το περιεχόμενο αυτού του εγγράφου δεν ήταν δυνατό να επαληθευτεί."
 
 #: models/places.py:263
 msgid "publication date is optional"
-msgstr ""
+msgstr "Η ημερομηνία δημοσίευσης είναι προαιρετική"
 
 #: models/places.py:264
 msgid "Are publication dates optional in this place?"
-msgstr ""
+msgstr "Είναι οι ημερομηνίες δημοσίευσης προαιρετικές σε αυτό το μέρος;"
 
 #: models/places.py:265
 msgid "a consolidation is being imported"
-msgstr ""
+msgstr "εισάγεται μια ενοποίηση"
 
 #: models/places.py:266
 msgid "Is a consolidation being worked on in this place?"
-msgstr ""
+msgstr "Γίνεται κάποια προσπάθεια ενοποίησης σε αυτό το μέρος;"
 
 #: models/places.py:267
 msgid "chapters are used"
-msgstr ""
+msgstr "χρησιμοποιούνται κεφάλαια"
 
 #: models/places.py:268
 msgid "Are Chapters used for Acts in this place?"
-msgstr ""
+msgstr "Χρησιμοποιούνται κεφάλαια για τις Πράξεις σε αυτό το μέρος;"
 
 #: models/places.py:271
 msgid "place settings"
-msgstr ""
+msgstr "σερβίτσια"
 
 #: models/places.py:272
 msgid "places' settings"
-msgstr ""
+msgstr "ρυθμίσεις τόπων"
 
 #: models/places.py:309
 msgid "terms"
-msgstr ""
+msgstr "όροι"
 
 #: models/places.py:312 models/places.py:313
 msgid "accented terms"
-msgstr ""
+msgstr "τονισμένοι όροι"
 
 #: models/places.py:320
 msgid "annotation title"
-msgstr ""
+msgstr "τίτλος σχολιασμού"
 
 #: models/places.py:320
 msgid "to be shown in the document's drop-down menu"
-msgstr ""
+msgstr "για εμφάνιση στο αναπτυσσόμενο μενού του εγγράφου"
 
 #: models/places.py:321
 msgid "annotation content"
-msgstr ""
+msgstr "περιεχόμενο σχολίων"
 
 #: models/places.py:321
 msgid "will always be wrapped in []s — don't include them again"
-msgstr ""
+msgstr "θα είναι πάντα τυλιγμένο σε []s — μην τα συμπεριλάβετε ξανά"
 
 #: models/saved_searches.py:7
 msgid "Tasks"
-msgstr ""
+msgstr "Εργασίες"
 
 #: models/saved_searches.py:8
 msgid "Works"
-msgstr ""
+msgstr "Εργοστάσιο"
 
 #: models/saved_searches.py:12
 msgid "scope"
-msgstr ""
+msgstr "έκταση"
 
 #: models/saved_searches.py:13
 msgid "querystring"
-msgstr ""
+msgstr "συμβολοσειρά ερωτήματος"
 
 #: models/saved_searches.py:16
 msgid "saved search"
-msgstr ""
+msgstr "αποθηκευμένη αναζήτηση"
 
 #: models/saved_searches.py:17
 msgid "saved searches"
-msgstr ""
+msgstr "αποθηκευμένες αναζητήσεις"
 
 #: models/tasks.py:72 models/tasks.py:81
 msgid "Open"
-msgstr ""
+msgstr "Ανοιχτό"
 
 #: models/tasks.py:73 models/tasks.py:83
 msgid "Pending review"
-msgstr ""
+msgstr "Εκκρεμεί αξιολόγηση"
 
 #: models/tasks.py:74 models/tasks.py:80
 msgid "Blocked"
-msgstr ""
+msgstr "Αποκλεισμένο"
 
 #: models/tasks.py:75 models/tasks.py:85
 msgid "Cancelled"
-msgstr ""
+msgstr "Ακυρώθηκε"
 
 #: models/tasks.py:76 models/tasks.py:84
 msgid "Done"
-msgstr ""
+msgstr "Γινώμενος"
 
 #: models/tasks.py:82
 msgid "Assigned"
-msgstr ""
+msgstr "Ανατέθηκε"
 
 #: models/tasks.py:100
 msgid "Convert document"
-msgstr ""
+msgstr "Μετατροπή εγγράφου"
 
 #: models/tasks.py:101
 msgid "Import content"
-msgstr ""
+msgstr "Εισαγωγή περιεχομένου"
 
 #: models/tasks.py:102
 msgid "Apply amendment"
-msgstr ""
+msgstr "Εφαρμογή τροποποίησης"
 
 #: models/tasks.py:103
 msgid "Extract amendment instructions"
-msgstr ""
+msgstr "Απόσπασμα οδηγιών τροποποίησης"
 
 #: models/tasks.py:104
 msgid "Link gazette"
-msgstr ""
+msgstr "Σύνδεσμος εφημερίδας"
 
 #: models/tasks.py:108
 msgid "Check / update primary work"
-msgstr ""
+msgstr "Έλεγχος/ενημέρωση κύριας εργασίας"
 
 #: models/tasks.py:109
 msgid "Check / update repeal"
-msgstr ""
+msgstr "Έλεγχος / ενημέρωση κατάργησης"
 
 #: models/tasks.py:110
 msgid "'Commences on' date missing"
-msgstr ""
+msgstr "Λείπει η ημερομηνία «Έναρξη στις»"
 
 #: models/tasks.py:111
 msgid "Comment"
-msgstr ""
+msgstr "Σχόλιο"
 
 #: models/tasks.py:112
 msgid "Link amendment (active)"
-msgstr ""
+msgstr "Τροποποίηση συνδέσμου (ενεργή)"
 
 #: models/tasks.py:113
 msgid "Link amendment (passive)"
-msgstr ""
+msgstr "Τροποποίηση συνδέσμου (παθητική)"
 
 #: models/tasks.py:114
 msgid "Link amendment (pending commencement)"
-msgstr ""
+msgstr "Τροποποίηση συνδέσμου (εκκρεμεί η έναρξη)"
 
 #: models/tasks.py:115
 msgid "Link commencement (active)"
-msgstr ""
+msgstr "Έναρξη σύνδεσης (ενεργή)"
 
 #: models/tasks.py:116
 msgid "Link commencement (passive)"
-msgstr ""
+msgstr "Έναρξη σύνδεσης (παθητική)"
 
 #: models/tasks.py:117
 msgid "Link primary work"
-msgstr ""
+msgstr "Σύνδεση κύριας εργασίας"
 
 #: models/tasks.py:118
 msgid "Link repeal"
-msgstr ""
+msgstr "Κατάργηση συνδέσμου"
 
 #: models/tasks.py:119
 msgid "Link repeal (not found)"
-msgstr ""
+msgstr "Κατάργηση συνδέσμου (δεν βρέθηκε)"
 
 #: models/tasks.py:120
 msgid "Link repeal (pending commencement)"
-msgstr ""
+msgstr "Κατάργηση συνδέσμου (εκκρεμεί η έναρξη)"
 
 #: models/tasks.py:121
 msgid "Link subleg"
-msgstr ""
+msgstr "Υποσύνδεσμος συνδέσμου"
 
 #: models/tasks.py:122
 msgid "Link taxonomy"
-msgstr ""
+msgstr "Ταξινόμηση συνδέσμων"
 
 #: models/tasks.py:123
 msgid "Sign-off"
-msgstr ""
+msgstr "Υπογραφή"
 
 #: models/tasks.py:127
 msgid "Convert the input file into a .docx file and remove automatic numbering."
-msgstr ""
+msgstr "Μετατρέψτε το αρχείο εισόδου σε αρχείο .docx και καταργήστε την αυτόματη αρίθμηση."
 
 #: models/tasks.py:128
 msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-msgstr ""
+msgstr "Εισαγάγετε το περιεχόμενο για αυτό το έργο την κατάλληλη ημερομηνία — συνήθως την ημερομηνία δημοσίευσης ή ενοποίησης."
 
 #: models/tasks.py:129
 msgid "Find and link the Gazette (original publication document) for this work."
-msgstr ""
+msgstr "Βρείτε και συνδέστε την Εφημερίδα (πρωτότυπο έγγραφο δημοσίευσης) για αυτό το έργο."
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "Εξαγάγετε τις οδηγίες για την εφαρμογή αυτής της τροποποίησης."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
-msgstr ""
+msgstr "Μπορεί να υποβάλει μια ανοιχτή εργασία για αξιολόγηση"
 
 #: models/tasks.py:142
 msgid "Can cancel a task that is open or has been submitted for review"
-msgstr ""
+msgstr "Μπορεί να ακυρώσει μια εργασία που είναι ανοιχτή ή έχει υποβληθεί για έλεγχο"
 
 #: models/tasks.py:143
 msgid "Can reopen a task that is closed or cancelled"
-msgstr ""
+msgstr "Μπορεί να ανοίξει ξανά μια εργασία που έχει κλείσει ή ακυρωθεί"
 
 #: models/tasks.py:144
 msgid "Can unsubmit a task that has been submitted for review"
-msgstr ""
+msgstr "Δυνατότητα κατάργησης υποβολής μιας εργασίας που έχει υποβληθεί για αξιολόγηση"
 
 #: models/tasks.py:145
 msgid "Can close a task that has been submitted for review"
-msgstr ""
+msgstr "Μπορεί να κλείσει μια εργασία που έχει υποβληθεί για έλεγχο"
 
 #: models/tasks.py:146
 msgid "Can close any task that has been submitted for review, regardless of who submitted it"
-msgstr ""
+msgstr "Μπορεί να κλείσει οποιαδήποτε εργασία που έχει υποβληθεί για έλεγχο, ανεξάρτητα από το ποιος την υπέβαλε"
 
 #: models/tasks.py:147
 msgid "Can block a task from being done, and unblock it"
-msgstr ""
+msgstr "Μπορεί να μπλοκάρει την ολοκλήρωση μιας εργασίας και να την ξεμπλοκάρει"
 
 #: models/tasks.py:148
 msgid "Can be assigned tasks in excess of limits"
-msgstr ""
+msgstr "Μπορεί να ανατεθούν εργασίες που υπερβαίνουν τα όρια"
 
 #: models/tasks.py:151
 msgid "tasks"
-msgstr ""
+msgstr "εργασίες"
 
 #: models/tasks.py:156 models/tasks.py:647 models/works.py:58
 #: models/works.py:1022
 msgid "description"
-msgstr ""
+msgstr "περιγραφή"
 
 #: models/tasks.py:162
 msgid "timeline date"
-msgstr ""
+msgstr "ημερομηνία χρονοδιαγράμματος"
 
 #: models/tasks.py:162
 msgid "A date on the timeline of work-related tasks, e.g. the date at which an amendment should be applied."
-msgstr ""
+msgstr "Μια ημερομηνία στο χρονοδιάγραμμα των εργασιών που σχετίζονται με την εργασία, π.χ. η ημερομηνία κατά την οποία θα πρέπει να εφαρμοστεί μια τροποποίηση."
 
 #: models/tasks.py:170
 msgid "input file"
-msgstr ""
+msgstr "αρχείο εισόδου"
 
 #: models/tasks.py:171
 msgid "output file"
-msgstr ""
+msgstr "αρχείο εξόδου"
 
 #: models/tasks.py:173
 msgid "assigned to"
-msgstr ""
+msgstr "ανατεθεί σε"
 
 #: models/tasks.py:174
 msgid "submitted by user"
-msgstr ""
+msgstr "υποβλήθηκε από τον χρήστη"
 
 #: models/tasks.py:175
 msgid "reviewed by user"
-msgstr ""
+msgstr "αξιολογήθηκε από τον χρήστη"
 
 #: models/tasks.py:176
 msgid "finished by user"
-msgstr ""
+msgstr "ολοκληρώθηκε από τον χρήστη"
 
 #: models/tasks.py:177
 msgid "closed at"
-msgstr ""
+msgstr "κλειστό στις"
 
 #: models/tasks.py:177
 msgid "When the task was marked as done or cancelled."
-msgstr ""
+msgstr "Όταν η εργασία επισημάνθηκε ως ολοκληρωμένη ή ακυρώθηκε."
 
 #: models/tasks.py:179
 msgid "changes requested"
-msgstr ""
+msgstr "ζητούμενες αλλαγές"
 
 #: models/tasks.py:179
 msgid "Have changes been requested on this task?"
-msgstr ""
+msgstr "Έχουν ζητηθεί αλλαγές σε αυτήν την εργασία;"
 
 #: models/tasks.py:181
 msgid "created by user"
-msgstr ""
+msgstr "δημιουργήθηκε από τον χρήστη"
 
 #: models/tasks.py:182
 msgid "updated by user"
-msgstr ""
+msgstr "ενημερώθηκε από τον χρήστη"
 
 #: models/tasks.py:187
 msgid "labels"
-msgstr ""
+msgstr "ετικέτες"
 
 #: models/tasks.py:189
 msgid "extra data"
-msgstr ""
+msgstr "επιπλέον δεδομένα"
 
 #: models/tasks.py:191
 msgid "blocked by"
-msgstr ""
+msgstr "μπλοκαρισμένος από"
 
 #: models/tasks.py:191
 msgid "Tasks blocking this task from being done."
-msgstr ""
+msgstr "Εργασίες που εμποδίζουν την ολοκλήρωση αυτής της εργασίας."
 
 #: models/tasks.py:646 models/works.py:56
 msgid "slug"
-msgstr ""
+msgstr "γυμνοσάλιαγκας"
 
 #: models/tasks.py:651
 msgid "task label"
-msgstr ""
+msgstr "ετικέτα εργασίας"
 
 #: models/tasks.py:652
 msgid "task labels"
-msgstr ""
+msgstr "ετικέτες εργασιών"
 
 #: models/tasks.py:666
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: models/tasks.py:669
 msgid "mimetype"
-msgstr ""
+msgstr "τύπος μίμης"
 
 #: models/tasks.py:674
 msgid "task file"
-msgstr ""
+msgstr "αρχείο εργασίας"
 
 #: models/tasks.py:675
 msgid "task files"
-msgstr ""
+msgstr "αρχεία εργασιών"
 
 #: models/works.py:36
 #, python-format
 msgid "Work for FRBR URI '%(uri)s' doesn't exist"
-msgstr ""
+msgstr "Η εργασία για το FRBR URI '%(uri)s' δεν υπάρχει"
 
 #: models/works.py:55
 msgid "Name of the taxonomy topic"
-msgstr ""
+msgstr "Όνομα του θέματος ταξινόμησης"
 
 #: models/works.py:57
 msgid "Unique short name (code) for the topic."
-msgstr ""
+msgstr "Μοναδικό σύντομο όνομα (κωδικός) για το θέμα."
 
 #: models/works.py:59
 msgid "Description of the topic"
-msgstr ""
+msgstr "Περιγραφή του θέματος"
 
 #: models/works.py:60
 msgid "public"
-msgstr ""
+msgstr "κοινό"
 
 #: models/works.py:61
 msgid "project"
-msgstr ""
+msgstr "σχέδιο"
 
 #: models/works.py:63
 msgid "copy from principal work"
-msgstr ""
+msgstr "αντίγραφο από το κύριο έργο"
 
 #: models/works.py:64
 msgid "Copy this topic from principal works to works that amend, commence or repeal the principal work."
-msgstr ""
+msgstr "Αντιγράψτε αυτό το θέμα από τα κύρια έργα σε έργα που τροποποιούν, ξεκινούν ή καταργούν το κύριο έργο."
 
 #: models/works.py:69
 msgid "taxonomy topic"
-msgstr ""
+msgstr "θέμα ταξινόμησης"
 
 #: models/works.py:70 models/works.py:553
 msgid "taxonomy topics"
-msgstr ""
+msgstr "θέματα ταξινόμησης"
 
 #: models/works.py:438
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Άγνωστη ημερομηνία έναρξης"
 
 #: models/works.py:444
 msgid "There are multiple commencements"
-msgstr ""
+msgstr "Υπάρχουν πολλαπλές ενάρξεις"
 
 #: models/works.py:483
 msgid "repealed"
-msgstr ""
+msgstr "καταργήθηκε"
 
 #: models/works.py:484
 msgid "revoked"
-msgstr ""
+msgstr "ανακλήθηκε"
 
 #: models/works.py:485
 msgid "withdrawn"
-msgstr ""
+msgstr "αποτραβηγμένος"
 
 #: models/works.py:486
 msgid "lapsed"
-msgstr ""
+msgstr "ληξιπρόθεσμος"
 
 #: models/works.py:487
 msgid "retired"
-msgstr ""
+msgstr "συνταξιούχος"
 
 #: models/works.py:488
 msgid "expired"
-msgstr ""
+msgstr "έληξε"
 
 #: models/works.py:489
 msgid "replaced"
-msgstr ""
+msgstr "αντικαταστάθηκε"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "απενεργοποιημένο"
 
 #: models/works.py:495
 msgid "Can review work details"
-msgstr ""
+msgstr "Μπορεί να ελέγξει τις λεπτομέρειες της εργασίας"
 
 #: models/works.py:496
 msgid "Can import works in bulk"
-msgstr ""
+msgstr "Δυνατότητα μαζικής εισαγωγής έργων"
 
 #: models/works.py:497
 msgid "Can export works in bulk"
-msgstr ""
+msgstr "Μπορεί να εξαγάγει έργα χύμα"
 
 #: models/works.py:500
 msgid "works"
-msgstr ""
+msgstr "εργοστάσιο"
 
 #: models/works.py:512
 msgid "doctype"
-msgstr ""
+msgstr "doctype"
 
 #: models/works.py:512
 msgid "FRBR doctype"
-msgstr ""
+msgstr "Τύπος εγγράφου FRBR"
 
 #: models/works.py:513 models/works.py:1073
 msgid "subtype"
-msgstr ""
+msgstr "υποτύπος"
 
 #: models/works.py:513
 msgid "FRBR subtype"
-msgstr ""
+msgstr "Υποτύπος FRBR"
 
 #: models/works.py:514
 msgid "actor"
-msgstr ""
+msgstr "ηθοποιός"
 
 #: models/works.py:514
 msgid "FRBR actor"
-msgstr ""
+msgstr "Ηθοποιός FRBR"
 
 #: models/works.py:515
 msgid "FRBR date"
-msgstr ""
+msgstr "Ημερομηνία FRBR"
 
 #: models/works.py:516 models/works.py:1112
 msgid "number"
-msgstr ""
+msgstr "αριθμός"
 
 #: models/works.py:516
 msgid "FRBR number"
-msgstr ""
+msgstr "Αριθμός FRBR"
 
 #: models/works.py:519
 msgid "publication name"
-msgstr ""
+msgstr "όνομα έκδοσης"
 
 #: models/works.py:520
 msgid "Original publication's name, e.g. Government Gazette"
-msgstr ""
+msgstr "Όνομα πρωτότυπου δημοσιεύματος, π.χ. Εφημερίδα της Κυβερνήσεως"
 
 #: models/works.py:521
 msgid "publication number"
-msgstr ""
+msgstr "αριθμός δημοσίευσης"
 
 #: models/works.py:522
 msgid "Publication's sequence number, eg. gazette number"
-msgstr ""
+msgstr "Αριθμός σειράς δημοσίευσης, π.χ. αριθμός εφημερίδας"
 
 #: models/works.py:523
 msgid "publication date"
-msgstr ""
+msgstr "ημερομηνία δημοσίευσης"
 
 #: models/works.py:523
 msgid "Date of publication"
-msgstr ""
+msgstr "Ημερομηνία δημοσίευσης"
 
 #: models/works.py:525
 msgid "assent date"
-msgstr ""
+msgstr "ημερομηνία συναίνεσης"
 
 #: models/works.py:525
 msgid "Date signed by the president"
-msgstr ""
+msgstr "Ημερομηνία υπογραφής από τον πρόεδρο"
 
 #: models/works.py:527
 msgid "commenced"
-msgstr ""
+msgstr "ξεκίνησε"
 
 #: models/works.py:528
 msgid "Has this work commenced? (Date may be unknown)"
-msgstr ""
+msgstr "Έχει ξεκινήσει αυτή η εργασία; (Η ημερομηνία μπορεί να είναι άγνωστη)"
 
 #: models/works.py:532
 msgid "Work that repealed this work"
-msgstr ""
+msgstr "Έργο που ακύρωσε αυτό το έργο"
 
 #: models/works.py:533
 msgid "repealed by"
-msgstr ""
+msgstr "καταργήθηκε από"
 
 #: models/works.py:534
 msgid "repealed date"
-msgstr ""
+msgstr "ημερομηνία κατάργησης"
 
 #: models/works.py:534
 msgid "Date of repeal of this work"
-msgstr ""
+msgstr "Ημερομηνία κατάργησης αυτού του έργου"
 
 #: models/works.py:535
 msgid "repealed verb"
-msgstr ""
+msgstr "καταργημένο ρήμα"
 
 #: models/works.py:536
 msgid "Specify if it should be anything other than 'repealed' (the default)"
-msgstr ""
+msgstr "Καθορίστε αν θα πρέπει να είναι κάτι διαφορετικό από «καταργήθηκε» (η προεπιλογή)"
 
 #: models/works.py:537
 msgid "repealed note"
-msgstr ""
+msgstr "καταργημένο σημείωμα"
 
 #: models/works.py:538
 msgid "Optional note giving extra detail about the repeal"
-msgstr ""
+msgstr "Προαιρετική σημείωση που παρέχει επιπλέον λεπτομέρειες σχετικά με την κατάργηση"
 
 #: models/works.py:542
 msgid "Parent (primary) work for subsidiary legislation"
-msgstr ""
+msgstr "Γονική (πρωτογενής) εργασία για δευτερογενή νομοθεσία"
 
 #: models/works.py:543
 msgid "parent (primary) work"
-msgstr ""
+msgstr "γονική (πρωτοβάθμια) εργασία"
 
 #: models/works.py:545
 msgid "principal"
-msgstr ""
+msgstr "κύριος"
 
 #: models/works.py:546
 msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
-msgstr ""
+msgstr "Τα κύρια έργα δεν είναι απλώς καταργήσεις, τροποποιήσεις ή ενάρξεις ισχύος και θα πρέπει να έχουν πλήρες κείμενο."
 
 #: models/works.py:548
 msgid "stub"
-msgstr ""
+msgstr "στέλεχος"
 
 #: models/works.py:548
 msgid "Stub works do not have content or points in time"
-msgstr ""
+msgstr "Τα stub works δεν έχουν περιεχόμενο ή χρονικά σημεία"
 
 #: models/works.py:551
 msgid "properties"
-msgstr ""
+msgstr "σκηνικά θέατρου"
 
 #: models/works.py:555
 msgid "as-at date override"
-msgstr ""
+msgstr "παράκαμψη ημερομηνίας ως έχει"
 
 #: models/works.py:556
 msgid "Date up to which this work was last checked for updates"
-msgstr ""
+msgstr "Ημερομηνία έως την οποία ελέγχθηκε τελευταία φορά αυτό το έργο για ενημερώσεις"
 
 #: models/works.py:557
 msgid "consolidation note override"
-msgstr ""
+msgstr "παράκαμψη ενοποιημένου ομολογιακού δανείου"
 
 #: models/works.py:558
 msgid "Consolidation note about this particular work, to override any consolidation note for the place"
-msgstr ""
+msgstr "Σημείωμα ενοποίησης σχετικά με αυτό το συγκεκριμένο έργο, για την αντικατάσταση οποιουδήποτε σημειώματος ενοποίησης για τον τόπο"
 
 #: models/works.py:560
 msgid "disclaimer"
-msgstr ""
+msgstr "άρνηση"
 
 #: models/works.py:561
 msgid "Disclaimer text about this work"
-msgstr ""
+msgstr "Κείμενο αποποίησης ευθύνης σχετικά με αυτό το έργο"
 
 #: models/works.py:563
 msgid "work in progress"
-msgstr ""
+msgstr "εργασία σε εξέλιξη"
 
 #: models/works.py:564
 msgid "Work in progress, to be approved"
-msgstr ""
+msgstr "Εργασία σε εξέλιξη, προς έγκριση"
 
 #: models/works.py:571
 msgid "approved at"
-msgstr ""
+msgstr "εγκεκριμένο στις"
 
 #: models/works.py:578
 msgid "approved by"
-msgstr ""
+msgstr "εγκεκριμένο από"
 
 #: models/works.py:596
 #, python-format
 msgid "No such locality for this country: %(code)s"
-msgstr ""
+msgstr "Δεν υπάρχει τέτοια τοποθεσία για αυτήν τη χώρα: %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "Αυτό το πεδίο είναι υποχρεωτικό."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
-msgstr ""
+msgstr "Αυτό το έγγραφο δεν δημοσιεύτηκε επειδή το έργο του δεν είχε εγκριθεί."
 
 #: models/works.py:890
 msgid "trusted URL"
-msgstr ""
+msgstr "αξιόπιστη διεύθυνση URL"
 
 #: models/works.py:891
 msgid "file size"
-msgstr ""
+msgstr "μέγεθος αρχείου"
 
 #: models/works.py:892
 msgid "file name"
-msgstr ""
+msgstr "όνομα αρχείου"
 
 #: models/works.py:893
 msgid "file MIME type"
-msgstr ""
+msgstr "τύπος MIME αρχείου"
 
 #: models/works.py:898
 msgid "publication document"
-msgstr ""
+msgstr "έγγραφο δημοσίευσης"
 
 #: models/works.py:899
 msgid "publication documents"
-msgstr ""
+msgstr "έγγραφα δημοσίευσης"
 
 #: models/works.py:939
 msgid "commenced work"
-msgstr ""
+msgstr "ξεκίνησε την εργασία"
 
 #: models/works.py:940
 msgid "Principal work being commenced"
-msgstr ""
+msgstr "Ξεκινούν οι κύριες εργασίες"
 
 #: models/works.py:941
 msgid "commencing work"
-msgstr ""
+msgstr "έναρξη εργασιών"
 
 #: models/works.py:942
 msgid "Work that provides the commencement date for the principal work"
-msgstr ""
+msgstr "Εργασία που παρέχει την ημερομηνία έναρξης για την κύρια εργασία"
 
 #: models/works.py:945
 msgid "Date of the commencement, or null if it is unknown"
-msgstr ""
+msgstr "Ημερομηνία έναρξης ή μηδενική εάν είναι άγνωστη"
 
 #: models/works.py:946
 msgid "main"
-msgstr ""
+msgstr "κύριος"
 
 #: models/works.py:947
 msgid "This commencement date is the date on which most of the provisions of the commenced work come into force"
-msgstr ""
+msgstr "Αυτή η ημερομηνία έναρξης είναι η ημερομηνία κατά την οποία τίθενται σε ισχύ οι περισσότερες από τις διατάξεις των εργασιών που έχουν ξεκινήσει."
 
 #: models/works.py:949
 msgid "all provisions"
-msgstr ""
+msgstr "όλες οι διατάξεις"
 
 #: models/works.py:950
 msgid "All provisions of this work commenced on this date"
-msgstr ""
+msgstr "Όλες οι διατάξεις αυτού του έργου ξεκίνησαν από αυτήν την ημερομηνία"
 
 #: models/works.py:951
 msgid "note"
-msgstr ""
+msgstr "σημείωμα"
 
 #: models/works.py:952
 msgid "Usually a reference to a provision of the commenced work or a commencing work, if there is a commencement but the date is open to interpretation"
-msgstr ""
+msgstr "Συνήθως μια αναφορά σε μια διάταξη της έναρξης της εργασίας ή μιας έναρξης εργασίας, εάν υπάρχει έναρξη αλλά η ημερομηνία είναι ανοιχτή σε ερμηνεία."
 
 #: models/works.py:956
 msgid "commenced provisions"
-msgstr ""
+msgstr "αρχικές προβλέψεις"
 
 #: models/works.py:957
 msgid "A list of the element ids of the provisions that come into force with this commencement"
-msgstr ""
+msgstr "Λίστα με τα αναγνωριστικά στοιχείων των διατάξεων που τίθενται σε ισχύ με την έναρξη ισχύος της παρούσας"
 
 #: models/works.py:971
 msgid "commencement"
-msgstr ""
+msgstr "έναρξη"
 
 #: models/works.py:972
 msgid "commencements"
-msgstr ""
+msgstr "τελετές αποφοίτησης"
 
 #: models/works.py:1021
 msgid "Arbitrary date, e.g. consolidation date"
-msgstr ""
+msgstr "Αυθαίρετη ημερομηνία, π.χ. ημερομηνία ενοποίησης"
 
 #: models/works.py:1037
 msgid "arbitrary expression date"
-msgstr ""
+msgstr "ημερομηνία αυθαίρετης έκφρασης"
 
 #: models/works.py:1038
 msgid "arbitrary expression dates"
-msgstr ""
+msgstr "ημερομηνίες αυθαίρετων εκφράσεων"
 
 #: models/works.py:1065
 msgid "Name of the subtype"
-msgstr ""
+msgstr "Όνομα του υποτύπου"
 
 #: models/works.py:1066
 msgid "abbreviation"
-msgstr ""
+msgstr "συντομογραφία"
 
 #: models/works.py:1067
 msgid "Short abbreviation to use in the FRBR URI. No punctuation."
-msgstr ""
+msgstr "Σύντομη συντομογραφία για χρήση στο URI FRBR. Χωρίς σημεία στίξης."
 
 #: models/works.py:1074
 msgid "subtypes"
-msgstr ""
+msgstr "υποτύποι"
 
 #: models/works.py:1098
 msgid "alias"
-msgstr ""
+msgstr "ψευδώνυμο"
 
 #: models/works.py:1098
 msgid "Alias e.g. Penal Code, etc"
-msgstr ""
+msgstr "Ψευδώνυμο π.χ. Ποινικός Κώδικας, κ.λπ."
 
 #: models/works.py:1104
 msgid "work alias"
-msgstr ""
+msgstr "ψευδώνυμο εργασίας"
 
 #: models/works.py:1105
 msgid "work aliases"
-msgstr ""
+msgstr "ψευδώνυμα εργασίας"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "Ο αριθμός κεφαλαίου"
 
 #: models/works.py:1113
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr ""
+msgstr "Καθορίστε αν θα πρέπει να είναι κάτι διαφορετικό από «κεφάλαιο» (η προεπιλογή)"
 
 #: models/works.py:1115
 msgid "validity start date"
-msgstr ""
+msgstr "ημερομηνία έναρξης ισχύος"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "Ημερομηνία από την οποία ισχύει αυτός ο αριθμός κεφαλαίου για το έργο"
 
 #: models/works.py:1116
 msgid "validity end date"
-msgstr ""
+msgstr "ημερομηνία λήξης ισχύος"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "Ημερομηνία μέχρι την οποία ίσχυε αυτός ο αριθμός κεφαλαίου για το έργο"
 
 #: models/works.py:1117
 msgid "revision name"
-msgstr ""
+msgstr "όνομα αναθεώρησης"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "Όνομα της έκδοσης στην οποία αποδόθηκε αυτός ο αριθμός κεφαλαίου στο έργο"
 
 #: models/works.py:1121
 msgid "chapter number"
-msgstr ""
+msgstr "αριθμός κεφαλαίου"
 
 #: models/works.py:1122
 msgid "chapter numbers"
-msgstr ""
+msgstr "αριθμοί κεφαλαίων"
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Κεφάλαιο"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
-msgstr ""
+msgstr "Ερευνα"
 
 #: templates/admin/tree_change_list.html:8
 msgid "Collapse all"
-msgstr ""
+msgstr "Σύμπτυξη όλων"
 
 #: templates/admin/tree_change_list.html:9
 msgid "Expand all"
-msgstr ""
+msgstr "Ανάπτυξη όλων"
 
 #: templates/indigo_api/akn/_amendments.html:11
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Αναθεωρήθηκε από <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> στις <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:13
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Τροποποιήθηκε από <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> στις <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:17
 #, python-format
 msgid "[Revised by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Αναθεωρήθηκε από <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> στις <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:19
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Τροποποιήθηκε από <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> στις <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_commencements_table.html:6
 msgid "Provisions"
-msgstr ""
+msgstr "Προμήθειες"
 
 #: templates/indigo_api/akn/_commencements_table.html:7
 msgid "Status"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: templates/indigo_api/akn/_commencements_table.html:20
 msgid "Unknown provisions"
-msgstr ""
+msgstr "Άγνωστες διατάξεις"
 
 #: templates/indigo_api/akn/_commencements_table.html:25
 #, python-format
 msgid "commenced on %(date)s"
-msgstr ""
+msgstr "ξεκίνησε στις %(date)s"
 
 #: templates/indigo_api/akn/_commencements_table.html:27
 msgid "commenced on <i>(unknown date)</i>"
-msgstr ""
+msgstr "ξεκίνησε στις <i>(άγνωστη ημερομηνία)</i>"
 
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
-msgstr ""
+msgstr "από <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:36
 #, python-format
 msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
-msgstr ""
+msgstr "από <a href=\"%(resolver_uri)s\">%(title)s</a>"
 
 #: templates/indigo_api/akn/_commencements_table.html:42
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:45
 msgid "Note:"
-msgstr ""
+msgstr "Σημείωμα:"
 
 #: templates/indigo_api/akn/_commencements_table.html:57
 msgid "not yet commenced"
-msgstr ""
+msgstr "δεν έχει ξεκινήσει ακόμη"
 
 #: templates/indigo_api/akn/coverpage_act.html:46
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Συμφωνήθηκε στις %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:37
 #, python-format
 msgid "Legislation as at %(date)s"
-msgstr ""
+msgstr "Νομοθεσία όπως στο %(date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:54
 msgid "There may have been updates since this file was created."
-msgstr ""
+msgstr "Ενδέχεται να έχουν υπάρξει ενημερώσεις από τότε που δημιουργήθηκε αυτό το αρχείο."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:58
 #, python-format
 msgid "PDF created on %(current_date)s at %(current_time)s."
-msgstr ""
+msgstr "Το PDF δημιουργήθηκε στις %(current_date)s στη διεύθυνση %(current_time)s."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:62
 #, python-format
 msgid "Collection last checked for updates: %(as_at_date)s"
-msgstr ""
+msgstr "Η συλλογή ελέγχθηκε τελευταία φορά για ενημερώσεις: %(as_at_date)s"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:69
 msgid "About this collection"
-msgstr ""
+msgstr "Σχετικά με αυτήν τη συλλογή"
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:71
 msgid "The legislation in this collection has been reproduced as it was originally printed in the Government Gazette, with improved formatting and with minor typographical errors corrected. All amendments have been applied directly to the text and annotated. A scan of the original gazette of each piece of legislation (including amendments) is available for reference."
-msgstr ""
+msgstr "Η νομοθεσία σε αυτήν τη συλλογή έχει αναπαραχθεί όπως είχε αρχικά τυπωθεί στην Εφημερίδα της Κυβερνήσεως, με βελτιωμένη μορφοποίηση και με διορθώσεις μικρών τυπογραφικών λαθών. Όλες οι τροποποιήσεις έχουν εφαρμοστεί απευθείας στο κείμενο και έχουν σχολιαστεί. Διατίθεται σάρωση της αρχικής εφημερίδας κάθε νομοθετικής πράξης (συμπεριλαμβανομένων των τροποποιήσεων) για αναφορά."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:85
 msgid "There is no copyright on the legislative content of this document."
-msgstr ""
+msgstr "Δεν υπάρχουν πνευματικά δικαιώματα επί του νομοθετικού περιεχομένου αυτού του εγγράφου."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:86
 msgid "This PDF copy is licensed under a Creative Commons Attribution 4.0 License (CC BY 4.0). Share widely and freely."
-msgstr ""
+msgstr "Αυτό το αντίγραφο PDF διατίθεται με άδεια Creative Commons Attribution 4.0 (CC BY 4.0). Κοινοποιήστε το ευρέως και ελεύθερα."
 
 #: templates/indigo_api/akn/export/pdf_frontmatter_akn.xml:96
 msgid "Contents"
-msgstr ""
+msgstr "Περιεχόμενα"
 
 #: templates/indigo_api/akn/export/pdf_static_content_akn.xml:22
 #, python-format
 msgid "By <a href=\"%(lawsafrica)s\">Laws.Africa</a> and contributors. Licensed under <a href=\"%(ccby)s\">CC-BY</a>. Share widely and freely."
-msgstr ""
+msgstr "Από <a href=\"%(lawsafrica)s\">Laws.Africa</a> και τους συνεισφέροντες. Με άδεια χρήσης <a href=\"%(ccby)s\">CC-BY</a>. Κοινοποίηση ευρέως και ελεύθερα."
 
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Πίνακας περιεχομένων"
 
 #: timeline.py:69
 #, python-format
 msgid "Note: %(note)s"
-msgstr ""
+msgstr "Σημείωση: %(note)s"
 
 #: timeline.py:85
 #, python-format
 msgid "Commenced on %(date)s by"
-msgstr ""
+msgstr "Ξεκίνησε στις %(date)s από"
 
 #: timeline.py:89
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr ""
+msgstr "Ξεκίνησε στις %(date)s"
 
 #: timeline.py:93
 msgid "Commenced by"
-msgstr ""
+msgstr "Ξεκίνησε από"
 
 #: timeline.py:97
 msgid "Commenced"
-msgstr ""
+msgstr "Ξεκίνησε"
 
 #: timeline.py:113
 #, python-format
 msgid "%(verbed)s on %(date)s by"
-msgstr ""
+msgstr "%(verbed)s στις %(date)s από"
 
 #: timeline.py:118
 #, python-format
 msgid "%(verbed)s by"
-msgstr ""
+msgstr "%(verbed)s από"
 
 #: timeline.py:123
 #, python-format
 msgid "%(verbed)s on %(date)s"
-msgstr ""
+msgstr "%(verbed)s σε %(date)s"
 
 #: timeline.py:150
 #, python-format
 msgid "Published in %(name)s %(number)s on %(date)s"
-msgstr ""
+msgstr "Δημοσιεύτηκε σε %(name)s %(number)s στις %(date)s"
 
 #: timeline.py:156
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Δημοσιεύτηκε στο %(name)s στις %(date)s"
 
 #: timeline.py:161
 #, python-format
 msgid "Published on %(date)s"
-msgstr ""
+msgstr "Δημοσιεύτηκε στις %(date)s"
 
 #: timeline.py:167
 #, python-format
 msgid "Published in %(name)s %(number)s"
-msgstr ""
+msgstr "Δημοσιεύτηκε σε %(name)s %(number)s"
 
 #: timeline.py:174
 #, python-format
 msgid "Published in %(name)s"
-msgstr ""
+msgstr "Δημοσιεύτηκε σε %(name)s"
 
 #: timeline.py:179
 msgid "Published"
-msgstr ""
+msgstr "Δημοσιεύτηκε"
 
 #: timeline.py:243
 msgid "Assented to"
-msgstr ""
+msgstr "Συμφώνησε με"
 
 #: timeline.py:250
 msgid "Revised by"
-msgstr ""
+msgstr "Αναθεωρήθηκε από"
 
 #: timeline.py:250
 msgid "Amended by"
-msgstr ""
+msgstr "Τροποποιήθηκε από"
 
 #: timeline.py:262
 #, python-format
 msgid "Commencement note: %(note)s"
-msgstr ""
+msgstr "Εναρκτήριο σημείωμα: %(note)s"
 
 #: timeline.py:274
 msgid "Consolidation"
-msgstr ""
+msgstr "Ενοποίηση"
 
 #: views/documents.py:102
 msgid "DELETE not allowed for published documents, mark as a draft first."
-msgstr ""
+msgstr "Η ΔΙΑΓΡΑΦΗ δεν επιτρέπεται για δημοσιευμένα έγγραφα, επισημάνετέ τα πρώτα ως προσχέδιο."
 
 #: views/documents.py:206
 msgid "Cannot create a task for a reply annotation."
-msgstr ""
+msgstr "Δεν είναι δυνατή η δημιουργία εργασίας για σχολιασμό απάντησης."
 
 #: views/documents.py:369
 msgid "Error during import"
-msgstr ""
+msgstr "Σφάλμα κατά την εισαγωγή"
+
